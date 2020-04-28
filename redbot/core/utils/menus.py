@@ -5,7 +5,8 @@
 import asyncio
 import contextlib
 import functools
-from typing import Union, Iterable, Optional
+import warnings
+from typing import Iterable, List, Optional, Union
 import discord
 
 from .. import commands
@@ -16,7 +17,7 @@ _ReactableEmoji = Union[str, discord.Emoji]
 
 async def menu(
     ctx: commands.Context,
-    pages: list,
+    pages: Union[List[str], List[discord.Embed]],
     controls: dict,
     message: discord.Message = None,
     page: int = 0,
@@ -56,6 +57,8 @@ async def menu(
     RuntimeError
         If either of the notes above are violated
     """
+    if not isinstance(pages[0], (discord.Embed, str)):
+        raise RuntimeError("Pages must be of type discord.Embed or str")
     if not all(isinstance(x, discord.Embed) for x in pages) and not all(
         isinstance(x, str) for x in pages
     ):
@@ -75,7 +78,7 @@ async def menu(
             message = await ctx.send(current_page)
         # Don't wait for reactions to be added (GH-1797)
         # noinspection PyAsyncCall
-        start_adding_reactions(message, controls.keys(), ctx.bot.loop)
+        start_adding_reactions(message, controls.keys())
     else:
         try:
             if isinstance(current_page, discord.Embed):
@@ -93,10 +96,18 @@ async def menu(
         )
     except asyncio.TimeoutError:
         try:
-            await message.clear_reactions()
-        except discord.Forbidden:  # cannot remove all reactions
+            if message.channel.permissions_for(ctx.me).manage_messages:
+                await message.clear_reactions()
+            else:
+                raise RuntimeError
+        except (discord.Forbidden, RuntimeError):  # cannot remove all reactions
             for key in controls.keys():
-                await message.remove_reaction(key, ctx.bot.user)
+                try:
+                    await message.remove_reaction(key, ctx.bot.user)
+                except discord.Forbidden:
+                    return
+                except discord.HTTPException:
+                    pass
         except discord.NotFound:
             return
     else:
@@ -200,7 +211,13 @@ def start_adding_reactions(
                 await message.add_reaction(emoji)
 
     if loop is None:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
+    else:
+        warnings.warn(
+            "Explicitly passing the loop will not work in Red 3.4+",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     return loop.create_task(task())
 

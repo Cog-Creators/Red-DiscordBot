@@ -10,6 +10,18 @@ General Utility
 .. automodule:: redbot.core.utils
     :members: deduplicate_iterables, bounded_gather, bounded_gather_iter
 
+.. autoclass:: AsyncIter
+    :members:
+    :special-members: __await__
+    :exclude-members: enumerate, filter
+
+    .. automethod:: enumerate
+        :async-for:
+
+    .. automethod:: filter
+        :async-for:
+
+
 Chat Formatting
 ===============
 
@@ -21,6 +33,7 @@ Embed Helpers
 
 .. automodule:: redbot.core.utils.embed
     :members:
+    :exclude-members: randomize_color
 
 Reaction Menus
 ==============
@@ -31,7 +44,16 @@ Reaction Menus
 Event Predicates
 ================
 
-.. automodule:: redbot.core.utils.predicates
+MessagePredicate
+****************
+
+.. autoclass:: redbot.core.utils.predicates.MessagePredicate
+    :members:
+
+ReactionPredicate
+*****************
+
+.. autoclass:: redbot.core.utils.predicates.ReactionPredicate
     :members:
 
 Mod Helpers

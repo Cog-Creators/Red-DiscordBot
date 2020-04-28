@@ -1,1 +1,0 @@
-Confirmation prompts in ``redbot-setup`` now have default values for user convenience.

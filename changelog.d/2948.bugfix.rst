@@ -1,1 +1,0 @@
-The [p]invite command no longer errors when a user has the bot blocked or DMs disabled in the server.

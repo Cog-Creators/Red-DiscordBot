@@ -1,13 +1,13 @@
 import asyncio
 import contextlib
 import logging
-from collections import namedtuple
 from datetime import datetime, timedelta
-from typing import cast, Optional, Union
+from typing import Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.utils.chat_formatting import pagify, humanize_number
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -71,7 +71,7 @@ class KickBanMixin(MixinMeta):
 
         if author == user:
             return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             return _(
                 "I cannot let you do that. You are "
                 "not higher than the user in the role "
@@ -81,6 +81,19 @@ class KickBanMixin(MixinMeta):
             return _("I cannot do that due to discord hierarchy rules")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
+
+        toggle = await self.config.guild(guild).dm_on_kickban()
+        if toggle:
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been banned from {guild}.").format(guild=guild))
+                )
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
+                await user.send(embed=em)
 
         audit_reason = get_audit_reason(author, reason)
 
@@ -95,7 +108,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: impproper return type? Is this intended to be re-raised?
+            return e  # TODO: improper return type? Is this intended to be re-raised?
 
         if create_modlog_case:
             try:
@@ -119,29 +132,37 @@ class KickBanMixin(MixinMeta):
         return True
 
     async def check_tempban_expirations(self):
-        member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
-            for guild in self.bot.guilds:
-                async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
+            async for guild in AsyncIter(self.bot.guilds, steps=100):
+                if not guild.me.guild_permissions.ban_members:
+                    continue
+
+                async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
                         unban_time = datetime.utcfromtimestamp(
-                            await self.settings.member(member(uid, guild)).banned_until()
+                            await self.config.member_from_ids(guild.id, uid).banned_until()
                         )
                         if datetime.utcnow() > unban_time:  # Time to unban the user
-                            user = await self.bot.fetch_user(uid)
-                            queue_entry = (guild.id, user.id)
+                            queue_entry = (guild.id, uid)
                             try:
-                                await guild.unban(user, reason=_("Tempban finished"))
+                                await guild.unban(
+                                    discord.Object(id=uid), reason=_("Tempban finished")
+                                )
+                            except discord.NotFound:
+                                # user is not banned anymore
                                 guild_tempbans.remove(uid)
                             except discord.HTTPException as e:
                                 # 50013: Missing permissions error code or 403: Forbidden status
                                 if e.code == 50013 or e.status == 403:
                                     log.info(
-                                        f"Failed to unban {user}({user.id}) user from "
+                                        f"Failed to unban ({uid}) user from "
                                         f"{guild.name}({guild.id}) guild due to permissions"
                                     )
                                     break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
+                            else:
+                                # user unbanned successfully
+                                guild_tempbans.remove(uid)
             await asyncio.sleep(60)
 
     @commands.command()
@@ -164,7 +185,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -177,6 +198,18 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
+        toggle = await self.config.guild(guild).dm_on_kickban()
+        if toggle:
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                )
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
+                await user.send(embed=em)
         try:
             await guild.kick(user, reason=audit_reason)
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
@@ -209,14 +242,19 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
 
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. Defaults to 0."""
+
+        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
+        author = ctx.author
+        guild = ctx.guild
+        if days is None:
+            days = await self.config.guild(guild).default_days()
 
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
@@ -235,7 +273,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user_ids: commands.Greedy[RawUserIds],
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
@@ -243,7 +281,6 @@ class KickBanMixin(MixinMeta):
 
         User IDs need to be provided in order to ban
         using this command"""
-        days = cast(int, days)
         banned = []
         errors = {}
 
@@ -269,6 +306,9 @@ class KickBanMixin(MixinMeta):
         if not user_ids:
             await ctx.send_help()
             return
+
+        if days is None:
+            days = await self.config.guild(guild).default_days()
 
         if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
@@ -334,15 +374,13 @@ class KickBanMixin(MixinMeta):
             else:
                 banned.append(user_id)
 
-            user_info = await self.bot.fetch_user(user_id)
-
             try:
                 await modlog.create_case(
                     self.bot,
                     guild,
                     ctx.message.created_at,
                     "hackban",
-                    user_info,
+                    user_id,
                     author,
                     reason,
                     until=None,
@@ -370,10 +408,9 @@ class KickBanMixin(MixinMeta):
             invite = ""
 
         queue_entry = (guild.id, user.id)
-        await self.settings.member(user).banned_until.set(unban_time.timestamp())
-        cur_tbans = await self.settings.guild(guild).current_tempbans()
-        cur_tbans.append(user.id)
-        await self.settings.guild(guild).current_tempbans.set(cur_tbans)
+        await self.config.member(user).banned_until.set(unban_time.timestamp())
+        async with self.config.guild(guild).current_tempbans() as current_tempbans:
+            current_tempbans.append(user.id)
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
@@ -425,7 +462,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -501,7 +538,7 @@ class KickBanMixin(MixinMeta):
 
         if await self._voice_perm_check(ctx, user_voice_state, move_members=True) is False:
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, member):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, member):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -542,7 +579,7 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
+    async def unban(self, ctx: commands.Context, user_id: RawUserIds, *, reason: str = None):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
@@ -551,18 +588,14 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        try:
-            user = await self.bot.fetch_user(user_id)
-        except discord.errors.NotFound:
-            await ctx.send(_("Couldn't find a user with that ID!"))
-            return
         audit_reason = get_audit_reason(ctx.author, reason)
         bans = await guild.bans()
         bans = [be.user for be in bans]
-        if user not in bans:
+        user = discord.utils.get(bans, id=user_id)
+        if not user:
             await ctx.send(_("It seems that user isn't banned!"))
             return
-        queue_entry = (guild.id, user.id)
+        queue_entry = (guild.id, user_id)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
@@ -585,7 +618,14 @@ class KickBanMixin(MixinMeta):
                 await ctx.send(e)
             await ctx.send(_("Unbanned that user from this server"))
 
-        if await self.settings.guild(guild).reinvite_on_unban():
+        if await self.config.guild(guild).reinvite_on_unban():
+            user = ctx.bot.get_user(user_id)
+            if not user:
+                await ctx.send(
+                    _("I don't share another server with this user. I can't reinvite them.")
+                )
+                return
+
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
                 try:

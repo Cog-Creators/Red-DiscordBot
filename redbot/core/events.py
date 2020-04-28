@@ -1,10 +1,10 @@
+import asyncio
 import contextlib
 import sys
 import codecs
 import datetime
 import logging
 import traceback
-import asyncio
 from datetime import timedelta
 
 import aiohttp
@@ -13,18 +13,19 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from redbot.core.commands import RedHelpFormatter
+from redbot.core.commands import RedHelpFormatter, HelpSettings
+from redbot.core.i18n import Translator
+from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .data_manager import storage_type
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
 init()
 
-INTRO = """
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -32,6 +33,8 @@ ______         _           ______ _                       _  ______       _
 | |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_
 \_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
 """
+
+_ = Translator(__name__, __file__)
 
 
 def init_events(bot, cli_flags):
@@ -46,47 +49,22 @@ def init_events(bot, cli_flags):
             return
 
         bot._uptime = datetime.datetime.utcnow()
-        packages = []
-
-        if cli_flags.no_cogs is False:
-            packages.extend(await bot._config.packages())
-
-        if cli_flags.load_cogs:
-            packages.extend(cli_flags.load_cogs)
-
-        if packages:
-            # Load permissions first, for security reasons
-            try:
-                packages.remove("permissions")
-            except ValueError:
-                pass
-            else:
-                packages.insert(0, "permissions")
-
-            to_remove = []
-            print("Loading packages...")
-            for package in packages:
-                try:
-                    spec = await bot._cog_mgr.find_cog(package)
-                    await bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
-                    await bot.remove_loaded_package(package)
-                    to_remove.append(package)
-            for package in to_remove:
-                packages.remove(package)
-            if packages:
-                print("Loaded packages: " + ", ".join(packages))
-
-        if bot.rpc_enabled:
-            await bot.rpc.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
+        app_info = await bot.application_info()
+
+        if app_info.team:
+            if bot._use_team_features:
+                bot.owner_ids = {m.id for m in app_info.team.members}
+        else:
+            if bot.owner_id is None:
+                bot.owner_id = app_info.owner.id
+        bot._app_owners_fetched = True
+
         try:
-            data = await bot.application_info()
-            invite_url = discord.utils.oauth_url(data.id)
+            invite_url = discord.utils.oauth_url(app_info.id)
         except:
             invite_url = "Could not fetch invite url"
 
@@ -111,25 +89,22 @@ def init_events(bot, cli_flags):
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
-        with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
+        outdated_red_message = ""
+        with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
             if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
                 INFO.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-
-                await bot.send_to_owners(
+                outdated_red_message = (
                     "Your Red instance is out of date! {} is the current "
-                    "version, however you are using {}!".format(
-                        data["info"]["version"], red_version
-                    )
-                )
+                    "version, however you are using {}!"
+                ).format(data["info"]["version"], red_version)
         INFO2 = []
 
-        mongo_enabled = storage_type() != "JSON"
         reqs_installed = {"docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
@@ -141,7 +116,6 @@ def init_events(bot, cli_flags):
                 reqs_installed[key] = True
 
         options = (
-            ("MongoDB", mongo_enabled),
             ("Voice", True),
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"]),
@@ -161,6 +135,13 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot._color = discord.Colour(await bot._config.color())
+        bot._red_ready.set()
+        if outdated_red_message:
+            await bot.send_to_owners(outdated_red_message)
+
+    @bot.event
+    async def on_command_completion(ctx: commands.Context):
+        await bot._delete_delay(ctx)
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
@@ -172,9 +153,20 @@ def init_events(bot, cli_flags):
             if ctx.cog:
                 if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
                     return
+        if not isinstance(error, commands.CommandNotFound):
+            await bot._delete_delay(ctx)
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ArgParserFailure):
+            msg = _("`{user_input}` is not a valid value for `{command}`").format(
+                user_input=error.user_input, command=error.cmd,
+            )
+            if error.custom_help_msg:
+                msg += f"\n{error.custom_help_msg}"
+            await ctx.send(msg)
+            if error.send_cmd_help:
+                await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
             if error.args:
                 await ctx.send(error.args[0])
@@ -192,9 +184,9 @@ def init_events(bot, cli_flags):
                 exc_info=error.original,
             )
 
-            message = "Error in command '{}'. Check your console or logs for details.".format(
-                ctx.command.qualified_name
-            )
+            message = _(
+                "Error in command '{command}'. Check your console or logs for details."
+            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
@@ -202,11 +194,12 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
+            help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
-                commands={
-                    c async for c in RedHelpFormatter.help_filter_func(ctx, bot.walk_commands())
-                },
+                commands=RedHelpFormatter.help_filter_func(
+                    ctx, bot.walk_commands(), help_settings=help_settings
+                ),
             )
             if not fuzzy_commands:
                 pass
@@ -216,27 +209,35 @@ def init_events(bot, cli_flags):
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
-                plural = ""
-            else:
-                plural = "s"
-            await ctx.send(
-                "I require the {perms} permission{plural} to execute that command.".format(
-                    perms=format_perms_list(error.missing), plural=plural
+                msg = _("I require the {permission} permission to execute that command.").format(
+                    permission=format_perms_list(error.missing)
                 )
-            )
+            else:
+                msg = _("I require {permission_list} permissions to execute that command.").format(
+                    permission_list=format_perms_list(error.missing)
+                )
+            await ctx.send(msg)
         elif isinstance(error, commands.UserFeedbackCheckFailure):
             if error.message:
                 await ctx.send(error.message)
+        elif isinstance(error, commands.NoPrivateMessage):
+            await ctx.send(_("That command is not available in DMs."))
+        elif isinstance(error, commands.PrivateMessageOnly):
+            await ctx.send(_("That command is only available in DMs."))
         elif isinstance(error, commands.CheckFailure):
             pass
-        elif isinstance(error, commands.NoPrivateMessage):
-            await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
+            if delay := humanize_timedelta(seconds=error.retry_after):
+                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
+            else:
+                msg = _("This command is on cooldown. Try again in 1 second.")
+            await ctx.send(msg, delete_after=error.retry_after)
+        elif isinstance(error, commands.MaxConcurrencyReached):
             await ctx.send(
-                "This command is on cooldown. Try again in {}.".format(
-                    humanize_timedelta(seconds=error.retry_after) or "1 second"
-                ),
-                delete_after=error.retry_after,
+                _(
+                    "Too many people using this command."
+                    " It can only be used {number} time(s) per {type} concurrently."
+                ).format(number=error.number, type=error.per.name)
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
@@ -264,10 +265,11 @@ def init_events(bot, cli_flags):
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
-        for guild in bot.guilds:
-            disabled_commands = await bot._config.guild(guild).disabled_commands()
+        guild_data = await bot._config.all_guilds()
+        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
+            disabled_commands = data.get("disabled_commands", [])
             if command.qualified_name in disabled_commands:
-                command.disable_in(guild)
+                command.disable_in(discord.Object(id=guild_id))
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()

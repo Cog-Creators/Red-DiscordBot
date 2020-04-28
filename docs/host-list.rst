@@ -56,6 +56,9 @@ Others
 |`Google Cloud                        |Same as AWS, but it's Google.                        |
 |<https://cloud.google.com/compute/>`_|                                                     |
 +-------------------------------------+-----------------------------------------------------+
+|`Microsoft Azure                     |Same as AWS, but it's Microsoft.                     |
+|<https://azure.microsoft.com>`_      |                                                     |
++-------------------------------------+-----------------------------------------------------+
 |`LowEndBox <http://lowendbox.com/>`_ |A curator for lower specced servers.                 |
 +-------------------------------------+-----------------------------------------------------+
 

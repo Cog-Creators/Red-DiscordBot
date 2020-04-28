@@ -214,6 +214,7 @@ def storage_type() -> str:
     Returns
     -------
     str
+        Storage type.
     """
     try:
         return basic_config["STORAGE_TYPE"]
@@ -229,5 +230,6 @@ def storage_details() -> dict:
     Returns
     -------
     dict
+        Storage details.
     """
     return basic_config.get("STORAGE_DETAILS", {})

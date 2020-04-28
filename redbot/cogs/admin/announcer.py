@@ -3,6 +3,8 @@ import asyncio
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.chat_formatting import humanize_list, inline
 
 _ = Translator("Announcer", __file__)
 
@@ -53,8 +55,8 @@ class Announcer:
 
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
-        bot_owner = (await self.ctx.bot.application_info()).owner
-        for g in guild_list:
+        failed = []
+        async for g in AsyncIter(guild_list, delay=0.5):
             if not self.active:
                 return
 
@@ -66,9 +68,14 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send(
-                    _("I could not announce to server: {server.id}").format(server=g)
-                )
-            await asyncio.sleep(0.5)
+                failed.append(str(g.id))
 
+        if failed:
+            msg = (
+                _("I could not announce to the following server: ")
+                if len(failed) == 1
+                else _("I could not announce to the following servers: ")
+            )
+            msg += humanize_list(tuple(map(inline, failed)))
+            await self.ctx.bot.send_to_owners(msg)
         self.active = False

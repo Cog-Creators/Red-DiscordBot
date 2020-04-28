@@ -4,6 +4,7 @@ import logging
 import os
 import pickle
 import weakref
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
@@ -17,6 +18,7 @@ __all__ = ["JsonDriver"]
 _shared_datastore = {}
 _driver_counts = {}
 _finalizers = []
+_locks = defaultdict(asyncio.Lock)
 
 log = logging.getLogger("redbot.json_driver")
 
@@ -30,6 +32,8 @@ def finalize_driver(cog_name):
     if _driver_counts[cog_name] == 0:
         if cog_name in _shared_datastore:
             del _shared_datastore[cog_name]
+        if cog_name in _locks:
+            del _locks[cog_name]
 
     for f in _finalizers:
         if not f.alive:
@@ -68,9 +72,11 @@ class JsonDriver(BaseDriver):
             self.data_path = data_manager.cog_data_path(raw_name=cog_name)
         self.data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = self.data_path / self.file_name
-
-        self._lock = asyncio.Lock()
         self._load_data()
+
+    @property
+    def _lock(self):
+        return _locks[self.cog_name]
 
     @property
     def data(self):
@@ -181,11 +187,11 @@ class JsonDriver(BaseDriver):
                     continue
             if not isinstance(data, dict):
                 continue
-            for cog, inner in data.items():
+            cog_name = _dir.stem
+            for cog_id, inner in data.items():
                 if not isinstance(inner, dict):
                     continue
-                for cog_id in inner:
-                    yield cog, cog_id
+                yield cog_name, cog_id
 
     async def import_data(self, cog_data, custom_group_data):
         def update_write_data(identifier_data: IdentifierData, _data):
@@ -217,11 +223,11 @@ class JsonDriver(BaseDriver):
 
 def _save_json(path: Path, data: Dict[str, Any]) -> None:
     """
-    This fsync stuff here is entirely neccessary.
+    This fsync stuff here is entirely necessary.
 
     On windows, it is not available in entirety.
     If a windows user ends up with tons of temp files, they should consider hosting on
-    something POSIX compatible, or using the mongo backend instead.
+    something POSIX compatible, or using a different backend instead.
 
     Most users wont encounter this issue, but with high write volumes,
     without the fsync on both the temp file, and after the replace on the directory,
