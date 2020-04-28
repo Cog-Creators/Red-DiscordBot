@@ -208,6 +208,7 @@ class RedHelpFormatter:
 
         description = command.description or ""
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+
         signature = (
             f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         )
