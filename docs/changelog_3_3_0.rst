@@ -1,5 +1,31 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.8 or 3.4.0 (Unreleased)
+==================================
+
+| Thanks to all these amazing people that contributed to this release:
+| 
+
+End-user changelog
+------------------
+
+
+
+Developer changelog
+-------------------
+
+
+
+Documentation changes
+---------------------
+
+
+
+Miscellaneous
+-------------
+
+
+
 Redbot 3.3.7 (2020-04-28)
 =========================
 
