@@ -1,5 +1,11 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.7 (2020-04-28)
+=========================
+
+This is a hotfix release fixing issue with generating messages for new cases in Modlog.
+
+
 Redbot 3.3.6 (2020-04-27)
 =========================
 
