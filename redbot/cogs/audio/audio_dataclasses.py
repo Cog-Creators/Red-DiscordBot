@@ -23,7 +23,7 @@ import lavalink
 from redbot.core.utils import AsyncIter
 
 _RE_REMOVE_START: Final[Pattern] = re.compile(r"^(sc|list) ")
-_RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"&t=(\d+)s?")
+_RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"[&|?]t=(\d+)s?")
 _RE_YOUTUBE_INDEX: Final[Pattern] = re.compile(r"&index=(\d+)")
 _RE_SPOTIFY_URL: Final[Pattern] = re.compile(r"(http[s]?://)?(open.spotify.com)/")
 _RE_SPOTIFY_TIMESTAMP: Final[Pattern] = re.compile(r"#(\d+):(\d+)")
@@ -506,7 +506,7 @@ class Query:
                     if url_domain in ["youtube.com", "youtu.be"]:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
-                        if "&t=" in track:
+                        if "&t=" in track or "?t=" in track:
                             match = re.search(_RE_YOUTUBE_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = int(match.group(1))
