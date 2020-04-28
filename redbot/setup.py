@@ -352,11 +352,8 @@ class RestoreInfo:
     @staticmethod
     def get_backup_version(tar: tarfile.TarFile) -> int:
         if (fp := open_file_from_tar(tar, "backup.version")) is None:
-            print(
-                "This backup was created using old version (v1) of backup system"
-                " and can't be restored using this command."
-            )
-            sys.exit(1)
+            # backup version 1 doesn't have the version file
+            return 1
         with fp:
             backup_version = int(fp.read())
         if backup_version > 2:
@@ -515,6 +512,13 @@ class RestoreInfo:
                 await repo_mgr._restore_from_backup()
             finally:
                 await driver_cls.teardown()
+        elif self.backup_version == 1:
+            print(
+                "INFO: Downloader's data isn't included in the backup file"
+                " - this backup was created with Red 3.3.7 or older."
+            )
+        else:
+            print("WARNING: Downloader's data isn't included in the backup file.")
 
     async def run(self) -> None:
         self.print_instance_data()
