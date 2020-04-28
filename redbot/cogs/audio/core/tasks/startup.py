@@ -1,7 +1,5 @@
-import asyncio
 import logging
 
-import aiohttp
 import lavalink
 
 from redbot.core.data_manager import cog_data_path
@@ -17,11 +15,9 @@ log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 
 class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     def start_up_task(self):
-        # These has to be a task since this requires the bot to be ready
+        # There has to be a task since this requires the bot to be ready
         # If it waits for ready in startup, we cause a deadlock during initial load
         # as initial load happens before the bot can ever be ready.
-        self.session = aiohttp.ClientSession()
-        self.cog_ready_event = asyncio.Event()
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
 
     async def initialize(self) -> None:

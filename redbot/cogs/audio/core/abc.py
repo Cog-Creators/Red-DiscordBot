@@ -56,7 +56,7 @@ class MixinMeta(ABC):
 
     lavalink_connect_task: Optional[asyncio.Task]
     player_automated_timer_task: Optional[asyncio.Task]
-    cog_init_task: asyncio.Task
+    cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
 
     _default_lavalink_settings: Mapping

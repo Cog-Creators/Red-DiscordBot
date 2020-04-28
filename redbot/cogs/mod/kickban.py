@@ -1,9 +1,8 @@
 import asyncio
 import contextlib
 import logging
-from collections import namedtuple
 from datetime import datetime, timedelta
-from typing import cast, Optional, Union
+from typing import Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
@@ -133,28 +132,24 @@ class KickBanMixin(MixinMeta):
         return True
 
     async def check_tempban_expirations(self):
-        member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
             async for guild in AsyncIter(self.bot.guilds, steps=100):
                 if not guild.me.guild_permissions.ban_members:
                     continue
-                try:
-                    banned_users = {b.user.id: b.user for b in (await guild.bans())}
-                except discord.HTTPException:
-                    continue
 
                 async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
-                        user = banned_users.get(uid, None)
-                        if not user:
-                            continue
                         unban_time = datetime.utcfromtimestamp(
-                            await self.config.member(member(uid, guild)).banned_until()
+                            await self.config.member_from_ids(guild.id, uid).banned_until()
                         )
                         if datetime.utcnow() > unban_time:  # Time to unban the user
                             queue_entry = (guild.id, uid)
                             try:
-                                await guild.unban(user, reason=_("Tempban finished"))
+                                await guild.unban(
+                                    discord.Object(id=uid), reason=_("Tempban finished")
+                                )
+                            except discord.NotFound:
+                                # user is not banned anymore
                                 guild_tempbans.remove(uid)
                             except discord.HTTPException as e:
                                 # 50013: Missing permissions error code or 403: Forbidden status
@@ -165,6 +160,9 @@ class KickBanMixin(MixinMeta):
                                     )
                                     break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
+                            else:
+                                # user unbanned successfully
+                                guild_tempbans.remove(uid)
             await asyncio.sleep(60)
 
     @commands.command()

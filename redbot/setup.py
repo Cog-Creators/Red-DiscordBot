@@ -108,12 +108,9 @@ def get_storage_type():
     storage = None
     while storage is None:
         print()
-        print("Please choose your storage backend (if you're unsure, choose 1).")
+        print("Please choose your storage backend (if you're unsure, just choose 1).")
         print("1. JSON (file storage, requires no database).")
-        print(
-            "2. PostgreSQL (Requires a database server)"
-            "\n(Warning: You cannot convert postgres instances to other backends yet)"
-        )
+        print("2. PostgreSQL (Requires a database server)")
         storage = input("> ")
         try:
             storage = int(storage)
@@ -316,7 +313,7 @@ def cli(ctx, debug):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.option(
     "--no-prompt",
     "interactive",
@@ -381,8 +378,8 @@ def delete(
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
+@click.argument("backend", type=click.Choice(["json", "postgres"]))
 def convert(instance, backend):
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
@@ -394,8 +391,6 @@ def convert(instance, backend):
 
     if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
-    elif current_backend == BackendType.POSTGRES:  # TODO: GH-3115
-        raise RuntimeError("Converting away from postgres isn't currently supported")
     else:
         new_storage_details = asyncio.run(do_migration(current_backend, target))
 
@@ -411,7 +406,7 @@ def convert(instance, backend):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument(
     "destination_folder",
     type=click.Path(

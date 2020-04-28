@@ -1196,13 +1196,12 @@ class RepoManager:
             except errors.NoRemoteURL:
                 log.warning("A remote URL does not exist for repo %s", folder.stem)
             except errors.DownloaderException as err:
-                log.error("Discarding repo %s due to error.", folder.stem, exc_info=err)
-                shutil.rmtree(
-                    str(folder),
-                    onerror=lambda func, path, exc: log.error(
-                        "Failed to remove folder %s", path, exc_info=exc
-                    ),
-                )
+                log.error("Ignoring repo %s due to error.", folder.stem, exc_info=err)
+                # Downloader should NOT remove the repo on generic errors like this one.
+                # We were removing whole repo folder here in the past,
+                # but it's quite destructive for such a generic error.
+                # We can't **expect** that this error will always mean git repository is broken.
+                # GH-3867
 
         if set_repos:
             self._repos = ret

@@ -33,7 +33,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
         if len(player.queue) > 500:
-            queue_list = "__Too many songs in the queue, only showing the first 500__.\n\n"
+            queue_list = _("__Too many songs in the queue, only showing the first 500__.\n\n")
         else:
             queue_list = ""
 
@@ -73,7 +73,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title="Queue for __{guild.name}__".format(guild=ctx.guild),
+            title=_("Queue for __{guild_name}__").format(guild_name=ctx.guild.name),
             description=queue_list,
         )
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
@@ -156,7 +156,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             colour=await ctx.embed_colour(), title=_("Matching Tracks:"), description=track_match
         )
         embed.set_footer(
-            text=(_("Page {page_num}/{total_pages}") + " | {num_tracks} tracks").format(
+            text=_("Page {page_num}/{total_pages} | {num_tracks} tracks").format(
                 page_num=humanize_number(page_num),
                 total_pages=humanize_number(search_num_pages),
                 num_tracks=len(search_list),
