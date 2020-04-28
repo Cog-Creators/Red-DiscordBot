@@ -209,7 +209,7 @@ class RedHelpFormatter:
         description = command.description or ""
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
         signature = (
-            T_("`Syntax:`") + f"{ctx.clean_prefix}{command.qualified_name} {command.signature}"
+            f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         )
         if command.aliases:
             alias_fmt = T_("Aliases") if len(command.aliases) > 1 else T_("Alias")
