@@ -123,11 +123,11 @@ msgstr ""
 #: redbot/cogs/general/general.py:118
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
-msgstr ""
+msgstr "Подбросить монетку... или пользователя.\\n\\n        По умолчанию монетку.\\n        "
 
 #: redbot/cogs/general/general.py:126
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
-msgstr ""
+msgstr "Хорошая попытка. Ты думаешь это смешно?\\n Как насчет *этого* тогда:\\n\\n"
 
 #: redbot/cogs/general/general.py:137
 msgid "*flips a coin and... "

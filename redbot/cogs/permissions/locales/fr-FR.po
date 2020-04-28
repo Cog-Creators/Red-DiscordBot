@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-05 12:09+0000\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -13,33 +13,33 @@ msgstr ""
 "X-Crowdin-Language: fr\n"
 "Language: fr_FR\n"
 
-#: redbot/cogs/permissions/converters.py:64
+#: redbot/cogs/permissions/converters.py:65
 msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" n'a pas été trouvé. Ce doit être une ID, une mention, ou le nom d'un serveur, salon, utilisateur ou rôle que le bot peut voir."
 
-#: redbot/cogs/permissions/converters.py:73
+#: redbot/cogs/permissions/converters.py:74
 msgid "\\\"{arg}\\\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\\\"{arg}\\\" ne fait pas référence à un serveur, salon, utilisateur ou rôle unique. Veuillez utilisez l'ID de ce que vous essayez de spécifier, ou mentionnez-le/les."
 
-#: redbot/cogs/permissions/converters.py:116
+#: redbot/cogs/permissions/converters.py:117
 msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
-msgstr ""
+msgstr "\\\"{arg}\\\" n'a pas été trouvé. Cela doit être l'ID, la mention ou le nom d'un serveur, d'un salon, d'un utilisateur ou d'un rôle dans ce serveur."
 
-#: redbot/cogs/permissions/converters.py:125
+#: redbot/cogs/permissions/converters.py:126
 msgid "\\\"{arg}\\\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\\\"{arg}\\\" ne fait pas référence à un salon, utilisateur ou rôle. Veuillez utilisez l'ID de ce que vous essayez de spécifier, ou mentionnez-le/les."
 
-#: redbot/cogs/permissions/converters.py:148
+#: redbot/cogs/permissions/converters.py:149
 msgid "Cog or command \\\"{name}\\\" not found. Please note that this is case sensitive."
-msgstr ""
+msgstr "Cog ou commande \\\"{name}\\\" introuvable. Veuillez notez que c'est sensible aux caractères."
 
-#: redbot/cogs/permissions/converters.py:161
+#: redbot/cogs/permissions/converters.py:162
 msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\""
-msgstr ""
+msgstr "\\\"{arg}\\\" n'est pas une règle valide. Les règles valides sont \\\"allow\\\" ou \\\"deny\\\""
 
-#: redbot/cogs/permissions/converters.py:174
+#: redbot/cogs/permissions/converters.py:175
 msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\", or \\\"clear\\\" to remove the rule"
-msgstr ""
+msgstr "\\\"{arg}\\\" n'est pas une règle valide. Les règles valides sont \\\"allow\\\" ou \\\"deny\\\", ou \\\"clear\\\" pour supprimer la règle"
 
 #: redbot/cogs/permissions/permissions.py:46
 #: redbot/cogs/permissions/permissions.py:60
@@ -88,7 +88,7 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:147
 #, docstring
 msgid "Check if a user can run a command.\\n\\n        This will take the current context into account, such as the\\n        server and text channel.\\n        "
-msgstr ""
+msgstr "Vérifie si un utilisateur peut utiliser une commande.\\n\\n         Cela prendra en compte le contexte actuel, tel que\\n         le serveur et le salon textuel.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:162
 msgid "No such command"
@@ -109,7 +109,7 @@ msgstr "Gérer les permissions avec des fichiers YAML."
 
 #: redbot/cogs/permissions/permissions.py:186
 msgid "Example YAML for setting rules:\\n"
-msgstr ""
+msgstr "Exemple d'AYML pour définir les règles :\\n"
 
 #: redbot/cogs/permissions/permissions.py:208
 #, docstring
@@ -154,14 +154,14 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:290
 #, docstring
 msgid "Add a global rule to a command.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Ajoute une règle globale à une commande.\\n\\n         `<allow_or_deny>` doit être soit \\\"allow\\\" ou \\\"deny\\\".\\n\\n         `<cog_or_command>` est le cog ou la commande à lequelle s'applique la règle.\\n         Cela est sensible aux caractères.\\n\\n         `<who_or_what>` est un ou plusieurs utilisateurs, salons ou rôles à lesquels s'applique la règle.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:304
 #: redbot/cogs/permissions/permissions.py:347
 #: redbot/cogs/permissions/permissions.py:432
 #: redbot/cogs/permissions/permissions.py:463
 msgid "This command is designated as being always available and cannot be modified by permission rules."
-msgstr ""
+msgstr "Cette commande est désignée comment étant toujours disponible et ne peut pas être modifiée par des règles de permissions."
 
 #: redbot/cogs/permissions/permissions.py:317
 #: redbot/cogs/permissions/permissions.py:360
@@ -171,12 +171,12 @@ msgstr "Règle ajoutée."
 #: redbot/cogs/permissions/permissions.py:333
 #, docstring
 msgid "Add a rule to a command in this server.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Ajoute une règle à une commande dans ce serveur.\\n\\n         `<allow_or_deny>` doit être soit \\\"allow\\\" ou \\\"deny\\\".\\n\\n         `<cog_or_command>` est le cog ou la commande à laquelle s'applique la règle.\\n         Cela est sensible aux caractères.\\n\\n         `<who_or_what>` est un ou plusieurs utilisateurs, salons ou rôles à lesquels s'applique la règle.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:370
 #, docstring
 msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n       `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Enlève une règle globale à une commande.\\n\\n        `<cog_or_command>` est le cog ou la commande à laquelle la règle se supprime.\\n         Cela est sensible aux caractères.\\n\\n         `<who_or_what>` est un ou plusieurs utilisateurs, salons ou rôles à lesquels la règle est.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:382
 #: redbot/cogs/permissions/permissions.py:411
@@ -186,7 +186,7 @@ msgstr "Règle supprimée."
 #: redbot/cogs/permissions/permissions.py:397
 #, docstring
 msgid "Remove a server rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Enlève une règle du serveur à une commande.\\n\\n        `<cog_or_command>` est le cog ou la commande à laquelle la règle se supprime.\\n         Cela est sensible aux caractères.\\n\\n         `<who_or_what>` est un ou plusieurs utilisateurs, salons ou rôles à lesquels la règle est.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:419
 #, docstring

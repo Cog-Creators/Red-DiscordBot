@@ -255,7 +255,7 @@ class Warnings(commands.Cog):
             for r, v in registered_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                        title=_("Reason: {name}").format(name=r), description=v["description"]
+                        title=_("Reason: {name}").format(name=r), description=v["description"],
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -283,7 +283,9 @@ class Warnings(commands.Cog):
                 if await ctx.embed_requested():
                     em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
-                    em.add_field(name=_("Exceed command"), value=r["exceed_command"], inline=False)
+                    em.add_field(
+                        name=_("Exceed command"), value=r["exceed_command"], inline=False,
+                    )
                     em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
                     msg_list.append(em)
                 else:
@@ -320,6 +322,9 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
+            return
+        if user.bot:
+            await ctx.send(_("You cannot warn other bots."))
             return
         custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
         guild_settings = self.config.guild(ctx.guild)
@@ -396,7 +401,7 @@ class Warnings(commands.Cog):
                 if channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await channel.send(
-                            _("{user} has been warned.").format(user=user.mention), embed=em
+                            _("{user} has been warned.").format(user=user.mention), embed=em,
                         )
 
             if not dm_failed:
@@ -466,7 +471,8 @@ class Warnings(commands.Cog):
                         description=user_warnings[key]["description"],
                     )
                 await ctx.send_interactive(
-                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                    pagify(msg, shorten_by=58),
+                    box_lang=_("Warnings for {user}").format(user=user),
                 )
 
     @commands.command()
@@ -495,7 +501,8 @@ class Warnings(commands.Cog):
                         description=user_warnings[key]["description"],
                     )
                 await ctx.send_interactive(
-                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                    pagify(msg, shorten_by=58),
+                    box_lang=_("Warnings for {user}").format(user=user),
                 )
 
     @commands.command()
