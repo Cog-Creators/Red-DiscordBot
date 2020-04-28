@@ -105,7 +105,6 @@ class AudioAPIInterface:
     async def route_tasks(
         self,
         action_type: str = None,
-        table: str = None,
         data: Union[List[MutableMapping], MutableMapping] = None,
     ) -> None:
         """Separate the tasks and run them in the appropriate functions"""
@@ -113,19 +112,23 @@ class AudioAPIInterface:
         if not data:
             return
         if action_type == "insert" and isinstance(data, list):
-            if table == "lavalink":
-                await self.local_cache_api.lavalink.insert(data)
-            elif table == "youtube":
-                await self.local_cache_api.youtube.insert(data)
-            elif table == "spotify":
-                await self.local_cache_api.spotify.insert(data)
+            for table, d in data:
+                if table == "lavalink":
+                    await self.local_cache_api.lavalink.insert(d)
+                elif table == "youtube":
+                    await self.local_cache_api.youtube.insert(d)
+                elif table == "spotify":
+                    await self.local_cache_api.spotify.insert(d)
         elif action_type == "update" and isinstance(data, dict):
-            if table == "lavalink":
-                await self.local_cache_api.lavalink.update(data)
-            elif table == "youtube":
-                await self.local_cache_api.youtube.update(data)
-            elif table == "spotify":
-                await self.local_cache_api.spotify.update(data)
+            for table, d in data:
+                if table == "lavalink":
+                    await self.local_cache_api.lavalink.update(data)
+                elif table == "youtube":
+                    await self.local_cache_api.youtube.update(data)
+                elif table == "spotify":
+                    await self.local_cache_api.spotify.update(data)
+        elif action_type == "global" and isinstance(data, list):
+            await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
         """Run tasks for a specific context"""
@@ -142,10 +145,11 @@ class AudioAPIInterface:
                     log.debug(f"Running database writes for {lock_id} ({lock_author})")
                 try:
                     tasks = self._tasks[lock_id]
-                    del self._tasks[lock_id]
+                    tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
                     await asyncio.gather(
-                        *[self.route_tasks(*tasks[a]) for a in tasks], return_exceptions=True
+                        *tasks, return_exceptions=False
                     )
+                    del self._tasks[lock_id]
                 except Exception as exc:
                     debug_exc_log(
                         log, exc, f"Failed database writes for {lock_id} ({lock_author})"
@@ -165,8 +169,10 @@ class AudioAPIInterface:
                     async for t, args in AsyncIter(task.items()):
                         tasks[t].append(args)
                 self._tasks = {}
+                coro_tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
+
                 await asyncio.gather(
-                    *[self.route_tasks(*tasks[a]) for a in tasks], return_exceptions=True
+                    *coro_tasks, return_exceptions=False
                 )
 
             except Exception as exc:
