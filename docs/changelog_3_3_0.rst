@@ -1,5 +1,209 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.8 (2020-05-29)
+==================================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Important fixes to how PostgreSQL data backend saves data in bulks (:issue:`3829`)
+- Fixed ``[p]localwhitelist`` and ``[p]localblacklist`` commands (:issue:`3857`)
+- Red now includes information on how to update when sending information about being out of date (:issue:`3744`)
+- Using backslashes in bot's username/nickname no longer causes issues (:issue:`3826`, :issue:`3825`)
+
+Admin
+*****
+
+- Fixed server lock (:issue:`3815`, :issue:`3814`)
+
+Alias
+*****
+
+- Added pagination to ``[p]alias list`` and ``[p]alias global list`` to avoid errors for users with a lot of aliases (:issue:`3844`, :issue:`3834`)
+- ``[p]alias help`` should now work more reliably (:issue:`3864`)
+
+Audio
+*****
+
+- Twitch playback is functional once again (:issue:`3873`)
+- Recent errors with YouTube playback should be resolved (:issue:`3873`)
+- Added new option (settable with ``[p]audioset lyrics``) that makes Audio cog prefer (prioritize) tracks with lyrics (:issue:`3519`)
+- Added global daily (historical) queues (:issue:`3518`)
+- Added ``[p]audioset countrycode`` that allows to set the country code for spotify searches (:issue:`3528`)
+- Fixed ``[p]local search`` (:issue:`3528`, :issue:`3501`)
+- Local folders with special characters should work properly now (:issue:`3528`, :issue:`3467`)
+- Audio no longer fails to take the last spot in the voice channel with user limit (:issue:`3528`)
+- ``[p]local play`` no longer enqueues tracks from nested folders (:issue:`3528`)
+- Fixed ``[p]playlist dedupe`` not removing tracks (:issue:`3518`)
+- ``[p]disconnect`` now allows to disconnect if both DJ mode and voteskip aren't enabled (:issue:`3502`, :issue:`3485`)
+- Many UX improvements and fixes, including, among other things:
+
+  - Creating playlists without explicitly passing ``-scope`` no longer causes errors (:issue:`3500`)
+  - ``[p]playlist list`` now shows all accessible playlists if ``--scope`` flag isn't used (:issue:`3518`)
+  - ``[p]remove`` now also accepts a track URL in addition to queue index (:issue:`3201`)
+  - ``[p]playlist upload`` now accepts a playlist file uploaded in the message with a command (:issue:`3251`)
+  - Commands now send friendly error messages for common errors like lost Lavalink connection or bot not connected to voice channel (:issue:`3503`, :issue:`3528`, :issue:`3353`, :issue:`3712`)
+
+CustomCommands
+**************
+
+- ``[p]customcom create`` no longer allows spaces in custom command names (:issue:`3816`)
+
+Mod
+***
+
+- ``[p]userinfo`` now shows default avatar when no avatar is set (:issue:`3819`)
+
+Modlog
+******
+
+- Fixed (again) ``AttributeError`` for cases whose moderator doesn't share the server with the bot (:issue:`3805`, :issue:`3784`, :issue:`3778`)
+
+Permissions
+***********
+
+- Commands for settings ACL using yaml files now properly works on PostgreSQL data backend (:issue:`3829`, :issue:`3796`)
+
+Warnings
+********
+
+- Warnings cog no longer allows to warn bot users (:issue:`3855`, :issue:`3854`)
+
+
+Developer changelog
+-------------------
+
+| **Important:**
+| If you're using RPC, please see the full annoucement about current state of RPC in main Red server
+  `by clicking here <https://discord.com/channels/133049272517001216/411381123101491200/714560168465137694>`_.
+
+
+Core Bot
+********
+
+- Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
+- Libraries using ``pkg_resources`` (like ``humanize`` or ``google-api-python-client``) that were installed through Downloader should now work properly (:issue:`3843`)
+- All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
+
+  -  Note: If you want to use this on bot startup (e.g. in cog's initialisation), you need to await ``bot.wait_until_red_ready()`` first
+
+
+Documentation changes
+---------------------
+
+- Added information about provisional status of RPC (:issue:`3862`)
+- Revised install instructions (:issue:`3847`)
+- Improved navigation in `document about updating Red <update_red>` (:issue:`3856`, :issue:`3849`)
+
+
+Miscellaneous
+-------------
+
+- Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`, :issue:`3851`, :issue:`3861`)
+- **Downloader** - Downloader no longer removes the repo when it fails to load it (:issue:`3867`)
+
+
+Redbot 3.3.7 (2020-04-28)
+=========================
+
+This is a hotfix release fixing issue with generating messages for new cases in Modlog.
+
+
+Redbot 3.3.6 (2020-04-27)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Converting from and to Postgres driver with ``redbot-setup convert`` have been fixed (:issue:`3714`, :issue:`3115`)
+- Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
+- Various optimizations
+
+  - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
+  - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
+  - Improved performance for bots with big amount of guilds (:issue:`3767`)
+  - Mod cog no longer fetches guild's bans every 60 seconds when handling unbanning for tempbans (:issue:`3783`)
+  - Reduced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
+  - Aliases in Alias cog are now cached for better performance (:issue:`3788`)
+
+Core Commands
+*************
+
+- ``[p]set avatar`` now supports setting avatar using attachment (:issue:`3747`)
+- Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
+- Fixed list of ignored channels that is shown in ``[p]ignore``/``[p]unignore`` (:issue:`3746`)
+
+Audio
+*****
+
+- Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
+- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+
+CustomCommands
+**************
+
+- Added ``[p]cc raw`` command that gives you the raw response of a custom command for ease of copy pasting (:issue:`3795`)
+
+Modlog
+******
+
+- Fixed ``AttributeError`` for cases whose moderator doesn't share the server with the bot (:issue:`3784`, :issue:`3778`)
+
+Streams
+*******
+
+- Fixed incorrect stream URLs for Twitch channels that have localised display name (:issue:`3773`, :issue:`3772`)
+
+Trivia
+******
+
+- Fixed the error in ``[p]trivia stop`` that happened when there was no ongoing trivia session in the channel (:issue:`3774`)
+
+Trivia Lists
+************
+
+- Updated ``leagueoflegends`` list with new changes to League of Legends (`b8ac70e <https://github.com/Cog-Creators/Red-DiscordBot/commit/b8ac70e59aa1328f246784f14f992d6ffe00d778>`_)
+
+
+Developer changelog
+-------------------
+
+Utility Functions
+*****************
+
+- Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
+- `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
+
+
+Documentation changes
+---------------------
+
+- Added `document about updating Red <update_red>` (:issue:`3790`)
+- ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
+- Updated Python version in ``pyenv`` instructions (:issue:`3740`)
+- Updated install docs to include Ubuntu 20.04 (:issue:`3792`)
+
+
+Miscellaneous
+-------------
+
+- **Config** - JSON driver will now properly have only one lock per cog name (:issue:`3780`)
+- **Core Commands** - ``[p]debuginfo`` now shows used storage type (:issue:`3794`)
+- **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
+
+
 Redbot 3.3.5 (2020-04-09)
 =========================
 

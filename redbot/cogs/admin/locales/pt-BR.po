@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -230,9 +230,9 @@ msgstr "Não pude anunciar nos seguintes servidores: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr "A engrenagem Admin não está carregada."
+msgstr "O cog 'Admin' não está carregado."
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr "O cargo fornecido não é um cargo autoatribuível válido."
 

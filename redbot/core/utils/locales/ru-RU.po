@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -13,55 +13,55 @@ msgstr ""
 "X-Crowdin-Language: ru\n"
 "Language: ru_RU\n"
 
-#: redbot/core/utils/chat_formatting.py:380
+#: redbot/core/utils/chat_formatting.py:388
 msgid ", and "
 msgstr ", и "
 
-#: redbot/core/utils/chat_formatting.py:447
+#: redbot/core/utils/chat_formatting.py:455
 msgid "year"
 msgstr "год"
 
-#: redbot/core/utils/chat_formatting.py:447
+#: redbot/core/utils/chat_formatting.py:455
 msgid "years"
 msgstr "лет"
 
-#: redbot/core/utils/chat_formatting.py:448
+#: redbot/core/utils/chat_formatting.py:456
 msgid "month"
 msgstr "месяц"
 
-#: redbot/core/utils/chat_formatting.py:448
+#: redbot/core/utils/chat_formatting.py:456
 msgid "months"
 msgstr "месяцев"
 
-#: redbot/core/utils/chat_formatting.py:449
+#: redbot/core/utils/chat_formatting.py:457
 msgid "day"
 msgstr "дн."
 
-#: redbot/core/utils/chat_formatting.py:449
+#: redbot/core/utils/chat_formatting.py:457
 msgid "days"
 msgstr "дн."
 
-#: redbot/core/utils/chat_formatting.py:450
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hour"
 msgstr "ч."
 
-#: redbot/core/utils/chat_formatting.py:450
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hours"
 msgstr "ч."
 
-#: redbot/core/utils/chat_formatting.py:451
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minute"
 msgstr "мин."
 
-#: redbot/core/utils/chat_formatting.py:451
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minutes"
 msgstr "мин."
 
-#: redbot/core/utils/chat_formatting.py:452
+#: redbot/core/utils/chat_formatting.py:460
 msgid "second"
 msgstr "сек."
 
-#: redbot/core/utils/chat_formatting.py:452
+#: redbot/core/utils/chat_formatting.py:460
 msgid "seconds"
 msgstr "с."
 

@@ -21,6 +21,7 @@ import aiohttp
 import discord
 import pkg_resources
 from babel import Locale as BabelLocale, UnknownLocaleError
+from redbot.core.data_manager import storage_type
 
 from . import (
     __version__,
@@ -570,7 +571,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1506,7 +1507,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        This setting only applies to embedded help.
+        This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
@@ -1584,7 +1585,7 @@ class Core(commands.Cog, CoreLogic):
             footer += _(" | Server ID: {}").format(guild.id)
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
@@ -1689,7 +1690,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
@@ -1758,7 +1759,7 @@ class Core(commands.Cog, CoreLogic):
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
-
+        driver = storage_type()
         if await ctx.embed_requested():
             e = discord.Embed(color=await ctx.embed_colour())
             e.title = "Debug Info for Red"
@@ -1774,6 +1775,7 @@ class Core(commands.Cog, CoreLogic):
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
+            e.add_field(name="Storage type", value=driver, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
@@ -1786,6 +1788,7 @@ class Core(commands.Cog, CoreLogic):
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
+                + "Storage type: {}\n".format(driver)
             )
             await ctx.send(box(info))
 
@@ -1942,8 +1945,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
@@ -1977,8 +1980,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
@@ -1998,7 +2001,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localblacklist(self, ctx: commands.Context):
         """
-        blacklist management commands.
+        Blacklist management commands.
         """
         pass
 
@@ -2024,8 +2027,8 @@ class Core(commands.Cog, CoreLogic):
             if await ctx.bot.is_owner(uid):
                 await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
@@ -2061,9 +2064,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} removed from the local blacklist.").format(names=humanize_list(names))
@@ -2074,7 +2077,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
-        await ctx.bot._config.guild(ctx.guild).blacklist.set([])
+        await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
         await ctx.send(_("Local blacklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)

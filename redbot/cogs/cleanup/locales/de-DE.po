@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -77,8 +77,8 @@ msgstr "Lösche Nachrichten vom Bot.\\n\\n        Standardmäßig werden alle Na
 
 #: redbot/cogs/cleanup/cleanup.py:540
 #, docstring
-msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n        \\n        Defaults to 50.\\n        "
-msgstr ""
+msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
+msgstr "Löscht doppelte Nachrichten im Kanal aus den letzten X-Nachrichten und behält nur eine Kopie. \\n \\n Der Standardwert ist 50. \\n        "
 
 #: redbot/cogs/cleanup/converters.py:12
 msgid "{} doesn't look like a valid message ID."
