@@ -46,7 +46,7 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify
+from ..utils.chat_formatting import box, humanize_list, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
@@ -208,12 +208,12 @@ class RedHelpFormatter:
 
         description = command.description or ""
         tagline = (await ctx.bot._config.help.tagline()) or self.get_default_tagline(ctx)
-        signature = f"`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-        signature += (
-            f"\n`Alias{'es' if len(command.aliases) > 1 else ''}: {', '.join(command.aliases)}`"
-            if command.aliases
-            else ""
+        signature = (
+            T_("`Syntax:`") + f"{ctx.clean_prefix}{command.qualified_name} {command.signature}"
         )
+        if command.aliases:
+            alias_fmt = T_("Aliases") if len(command.aliases) > 1 else T_("Alias")
+            signature += f"\n`{alias_fmt}: {humanize_list(command.aliases)}`"
         subcommands = None
 
         if hasattr(command, "all_commands"):
