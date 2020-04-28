@@ -206,6 +206,47 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
+    @customcom.command(name="raw")
+    async def cc_raw(self, ctx: commands.Context, command: str.lower):
+        """Get the raw response of a custom command, to get the proper markdown.
+        
+        This is helpful for copy and pasting."""
+        commands = await self.config.guild(ctx.guild).commands()
+        if command not in commands:
+            return await ctx.send("That command doesn't exist.")
+        command = commands[command]
+        if isinstance(command["response"], str):
+            raw = discord.utils.escape_markdown(command["response"])
+            if len(raw) > 2000:
+                raw = f"{raw[:1997]}..."
+            await ctx.send(raw)
+        else:
+            msglist = []
+            if await ctx.embed_requested():
+                colour = await ctx.embed_colour()
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    if len(raw) > 2048:
+                        raw = f"{raw[:2045]}..."
+                    embed = discord.Embed(
+                        title=_("Response #{num}/{total}").format(
+                            num=number, total=len(command["response"])
+                        ),
+                        description=raw,
+                        colour=colour,
+                    )
+                    msglist.append(embed)
+            else:
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    msg = _("Response #{num}/{total}:\n{raw}").format(
+                        num=number, total=len(command["response"]), raw=raw
+                    )
+                    if len(msg) > 2000:
+                        msg = f"{msg[:1997]}..."
+                    msglist.append(msg)
+            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
+
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):

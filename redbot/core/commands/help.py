@@ -566,13 +566,14 @@ class RedHelpFormatter:
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
-        coms = {
-            c
-            async for c in self.help_filter_func(
+        fuzzy_commands = await fuzzy_command_search(
+            ctx,
+            help_for,
+            commands=self.help_filter_func(
                 ctx, ctx.bot.walk_commands(), help_settings=help_settings
-            )
-        }
-        fuzzy_commands = await fuzzy_command_search(ctx, help_for, commands=coms, min_score=75)
+            ),
+            min_score=75,
+        )
         use_embeds = await ctx.embed_requested()
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
