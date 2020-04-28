@@ -16,7 +16,7 @@ msgstr ""
 #: redbot/cogs/general/general.py:46
 #, docstring
 msgid "General commands."
-msgstr ""
+msgstr "常規命令。"
 
 #: redbot/cogs/general/general.py:51
 msgid "As I see it, yes"
@@ -56,7 +56,7 @@ msgstr "絶對是的"
 
 #: redbot/cogs/general/general.py:60
 msgid "You may rely on it"
-msgstr ""
+msgstr "你可以相信它"
 
 #: redbot/cogs/general/general.py:61
 msgid "Reply hazy, try again"
@@ -68,7 +68,7 @@ msgstr "稍後再問一次"
 
 #: redbot/cogs/general/general.py:63
 msgid "Better not tell you now"
-msgstr ""
+msgstr "最好不要現在告訴你"
 
 #: redbot/cogs/general/general.py:64
 msgid "Cannot predict now"
@@ -165,7 +165,7 @@ msgstr ""
 #: redbot/cogs/general/general.py:186
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
-msgstr ""
+msgstr "問八號球一個問題。\\n\\n        問題必須以問號結尾。\\n        "
 
 #: redbot/cogs/general/general.py:193
 msgid "That doesn't look like a question."
@@ -201,7 +201,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:253
 msgid "Created on {date}. That's over {num} days ago!"
-msgstr ""
+msgstr "創立於{date}。那是{num}天前！"
 
 #: redbot/cogs/general/general.py:264
 msgid "Region"
@@ -209,7 +209,7 @@ msgstr "區域"
 
 #: redbot/cogs/general/general.py:265
 msgid "Users online"
-msgstr ""
+msgstr "線上使用者"
 
 #: redbot/cogs/general/general.py:266
 msgid "Text Channels"
@@ -229,7 +229,7 @@ msgstr "擁有者"
 
 #: redbot/cogs/general/general.py:270
 msgid "Server ID: "
-msgstr ""
+msgstr "伺服器ID: "
 
 #: redbot/cogs/general/general.py:293
 msgid "\\nShard ID: **{shard_id}/{shard_count}**"
@@ -425,11 +425,11 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:405
 msgid "Members:"
-msgstr ""
+msgstr "成員:"
 
 #: redbot/cogs/general/general.py:407
 msgid "Channels:"
-msgstr ""
+msgstr "頻道:"
 
 #: redbot/cogs/general/general.py:408
 msgid "💬 Text: {text}\\n🔊 Voice: {voice}"

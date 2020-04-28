@@ -409,8 +409,8 @@ class Cleanup(commands.Cog):
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (
-                set((a.name for a in await alias_cog.unloaded_global_aliases()))
-                | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
+                set((a.name for a in await alias_cog._aliases.get_global_aliases()))
+                | set(a.name for a in await alias_cog._aliases.get_guild_aliases(ctx.guild))
             )
             is_alias = lambda name: name in alias_names
         else:
@@ -465,12 +465,7 @@ class Cleanup(commands.Cog):
         """Clean up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
-        it is used for pattern matching: If it begins with r( and ends with ),
-        then it is interpreted as a regex, and messages that match it are
-        deleted. Otherwise, it is used in a simple substring test.
-
-        Some helpful regex flags to include in your pattern:
-        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        it is used for pattern matching - only messages containing the given text will be deleted.
         """
         channel = ctx.channel
         author = ctx.message.author
@@ -538,7 +533,7 @@ class Cleanup(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: int = 50):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
-        
+
         Defaults to 50.
         """
         msgs = []

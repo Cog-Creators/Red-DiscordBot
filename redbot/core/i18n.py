@@ -15,6 +15,7 @@ __all__ = [
     "cog_i18n",
     "Translator",
     "get_babel_locale",
+    "get_babel_regional_format",
 ]
 
 _current_locale = "en-US"

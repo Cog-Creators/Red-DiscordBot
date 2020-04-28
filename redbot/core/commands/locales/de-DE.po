@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-05 12:09+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -43,10 +43,10 @@ msgstr "Unerwarteter Schlüssel {key}"
 
 #: redbot/core/commands/converter.py:439
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Eins von {} erwartet"
 
-#: redbot/core/commands/help.py:689
+#: redbot/core/commands/help.py:718
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr "\\n    Ich brauche jemanden\\n    (Hilfe) nicht nur jemanden\\n    (Hilfe) Sie wissen, dass ich jemanden brauche\\n    (Hilfe!)\\n    "
+msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 

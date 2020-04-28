@@ -281,10 +281,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
         embed3 = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_(
-                "Current equalizer saved to the {preset_name} preset.".format(
-                    preset_name=eq_preset
-                )
+            title=_("Current equalizer saved to the {preset_name} preset.").format(
+                preset_name=eq_preset
             ),
         )
         if eq_exists_msg:
@@ -379,10 +377,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             embed=discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Preset Modified"),
-                description=_(
-                    "The {band_name}Hz band has been set to {band_value}.".format(
-                        band_name=band_name, band_value=band_value
-                    )
+                description=_("The {band_name}Hz band has been set to {band_value}.").format(
+                    band_name=band_name, band_value=band_value
                 ),
             ),
         )

@@ -20,7 +20,7 @@ from .errors import LavalinkDownloadFailed
 
 log = logging.getLogger("red.audio.manager")
 JAR_VERSION: Final[str] = "3.3.1"
-JAR_BUILD: Final[int] = 986
+JAR_BUILD: Final[int] = 1050
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -94,17 +94,11 @@ class ServerManager:
     @classmethod
     async def _get_jar_args(cls) -> List[str]:
         (java_available, java_version) = await cls._has_java()
+
         if not java_available:
-            raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
+            raise RuntimeError("You must install Java 11 for Lavalink to run.")
 
-        if java_version == (1, 8):
-            extra_flags = ["-Dsun.zip.disableMemoryMapping=true"]
-        elif java_version >= (11, 0):
-            extra_flags = ["-Djdk.tls.client.protocols=TLSv1.2"]
-        else:
-            extra_flags = []
-
-        return ["java", *extra_flags, "-jar", str(LAVALINK_JAR_FILE)]
+        return ["java", "-Djdk.tls.client.protocols=TLSv1.2", "-jar", str(LAVALINK_JAR_FILE)]
 
     @classmethod
     async def _has_java(cls) -> Tuple[bool, Optional[Tuple[int, int]]]:
@@ -117,7 +111,7 @@ class ServerManager:
             cls.java_version = None
         else:
             cls._java_version = version = await cls._get_java_version()
-            cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
+            cls._java_available = (11, 0) <= version < (12, 0)
         return cls._java_available, cls._java_version
 
     @staticmethod

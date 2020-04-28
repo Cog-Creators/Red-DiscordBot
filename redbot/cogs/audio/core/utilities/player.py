@@ -167,15 +167,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             elif skip_to_track > len(player.queue):
                 await self.send_embed_msg(
                     ctx,
-                    title=_(
-                        "There are only {queuelen} songs currently queued.".format(
-                            queuelen=len(player.queue)
-                        )
+                    title=_("There are only {queuelen} songs currently queued.").format(
+                        queuelen=len(player.queue)
                     ),
                 )
                 return
             embed = discord.Embed(
-                title=_("{skip_to_track} Tracks Skipped".format(skip_to_track=skip_to_track))
+                title=_("{skip_to_track} Tracks Skipped").format(skip_to_track=skip_to_track)
             )
             await self.send_embed_msg(ctx, embed=embed)
             if player.repeat:
@@ -267,7 +265,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             except SpotifyFetchError as error:
                 self.update_player_lock(ctx, False)
                 return await self.send_embed_msg(
-                    ctx, title=_(error.message).format(prefix=ctx.prefix)
+                    ctx, title=error.message.format(prefix=ctx.prefix)
                 )
             self.update_player_lock(ctx, False)
             try:
@@ -388,7 +386,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 title = _("Nothing found.")
                 embed = discord.Embed(title=title)
                 if result.exception_message:
-                    embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
+                    if "Status Code" in result.exception_message:
+                        embed.set_footer(text=result.exception_message[:2000])
+                    else:
+                        embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -450,7 +451,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
-                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(
                     bad_tracks=(len(tracks) - track_len)
                 )
             else:
@@ -593,7 +594,18 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
-                description=_(error.message).format(prefix=ctx.prefix),
+                description=error.message.format(prefix=ctx.prefix),
+            )
+        except TrackEnqueueError:
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable get a track from Lavalink at the moment,"
+                    "try again in a few minutes."
+                ),
+                error=True,
             )
         except (RuntimeError, aiohttp.ServerDisconnectedError):
             self.update_player_lock(ctx, False)

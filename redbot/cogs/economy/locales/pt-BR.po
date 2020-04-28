@@ -199,11 +199,11 @@ msgstr "Não há nenhuma conta no banco."
 
 #: redbot/cogs/economy/economy.py:486
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: redbot/cogs/economy/economy.py:487
 msgid "Score"
-msgstr ""
+msgstr "Pontuação"
 
 #: redbot/cogs/economy/economy.py:534
 #, docstring
