@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import datetime
 import json
 import logging
@@ -10,7 +11,7 @@ from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tupl
 import aiohttp
 import discord
 import lavalink
-from lavalink.rest_api import LoadResult
+from lavalink.rest_api import LoadResult, LoadType
 from redbot.core.utils import AsyncIter
 
 from redbot.core import Config, commands
@@ -23,6 +24,7 @@ from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
+from .api_utils import LavalinkCacheFetchForGlobalResult
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
@@ -124,6 +126,8 @@ class AudioAPIInterface:
                     await self.local_cache_api.youtube.update(data)
                 elif table == "spotify":
                     await self.local_cache_api.spotify.update(data)
+        elif action_type == "global" and isinstance(data, list):
+            await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
         """Run tasks for a specific context"""
@@ -421,7 +425,9 @@ class AudioAPIInterface:
         List[str]
             List of Youtube URLs.
         """
-        # globaldb_toggle = await self.config.global_db_enabled()
+        await self.global_cache_api._get_api_key()
+        globaldb_toggle = await self.config.global_db_enabled()
+        global_entry = globaldb_toggle and query_global
         track_list: List = []
         has_not_allowed = False
         try:
@@ -483,7 +489,14 @@ class AudioAPIInterface:
                         )
                     except Exception as exc:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
-
+                should_query_global = globaldb_toggle and query_global and val is None
+                if should_query_global:
+                    llresponse = await self.global_cache_api.get_spotify(track_name, artist_name)
+                    if llresponse:
+                        if llresponse.get("loadType") == "V2_COMPACT":
+                            llresponse["loadType"] = "V2_COMPAT"
+                        llresponse = LoadResult(llresponse)
+                    val = llresponse or None
                 if val is None:
                     val = await self.fetch_youtube_query(
                         ctx, track_info, current_cache_level=current_cache_level
@@ -492,7 +505,7 @@ class AudioAPIInterface:
                     task = ("update", ("youtube", {"track": track_info}))
                     self.append_task(ctx, *task)
 
-                if llresponse is not None:
+                if isinstance(llresponse, LoadResult):
                     track_object = llresponse.tracks
                 elif val:
                     try:
@@ -501,6 +514,7 @@ class AudioAPIInterface:
                             player,
                             Query.process_input(val, self.cog.local_folder_current_path),
                             forced=forced,
+                            should_query_global=not should_query_global,
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)
@@ -536,7 +550,7 @@ class AudioAPIInterface:
                             seconds=seconds,
                         )
 
-                if consecutive_fails >= 10:
+                if consecutive_fails >= (100 if global_entry else 10):
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Failing to get tracks, skipping remaining."),
@@ -725,6 +739,7 @@ class AudioAPIInterface:
         val = None
         query = Query.process_input(query, self.cog.local_folder_current_path)
         query_string = str(query)
+        globaldb_toggle = await self.config.global_db_enabled()
         valid_global_entry = False
         results = None
         called_api = False
@@ -752,7 +767,31 @@ class AudioAPIInterface:
                 called_api = False
             else:
                 val = None
-
+        if (
+            globaldb_toggle
+            and not val
+            and should_query_global
+            and not forced
+            and not query.is_local
+            and not query.is_spotify
+        ):
+            valid_global_entry = False
+            with contextlib.suppress(Exception):
+                global_entry = await self.global_cache_api.get_call(query=query)
+                if global_entry.get("loadType") == "V2_COMPACT":
+                    global_entry["loadType"] = "V2_COMPAT"
+                results = LoadResult(global_entry)
+                if results.load_type in [
+                    LoadType.PLAYLIST_LOADED,
+                    LoadType.TRACK_LOADED,
+                    LoadType.SEARCH_RESULT,
+                    LoadType.V2_COMPAT,
+                ]:
+                    valid_global_entry = True
+                if valid_global_entry:
+                    if IS_DEBUG:
+                        log.debug(f"Querying Global DB api for {query}")
+                    results, called_api = results, False
         if valid_global_entry:
             pass
         elif lazy is True:
@@ -767,6 +806,7 @@ class AudioAPIInterface:
             if results.has_error:
                 # If cached value has an invalid entry make a new call so that it gets updated
                 results, called_api = await self.fetch_track(ctx, player, query, forced=True)
+            valid_global_entry = False
         else:
             if IS_DEBUG:
                 log.debug(f"Querying Lavalink api for {query_string}")
@@ -779,7 +819,19 @@ class AudioAPIInterface:
                 raise TrackEnqueueError
         if results is None:
             results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
-
+            valid_global_entry = False
+        update_global = (
+            globaldb_toggle and not valid_global_entry and self.global_cache_api.has_api_key
+        )
+        with contextlib.suppress(Exception):
+            if (
+                update_global
+                and not query.is_local
+                and not results.has_error
+                and len(results.tracks) >= 1
+            ):
+                global_task = ("global", dict(llresponse=results, query=query))
+                self.append_task(ctx, *global_task)
         if (
             cache_enabled
             and results.load_type
@@ -892,3 +944,37 @@ class AudioAPIInterface:
             )
             if not player.current:
                 await player.play()
+
+    async def fetch_all_contribute(self) -> List[LavalinkCacheFetchForGlobalResult]:
+        return await self.local_cache_api.lavalink.fetch_all_for_global()
+
+    async def contribute_to_global(
+        self, ctx: commands.Context, db_entries: List[LavalinkCacheFetchForGlobalResult]
+    ) -> None:
+        tasks = []
+        async for i, entry in AsyncIter(db_entries).enumerate(start=1):
+            query = entry.query
+            data = entry.data
+            _raw_query = Query.process_input(query, self.cog.local_folder_current_path)
+            if data.get("loadType") == "V2_COMPACT":
+                data["loadType"] = "V2_COMPAT"
+            results = LoadResult(data)
+            await asyncio.sleep(0)
+            with contextlib.suppress(Exception):
+                if not _raw_query.is_local and not results.has_error and len(results.tracks) >= 1:
+                    global_task = dict(llresponse=results, query=_raw_query)
+                    tasks.append(global_task)
+                    await asyncio.sleep(0)
+                if i % 100 == 0:
+                    if IS_DEBUG:
+                        log.debug("Running pending writes to database")
+                    await asyncio.gather(
+                        *[self.global_cache_api.update_global(**a) for a in tasks],
+                        return_exceptions=True,
+                    )
+                    tasks = []
+                    if IS_DEBUG:
+                        log.debug("Pending writes to database have finished")
+            if i % 250 == 0:
+                await asyncio.sleep(5)
+        await ctx.tick()
