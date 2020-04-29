@@ -2,6 +2,7 @@ import datetime
 import logging
 import math
 import re
+import time
 from typing import List, Optional
 
 import discord
@@ -166,6 +167,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif guild_data["maxlength"] > 0:
 
             if self.is_track_too_long(search_choice.length, guild_data["maxlength"]):
+                search_choice.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
+                )
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
@@ -174,6 +182,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
         else:
+            search_choice.extras.update(
+                {
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": ctx.author.id,
+                }
+            )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
             self.bot.dispatch(

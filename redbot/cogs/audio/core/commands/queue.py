@@ -186,6 +186,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Clear Queue"),
                 description=_("You need the DJ role to clear the queue."),
             )
+        async for track in AsyncIter(player.queue):
+            await self.api_interface.persistent_queue_api.played(
+                ctx.guild.id, track.extras.get("enqueue_time")
+            )
         player.queue.clear()
         await self.send_embed_msg(
             ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
@@ -220,6 +224,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             if track.requester in listeners:
                 clean_tracks.append(track)
             else:
+                await self.api_interface.persistent_queue_api.played(
+                    ctx.guild.id, track.extras.get("enqueue_time")
+                )
                 removed_tracks += 1
         player.queue = clean_tracks
         if removed_tracks == 0:
@@ -252,6 +259,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 clean_tracks.append(track)
             else:
                 removed_tracks += 1
+                await self.api_interface.persistent_queue_api.played(
+                    ctx.guild.id, track.extras.get("enqueue_time")
+                )
         player.queue = clean_tracks
         if removed_tracks == 0:
             await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))

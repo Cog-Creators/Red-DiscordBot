@@ -44,6 +44,7 @@ class MixinMeta(ABC):
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
     _daily_global_playlist_cache: MutableMapping[int, bool]
+    _persist_queue_cache: MutableMapping[int, bool]
     _dj_status_cache: MutableMapping[int, Optional[bool]]
     _dj_role_cache: MutableMapping[int, Optional[int]]
     _error_timer: MutableMapping[int, float]
@@ -493,6 +494,10 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def get_lyrics_status(self, ctx: Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def restore_players(self) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

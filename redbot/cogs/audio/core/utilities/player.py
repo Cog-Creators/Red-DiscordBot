@@ -437,6 +437,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_too_long(track, guild_data["maxlength"]):
                         track_len += 1
+                        track.extras.update(
+                            {
+                                "enqueue_time": int(time.time()),
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
+                            }
+                        )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.channel.guild, track, ctx.author
@@ -444,6 +451,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
                 else:
                     track_len += 1
+                    track.extras.update(
+                        {
+                            "enqueue_time": int(time.time()),
+                            "vc": player.channel.id,
+                            "requester": ctx.author.id,
+                        }
+                    )
                     player.add(ctx.author, track)
                     self.bot.dispatch(
                         "red_audio_track_enqueue", player.channel.guild, track, ctx.author
@@ -515,6 +529,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_too_long(single_track, guild_data["maxlength"]):
+                        single_track.extras.update(
+                            {
+                                "enqueue_time": int(time.time()),
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
+                            }
+                        )
                         player.add(ctx.author, single_track)
                         player.maybe_shuffle()
                         self.bot.dispatch(
@@ -530,6 +551,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
 
                 else:
+                    single_track.extras.update(
+                        {
+                            "enqueue_time": int(time.time()),
+                            "vc": player.channel.id,
+                            "requester": ctx.author.id,
+                        }
+                    )
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(

@@ -955,6 +955,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         bumpped_shuffle = _("Enabled") if data["shuffle_bumped"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
+        persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
         countrycode = data["country_code"]
 
         spotify_cache = CacheLevel.set_spotify()
@@ -996,6 +997,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
+            "Persist queue:    [{persist_queue}]\n"
             "Spotify search:   [{countrycode}]\n"
         ).format(
             countrycode=countrycode,
@@ -1004,6 +1006,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             notify=song_notify,
             status=song_status,
             bumpped_shuffle=bumpped_shuffle,
+            persist_queue=persist_queue,
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
@@ -1305,3 +1308,42 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg += _("I've set the cache age to {age} days").format(age=age)
         await self.config.cache_age.set(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
+
+    @command_audioset.command(name="persistqueue")
+    @commands.admin()
+    async def command_audioset_persist_queue(self, ctx: commands.Context):
+        """Toggle persistent queues.
+
+        Persistent queues allows the current queue to be restored when the queue closes.
+        """
+        persist_cache = self._persist_queue_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
+        )
+        await self.config.guild(ctx.guild).persist_queue.set(not persist_cache)
+        self._persist_queue_cache[ctx.guild.id] = not persist_cache
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Persisting queues: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
+            ),
+        )
+
+    @command_audioset.command(name="restart")
+    @commands.is_owner()
+    async def command_audioset_restart(self, ctx: commands.Context):
+        """Restarts the lavalink connection."""
+        async with ctx.typing():
+            lavalink.unregister_event_listener(self.lavalink_event_handler)
+            await lavalink.close()
+            if self.player_manager is not None:
+                await self.player_manager.shutdown()
+
+            self.lavalink_restart_connect()
+            lavalink.register_event_listener(self.lavalink_event_handler)
+            await self.restore_players()
+            await self.send_embed_msg(
+                ctx,
+                title=_("Restarting Lavalink"),
+                description=_("It can take a couple of minutes for Lavalink to fully start up."),
+            )

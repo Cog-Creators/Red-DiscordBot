@@ -25,6 +25,7 @@ from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
+from .persist_queue_wrapper import QueueInterface
 from .playlist_interface import get_playlist
 from .playlist_wrapper import PlaylistWrapper
 from .spotify import SpotifyWrapper
@@ -60,6 +61,7 @@ class AudioAPIInterface:
         self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session, self.cog)
         self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn, self.cog)
         self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session, self.cog)
+        self.persistent_queue_api = QueueInterface(self.bot, self.config, self.conn, self.cog)
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -67,6 +69,7 @@ class AudioAPIInterface:
     async def initialize(self) -> None:
         """Initialises the Local Cache connection"""
         await self.local_cache_api.lavalink.init()
+        await self.persistent_queue_api.init()
 
     def close(self) -> None:
         """Closes the Local Cache connection"""
@@ -568,6 +571,13 @@ class AudioAPIInterface:
                     if guild_data["maxlength"] > 0:
                         if self.cog.is_track_too_long(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
+                            single_track.extras.update(
+                                {
+                                    "enqueue_time": int(time.time()),
+                                    "vc": player.channel.id,
+                                    "requester": ctx.author.id,
+                                }
+                            )
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
                                 "red_audio_track_enqueue",
@@ -577,6 +587,13 @@ class AudioAPIInterface:
                             )
                     else:
                         enqueued_tracks += 1
+                        single_track.extras.update(
+                            {
+                                "enqueue_time": int(time.time()),
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
+                            }
+                        )
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue",
@@ -884,8 +901,14 @@ class AudioAPIInterface:
                         )
                     continue
                 valid = True
-
-            track.extras["autoplay"] = True
+            track.extras.update(
+                {
+                    "autoplay": True,
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": player.channel.guild.me.id,
+                }
+            )
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
                 "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me

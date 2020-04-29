@@ -45,12 +45,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("playing_song", current_track)
             player.store("requester", current_requester)
             self.bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
+            if guild_id and current_track:
+                await self.api_interface.persistent_queue_api.played(
+                    guild_id=guild_id, track_id=current_track.track_identifier
+                )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
+            if guild_id:
+                await self.api_interface.persistent_queue_api.drop(guild_id)
             if (
                 autoplay
                 and not player.queue

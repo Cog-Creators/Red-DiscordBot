@@ -2,6 +2,7 @@ import contextlib
 import datetime
 import logging
 import math
+import time
 from typing import MutableMapping, Optional
 
 import discord
@@ -276,6 +277,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif guild_data["maxlength"] > 0:
             if self.is_track_too_long(single_track, guild_data["maxlength"]):
                 single_track.requester = ctx.author
+                single_track.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
+                )
                 player.queue.insert(0, single_track)
                 player.maybe_shuffle()
                 self.bot.dispatch(
@@ -292,6 +300,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             single_track.requester = ctx.author
             single_track.extras["bumped"] = True
+            single_track.extras.update(
+                {
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": ctx.author.id,
+                }
+            )
             player.queue.insert(0, single_track)
             player.maybe_shuffle()
             self.bot.dispatch(
@@ -765,12 +780,26 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     elif guild_data["maxlength"] > 0:
                         if self.is_track_too_long(track, guild_data["maxlength"]):
                             track_len += 1
+                            track.extras.update(
+                                {
+                                    "enqueue_time": int(time.time()),
+                                    "vc": player.channel.id,
+                                    "requester": ctx.author.id,
+                                }
+                            )
                             player.add(ctx.author, track)
                             self.bot.dispatch(
                                 "red_audio_track_enqueue", player.channel.guild, track, ctx.author
                             )
                     else:
                         track_len += 1
+                        track.extras.update(
+                            {
+                                "enqueue_time": int(time.time()),
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
+                            }
+                        )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.channel.guild, track, ctx.author

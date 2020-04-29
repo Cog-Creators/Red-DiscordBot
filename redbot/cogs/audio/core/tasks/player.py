@@ -46,6 +46,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         stop_times.pop(sid)
                         try:
                             player = lavalink.get_player(sid)
+                            await self.api_interface.persistent_queue_api.drop(sid)
                             await player.stop()
                             await player.disconnect()
                         except Exception as err:

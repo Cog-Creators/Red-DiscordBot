@@ -49,6 +49,7 @@ class Audio(
         self._disconnected_players = {}
         self._daily_playlist_cache = {}
         self._daily_global_playlist_cache = {}
+        self._persist_queue_cache = {}
         self._dj_status_cache = {}
         self._dj_role_cache = {}
         self.skip_votes = {}
@@ -82,6 +83,7 @@ class Audio(
         default_guild = dict(
             auto_play=False,
             autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
+            persist_queue=True,
             disconnect=False,
             dj_enabled=False,
             dj_role=None,

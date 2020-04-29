@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 import re
 from pathlib import Path
@@ -39,11 +40,11 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
-        # with contextlib.suppress(Exception):
-        #     player = lavalink.get_player(ctx.guild.id)
-        #     notify_channel = player.fetch("channel")
-        #     if not notify_channel:
-        #         player.store("channel", ctx.channel.id)
+        with contextlib.suppress(Exception):
+            player = lavalink.get_player(ctx.guild.id)
+            notify_channel = player.fetch("channel")
+            if not notify_channel:
+                player.store("channel", ctx.channel.id)
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -52,6 +53,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         )
         self._daily_global_playlist_cache.setdefault(
             self.bot.user.id, await self.config.daily_playlists()
+        )
+        self._persist_queue_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
         )
         if self.local_folder_current_path is None:
             self.local_folder_current_path = Path(await self.config.localpath())

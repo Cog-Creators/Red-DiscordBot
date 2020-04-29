@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import tarfile
+import time
 from io import BytesIO
 from typing import Optional, cast
 
@@ -1491,7 +1492,13 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         continue
                 if maxlength > 0 and not self.is_track_too_long(track.length, maxlength):
                     continue
-
+                track.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
+                )
                 player.add(author_obj, track)
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.channel.guild, track, ctx.author

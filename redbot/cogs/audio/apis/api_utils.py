@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import List, MutableMapping, Optional, Union
 
 import discord
+import lavalink
 
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
@@ -72,6 +73,20 @@ class PlaylistFetchResult:
     def __post_init__(self):
         if isinstance(self.tracks, str):
             self.tracks = json.loads(self.tracks)
+
+
+@dataclass
+class QueueFetchResult:
+    guild_id: int
+    room_id: int
+    track: dict = field(default_factory=lambda: {})
+    track_object: lavalink.Track = None
+
+    def __post_init__(self):
+        if isinstance(self.track, str):
+            self.track = json.loads(self.track)
+        if self.track:
+            self.track_object = lavalink.Track(self.track)
 
 
 def standardize_scope(scope: str) -> str:
