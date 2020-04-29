@@ -3,8 +3,10 @@ import inspect
 import logging
 import os
 import platform
+import re
 import shutil
 import sys
+import contextlib
 from collections import namedtuple
 from datetime import datetime
 from enum import IntEnum
@@ -38,15 +40,16 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager
+from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
 
 from .rpc import RPCMixin
 from .utils import common_filters
+from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
-log = logging.getLogger("redbot")
+log = logging.getLogger("red")
 
 __all__ = ["RedBase", "Red", "ExitCodes"]
 
@@ -86,6 +89,7 @@ class RedBase(
             whitelist=[],
             blacklist=[],
             locale="en-US",
+            regional_format=None,
             embeds=True,
             color=15158332,
             fuzzy=False,
@@ -118,13 +122,15 @@ class RedBase(
             admin_role=[],
             mod_role=[],
             embeds=None,
+            ignored=False,
             use_bot_color=False,
             fuzzy=False,
             disabled_commands=[],
             autoimmune_ids=[],
+            delete_delay=-1,
         )
 
-        self._config.register_channel(embeds=None)
+        self._config.register_channel(embeds=None, ignored=False)
         self._config.register_user(embeds=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
@@ -133,6 +139,8 @@ class RedBase(
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
+        self._ignored_cache = IgnoreManager(self._config)
+        self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -162,6 +170,8 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
+        # to prevent multiple calls to app info in `is_owner()`
+        self._app_owners_fetched = False
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -350,13 +360,13 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._config.whitelist()
+        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
         if global_whitelist:
             if who.id not in global_whitelist:
                 return False
         else:
             # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._config.blacklist()
+            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
             if who.id in global_blacklist:
                 return False
 
@@ -375,16 +385,43 @@ class RedBase(
                 # there is a silent failure potential, and role blacklist/whitelists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._config.guild(guild).whitelist()
+            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
             if guild_whitelist:
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = await self._config.guild(guild).blacklist()
+                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
         return True
+
+    async def ignored_channel_or_guild(self, ctx: commands.Context) -> bool:
+        """
+        This checks if the bot is meant to be ignoring commands in a channel or guild,
+        as considered by Red's whitelist and blacklist.
+
+        Parameters
+        ----------
+        ctx : Context of where the command is being run.
+
+        Returns
+        -------
+        bool
+            `True` if commands are allowed in the channel, `False` otherwise
+        """
+        perms = ctx.channel.permissions_for(ctx.author)
+        surpass_ignore = (
+            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            or perms.manage_guild
+            or await ctx.bot.is_owner(ctx.author)
+            or await ctx.bot.is_admin(ctx.author)
+        )
+        if surpass_ignore:
+            return True
+        guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
+        chann_ignored = await self._ignored_cache.get_ignored_channel(ctx.channel)
+        return not (guild_ignored or chann_ignored and not perms.manage_channels)
 
     async def get_valid_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
         """
@@ -503,6 +540,8 @@ class RedBase(
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
+        i18n_regional_format = await self._config.regional_format()
+        i18n.set_regional_format(i18n_regional_format)
 
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
@@ -517,18 +556,6 @@ class RedBase(
 
         last_system_info = await self._config.last_system_info()
 
-        async def notify_owners(content: str) -> None:
-            destinations = await self.get_owner_notification_destinations()
-            for destination in destinations:
-                prefixes = await self.get_valid_prefixes(getattr(destination, "guild", None))
-                prefix = prefixes[0]
-                try:
-                    await destination.send(content.format(prefix=prefix))
-                except Exception as _exc:
-                    log.exception(
-                        f"I could not send an owner notification to ({destination.id}){destination}"
-                    )
-
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
         LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
@@ -538,13 +565,14 @@ class RedBase(
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
                 self.loop.create_task(
-                    notify_owners(
+                    send_to_owners_with_prefix_replaced(
+                        self,
                         "We detected a change in minor Python version"
                         " and cleared packages in lib folder.\n"
                         "The instance was started with no cogs, please load Downloader"
-                        " and use `{prefix}cog reinstallreqs` to regenerate lib folder."
+                        " and use `[p]cog reinstallreqs` to regenerate lib folder."
                         " After that, restart the bot to get"
-                        " all of your previously loaded cogs loaded again."
+                        " all of your previously loaded cogs loaded again.",
                     )
                 )
                 python_version_changed = True
@@ -572,11 +600,12 @@ class RedBase(
 
         if system_changed and not python_version_changed:
             self.loop.create_task(
-                notify_owners(
+                send_to_owners_with_prefix_replaced(
+                    self,
                     "We detected a possible change in machine's operating system"
                     " or architecture. You might need to regenerate your lib folder"
                     " if 3rd-party cogs stop working properly.\n"
-                    "To regenerate lib folder, load Downloader and use `{prefix}cog reinstallreqs`."
+                    "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`.",
                 )
             )
 
@@ -677,21 +706,24 @@ class RedBase(
         if user.id in self._co_owners:
             return True
 
+        ret = False
+
         if self.owner_id:
             return self.owner_id == user.id
         elif self.owner_ids:
             return user.id in self.owner_ids
-        else:
+        elif not self._app_owners_fetched:
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
                     self.owner_ids = ids = {m.id for m in app.team.members}
-                    return user.id in ids
+                    ret = user.id in ids
             else:
                 self.owner_id = owner_id = app.owner.id
-                return user.id == owner_id
+                ret = user.id == owner_id
+            self._app_owners_fetched = True
 
-        return False
+        return ret
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
@@ -1171,8 +1203,11 @@ class RedBase(
             try:
                 await location.send(content, **kwargs)
             except Exception as _exc:
-                log.exception(
-                    f"I could not send an owner notification to ({location.id}){location}"
+                log.error(
+                    "I could not send an owner notification to %s (%s)",
+                    location,
+                    location.id,
+                    exc_info=_exc,
                 )
 
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
@@ -1181,6 +1216,26 @@ class RedBase(
     async def wait_until_red_ready(self):
         """Wait until our post connection startup is done."""
         await self._red_ready.wait()
+
+    async def _delete_delay(self, ctx: commands.Context):
+        """Currently used for:
+            * delete delay"""
+        guild = ctx.guild
+        if guild is None:
+            return
+        message = ctx.message
+        delay = await self._config.guild(guild).delete_delay()
+
+        if delay == -1:
+            return
+
+        async def _delete_helper(m):
+            with contextlib.suppress(discord.HTTPException):
+                await m.delete()
+                log.debug("Deleted command msg {}".format(m.id))
+
+        await asyncio.sleep(delay)
+        await _delete_helper(message)
 
 
 class Red(RedBase, discord.AutoShardedClient):

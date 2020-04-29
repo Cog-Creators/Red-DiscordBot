@@ -2,5 +2,7 @@ from .alias import Alias
 from redbot.core.bot import Red
 
 
-def setup(bot: Red):
-    bot.add_cog(Alias(bot))
+async def setup(bot: Red):
+    cog = Alias(bot)
+    await cog.initialize()
+    bot.add_cog(cog)
