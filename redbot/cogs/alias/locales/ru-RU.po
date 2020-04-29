@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-05-21 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,142 +11,148 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /alias/locales/messages.pot\n"
 "Language: ru_RU\n"
 
-#: redbot/cogs/alias/alias.py:35
+#: redbot/cogs/alias/alias.py:31
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
 msgstr "Создать псевдонимы для команд.\\n\\n    Псевдонимы - это альтернативные сокращения имен для команд.\\n    Они могут действовать как лямбда (хранение аргументов для\\n    многократного использования) или просто как сокращение \\\"а б в\\\".\\n\\n    При запуске псевдонимы принимают любые дополнительные\\n    аргументы и добавляют их к сохраненному псевдониму.\\n    "
 
-#: redbot/cogs/alias/alias.py:107
-msgid "Arguments must be specified with a number."
-msgstr "Аргументы должны быть указаны с числом."
-
-#: redbot/cogs/alias/alias.py:114
-msgid "Arguments must be sequential. Missing arguments: "
-msgstr "Аргументы должны быть последовательными. Отсутствующие аргументы: "
-
-#: redbot/cogs/alias/alias.py:164
+#: redbot/cogs/alias/alias.py:86
 msgid "No prefix found."
 msgstr "Префикс не найден."
 
-#: redbot/cogs/alias/alias.py:231
+#: redbot/cogs/alias/alias.py:116
+msgid "Aliases:\\n"
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:118
+msgid "\\n\\nPage {page}/{total}"
+msgstr "\\n\\nСтраница {page}/{total}"
+
+#: redbot/cogs/alias/alias.py:129
 #, docstring
 msgid "Manage command aliases."
 msgstr "Управление псевдонимами команд."
 
-#: redbot/cogs/alias/alias.py:236
+#: redbot/cogs/alias/alias.py:134
 #, docstring
 msgid "Manage global aliases."
 msgstr "Управление глобальными псевдонимами."
 
-#: redbot/cogs/alias/alias.py:243
+#: redbot/cogs/alias/alias.py:141
 #, docstring
 msgid "Add an alias for a command."
 msgstr "Добавить псевдоним для команды."
 
-#: redbot/cogs/alias/alias.py:248
+#: redbot/cogs/alias/alias.py:146
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
 msgstr "Вы попытались создать новый псевдоним {name}, но это имя уже является командой для этого бота."
 
-#: redbot/cogs/alias/alias.py:259
+#: redbot/cogs/alias/alias.py:157
 msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
 msgstr "Вы пытались создать новый псевдоним {name}, но этот псевдоним уже существует на этом сервере."
 
-#: redbot/cogs/alias/alias.py:270
+#: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Вы попытались создать новый псевдоним {name}, но это имя является недопустимым псевдонимом. Имена псевдонимов не могут содержать пробелов."
 
-#: redbot/cogs/alias/alias.py:289
+#: redbot/cogs/alias/alias.py:180
+msgid "You attempted to create a new alias for a command that doesn't exist."
+msgstr "Вы попытались создать новый псевдоним для не существующей команды."
+
+#: redbot/cogs/alias/alias.py:194
 msgid "A new alias with the trigger `{name}` has been created."
 msgstr "Новый псевдоним с триггером `{name}` был создан."
 
-#: redbot/cogs/alias/alias.py:295
+#: redbot/cogs/alias/alias.py:200
 #, docstring
 msgid "Add a global alias for a command."
 msgstr "Добавить глобальный псевдоним для команды."
 
-#: redbot/cogs/alias/alias.py:300
+#: redbot/cogs/alias/alias.py:205
 msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
 msgstr "Вы попытались создать новый глобальный псевдоним {name}, но это имя уже является командой для этого бота."
 
-#: redbot/cogs/alias/alias.py:311
+#: redbot/cogs/alias/alias.py:216
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
 msgstr "Вы попытались создать новый глобальный псевдоним {name}, но этот псевдоним уже существует на этом сервере."
 
-#: redbot/cogs/alias/alias.py:322
+#: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Вы попытались создать новый глобальный псевдоним {name}, но это имя является недопустимым псевдонимом. Имена псевдонимов не могут содержать пробелов."
 
-#: redbot/cogs/alias/alias.py:338
+#: redbot/cogs/alias/alias.py:243
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "Новый глобальный псевдоним с триггером `{name}` был создан."
 
-#: redbot/cogs/alias/alias.py:346
+#: redbot/cogs/alias/alias.py:251
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Попробуйте вызвать справку для базовой команды псевдонима."
 
-#: redbot/cogs/alias/alias.py:355
-msgid "{prefix}help {command}"
-msgstr "{prefix}help {command}"
-
-#: redbot/cogs/alias/alias.py:360
+#: redbot/cogs/alias/alias.py:263
 msgid "No such alias exists."
 msgstr "Псевдоним не существует."
 
-#: redbot/cogs/alias/alias.py:365
+#: redbot/cogs/alias/alias.py:268
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Показать, какую команду выполняет псевдоним."
 
-#: redbot/cogs/alias/alias.py:370
+#: redbot/cogs/alias/alias.py:273
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "Псевдоним `{alias_name}` будет выполнять команду `{command}`"
 
-#: redbot/cogs/alias/alias.py:375
+#: redbot/cogs/alias/alias.py:278
 msgid "There is no alias with the name `{name}`"
 msgstr "Нет псевдонима с именем `{name}`"
 
-#: redbot/cogs/alias/alias.py:381
+#: redbot/cogs/alias/alias.py:284
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Удалить существующий псевдоним на этом сервере."
 
-#: redbot/cogs/alias/alias.py:386 redbot/cogs/alias/alias.py:422
-#: redbot/cogs/alias/alias.py:433
+#: redbot/cogs/alias/alias.py:286 redbot/cogs/alias/alias.py:318
 msgid "There are no aliases on this server."
 msgstr "На этом сервере нет псевдонимов."
 
-#: redbot/cogs/alias/alias.py:391 redbot/cogs/alias/alias.py:409
+#: redbot/cogs/alias/alias.py:291 redbot/cogs/alias/alias.py:306
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "Псевдоним с именем `{name}` был успешно удален."
 
-#: redbot/cogs/alias/alias.py:394 redbot/cogs/alias/alias.py:412
+#: redbot/cogs/alias/alias.py:294 redbot/cogs/alias/alias.py:309
 msgid "Alias with name `{name}` was not found."
 msgstr "Псевдоним с именем `{name}` не найден."
 
-#: redbot/cogs/alias/alias.py:399
+#: redbot/cogs/alias/alias.py:299
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Удалить существующий глобальный псевдоним."
 
-#: redbot/cogs/alias/alias.py:404
-msgid "There are no aliases on this bot."
-msgstr "У этого бота нет псевдонимов."
+#: redbot/cogs/alias/alias.py:301
+msgid "There are no global aliases on this bot."
+msgstr "У этого бота нет глобальных псевдонимов."
 
-#: redbot/cogs/alias/alias.py:417
+#: redbot/cogs/alias/alias.py:315
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Список доступных псевдонимов на этом сервере."
 
-#: redbot/cogs/alias/alias.py:418 redbot/cogs/alias/alias.py:429
-msgid "Aliases:"
-msgstr "Псевдонимы:"
-
-#: redbot/cogs/alias/alias.py:428
+#: redbot/cogs/alias/alias.py:324
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Список доступных глобальных псевдонимов для этого бота."
+
+#: redbot/cogs/alias/alias.py:327
+msgid "There are no global aliases."
+msgstr "Нет глобальных псевдонимов."
+
+#: redbot/cogs/alias/alias_entry.py:174
+msgid "Arguments must be specified with a number."
+msgstr "Аргументы должны быть указаны с числом."
+
+#: redbot/cogs/alias/alias_entry.py:181
+msgid "Arguments must be sequential. Missing arguments: "
+msgstr "Аргументы должны быть последовательными. Отсутствующие аргументы: "
 

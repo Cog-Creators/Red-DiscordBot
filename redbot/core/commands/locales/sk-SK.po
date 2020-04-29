@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Slovak\n"
 "MIME-Version: 1.0\n"
@@ -12,39 +11,42 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: sk\n"
-"X-Crowdin-File: /commands/locales/messages.pot\n"
 "Language: sk_SK\n"
 
-#: redbot/core/commands/commands.py:301
+#: redbot/core/commands/commands.py:503
 msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+msgstr "\\\"{argument}\\\" nie je číslo."
 
-#: redbot/core/commands/converter.py:90
+#: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr ""
 
-#: redbot/core/commands/converter.py:96
+#: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:102
+#: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:130
+#: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
 msgstr ""
 
-#: redbot/core/commands/converter.py:159 redbot/core/commands/converter.py:161
+#: redbot/core/commands/converter.py:182 redbot/core/commands/converter.py:184
 msgid "The provided tokens are not in a valid format."
 msgstr ""
 
-#: redbot/core/commands/converter.py:187
+#: redbot/core/commands/converter.py:218
 msgid "Unexpected key {key}"
 msgstr ""
 
-#: redbot/core/commands/help.py:580
+#: redbot/core/commands/converter.py:439
+msgid "Expected one of: {}"
+msgstr ""
+
+#: redbot/core/commands/help.py:718
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr ""
+msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 

@@ -7,7 +7,7 @@ from typing import cast, Iterable, Union
 
 import discord
 
-from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
+from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
@@ -191,8 +191,9 @@ class Economy(commands.Cog):
             )
         )
 
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
-    @check_global_setting_admin()
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of user's bank account.
 
@@ -236,8 +237,9 @@ class Economy(commands.Cog):
         else:
             await ctx.send(msg)
 
+    @is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
     @_bank.command()
-    @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
         """Delete all bank accounts."""
         if confirmation is False:
@@ -247,7 +249,7 @@ class Economy(commands.Cog):
                     "`{prefix}bank reset yes`"
                 ).format(
                     scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.prefix,
+                    prefix=ctx.clean_prefix,
                 )
             )
         else:
@@ -258,8 +260,9 @@ class Economy(commands.Cog):
                 )
             )
 
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
     @_bank.group(name="prune")
-    @check_global_setting_admin()
     async def _prune(self, ctx):
         """Prune bank accounts."""
         pass
@@ -279,7 +282,7 @@ class Economy(commands.Cog):
                     "This will delete all bank accounts for users no longer in this server."
                     "\nIf you're sure, type "
                     "`{prefix}bank prune local yes`"
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild)
@@ -301,7 +304,7 @@ class Economy(commands.Cog):
                     "This will delete all bank accounts for users "
                     "who no longer share a server with the bot."
                     "\nIf you're sure, type `{prefix}bank prune global yes`"
-                ).format(prefix=ctx.prefix)
+                ).format(prefix=ctx.clean_prefix)
             )
         else:
             await bank.bank_prune(self.bot)
@@ -333,7 +336,7 @@ class Economy(commands.Cog):
                     "This will delete {name}'s bank account."
                     "\nIf you're sure, type "
                     "`{prefix}bank prune user {id} yes`"
-                ).format(prefix=ctx.prefix, id=uid, name=name)
+                ).format(prefix=ctx.clean_prefix, id=uid, name=name)
             )
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
@@ -349,7 +352,11 @@ class Economy(commands.Cog):
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
-            next_payday = await self.config.user(author).next_payday()
+
+            # Gets the latest time the user used the command successfully and adds the global payday time
+            next_payday = (
+                await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
+            )
             if cur_time >= next_payday:
                 try:
                     await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
@@ -365,8 +372,8 @@ class Economy(commands.Cog):
                         )
                     )
                     return
-                next_payday = cur_time + await self.config.PAYDAY_TIME()
-                await self.config.user(author).next_payday.set(next_payday)
+                # Sets the current time as the latest payday
+                await self.config.user(author).next_payday.set(cur_time)
 
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
@@ -392,7 +399,12 @@ class Economy(commands.Cog):
                     ).format(author=author, time=dtime)
                 )
         else:
-            next_payday = await self.config.member(author).next_payday()
+
+            # Gets the users latest successfully payday and adds the guilds payday time
+            next_payday = (
+                await self.config.member(author).next_payday()
+                + await self.config.guild(guild).PAYDAY_TIME()
+            )
             if cur_time >= next_payday:
                 credit_amount = await self.config.guild(guild).PAYDAY_CREDITS()
                 for role in author.roles:
@@ -415,7 +427,10 @@ class Economy(commands.Cog):
                         )
                     )
                     return
-                next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
+
+                # Sets the latest payday time to the current time
+                next_payday = cur_time
+
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
@@ -634,9 +649,10 @@ class Economy(commands.Cog):
             )
         )
 
-    @commands.group()
     @guild_only_check()
-    @check_global_setting_admin()
+    @is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
+    @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Manage Economy settings."""
         guild = ctx.guild

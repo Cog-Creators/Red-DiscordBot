@@ -4,5 +4,5 @@ from .mod import Mod
 
 async def setup(bot: Red):
     cog = Mod(bot)
-    await cog.initialize()
     bot.add_cog(cog)
+    await cog.initialize()

@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import pip
+import pkg_resources
 import platform
 import shutil
 import signal
@@ -346,6 +347,14 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
         sys.path.append(str(LIB_PATH))
+
+        # "It's important to note that the global `working_set` object is initialized from
+        # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
+        # all future `sys.path` manipulation via `pkg_resources` APIs. If you manually modify
+        # `sys.path`, you must invoke the appropriate methods on the `working_set` instance
+        # to keep it in sync."
+        # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
+        pkg_resources.working_set.add_entry(str(LIB_PATH))
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:
@@ -430,7 +439,10 @@ def global_exception_handler(red, loop, context):
     msg = context.get("exception", context["message"])
     # These will get handled later when it *also* kills loop.run_forever
     if not isinstance(msg, (KeyboardInterrupt, SystemExit)):
-        log.critical("Caught unhandled exception in task: %s", msg)
+        if isinstance(msg, Exception):
+            log.critical("Caught unhandled exception in task:\n", exc_info=msg)
+        else:
+            log.critical("Caught unhandled exception in task: %s", msg)
 
 
 def red_exception_handler(red, red_task: asyncio.Future):
