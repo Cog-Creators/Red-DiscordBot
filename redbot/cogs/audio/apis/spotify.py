@@ -2,15 +2,22 @@ import base64
 import contextlib
 import logging
 import time
-from typing import List, MutableMapping, Optional, Tuple, Union
+from typing import List, Mapping, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core.commands import Context
+from redbot.core.commands import Cog, Context
 
 from ..errors import SpotifyFetchError
+
+if TYPE_CHECKING:
+    from .. import Audio
+
+_ = Translator("Audio", __file__)
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")
 
@@ -25,13 +32,17 @@ PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/playlists"
 class SpotifyWrapper:
     """Wrapper for the Spotify API."""
 
-    def __init__(self, bot: Red, config: Config, session: aiohttp.ClientSession):
+    def __init__(
+        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+    ):
         self.bot = bot
         self.config = config
         self.session = session
         self.spotify_token: Optional[MutableMapping] = None
         self.client_id: Optional[str] = None
         self.client_secret: Optional[str] = None
+        self._token: Mapping[str, str] = {}
+        self.cog = cog
 
     @staticmethod
     def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
@@ -49,7 +60,7 @@ class SpotifyWrapper:
         self, track_data: MutableMapping, ctx: Context
     ) -> Tuple[str, ...]:
         """Extract track info from spotify response"""
-        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
+        prefer_lyrics = await self.cog.get_lyrics_status(ctx)
         track_name = track_data["name"]
         if prefer_lyrics:
             track_name = f"{track_name} - lyrics"
@@ -63,12 +74,12 @@ class SpotifyWrapper:
         return song_url, track_info, uri, artist_name, track_name, _id, _type
 
     @staticmethod
-    async def _check_token(token: MutableMapping) -> bool:
+    async def is_access_token_valid(token: MutableMapping) -> bool:
         """Check if current token is not too old"""
         return (token["expires_at"] - int(time.time())) < 60
 
     @staticmethod
-    def _make_token_auth(
+    def make_auth_header(
         client_id: Optional[str], client_secret: Optional[str]
     ) -> MutableMapping[str, Union[str, int]]:
         """Make Authorization header for spotify token"""
@@ -79,7 +90,7 @@ class SpotifyWrapper:
         auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode("ascii"))
         return {"Authorization": f"Basic {auth_header.decode('ascii')}"}
 
-    async def _make_get(
+    async def get(
         self, url: str, headers: MutableMapping = None, params: MutableMapping = None
     ) -> MutableMapping[str, str]:
         """Make a GET request to the spotify API"""
@@ -91,26 +102,33 @@ class SpotifyWrapper:
                 log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
             return data
 
-    async def _get_auth(self) -> None:
-        """Get the stored spotify tokens"""
-        tokens = await self.bot.get_shared_api_tokens("spotify")
-        if tokens is not None:
-            self.client_id = tokens.get("client_id", "")
-            self.client_secret = tokens.get("client_secret", "")
+    def update_token(self, new_token: Mapping[str, str]):
+        self._token = new_token
 
-    async def _request_token(self) -> MutableMapping:
+    async def get_token(self) -> None:
+        """Get the stored spotify tokens"""
+        if not self._token:
+            self._token = await self.bot.get_shared_api_tokens("spotify")
+
+        self.client_id = self._token.get("client_id", "")
+        self.client_secret = self._token.get("client_secret", "")
+
+    async def get_country_code(self, ctx: Context = None) -> str:
+        return await self.config.guild(ctx.guild).country_code() if ctx else "US"
+
+    async def request_access_token(self) -> MutableMapping:
         """Make a spotify call to get the auth token"""
-        await self._get_auth()
+        await self.get_token()
         payload = {"grant_type": "client_credentials"}
-        headers = self._make_token_auth(self.client_id, self.client_secret)
-        r = await self.post_call(TOKEN_ENDPOINT, payload=payload, headers=headers)
+        headers = self.make_auth_header(self.client_id, self.client_secret)
+        r = await self.post(TOKEN_ENDPOINT, payload=payload, headers=headers)
         return r
 
-    async def _get_spotify_token(self) -> Optional[str]:
+    async def get_access_token(self) -> Optional[str]:
         """Get the access_token"""
-        if self.spotify_token and not await self._check_token(self.spotify_token):
+        if self.spotify_token and not await self.is_access_token_valid(self.spotify_token):
             return self.spotify_token["access_token"]
-        token = await self._request_token()
+        token = await self.request_access_token()
         if token is None:
             log.debug("Requested a token from Spotify, did not end up getting one.")
         try:
@@ -121,7 +139,7 @@ class SpotifyWrapper:
         log.debug(f"Created a new access token for Spotify: {token}")
         return self.spotify_token["access_token"]
 
-    async def post_call(
+    async def post(
         self, url: str, payload: MutableMapping, headers: MutableMapping = None
     ) -> MutableMapping:
         """Make a POST call to spotify"""
@@ -131,33 +149,33 @@ class SpotifyWrapper:
                 log.debug(f"Issue making POST request to {url}: [{r.status}] {data}")
             return data
 
-    async def get_call(self, url: str, params: MutableMapping) -> MutableMapping:
+    async def make_get_call(self, url: str, params: MutableMapping) -> MutableMapping:
         """Make a Get call to spotify"""
-        token = await self._get_spotify_token()
-        return await self._make_get(
-            url, params=params, headers={"Authorization": f"Bearer {token}"}
-        )
+        token = await self.get_access_token()
+        return await self.get(url, params=params, headers={"Authorization": f"Bearer {token}"})
 
-    async def get_categories(self) -> List[MutableMapping]:
+    async def get_categories(self, ctx: Context = None) -> List[MutableMapping]:
         """Get the spotify categories"""
-        params: MutableMapping = {}
-        result = await self.get_call(CATEGORY_ENDPOINT, params=params)
+        country_code = await self.get_country_code(ctx=ctx)
+        params: MutableMapping = {"country": country_code} if country_code else {}
+        result = await self.make_get_call(CATEGORY_ENDPOINT, params=params)
         with contextlib.suppress(KeyError):
             if result["error"]["status"] == 401:
                 raise SpotifyFetchError(
-                    message=(
+                    message=_(
                         "The Spotify API key or client secret has not been set properly. "
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
                     )
                 )
         categories = result.get("categories", {}).get("items", [])
-        return [{c["name"]: c["id"]} for c in categories]
+        return [{c["name"]: c["id"]} for c in categories if c]
 
-    async def get_playlist_from_category(self, category: str):
+    async def get_playlist_from_category(self, category: str, ctx: Context = None):
         """Get spotify playlists for the specified category"""
         url = f"{CATEGORY_ENDPOINT}/{category}/playlists"
-        params: MutableMapping = {}
-        result = await self.get_call(url, params=params)
+        country_code = await self.get_country_code(ctx=ctx)
+        params: MutableMapping = {"country": country_code} if country_code else {}
+        result = await self.make_get_call(url, params=params)
         playlists = result.get("playlists", {}).get("items", [])
         return [
             {
@@ -166,5 +184,6 @@ class SpotifyWrapper:
                 "url": c.get("external_urls", {}).get("spotify"),
                 "tracks": c.get("tracks", {}).get("total", "Unknown"),
             }
-            for c in playlists
+            async for c in AsyncIter(playlists)
+            if c
         ]
