@@ -70,11 +70,11 @@ class Admin(commands.Cog):
     """A collection of server administration utilities."""
 
     def __init__(self):
-        self.conf = Config.get_conf(self, 8237492837454039, force_registration=True)
+        self.config = Config.get_conf(self, 8237492837454039, force_registration=True)
 
-        self.conf.register_global(serverlocked=False)
+        self.config.register_global(serverlocked=False)
 
-        self.conf.register_guild(
+        self.config.register_guild(
             announce_ignore=False,
             announce_channel=None,  # Integer ID
             selfroles=[],  # List of integer ID's
@@ -290,14 +290,14 @@ class Admin(commands.Cog):
     async def announce(self, ctx: commands.Context, *, message: str):
         """Announce a message to all servers the bot is in."""
         if not self.is_announcing():
-            announcer = Announcer(ctx, message, config=self.conf)
+            announcer = Announcer(ctx, message, config=self.config)
             announcer.start()
 
             self.__current_announcer = announcer
 
             await ctx.send(_("The announcement has begun."))
         else:
-            prefix = ctx.prefix
+            prefix = ctx.clean_prefix
             await ctx.send(_(RUNNING_ANNOUNCEMENT).format(prefix=prefix))
 
     @announce.command(name="cancel")
@@ -325,7 +325,7 @@ class Admin(commands.Cog):
         """
         if channel is None:
             channel = ctx.channel
-        await self.conf.guild(ctx.guild).announce_channel.set(channel.id)
+        await self.config.guild(ctx.guild).announce_channel.set(channel.id)
         await ctx.send(
             _("The announcement channel has been set to {channel.mention}").format(channel=channel)
         )
@@ -333,8 +333,8 @@ class Admin(commands.Cog):
     @announceset.command(name="ignore")
     async def announceset_ignore(self, ctx):
         """Toggle announcements being enabled this server."""
-        ignored = await self.conf.guild(ctx.guild).announce_ignore()
-        await self.conf.guild(ctx.guild).announce_ignore.set(not ignored)
+        ignored = await self.config.guild(ctx.guild).announce_ignore()
+        await self.config.guild(ctx.guild).announce_ignore.set(not ignored)
         if ignored:
             await ctx.send(
                 _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
@@ -352,14 +352,14 @@ class Admin(commands.Cog):
         :param guild:
         :return:
         """
-        selfrole_ids = set(await self.conf.guild(guild).selfroles())
+        selfrole_ids = set(await self.config.guild(guild).selfroles())
         guild_roles = guild.roles
 
         valid_roles = tuple(r for r in guild_roles if r.id in selfrole_ids)
         valid_role_ids = set(r.id for r in valid_roles)
 
         if selfrole_ids != valid_role_ids:
-            await self.conf.guild(guild).selfroles.set(list(valid_role_ids))
+            await self.config.guild(guild).selfroles.set(list(valid_role_ids))
 
         # noinspection PyTypeChecker
         return valid_roles
@@ -427,7 +427,7 @@ class Admin(commands.Cog):
                 ).format(role=role)
             )
             return
-        async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
+        async with self.config.guild(ctx.guild).selfroles() as curr_selfroles:
             if role.id not in curr_selfroles:
                 curr_selfroles.append(role.id)
                 await ctx.send(_("Added."))
@@ -449,7 +449,7 @@ class Admin(commands.Cog):
                 ).format(role=role)
             )
             return
-        async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
+        async with self.config.guild(ctx.guild).selfroles() as curr_selfroles:
             curr_selfroles.remove(role.id)
 
         await ctx.send(_("Removed."))
@@ -458,8 +458,8 @@ class Admin(commands.Cog):
     @checks.is_owner()
     async def serverlock(self, ctx: commands.Context):
         """Lock a bot to its current servers only."""
-        serverlocked = await self.conf.serverlocked()
-        await self.conf.serverlocked.set(not serverlocked)
+        serverlocked = await self.config.serverlocked()
+        await self.config.serverlocked.set(not serverlocked)
 
         if serverlocked:
             await ctx.send(_("The bot is no longer serverlocked."))
@@ -468,7 +468,7 @@ class Admin(commands.Cog):
 
     # region Event Handlers
     async def on_guild_join(self, guild: discord.Guild):
-        if await self.conf.serverlocked():
+        if await self.config.serverlocked():
             await guild.leave()
 
 

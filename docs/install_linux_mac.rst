@@ -20,7 +20,7 @@ The pre-requirements are:
  - Python 3.8.1 or greater
  - Pip 18.1 or greater
  - Git 2.11+
- - Java Runtime Environment 11 or later (for audio support)
+ - Java Runtime Environment 11 (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
@@ -163,20 +163,18 @@ following, then press Enter:
 
 .. code-block:: none
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
 
 .. code-block:: none
 
-    brew install python --with-brewed-openssl
+    brew install python@3.8
+    echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
+    source ~/.profile
     brew install git
-    brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk11
-
-It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.8 folder then double click ``Install certificates.command``.
+    brew cask install adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
 
@@ -241,9 +239,9 @@ Continue by `creating-venv-linux`.
 
 .. _install-ubuntu:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Ubuntu LTS versions (18.04 and 16.04)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu LTS versions (20.04, 18.04, and 16.04)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
@@ -315,7 +313,7 @@ virtual environment.
 
 .. code-block:: none
 
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+    command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
 After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
 instructions given to fix that, then close and reopen your shell.
@@ -324,7 +322,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.1 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.2 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -336,7 +334,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.1
+    pyenv global 3.8.2
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
@@ -348,8 +346,82 @@ Continue by `creating-venv-linux`.
 Creating a Virtual Environment
 ------------------------------
 
+.. tip::
+
+    If you want to learn more about virtual environments, see page: `about-venvs`
+
 We require installing Red into a virtual environment. Don't be scared, it's very
-straightforward. See the section `installing-in-virtual-environment`.
+straightforward.
+
+You have 2 options:
+
+* :ref:`using-venv` (quick and easy, involves just two commands)
+* :ref:`using-pyenv-virtualenv` (only available and recommended when you installed Python with pyenv)
+
+----
+
+.. _using-venv:
+
+**************
+Using ``venv``
+**************
+This is the quickest way to get your virtual environment up and running, as `venv` is shipped with
+python.
+
+First, choose a directory where you would like to create your virtual environment. It's a good idea
+to keep it in a location which is easy to type out the path to. From now, we'll call it
+``redenv`` and it will be located in your home directory.
+
+Create your virtual environment with the following command::
+
+    python3.8 -m venv ~/redenv
+
+And activate it with the following command::
+
+    source ~/redenv/bin/activate
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red.
+
+Continue by `installing-red-linux-mac`.
+
+----
+
+.. _using-pyenv-virtualenv:
+
+**************************
+Using ``pyenv virtualenv``
+**************************
+
+Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
+environments. This option is only available if you installed Python with pyenv.
+
+First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command::
+
+    pyenv version
+
+Now, create a virtual environment with the following command::
+
+    pyenv virtualenv <name>
+
+Replace ``<name>`` with whatever you like. If you ever forget what you named it,
+you can always use the command ``pyenv versions`` to list all virtual environments.
+
+Now activate your virtualenv with the following command::
+
+    pyenv shell <name>
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red. You can check out other commands like ``pyenv local`` and
+    ``pyenv global`` if you wish to keep the virtualenv activated all the time.
+
+Continue by `installing-red-linux-mac`.
+
+.. _pyenv-installer: https://github.com/pyenv/pyenv-installer/blob/master/README.rst
 
 .. _installing-red-linux-mac:
 
