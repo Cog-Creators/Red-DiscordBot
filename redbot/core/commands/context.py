@@ -75,7 +75,7 @@ class Context(DPYContext):
             :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
             This must take a single `str` as an argument, and return
             the sanitized `str`.
-        \*\*kwargs
+        **kwargs
             See `discord.ext.commands.Context.send`.
 
         Returns
@@ -262,7 +262,7 @@ class Context(DPYContext):
         """str: The command prefix, but a mention prefix is displayed nicer."""
         me = self.me
         pattern = re.compile(rf"<@!?{me.id}>")
-        return pattern.sub(f"@{me.display_name}", self.prefix)
+        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:

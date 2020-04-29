@@ -5,36 +5,37 @@ import logging
 import random
 import time
 from collections import namedtuple
-from pathlib import Path
-from typing import Callable, List, MutableMapping, Optional, Tuple, Union, cast, Mapping
+from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union, cast
 
 import aiohttp
 import discord
 import lavalink
 from lavalink.rest_api import LoadResult
+from redbot.core.utils import AsyncIter
 
-from redbot.cogs.audio.apis.playlist_wrapper import PlaylistWrapper
 from redbot.core import Config, commands
 from redbot.core.bot import Red
-from redbot.core.commands import Cog
+from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
-from ..core.abc import MixinMeta
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
 from ..utils import CacheLevel, Notifier
 from .global_db import GlobalCacheWrapper
 from .local_db import LocalCacheWrapper
 from .playlist_interface import get_playlist
+from .playlist_wrapper import PlaylistWrapper
 from .spotify import SpotifyWrapper
 from .youtube import YouTubeWrapper
+
+if TYPE_CHECKING:
+    from .. import Audio
 
 _ = Translator("Audio", __file__)
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
-# TODO: Get random from global Cache
 
 
 class AudioAPIInterface:
@@ -44,15 +45,21 @@ class AudioAPIInterface:
     """
 
     def __init__(
-        self, bot: Red, config: Config, session: aiohttp.ClientSession, conn: APSWConnectionWrapper
+        self,
+        bot: Red,
+        config: Config,
+        session: aiohttp.ClientSession,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
     ):
         self.bot = bot
         self.config = config
         self.conn = conn
-        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session)
-        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session)
-        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn)
-        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session)
+        self.cog = cog
+        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session, self.cog)
+        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session, self.cog)
+        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn, self.cog)
+        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session, self.cog)
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -95,29 +102,28 @@ class AudioAPIInterface:
         return track
 
     async def route_tasks(
-        self,
-        action_type: str = None,
-        table: str = None,
-        data: Union[List[MutableMapping], MutableMapping] = None,
+        self, action_type: str = None, data: Union[List[MutableMapping], MutableMapping] = None,
     ) -> None:
         """Separate the tasks and run them in the appropriate functions"""
 
         if not data:
             return
         if action_type == "insert" and isinstance(data, list):
-            if table == "lavalink":
-                await self.local_cache_api.lavalink.insert(data)
-            elif table == "youtube":
-                await self.local_cache_api.youtube.insert(data)
-            elif table == "spotify":
-                await self.local_cache_api.spotify.insert(data)
+            for table, d in data:
+                if table == "lavalink":
+                    await self.local_cache_api.lavalink.insert(d)
+                elif table == "youtube":
+                    await self.local_cache_api.youtube.insert(d)
+                elif table == "spotify":
+                    await self.local_cache_api.spotify.insert(d)
         elif action_type == "update" and isinstance(data, dict):
-            if table == "lavalink":
-                await self.local_cache_api.lavalink.update(data)
-            elif table == "youtube":
-                await self.local_cache_api.youtube.update(data)
-            elif table == "spotify":
-                await self.local_cache_api.spotify.update(data)
+            for table, d in data:
+                if table == "lavalink":
+                    await self.local_cache_api.lavalink.update(data)
+                elif table == "youtube":
+                    await self.local_cache_api.youtube.update(data)
+                elif table == "spotify":
+                    await self.local_cache_api.spotify.update(data)
 
     async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
         """Run tasks for a specific context"""
@@ -134,10 +140,9 @@ class AudioAPIInterface:
                     log.debug(f"Running database writes for {lock_id} ({lock_author})")
                 try:
                     tasks = self._tasks[lock_id]
+                    tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
+                    await asyncio.gather(*tasks, return_exceptions=True)
                     del self._tasks[lock_id]
-                    await asyncio.gather(
-                        *[self.route_tasks(*tasks[a]) for a in tasks], return_exceptions=True
-                    )
                 except Exception as exc:
                     debug_exc_log(
                         log, exc, f"Failed database writes for {lock_id} ({lock_author})"
@@ -153,13 +158,13 @@ class AudioAPIInterface:
                 log.debug("Running pending writes to database")
             try:
                 tasks: MutableMapping = {"update": [], "insert": [], "global": []}
-                for (k, task) in self._tasks.items():
-                    for t, args in task.items():
+                async for k, task in AsyncIter(self._tasks.items()):
+                    async for t, args in AsyncIter(task.items()):
                         tasks[t].append(args)
                 self._tasks = {}
-                await asyncio.gather(
-                    *[self.route_tasks(*tasks[a]) for a in tasks], return_exceptions=True
-                )
+                coro_tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
+
+                await asyncio.gather(*coro_tasks, return_exceptions=True)
 
             except Exception as exc:
                 debug_exc_log(log, exc, "Failed database writes")
@@ -174,7 +179,7 @@ class AudioAPIInterface:
             self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
         self._tasks[lock_id][event].append(task)
 
-    async def _spotify_first_time_query(
+    async def fetch_spotify_query(
         self,
         ctx: commands.Context,
         query_type: str,
@@ -185,13 +190,15 @@ class AudioAPIInterface:
     ) -> List[str]:
         """Return youtube URLS for the spotify URL provided"""
         youtube_urls = []
-        tracks = await self._spotify_fetch_tracks(query_type, uri, params=None, notifier=notifier)
+        tracks = await self.fetch_from_spotify_api(
+            query_type, uri, params=None, notifier=notifier, ctx=ctx
+        )
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
-        for track in tracks:
+        async for track in AsyncIter(tracks):
             if isinstance(track, str):
                 break
             elif isinstance(track, dict) and track.get("error", {}).get("message") == "invalid id":
@@ -230,7 +237,7 @@ class AudioAPIInterface:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
 
                 if val is None:
-                    val = await self._youtube_first_time_query(
+                    val = await self.fetch_youtube_query(
                         ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val:
@@ -240,7 +247,6 @@ class AudioAPIInterface:
                     youtube_urls.append(val)
             else:
                 youtube_urls.append(track_info)
-            await asyncio.sleep(0)
             track_count += 1
             if notifier is not None and ((track_count % 2 == 0) or (track_count == total_tracks)):
                 await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
@@ -249,28 +255,29 @@ class AudioAPIInterface:
             self.append_task(ctx, *task)
         return youtube_urls
 
-    async def _spotify_fetch_tracks(
+    async def fetch_from_spotify_api(
         self,
         query_type: str,
         uri: str,
         recursive: Union[str, bool] = False,
         params: MutableMapping = None,
         notifier: Optional[Notifier] = None,
+        ctx: Context = None,
     ) -> Union[List[MutableMapping], List[str]]:
         """Gets track info from spotify API"""
 
         if recursive is False:
             (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
-            results = await self.spotify_api.get_call(call, params)
+            results = await self.spotify_api.make_get_call(call, params)
         else:
             if isinstance(recursive, str):
-                results = await self.spotify_api.get_call(recursive, params)
+                results = await self.spotify_api.make_get_call(recursive, params)
             else:
                 results = {}
         try:
             if results["error"]["status"] == 401 and not recursive:
                 raise SpotifyFetchError(
-                    (
+                    _(
                         "The Spotify API key or client secret has not been set properly. "
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
                     )
@@ -304,7 +311,7 @@ class AudioAPIInterface:
                 await notifier.notify_user(current=track_count, total=total_tracks, key="spotify")
             try:
                 if results.get("next") is not None:
-                    results = await self._spotify_fetch_tracks(
+                    results = await self.fetch_from_spotify_api(
                         query_type, uri, results["next"], params, notifier=notifier
                     )
                     continue
@@ -312,7 +319,7 @@ class AudioAPIInterface:
                     break
             except KeyError:
                 raise SpotifyFetchError(
-                    "This doesn't seem to be a valid Spotify playlist/album URL or code."
+                    _("This doesn't seem to be a valid Spotify playlist/album URL or code.")
                 )
         return tracks
 
@@ -359,7 +366,7 @@ class AudioAPIInterface:
             val = None
         youtube_urls = []
         if val is None:
-            urls = await self._spotify_first_time_query(
+            urls = await self.fetch_spotify_query(
                 ctx,
                 query_type,
                 uri,
@@ -384,7 +391,8 @@ class AudioAPIInterface:
         player: lavalink.Player,
         lock: Callable,
         notifier: Optional[Notifier] = None,
-        query_global: bool = True,
+        forced: bool = False,
+        query_global: bool = False,
     ) -> List[lavalink.Track]:
         """Queries the Database then falls back to Spotify and YouTube APIs then Enqueued matched tracks.
 
@@ -405,7 +413,9 @@ class AudioAPIInterface:
         lock: Callable
             A callable handling the Track enqueue lock while spotify tracks are being added.
         query_global: bool
-            A place holder
+            Whether or not to query the global API.
+        forced: bool
+            Ignore Cache and make a fetch from API.
         Returns
         -------
         List[str]
@@ -419,10 +429,10 @@ class AudioAPIInterface:
             guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
-            queue_dur = await ctx.cog.queue_duration(ctx)
-            queue_total_duration = ctx.cog.format_time(queue_dur)
+            queue_dur = await self.cog.queue_duration(ctx)
+            queue_total_duration = self.cog.format_time(queue_dur)
             before_queue_length = len(player.queue)
-            tracks_from_spotify = await self._spotify_fetch_tracks(
+            tracks_from_spotify = await self.fetch_from_spotify_api(
                 query_type, uri, params=None, notifier=notifier
             )
             total_tracks = len(tracks_from_spotify)
@@ -440,7 +450,7 @@ class AudioAPIInterface:
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
-            for track_count, track in enumerate(tracks_from_spotify):
+            async for track_count, track in AsyncIter(tracks_from_spotify).enumerate(start=1):
                 (
                     song_url,
                     track_info,
@@ -475,7 +485,7 @@ class AudioAPIInterface:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
 
                 if val is None:
-                    val = await self._youtube_first_time_query(
+                    val = await self.fetch_youtube_query(
                         ctx, track_info, current_cache_level=current_cache_level
                     )
                 if youtube_cache and val and llresponse is None:
@@ -489,9 +499,8 @@ class AudioAPIInterface:
                         (result, called_api) = await self.fetch_track(
                             ctx,
                             player,
-                            Query.process_input(
-                                val, Path(await self.config.localpath()).absolute()
-                            ),
+                            Query.process_input(val, self.cog.local_folder_current_path),
+                            forced=forced,
                         )
                     except (RuntimeError, aiohttp.ServerDisconnectedError):
                         lock(ctx, False)
@@ -540,12 +549,12 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                if not await ctx.cog.is_allowed(
+                if not await self.cog.is_query_allowed(
                     self.config,
                     ctx.guild,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
-                        f"{str(Query.process_input(single_track, Path(await self.config.localpath()).absolute()))}"
+                        f"{Query.process_input(single_track, self.cog.local_folder_current_path)}"
                     ),
                 ):
                     has_not_allowed = True
@@ -557,7 +566,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if ctx.cog.track_limit(single_track, guild_data["maxlength"]):
+                        if self.cog.is_track_too_long(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
@@ -585,12 +594,12 @@ class AudioAPIInterface:
                         "or you may be rate limited on YouTube's search service.\n"
                         "Check the YouTube API key again and follow the instructions "
                         "at `{prefix}audioset youtubeapi`."
-                    ).format(prefix=ctx.prefix)
+                    )
                 )
             player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
-                    maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                    maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(
                         bad_tracks=(total_tracks - enqueued_tracks)
                     )
                 else:
@@ -625,7 +634,7 @@ class AudioAPIInterface:
             lock(ctx, False)
         return track_list
 
-    async def _youtube_first_time_query(
+    async def fetch_youtube_query(
         self,
         ctx: commands.Context,
         track_info: str,
@@ -654,7 +663,9 @@ class AudioAPIInterface:
             self.append_task(ctx, *task)
         return track_url
 
-    async def youtube_query(self, ctx: commands.Context, track_info: str) -> Optional[str]:
+    async def fetch_from_youtube_api(
+        self, ctx: commands.Context, track_info: str
+    ) -> Optional[str]:
         """
         Gets an YouTube URL from for the query
         """
@@ -667,7 +678,7 @@ class AudioAPIInterface:
             except Exception as exc:
                 debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
         if val is None:
-            youtube_url = await self._youtube_first_time_query(
+            youtube_url = await self.fetch_youtube_query(
                 ctx, track_info, current_cache_level=current_cache_level
             )
         else:
@@ -712,12 +723,12 @@ class AudioAPIInterface:
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
-        query = Query.process_input(query, Path(await self.config.localpath()).absolute())
+        query = Query.process_input(query, self.cog.local_folder_current_path)
         query_string = str(query)
         valid_global_entry = False
         results = None
         called_api = False
-        prefer_lyrics = await ctx.cog.get_lyrics_status(ctx)
+        prefer_lyrics = await self.cog.get_lyrics_status(ctx)
         if prefer_lyrics and query.is_youtube and query.is_search:
             query_string = f"{query} - lyrics"
         if cache_enabled and not forced and not query.is_local:
@@ -746,7 +757,7 @@ class AudioAPIInterface:
             pass
         elif lazy is True:
             called_api = False
-        elif val and not forced:
+        elif val and not forced and isinstance(val, dict):
             data = val
             data["query"] = query_string
             if data.get("loadType") == "V2_COMPACT":
@@ -803,9 +814,7 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(
-        self, player: lavalink.Player, playlist_api: PlaylistWrapper, cog: MixinMeta
-    ):
+    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """
         Enqueue a random track
         """
@@ -830,44 +839,42 @@ class AudioAPIInterface:
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
-                tracks = [await self.get_random_track_from_db()]
+                track = await self.get_random_track_from_db()
+                tracks = [] if not track else [track]
             if not tracks:
                 ctx = namedtuple("Context", "message guild cog")
                 (results, called_api) = await self.fetch_track(
-                    cast(commands.Context, ctx(player.channel.guild, player.channel.guild, cog)),
-                    player,
-                    Query.process_input(
-                        _TOP_100_US, Path(await self.config.localpath()).absolute()
+                    cast(
+                        commands.Context, ctx(player.channel.guild, player.channel.guild, self.cog)
                     ),
+                    player,
+                    Query.process_input(_TOP_100_US, self.cog.local_folder_current_path),
                 )
                 tracks = list(results.tracks)
         if tracks:
             multiple = len(tracks) > 1
-            track = tracks[0]
-
             valid = not multiple
             tries = len(tracks)
+            track = tracks[0]
             while valid is False and multiple:
                 tries -= 1
                 if tries <= 0:
                     raise DatabaseError("No valid entry found")
                 track = random.choice(tracks)
-                query = Query.process_input(track, Path(await self.config.localpath()).absolute())
+                query = Query.process_input(track, self.cog.local_folder_current_path)
                 await asyncio.sleep(0.001)
-                if not query.valid:
-                    continue
-                if (
+                if not query.valid or (
                     query.is_local
                     and query.local_track_path is not None
                     and not query.local_track_path.exists()
                 ):
                     continue
-                if not await cog.is_allowed(
+                if not await self.cog.is_query_allowed(
                     self.config,
                     player.channel.guild,
                     (
                         f"{track.title} {track.author} {track.uri} "
-                        f"{str(Query.process_input(track, Path(await self.config.localpath()).absolute()))}"
+                        f"{str(Query.process_input(track, self.cog.local_folder_current_path))}"
                     ),
                 ):
                     if IS_DEBUG:

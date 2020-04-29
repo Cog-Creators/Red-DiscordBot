@@ -8,12 +8,14 @@ from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
+from redbot.core.i18n import cog_i18n
 
 from ..utils import PlaylistScope
 from . import abc, cog_utils, commands, events, tasks, utilities
-from .cog_utils import CompositeMetaClass
+from .cog_utils import CompositeMetaClass, _
 
 
+@cog_i18n(_)
 class Audio(
     commands.Commands,
     events.Events,
@@ -22,7 +24,7 @@ class Audio(
     Cog,
     metaclass=CompositeMetaClass,
 ):
-    """Class joining all Audio subclasses"""
+    """Play audio through voice channels."""
 
     _default_lavalink_settings = {
         "host": "localhost",
@@ -39,27 +41,27 @@ class Audio(
         self.api_interface = None
         self.player_manager = None
         self.playlist_api = None
-        self.local_folder_current_path = cog_data_path(raw_name="Audio") / "localtracks"
+        self.local_folder_current_path = None
         self.db_conn = None
-        self.session = aiohttp.ClientSession()
 
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}
-        self.skip_votes = {}
-        self.play_lock = {}
         self._daily_playlist_cache = {}
         self._daily_global_playlist_cache = {}
         self._dj_status_cache = {}
         self._dj_role_cache = {}
+        self.skip_votes = {}
+        self.play_lock = {}
 
         self.lavalink_connect_task = None
         self.player_automated_timer_task = None
         self.cog_cleaned_up = False
         self.lavalink_connection_aborted = False
-        self.api_interface = None
-        self.lavalink_connect_task = None
-        self.player_automated_timer_task = None
+
+        self.session = aiohttp.ClientSession()
+        self.cog_ready_event = asyncio.Event()
+        self.cog_init_task = None
 
         default_global = dict(
             schema_version=1,
@@ -103,6 +105,7 @@ class Audio(
             room_lock=None,
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
+            country_code="US",
         )
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
@@ -116,9 +119,3 @@ class Audio(
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
-
-        # These has to be a task since this requires the bot to be ready
-        # If it waits for ready in startup, we cause a deadlock during initial load
-        # as initial load happens before the bot can ever be ready.
-        self.cog_init_task = self.bot.loop.create_task(self.initialize())
-        self.cog_ready_event = asyncio.Event()

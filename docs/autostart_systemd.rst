@@ -8,29 +8,39 @@ Setting up auto-restart using systemd on Linux
 Creating the service file
 -------------------------
 
-In order to create the service file, you will first need the location of your :code:`redbot` binary.
+In order to create the service file, you will first need to know two things, your Linux :code:`username` and your Python :code:`path`
+
+First, your Linux :code:`username` can be fetched with the following command:
 
 .. code-block:: bash
 
-    # If redbot is installed in a virtualenv
-    source redenv/bin/activate
+    whoami
+
+Next, your python :code:`path` can be fetched with the following commands:
+
+.. code-block:: bash
+
+    # If redbot is installed in a venv
+    source ~/redenv/bin/activate
     which python
 
-    # If you are using pyenv
-    pyenv shell <name>
+    # If redbot is installed in a pyenv virtualenv
+    pyenv shell <virtualenv_name>
     pyenv which python
 
 Then create the new service file:
 
 :code:`sudo -e /etc/systemd/system/red@.service`
 
-Paste the following and replace all instances of :code:`username` with the username, and :code:`path` with the location you obtained above:
+Paste the following in the file, and replace all instances of :code:`username` with the Linux username you retrieved above, and :code:`path` with the python path you retrieved above.
 
 .. code-block:: none
 
     [Unit]
     Description=%I redbot
     After=multi-user.target
+    After=network-online.target
+    Wants=network-online.target
 
     [Service]
     ExecStart=path -O -m redbot %I --no-prompt

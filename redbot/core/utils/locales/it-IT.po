@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-14 04:24+0000\n"
-"PO-Revision-Date: 2020-01-07 21:48\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -12,58 +11,57 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: it\n"
-"X-Crowdin-File: /utils/locales/messages.pot\n"
 "Language: it_IT\n"
 
-#: redbot/core/utils/chat_formatting.py:369
+#: redbot/core/utils/chat_formatting.py:388
 msgid ", and "
 msgstr ", e "
 
-#: redbot/core/utils/chat_formatting.py:414
+#: redbot/core/utils/chat_formatting.py:455
 msgid "year"
 msgstr "anno"
 
-#: redbot/core/utils/chat_formatting.py:414
+#: redbot/core/utils/chat_formatting.py:455
 msgid "years"
 msgstr "anni"
 
-#: redbot/core/utils/chat_formatting.py:415
+#: redbot/core/utils/chat_formatting.py:456
 msgid "month"
 msgstr "mese"
 
-#: redbot/core/utils/chat_formatting.py:415
+#: redbot/core/utils/chat_formatting.py:456
 msgid "months"
 msgstr "mesi"
 
-#: redbot/core/utils/chat_formatting.py:416
+#: redbot/core/utils/chat_formatting.py:457
 msgid "day"
 msgstr "giorno"
 
-#: redbot/core/utils/chat_formatting.py:416
+#: redbot/core/utils/chat_formatting.py:457
 msgid "days"
 msgstr "giorni"
 
-#: redbot/core/utils/chat_formatting.py:417
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hour"
 msgstr "ora"
 
-#: redbot/core/utils/chat_formatting.py:417
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hours"
 msgstr "ore"
 
-#: redbot/core/utils/chat_formatting.py:418
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minute"
 msgstr "minuti"
 
-#: redbot/core/utils/chat_formatting.py:418
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minutes"
 msgstr "minuti"
 
-#: redbot/core/utils/chat_formatting.py:419
+#: redbot/core/utils/chat_formatting.py:460
 msgid "second"
 msgstr "secondi"
 
-#: redbot/core/utils/chat_formatting.py:419
+#: redbot/core/utils/chat_formatting.py:460
 msgid "seconds"
 msgstr "secondi"
 

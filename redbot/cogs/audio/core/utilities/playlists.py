@@ -9,6 +9,7 @@ from typing import List, MutableMapping, Optional, Tuple, Union
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
@@ -30,7 +31,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
         self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
     ) -> bool:
-        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_owner = await self.bot.is_owner(ctx.author)
         has_perms = False
         user_to_query = user
         guild_to_query = guild
@@ -56,7 +57,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if (
                 guild.owner_id == ctx.author.id
                 or (dj_enabled and await self._has_dj_role(ctx, ctx.author))
-                or (await ctx.bot.is_mod(ctx.author))
+                or (await self.bot.is_mod(ctx.author))
                 or (not dj_enabled and not is_different_user)
             ):
                 has_perms = True
@@ -93,17 +94,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(user=playlist_author)
             else:
                 msg = _(
-                    "You do not have the permissions to manage "
-                    "playlists in {scope} scope.".format(
-                        scope=self.humanize_scope(scope, the=True)
-                    )
-                )
+                    "You do not have the permissions to manage playlists in {scope} scope."
+                ).format(scope=self.humanize_scope(scope, the=True))
 
-            await self._embed_msg(ctx, title=_("No access to playlist."), description=msg)
+            await self.send_embed_msg(ctx, title=_("No access to playlist."), description=msg)
             return False
         return True
 
-    async def _get_correct_playlist_id(
+    async def get_playlist_match(
         self,
         context: commands.Context,
         matches: MutableMapping,
@@ -222,7 +220,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         playlists = f"{'#':{pos_len}}\n"
         number = 0
         correct_scope_matches = sorted(correct_scope_matches, key=lambda x: x.name.lower())
-        for number, playlist in enumerate(correct_scope_matches, 1):
+        async for number, playlist in AsyncIter(correct_scope_matches).enumerate(start=1):
             author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
             line = _(
                 "{number}."
@@ -283,12 +281,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         plist_idx_start = (page_num - 1) * 5
         plist_idx_end = plist_idx_start + 5
         plist = ""
-        for i, playlist_info in enumerate(
-            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
-        ):
+        async for i, playlist_info in AsyncIter(
+            abc_names[plist_idx_start:plist_idx_end]
+        ).enumerate(start=plist_idx_start):
             item_idx = i + 1
             plist += "`{}.` {}".format(item_idx, playlist_info)
-            await asyncio.sleep(0)
         if scope is None:
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
@@ -319,7 +316,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild: Union[discord.Guild],
     ) -> None:
         embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
-        playlist_msg = await self._embed_msg(ctx, embed=embed1)
+        playlist_msg = await self.send_embed_msg(ctx, embed=embed1)
         track_count = len(track_list)
         uploaded_track_count = len(track_list)
         await asyncio.sleep(1)
@@ -364,7 +361,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
         database_entries = []
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-        for t in track_list:
+        async for t in AsyncIter(track_list):
             uri = t.get("info", {}).get("uri")
             if uri:
                 t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
@@ -393,23 +390,21 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild: Union[discord.Guild],
     ):
         track_list = []
-        track_count = 0
         successful_count = 0
         uploaded_track_count = len(uploaded_track_list)
 
         embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
-        playlist_msg = await self._embed_msg(ctx, embed=embed1)
+        playlist_msg = await self.send_embed_msg(ctx, embed=embed1)
         notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
-        for song_url in uploaded_track_list:
-            track_count += 1
+        async for track_count, song_url in AsyncIter(uploaded_track_list).enumerate(start=1):
             try:
                 try:
                     result, called_api = await self.api_interface.fetch_track(
                         ctx, player, Query.process_input(song_url, self.local_folder_current_path)
                     )
                 except TrackEnqueueError:
-                    self._play_lock(ctx, False)
-                    return await self._embed_msg(
+                    self.update_player_lock(ctx, False)
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
@@ -423,7 +418,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 debug_exc_log(log, err, f"Failed to get track for {song_url}")
                 continue
             try:
-                track_obj = self.track_creator(player, other_track=track)
+                track_obj = self.get_track_json(player, other_track=track)
                 track_list.append(track_obj)
                 successful_count += 1
             except Exception as err:
@@ -471,8 +466,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if playlist.url is None:
             return [], [], playlist
         results = {}
-        updated_tracks = await self._playlist_tracks(
-            ctx, player, Query.process_input(playlist.url, self.local_folder_current_path)
+        updated_tracks = await self.fetch_playlist_tracks(
+            ctx,
+            player,
+            Query.process_input(playlist.url, self.local_folder_current_path),
+            skip_cache=True,
         )
         if isinstance(updated_tracks, discord.Message):
             return [], [], playlist
@@ -496,17 +494,17 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
                 desc = EmptyEmbed
-                if await ctx.bot.is_owner(ctx.author):
+                if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
-                await self._embed_msg(ctx, title=msg, description=desc)
+                await self.send_embed_msg(ctx, title=msg, description=desc)
                 return False
             try:
                 if (
                     not ctx.author.voice.channel.permissions_for(ctx.me).connect
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.userlimit(ctx.author.voice.channel)
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
-                    await self._embed_msg(
+                    await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Playlists"),
                         description=_("I don't have permission to connect to your channel."),
@@ -516,14 +514,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except IndexError:
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
                 return False
             except AttributeError:
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
                     description=_("Connect to a voice channel first."),
@@ -536,18 +534,22 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
-            await self._embed_msg(
+            await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Get Playlists"),
                 description=_("You must be in the voice channel to use the playlist command."),
             )
             return False
         await self._eq_check(ctx, player)
-        await self._data_check(ctx)
+        await self.set_player_settings(ctx)
         return True
 
-    async def _playlist_tracks(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, query: Query
+    async def fetch_playlist_tracks(
+        self,
+        ctx: commands.Context,
+        player: lavalink.player_manager.Player,
+        query: Query,
+        skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
         search = query.is_search
         tracklist = []
@@ -555,14 +557,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if query.is_spotify:
             try:
                 if self.play_lock[ctx.message.guild.id]:
-                    return await self._embed_msg(
+                    return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Tracks"),
                         description=_("Wait until the playlist has finished loading."),
                     )
             except KeyError:
                 pass
-            tracks = await self._get_spotify_tracks(ctx, query)
+            tracks = await self._get_spotify_tracks(ctx, query, forced=skip_cache)
 
             if isinstance(tracks, discord.Message):
                 return None
@@ -575,18 +577,19 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
                     ).format(suffix=query.suffix)
-                return await self._embed_msg(ctx, embed=embed)
-            for track in tracks:
-                track_obj = self.track_creator(player, other_track=track)
+                return await self.send_embed_msg(ctx, embed=embed)
+            async for track in AsyncIter(tracks):
+                track_obj = self.get_track_json(player, other_track=track)
                 tracklist.append(track_obj)
-                await asyncio.sleep(0)
-            self._play_lock(ctx, False)
+            self.update_player_lock(ctx, False)
         elif query.is_search:
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(
+                    ctx, player, query, forced=skip_cache
+                )
             except TrackEnqueueError:
-                self._play_lock(ctx, False)
-                return await self._embed_msg(
+                self.update_player_lock(ctx, False)
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
@@ -604,13 +607,15 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "**{suffix}** is not a fully supported format and some "
                         "tracks may not play."
                     ).format(suffix=query.suffix)
-                return await self._embed_msg(ctx, embed=embed)
+                return await self.send_embed_msg(ctx, embed=embed)
         else:
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(
+                    ctx, player, query, forced=skip_cache
+                )
             except TrackEnqueueError:
-                self._play_lock(ctx, False)
-                return await self._embed_msg(
+                self.update_player_lock(ctx, False)
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
@@ -622,12 +627,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             tracks = result.tracks
 
         if not search and len(tracklist) == 0:
-            for track in tracks:
-                track_obj = self.track_creator(player, other_track=track)
+            async for track in AsyncIter(tracks):
+                track_obj = self.get_track_json(player, other_track=track)
                 tracklist.append(track_obj)
-                await asyncio.sleep(0)
         elif len(tracklist) == 0:
-            track_obj = self.track_creator(player, other_track=tracks[0])
+            track_obj = self.get_track_json(player, other_track=tracks[0])
             tracklist.append(track_obj)
         return tracklist
 

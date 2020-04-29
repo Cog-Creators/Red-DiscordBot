@@ -1,23 +1,34 @@
-import asyncio
 import contextlib
 import glob
+import logging
 import ntpath
 import os
 import posixpath
 import re
 from pathlib import Path, PosixPath, WindowsPath
-from typing import AsyncIterator, Final, Iterator, MutableMapping, Optional, Tuple, Union, Callable
+from typing import (
+    AsyncIterator,
+    Final,
+    Iterator,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+    Callable,
+    Pattern,
+)
 from urllib.parse import urlparse
 
 import lavalink
+from redbot.core.utils import AsyncIter
 
-_RE_REMOVE_START: Final[re.Pattern] = re.compile(r"^(sc|list) ")
-_RE_YOUTUBE_TIMESTAMP: Final[re.Pattern] = re.compile(r"&t=(\d+)s?")
-_RE_YOUTUBE_INDEX: Final[re.Pattern] = re.compile(r"&index=(\d+)")
-_RE_SPOTIFY_URL: Final[re.Pattern] = re.compile(r"(http[s]?://)?(open.spotify.com)/")
-_RE_SPOTIFY_TIMESTAMP: Final[re.Pattern] = re.compile(r"#(\d+):(\d+)")
-_RE_SOUNDCLOUD_TIMESTAMP: Final[re.Pattern] = re.compile(r"#t=(\d+):(\d+)s?")
-_RE_TWITCH_TIMESTAMP: Final[re.Pattern] = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
+_RE_REMOVE_START: Final[Pattern] = re.compile(r"^(sc|list) ")
+_RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"[&|?]t=(\d+)s?")
+_RE_YOUTUBE_INDEX: Final[Pattern] = re.compile(r"&index=(\d+)")
+_RE_SPOTIFY_URL: Final[Pattern] = re.compile(r"(http[s]?://)?(open.spotify.com)/")
+_RE_SPOTIFY_TIMESTAMP: Final[Pattern] = re.compile(r"#(\d+):(\d+)")
+_RE_SOUNDCLOUD_TIMESTAMP: Final[Pattern] = re.compile(r"#t=(\d+):(\d+)s?")
+_RE_TWITCH_TIMESTAMP: Final[Pattern] = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 _PATH_SEPS: Final[Tuple[str, str]] = (posixpath.sep, ntpath.sep)
 
 _FULLY_SUPPORTED_MUSIC_EXT: Final[Tuple[str, ...]] = (".mp3", ".flac", ".ogg")
@@ -63,6 +74,9 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
+log = logging.getLogger("red.cogs.Audio.audio_dataclasses")
+
+
 class LocalPath:
     """Local tracks class.
 
@@ -83,7 +97,6 @@ class LocalPath:
         self.cwd = Path.cwd()
         _lt_folder = Path(self._localtrack_folder) if self._localtrack_folder else self.cwd
         _path = Path(path) if path else self.cwd
-
         if _lt_folder.parts[-1].lower() == "localtracks" and not kwargs.get("forced"):
             self.localtrack_folder = _lt_folder
         elif kwargs.get("forced"):
@@ -155,32 +168,35 @@ class LocalPath:
 
     def rglob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return glob.iglob(f"{self.path}{os.sep}**{os.sep}", recursive=True)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}**{os.sep}", recursive=True)
         else:
-            return glob.iglob(f"{self.path}{os.sep}**{os.sep}{pattern}", recursive=True)
+            return glob.iglob(
+                f"{glob.escape(self.path)}{os.sep}**{os.sep}*{pattern}", recursive=True
+            )
 
     def glob(self, pattern, folder=False) -> Iterator[str]:
         if folder:
-            return glob.iglob(f"{self.path}{os.sep}*{os.sep}", recursive=False)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}*{os.sep}", recursive=False)
         else:
-            return glob.iglob(f"{self.path}{os.sep}*{pattern}", recursive=False)
+            return glob.iglob(f"{glob.escape(self.path)}{os.sep}*{pattern}", recursive=False)
 
-    async def _multiglob(self, pattern: str, folder: bool, callable: Callable):
-        for rp in callable(pattern):
+    async def _multiglob(self, pattern: str, folder: bool, method: Callable):
+        async for rp in AsyncIter(method(pattern)):
             rp_local = LocalPath(rp, self._localtrack_folder)
-            if (folder and rp_local.is_dir() and rp_local.exists()) or (
-                rp_local.suffix in self._all_music_ext and rp_local.is_file() and rp_local.exists()
+            if (
+                (folder and rp_local.is_dir() and rp_local.exists())
+                or (not folder and rp_local.suffix in self._all_music_ext and rp_local.is_file())
+                and rp_local.exists()
             ):
                 yield rp_local
-                await asyncio.sleep(0)
 
     async def multiglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
-        for p in patterns:
+        async for p in AsyncIter(patterns):
             async for path in self._multiglob(p, folder, self.glob):
                 yield path
 
     async def multirglob(self, *patterns, folder=False) -> AsyncIterator["LocalPath"]:
-        for p in patterns:
+        async for p in AsyncIter(patterns):
             async for path in self._multiglob(p, folder, self.rglob):
                 yield path
 
@@ -225,6 +241,7 @@ class LocalPath:
             with contextlib.suppress(ValueError):
                 if (
                     f not in return_folders
+                    and f.is_dir()
                     and f.path != self.localtrack_folder
                     and f.path.relative_to(self.path)
                 ):
@@ -342,6 +359,7 @@ class Query:
             self.local_track_path: Optional[LocalPath] = _localtrack
             self.track: str = str(_localtrack.absolute())
             self.is_local: bool = True
+            self.uri = self.track
         else:
             self.local_track_path: Optional[LocalPath] = None
             self.track: str = str(query)
@@ -488,7 +506,7 @@ class Query:
                     if url_domain in ["youtube.com", "youtu.be"]:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
-                        if "&t=" in track:
+                        if "&t=" in track or "?t=" in track:
                             match = re.search(_RE_YOUTUBE_TIMESTAMP, track)
                             if match:
                                 returning["start_time"] = int(match.group(1))
