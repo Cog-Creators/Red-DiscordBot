@@ -450,7 +450,7 @@ class AudioAPIInterface:
 
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
-            for track_count, track in enumerate(tracks_from_spotify):
+            async for track_count, track in AsyncIter(tracks_from_spotify).enumerate(start=1):
                 (
                     song_url,
                     track_info,

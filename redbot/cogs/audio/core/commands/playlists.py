@@ -873,7 +873,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         page_list = []
         pages = list(pagify(msg, delims=["\n"], page_length=2000))
         total_pages = len(pages)
-        for numb, page in enumerate(pages, start=1):
+        async for numb, page in AsyncIter(pages).enumerate(start=1):
             embed = discord.Embed(
                 colour=await ctx.embed_colour(), title=embed_title, description=page
             )
@@ -1662,7 +1662,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 page_count = 0
                 if removed:
                     removed_text = ""
-                    for i, track in enumerate(removed, 1):
+                    async for i, track in AsyncIter(removed).enumerate(start=1):
                         if len(track.title) > 40:
                             track_title = str(track.title).replace("[", "")
                             track_title = "{}...".format((track_title[:40]).rstrip(" "))
@@ -1682,7 +1682,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             removed_text = ""
                 if added:
                     added_text = ""
-                    for i, track in enumerate(added, 1):
+                    async for i, track in AsyncIter(added).enumerate(start=1):
                         if len(track.title) > 40:
                             track_title = str(track.title).replace("[", "")
                             track_title = "{}...".format((track_title[:40]).rstrip(" "))
