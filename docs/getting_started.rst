@@ -270,7 +270,7 @@ If you want to do it, follow these steps.
 2. **Install Linux**
 
   Most of the VPS providers have tools for installing Linux automatically. If
-  you're a beginner, we recommend **Ubuntu 18**.
+  you're a beginner, we recommend **Ubuntu 20.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
@@ -351,6 +351,11 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
         Arguments enclosed in ``[ ]`` means that the argument is **optional**
         for the command; you can decide to use it or not.
+        
+        If your argument includes spaces like ``Hello world!``, most of the time
+        you will need to place it in double quotes like this: ``"Hello world!"``.
+        Sometimes (especially for the last argument) these double quotes are not
+        required.
 
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.

@@ -1,9 +1,10 @@
-import asyncio
 import concurrent
 import json
 import logging
 from types import SimpleNamespace
 from typing import List, MutableMapping, Optional
+
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -149,12 +150,8 @@ class PlaylistWrapper:
                     except Exception as exc:
                         debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
                         return []
-
-        for index, row in enumerate(row_result, start=1):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
+        async for row in AsyncIter(row_result):
             output.append(PlaylistFetchResult(*row))
-            await asyncio.sleep(0)
         return output
 
     async def fetch_all_converter(
@@ -190,12 +187,8 @@ class PlaylistWrapper:
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
 
-            for index, row in enumerate(row_result, start=1):
-                if index % 50 == 0:
-                    await asyncio.sleep(0.01)
+            async for row in AsyncIter(row_result):
                 output.append(PlaylistFetchResult(*row))
-                await asyncio.sleep(0)
-
         return output
 
     async def delete(self, scope: str, playlist_id: int, scope_id: int):

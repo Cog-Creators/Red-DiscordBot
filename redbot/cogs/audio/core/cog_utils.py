@@ -2,13 +2,13 @@ from abc import ABC
 from pathlib import Path
 from typing import Final
 
-from redbot import VersionInfo, version_info
+from redbot import VersionInfo
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
 from ..converters import get_lazy_converter, get_playlist_converter
 
-__version__ = VersionInfo.from_json({"major": 2, "minor": 0, "micro": 0, "dev_release": "99"})
+__version__ = VersionInfo.from_json({"major": 2, "minor": 0, "micro": 0, "releaselevel": "final"})
 
 __author__ = ["aikaterna", "Draper"]
 

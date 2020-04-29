@@ -202,15 +202,15 @@ the built-in Economy credits::
 
     class Pets:
         def __init__(self):
-            self.conf = Config.get_conf(self, 1234567890)
+            self.config = Config.get_conf(self, 1234567890)
 
             # Here we'll assign some default costs for the pets
-            self.conf.register_global(
+            self.config.register_global(
                 dog=100,
                 cat=100,
                 bird=50
             )
-            self.conf.register_user(
+            self.config.register_user(
                 pets={}
             )
 
@@ -229,7 +229,7 @@ And now that the cog is set up we'll need to create some commands that allow use
 
             # We will need to use "get_raw"
             try:
-                cost = await self.conf.get_raw(pet_type)
+                cost = await self.config.get_raw(pet_type)
             except KeyError:
                 # KeyError is thrown whenever the data you try to access does not
                 # exist in the registered defaults or in the saved data.
@@ -241,15 +241,15 @@ assign a new pet to the user. This is very easily done using the V3 bank API and
 
     # continued
             if await bank.can_spend(ctx.author, cost):
-                await self.conf.user(ctx.author).pets.set_raw(
+                await self.config.user(ctx.author).pets.set_raw(
                     pet_name, value={'cost': cost, 'hunger': 0}
                 )
 
                 # this is equivalent to doing the following
 
-                pets = await self.conf.user(ctx.author).pets()
+                pets = await self.config.user(ctx.author).pets()
                 pets[pet_name] = {'cost': cost, 'hunger': 0}
-                await self.conf.user(ctx.author).pets.set(pets)
+                await self.config.user(ctx.author).pets.set(pets)
 
 Since the pets can get hungry we're gonna need a command that let's pet owners check how hungry their pets are::
 
@@ -257,7 +257,7 @@ Since the pets can get hungry we're gonna need a command that let's pet owners c
         @commands.command()
         async def hunger(self, ctx, pet_name: str):
             try:
-                hunger = await self.conf.user(ctx.author).pets.get_raw(pet_name, 'hunger')
+                hunger = await self.config.user(ctx.author).pets.get_raw(pet_name, 'hunger')
             except KeyError:
                 # Remember, this is thrown if something in the provided identifiers
                 # is not found in the saved data or the defaults.
@@ -274,7 +274,7 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
             # This is a bit more complicated because we need to check if the pet is
             # owned first.
             try:
-                pet = await self.conf.user(ctx.author).pets.get_raw(pet_name)
+                pet = await self.config.user(ctx.author).pets.get_raw(pet_name)
             except KeyError:
                 # If the given pet name doesn't exist in our data
                 await ctx.send("You don't own that pet!")
@@ -285,12 +285,12 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
             # Determine the new hunger and make sure it doesn't go negative
             new_hunger = max(hunger - food, 0)
 
-            await self.conf.user(ctx.author).pets.set_raw(
+            await self.config.user(ctx.author).pets.set_raw(
                 pet_name, 'hunger', value=new_hunger
             )
 
             # We could accomplish the same thing a slightly different way
-            await self.conf.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
+            await self.config.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
 
             await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger)
 
@@ -300,7 +300,7 @@ Of course, if we're less than responsible pet owners, there are consequences::
         @commands.command()
         async def adopt(self, ctx, pet_name: str, *, member: discord.Member):
             try:
-                pet = await self.conf.user(member).pets.get_raw(pet_name)
+                pet = await self.config.user(member).pets.get_raw(pet_name)
             except KeyError:
                 await ctx.send("That person doesn't own that pet!")
                 return
@@ -310,15 +310,15 @@ Of course, if we're less than responsible pet owners, there are consequences::
                 await ctx.send("That pet is too well taken care of to be adopted.")
                 return
 
-            await self.conf.user(member).pets.clear_raw(pet_name)
+            await self.config.user(member).pets.clear_raw(pet_name)
 
             # this is equivalent to doing the following
 
-            pets = await self.conf.user(member).pets()
+            pets = await self.config.user(member).pets()
             del pets[pet_name]
-            await self.conf.user(member).pets.set(pets)
+            await self.config.user(member).pets.set(pets)
 
-            await self.conf.user(ctx.author).pets.set_raw(pet_name, value=pet)
+            await self.config.user(ctx.author).pets.set_raw(pet_name, value=pet)
             await ctx.send(
                 "Your request to adopt this pet has been granted due to "
                 "how poorly it was taken care of."
@@ -351,15 +351,15 @@ much the same way they would in V2. The following examples will demonstrate how 
 
     class ExampleCog:
         def __init__(self):
-            self.conf = Config.get_conf(self, 1234567890)
+            self.config = Config.get_conf(self, 1234567890)
 
             self.data = {}
 
         async def load_data(self):
-            self.data = await self.conf.custom("V2", "V2").all()
+            self.data = await self.config.custom("V2", "V2").all()
 
         async def save_data(self):
-            await self.conf.custom("V2", "V2").set(self.data)
+            await self.config.custom("V2", "V2").set(self.data)
 
 
     async def setup(bot):
@@ -407,13 +407,13 @@ API Reference
     includes keys within a `dict` when one is being set, as well as keys in  nested dictionaries
     within that `dict`. For example::
 
-        >>> conf = Config.get_conf(self, identifier=999)
-        >>> conf.register_global(foo={})
-        >>> await conf.foo.set_raw(123, value=True)
-        >>> await conf.foo()
+        >>> config = Config.get_conf(self, identifier=999)
+        >>> config.register_global(foo={})
+        >>> await config.foo.set_raw(123, value=True)
+        >>> await config.foo()
         {'123': True}
-        >>> await conf.foo.set({123: True, 456: {789: False}}
-        >>> await conf.foo()
+        >>> await config.foo.set({123: True, 456: {789: False}}
+        >>> await config.foo()
         {'123': True, '456': {'789': False}}
 
 .. automodule:: redbot.core.config

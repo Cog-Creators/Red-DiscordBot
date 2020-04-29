@@ -4,6 +4,7 @@ import time
 from typing import Dict
 
 import lavalink
+from redbot.core.utils import AsyncIter
 
 from ...audio_logging import debug_exc_log
 from ..abc import MixinMeta
@@ -17,7 +18,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         stop_times: Dict = {}
         pause_times: Dict = {}
         while True:
-            for p in lavalink.all_players():
+            async for p in AsyncIter(lavalink.all_players()):
                 server = p.channel.guild
 
                 if [self.bot.user] == p.channel.members:
@@ -37,7 +38,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     pause_times.pop(server.id, None)
             servers = stop_times.copy()
             servers.update(pause_times)
-            for sid in servers:
+            async for sid in AsyncIter(servers, steps=5):
                 server_obj = self.bot.get_guild(sid)
                 if sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()

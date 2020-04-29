@@ -554,3 +554,109 @@ async def test_config_ctxmgr_atomicity(config):
     await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
     assert len(await config.foo()) == 15
+
+
+@pytest.mark.asyncio
+async def test_set_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 3)
+    await config.custom("CUSTOM", "1").set({"11": {"111": {"foo": "bar"}}})
+    assert await config.custom("CUSTOM", "1", "11", "111").foo() == "bar"
+
+    await config.custom("CUSTOM", "2").set(
+        {
+            "11": {"111": {"foo": "bad"}},
+            "22": {"111": {"foo": "baz"}},
+            "33": {"111": {"foo": "boo"}, "222": {"foo": "boz"}},
+        }
+    )
+    assert await config.custom("CUSTOM", "2", "11", "111").foo() == "bad"
+    assert await config.custom("CUSTOM", "2", "22", "111").foo() == "baz"
+    assert await config.custom("CUSTOM", "2", "33", "111").foo() == "boo"
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "boz"
+
+    await config.custom("CUSTOM", "2").set({"22": {}, "33": {"111": {}, "222": {"foo": "biz"}}})
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "11")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "22", "111")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "33", "111", "foo")
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "biz"
+
+
+@pytest.mark.asyncio
+async def test_raw_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 1)
+    await config.custom("CUSTOM").set_raw("primary_key", "identifier", value=True)
+    assert await config.custom("CUSTOM", "primary_key").identifier() is True
+    await config.custom("CUSTOM").set_raw(value={"primary_key": {"identifier": False}})
+    assert await config.custom("CUSTOM", "primary_key").identifier() is False
+
+
+"""
+Following PARAMS can be generated with:
+from functools import reduce
+from pprint import pprint
+def generate_test_args(print_args=True):
+    pkeys = ("1", "2", "3")
+    identifiers = ("foo",)
+    full_dict = {"1": {"2": {"3": {"foo": "bar"}}}}
+    argvalues = [
+        (
+            pkeys[:x],
+            (pkeys[x:] + identifiers)[:y],
+            reduce(lambda d, k: d[k], (pkeys + identifiers)[:x+y], full_dict),
+        )
+        for x in range(len(pkeys) + 1)
+        for y in range(len(pkeys) + len(identifiers) - x + 1)
+    ]
+    if print_args:
+        print("[")
+        for args in argvalues:
+            print(f"    {args!r},")
+        print("]")
+    else:
+        return argvalues
+generate_test_args()
+"""
+PARAMS = [
+    ((), (), {"1": {"2": {"3": {"foo": "bar"}}}}),
+    ((), (1,), {"2": {"3": {"foo": "bar"}}}),
+    ((), (1, 2), {"3": {"foo": "bar"}}),
+    ((), (1, 2, 3), {"foo": "bar"}),
+    ((), (1, 2, 3, "foo"), "bar"),
+    ((1,), (), {"2": {"3": {"foo": "bar"}}}),
+    ((1,), (2,), {"3": {"foo": "bar"}}),
+    ((1,), (2, 3), {"foo": "bar"}),
+    ((1,), (2, 3, "foo"), "bar"),
+    ((1, 2), (), {"3": {"foo": "bar"}}),
+    ((1, 2), (3,), {"foo": "bar"}),
+    ((1, 2), (3, "foo"), "bar"),
+    ((1, 2, 3), (), {"foo": "bar"}),
+    ((1, 2, 3), ("foo",), "bar"),
+]
+
+
+@pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
+@pytest.mark.asyncio
+async def test_config_custom_partial_pkeys_get(config, pkeys, raw_args, result):
+    # setup
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+    await config.custom("TEST", 1, 2, 3).set({"foo": "bar"})
+
+    group = config.custom("TEST", *pkeys)
+    assert await group.get_raw(*raw_args) == result
+
+
+@pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
+@pytest.mark.asyncio
+async def test_config_custom_partial_pkeys_set(config, pkeys, raw_args, result):
+    # setup
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+    await config.custom("TEST", 1, 2, 3).set({"foo": "blah"})
+
+    group = config.custom("TEST", *pkeys)
+    await group.set_raw(*raw_args, value=result)
+    assert await group.get_raw(*raw_args) == result

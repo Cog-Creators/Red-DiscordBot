@@ -2,24 +2,28 @@ import asyncio
 import contextlib
 import datetime
 import functools
+import json
 import logging
 import re
-from typing import Any, Final, MutableMapping, Union
+from typing import Any, Final, MutableMapping, Union, cast, Mapping, Pattern
 
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
-from redbot.core import bank, commands, Config
+from redbot.core import bank, commands
 from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass, _, _SCHEMA_VERSION
+from ...apis.playlist_interface import get_all_playlist_for_migration23
+from ...utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 
-_RE_TIME_CONVERTER: Final[re.Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}
 
 
@@ -30,7 +34,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         """Non blocking version of clear_react."""
         return self.bot.loop.create_task(self.clear_react(message, emoji))
 
-    async def _currency_check(self, ctx: commands.Context, jukebox_price: int) -> bool:
+    async def maybe_charge_requester(self, ctx: commands.Context, jukebox_price: int) -> bool:
         jukebox = await self.config.guild(ctx.guild).jukebox()
         if jukebox and not await self._can_instaskip(ctx, ctx.author):
             can_spend = await bank.can_spend(ctx.author, jukebox_price)
@@ -39,7 +43,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 credits_name = await bank.get_currency_name(ctx.guild)
                 bal = await bank.get_balance(ctx.author)
-                await self._embed_msg(
+                await self.send_embed_msg(
                     ctx,
                     title=_("Not enough {currency}").format(currency=credits_name),
                     description=_(
@@ -54,7 +58,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return True
 
-    async def _embed_msg(self, ctx: commands.Context, **kwargs) -> discord.Message:
+    async def send_embed_msg(
+        self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
+    ) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
@@ -80,9 +86,16 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             embed.set_footer(text=footer)
         if thumbnail:
             embed.set_thumbnail(url=thumbnail)
+        if author:
+            name = author.get("name")
+            url = author.get("url")
+            if name and url:
+                embed.set_author(name=name, icon_url=url)
+            elif name:
+                embed.set_author(name=name)
         return await ctx.send(embed=embed)
 
-    async def _process_db(self, ctx: commands.Context) -> None:
+    async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
             await self.api_interface.run_tasks(ctx)
 
@@ -100,7 +113,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "youtube_api": youtube.get("api_key", ""),
         }
 
-    async def _check_external(self) -> bool:
+    async def update_external_status(self) -> bool:
         external = await self.config.use_external_lavalink()
         if not external:
             if self.player_manager is not None:
@@ -136,13 +149,12 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if not emoji:
                 return
             with contextlib.suppress(discord.HTTPException):
-                for key in emoji.values():
-                    await asyncio.sleep(0.2)
+                async for key in AsyncIter(emoji.values(), delay=0.2):
                     await message.remove_reaction(key, self.bot.user)
         except discord.HTTPException:
             return
 
-    def track_creator(
+    def get_track_json(
         self,
         player: lavalink.Player,
         position: Union[int, str] = None,
@@ -190,7 +202,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
         duration = []
-        for i in range(len(player.queue)):
+        async for i in AsyncIter(range(len(player.queue))):
             if not player.queue[i].is_stream:
                 duration.append(player.queue[i].length)
         queue_dur = sum(duration)
@@ -219,7 +231,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             remain = 0
         return remain
 
-    def dynamic_time(self, seconds: int) -> str:
+    def get_time_string(self, seconds: int) -> str:
         m, s = divmod(seconds, 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)
@@ -248,9 +260,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             day = "%02d:" % days
         if hours or day:
             hour = "%02d:" % hours
-        min = "%02d:" % minutes
+        minutes = "%02d:" % minutes
         sec = "%02d" % seconds
-        return f"{day}{hour}{min}{sec}"
+        return f"{day}{hour}{minutes}{sec}"
 
     async def get_lyrics_status(self, ctx: Context) -> bool:
         global _prefer_lyrics_cache
@@ -258,3 +270,66 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
         )
         return prefer_lyrics
+
+    async def data_schema_migration(self, from_version: int, to_version: int) -> None:
+        database_entries = []
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        if from_version == to_version:
+            return
+        if from_version < 2 <= to_version:
+            all_guild_data = await self.config.all_guilds()
+            all_playlist = {}
+            async for guild_id, guild_data in AsyncIter(all_guild_data.items()):
+                temp_guild_playlist = guild_data.pop("playlists", None)
+                if temp_guild_playlist:
+                    guild_playlist = {}
+                    async for count, (name, data) in AsyncIter(
+                        temp_guild_playlist.items()
+                    ).enumerate(start=1000):
+                        if not data or not name:
+                            continue
+                        playlist = {"id": count, "name": name, "guild": int(guild_id)}
+                        playlist.update(data)
+                        guild_playlist[str(count)] = playlist
+
+                        tracks_in_playlist = data.get("tracks", []) or []
+                        async for t in AsyncIter(tracks_in_playlist):
+                            uri = t.get("info", {}).get("uri")
+                            if uri:
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
+                                data = json.dumps(t)
+                                if all(
+                                    k in data
+                                    for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]
+                                ):
+                                    database_entries.append(
+                                        {
+                                            "query": uri,
+                                            "data": data,
+                                            "last_updated": time_now,
+                                            "last_fetched": time_now,
+                                        }
+                                    )
+                    if guild_playlist:
+                        all_playlist[str(guild_id)] = guild_playlist
+            await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
+            # new schema is now in place
+            await self.config.schema_version.set(2)
+
+            # migration done, now let's delete all the old stuff
+            async for guild_id in AsyncIter(all_guild_data):
+                await self.config.guild(
+                    cast(discord.Guild, discord.Object(id=guild_id))
+                ).clear_raw("playlists")
+        if from_version < 3 <= to_version:
+            for scope in PlaylistScope.list():
+                scope_playlist = await get_all_playlist_for_migration23(
+                    self.bot, self.playlist_api, self.config, scope
+                )
+                async for p in AsyncIter(scope_playlist):
+                    await p.save()
+                await self.config.custom(scope).clear()
+            await self.config.schema_version.set(3)
+
+        if database_entries:
+            await self.api_interface.local_cache_api.lavalink.insert(database_entries)

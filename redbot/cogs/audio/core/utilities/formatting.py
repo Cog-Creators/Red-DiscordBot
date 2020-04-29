@@ -1,12 +1,13 @@
-import asyncio
 import datetime
 import logging
 import math
+import re
 from typing import List, Optional
 
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box, escape
@@ -17,6 +18,8 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+
+RE_SQUARE = re.compile(r"[\[\]]")
 
 
 class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -55,22 +58,21 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
         search_list = ""
-        for i, entry in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+        async for i, entry in AsyncIter(tracks[search_idx_start:search_idx_end]).enumerate(
+            start=search_idx_start
+        ):
             search_track_num = i + 1
             if search_track_num > 5:
                 search_track_num = search_track_num % 5
             if search_track_num == 0:
                 search_track_num = 5
             if playlist:
-                name = "**[{}]({})** - {}".format(
-                    entry.get("name"),
-                    entry.get("url"),
-                    str(entry.get("tracks")) + " " + _("tracks"),
+                name = "**[{}]({})** - {} {}".format(
+                    entry.get("name"), entry.get("url"), str(entry.get("tracks")), _("tracks")
                 )
             else:
                 name = f"{list(entry.keys())[0]}"
-            search_list += "`{}.` {}\n".format(search_track_num, name)
-            await asyncio.sleep(0)
+            search_list += f"`{search_track_num}.` {name}\n"
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(), title=title, description=search_list
@@ -89,26 +91,26 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed.")
                 description = EmptyEmbed
-                if await ctx.bot.is_owner(ctx.author):
+                if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
-                return await self._embed_msg(ctx, title=msg, description=description)
+                return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
-                return await self._embed_msg(ctx, title=_("Connect to a voice channel first."))
+                return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
-                return await self._embed_msg(
+                return await self.send_embed_msg(
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
-            return await self._embed_msg(
+            return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self._currency_check(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
@@ -125,7 +127,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 search_choice = tracks[0 + (page * 5)]
         except IndexError:
             search_choice = tracks[-1]
-        if getattr(search_choice, "uri", None):
+        if not hasattr(search_choice, "is_local") and getattr(search_choice, "uri", None):
             description = self.get_track_description(search_choice, self.local_folder_current_path)
         else:
             search_choice = Query.process_input(search_choice, self.local_folder_current_path)
@@ -147,7 +149,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
 
-        if not await self.is_allowed(
+        if not await self.is_query_allowed(
             self.config,
             ctx.guild,
             (
@@ -157,18 +159,20 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         ):
             if IS_DEBUG:
                 log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
-            self._play_lock(ctx, False)
-            return await self._embed_msg(ctx, title=_("This track is not allowed in this server."))
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx, title=_("This track is not allowed in this server.")
+            )
         elif guild_data["maxlength"] > 0:
 
-            if self.track_limit(search_choice.length, guild_data["maxlength"]):
+            if self.is_track_too_long(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
                 )
             else:
-                return await self._embed_msg(ctx, title=_("Track exceeds maximum length."))
+                return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
         else:
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
@@ -185,7 +189,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if not player.current:
             await player.play()
-        return await self._embed_msg(ctx, embed=songembed)
+        return await self.send_embed_msg(ctx, embed=songembed)
 
     def _format_search_options(self, search_choice):
         query = Query.process_input(search_choice, self.local_folder_current_path)
@@ -201,7 +205,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         search_list = ""
         command = ctx.invoked_with
         folder = False
-        for i, track in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+        async for i, track in AsyncIter(tracks[search_idx_start:search_idx_end]).enumerate(
+            start=search_idx_start
+        ):
             search_track_num = i + 1
             if search_track_num > 5:
                 search_track_num = search_track_num % 5
@@ -231,7 +237,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     search_list += "`{}.` **{}**\n".format(
                         search_track_num, track.to_string_user()
                     )
-            await asyncio.sleep(0)
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
             footer = _("search results")
@@ -254,44 +259,86 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
         return embed
 
-    def get_track_description(self, track, local_folder_current_path) -> Optional[str]:
+    def get_track_description(
+        self, track, local_folder_current_path, shorten=False
+    ) -> Optional[str]:
         """Get the user facing formatted track name"""
+        string = None
         if track and getattr(track, "uri", None):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
-                if track.title != "Unknown title":
-                    return f'**{escape(f"{track.author} - {track.title}")}**' + escape(
-                        f"\n{query.to_string_user()} "
-                    )
+                if (
+                    hasattr(track, "title")
+                    and track.title != "Unknown title"
+                    and hasattr(track, "author")
+                    and track.author != "Unknown artist"
+                ):
+                    if shorten:
+                        string = f"{track.author} - {track.title}"
+                        if len(string) > 40:
+                            string = "{}...".format((string[:40]).rstrip(" "))
+                        string = f'**{escape(f"{string}", formatting=True)}**'
+                    else:
+                        string = (
+                            f'**{escape(f"{track.author} - {track.title}", formatting=True)}**'
+                            + escape(f"\n{query.to_string_user()} ", formatting=True)
+                        )
+                elif hasattr(track, "title") and track.title != "Unknown title":
+                    if shorten:
+                        string = f"{track.title}"
+                        if len(string) > 40:
+                            string = "{}...".format((string[:40]).rstrip(" "))
+                        string = f'**{escape(f"{string}", formatting=True)}**'
+                    else:
+                        string = f'**{escape(f"{track.title}", formatting=True)}**' + escape(
+                            f"\n{query.to_string_user()} ", formatting=True
+                        )
                 else:
-                    return escape(query.to_string_user())
+                    string = query.to_string_user()
+                    if shorten and len(string) > 40:
+                        string = "{}...".format((string[:40]).rstrip(" "))
+                    string = f'**{escape(f"{string}", formatting=True)}**'
             else:
                 if track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
-                return f'**{escape(f"[{title}]({track.uri}) ")}**'
+                string = f"{title}"
+                if shorten and len(string) > 40:
+                    string = "{}...".format((string[:40]).rstrip(" "))
+                    string = re.sub(RE_SQUARE, "", string)
+                string = f"**[{escape(string, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
-            return escape(track.to_string_user() + " ")
-        return None
+            string = track.to_string_user() + " "
+            if shorten and len(string) > 40:
+                string = "{}...".format((string[:40]).rstrip(" "))
+            string = f'**{escape(f"{string}", formatting=True)}**'
+        return string
 
     def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
         """Get the user facing unformatted track name"""
         if track and hasattr(track, "uri"):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
-                if track.title != "Unknown title":
-                    return escape(f"{track.author} - {track.title}")
+                if (
+                    hasattr(track, "title")
+                    and track.title != "Unknown title"
+                    and hasattr(track, "author")
+                    and track.author != "Unknown artist"
+                ):
+                    return f"{track.author} - {track.title}"
+                elif hasattr(track, "title") and track.title != "Unknown title":
+                    return f"{track.title}"
                 else:
-                    return escape(query.to_string_user())
+                    return query.to_string_user()
             else:
                 if track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
-                return escape(f"{title}")
+                return f"{title}"
         elif hasattr(track, "to_string_user") and track.is_local:
-            return escape(track.to_string_user() + " ")
+            return track.to_string_user() + " "
         return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
