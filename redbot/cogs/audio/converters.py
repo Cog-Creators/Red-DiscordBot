@@ -276,7 +276,7 @@ class ScopeParser(commands.Converter):
         elif any(x in argument for x in ["--author", "--user", "--member"]):
             raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
 
-        target_scope: str = target_scope or None
+        target_scope: Optional[str] = target_scope or None
         target_user: Union[discord.Member, discord.User] = target_user or ctx.author
         target_guild: discord.Guild = target_guild or ctx.guild
 
