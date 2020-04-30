@@ -41,7 +41,7 @@ msgstr ""
 #: redbot/cogs/audio/apis.py:664 redbot/cogs/audio/audio.py:3609
 #: redbot/cogs/audio/audio.py:5460
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "已加入播放清單"
 
 #: redbot/cogs/audio/apis.py:665 redbot/cogs/audio/audio.py:3612
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -70,7 +70,7 @@ msgstr "在 {} 個伺服器中播放"
 
 #: redbot/cogs/audio/audio.py:485 redbot/cogs/audio/audio.py:3351
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "無法取得有效的歌曲。"
 
 #: redbot/cogs/audio/audio.py:505
 msgid "Auto Play Started."
@@ -192,7 +192,7 @@ msgstr "\\n已停用自動播放。"
 #: redbot/cogs/audio/audio.py:719
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "管理黑名單和白名單的關鍵字。"
 
 #: redbot/cogs/audio/audio.py:724
 #, docstring

@@ -19,31 +19,31 @@ msgstr "Bir şey denemeye çalıştım ancak Discord izinlerim yeterli olmadı. 
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{member.display_name} kullanıcısına {role.name} veremiyorum çünkü bu rol Discord hiyerarşisinde rolüme eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:28
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{member.display_name} kullanıcısından {role.name} rolünü kaldıramıyorum çünkü bu rol Discord hiyerarşisinde rolüme eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:34
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} rolünü düzenleyemiyorum çünkü bu rol Discord hiyerarşisinde rolüme eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:40
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{member.display_name} kullanıcısına {role.name} rolünü vermene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:46
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{member.display_name} kullanıcısının {role.name} rolünü silmene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:52
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} rolünü düzenlemene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
 
 #: redbot/cogs/admin/admin.py:58
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "Bunu yapabilmem için \"rolleri yönet\" iznine ihtiyacım var."
 
 #: redbot/cogs/admin/admin.py:60
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -56,7 +56,7 @@ msgstr "Sunucu yönetimiyle ilgili ayarlar"
 
 #: redbot/cogs/admin/admin.py:126
 msgid "{member.display_name} already has the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} kullanıcısı {role.name} rolüne zaten sahip."
 
 #: redbot/cogs/admin/admin.py:146
 msgid "I successfully added {role.name} to {member.display_name}"
@@ -64,7 +64,7 @@ msgstr "{role.name} rolünü {member.display_name} kişisine başarılı bir şe
 
 #: redbot/cogs/admin/admin.py:156
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} kullanıcısı {role.name} rolüne sahip değil."
 
 #: redbot/cogs/admin/admin.py:176
 msgid "I successfully removed {role.name} from {member.display_name}"
@@ -73,12 +73,12 @@ msgstr "{role.name} rolünü {member.display_name} kişisine başarılı bir şe
 #: redbot/cogs/admin/admin.py:187
 #, docstring
 msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        Kullanıcıya rol ekle.\\n\\n        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\\n        Kullanıcı boş bırakılırsa, varsayılan olarak komutun yazarıdır.\\n        "
 
 #: redbot/cogs/admin/admin.py:203
 #, docstring
 msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        Kullanıcıdan rol sil.\\n\\n        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\\n        Kullanıcı boş bırakılırsa, varsayılan olarak komutun yazarıdır.\\n        "
 
 #: redbot/cogs/admin/admin.py:217
 #, docstring
@@ -115,7 +115,7 @@ msgstr "Şuan yapılan duyuruyu iptal eder."
 
 #: redbot/cogs/admin/admin.py:307
 msgid "There is no currently running announcement."
-msgstr ""
+msgstr "Şu anda yapılan bir duyuru mevcut değil."
 
 #: redbot/cogs/admin/admin.py:310
 msgid "The current announcement has been cancelled."
@@ -151,7 +151,7 @@ msgstr "{guild.name} sunucusu duyuruları almayacak."
 #: redbot/cogs/admin/admin.py:370
 #, docstring
 msgid "Apply selfroles."
-msgstr ""
+msgstr "Kişisel rol ekle."
 
 #: redbot/cogs/admin/admin.py:375
 #, docstring
@@ -175,7 +175,7 @@ msgstr "Kullanılabilir Selfrol'ler:\\n{selfroles}"
 #: redbot/cogs/admin/admin.py:413
 #, docstring
 msgid "Manage selfroles."
-msgstr ""
+msgstr "Kişisel rolleri düzenle."
 
 #: redbot/cogs/admin/admin.py:418
 #, docstring
@@ -188,11 +188,11 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:433
 msgid "Added."
-msgstr ""
+msgstr "Eklendi."
 
 #: redbot/cogs/admin/admin.py:436
 msgid "That role is already a selfrole."
-msgstr ""
+msgstr "Bu rol zaten bir kişisel rol."
 
 #: redbot/cogs/admin/admin.py:440
 #, docstring
@@ -205,7 +205,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:455
 msgid "Removed."
-msgstr ""
+msgstr "Kaldırıldı."
 
 #: redbot/cogs/admin/admin.py:460
 #, docstring
@@ -222,11 +222,11 @@ msgstr "Bot şuan sunucularda kilitli."
 
 #: redbot/cogs/admin/announcer.py:75
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "Bu sunucuya duyuru yapamıyorum: "
 
 #: redbot/cogs/admin/announcer.py:77
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "Bu sunucuya duyuru yapamıyorum: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
