@@ -266,6 +266,13 @@ class Case:
                 await self.message.edit(embed=case_content)
             else:
                 await self.message.edit(content=case_content)
+        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+            log.exception(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s due to unexpected error.",
+                self.case_number,
+                self.guild.id,
+            )
         finally:
             return None
 
@@ -816,8 +823,15 @@ async def create_case(
         else:
             msg = await mod_channel.send(case_content)
         await case.edit({"message": msg})
-    except (RuntimeError, discord.HTTPException):
+    except RuntimeError:  # modlog channel isn't set
         pass
+    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        log.exception(
+            "Modlog failed to send the Discord message for"
+            " the case #%s from guild with ID %s due to unexpected error.",
+            case.case_number,
+            case.guild.id,
+        )
     finally:
         return case
 
