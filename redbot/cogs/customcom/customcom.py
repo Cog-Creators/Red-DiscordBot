@@ -292,6 +292,10 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if " " in command:
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
@@ -317,6 +321,10 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
+        if " " in command:
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
