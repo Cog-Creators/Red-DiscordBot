@@ -266,6 +266,11 @@ class Case:
                 await self.message.edit(embed=case_content)
             else:
                 await self.message.edit(content=case_content)
+        except discord.Forbidden:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID due to missing permissions."
+            )
         except Exception:  # `finally` with `return` suppresses unexpected exceptions
             log.exception(
                 "Modlog failed to edit the Discord message for"
@@ -825,6 +830,11 @@ async def create_case(
         await case.edit({"message": msg})
     except RuntimeError:  # modlog channel isn't set
         pass
+    except discord.Forbidden:
+        log.info(
+            "Modlog failed to edit the Discord message for"
+            " the case #%s from guild with ID due to missing permissions."
+        )
     except Exception:  # `finally` with `return` suppresses unexpected exceptions
         log.exception(
             "Modlog failed to send the Discord message for"
