@@ -311,7 +311,7 @@ class Case:
             until = end_fmt
             duration = dur_fmt
 
-        if self.amended_by:
+        if self.amended_by is None:
             amended_by = None
         elif isinstance(self.amended_by, int):
             amended_by = f"[Unknown or Deleted User] ({self.amended_by})"
