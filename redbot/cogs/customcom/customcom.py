@@ -498,7 +498,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(box(p, lang="yaml"))
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
@@ -510,7 +510,7 @@ class CustomCommands(commands.Cog):
 
         ctx = await self.bot.get_context(message)
 
-        if ctx.prefix is None or ctx.valid:
+        if ctx.prefix is None:
             return
 
         try:
