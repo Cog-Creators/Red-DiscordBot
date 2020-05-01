@@ -292,7 +292,7 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
-        if " " in command:
+        if any(char.isspace() for char in command):
             # Haha, nice try
             await ctx.send(_("Custom command names cannot have spaces in them."))
             return
@@ -321,7 +321,7 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
-        if " " in command:
+        if any(char.isspace() for char in command):
             # Haha, nice try
             await ctx.send(_("Custom command names cannot have spaces in them."))
             return
