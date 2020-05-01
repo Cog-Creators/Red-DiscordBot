@@ -71,6 +71,7 @@ class HelpSettings:
     max_pages_in_guild: int = 2
     use_menus: bool = False
     show_hidden: bool = False
+    show_aliases: bool = True
     verify_checks: bool = True
     verify_exists: bool = False
     tagline: str = ""
@@ -212,7 +213,7 @@ class RedHelpFormatter:
         signature = (
             f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         )
-        if command.aliases:
+        if help_settings.show_aliases and command.aliases:
             alias_fmt = T_("Aliases") if len(command.aliases) > 1 else T_("Alias")
             signature += f"\n`{alias_fmt}: {humanize_list(command.aliases)}`"
         subcommands = None

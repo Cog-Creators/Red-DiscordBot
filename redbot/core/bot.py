@@ -99,6 +99,7 @@ class RedBase(
             help__delete_delay=0,
             help__use_menus=False,
             help__show_hidden=False,
+            help__show_aliases=True,
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",

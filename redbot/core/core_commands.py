@@ -1443,6 +1443,22 @@ class Core(commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will filter hidden commands."))
 
+    @helpset.command(name="showaliases")
+    async def helpset_showaliases(self, ctx: commands.Context, show_aliases: bool = None):
+        """
+        This allows the help command to show existing commands aliases if there is any.
+
+        This defaults to True.
+        Using this without a setting will toggle.
+        """
+        if show_aliases is None:
+            show_aliases = not await ctx.bot._config.help.show_aliases()
+        await ctx.bot._config.help.show_aliases.set(show_aliases)
+        if show_aliases:
+            await ctx.send(_("Help will not show commands aliases."))
+        else:
+            await ctx.send(_("Help will show commands aliases."))
+
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
