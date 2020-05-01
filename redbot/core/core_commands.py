@@ -1430,7 +1430,7 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
         """
-        This allows the help command to show hidden commands
+        This allows the help command to show hidden commands.
 
         This defaults to False.
         Using this without a setting will toggle.
@@ -1439,7 +1439,7 @@ class Core(commands.Cog, CoreLogic):
             show_hidden = not await ctx.bot._config.help.show_hidden()
         await ctx.bot._config.help.show_hidden.set(show_hidden)
         if show_hidden:
-            await ctx.send(_("Help will not filter hidden commands"))
+            await ctx.send(_("Help will not filter hidden commands."))
         else:
             await ctx.send(_("Help will filter hidden commands."))
 
@@ -1463,7 +1463,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
         Sets if commands which can't be run in the current context should be
-        filtered from help
+        filtered from help.
 
         Defaults to True.
         Using this without a setting will toggle.
