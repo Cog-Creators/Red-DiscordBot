@@ -1455,9 +1455,9 @@ class Core(commands.Cog, CoreLogic):
             show_aliases = not await ctx.bot._config.help.show_aliases()
         await ctx.bot._config.help.show_aliases.set(show_aliases)
         if show_aliases:
-            await ctx.send(_("Help will not show commands aliases."))
-        else:
             await ctx.send(_("Help will show commands aliases."))
+        else:
+            await ctx.send(_("Help will not show commands aliases."))
 
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
