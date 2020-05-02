@@ -117,17 +117,6 @@ def init_events(bot, cli_flags):
                     extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
                         python=sys.executable
                     )
-                    extra_update += _(
-                        "\n\nPlease be aware that the command above is a best guess;"
-                        "\nIt is based on your current OS, environment, and Python version so "
-                        "there is a small chance it could be incorrect."
-                        "\n**Should the above not work for you, please check our docs at <{docs}> "
-                        "and/or visit our support server at <https://discord.gg/red>.**"
-                    ).format(
-                        docs="https://docs.discord.red/en/stable/install_windows.html"
-                        if platform.system() == "Windows"
-                        else "https://docs.discord.red/en/stable/install_linux_mac.html",
-                    )
 
                 else:
                     extra_update = _(
@@ -146,6 +135,17 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else "https://docs.discord.red/en/stable/install_linux_mac.html",
                     )
+
+                extra_update += _(
+                    "\n\nPlease be aware that the above is a best guess;"
+                    "\nIt is based on your current OS, environment, and Python version so "
+                    "there is a small chance it could be incorrect."
+                    "\n**Should the above not work for you,"
+                    " please check our update instructions at <{docs}> and/or "
+                    "visit our support server at <https://discord.gg/red>.**"
+                ).format(
+                    docs="https://docs.discord.red/en/stable/update_red.html",
+                )
 
                 outdated_red_message += extra_update
 
