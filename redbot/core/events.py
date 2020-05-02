@@ -145,9 +145,7 @@ def init_events(bot, cli_flags):
                     "\n**Should the above not work for you,"
                     " please check our update instructions at <{docs}> and/or "
                     "visit our support server at <https://discord.gg/red>.**"
-                ).format(
-                    docs="https://docs.discord.red/en/stable/update_red.html",
-                )
+                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
 
                 outdated_red_message += extra_update
 
