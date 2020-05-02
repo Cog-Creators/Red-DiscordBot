@@ -21,6 +21,7 @@ import aiohttp
 import discord
 import pkg_resources
 from babel import Locale as BabelLocale, UnknownLocaleError
+from redbot.core.data_manager import storage_type
 
 from . import (
     __version__,
@@ -33,6 +34,7 @@ from . import (
     i18n,
     config,
 )
+from .utils import AsyncIter
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -110,7 +112,7 @@ class CoreLogic:
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
-        for spec, name in cogspecs:
+        async for spec, name in AsyncIter(cogspecs, steps=10):
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
@@ -350,15 +352,14 @@ class Core(commands.Cog, CoreLogic):
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name=_("Red version"), value=red_version)
-        if outdated is True:
-            outdated_value = _("Yes, {version} is available").format(
-                version=data["info"]["version"]
-            )
-        elif outdated is None:
-            outdated_value = _("Checking for updates failed.")
-        else:
-            outdated_value = _("No")
-        embed.add_field(name=_("Outdated"), value=outdated_value)
+        if outdated in (True, None):
+            if outdated is True:
+                outdated_value = _("Yes, {version} is available.").format(
+                    version=data["info"]["version"]
+                )
+            else:
+                outdated_value = _("Checking for updates failed.")
+            embed.add_field(name=_("Outdated"), value=outdated_value)
         if custom_info:
             embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
         embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -880,13 +881,14 @@ class Core(commands.Cog, CoreLogic):
         """Changes [botname]'s settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
+                guild_data = await ctx.bot._config.guild(ctx.guild).all()
                 guild = ctx.guild
-                admin_role_ids = await ctx.bot._config.guild(ctx.guild).admin_role()
+                admin_role_ids = guild_data["admin_role"]
                 admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
                 admin_roles_str = (
                     humanize_list(admin_role_names) if admin_role_names else "Not Set."
                 )
-                mod_role_ids = await ctx.bot._config.guild(ctx.guild).mod_role()
+                mod_role_ids = guild_data["mod_role"]
                 mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
                 mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
                 guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
@@ -896,8 +898,9 @@ class Core(commands.Cog, CoreLogic):
                 guild_settings = ""
 
             prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
-            locale = await ctx.bot._config.locale()
-            regional_format = await ctx.bot._config.regional_format() or _("Same as bot's locale")
+            global_data = await ctx.bot._config.all()
+            locale = global_data["locale"]
+            regional_format = global_data["regional_format"] or _("Same as bot's locale")
 
             prefix_string = " ".join(prefixes)
             settings = _(
@@ -1094,28 +1097,48 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str):
-        """Sets [botname]'s avatar"""
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                data = await r.read()
+    async def avatar(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s avatar
+
+        Supports either an attachment or an image URL."""
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.read()
+        else:
+            await ctx.send_help()
+            return
 
         try:
-            await ctx.bot.user.edit(avatar=data)
+            async with ctx.typing():
+                await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
             await ctx.send(
                 _(
                     "Failed. Remember that you can edit my avatar "
-                    "up to two times a hour. The URL must be a "
-                    "direct link to a JPG / PNG."
+                    "up to two times a hour. The URL or attachment "
+                    "must be a valid image in either JPG or PNG format."
                 )
             )
         except discord.InvalidArgument:
             await ctx.send(_("JPG / PNG format only."))
         else:
             await ctx.send(_("Done."))
+
+    @avatar.command(name="remove", aliases=["clear"])
+    @checks.is_owner()
+    async def avatar_remove(self, ctx: commands.Context):
+        """Removes [botname]'s avatar"""
+        async with ctx.typing():
+            await ctx.bot.user.edit(avatar=None)
+        await ctx.send(_("Avatar removed."))
 
     @_set.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
@@ -1484,7 +1507,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        This setting only applies to embedded help.
+        This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
@@ -1736,7 +1759,7 @@ class Core(commands.Cog, CoreLogic):
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
-
+        driver = storage_type()
         if await ctx.embed_requested():
             e = discord.Embed(color=await ctx.embed_colour())
             e.title = "Debug Info for Red"
@@ -1752,6 +1775,7 @@ class Core(commands.Cog, CoreLogic):
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
+            e.add_field(name="Storage type", value=driver, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
@@ -1764,6 +1788,7 @@ class Core(commands.Cog, CoreLogic):
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
+                + "Storage type: {}\n".format(driver)
             )
             await ctx.send(box(info))
 
@@ -2545,17 +2570,14 @@ class Core(commands.Cog, CoreLogic):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
-                continue
-            else:
-                continue
-            if await self.bot._ignored_cache.get_ignored_channel(channel):
+            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
 
         cat_str = (
             humanize_list([c.name for c in category_channels]) if category_channels else "None"
         )
         chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
-        msg = _("Currently ignored categories: {categories}\nChannels:{channels}").format(
+        msg = _("Currently ignored categories: {categories}\nChannels: {channels}").format(
             categories=cat_str, channels=chan_str
         )
         return msg

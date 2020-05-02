@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import collections.abc
 import json
 import logging
 import os
@@ -10,7 +11,17 @@ import tarfile
 import operator as op
 from datetime import datetime
 from pathlib import Path
-from typing import Awaitable, Callable, List, Optional, Set, Union, TYPE_CHECKING
+from typing import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Iterator,
+    List,
+    Optional,
+    Union,
+    Set,
+    TYPE_CHECKING,
+)
 from distutils.version import LooseVersion
 
 import discord
@@ -63,7 +74,7 @@ async def fuzzy_command_search(
     ctx: Context,
     term: Optional[str] = None,
     *,
-    commands: Optional[Set[Command]] = None,
+    commands: Optional[Union[AsyncIterator[Command], Iterator[Command]]] = None,
     min_score: int = 80,
 ) -> Optional[List[Command]]:
     """Search for commands which are similar in name to the one invoked.
@@ -78,7 +89,7 @@ async def fuzzy_command_search(
     term : Optional[str]
         The name of the invoked command. If ``None``,
         `Context.invoked_with` will be used instead.
-    commands : Optional[Set[commands.Command]]
+    commands : Optional[Union[AsyncIterator[commands.Command], Iterator[commands.Command]]]
         The commands available to choose from when doing a fuzzy match.
         When omitted, `Bot.walk_commands` will be used instead.
     min_score : int
@@ -105,9 +116,9 @@ async def fuzzy_command_search(
     # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
+        alias = await alias_cog._aliases.get_alias(ctx.guild, term)
 
-        if is_alias:
+        if alias:
             return None
     customcom_cog = ctx.bot.get_cog("CustomCommands")
     if customcom_cog is not None:
@@ -120,10 +131,15 @@ async def fuzzy_command_search(
         else:
             return None
 
+    if commands is None:
+        choices = set(ctx.bot.walk_commands())
+    elif isinstance(commands, collections.abc.AsyncIterator):
+        choices = {c async for c in commands}
+    else:
+        choices = set(commands)
+
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(
-        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
-    )
+    extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
     if not extracted:
         return None
 

@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-05 12:09+0000\n"
-"PO-Revision-Date: 2020-03-05 12:15\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -12,34 +11,33 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: es-ES\n"
-"X-Crowdin-File: /cogs/permissions/locales/messages.pot\n"
 "Language: es_ES\n"
 
-#: redbot/cogs/permissions/converters.py:64
+#: redbot/cogs/permissions/converters.py:65
 msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:73
+#: redbot/cogs/permissions/converters.py:74
 msgid "\\\"{arg}\\\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:116
+#: redbot/cogs/permissions/converters.py:117
 msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:125
+#: redbot/cogs/permissions/converters.py:126
 msgid "\\\"{arg}\\\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:148
+#: redbot/cogs/permissions/converters.py:149
 msgid "Cog or command \\\"{name}\\\" not found. Please note that this is case sensitive."
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:161
+#: redbot/cogs/permissions/converters.py:162
 msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\""
 msgstr ""
 
-#: redbot/cogs/permissions/converters.py:174
+#: redbot/cogs/permissions/converters.py:175
 msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\", or \\\"clear\\\" to remove the rule"
 msgstr ""
 

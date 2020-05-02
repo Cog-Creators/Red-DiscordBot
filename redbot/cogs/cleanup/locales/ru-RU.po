@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-04-02 12:07+0000\n"
-"PO-Revision-Date: 2020-04-02 12:12\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /cogs/cleanup/locales/messages.pot\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/cleanup/cleanup.py:22
@@ -36,12 +34,12 @@ msgstr "Удалить сообщения."
 #: redbot/cogs/cleanup/cleanup.py:125
 #, docstring
 msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n        "
-msgstr ""
+msgstr "Удалить последние X сообщений с соответствующим текстом.\\n\\n        Пример:\\n            `[p]cleanup text \\\"тест\\\" 5`\\n\\n        Не забывайте использовать двойные кавычки.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:174
 #, docstring
 msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
-msgstr ""
+msgstr "Удалить последние X сообщений от указанного пользователя.\\n\\n        Пример:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n"
 
 #: redbot/cogs/cleanup/cleanup.py:237
 #, docstring

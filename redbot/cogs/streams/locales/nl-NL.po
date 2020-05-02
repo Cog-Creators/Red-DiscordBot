@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-04-02 12:07+0000\n"
-"PO-Revision-Date: 2020-04-02 12:11\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /cogs/streams/locales/messages.pot\n"
 "Language: nl_NL\n"
 
 #: redbot/cogs/streams/streams.py:115
@@ -271,50 +269,50 @@ msgstr ""
 msgid "I won't send notifications about {stream.name} in this channel anymore."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:695
+#: redbot/cogs/streams/streams.py:697
 msgid "{mention}, {stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:706
+#: redbot/cogs/streams/streams.py:710
 msgid "{stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:303
+#: redbot/cogs/streams/streamtypes.py:305
 msgid "Untitled broadcast"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:305
+#: redbot/cogs/streams/streamtypes.py:307
 msgid " - Rerun"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:308
-#: redbot/cogs/streams/streamtypes.py:351
-#: redbot/cogs/streams/streamtypes.py:389
-#: redbot/cogs/streams/streamtypes.py:435
+#: redbot/cogs/streams/streamtypes.py:310
+#: redbot/cogs/streams/streamtypes.py:353
+#: redbot/cogs/streams/streamtypes.py:391
+#: redbot/cogs/streams/streamtypes.py:437
 msgid "Followers"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:309
-#: redbot/cogs/streams/streamtypes.py:390
-#: redbot/cogs/streams/streamtypes.py:436
+#: redbot/cogs/streams/streamtypes.py:311
+#: redbot/cogs/streams/streamtypes.py:392
+#: redbot/cogs/streams/streamtypes.py:438
 msgid "Total views"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:314
-#: redbot/cogs/streams/streamtypes.py:355
-#: redbot/cogs/streams/streamtypes.py:399
+#: redbot/cogs/streams/streamtypes.py:316
+#: redbot/cogs/streams/streamtypes.py:357
+#: redbot/cogs/streams/streamtypes.py:401
 msgid "Playing: "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:441
+#: redbot/cogs/streams/streamtypes.py:443
 msgid "None"
 msgstr "Geen"
 
-#: redbot/cogs/streams/streamtypes.py:444
+#: redbot/cogs/streams/streamtypes.py:446
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:448
+#: redbot/cogs/streams/streamtypes.py:450
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr ""
 

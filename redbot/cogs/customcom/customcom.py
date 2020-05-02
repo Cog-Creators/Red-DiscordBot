@@ -206,6 +206,47 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
+    @customcom.command(name="raw")
+    async def cc_raw(self, ctx: commands.Context, command: str.lower):
+        """Get the raw response of a custom command, to get the proper markdown.
+        
+        This is helpful for copy and pasting."""
+        commands = await self.config.guild(ctx.guild).commands()
+        if command not in commands:
+            return await ctx.send("That command doesn't exist.")
+        command = commands[command]
+        if isinstance(command["response"], str):
+            raw = discord.utils.escape_markdown(command["response"])
+            if len(raw) > 2000:
+                raw = f"{raw[:1997]}..."
+            await ctx.send(raw)
+        else:
+            msglist = []
+            if await ctx.embed_requested():
+                colour = await ctx.embed_colour()
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    if len(raw) > 2048:
+                        raw = f"{raw[:2045]}..."
+                    embed = discord.Embed(
+                        title=_("Response #{num}/{total}").format(
+                            num=number, total=len(command["response"])
+                        ),
+                        description=raw,
+                        colour=colour,
+                    )
+                    msglist.append(embed)
+            else:
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    msg = _("Response #{num}/{total}:\n{raw}").format(
+                        num=number, total=len(command["response"]), raw=raw
+                    )
+                    if len(msg) > 2000:
+                        msg = f"{msg[:1997]}..."
+                    msglist.append(msg)
+            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
+
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):
@@ -251,6 +292,10 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
@@ -276,6 +321,10 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
@@ -457,7 +506,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(box(p, lang="yaml"))
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
@@ -469,7 +518,7 @@ class CustomCommands(commands.Cog):
 
         ctx = await self.bot.get_context(message)
 
-        if ctx.prefix is None or ctx.valid:
+        if ctx.prefix is None:
             return
 
         try:

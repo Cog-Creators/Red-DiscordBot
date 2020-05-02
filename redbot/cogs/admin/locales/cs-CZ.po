@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-03-05 12:11\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -158,7 +156,7 @@ msgstr "Aplikovat self-role."
 #: redbot/cogs/admin/admin.py:375
 #, docstring
 msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Odstraní vám self-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgstr "\\n        Přidá vám self-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
 
 #: redbot/cogs/admin/admin.py:386
 #, docstring
@@ -234,7 +232,7 @@ msgstr "Nemohu oznámit následujícím serverům: "
 msgid "The Admin cog is not loaded."
 msgstr "Admin cog není načten."
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr "Daná role není platná self-role."
 
