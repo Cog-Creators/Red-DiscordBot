@@ -409,9 +409,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
         if issue:
             message = _(
-                    "{users} could not be muted in some channels. "
-                    "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
+                "{users} could not be muted in some channels. "
+                "Would you like to see which channels and why?"
+            ).format(users=humanize_list([f"{u}" for u in users]))
             await self.handle_issues(ctx, message)
 
     async def handle_issues(self, ctx: commands.Context, message: str) -> None:
@@ -579,9 +579,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
         if issue:
             message = _(
-                    "{users} could not be unmuted in some channels. "
-                    "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
+                "{users} could not be unmuted in some channels. "
+                "Would you like to see which channels and why?"
+            ).format(users=humanize_list([f"{u}" for u in users]))
             await self.handle_issues(ctx, message)
 
     @checks.mod_or_permissions(manage_roles=True)
