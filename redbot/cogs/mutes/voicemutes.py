@@ -164,7 +164,7 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.channel_mute_user(guild, channel, author, user, audit_reason)
 
         if success:
             try:
@@ -206,7 +206,9 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+        success, message = await self.channel_unmute_user(
+            guild, channel, author, user, audit_reason
+        )
 
         try:
             await modlog.create_case(
