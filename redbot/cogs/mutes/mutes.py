@@ -412,9 +412,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "{users} could not be muted in some channels. "
                 "Would you like to see which channels and why?"
             ).format(users=humanize_list([f"{u}" for u in users]))
-            await self.handle_issues(ctx, message)
+            await self.handle_issues(ctx, message, issue)
 
-    async def handle_issues(self, ctx: commands.Context, message: str) -> None:
+    async def handle_issues(self, ctx: commands.Context, message: str, issue: str) -> None:
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
         if not can_react:
             message += " (y/n)"
@@ -582,7 +582,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "{users} could not be unmuted in some channels. "
                 "Would you like to see which channels and why?"
             ).format(users=humanize_list([f"{u}" for u in users]))
-            await self.handle_issues(ctx, message)
+            await self.handle_issues(ctx, message, issue)
 
     @checks.mod_or_permissions(manage_roles=True)
     @commands.command(name="channelunmute", aliases=["unmutechannel"])
