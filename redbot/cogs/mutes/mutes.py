@@ -338,7 +338,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         time_and_reason: MuteTime = {},
     ):
         """Mute users."""
-
+        if not users:
+            return await ctx.send_help()
         duration = time_and_reason.get("duration", {})
         reason = time_and_reason.get("reason", None)
         time = ""
@@ -395,7 +396,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
         )
 
-    @commands.command(name="mutechannel")
+    @commands.command(name="mutechannel", aliases=["channelmute"])
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(manage_roles=True)
@@ -407,6 +408,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         time_and_reason: MuteTime = {},
     ):
         """Mute a user in the current text channel."""
+        if not users:
+            return await ctx.send_help()
         duration = time_and_reason.get("duration", {})
         reason = time_and_reason.get("reason", None)
         until = None
@@ -474,6 +477,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
     ):
         """Unmute users."""
+        if not users:
+            return await ctx.send_help()
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
@@ -506,13 +511,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
 
     @checks.mod_or_permissions(manage_roles=True)
-    @commands.command(name="channelunmute")
+    @commands.command(name="channelunmute", aliases=["unmutechannel"])
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
     async def unmute_channel(
         self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
     ):
         """Unmute a user in this channel."""
+        if not users:
+            return await ctx.send_help()
         channel = ctx.channel
         author = ctx.author
         guild = ctx.guild
