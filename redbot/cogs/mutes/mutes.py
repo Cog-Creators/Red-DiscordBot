@@ -263,8 +263,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="role")
     @checks.bot_has_permissions(manage_roles=True)
     async def mute_role(self, ctx: commands.Context, *, role: discord.Role = None):
-        """
-            Sets the role to be applied when muting a user.
+        """Sets the role to be applied when muting a user.
 
             If no role is setup the bot will attempt to mute a user by setting
             channel overwrites in all channels to prevent the user from sending messages.
@@ -279,8 +278,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="makerole")
     @checks.bot_has_permissions(manage_roles=True)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
-        """
-            Create a Muted role.
+        """Create a Muted role.
 
             This will create a role and apply overwrites to all available channels
             to more easily setup muting a user.
@@ -337,7 +335,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         *,
         time_and_reason: MuteTime = {},
     ):
-        """Mute users."""
+        """Mute users.
+
+        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason={}]` is the time to mute for and reason. Time is
+        any valid time length such as `30 minutes` or `2 days`. If nothing
+        is provided the mute will be indefinite.
+
+        Examples:
+        `[p]mute @member1 @member2 spam 5 hours`
+        `[p]mute @member1 3 days`
+
+        """
         if not users:
             return await ctx.send_help()
         duration = time_and_reason.get("duration", {})
@@ -407,7 +416,17 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         *,
         time_and_reason: MuteTime = {},
     ):
-        """Mute a user in the current text channel."""
+        """Mute a user in the current text channel.
+
+        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason={}]` is the time to mute for and reason. Time is
+        any valid time length such as `30 minutes` or `2 days`. If nothing
+        is provided the mute will be indefinite.
+
+        Examples:
+        `[p]mutechannel @member1 @member2 spam 5 hours`
+        `[p]mutechannel @member1 3 days`
+        """
         if not users:
             return await ctx.send_help()
         duration = time_and_reason.get("duration", {})
@@ -476,7 +495,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def unmute(
         self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
     ):
-        """Unmute users."""
+        """Unmute users.
+
+        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[reason]` is the reason for the unmute.
+        """
         if not users:
             return await ctx.send_help()
         guild = ctx.guild
@@ -517,7 +540,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def unmute_channel(
         self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
     ):
-        """Unmute a user in this channel."""
+        """Unmute a user in this channel.
+
+        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[reason]` is the reason for the unmute.
+        """
         if not users:
             return await ctx.send_help()
         channel = ctx.channel
