@@ -33,7 +33,6 @@ class GlobalCacheWrapper:
         self.api_key = None
         self._handshake_token = ""
         self.can_write = False
-        self._handshake_token = ""
         self.has_api_key = None
         self._token: Mapping[str, str] = {}
         self.cog = cog
