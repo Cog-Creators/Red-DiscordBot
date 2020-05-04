@@ -17,7 +17,7 @@ from ..audio_logging import IS_DEBUG, debug_exc_log
 if TYPE_CHECKING:
     from .. import Audio
 
-_API_URL = "https://api.redbot.app/"
+_API_URL = "https://api.redbot.app"
 
 log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
 
@@ -54,7 +54,7 @@ class GlobalCacheWrapper:
         return self.api_key
 
     async def get_call(self, query: Optional[Query] = None) -> dict:
-        api_url = f"{_API_URL}api/v1/queries"
+        api_url = f"{_API_URL}/api/v1/queries"
         try:
             query = Query.process_input(query, self.cog.local_folder_current_path)
             if any([not query or not query.valid or query.is_spotify or query.is_local]):
@@ -83,7 +83,7 @@ class GlobalCacheWrapper:
         return {}
 
     async def get_spotify(self, title: str, author: Optional[str]) -> dict:
-        api_url = f"{_API_URL}api/v1/queries/spotify"
+        api_url = f"{_API_URL}/api/v1/queries/spotify"
         try:
             search_response = "error"
             params = {"title": urllib.parse.quote(title), "author": urllib.parse.quote(author)}
@@ -123,7 +123,7 @@ class GlobalCacheWrapper:
             if self.api_key is None:
                 await asyncio.sleep(0)
                 return None
-            api_url = f"{_API_URL}api/v1/queries"
+            api_url = f"{_API_URL}/api/v1/queries"
             async with self.session.post(
                 api_url,
                 json=llresponse._raw,
