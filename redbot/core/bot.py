@@ -65,12 +65,12 @@ def _is_submodule(parent, child):
 
 # barely spurious warning caused by our intentional shadowing
 class RedBase(
-    commands.GroupMixin, dpy_commands.bot.BotBase, RPCMixin
+    commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
 ):  # pylint: disable=no-member
-    """Mixin for the main bot class.
-
-    This exists because `Red` inherits from `discord.AutoShardedClient`, which
-    is something other bot classes may not want to have as a parent class.
+    """
+    The historical reasons for this mixin no longer apply
+    and only remains temporarily to not break people
+    relying on the publicly exposed bases existing.
     """
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
@@ -640,6 +640,9 @@ class RedBase(
             await self.rpc.initialize(self.rpc_port)
 
     async def start(self, *args, **kwargs):
+        """
+        Overridden start which ensures cog load and other pre-connection tasks are handled
+        """
         cli_flags = kwargs.pop("cli_flags")
         await self.pre_flight(cli_flags=cli_flags)
         return await super().start(*args, **kwargs)
@@ -1237,12 +1240,6 @@ class RedBase(
         await asyncio.sleep(delay)
         await _delete_helper(message)
 
-
-class Red(RedBase, discord.AutoShardedClient):
-    """
-    You're welcome Caleb.
-    """
-
     async def logout(self):
         """Logs out of Discord and closes all connections."""
         await super().logout()
@@ -1271,6 +1268,13 @@ class Red(RedBase, discord.AutoShardedClient):
 
         await self.logout()
         sys.exit(self._shutdown_mode)
+
+
+# This can be removed, and the parent class renamed as a breaking change
+class Red(RedBase):
+    """
+    Our subclass of discord.ext.commands.AutoShardedBot
+    """
 
 
 class ExitCodes(IntEnum):
