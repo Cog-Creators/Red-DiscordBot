@@ -165,7 +165,7 @@ class SpotifyWrapper:
                     )
                 )
         categories = result.get("categories", {}).get("items", [])
-        return [{c["name"]: c["id"]} for c in categories]
+        return [{c["name"]: c["id"]} for c in categories if c]
 
     async def get_playlist_from_category(self, category: str, ctx: Context = None):
         """Get spotify playlists for the specified category"""
@@ -181,5 +181,5 @@ class SpotifyWrapper:
                 "url": c.get("external_urls", {}).get("spotify"),
                 "tracks": c.get("tracks", {}).get("total", "Unknown"),
             }
-            async for c in AsyncIter(playlists)
+            async for c in AsyncIter(playlists) if c
         ]

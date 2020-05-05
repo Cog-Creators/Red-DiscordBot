@@ -595,6 +595,17 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Invalid Environment"),
                 description=_(error.message).format(prefix=ctx.prefix),
             )
+        except TrackEnqueueError:
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable get a track from Lavalink at the moment,"
+                    "try again in a few minutes."
+                ),
+                error=True,
+            )
         except (RuntimeError, aiohttp.ServerDisconnectedError):
             self.update_player_lock(ctx, False)
             error_embed = discord.Embed(
