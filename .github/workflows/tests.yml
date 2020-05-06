@@ -83,3 +83,33 @@ jobs:
             PGPASSWORD: postgres
             PGPORT: 5432
           run: tox
+
+    tox-redis:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          python_version:
+            - "3.8"
+        fail-fast: false
+      name: Tox - Redis
+      services:
+        redis:
+          image: redislabs/rejson:latest
+          ports:
+            - 6379:6379
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            ref: ${{ env.ref }}
+        - name: Set up Python
+          uses: actions/setup-python@v1
+          with:
+            python-version: ${{ matrix.python_version }}
+        - name: Install tox
+          run: |
+            python -m pip install --upgrade pip
+            pip install tox
+        - name: Tox test
+          env:
+            TOXENV: redis
+          run: tox
