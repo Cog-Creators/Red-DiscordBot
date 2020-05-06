@@ -278,7 +278,9 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
     async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
-        prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}", prefixes[0])
+        prefix = re.sub(
+            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
+        )
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
