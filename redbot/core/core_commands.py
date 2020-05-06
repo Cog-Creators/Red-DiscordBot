@@ -571,7 +571,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
