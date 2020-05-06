@@ -116,15 +116,14 @@ class CogCommandMixin:
             text which has had some portions replaced based on context
         """
         formatting_pattern = re.compile(r"\[p\]|\[botname\]")
+        replacements = {
+            "[p]": ctx.clean_prefix.replace("\\", r"\\"),
+            "[botname]": ctx.me.display_name.replace("\\", r"\\"),
+        }
 
         def replacement(m: re.Match) -> str:
             s = m.group(0)
-            if s == "[p]":
-                return ctx.clean_prefix
-            if s == "[botname]":
-                return ctx.me.display_name
-            # We shouldnt get here:
-            return s
+            return replacements.get(s, s)
 
         return formatting_pattern.sub(replacement, text)
 
