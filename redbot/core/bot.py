@@ -63,10 +63,13 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-# barely spurious warning caused by our intentional shadowing
+# Order of inheritance here matters.
+# d.py autoshardedbot should be at the end
+# all of our mixins should happen before,
+# and must include a call to super().__init__ unless they do not provide an init
 class RedBase(
     commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
-):  # pylint: disable=no-member
+):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """
     The historical reasons for this mixin no longer apply
     and only remains temporarily to not break people
