@@ -557,6 +557,13 @@ async def test_config_ctxmgr_atomicity(config):
 
 
 @pytest.mark.asyncio
+async def test_set_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 3)
+    await config.custom("CUSTOM", "1").set({"2": {"3": {"foo": "bar"}}})
+    assert await config.custom("CUSTOM", "1", "2", "3").foo() == "bar"
+
+
+@pytest.mark.asyncio
 async def test_raw_with_partial_primary_keys(config):
     config.init_custom("CUSTOM", 1)
     await config.custom("CUSTOM").set_raw("primary_key", "identifier", value=True)
