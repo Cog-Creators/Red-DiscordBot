@@ -207,13 +207,15 @@ class PostgresDriver(BaseDriver):
     async def delete_all_data(cls, *, drop_db: Optional[bool] = None, **kwargs) -> None:
         """Delete all data being stored by this driver.
 
+        Schemas within the database which
+        store bot data will be dropped, as well as functions,
+        aggregates, event triggers, and meta-tables.
+
         Parameters
         ----------
         drop_db : Optional[bool]
-            Set to ``True`` to drop the entire database for the current
-            bot's instance. Otherwise, schemas within the database which
-            store bot data will be dropped, as well as functions,
-            aggregates, event triggers, and meta-tables.
+            If set to ``True``, function will print information
+            about not being able to drop the entire database.
 
         """
         if drop_db is True:
