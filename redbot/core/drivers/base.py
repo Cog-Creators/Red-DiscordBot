@@ -135,6 +135,29 @@ class IdentifierData:
             self.is_custom,
         )
 
+    def __gt__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return NotImplemented
+
+        self_tup = self.to_tuple()
+        other_tup = other.to_tuple()
+        return self_tup == other_tup[: len(self_tup)] and len(self_tup) != len(other_tup)
+
+    def __lt__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return NotImplemented
+        return other > self
+
+    def __ge__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return NotImplemented
+        return self > other or self == other
+
+    def __le__(self, other) -> bool:
+        if not isinstance(other, IdentifierData):
+            return NotImplemented
+        return self < other or self == other
+
     def add_identifier(self, *identifier: str) -> "IdentifierData":
         if not all(isinstance(i, str) for i in identifier):
             raise ValueError("Identifiers must be strings.")
@@ -147,6 +170,31 @@ class IdentifierData:
             self.identifiers + identifier,
             self.primary_key_len,
             is_custom=self.is_custom,
+        )
+
+    def get_parent(self) -> Tuple[str, "IdentifierData"]:
+        identifiers = self.identifiers
+        primary_key = self.primary_key
+        if identifiers:
+            popped = identifiers[-1]
+            identifiers = identifiers[:-1]
+        elif primary_key:
+            popped = primary_key[-1]
+            primary_key = primary_key[:-1]
+        else:
+            raise IndexError("cannot retreive parent of category")
+
+        return (
+            popped,
+            IdentifierData(
+                self.cog_name,
+                self.uuid,
+                self.category,
+                primary_key,
+                identifiers,
+                self.primary_key_len,
+                is_custom=self.is_custom,
+            ),
         )
 
     def to_tuple(self) -> Tuple[str, ...]:
