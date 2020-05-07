@@ -397,7 +397,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:372
 msgid "More Emojis"
-msgstr ""
+msgstr "Plus d'émojis"
 
 #: redbot/cogs/general/general.py:373
 msgid "Commerce"
