@@ -554,3 +554,12 @@ async def test_config_ctxmgr_atomicity(config):
     await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
     assert len(await config.foo()) == 15
+
+
+@pytest.mark.asyncio
+async def test_raw_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 1)
+    await config.custom("CUSTOM").set_raw("primary_key", "identifier", value=True)
+    assert await config.custom("CUSTOM", "primary_key").identifier() is True
+    await config.custom("CUSTOM").set_raw(value={"primary_key": {"identifier": False}})
+    assert await config.custom("CUSTOM", "primary_key").identifier() is False
