@@ -574,9 +574,7 @@ async def test_set_with_partial_primary_keys(config):
     assert await config.custom("CUSTOM", "2", "33", "111").foo() == "boo"
     assert await config.custom("CUSTOM", "2", "33", "222").foo() == "boz"
 
-    await config.custom("CUSTOM", "2").set(
-        {"22": {}, "33": {"111": {}, "222": {"foo": "biz"}}}
-    )
+    await config.custom("CUSTOM", "2").set({"22": {}, "33": {"111": {}, "222": {"foo": "biz"}}})
     with pytest.raises(KeyError):
         await config.custom("CUSTOM").get_raw("2", "11")
     with pytest.raises(KeyError):
