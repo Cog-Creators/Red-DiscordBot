@@ -1,5 +1,6 @@
 import contextlib
 from collections import namedtuple
+from copy import copy
 from typing import Union, Optional
 
 import discord
