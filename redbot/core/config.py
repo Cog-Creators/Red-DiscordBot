@@ -334,7 +334,7 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifier_data.add_identifier(item)
+        new_identifiers = self.identifier_data.get_child(item)
         if is_group:
             return Group(
                 identifier_data=new_identifiers,
@@ -381,7 +381,7 @@ class Group(Value):
             dict access. These are casted to `str` for you.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
@@ -499,7 +499,7 @@ class Group(Value):
             else:
                 default = poss_default
 
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         try:
             raw = await self.driver.get(identifier_data)
         except KeyError:
@@ -583,7 +583,7 @@ class Group(Value):
             The value to store.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
         await self.driver.set(identifier_data, value=value)
