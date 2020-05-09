@@ -132,18 +132,26 @@ class IdentifierData:
             return NotImplemented
         return self < other or self == other
 
-    def add_identifier(self, *identifier: str) -> "IdentifierData":
-        if not all(isinstance(i, str) for i in identifier):
+    def get_child(self, *keys: str) -> "IdentifierData":
+        if not all(isinstance(i, str) for i in keys):
             raise ValueError("Identifiers must be strings.")
+
+        primary_keys = self.primary_key
+        identifiers = self.identifiers
+        num_missing_pkeys = self.primary_key_len - len(self.primary_key)
+        if num_missing_pkeys > 0:
+            primary_keys += keys[:num_missing_pkeys]
+        if len(keys) > num_missing_pkeys:
+            identifiers += keys[num_missing_pkeys:]
 
         return IdentifierData(
             self.cog_name,
             self.uuid,
             self.category,
-            self.primary_key,
-            self.identifiers + identifier,
+            primary_keys,
+            identifiers,
             self.primary_key_len,
-            is_custom=self.is_custom,
+            self.is_custom,
         )
 
     def get_parent(self) -> Tuple[str, "IdentifierData"]:
@@ -169,6 +177,20 @@ class IdentifierData:
                 self.primary_key_len,
                 is_custom=self.is_custom,
             ),
+        )
+
+    def add_identifier(self, *identifier: str) -> "IdentifierData":
+        if not all(isinstance(i, str) for i in identifier):
+            raise ValueError("Identifiers must be strings.")
+
+        return IdentifierData(
+            self.cog_name,
+            self.uuid,
+            self.category,
+            self.primary_key,
+            self.identifiers + identifier,
+            self.primary_key_len,
+            is_custom=self.is_custom,
         )
 
     def to_tuple(self) -> Tuple[str, ...]:

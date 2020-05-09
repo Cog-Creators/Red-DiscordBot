@@ -28,24 +28,24 @@ msgstr ""
 
 #: redbot/cogs/audio/apis.py:576
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "播放器超時，跳過剩餘歌曲。"
 
 #: redbot/cogs/audio/apis.py:598
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "無法取得歌曲，跳過剩餘的歌曲。"
 
 #: redbot/cogs/audio/apis.py:646
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "找不到任何內容。\\n您的YouTube API key可能是無效的，或者您在YouTube的搜索服務上受到速率限制。\\n請檢查YouTube API key，然後按照`{prefix}audioset youtubeapi`中的說明進行操作。"
 
 #: redbot/cogs/audio/apis.py:664 redbot/cogs/audio/audio.py:3609
 #: redbot/cogs/audio/audio.py:5460
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "已加入播放清單"
 
 #: redbot/cogs/audio/apis.py:665 redbot/cogs/audio/audio.py:3612
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "已將{num}首歌曲添加到播放清單中。{maxlength_msg}"
 
 #: redbot/cogs/audio/apis.py:671 redbot/cogs/audio/audio.py:3618
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
@@ -70,7 +70,7 @@ msgstr "在 {} 個伺服器中播放"
 
 #: redbot/cogs/audio/audio.py:485 redbot/cogs/audio/audio.py:3351
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "無法取得有效的歌曲。"
 
 #: redbot/cogs/audio/audio.py:505
 msgid "Auto Play Started."
@@ -91,7 +91,7 @@ msgstr "播放清單已空。"
 
 #: redbot/cogs/audio/audio.py:585
 msgid "Multiple errors detected"
-msgstr ""
+msgstr "偵測到多個錯誤"
 
 #: redbot/cogs/audio/audio.py:586
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
@@ -136,7 +136,7 @@ msgstr "已變更設定"
 
 #: redbot/cogs/audio/audio.py:689
 msgid "Daily queues: {true_or_false}."
-msgstr ""
+msgstr "今日播放清單: {true_or_false}。"
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -179,7 +179,7 @@ msgstr "已停用"
 #: redbot/cogs/audio/audio.py:697
 #, docstring
 msgid "Toggle the bot auto-disconnecting when done playing.\\n\\n        This setting takes precedence over `[p]audioset emptydisconnect`.\\n        "
-msgstr ""
+msgstr "切換播放完畢後，機器人自動退出語音的設定。\\n\\n 此設定優先於`[p]audioset emptydisconnect`.\\n        "
 
 #: redbot/cogs/audio/audio.py:705
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -192,22 +192,22 @@ msgstr "\\n已停用自動播放。"
 #: redbot/cogs/audio/audio.py:719
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "管理黑名單和白名單的關鍵字。"
 
 #: redbot/cogs/audio/audio.py:724
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "管理全域白名單/黑名單關鍵字。"
 
 #: redbot/cogs/audio/audio.py:728
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "管理全域白名單關鍵字。"
 
 #: redbot/cogs/audio/audio.py:732
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "管理全域黑名單關鍵字。"
 
 #: redbot/cogs/audio/audio.py:736 redbot/cogs/audio/audio.py:917
 #, docstring
@@ -283,7 +283,7 @@ msgstr "白名單中沒有任何項目。"
 #: redbot/cogs/audio/audio.py:857 redbot/cogs/audio/audio.py:1038
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "列出所有已添加到黑名單中的關鍵字。"
 
 #: redbot/cogs/audio/audio.py:860 redbot/cogs/audio/audio.py:899
 #: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:1080
@@ -293,30 +293,30 @@ msgstr "黑名單中沒有任何項目。"
 #: redbot/cogs/audio/audio.py:883 redbot/cogs/audio/audio.py:1064
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "清除所有白名單中的關鍵字。"
 
 #: redbot/cogs/audio/audio.py:891 redbot/cogs/audio/audio.py:1072
 msgid "All entries have been removed from the whitelist."
-msgstr "所有項目均已從白名單中移除。"
+msgstr "已從白名單中移除所有項目。"
 
 #: redbot/cogs/audio/audio.py:896 redbot/cogs/audio/audio.py:1077
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "清除所有黑名單中的關鍵字。"
 
 #: redbot/cogs/audio/audio.py:904 redbot/cogs/audio/audio.py:1085
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "已從黑名單中移除所有項目。"
 
 #: redbot/cogs/audio/audio.py:909
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "管理白名單關鍵字。"
 
 #: redbot/cogs/audio/audio.py:913
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "管理黑名單關鍵字。"
 
 #: redbot/cogs/audio/audio.py:940
 #, docstring
@@ -352,7 +352,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1165 redbot/cogs/audio/audio.py:1182
 msgid "No Playlist Found"
-msgstr ""
+msgstr "沒有找到播放清單"
 
 #: redbot/cogs/audio/audio.py:1166 redbot/cogs/audio/audio.py:4080
 #: redbot/cogs/audio/audio.py:5395
@@ -361,11 +361,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1174
 msgid "No Tracks Found"
-msgstr ""
+msgstr "沒有找到歌曲"
 
 #: redbot/cogs/audio/audio.py:1175
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "播放清單{name}中沒有歌曲。"
 
 #: redbot/cogs/audio/audio.py:1183 redbot/cogs/audio/audio.py:4088
 #: redbot/cogs/audio/audio.py:4282 redbot/cogs/audio/audio.py:4452
@@ -434,12 +434,12 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Invalid Time"
-msgstr ""
+msgstr "無效的時間"
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Seconds can't be less than zero."
-msgstr ""
+msgstr "秒數不能小於零。"
 
 #: redbot/cogs/audio/audio.py:1274
 msgid "Empty disconnect disabled."
@@ -469,7 +469,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Invalid Price"
-msgstr ""
+msgstr "錯誤的價格"
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Price can't be less than zero."
@@ -498,7 +498,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1396
 msgid "Invalid Path"
-msgstr ""
+msgstr "無效的路徑"
 
 #: redbot/cogs/audio/audio.py:1397
 msgid "{local_path} does not seem like a valid path."
@@ -525,7 +525,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1433
 msgid "Invalid length"
-msgstr ""
+msgstr "無效的長度"
 
 #: redbot/cogs/audio/audio.py:1433
 msgid "Length can't be less than zero."
@@ -776,7 +776,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1836
 #, docstring
 msgid "Audio stats."
-msgstr ""
+msgstr "音樂統計信息。"
 
 #: redbot/cogs/audio/audio.py:1866 redbot/cogs/audio/audio.py:1901
 #: redbot/cogs/audio/audio.py:1941 redbot/cogs/audio/audio.py:1979
@@ -804,7 +804,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1895
 #, docstring
 msgid "Bump a track number to the top of the queue."
-msgstr ""
+msgstr "將編號歌曲移動到到播放清單頂部。"
 
 #: redbot/cogs/audio/audio.py:1908 redbot/cogs/audio/audio.py:1915
 #: redbot/cogs/audio/audio.py:1921
@@ -830,7 +830,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1939
 #, docstring
 msgid "Disconnect from the voice channel."
-msgstr ""
+msgstr "退出語音頻道。"
 
 #: redbot/cogs/audio/audio.py:1952
 msgid "Unable to disconnect"
@@ -851,7 +851,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1976
 #, docstring
 msgid "Equalizer management."
-msgstr ""
+msgstr "等化器管理。"
 
 #: redbot/cogs/audio/audio.py:2012
 #, docstring
@@ -984,7 +984,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2344
 #, docstring
 msgid "Local playback commands."
-msgstr ""
+msgstr "本地播放命令。"
 
 #: redbot/cogs/audio/audio.py:2350
 #, docstring
@@ -1024,7 +1024,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2542
 #, docstring
 msgid "Now playing."
-msgstr ""
+msgstr "正在播放。"
 
 #: redbot/cogs/audio/audio.py:2556
 msgid "\\n Requested by: **{track.requester}**"
@@ -1052,7 +1052,7 @@ msgstr "重複播放"
 #: redbot/cogs/audio/audio.py:2642
 #, docstring
 msgid "Pause or resume a playing track."
-msgstr ""
+msgstr "暫停或繼續播放歌曲。"
 
 #: redbot/cogs/audio/audio.py:2654 redbot/cogs/audio/audio.py:2661
 msgid "Unable To Manage Tracks"
@@ -1077,7 +1077,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2682
 #, docstring
 msgid "Queue percentage."
-msgstr ""
+msgstr "暫停或繼續播放歌曲。"
 
 #: redbot/cogs/audio/audio.py:2709
 msgid "There's  nothing in the queue."
@@ -1085,12 +1085,12 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2731
 msgid "Queued and playing tracks:"
-msgstr ""
+msgstr "已加入和正在播放的歌曲:"
 
 #: redbot/cogs/audio/audio.py:2738
 #, docstring
 msgid "Play a URL or search for a track."
-msgstr ""
+msgstr "播放URL或搜索歌曲。"
 
 #: redbot/cogs/audio/audio.py:2747 redbot/cogs/audio/audio.py:2752
 #: redbot/cogs/audio/audio.py:2769 redbot/cogs/audio/audio.py:2778
@@ -1114,7 +1114,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6939 redbot/cogs/audio/audio.py:7000
 #: redbot/cogs/audio/audio.py:7133
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "無法播放歌曲"
 
 #: redbot/cogs/audio/audio.py:2748 redbot/cogs/audio/audio.py:2854
 #: redbot/cogs/audio/audio.py:6934
@@ -1160,7 +1160,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6906 redbot/cogs/audio/audio.py:7127
 #: redbot/cogs/audio/audio.py:7781
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "尚未與Lavalink建立連接。"
 
 #: redbot/cogs/audio/audio.py:2792 redbot/cogs/audio/audio.py:2898
 #: redbot/cogs/audio/audio.py:3148 redbot/cogs/audio/audio.py:3323
@@ -1187,7 +1187,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "在播放清單頂部播放URL或搜索歌曲。"
 
 #: redbot/cogs/audio/audio.py:2843
 msgid "Unable to bump track"
@@ -1227,7 +1227,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3018
 msgid "{time} until track playback: #1 in queue"
-msgstr ""
+msgstr "{time}後開始播放: 在播放清單的第#1首歌"
 
 #: redbot/cogs/audio/audio.py:3022 redbot/cogs/audio/audio.py:3686
 #: redbot/cogs/audio/audio.py:7162
@@ -1237,7 +1237,7 @@ msgstr "已加入播放清單"
 #: redbot/cogs/audio/audio.py:3036
 #, docstring
 msgid "Pick a Spotify playlist from a list of categories to start playing."
-msgstr ""
+msgstr "從類別列表中選擇一個Spotify播放列表以開始播放。"
 
 #: redbot/cogs/audio/audio.py:3102
 msgid "The owner needs to set the Spotify client ID, Spotify client secret, and YouTube API key before Spotify URLs or codes can be used. \\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` for instructions."
@@ -1288,7 +1288,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3283
 #, docstring
 msgid "Starts auto play."
-msgstr ""
+msgstr "開始自動播放。"
 
 #: redbot/cogs/audio/audio.py:3337
 msgid "You must be in the voice channel to use the autoplay command."
@@ -1363,7 +1363,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3689 redbot/cogs/audio/audio.py:7196
 msgid "{time} until track playback: #{position} in queue"
-msgstr ""
+msgstr "{time}後開始播放: 在播放清單的第#{position}首歌開始"
 
 #: redbot/cogs/audio/audio.py:3710
 msgid "Please wait, finding tracks..."
@@ -1384,7 +1384,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3719
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "大約剩餘時間: {seconds}"
 
 #: redbot/cogs/audio/audio.py:3790
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
@@ -1409,7 +1409,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3952 redbot/cogs/audio/audio.py:4889
 #: redbot/cogs/audio/audio.py:4982 redbot/cogs/audio/utils.py:184
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: redbot/cogs/audio/audio.py:3953
 msgid "{number}.    <{playlist.name}>\\n - Scope:  < {scope} >\\n - ID:     < {playlist.id} >\\n - Tracks: < {tracks} >\\n - Author: < {author} >\\n\\n"
@@ -1426,7 +1426,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:4009
 #, docstring
 msgid "Playlist configuration options.\\n\\n        Scope info:\\n        ​ ​ ​ ​ **Global**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\\n        ​ ​ ​ ​ **Guild**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\\n        ​ ​ ​ ​ **User**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\\n\\n        "
-msgstr ""
+msgstr "播放清單設定選項。\\n\\n        範圍訊息:\\n         ​ ​ ​ ​ **全域**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ 所有使用者均可看到。\\n        ​ ​ ​ ​ ​ ​ ​ ​ 只能由機器人的所有者來編輯。\\n        ​ ​ ​ ​ **伺服器**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ 該伺服器中的所有使用者均可看到。\\n        ​ ​ ​ ​ ​ ​ ​ ​ 可以由伺服器擁有者、伺服器管理員、伺服器仲裁者、DJ身分組及播放清單的創建者來編輯。\\n        ​ ​ ​ ​ **使用者**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ 如果是通過--author的話，所有人均可以看到。\\n        ​ ​ ​ ​ ​ ​ ​ ​ 機器人的所有者和創建者均可編輯。\\n\\n        "
 
 #: redbot/cogs/audio/audio.py:4033
 #, docstring
@@ -1792,7 +1792,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6201
 #, docstring
 msgid "Skip to the start of the previously played track."
-msgstr ""
+msgstr "跳到上一個播放歌曲的開頭。"
 
 #: redbot/cogs/audio/audio.py:6215 redbot/cogs/audio/audio.py:6222
 #: redbot/cogs/audio/audio.py:6229 redbot/cogs/audio/audio.py:7475
@@ -1825,7 +1825,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6257
 #, docstring
 msgid "List the songs in the queue."
-msgstr ""
+msgstr "列出播放清單中的歌曲。"
 
 #: redbot/cogs/audio/audio.py:6293
 msgid "\\n Requested by: **{track.requester}**"
@@ -1866,7 +1866,7 @@ msgstr "點歌者 **{user}**\\n"
 
 #: redbot/cogs/audio/audio.py:6475
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr ""
+msgstr "第{page_num}頁/共{total_pages}頁 | 共{num_tracks}首歌曲, 剩餘{num_remaining}\\n"
 
 #: redbot/cogs/audio/audio.py:6550
 msgid "Matching Tracks:"
@@ -1984,7 +1984,7 @@ msgstr "\\n已停用自動播放。"
 #: redbot/cogs/audio/audio.py:6800
 #, docstring
 msgid "Remove a specific track number from the queue."
-msgstr ""
+msgstr "從播放清單中刪除指定的歌曲編號。"
 
 #: redbot/cogs/audio/audio.py:6808
 msgid "Nothing queued."
@@ -2014,7 +2014,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6843
 #, docstring
 msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube.\\n        `[p]search sc<search term>` will search SoundCloud instead of YouTube.\\n        "
-msgstr ""
+msgstr "選擇要搜索的曲目。\\n\\n        使用`[p]search list <search term>` 來把所有在YouTube搜尋到的結果加入播放清單中。\\n        `[p]search sc <search term>`則會搜尋SoundCloud而不是YouTube。\\n        "
 
 #: redbot/cogs/audio/audio.py:6890 redbot/cogs/audio/audio.py:6899
 #: redbot/cogs/audio/audio.py:6905 redbot/cogs/audio/audio.py:6917
@@ -2076,7 +2076,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7280
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\\n        "
-msgstr ""
+msgstr "在軌道上向前或向後搜索幾秒鐘或到特定時間。\\n\\n接受的格式為秒數或00:00:00(`hh:mm:ss`)或00:00 (`mm:ss`)的值。\\n        "
 
 #: redbot/cogs/audio/audio.py:7298 redbot/cogs/audio/audio.py:7305
 #: redbot/cogs/audio/audio.py:7312 redbot/cogs/audio/audio.py:7319
@@ -2146,12 +2146,12 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7450
 #, docstring
 msgid "Make Red sing one of her songs."
-msgstr ""
+msgstr "讓Red唱她的一首歌。"
 
 #: redbot/cogs/audio/audio.py:7466
 #, docstring
 msgid "Skip to the next track, or to a given track number."
-msgstr ""
+msgstr "跳到下一首歌曲或指定編號的歌曲。"
 
 #: redbot/cogs/audio/audio.py:7476
 msgid "You must be in the voice channel to skip the music."
@@ -2204,7 +2204,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7670
 #, docstring
 msgid "Stop playback and clear the queue."
-msgstr ""
+msgstr "停止播放並清除播放清單。"
 
 #: redbot/cogs/audio/audio.py:7683 redbot/cogs/audio/audio.py:7690
 #: redbot/cogs/audio/audio.py:7697
@@ -2226,7 +2226,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7722
 #, docstring
 msgid "Summon the bot to a voice channel."
-msgstr ""
+msgstr "召喚機器人到語音頻道。"
 
 #: redbot/cogs/audio/audio.py:7735 redbot/cogs/audio/audio.py:7743
 #: redbot/cogs/audio/audio.py:7756 redbot/cogs/audio/audio.py:7773
@@ -2245,7 +2245,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7788
 #, docstring
 msgid "Set the volume, 1% - 150%."
-msgstr ""
+msgstr "設定音量，1% - 150%。"
 
 #: redbot/cogs/audio/audio.py:7794
 msgid "Current Volume:"
@@ -2270,7 +2270,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7838
 #, docstring
 msgid "Lavalink server configuration options."
-msgstr ""
+msgstr "Lavalink伺服器的設定選項。"
 
 #: redbot/cogs/audio/audio.py:7842
 #, docstring
