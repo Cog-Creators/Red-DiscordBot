@@ -559,8 +559,34 @@ async def test_config_ctxmgr_atomicity(config):
 @pytest.mark.asyncio
 async def test_set_with_partial_primary_keys(config):
     config.init_custom("CUSTOM", 3)
-    await config.custom("CUSTOM", "1").set({"2": {"3": {"foo": "bar"}}})
-    assert await config.custom("CUSTOM", "1", "2", "3").foo() == "bar"
+    await config.custom("CUSTOM", "1").set({"11": {"111": {"foo": "bar"}}})
+    assert await config.custom("CUSTOM", "1", "11", "111").foo() == "bar"
+
+    await config.custom("CUSTOM", "2").set(
+        {
+            "11": {"111": {"foo": "bad"}},
+            "22": {"111": {"foo": "baz"}},
+            "33": {"111": {"foo": "boo"}, "222": {"foo": "boz"}},
+        }
+    )
+    assert await config.custom("CUSTOM", "2", "11", "111").foo() == "bad"
+    assert await config.custom("CUSTOM", "2", "22", "111").foo() == "baz"
+    assert await config.custom("CUSTOM", "2", "33", "111").foo() == "boo"
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "boz"
+
+    await config.custom("CUSTOM", "2").set(
+        {
+            "22": {},
+            "33": {"111": {}, "222": {"foo": "biz"}},
+        }
+    )
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "11")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "22", "111")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "33", "111", "foo")
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "biz"
 
 
 @pytest.mark.asyncio
