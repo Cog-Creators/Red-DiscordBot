@@ -12,7 +12,6 @@ from secrets import compare_digest
 try:
     # pylint: disable=import-error
     import aioredis
-    import aioredis_lock
     from .client_interface import Client
 except ModuleNotFoundError:
     aioredis = None
