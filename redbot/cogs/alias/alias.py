@@ -303,7 +303,11 @@ class Alias(commands.Cog):
         if len(message) > 1850:
             for page in pagify(message, delims=["\n"], page_length=1850):
                 count += 1
-                page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                page = (
+                    (_("Aliases:"))
+                    + page
+                    + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                )
                 alias_list.append(box("".join(page), "diff"))
         else:
             message = (_("Aliases:")) + message
@@ -328,7 +332,11 @@ class Alias(commands.Cog):
         if len(message) > 1850:
             for page in pagify(message, delims=["\n"], page_length=1850):
                 count += 1
-                page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                page = (
+                    (_("Aliases:"))
+                    + page
+                    + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                )
                 alias_list.append(box("".join(page), "diff"))
         else:
             message = (_("Aliases:")) + message
