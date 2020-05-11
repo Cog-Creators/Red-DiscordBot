@@ -288,6 +288,7 @@ class Alias(commands.Cog):
 
     @alias.command(name="list")
     @commands.guild_only()
+    @checks.bot_has_permissions(add_reactions=True)
     async def _list_alias(self, ctx: commands.Context):
         """List the available aliases on this server."""
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
@@ -298,18 +299,21 @@ class Alias(commands.Cog):
         for a in names:
             message += "{}\n".format(a)
         alias_list = []
-        for page in pagify(message, delims=["\n"], page_length=1900):
-            page = (_("Aliases:")) + page
-            alias_list.append(box("".join(page), "diff"))
+        count = 0
+        if len(message) > 1850:
+            for page in pagify(message, delims=["\n"], page_length=1850):
+                count += 1
+                page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                alias_list.append(box("".join(page), "diff"))
+        else:
+            message = (_("Aliases:")) + message
+            alias_list.append(box("".join(message), "diff"))
         if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
-        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
-            await menu(ctx, alias_list, DEFAULT_CONTROLS)
-        else:
-            for i in range(len(alias_list)):
-                await ctx.send("{}".format(alias_list[i]))
+        await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @global_.command(name="list")
+    @checks.bot_has_permissions(add_reactions=True)
     async def _list_global_alias(self, ctx: commands.Context):
         """List the available global aliases on this bot."""
         global_aliases = await self._aliases.get_global_aliases()
@@ -320,16 +324,18 @@ class Alias(commands.Cog):
         for a in names:
             message += "{}\n".format(a)
         alias_list = []
-        for page in pagify(message, delims=["\n"], page_length=1900):
-            page = (_("Aliases:")) + page
-            alias_list.append(box("".join(page), "diff"))
+        count = 0
+        if len(message) > 1850:
+            for page in pagify(message, delims=["\n"], page_length=1850):
+                count += 1
+                page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
+                alias_list.append(box("".join(page), "diff"))
+        else:
+            message = (_("Aliases:")) + message
+            alias_list.append(box("".join(message), "diff"))
         if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
-        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
-            await menu(ctx, alias_list, DEFAULT_CONTROLS)
-        else:
-            for i in range(len(alias_list)):
-                await ctx.send("{}".format(alias_list[i]))
+        await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
