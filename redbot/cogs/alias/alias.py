@@ -6,7 +6,8 @@ from typing import Dict
 import discord
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
@@ -292,8 +293,20 @@ class Alias(commands.Cog):
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        names = [_("Aliases:")] + sorted(["+ " + a.name for a in guild_aliases])
-        await ctx.send(box("\n".join(names), "diff"))
+        names = [_("Aliases: ")] + sorted(["+ " + a.name for a in guild_aliases])
+        message = ""
+        for a in names:
+            message += "{}\n".format(a)
+        a_list = []
+        for page in pagify(message, delims=["\n"], page_length=1950):
+            a_list.append(box("".join(page), "diff"))
+        if len(a_list) == 1:
+            return await ctx.send(a_list[0])
+        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+            await menu(ctx, a_list, DEFAULT_CONTROLS)
+        else:
+            for i in range(len(a_list)):
+                await ctx.send("{}".format(a_list[i]))
 
     @global_.command(name="list")
     async def _list_global_alias(self, ctx: commands.Context):
@@ -302,7 +315,19 @@ class Alias(commands.Cog):
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
         names = [_("Aliases:")] + sorted(["+ " + a.name for a in global_aliases])
-        await ctx.send(box("\n".join(names), "diff"))
+        message = ""
+        for a in names:
+            message += "{}\n".format(a)
+        a_list = []
+        for page in pagify(message, delims=["\n"], page_length=1950):
+            a_list.append(box("".join(page), "diff"))
+        if len(a_list) == 1:
+            return await ctx.send(a_list[0])
+        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+            await menu(ctx, a_list, DEFAULT_CONTROLS)
+        else:
+            for i in range(len(a_list)):
+                await ctx.send("{}".format(a_list[i]))
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
