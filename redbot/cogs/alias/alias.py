@@ -293,12 +293,13 @@ class Alias(commands.Cog):
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        names = [_("Aliases: ")] + sorted(["+ " + a.name for a in guild_aliases])
+        names = [""] + sorted(["+ " + a.name for a in guild_aliases])
         message = ""
         for a in names:
             message += "{}\n".format(a)
         a_list = []
-        for page in pagify(message, delims=["\n"], page_length=1950):
+        for page in pagify(message, delims=["\n"], page_length=1900):
+            page = (_("Aliases:")) + page
             a_list.append(box("".join(page), "diff"))
         if len(a_list) == 1:
             return await ctx.send(a_list[0])
@@ -314,12 +315,13 @@ class Alias(commands.Cog):
         global_aliases = await self._aliases.get_global_aliases()
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
-        names = [_("Aliases:")] + sorted(["+ " + a.name for a in global_aliases])
+        names = [""] + sorted(["+ " + a.name for a in global_aliases])
         message = ""
         for a in names:
             message += "{}\n".format(a)
         a_list = []
-        for page in pagify(message, delims=["\n"], page_length=1950):
+        for page in pagify(message, delims=["\n"], page_length=1900):
+            page = (_("Aliases:")) + page
             a_list.append(box("".join(page), "diff"))
         if len(a_list) == 1:
             return await ctx.send(a_list[0])
