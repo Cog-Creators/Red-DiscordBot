@@ -297,17 +297,17 @@ class Alias(commands.Cog):
         message = ""
         for a in names:
             message += "{}\n".format(a)
-        a_list = []
+        alias_list = []
         for page in pagify(message, delims=["\n"], page_length=1900):
             page = (_("Aliases:")) + page
-            a_list.append(box("".join(page), "diff"))
-        if len(a_list) == 1:
-            return await ctx.send(a_list[0])
+            alias_list.append(box("".join(page), "diff"))
+        if len(alias_list) == 1:
+            return await ctx.send(alias_list[0])
         if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
-            await menu(ctx, a_list, DEFAULT_CONTROLS)
+            await menu(ctx, alias_list, DEFAULT_CONTROLS)
         else:
-            for i in range(len(a_list)):
-                await ctx.send("{}".format(a_list[i]))
+            for i in range(len(alias_list)):
+                await ctx.send("{}".format(alias_list[i]))
 
     @global_.command(name="list")
     async def _list_global_alias(self, ctx: commands.Context):
@@ -319,17 +319,17 @@ class Alias(commands.Cog):
         message = ""
         for a in names:
             message += "{}\n".format(a)
-        a_list = []
+        alias_list = []
         for page in pagify(message, delims=["\n"], page_length=1900):
             page = (_("Aliases:")) + page
-            a_list.append(box("".join(page), "diff"))
-        if len(a_list) == 1:
-            return await ctx.send(a_list[0])
+            alias_list.append(box("".join(page), "diff"))
+        if len(alias_list) == 1:
+            return await ctx.send(alias_list[0])
         if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
-            await menu(ctx, a_list, DEFAULT_CONTROLS)
+            await menu(ctx, alias_list, DEFAULT_CONTROLS)
         else:
-            for i in range(len(a_list)):
-                await ctx.send("{}".format(a_list[i]))
+            for i in range(len(alias_list)):
+                await ctx.send("{}".format(alias_list[i]))
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
