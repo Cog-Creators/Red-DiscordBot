@@ -298,20 +298,13 @@ class Alias(commands.Cog):
         message = ""
         for a in names:
             message += "{}\n".format(a)
+        temp = list(pagify(message, delims=["\n"], page_length=1850))
         alias_list = []
         count = 0
-        if len(message) > 1850:
-            for page in pagify(message, delims=["\n"], page_length=1850):
-                count += 1
-                page = (
-                    (_("Aliases:"))
-                    + page
-                    + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
-                )
-                alias_list.append(box("".join(page), "diff"))
-        else:
-            message = (_("Aliases:")) + message
-            alias_list.append(box("".join(message), "diff"))
+        for page in temp:
+            count += 1
+            page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, len(temp)))
+            alias_list.append(box("".join(page), "diff"))
         if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
@@ -327,20 +320,13 @@ class Alias(commands.Cog):
         message = ""
         for a in names:
             message += "{}\n".format(a)
+        temp = list(pagify(message, delims=["\n"], page_length=1850))
         alias_list = []
         count = 0
-        if len(message) > 1850:
-            for page in pagify(message, delims=["\n"], page_length=1850):
-                count += 1
-                page = (
-                    (_("Aliases:"))
-                    + page
-                    + ("\n\nPage {}/{}".format(count, round((len(message) / 1850) + 1)))
-                )
-                alias_list.append(box("".join(page), "diff"))
-        else:
-            message = (_("Aliases:")) + message
-            alias_list.append(box("".join(message), "diff"))
+        for page in temp:
+            count += 1
+            page = (_("Aliases:")) + page + ("\n\nPage {}/{}".format(count, len(temp)))
+            alias_list.append(box("".join(page), "diff"))
         if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
