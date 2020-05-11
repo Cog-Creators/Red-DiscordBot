@@ -292,6 +292,10 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
@@ -317,6 +321,10 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
@@ -451,7 +459,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's reponses and its settings."""
+        """Shows a custom command's responses and its settings."""
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
@@ -498,7 +506,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(box(p, lang="yaml"))
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
@@ -510,7 +518,7 @@ class CustomCommands(commands.Cog):
 
         ctx = await self.bot.get_context(message)
 
-        if ctx.prefix is None or ctx.valid:
+        if ctx.prefix is None:
             return
 
         try:

@@ -266,14 +266,9 @@ class ModInfo(MixinMeta):
         name = " ~ ".join((name, user.nick)) if user.nick else name
         name = filter_invites(name)
 
-        if user.avatar:
-            avatar = user.avatar_url_as(static_format="png")
-            data.set_author(
-                name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name), url=avatar
-            )
-            data.set_thumbnail(url=avatar)
-        else:
-            data.set_author(name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name))
+        avatar = user.avatar_url_as(static_format="png")
+        data.set_author(name=f"{statusemoji} {name}", url=avatar)
+        data.set_thumbnail(url=avatar)
 
         await ctx.send(embed=data)
 

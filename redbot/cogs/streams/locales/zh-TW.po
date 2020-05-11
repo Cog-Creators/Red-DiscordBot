@@ -306,7 +306,7 @@ msgstr "正在播放: "
 
 #: redbot/cogs/streams/streamtypes.py:443
 msgid "None"
-msgstr ""
+msgstr "無"
 
 #: redbot/cogs/streams/streamtypes.py:446
 msgid "NSFW | "

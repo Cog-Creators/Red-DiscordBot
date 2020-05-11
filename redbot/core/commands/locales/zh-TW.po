@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-04-23 12:07+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -15,27 +15,27 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:503
 msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+msgstr "\\\"{argument}\\\" 不是數字。"
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}`不是此命令的有效時間單位"
 
 #: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "對於該命令來說，此時間量太大。 (最大值: {maximum})"
 
 #: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "對於該命令來說，此時間量太小。 (最小值: {minimum})"
 
 #: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
-msgstr ""
+msgstr "沒有找到\\\"{name}\\\"伺服器."
 
 #: redbot/core/commands/converter.py:182 redbot/core/commands/converter.py:184
 msgid "The provided tokens are not in a valid format."
-msgstr ""
+msgstr "提供的token格式無效。"
 
 #: redbot/core/commands/converter.py:218
 msgid "Unexpected key {key}"
@@ -45,8 +45,9 @@ msgstr ""
 msgid "Expected one of: {}"
 msgstr ""
 
-#: redbot/core/commands/help.py:717
+#: redbot/core/commands/help.py:718
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
+msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    \n"
+"\\n   我需要某人\\n    (救命)不只是任何人\\n    (救命)你知道我需要某人\\n    (救命!)\\n     "
 

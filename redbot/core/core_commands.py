@@ -571,7 +571,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1507,7 +1507,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        This setting only applies to embedded help.
+        This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
