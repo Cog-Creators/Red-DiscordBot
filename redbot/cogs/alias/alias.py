@@ -295,9 +295,7 @@ class Alias(commands.Cog):
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
         names = sorted(["+ " + a.name for a in guild_aliases])
-        message = ""
-        for a in names:
-            message += "{}\n".format(a)
+        message = "\n".join(names)
         temp = list(pagify(message, delims=["\n"], page_length=1850))
         alias_list = []
         count = 0
