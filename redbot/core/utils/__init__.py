@@ -182,7 +182,7 @@ def bounded_gather_iter(
     """
     if loop is not None:
         warnings.warn(
-            "`loop` kwarg will be removed in first minor release after [PUT A DATE HERE]"
+            "`loop` kwarg will be removed in first minor release after 2020-08-05"
             " and is currently ignored. Call this from the related event loop.",
             DeprecationWarning,
             stacklevel=2,
@@ -240,7 +240,7 @@ def bounded_gather(
     """
     if loop is not None:
         warnings.warn(
-            "`loop` kwarg will be removed in first minor release after [PUT A DATE HERE]"
+            "`loop` kwarg will be removed in first minor release after 2020-08-05"
             " and is currently ignored. Call this from the related event loop.",
             DeprecationWarning,
             stacklevel=2,
