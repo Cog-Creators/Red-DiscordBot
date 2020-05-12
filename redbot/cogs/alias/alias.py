@@ -325,7 +325,11 @@ class Alias(commands.Cog):
         count = 0
         for page in temp:
             count += 1
-            page = (_("Aliases:\n")) + page + ("\n\nPage {}/{}".format(count, len(temp)))
+            page = (
+                _("Aliases:\n")
+                + page
+                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
+            )
             alias_list.append(box("".join(page), "diff"))
         if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
