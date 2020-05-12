@@ -5,9 +5,10 @@ This module contains useful functions and classes for command argument conversio
 
 Some of the converters within are included provisionaly and are marked as such.
 """
+import functools
 import os
 import re
-import functools
+import warnings
 from datetime import timedelta
 from typing import (
     TYPE_CHECKING,
@@ -20,6 +21,7 @@ from typing import (
     Type,
     TypeVar,
     Literal as Literal,
+    Any,
 )
 
 import discord
@@ -33,7 +35,6 @@ if TYPE_CHECKING:
     from .context import Context
 
 __all__ = [
-    "APIToken",
     "DictConverter",
     "GuildConverter",
     "UserInputOptional",
@@ -154,7 +155,7 @@ class GuildConverter(discord.Guild):
         return ret
 
 
-class APIToken(discord.ext.commands.Converter):
+class _APIToken(discord.ext.commands.Converter):
     """Converts to a `dict` object.
 
     This will parse the input argument separating the key value pairs into a 
@@ -183,6 +184,22 @@ class APIToken(discord.ext.commands.Converter):
         if not result:
             raise BadArgument(_("The provided tokens are not in a valid format."))
         return result
+
+
+_APIToken.__name__ = "APIToken"
+
+
+def __getattr__(name: str) -> Any:
+    # honestly, this is awesome (PEP-562)
+    if name == "APIToken":
+        warnings.warn(
+            "`APIToken` is deprecated since Red 3.3.0 and will be removed"
+            " in first minor release after 2020-08-05. Use `DictConverter` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return globals()["_APIToken"]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when

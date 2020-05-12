@@ -19,7 +19,6 @@ from .commands import (
 )
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
 from .converter import (
-    APIToken as APIToken,
     DictConverter as DictConverter,
     GuildConverter as GuildConverter,
     TimedeltaConverter as TimedeltaConverter,
@@ -29,6 +28,7 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
+    __getattr__,  # this contains deprecation of APIToken
 )
 from .errors import (
     ConversionFailure as ConversionFailure,
