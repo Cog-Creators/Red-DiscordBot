@@ -331,7 +331,7 @@ class Alias(commands.Cog):
                 + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
             )
             alias_list.append(box("".join(page), "diff"))
-        if len(alias_list) == 1:
+        if count == 1:
             return await ctx.send(alias_list[0])
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
