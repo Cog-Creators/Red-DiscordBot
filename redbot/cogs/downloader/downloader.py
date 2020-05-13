@@ -29,7 +29,7 @@ _ = Translator("Downloader", __file__)
 
 DEPRECATION_NOTICE = _(
     "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in future: {repo_list}.\n"
+    " which are marked for removal in the future: {repo_list}.\n"
     " You should inform maintainers of these repos about this message."
 )
 

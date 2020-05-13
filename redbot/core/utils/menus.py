@@ -214,7 +214,7 @@ def start_adding_reactions(
         loop = asyncio.get_running_loop()
     else:
         warnings.warn(
-            "`loop` kwarg will be removed in first minor release after 2020-08-05"
+            "`loop` kwarg will be removed in the first minor release after 2020-08-05"
             " and is currently ignored. Call this from the related event loop.",
             DeprecationWarning,
             stacklevel=2,

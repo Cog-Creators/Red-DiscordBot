@@ -22,7 +22,7 @@ class SharedLibImportWarner(MetaPathFinder):
             return None
         msg = (
             "One of cogs uses shared libraries which are"
-            " deprecated and scheduled for removal in future.\n"
+            " deprecated and scheduled for removal in the future.\n"
             "You should inform author of the cog about this message."
         )
         warnings.warn(msg, SharedLibDeprecationWarning, stacklevel=2)

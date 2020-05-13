@@ -169,7 +169,7 @@ class _APIToken(discord.ext.commands.Converter):
     Note: Core usage of this has been replaced with `DictConverter` use instead.
 
     .. warning::
-        This will be removed in first minor release after 2020-08-05.
+        This will be removed in the first minor release after 2020-08-05.
     """
 
     async def convert(self, ctx: "Context", argument) -> dict:
@@ -194,7 +194,7 @@ def __getattr__(name: str) -> Any:
     if name == "APIToken":
         warnings.warn(
             "`APIToken` is deprecated since Red 3.3.0 and will be removed"
-            " in first minor release after 2020-08-05. Use `DictConverter` instead.",
+            " in the first minor release after 2020-08-05. Use `DictConverter` instead.",
             DeprecationWarning,
             stacklevel=2,
         )
