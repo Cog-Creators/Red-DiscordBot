@@ -367,7 +367,7 @@ class Admin(commands.Cog):
     @commands.guild_only()
     @commands.group()
     async def selfrole(self, ctx: commands.Context):
-        """Apply selfroles."""
+        """Apply selfroles. Admins: see selfroleset to edit this list."""
         pass
 
     @selfrole.command(name="add")
