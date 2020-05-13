@@ -239,9 +239,34 @@ Continue by `creating-venv-linux`.
 
 .. _install-ubuntu:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Ubuntu LTS versions (20.04, 18.04)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+Ubuntu 20.04 LTS
+~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:git-core/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
+      build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu-1804:
+
+~~~~~~~~~~~~~~~~
+Ubuntu 18.04 LTS
+~~~~~~~~~~~~~~~~
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
