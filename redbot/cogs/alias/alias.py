@@ -1,7 +1,7 @@
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict
+from typing import Dict, List
 
 import discord
 from redbot.core import Config, commands, checks
@@ -111,6 +111,7 @@ class Alias(commands.Cog):
         count = 0
         for page in temp:
             count += 1
+            page = page.lstrip("\n")
             page = (
                 _("Aliases:\n")
                 + page
