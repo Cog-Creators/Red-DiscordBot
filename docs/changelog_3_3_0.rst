@@ -4,11 +4,15 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`jack1142`
 
 End-user changelog
 ------------------
 
+Admin
+*****
+
+- Fixed server lock (:issue:`3815`, :issue:`3814`)
 
 
 Developer changelog
