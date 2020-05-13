@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`qaisjp`
+| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`qaisjp`
 
 End-user changelog
 ------------------
@@ -13,6 +13,11 @@ Admin
 *****
 
 - Fixed server lock (:issue:`3815`, :issue:`3814`)
+
+CustomCommands
+**************
+
+- ``[p]customcom create`` no longer allows spaces in custom command names (:issue:`3816`)
 
 
 Developer changelog
