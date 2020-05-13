@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`qaisjp`
+| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`qaisjp`
 
 End-user changelog
 ------------------
@@ -18,6 +18,11 @@ CustomCommands
 **************
 
 - ``[p]customcom create`` no longer allows spaces in custom command names (:issue:`3816`)
+
+Mod
+***
+
+- ``[p]userinfo`` now shows default avatar when no avatar is set (:issue:`3819`)
 
 
 Developer changelog
