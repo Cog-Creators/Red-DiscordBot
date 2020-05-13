@@ -101,7 +101,7 @@ class Alias(commands.Cog):
         )
         await self.bot.process_commands(new_message)
 
-    async def paginate_alias_list(self, alias_list: list) -> list:
+    async def paginate_alias_list(self, ctx: commands.Context, alias_list: list) -> list:
         names = sorted(["+ " + a.name for a in alias_list])
         message = "\n".join(names)
         temp = list(pagify(message, delims=["\n"], page_length=1850))
@@ -115,7 +115,9 @@ class Alias(commands.Cog):
                 + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
             )
             alias_list.append(box("".join(page), "diff"))
-        return alias_list
+        if len(alias_list) == 1:
+            return await ctx.send(alias_list[0])
+        await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @commands.group()
     @commands.guild_only()
@@ -310,10 +312,7 @@ class Alias(commands.Cog):
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        alias_list = await self.paginate_alias_list(guild_aliases)
-        if len(alias_list) == 1:
-            return await ctx.send(alias_list[0])
-        await menu(ctx, alias_list, DEFAULT_CONTROLS)
+        await self.paginate_alias_list(ctx, guild_aliases)
 
     @global_.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
@@ -322,10 +321,7 @@ class Alias(commands.Cog):
         global_aliases = await self._aliases.get_global_aliases()
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
-        alias_list = await self.paginate_alias_list(global_aliases)
-        if len(alias_list) == 1:
-            return await ctx.send(alias_list[0])
-        await menu(ctx, alias_list, DEFAULT_CONTROLS)
+        await self.paginate_alias_list(ctx, global_aliases)
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
