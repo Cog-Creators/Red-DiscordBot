@@ -101,7 +101,9 @@ class Alias(commands.Cog):
         )
         await self.bot.process_commands(new_message)
 
-    async def paginate_alias_list(self, ctx: commands.Context, alias_list: list) -> list:
+    async def paginate_alias_list(
+        self, ctx: commands.Context, alias_list: List[AliasEntry]
+    ) -> None:
         names = sorted(["+ " + a.name for a in alias_list])
         message = "\n".join(names)
         temp = list(pagify(message, delims=["\n"], page_length=1850))
