@@ -101,6 +101,22 @@ class Alias(commands.Cog):
         )
         await self.bot.process_commands(new_message)
 
+    async def paginate_alias_list(self, alias_list: list) -> list:
+        names = sorted(["+ " + a.name for a in alias_list])
+        message = "\n".join(names)
+        temp = list(pagify(message, delims=["\n"], page_length=1850))
+        alias_list = []
+        count = 0
+        for page in temp:
+            count += 1
+            page = (
+                _("Aliases:\n")
+                + page
+                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
+            )
+            alias_list.append(box("".join(page), "diff"))
+        return alias_list
+
     @commands.group()
     @commands.guild_only()
     async def alias(self, ctx: commands.Context):
@@ -294,20 +310,8 @@ class Alias(commands.Cog):
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        names = sorted(["+ " + a.name for a in guild_aliases])
-        message = "\n".join(names)
-        temp = list(pagify(message, delims=["\n"], page_length=1850))
-        alias_list = []
-        count = 0
-        for page in temp:
-            count += 1
-            page = (
-                _("Aliases:\n")
-                + page
-                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
-            )
-            alias_list.append(box("".join(page), "diff"))
-        if count == 1:
+        alias_list = await self.paginate_alias_list(guild_aliases)
+        if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
@@ -318,20 +322,8 @@ class Alias(commands.Cog):
         global_aliases = await self._aliases.get_global_aliases()
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
-        names = sorted(["+ " + a.name for a in global_aliases])
-        message = "\n".join(names)
-        temp = list(pagify(message, delims=["\n"], page_length=1850))
-        alias_list = []
-        count = 0
-        for page in temp:
-            count += 1
-            page = (
-                _("Aliases:\n")
-                + page
-                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
-            )
-            alias_list.append(box("".join(page), "diff"))
-        if count == 1:
+        alias_list = await self.paginate_alias_list(global_aliases)
+        if len(alias_list) == 1:
             return await ctx.send(alias_list[0])
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
