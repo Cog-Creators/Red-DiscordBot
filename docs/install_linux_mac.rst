@@ -146,7 +146,7 @@ them with dnf:
 
 .. code-block:: none
 
-    sudo dnf -y install python38 git java-latest-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools
 
 Continue by `creating-venv-linux`.
 
