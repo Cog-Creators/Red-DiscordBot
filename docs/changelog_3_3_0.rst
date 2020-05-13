@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`
+| :ghuser:`jack1142`, :ghuser:`mikeshardmind`
 
 End-user changelog
 ------------------
@@ -18,6 +18,10 @@ Admin
 Developer changelog
 -------------------
 
+Core Bot
+********
+
+- Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
 
 
 Documentation changes
