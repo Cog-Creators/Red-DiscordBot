@@ -4,10 +4,15 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`qaisjp`
+| :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
 
 End-user changelog
 ------------------
+
+Core Bot
+********
+
+- Important fixes to how PostgreSQL data backend saves data in bulks (:issue:`3829`)
 
 Admin
 *****
@@ -23,6 +28,11 @@ Mod
 ***
 
 - ``[p]userinfo`` now shows default avatar when no avatar is set (:issue:`3819`)
+
+Permissions
+***********
+
+- Commands for settings ACL using yaml files now properly works on PostgreSQL data backend (:issue:`3829`, :issue:`3796`)
 
 
 Developer changelog
