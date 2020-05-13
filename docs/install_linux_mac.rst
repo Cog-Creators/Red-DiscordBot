@@ -230,7 +230,7 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper install python3-base python3-pip git-core java-12-openjdk-headless
+    sudo zypper install python3-base python3-pip git-core java-11-openjdk-headless
     sudo zypper install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
