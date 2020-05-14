@@ -255,7 +255,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
       build-essential
 
 Continue by `creating-venv-linux`.
@@ -286,7 +286,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
       build-essential
 
 Continue by `creating-venv-linux`.
@@ -323,7 +323,8 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git build-essential
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
+      build-essential
 
 Continue by `creating-venv-linux`.
 
