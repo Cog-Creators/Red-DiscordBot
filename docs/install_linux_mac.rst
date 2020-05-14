@@ -377,8 +377,8 @@ virtual environment.
 
     command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
-After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
-instructions given to fix that, then close and reopen your shell.
+**After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
+instructions given to fix that, then close and reopen your shell.**
 
 Then run the following command:
 
