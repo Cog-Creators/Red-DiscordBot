@@ -204,7 +204,9 @@ First, add the Opt-Python community repository:
 .. code-block:: none
 
     source /etc/os-release
-    sudo zypper -n ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
+    sudo zypper -n --gpg-auto-import-keys ar -f \
+      https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ \
+      Opt-Python
 
 Now install the pre-requirements with zypper:
 
