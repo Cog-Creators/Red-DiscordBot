@@ -119,7 +119,8 @@ class Alias(commands.Cog):
             )
             alias_list.append(box("".join(page), "diff"))
         if len(alias_list) == 1:
-            return await ctx.send(alias_list[0])
+            await ctx.send(alias_list[0])
+            return
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @commands.group()
