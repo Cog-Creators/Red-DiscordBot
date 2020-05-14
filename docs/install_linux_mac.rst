@@ -197,14 +197,14 @@ First, add the Opt-Python community repository:
 .. code-block:: none
 
     source /etc/os-release
-    sudo zypper ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
+    sudo zypper -n ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
 
 Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
@@ -230,8 +230,8 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper install python3-base python3-pip git-core java-11-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
 
