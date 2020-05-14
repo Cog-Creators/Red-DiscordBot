@@ -14,7 +14,7 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
     If you're developing for Red, you should also look for "Breaking changes" sections in release notes for each minor (X.Y.0) version that's been released since you last updated Red.
 
-Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section.
+Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section. You will always have to restart your bot after the update.
 
 
 Red 3.2.0 or newer
