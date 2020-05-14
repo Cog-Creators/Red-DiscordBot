@@ -145,7 +145,7 @@ msgstr "Версия Red бота"
 
 #: redbot/core/core_commands.py:357
 msgid "Yes, {version} is available."
-msgstr ""
+msgstr "Да, {version} доступен."
 
 #: redbot/core/core_commands.py:361
 msgid "Checking for updates failed."
@@ -628,7 +628,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1124
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG or PNG format."
-msgstr ""
+msgstr "Ошибка. Помните, что мой аватар можно редактировать до двух раз в час. Ссылка или вложение должны быть корректным изображением в формате JPG или PNG."
 
 #: redbot/core/core_commands.py:1131
 msgid "JPG / PNG format only."
@@ -641,7 +641,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1141
 msgid "Avatar removed."
-msgstr ""
+msgstr "Аватар удален."
 
 #: redbot/core/core_commands.py:1147
 #, docstring
@@ -1127,7 +1127,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2022
 msgid "You cannot blacklist yourself!"
-msgstr ""
+msgstr "Вы не можете добавить себя в черный список!"
 
 #: redbot/core/core_commands.py:2025
 msgid "You cannot blacklist the guild owner!"
@@ -1135,7 +1135,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2028
 msgid "You cannot blacklist a bot owner!"
-msgstr ""
+msgstr "Вы не можете добавить владельца в чёрный список!"
 
 #: redbot/core/core_commands.py:2035
 msgid "{names} added to the local blacklist."
@@ -1198,7 +1198,7 @@ msgstr "1 команда отключена глобально.\\n"
 #: redbot/core/core_commands.py:2121
 #, docstring
 msgid "List disabled commands in this server."
-msgstr ""
+msgstr "Список отключенных команд на этом сервере."
 
 #: redbot/core/core_commands.py:2124
 msgid "There aren't any disabled commands in {}."
@@ -1273,7 +1273,7 @@ msgstr "Включить команду на этом сервере."
 
 #: redbot/core/core_commands.py:2267
 msgid "You are not allowed to enable that command."
-msgstr ""
+msgstr "Вы не можете включить эту команду."
 
 #: redbot/core/core_commands.py:2277
 msgid "That command is already enabled in this server."

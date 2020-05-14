@@ -124,7 +124,7 @@ msgstr "Supprime un alias global existant."
 
 #: redbot/cogs/alias/alias.py:278
 msgid "There are no global aliases on this bot."
-msgstr ""
+msgstr "Il n'y a pas d'alias global sur ce bot."
 
 #: redbot/cogs/alias/alias.py:291
 #, docstring
@@ -142,7 +142,7 @@ msgstr "Liste les alias globaux disponibles sur ce bot."
 
 #: redbot/cogs/alias/alias.py:303
 msgid "There are no global aliases."
-msgstr ""
+msgstr "Il n'y a pas d'alias global."
 
 #: redbot/cogs/alias/alias_entry.py:174
 msgid "Arguments must be specified with a number."

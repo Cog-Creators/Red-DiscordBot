@@ -49,7 +49,7 @@ msgstr "已將{num}首歌曲添加到播放清單中。{maxlength_msg}"
 
 #: redbot/cogs/audio/apis.py:671 redbot/cogs/audio/audio.py:3618
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time}後播放: 在播放清單的#{position}首之後"
 
 #: redbot/cogs/audio/audio.py:82
 #, docstring

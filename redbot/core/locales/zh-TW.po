@@ -124,7 +124,7 @@ msgstr ""
 #: redbot/core/core_commands.py:307
 #, docstring
 msgid "Pong."
-msgstr ""
+msgstr "砰。"
 
 #: redbot/core/core_commands.py:312
 #, docstring
@@ -157,7 +157,7 @@ msgstr "已過期"
 
 #: redbot/core/core_commands.py:364
 msgid "About this instance"
-msgstr ""
+msgstr "關於這個實例"
 
 #: redbot/core/core_commands.py:365
 msgid "About Red"
@@ -169,16 +169,16 @@ msgstr ""
 
 #: redbot/core/core_commands.py:373
 msgid "I need the `Embed links` permission to send this"
-msgstr ""
+msgstr "我需要“嵌入鏈接”的權限才能發送此訊息。"
 
 #: redbot/core/core_commands.py:377
 #, docstring
 msgid "Shows [botname]'s uptime"
-msgstr ""
+msgstr "顯示[botname]的運行時間"
 
 #: redbot/core/core_commands.py:380
 msgid "Less than one second"
-msgstr ""
+msgstr "不到一秒"
 
 #: redbot/core/core_commands.py:382
 msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
@@ -207,7 +207,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:408
 msgid "User setting: {}"
-msgstr ""
+msgstr "使用者設定: {}"
 
 #: redbot/core/core_commands.py:414
 #, docstring
