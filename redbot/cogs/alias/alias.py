@@ -1,12 +1,13 @@
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict
+from typing import Dict, List
 
 import discord
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
@@ -99,6 +100,28 @@ class Alias(commands.Cog):
             prefix, command, " ".join(args[trackform.max + 1 :])
         )
         await self.bot.process_commands(new_message)
+
+    async def paginate_alias_list(
+        self, ctx: commands.Context, alias_list: List[AliasEntry]
+    ) -> None:
+        names = sorted(["+ " + a.name for a in alias_list])
+        message = "\n".join(names)
+        temp = list(pagify(message, delims=["\n"], page_length=1850))
+        alias_list = []
+        count = 0
+        for page in temp:
+            count += 1
+            page = page.lstrip("\n")
+            page = (
+                _("Aliases:\n")
+                + page
+                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
+            )
+            alias_list.append(box("".join(page), "diff"))
+        if len(alias_list) == 1:
+            await ctx.send(alias_list[0])
+            return
+        await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @commands.group()
     @commands.guild_only()
@@ -287,22 +310,22 @@ class Alias(commands.Cog):
 
     @alias.command(name="list")
     @commands.guild_only()
+    @checks.bot_has_permissions(add_reactions=True)
     async def _list_alias(self, ctx: commands.Context):
         """List the available aliases on this server."""
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
         if not guild_aliases:
             return await ctx.send(_("There are no aliases on this server."))
-        names = [_("Aliases:")] + sorted(["+ " + a.name for a in guild_aliases])
-        await ctx.send(box("\n".join(names), "diff"))
+        await self.paginate_alias_list(ctx, guild_aliases)
 
     @global_.command(name="list")
+    @checks.bot_has_permissions(add_reactions=True)
     async def _list_global_alias(self, ctx: commands.Context):
         """List the available global aliases on this bot."""
         global_aliases = await self._aliases.get_global_aliases()
         if not global_aliases:
             return await ctx.send(_("There are no global aliases."))
-        names = [_("Aliases:")] + sorted(["+ " + a.name for a in global_aliases])
-        await ctx.send(box("\n".join(names), "diff"))
+        await self.paginate_alias_list(ctx, global_aliases)
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
