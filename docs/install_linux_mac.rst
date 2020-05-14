@@ -237,19 +237,31 @@ Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-ubuntu:
+.. _install-ubuntu-1604:
 
 ~~~~~~~~~~~~~~~~
-Ubuntu 20.04 LTS
+Ubuntu 16.04 LTS
 ~~~~~~~~~~~~~~~~
 
-We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+We recommend adding the ``openjdk-r`` ppa to install Java 11:
 
 .. code-block:: none
 
     sudo apt update
     sudo apt -y install software-properties-common
-    sudo add-apt-repository -y ppa:git-core/ppa
+    sudo add-apt-repository -yu ppa:openjdk-r/ppa
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -yu ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -yu ppa:deadsnakes/ppa
 
 Now install the pre-requirements with apt:
 
@@ -293,31 +305,19 @@ Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-ubuntu-1604:
+.. _install-ubuntu:
 
 ~~~~~~~~~~~~~~~~
-Ubuntu 16.04 LTS
+Ubuntu 20.04 LTS
 ~~~~~~~~~~~~~~~~
-
-We recommend adding the ``openjdk-r`` ppa to install Java 11:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt -y install software-properties-common
-    sudo add-apt-repository -yu ppa:openjdk-r/ppa
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 .. code-block:: none
 
-    sudo add-apt-repository -yu ppa:git-core/ppa
-
-We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
-
-.. code-block:: none
-
-    sudo add-apt-repository -yu ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:git-core/ppa
 
 Now install the pre-requirements with apt:
 
