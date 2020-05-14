@@ -15,7 +15,7 @@ msgstr ""
 
 #: redbot/cogs/mod/converters.py:20
 msgid "{} doesn't look like a valid user ID."
-msgstr ""
+msgstr "{} ne ressemble pas à un ID d'utilisateur valide."
 
 #: redbot/cogs/mod/events.py:53 redbot/cogs/mod/events.py:67
 msgid "Mention spam (Autoban)"
@@ -41,15 +41,15 @@ msgstr "Jours non valides. Doit être compris entre 0 et 7."
 
 #: redbot/cogs/mod/kickban.py:89
 msgid "You have been banned from {guild}."
-msgstr ""
+msgstr "Vous avez été banni de {guild}."
 
 #: redbot/cogs/mod/kickban.py:92 redbot/cogs/mod/kickban.py:208
 msgid "**Reason**"
-msgstr ""
+msgstr "**Raison**"
 
 #: redbot/cogs/mod/kickban.py:93 redbot/cogs/mod/kickban.py:209
 msgid "No reason was given."
-msgstr ""
+msgstr "Aucune raison n'a été fournie."
 
 #: redbot/cogs/mod/kickban.py:109 redbot/cogs/mod/kickban.py:217
 msgid "I'm not allowed to do that."
@@ -57,7 +57,7 @@ msgstr "Je ne suis pas autorisé à faire cela."
 
 #: redbot/cogs/mod/kickban.py:127
 msgid "The user was banned but an error occurred when trying to create the modlog entry: {reason}"
-msgstr ""
+msgstr "L'utilisateur a été banni mais une erreur est survenue lors de la création de l'entrée du modlog : {reason}"
 
 #: redbot/cogs/mod/kickban.py:149
 msgid "Tempban finished"
@@ -66,7 +66,7 @@ msgstr "Ban temporaire terminé"
 #: redbot/cogs/mod/kickban.py:173
 #, docstring
 msgid "Kick a user.\\n\\n        If a reason is specified, it will be the reason that shows up\\n        in the audit log.\\n        "
-msgstr ""
+msgstr "Éjecte un utilisateur.\\n\\n        Si une raison est spécifiée, ce sera celle-ci qui sera\\n        affichée dans les logs du serveur.\\n        "
 
 #: redbot/cogs/mod/kickban.py:183 redbot/cogs/mod/kickban.py:460
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
@@ -74,7 +74,7 @@ msgstr "Je ne peux pas vous laisser faire ça. L'automutilation c'est mal {emoji
 
 #: redbot/cogs/mod/kickban.py:205
 msgid "You have been kicked from {guild}."
-msgstr ""
+msgstr "Vous avez été expulsé de {guild}."
 
 #: redbot/cogs/mod/kickban.py:235
 msgid "Done. That felt good."
@@ -83,7 +83,7 @@ msgstr "C'est fait. Ça m'a fait du bien."
 #: redbot/cogs/mod/kickban.py:249
 #, docstring
 msgid "Ban a user from this server and optionally delete days of messages.\\n\\n        If days is not a number, it's treated as the first word of the reason.\\n\\n        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."
-msgstr ""
+msgstr "Banni un utilisateur de ce serveur et optionnellement supprime le nombre de jours de messages.\\n\\n        Si le nombre de jours n'est pas un nombre, il est traité comme le premier mot de la raison.\\n\\n        Minimum 0 jours, maximum 7. Si ce n'est pas spécifié, le paramètre defaultdays sera utilisé à la place."
 
 #: redbot/cogs/mod/kickban.py:264
 msgid "Done. It was about time."
@@ -96,7 +96,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:288
 msgid "Banned {num} users from the server."
-msgstr ""
+msgstr "{num} utilisateurs bannis du serveur."
 
 #: redbot/cogs/mod/kickban.py:292
 msgid "\\nErrors:\\n"
@@ -116,15 +116,15 @@ msgstr "Impossible de bannir l'utilisateur {user_id}: {reason}"
 
 #: redbot/cogs/mod/kickban.py:367
 msgid "User {user_id} does not exist."
-msgstr ""
+msgstr "L’utilisateur {user_id} n’existe pas."
 
 #: redbot/cogs/mod/kickban.py:370
 msgid "Could not ban {user_id}: missing permissions."
-msgstr ""
+msgstr "Impossible de bannir {user_id}: permissions manquantes."
 
 #: redbot/cogs/mod/kickban.py:390
 msgid "Failed to create modlog case: {reason}"
-msgstr ""
+msgstr "Impossible de créer le cas dans le modlog : {reason}"
 
 #: redbot/cogs/mod/kickban.py:400
 #, docstring
@@ -154,7 +154,7 @@ msgstr "Éjecte un utilisateur et supprime les messages envoyés par cet utilisa
 
 #: redbot/cogs/mod/kickban.py:484
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\\nYou can now join the server again. {invite_link}"
-msgstr ""
+msgstr "Vous avez été banni puis dé-banni comme moyen rapide pour supprimer vos messages.\\nVous pouvez maintenant rejoindre le serveur à nouveau. {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:495
 msgid "My role is not high enough to softban that user."
@@ -167,20 +167,20 @@ msgstr "Terminé. Assez de chaos."
 #: redbot/cogs/mod/kickban.py:534
 #, docstring
 msgid "Kick a member from a voice channel."
-msgstr ""
+msgstr "Expulse un membre d'un salon vocal."
 
 #: redbot/cogs/mod/kickban.py:557
 msgid "I am unable to kick this member from the voice channel."
-msgstr ""
+msgstr "Je n'arrive pas à expulser ce membre du salon vocal."
 
 #: redbot/cogs/mod/kickban.py:560
 msgid "Something went wrong while attempting to kick that member"
-msgstr ""
+msgstr "Une erreur s'est produite lors de la tentative d'expulsion de ce membre"
 
 #: redbot/cogs/mod/kickban.py:583
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
-msgstr ""
+msgstr "Débanni un utilisateur de ce serveur.\\n\\n         Nécessite de spécifier l'ID de l'utilisateur. Pour le trouver, vous pouvez soit :\\n          #. Le copier à partir du cas dans les mod log (Si il a été créé), ou\\n          Activer le mode développeur, allez dans Bannissements dans les paramètres du serveur, clique\\n         droit sur l'utilisateur et sélectionner 'Copier l'ID'."
 
 #: redbot/cogs/mod/kickban.py:596
 msgid "It seems that user isn't banned!"
@@ -196,11 +196,11 @@ msgstr "Cet utilisateur à été débanni du serveur"
 
 #: redbot/cogs/mod/kickban.py:625
 msgid "I don't share another server with this user. I can't reinvite them."
-msgstr ""
+msgstr "Je ne partage pas d'autre serveur avec cette utilisateur. Je ne peux pas le réinviter."
 
 #: redbot/cogs/mod/kickban.py:633
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
-msgstr ""
+msgstr "Vous avez été débanni de {server}.\\nVoici une invitation pour ce serveur : {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:640
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
@@ -402,39 +402,39 @@ msgstr "Fait."
 
 #: redbot/cogs/mod/names.py:81
 msgid "Custom: {emoji} {name}"
-msgstr ""
+msgstr "Personnalisé : {emoji} {name}"
 
 #: redbot/cogs/mod/names.py:83
 msgid "Custom: {emoji}"
-msgstr ""
+msgstr "Personnalisé : {emoji}"
 
 #: redbot/cogs/mod/names.py:85
 msgid "Custom: {name}"
-msgstr ""
+msgstr "Personnalisé : {name}"
 
 #: redbot/cogs/mod/names.py:93
 msgid "Playing: {name}"
-msgstr ""
+msgstr "Joue : {name}"
 
 #: redbot/cogs/mod/names.py:102
 msgid "Streaming: [{name}{sep}{game}]({url})"
-msgstr ""
+msgstr "Streaming : [{name}{sep}{game}]({url})"
 
 #: redbot/cogs/mod/names.py:109
 msgid "Streaming: {name}"
-msgstr ""
+msgstr "Streaming : {name}"
 
 #: redbot/cogs/mod/names.py:118
 msgid "Listening: [{title}{sep}{artist}]({url})"
-msgstr ""
+msgstr "Écoute : [{title}{sep}{artist}]({url})"
 
 #: redbot/cogs/mod/names.py:125
 msgid "Listening: {title}"
-msgstr ""
+msgstr "Écoute : {title}"
 
 #: redbot/cogs/mod/names.py:133
 msgid "Watching: {name}"
-msgstr ""
+msgstr "Regarde : {name}"
 
 #: redbot/cogs/mod/names.py:155
 #, docstring
@@ -443,15 +443,15 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:183
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: redbot/cogs/mod/names.py:191
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n(il y a {} jours)"
 
 #: redbot/cogs/mod/names.py:192
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n(il y a {} jours)"
 
 #: redbot/cogs/mod/names.py:204
 msgid "Chilling in {} status"
@@ -459,7 +459,7 @@ msgstr "Statut : {}"
 
 #: redbot/cogs/mod/names.py:218
 msgid "and {numeric_number} more roles not displayed due to embed limits."
-msgstr ""
+msgstr "et {numeric_number} autres rôles non affichés en raison des limites de l'embed."
 
 #: redbot/cogs/mod/names.py:245
 msgid "Joined Discord on"
@@ -517,7 +517,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:34
 msgid "after {num} repeats"
-msgstr ""
+msgstr "après {num} répétitions"
 
 #: redbot/cogs/mod/settings.py:36 redbot/cogs/mod/settings.py:41
 #: redbot/cogs/mod/settings.py:44 redbot/cogs/mod/settings.py:52
@@ -556,7 +556,7 @@ msgstr "Aucun"
 
 #: redbot/cogs/mod/settings.py:51
 msgid "Reinvite on unban: {yes_or_no}\\n"
-msgstr ""
+msgstr "Réinviter lors du débannissement : {yes_or_no}\\n"
 
 #: redbot/cogs/mod/settings.py:54
 msgid "Send message to users on kick/ban: {yes_or_no}\\n"
@@ -620,7 +620,7 @@ msgstr ""
 #: redbot/cogs/mod/settings.py:163
 #, docstring
 msgid "Toggle whether an invite will be sent to a user when unbanned.\\n\\n        If this is True, the bot will attempt to create and send a single-use invite\\n        to the newly-unbanned user.\\n        "
-msgstr ""
+msgstr "Active/désactive si une invitation doit être envoyé à l'utilisateur lorsqu'il est débanni.\\n\\n        Si c'est True, le bot tentera de créer et d'envoyer une invitation à usage unique\\n        à l'utilisateur nouvellement débanni.\\n        "
 
 #: redbot/cogs/mod/settings.py:173
 msgid "Users unbanned with `{command}` will be reinvited."
@@ -663,13 +663,13 @@ msgstr ""
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring
 msgid "Changes channel's slowmode setting.\\n\\n        Interval can be anything from 0 seconds to 6 hours.\\n        Use without parameters to disable.\\n        "
-msgstr ""
+msgstr "Change les réglages du mode lent du salon.\\n\\n        L'intervalle peut être entre 0 secondes jusqu'à 6 heures.\\n        N'utiliser aucun paramètres pour désactiver.\\n        "
 
 #: redbot/cogs/mod/slowmode.py:36
 msgid "Slowmode interval is now {interval}."
-msgstr ""
+msgstr "L'intervalle du mond lent est maintenant {interval}."
 
 #: redbot/cogs/mod/slowmode.py:41
 msgid "Slowmode has been disabled."
-msgstr ""
+msgstr "Le mode lent a été désactivé."
 

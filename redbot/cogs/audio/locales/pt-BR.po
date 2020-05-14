@@ -1090,7 +1090,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2738
 #, docstring
 msgid "Play a URL or search for a track."
-msgstr ""
+msgstr "Toca uma URL ou procura por uma faixa."
 
 #: redbot/cogs/audio/audio.py:2747 redbot/cogs/audio/audio.py:2752
 #: redbot/cogs/audio/audio.py:2769 redbot/cogs/audio/audio.py:2778
@@ -1187,7 +1187,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "Forçar a reprodução de uma URL ou busca por uma faixa."
 
 #: redbot/cogs/audio/audio.py:2843
 msgid "Unable to bump track"
@@ -1232,7 +1232,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3022 redbot/cogs/audio/audio.py:3686
 #: redbot/cogs/audio/audio.py:7162
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Faixa Enfileirada"
 
 #: redbot/cogs/audio/audio.py:3036
 #, docstring

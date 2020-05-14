@@ -63,15 +63,15 @@ msgstr "Les noms de repo ne peuvent contenir que des caractères A-z, des chiffr
 
 #: redbot/cogs/downloader/downloader.py:504
 msgid "The repo name you provided is already in use. Please choose another name."
-msgstr ""
+msgstr "Le nom du repo que vous avez fourni est déjà utilisé. Veuillez choisir un autre nom."
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Something went wrong during the cloning process. See logs for more information."
-msgstr ""
+msgstr "Quelque chose s'est mal passé pendant le processus de clonage. Voir les logs pour plus d'informations."
 
 #: redbot/cogs/downloader/downloader.py:524
 msgid "Something went wrong trying to add that repo. See logs for more information."
-msgstr ""
+msgstr "Une erreur s'est produite lors de l'ajout de ce repo. Voir les logs pour plus d'informations."
 
 #: redbot/cogs/downloader/downloader.py:530
 msgid "Repo `{name}` successfully added."
@@ -155,7 +155,7 @@ msgstr "Commandes de gestion d'installation de Cog."
 #: redbot/cogs/downloader/downloader.py:606
 #, docstring
 msgid "\\n        This command will reinstall cog requirements and shared libraries for all installed cogs.\\n\\n        Red might ask user to use this when it clears contents of lib folder\\n        because of change in minor version of Python.\\n        "
-msgstr ""
+msgstr "\\n        Cette commande va réinstaller les pré-requis et les bibliothèques partagées pour tous les cogs installés.\\n\\n        Red peut demander à l'utilisateur d'utiliser ceci quand il efface le contenu des fichiers lib\\n        à cause de changement version mineure de Python.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:633
 #: redbot/cogs/downloader/downloader.py:1249
@@ -182,16 +182,16 @@ msgstr "Installer un cog à partir du repo donné."
 #: redbot/cogs/downloader/downloader.py:667
 #, docstring
 msgid "Install a cog from the specified revision of given repo."
-msgstr ""
+msgstr "Installez un cog à partir de la révision spécifiée du repo donné."
 
 #: redbot/cogs/downloader/downloader.py:682
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
-msgstr ""
+msgstr "Error: Court sha1 `{rev}` est ambigu. Candidats possibles:\\n"
 
 #: redbot/cogs/downloader/downloader.py:694
 #: redbot/cogs/downloader/downloader.py:953
 msgid "Error: there is no revision `{rev}` in repo `{repo.name}`"
-msgstr ""
+msgstr "Erreur: il n'y a pas de révision `{rev}` dans le repo `{repo.name}`"
 
 #: redbot/cogs/downloader/downloader.py:708
 msgid "\\nFailed to install requirements: "
@@ -228,11 +228,11 @@ msgstr "Cogs désinstallés avec succès : "
 
 #: redbot/cogs/downloader/downloader.py:794
 msgid "\\nDownloader has removed these cogs from the installed cogs list but it wasn't able to find their files: "
-msgstr ""
+msgstr "\\nLe cog Downloader a supprimé ces cogs de la liste des cogs installés, mais il n'a pas pu trouver leurs fichiers : "
 
 #: redbot/cogs/downloader/downloader.py:799
 msgid "\\nThey were most likely removed without using `{prefix}cog uninstall`.\\nYou may need to remove those files manually if the cogs are still usable. If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-msgstr ""
+msgstr "\\nIls ont très probablement été supprimés sans utiliser `{prefix}cog uninstall`.\\nVous devrez peut-être supprimer ces fichiers manuellement si les cogs sont toujours utilisables. Si c'est le cas, assurez-vous que les cogs ont été déchargés avec `{prefix}unload {cogs}`."
 
 #: redbot/cogs/downloader/downloader.py:809
 #, docstring
@@ -275,7 +275,7 @@ msgstr "\\nCes bibliothèques partagées peuvent être mises à jour : "
 
 #: redbot/cogs/downloader/downloader.py:879
 msgid "No cogs can be updated."
-msgstr ""
+msgstr "Aucun cogs ne peut être mise à jour."
 
 #: redbot/cogs/downloader/downloader.py:883
 msgid "All installed cogs are up to date."
@@ -294,11 +294,11 @@ msgstr "Mettez à jour tous les cogs du repos de votre choix."
 #: redbot/cogs/downloader/downloader.py:907
 #, docstring
 msgid "Update all cogs, or ones of your choosing to chosen revision of one repo.\\n\\n        Note that update doesn't mean downgrade and therefore revision\\n        has to be newer than the one that cog currently has. If you want to\\n        downgrade the cog, uninstall and install it again.\\n        "
-msgstr ""
+msgstr "Met à jour tout les cog, ou ceux de votre choix à partir de la révision d'un repo.\\n\\n        Notez que mettre à jour ne veux pas dire rétrograder et donc la révision\\n        doit être plus récente que celle que le cog a actuellement. Si vous voulez\\n        rétrograder le cog, désinstaller le et réinstaller le.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:942
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
-msgstr ""
+msgstr "Error: Court sha1 `{rev}` est ambigu. Candidats possibles:\\n"
 
 #: redbot/cogs/downloader/downloader.py:974
 msgid "There were no cogs to check."
@@ -310,19 +310,19 @@ msgstr "\\nCes cogs sont épinglés et n'ont donc pas été vérifiés : "
 
 #: redbot/cogs/downloader/downloader.py:992
 msgid "Cogs from provided repos are already up to date."
-msgstr ""
+msgstr "Les cogs du repo fourni sont déjà mis à jour."
 
 #: redbot/cogs/downloader/downloader.py:995
 msgid "Provided cogs are already up to date with this revision."
-msgstr ""
+msgstr "Les cogs fourni sont déjà mis à jour avec la révision."
 
 #: redbot/cogs/downloader/downloader.py:999
 msgid "Cogs from provided repo are already up to date with this revision."
-msgstr ""
+msgstr "Les cogs du repo fourni sont déjà mis à jour."
 
 #: redbot/cogs/downloader/downloader.py:1004
 msgid "Provided cogs are already up to date."
-msgstr ""
+msgstr "Les cogs fournis sont déjà à jour."
 
 #: redbot/cogs/downloader/downloader.py:1006
 msgid "All installed cogs are already up to date."
@@ -408,7 +408,7 @@ msgstr "Aucun cog n'a été mis à jour."
 
 #: redbot/cogs/downloader/downloader.py:1267
 msgid "\\nSome shared libraries were updated, you should restart the bot to bring the changes into effect."
-msgstr ""
+msgstr "\\nCertaines bibliothèques partagées ont été mises à jour, vous devriez redémarrer le bot pour que les modifications soient effectives."
 
 #: redbot/cogs/downloader/downloader.py:1273
 msgid "\\nFailed to install shared libraries: "

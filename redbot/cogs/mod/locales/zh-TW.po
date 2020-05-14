@@ -15,7 +15,7 @@ msgstr ""
 
 #: redbot/cogs/mod/converters.py:20
 msgid "{} doesn't look like a valid user ID."
-msgstr ""
+msgstr "{}看起來不是有效的使用者ID。"
 
 #: redbot/cogs/mod/events.py:53 redbot/cogs/mod/events.py:67
 msgid "Mention spam (Autoban)"
@@ -37,11 +37,11 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:314
 msgid "Invalid days. Must be between 0 and 7."
-msgstr ""
+msgstr "無效的天數，天數必須在0和7之間。"
 
 #: redbot/cogs/mod/kickban.py:89
 msgid "You have been banned from {guild}."
-msgstr ""
+msgstr "您已被 {guild} 伺服器封鎖。"
 
 #: redbot/cogs/mod/kickban.py:92 redbot/cogs/mod/kickban.py:208
 msgid "**Reason**"
@@ -49,7 +49,7 @@ msgstr "**原因**"
 
 #: redbot/cogs/mod/kickban.py:93 redbot/cogs/mod/kickban.py:209
 msgid "No reason was given."
-msgstr ""
+msgstr "未給出原因。"
 
 #: redbot/cogs/mod/kickban.py:109 redbot/cogs/mod/kickban.py:217
 msgid "I'm not allowed to do that."
@@ -78,7 +78,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:235
 msgid "Done. That felt good."
-msgstr ""
+msgstr "做完了。感覺很好。"
 
 #: redbot/cogs/mod/kickban.py:249
 #, docstring

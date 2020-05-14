@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
+"POT-Creation-Date: 2020-05-14 12:27+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -51,32 +51,32 @@ msgstr "Gestion des commandes personnalisées."
 #: redbot/cogs/customcom/customcom.py:211
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n        \\n        This is helpful for copy and pasting."
-msgstr ""
+msgstr "Obtenir la réponse brute d'une commande personnalisée, pour obtenir le markdown approprié.\\n        \\n        Ceci est utile pour copier et coller."
 
 #: redbot/cogs/customcom/customcom.py:232
 msgid "Response #{num}/{total}"
-msgstr ""
+msgstr "Réponse #{num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:242
 msgid "Response #{num}/{total}:\\n{raw}"
-msgstr ""
+msgstr "Réponse #{num}/{total}:\\n{raw}"
 
 #: redbot/cogs/customcom/customcom.py:253
 #, docstring
 msgid "Searches through custom commands, according to the query."
-msgstr ""
+msgstr "Rechercher à travers les commandes personnalisées, selon la requête."
 
 #: redbot/cogs/customcom/customcom.py:265
 msgid "No close matches were found."
-msgstr ""
+msgstr "Aucune correspondance proche n'a été trouvée."
 
 #: redbot/cogs/customcom/customcom.py:270
 msgid "Search results"
-msgstr ""
+msgstr "Résultats de la recherche"
 
 #: redbot/cogs/customcom/customcom.py:275
 msgid "The following matches have been found:"
-msgstr ""
+msgstr "Les correspondances suivantes ont été trouvées:"
 
 #: redbot/cogs/customcom/customcom.py:280
 #, docstring
@@ -91,7 +91,7 @@ msgstr "Créer une commande personnalisée qui choisira aléatoirement une répo
 #: redbot/cogs/customcom/customcom.py:297
 #: redbot/cogs/customcom/customcom.py:326
 msgid "Custom command names cannot have spaces in them."
-msgstr ""
+msgstr "Les noms de commandes personnalisées ne peuvent pas contenir d'espaces."
 
 #: redbot/cogs/customcom/customcom.py:300
 #: redbot/cogs/customcom/customcom.py:329
@@ -185,8 +185,8 @@ msgstr "Page {num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
-msgid "Shows a custom command's reponses and its settings."
-msgstr "Affiche les réponses d'une commande personnalisée et ses paramètres."
+msgid "Shows a custom command's responses and its settings."
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:467
 msgid "I could not not find that custom command."

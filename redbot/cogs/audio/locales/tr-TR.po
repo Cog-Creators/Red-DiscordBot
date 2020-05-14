@@ -959,19 +959,19 @@ msgstr "Kaydedilmiyor"
 #: redbot/cogs/audio/audio.py:2248
 #, docstring
 msgid "Set an eq band with a band number or name and value.\\n\\n        Band positions are 1-15 and values have a range of -0.25 to 1.0.\\n        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\\n        6.3k, 10k, and 16k Hz.\\n        Setting a band value to -0.25 nullifies it while +0.25 is double.\\n        "
-msgstr ""
+msgstr "EQ bant genişliği sayısı ya da isim ve değer girin. Bant pozisyonları 1-15 ve aralığı -0.25 ile 1.0 arası değişmektedir.\\n       Bant isimleri 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, ve 16k Hz'dir. Bir bant değerini -0,25'e ayarlamak geçersiz kılarken +0,25 iki katına çıkartır.\\n        "
 
 #: redbot/cogs/audio/audio.py:2265
 msgid "Unable To Set Preset"
-msgstr ""
+msgstr "Ön Ayar Değiştirilemiyor"
 
 #: redbot/cogs/audio/audio.py:2266
 msgid "You need the DJ role to set equalizer presets."
-msgstr ""
+msgstr "Ekolayzer ön ayarlarını kaydetmek için DJ rolüne ihtiyacın var."
 
 #: redbot/cogs/audio/audio.py:2305
 msgid "Invalid Band"
-msgstr ""
+msgstr "Geçersiz Bant"
 
 #: redbot/cogs/audio/audio.py:2306
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
@@ -979,7 +979,7 @@ msgstr "Geçerli bant sayıları 1-15 veya bu komutla beraber listelenmiş olan 
 
 #: redbot/cogs/audio/audio.py:2330
 msgid "Preset Modified"
-msgstr ""
+msgstr "Ön Ayar Değiştirildi"
 
 #: redbot/cogs/audio/audio.py:2344
 #, docstring
@@ -993,11 +993,11 @@ msgstr "Yerel dosyalarda bulunan tüm şarkıları çalar"
 
 #: redbot/cogs/audio/audio.py:2362
 msgid "Folder Not Found"
-msgstr ""
+msgstr "Klasör bulunamadı"
 
 #: redbot/cogs/audio/audio.py:2363
 msgid "Localtracks folder named {name} does not exist."
-msgstr ""
+msgstr "Yerel parçalar klasörü {name} bulunamadı."
 
 #: redbot/cogs/audio/audio.py:2372
 #, docstring
@@ -1028,7 +1028,7 @@ msgstr "Şimdi oynatılıyor."
 
 #: redbot/cogs/audio/audio.py:2556
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n Çalan: **{track.requester}**"
 
 #: redbot/cogs/audio/audio.py:2560
 msgid "Nothing."
@@ -1037,7 +1037,7 @@ msgstr "Hiçbir şey"
 #: redbot/cogs/audio/audio.py:2576 redbot/cogs/audio/audio.py:6306
 #: redbot/cogs/audio/audio.py:6484
 msgid "Auto-Play"
-msgstr ""
+msgstr "Otomatik çalma"
 
 #: redbot/cogs/audio/audio.py:2582 redbot/cogs/audio/audio.py:6312
 #: redbot/cogs/audio/audio.py:6490
@@ -1056,11 +1056,11 @@ msgstr "Çalmakta olan şarkıyı duraklat veya devam ettir"
 
 #: redbot/cogs/audio/audio.py:2654 redbot/cogs/audio/audio.py:2661
 msgid "Unable To Manage Tracks"
-msgstr ""
+msgstr "Parçalar düzenlenemiyor."
 
 #: redbot/cogs/audio/audio.py:2655
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "Şarkı çalmak ya da durdurabilmek için bir ses kanalında olmalısınız."
 
 #: redbot/cogs/audio/audio.py:2662
 msgid "You need the DJ role to pause or resume tracks."
@@ -1081,7 +1081,7 @@ msgstr "Sıra yüzdesi"
 
 #: redbot/cogs/audio/audio.py:2709
 msgid "There's  nothing in the queue."
-msgstr ""
+msgstr "Sırada herhangi birşey yok."
 
 #: redbot/cogs/audio/audio.py:2731
 msgid "Queued and playing tracks:"
@@ -1114,7 +1114,7 @@ msgstr "URL veya arama yaparak şarkı açabilirsiniz."
 #: redbot/cogs/audio/audio.py:6939 redbot/cogs/audio/audio.py:7000
 #: redbot/cogs/audio/audio.py:7133
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Parçalar Çalınamıyor"
 
 #: redbot/cogs/audio/audio.py:2748 redbot/cogs/audio/audio.py:2854
 #: redbot/cogs/audio/audio.py:6934
@@ -1124,13 +1124,13 @@ msgstr "Bu URL'e izin verilmiyor."
 #: redbot/cogs/audio/audio.py:2752 redbot/cogs/audio/audio.py:2858
 #: redbot/cogs/audio/audio.py:6940
 msgid "That track is not allowed."
-msgstr ""
+msgstr "Bu parçaya izin verilmiyor."
 
 #: redbot/cogs/audio/audio.py:2756 redbot/cogs/audio/audio.py:2862
 #: redbot/cogs/audio/audio.py:3112 redbot/cogs/audio/audio.py:3286
 #: redbot/cogs/audio/audio.py:6051 redbot/cogs/audio/audio.py:6877
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "Lavalink bağlantısı başarısız"
 
 #: redbot/cogs/audio/audio.py:2759 redbot/cogs/audio/audio.py:2865
 #: redbot/cogs/audio/audio.py:3115 redbot/cogs/audio/audio.py:3289
@@ -1175,45 +1175,45 @@ msgstr "Şarkıyı başlatabilmek için bir kanal da olmanız gerekli."
 #: redbot/cogs/audio/audio.py:2812 redbot/cogs/audio/audio.py:2918
 #: redbot/cogs/audio/audio.py:2943
 msgid "No tracks found for `{query}`."
-msgstr ""
+msgstr "`{query}` ile uyuşan herhangi bir parça bulunamadı."
 
 #: redbot/cogs/audio/audio.py:2818 redbot/cogs/audio/audio.py:2924
 #: redbot/cogs/audio/audio.py:3209 redbot/cogs/audio/audio.py:3341
 #: redbot/cogs/audio/audio.py:3566 redbot/cogs/audio/audio.py:3635
 #: redbot/cogs/audio/audio.py:7133
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Sıraya alma limitine ulaşıldı."
 
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "Bir URL'yi çalmaya zorlayın veya bir parça arayın."
 
 #: redbot/cogs/audio/audio.py:2843
 msgid "Unable to bump track"
-msgstr ""
+msgstr "Parça öne alınamıyor"
 
 #: redbot/cogs/audio/audio.py:2844
 msgid "Only single tracks work with bump play."
-msgstr ""
+msgstr "Öne alarak çalma sadece tek bir parça için yapılabilir."
 
 #: redbot/cogs/audio/audio.py:2946
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
 
 #: redbot/cogs/audio/audio.py:2955 redbot/cogs/audio/audio.py:3408
 #: redbot/cogs/audio/audio.py:3446 redbot/cogs/audio/audio.py:3547
 #: redbot/cogs/audio/audio.py:6133 redbot/cogs/audio/audio.py:6165
 #: redbot/cogs/audio/audio.py:6988 redbot/cogs/audio/audio.py:7086
 msgid "Track is not playable."
-msgstr ""
+msgstr "Parça çalınamaz."
 
 #: redbot/cogs/audio/audio.py:2957 redbot/cogs/audio/audio.py:3409
 #: redbot/cogs/audio/audio.py:3447 redbot/cogs/audio/audio.py:3549
 #: redbot/cogs/audio/audio.py:6134 redbot/cogs/audio/audio.py:6166
 #: redbot/cogs/audio/audio.py:6989 redbot/cogs/audio/audio.py:7087
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "**{suffix}** tamamen desteklenen bir format değil ve bazı parçalar çalınamayabilir."
 
 #: redbot/cogs/audio/audio.py:2989 redbot/cogs/audio/audio.py:3656
 #: redbot/cogs/audio/audio.py:7176
@@ -1829,7 +1829,7 @@ msgstr "Sıradaki şarkıları listeler."
 
 #: redbot/cogs/audio/audio.py:6293
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n Çalan: **{track.requester}**"
 
 #: redbot/cogs/audio/audio.py:6405
 msgid "**Currently livestreaming:**\\n"
@@ -2027,7 +2027,7 @@ msgstr "Sıraya şarkı ekleyebilmek için kanal da olmanız gerekmektedir."
 
 #: redbot/cogs/audio/audio.py:6978
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
 
 #: redbot/cogs/audio/audio.py:7041
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2043,7 +2043,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:7076
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
 
 #: redbot/cogs/audio/audio.py:7114
 msgid "Connection to Lavalink has failed."

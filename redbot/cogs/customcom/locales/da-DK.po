@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
+"POT-Creation-Date: 2020-05-14 12:27+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -185,7 +185,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
-msgid "Shows a custom command's reponses and its settings."
+msgid "Shows a custom command's responses and its settings."
 msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:467

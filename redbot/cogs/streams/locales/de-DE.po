@@ -15,7 +15,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:115
 msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
-msgstr ""
+msgstr "Du benötigst einen geheimen Client-Schlüssel um die Twitch-API in diesem Cog korrekt verwenden zu können.\\nFolge diesen Schritten:\\n1. Gehe zu dieser Seite: https://dev. witch.tv/console/apps.\\n2. Klicken Sie auf \\\"Verwalten\\\" in Ihrer Anwendung.\\n3. Klicken Sie auf \\\"Neues Geheimnis\\\".\\n5. Kopiere deine Client-ID und dein Client-Geheimnis in:\\n`[p]setze api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nHinweis: Diese Token sind sensibel und sollten nur in einem privaten Kanal oder in DM mit dem Bot verwendet werden."
 
 #: redbot/cogs/streams/streams.py:175
 #, docstring
