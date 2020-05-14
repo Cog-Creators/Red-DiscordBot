@@ -56,6 +56,12 @@ Continue by `creating-venv-linux`.
 CentOS and RHEL 7
 ~~~~~~~~~~~~~~~~~
 
+.. code-block:: none
+
+    yum -y groupinstall development
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
+
 We recommend adding the IUS repository to install Git 2.11 or greater:
 
 .. code-block:: none
@@ -63,12 +69,6 @@ We recommend adding the IUS repository to install Git 2.11 or greater:
     yum -y install https://repo.ius.io/ius-release-el7.rpm
     yum install -y yum-plugin-replace
     yum replace -y git --replace-with git2u
-
-.. code-block:: none
-
-    yum -y groupinstall development
-    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
