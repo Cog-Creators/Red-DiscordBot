@@ -49,26 +49,33 @@ Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-centos:
-.. _install-rhel:
+.. _install-centos7:
+.. _install-rhel7:
 
 ~~~~~~~~~~~~~~~~~
 CentOS and RHEL 7
 ~~~~~~~~~~~~~~~~~
 
+We recommend adding the IUS repository to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    yum -y install https://repo.ius.io/ius-release-el7.rpm
+    yum install -y yum-plugin-replace
+    yum replace -y git --replace-with git2u
+
 .. code-block:: none
 
     yum -y groupinstall development
-    yum -y install https://centos7.iuscommunity.org/ius-release.rpm
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk-headless
+      openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 ----
 
-.. _install-centos8:
-.. _install-rhel8:
+.. _install-centos:
+.. _install-rhel:
 
 ~~~~~~~~~~~~~~~~~
 CentOS and RHEL 8
@@ -80,8 +87,8 @@ CentOS and RHEL 8
     yum update -y
     yum -y groupinstall development
     yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
-     sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
-     
+      sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
+
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 ----
