@@ -61,7 +61,7 @@ CentOS and RHEL 7
     yum -y groupinstall development
     yum -y install https://centos7.iuscommunity.org/ius-release.rpm
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk
+      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk-headless
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -80,7 +80,7 @@ CentOS and RHEL 8
     yum update -y
     yum -y groupinstall development
     yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
-     sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk
+     sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
      
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -105,8 +105,8 @@ Debian Stretch. This guide will tell you how. First, run the following commands:
     sudo echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/red-sources.list
     sudo apt update
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+      libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -127,8 +127,8 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 
     sudo apt update
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+      libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -351,7 +351,7 @@ installing pyenv. To do this, first run the following commands:
 
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
       libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
