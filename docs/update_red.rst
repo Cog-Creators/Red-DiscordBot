@@ -24,7 +24,7 @@ Windows
 
 If you have Red 3.2.0 or newer, upgrading can be achieved by following these 4 easy steps:
 
-1. Shut off your bot.
+1. Shut your bot down.
 
 2. Activate your venv with the following command:
 
@@ -49,7 +49,7 @@ Linux & Mac
 
 If you have Red 3.2.0 or newer, upgrading can be achieved by following these 4 easy steps:
 
-1. Shut off your bot.
+1. Shut your bot down.
 
 2. Activate your virtual environment.
   
