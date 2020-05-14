@@ -14,8 +14,7 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
     If you're developing for Red, you should also look for "Breaking changes" sections in release notes for each minor (X.Y.0) version that's been released since you last updated Red.
 
-Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section. You will always have to restart your bot after the update.
-
+Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section.
 
 Red 3.2.0 or newer
 ******************
@@ -23,15 +22,17 @@ Red 3.2.0 or newer
 Windows
 -------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, upgrading can be achieved by following these 4 easy steps:
 
-1. Activate your venv with the following command:
+1. Shut off your bot.
+
+2. Activate your venv with the following command:
 
     .. code:: none
 
         "%userprofile%\redenv\Scripts\activate.bat"
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -41,12 +42,16 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
+
 Linux & Mac
 -----------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, upgrading can be achieved by following these 4 easy steps:
 
-1. Activate your virtual environment.
+1. Shut off your bot.
+
+2. Activate your virtual environment.
   
     If you used ``venv`` for your virtual environment, use:
 
@@ -60,7 +65,7 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
         pyenv shell <name>
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -70,6 +75,7 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
 
 Red 3.1.X
 *********
