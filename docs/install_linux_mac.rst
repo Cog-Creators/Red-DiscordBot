@@ -62,7 +62,7 @@ CentOS and RHEL 7
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
       openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
 
-We recommend adding the IUS repository to install Git 2.11 or greater:
+In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 
 .. code-block:: none
 
