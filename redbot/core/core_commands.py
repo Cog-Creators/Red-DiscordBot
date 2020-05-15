@@ -2001,7 +2001,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localblacklist(self, ctx: commands.Context):
         """
-        blacklist management commands.
+        Blacklist management commands.
         """
         pass
 
