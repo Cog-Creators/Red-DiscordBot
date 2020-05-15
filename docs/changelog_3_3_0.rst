@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`DariusStClair`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+| :ghuser:`DariusStClair`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
 
 End-user changelog
 ------------------
@@ -57,7 +57,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`)
+- Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`, :issue:`3851`)
 
 
 Redbot 3.3.7 (2020-04-28)
