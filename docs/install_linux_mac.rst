@@ -67,8 +67,8 @@ In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 .. code-block:: none
 
     yum -y install https://repo.ius.io/ius-release-el7.rpm
-    yum install -y yum-plugin-replace
-    yum replace -y git --replace-with git2u
+    yum -y install yum-plugin-replace
+    yum -y replace git --replace-with git2u
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -84,7 +84,7 @@ CentOS and RHEL 8
 .. code-block:: none
 
     yum -y install epel-release
-    yum update -y
+    yum -y update
     yum -y groupinstall development
     yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
       sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
