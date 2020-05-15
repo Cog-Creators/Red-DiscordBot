@@ -60,7 +60,7 @@ CentOS and RHEL 7
 
     sudo yum -y groupinstall development
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
 
 In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 
@@ -86,8 +86,8 @@ CentOS and RHEL 8
     sudo yum -y install epel-release
     sudo yum -y update
     sudo yum -y groupinstall development
-    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
-      sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
