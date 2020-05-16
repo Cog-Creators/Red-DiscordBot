@@ -143,3 +143,7 @@ from discord.ext.commands import (
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
 )
+
+
+def __dir__():
+    return [*globals().keys(), "APIToken"]

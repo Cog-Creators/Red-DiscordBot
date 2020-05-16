@@ -202,6 +202,10 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
+def __dir__() -> List[str]:
+    return [*globals().keys(), "APIToken"]
+
+
 # Below this line are a lot of lies for mypy about things that *end up* correct when
 # These are used for command conversion purposes. Please refer to the portion
 # which is *not* for type checking for the actual implementation
