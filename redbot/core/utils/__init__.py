@@ -182,8 +182,8 @@ def bounded_gather_iter(
     """
     if loop is not None:
         warnings.warn(
-            "`loop` kwarg will be removed in the first minor release after 2020-08-05"
-            " and is currently ignored. Call this from the related event loop.",
+            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
+            " and will be removed in the first minor release after 2020-08-05.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -240,8 +240,8 @@ def bounded_gather(
     """
     if loop is not None:
         warnings.warn(
-            "`loop` kwarg will be removed in the first minor release after 2020-08-05"
-            " and is currently ignored. Call this from the related event loop.",
+            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
+            " and will be removed in the first minor release after 2020-08-05.",
             DeprecationWarning,
             stacklevel=2,
         )
