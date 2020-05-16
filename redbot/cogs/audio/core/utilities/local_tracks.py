@@ -64,7 +64,9 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         local_tracks = []
         async for local_file in AsyncIter(await self.get_all_localtrack_folder_tracks(ctx, query)):
             with contextlib.suppress(IndexError, TrackEnqueueError):
-                trackdata, called_api = await self.api_interface.fetch_track(ctx, player, local_file)
+                trackdata, called_api = await self.api_interface.fetch_track(
+                    ctx, player, local_file
+                )
                 local_tracks.append(trackdata.tracks[0])
         return local_tracks
 

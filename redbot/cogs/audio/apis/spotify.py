@@ -181,5 +181,6 @@ class SpotifyWrapper:
                 "url": c.get("external_urls", {}).get("spotify"),
                 "tracks": c.get("tracks", {}).get("total", "Unknown"),
             }
-            async for c in AsyncIter(playlists) if c
+            async for c in AsyncIter(playlists)
+            if c
         ]
