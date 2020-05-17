@@ -64,6 +64,7 @@ CentOS and RHEL 7
     sudo yum -y install centos-release-scl
     sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
     echo "source scl_source enable devtoolset-8" >> ~/.bashrc
+    source ~/.bashrc
 
 In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 
