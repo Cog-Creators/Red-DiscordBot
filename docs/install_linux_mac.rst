@@ -71,8 +71,7 @@ In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 .. code-block:: none
 
     sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
-    sudo yum -y install yum-plugin-replace
-    sudo yum -y replace git --replace-with git224
+    sudo yum -y swap git git224
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
