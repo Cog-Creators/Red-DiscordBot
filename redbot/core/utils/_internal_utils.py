@@ -298,11 +298,5 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
 
 def expected_version(current: str, expected: str) -> bool:
-    re_match = re.match(version_req_re, expected)
-    specifier, expected = re_match.group(1), re_match.group(2)
-    if specifier is None:
-        specifier = ">="
-    try:
-        return operator_lookup[specifier](LooseVersion(current), LooseVersion(expected))
-    except TypeError:  # Invalid Expected version
-        return False
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    return current in pkg_resources.Requirement.parse(f"x{expected}")
