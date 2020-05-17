@@ -106,8 +106,61 @@ def init_events(bot, cli_flags):
                 ).format(data["info"]["version"], red_version)
                 requires_python = data["info"]["requires_python"]
                 current_python = platform.python_version()
+                extra_update = _("\n\nWhile the following should work in most scenarios as it is "
+                  "based on your current OS, environment, and Python version "
+                  "we highly recommend you to read the update docs at <{docs}> and "
+                  "make sure there is nothing else that "
+                  "needs to be done during the update. "
+                  "**Should the above not work for you,"
+                  " ensure you have read the update docs.**"
+                  ).format(docs="https://docs.discord.red/en/stable/update_red.html", )
                 if expected_version(current_python, requires_python):
-                    extra_update = _(
+                    package_extras = ""
+                    try:
+                        import alabaster
+                        import jinja2
+                        import requests
+                        import sphinx
+                        import urllib3
+                    except ImportError:
+                        docs = ""
+                    else:
+                        docs = "docs"
+                    try:
+                        import asyncpg
+                    except ImportError:
+                        postgres = ""
+                    else:
+                        postgres = "postgres"
+
+                    try:
+                        import black
+                        import regex
+                        import toml
+                        import typed_ast
+                    except ImportError:
+                        style = ""
+                    else:
+                        style = "style"
+
+                    try:
+                        import astroid
+                        import isort
+                        import pylint
+                        import pyparsing
+                        import pluggy
+                        import more_itertools
+                    except ImportError:
+                        test = ""
+                    else:
+                        test = "test"
+
+                    if any(i for i in [test, postgres, style, docs]):
+                        package_extras = "[{}]"
+                        valid = [i for i in [test, postgres, style, docs] if i ]
+                        package_extras.format(",".join(valid))
+
+                    extra_update += _(
                         "\n\nTo update your bot, first shutdown your "
                         "bot then open a window of {console} (Not as admin) and "
                         "run the following:\n\n"
@@ -116,19 +169,16 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else _("Terminal")
                     )
-                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot```'.format(
-                        python=sys.executable
+                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                        python=sys.executable, package_extras=package_extras
                     )
 
                 else:
-                    extra_update = _(
+                    extra_update += _(
                         "\n\nYou have Python `{py_version}` and this update "
                         "requires `{req_py}`; you cannot simply run the update command.\n\n"
-                        "You will need to follow the install instructions in our docs (<{docs}>) "
-                        "to reinstall Python, Red and any other dependencies that are out of date "
-                        "only skipping the `redbot-setup` command. (This will not delete your data)"
-                        "\nIf you already have a venv you will need to delete it and recreate it. "
-                        "If you need help updating go to our "
+                        "You will need to follow the update instruction in our docs above, "
+                        "if you still need shelp updating after following the docs go to our "
                         "#support channel in <https://discord.gg/red>"
                     ).format(
                         py_version=current_python,
@@ -137,16 +187,6 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else "https://docs.discord.red/en/stable/install_linux_mac.html",
                     )
-
-                extra_update += _(
-                    "\n\nPlease be aware that the above is a best guess;"
-                    "\nIt is based on your current OS, environment, and Python version so "
-                    "there is a small chance it could be incorrect."
-                    "\n**Should the above not work for you,"
-                    " please check our update instructions at <{docs}> and/or "
-                    "visit our support server at <https://discord.gg/red>.**"
-                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
-
                 outdated_red_message += extra_update
 
         INFO2 = []
