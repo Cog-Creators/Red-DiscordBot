@@ -112,7 +112,7 @@ def init_events(bot, cli_flags):
                     "we highly recommend you to read the update docs at <{docs}> and "
                     "make sure there is nothing else that "
                     "needs to be done during the update. "
-                    "**Should the above not work for you,"
+                    "**Should the information below not work for you,"
                     " ensure you have read the update docs.**"
                 ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
                 if expected_version(current_python, requires_python):
