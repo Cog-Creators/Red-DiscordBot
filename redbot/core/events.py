@@ -106,14 +106,15 @@ def init_events(bot, cli_flags):
                 ).format(data["info"]["version"], red_version)
                 requires_python = data["info"]["requires_python"]
                 current_python = platform.python_version()
-                extra_update = _("\n\nWhile the following should work in most scenarios as it is "
-                  "based on your current OS, environment, and Python version "
-                  "we highly recommend you to read the update docs at <{docs}> and "
-                  "make sure there is nothing else that "
-                  "needs to be done during the update. "
-                  "**Should the above not work for you,"
-                  " ensure you have read the update docs.**"
-                  ).format(docs="https://docs.discord.red/en/stable/update_red.html", )
+                extra_update = _(
+                    "\n\nWhile the following should work in most scenarios as it is "
+                    "based on your current OS, environment, and Python version "
+                    "we highly recommend you to read the update docs at <{docs}> and "
+                    "make sure there is nothing else that "
+                    "needs to be done during the update. "
+                    "**Should the above not work for you,"
+                    " ensure you have read the update docs.**"
+                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
                 if expected_version(current_python, requires_python):
                     package_extras = ""
                     try:
@@ -157,7 +158,7 @@ def init_events(bot, cli_flags):
 
                     if any(i for i in [test, postgres, style, docs]):
                         package_extras = "[{}]"
-                        valid = [i for i in [test, postgres, style, docs] if i ]
+                        valid = [i for i in [test, postgres, style, docs] if i]
                         package_extras.format(",".join(valid))
 
                     extra_update += _(
