@@ -498,7 +498,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1396
 msgid "Invalid Path"
-msgstr ""
+msgstr "Caminho Inválido"
 
 #: redbot/cogs/audio/audio.py:1397
 msgid "{local_path} does not seem like a valid path."
@@ -672,7 +672,7 @@ msgstr "dias"
 
 #: redbot/cogs/audio/audio.py:1622
 msgid "Lavalink Settings"
-msgstr ""
+msgstr "Configurações de Lavalink"
 
 #: redbot/cogs/audio/audio.py:1634
 msgid "Localtracks path: [{localpath}]\\n"
@@ -846,7 +846,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1960
 msgid "Disconnecting..."
-msgstr ""
+msgstr "Desconectando..."
 
 #: redbot/cogs/audio/audio.py:1976
 #, docstring
@@ -882,7 +882,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2058
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: redbot/cogs/audio/audio.py:2080
 msgid "{num} preset(s)"
@@ -1015,7 +1015,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2442 redbot/cogs/audio/audio.py:6671
 msgid "No matches."
-msgstr ""
+msgstr "Nenhum resultado."
 
 #: redbot/cogs/audio/audio.py:2521
 msgid "No localtracks folder."
@@ -1090,7 +1090,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2738
 #, docstring
 msgid "Play a URL or search for a track."
-msgstr ""
+msgstr "Toca uma URL ou procura por uma faixa."
 
 #: redbot/cogs/audio/audio.py:2747 redbot/cogs/audio/audio.py:2752
 #: redbot/cogs/audio/audio.py:2769 redbot/cogs/audio/audio.py:2778
@@ -1187,7 +1187,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "Forçar a reprodução de uma URL ou busca por uma faixa."
 
 #: redbot/cogs/audio/audio.py:2843
 msgid "Unable to bump track"
@@ -1232,7 +1232,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3022 redbot/cogs/audio/audio.py:3686
 #: redbot/cogs/audio/audio.py:7162
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Faixa Enfileirada"
 
 #: redbot/cogs/audio/audio.py:3036
 #, docstring
@@ -1257,7 +1257,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3178
 msgid "Categories"
-msgstr ""
+msgstr "Categorias"
 
 #: redbot/cogs/audio/audio.py:3184
 msgid "No categories selected, try again later."
@@ -1321,7 +1321,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6160 redbot/cogs/audio/audio.py:6976
 #: redbot/cogs/audio/audio.py:7074
 msgid "Nothing found."
-msgstr ""
+msgstr "Nada encontrado."
 
 #: redbot/cogs/audio/audio.py:3434 redbot/cogs/audio/audio.py:3521
 #: redbot/cogs/audio/audio.py:5976 redbot/cogs/audio/audio.py:6151
@@ -1359,7 +1359,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3680
 msgid "Nothing found"
-msgstr ""
+msgstr "Nada foi encontrado"
 
 #: redbot/cogs/audio/audio.py:3689 redbot/cogs/audio/audio.py:7196
 msgid "{time} until track playback: #{position} in queue"

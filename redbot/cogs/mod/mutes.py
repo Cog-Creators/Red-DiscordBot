@@ -249,7 +249,7 @@ class MuteMixin(MixinMeta):
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(administrator=True)
     async def guild_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Mutes user in the server"""
+        """Mutes user in the server."""
         author = ctx.message.author
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)

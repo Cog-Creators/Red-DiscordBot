@@ -22,6 +22,7 @@ import discord
 import pkg_resources
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core import modlog, bank, Config
+from redbot.core.data_manager import storage_type
 
 from . import (
     __version__,
@@ -571,7 +572,7 @@ class Core(commands.Cog, CoreLogic):
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentification for\
+        Please note that you might need two factor authentication for\
         some permissions.
         """
         await self.bot._config.invite_perm.set(level)
@@ -1573,7 +1574,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        This setting only applies to embedded help.
+        This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
@@ -1825,7 +1826,7 @@ class Core(commands.Cog, CoreLogic):
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
-
+        driver = storage_type()
         if await ctx.embed_requested():
             e = discord.Embed(color=await ctx.embed_colour())
             e.title = "Debug Info for Red"
@@ -1841,6 +1842,7 @@ class Core(commands.Cog, CoreLogic):
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
+            e.add_field(name="Storage type", value=driver, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
@@ -1853,6 +1855,7 @@ class Core(commands.Cog, CoreLogic):
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
+                + "Storage type: {}\n".format(driver)
             )
             await ctx.send(box(info))
 
@@ -2065,7 +2068,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localblacklist(self, ctx: commands.Context):
         """
-        blacklist management commands.
+        Blacklist management commands.
         """
         pass
 

@@ -228,6 +228,7 @@ class TwitchStream(Stream):
             data["followers"] = None
             data["view_count"] = None
             data["profile_image_url"] = None
+            data["login"] = None
 
             game_id = data["game_id"]
             if game_id:
@@ -260,6 +261,7 @@ class TwitchStream(Stream):
                 profile_image_url = user_profile_data["data"][0]["profile_image_url"]
                 data["profile_image_url"] = profile_image_url
                 data["view_count"] = user_profile_data["data"][0]["view_count"]
+                data["login"] = user_profile_data["data"][0]["login"]
 
             is_rerun = False
             return self.make_embed(data), is_rerun
@@ -294,7 +296,7 @@ class TwitchStream(Stream):
 
     def make_embed(self, data):
         is_rerun = data["type"] == "rerun"
-        url = f"https://www.twitch.tv/{data['user_name']}"
+        url = f"https://www.twitch.tv/{data['login']}" if data["login"] is not None else None
         logo = data["profile_image_url"]
         if logo is None:
             logo = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png"

@@ -1265,7 +1265,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:3198
 msgid "Playlists for {friendly_name}"
-msgstr ""
+msgstr "Плейлист для {friendly_name}"
 
 #: redbot/cogs/audio/audio.py:3206
 msgid "No tracks to play."
