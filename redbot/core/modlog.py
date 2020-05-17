@@ -309,7 +309,9 @@ class Case:
         if self.moderator is None:
             moderator = _("Unknown")
         elif isinstance(self.moderator, int):
-            moderator = f"[Unknown or Deleted User] ({self.moderator})"
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            moderator = f"[{translated}] ({self.moderator})"
         else:
             moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         until = None
@@ -326,7 +328,9 @@ class Case:
         if self.amended_by is None:
             amended_by = None
         elif isinstance(self.amended_by, int):
-            amended_by = f"[Unknown or Deleted User] ({self.amended_by})"
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            amended_by = f"[{translated}] ({self.amended_by})"
         else:
             amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
 
@@ -338,7 +342,9 @@ class Case:
 
         if isinstance(self.user, int):
             if self.last_known_username is None:
-                user = f"[Unknown or Deleted User] ({self.user})"
+                # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+                translated = _("Unknown or Deleted User")
+                user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
             avatar_url = None
