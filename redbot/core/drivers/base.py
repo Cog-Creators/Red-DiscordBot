@@ -6,6 +6,8 @@ from redbot.core.utils._internal_utils import async_tqdm
 
 __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 
+from redbot.core.drivers.log import log
+
 
 class ConfigCategory(str, enum.Enum):
     """Represents config category."""
@@ -371,7 +373,9 @@ class BaseDriver(abc.ABC):
     async def import_data(
         self, cog_data: List[Tuple[str, Dict[str, Any]]], custom_group_data: Dict[str, int]
     ) -> None:
+        log.info(f"Converting Cog: {self.cog_name}")
         for category, all_data in cog_data:
+            log.info(f"Converting cog category: {category}")
             splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
