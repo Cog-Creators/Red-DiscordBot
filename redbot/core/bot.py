@@ -274,7 +274,7 @@ class RedBase(
         """ Allow access to the value, but we don't want cog creators setting it """
         return self._store_names
 
-    @uptime.setter
+    @store_names.setter
     def store_names(self, value) -> NoReturn:
         raise RuntimeError("Please don't try to manually change this.")
 
