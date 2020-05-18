@@ -999,7 +999,7 @@ class Core(commands.Cog, CoreLogic):
                 _(
                     "The bot will no longer store usernames and nicknames in Bank, "
                     "ModLog and Mod cogs.\n"
-                    "To delete all stored names use `[p]set deletenames"
+                    "To delete all stored names use `[p]set deletenames`"
                 )
             )
 

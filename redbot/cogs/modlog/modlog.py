@@ -44,7 +44,7 @@ class ModLog(commands.Cog):
                     if "last_known_username" in modlog_data[guild_id][case_number]:
                         del modlog_data[guild_id][case_number]["last_known_username"]
                     await asyncio.sleep(0)
-        await ctx.tick()
+        await ctx.send(_("Usernames have been deleted from the ModLog config."))
 
     @modlogset.command()
     @commands.guild_only()
