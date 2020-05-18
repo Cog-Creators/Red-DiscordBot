@@ -38,7 +38,7 @@ class ModLog(commands.Cog):
     @modlogset.command(name="deletenames")
     async def modlogset_deletenames(self, ctx: commands.Context):
         """Delete all stored usernames."""
-        async with modlog._conf.custom("CASES").all() as modlog_data:
+        async with modlog._config.custom("CASES").all() as modlog_data:
             for guild_id, guild_data in modlog_data.items():
                 for case_number, case_data in guild_data.items():
                     if "last_known_username" in modlog_data[guild_id][case_number]:

@@ -105,14 +105,14 @@ class Bank(commands.Cog):
     @bankset.command(name="deletenames")
     async def bankset_delusername(self, ctx: commands.Context):
         """Delete all stored usernames."""
-        async with bank._conf._get_base_group(bank._conf.MEMBER).all() as bank_member_data:
+        async with bank._config._get_base_group(bank._config.MEMBER).all() as bank_member_data:
             for guild_id, guild_data in bank_member_data.items():
                 for member_id, member_data in guild_data.items():
                     if "name" in bank_member_data[guild_id][member_id]:
                         del bank_member_data[guild_id][member_id]["name"]
                         await asyncio.sleep(0)
 
-        async with bank._conf._get_base_group(bank._conf.USER).all() as bank_user_data:
+        async with bank._config._get_base_group(bank._config.USER).all() as bank_user_data:
             for user_id, user_data in bank_user_data.items():
                 if "name" in bank_user_data[user_id]:
                     del bank_user_data[user_id]["name"]

@@ -1007,20 +1007,20 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="deletenames")
     async def deletenames(self, ctx: commands.Context):
         """Delete all stored usernames and nick names."""
-        async with modlog._conf.custom("CASES").all() as modlog_data:
+        async with modlog._config.custom("CASES").all() as modlog_data:
             for guild_id, guild_data in modlog_data.items():
                 for case_number, case_data in guild_data.items():
                     if "last_known_username" in modlog_data[guild_id][case_number]:
                         del modlog_data[guild_id][case_number]["last_known_username"]
                     await asyncio.sleep(0)
-        async with bank._conf._get_base_group(bank._conf.MEMBER).all() as bank_member_data:
+        async with bank._config._get_base_group(bank._config.MEMBER).all() as bank_member_data:
             for guild_id, guild_data in bank_member_data.items():
                 for member_id, member_data in guild_data.items():
                     if "name" in bank_member_data[guild_id][member_id]:
                         del bank_member_data[guild_id][member_id]["name"]
                         await asyncio.sleep(0)
 
-        async with bank._conf._get_base_group(bank._conf.USER).all() as bank_user_data:
+        async with bank._config._get_base_group(bank._config.USER).all() as bank_user_data:
             for user_id, user_data in bank_user_data.items():
                 if "name" in bank_user_data[user_id]:
                     del bank_user_data[user_id]["name"]
