@@ -202,7 +202,9 @@ class JsonDriver(BaseDriver):
             partial[idents[-1]] = _data
 
         async with self._lock:
+            log.info(f"Converting Cog: {self.cog_name}")
             for category, all_data in cog_data:
+                log.info(f"Converting cog category: {category}")
                 splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
                 for pkey, data in splitted_pkey:
                     ident_data = IdentifierData(

@@ -1,6 +1,5 @@
 import asyncio
 import base64
-import contextlib
 import getpass
 import re
 from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Pattern
@@ -12,15 +11,15 @@ from secrets import compare_digest
 try:
     # pylint: disable=import-error
     import aioredis
-    from .client_interface import Client
-except ModuleNotFoundError:
+    from .client_interface import Client, create_redis_pool
+except ImportError:
     aioredis = None
     Client = None
 
 try:
     # pylint: disable=import-error
     import ujson
-except ModuleNotFoundError:
+except ImportError:
     import json as ujson
 
 from ..base import BaseDriver, IdentifierData, ConfigCategory
@@ -32,6 +31,10 @@ __all__ = ["RedisDriver"]
 # noinspection PyProtectedMember
 class RedisDriver(BaseDriver):
     _pool: Optional["Client"] = None
+    _pool_set: Optional["Client"] = None
+    _pool_get: Optional["Client"] = None
+    _pool_pre_flight: Optional["Client"] = None
+
     _lock: Optional["asyncio.Lock"] = None
     _save_task: Optional["asyncio.Task"] = None
     _backup_task: Optional["asyncio.Task"] = None
@@ -47,10 +50,18 @@ class RedisDriver(BaseDriver):
         password = storage_details["password"]
         database = storage_details.get("database", 0)
         address = f"redis://{host}:{port}"
-        client = await aioredis.create_redis_pool(
+        cls._pool = await create_redis_pool(
             address=address, db=database, password=password, encoding="utf-8", maxsize=50,
         )
-        cls._pool = Client(client._pool_or_conn)
+        cls._pool_set = await create_redis_pool(
+            address=address, db=database, password=password, encoding="utf-8", maxsize=50,
+        )
+        cls._pool_get = await create_redis_pool(
+            address=address, db=database, password=password, encoding="utf-8", maxsize=50,
+        )
+        cls._pool_pre_flight = await create_redis_pool(
+            address=address, db=database, password=password, encoding="utf-8", maxsize=50,
+        )
         cls._lock = asyncio.Lock()
         # cls._save_task = asyncio.create_task(cls._save_periodically())
         # cls._backup_task = asyncio.create_task(cls._backup_periodically())
@@ -58,12 +69,17 @@ class RedisDriver(BaseDriver):
     @classmethod
     async def teardown(cls) -> None:
         if cls._pool is not None:
-            # if cls._save_task is not None:
-            #     cls._save_task.cancel()
-            # if cls._backup_task is not None:
-            #     cls._backup_task.cancel()
             cls._pool.close()
             await cls._pool.wait_closed()
+        if cls._pool_get is not None:
+            cls._pool_get.close()
+            await cls._pool_get.wait_closed()
+        if cls._pool_set is not None:
+            cls._pool_set.close()
+            await cls._pool_set.wait_closed()
+        if cls._pool_pre_flight is not None:
+            cls._pool_pre_flight.close()
+            await cls._pool_pre_flight.wait_closed()
 
     @staticmethod
     def get_config_details():
@@ -128,38 +144,18 @@ class RedisDriver(BaseDriver):
             "database": database,
         }
 
-    # @classmethod
-    # async def _save_periodically(cls):
-    #     with contextlib.suppress(asyncio.CancelledError):
-    #         while True:
-    #             with contextlib.suppress(aioredis.errors.ReplyError):
-    #                 await cls._pool.bgrewriteaof()
-    #             await asyncio.sleep(2)
-    #     with contextlib.suppress(aioredis.errors.ReplyError):
-    #         await cls._pool.bgrewriteaof()
-    #
-    # @classmethod
-    # async def _backup_periodically(cls):
-    #     with contextlib.suppress(asyncio.CancelledError):
-    #         while True:
-    #             with contextlib.suppress(aioredis.errors.ReplyError):
-    #                 await cls._pool.bgsave()
-    #             await asyncio.sleep(60)
-    #     with contextlib.suppress(aioredis.errors.ReplyError):
-    #         await cls._pool.bgsave()
-
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
         async with self._lock:
             _cur_path = "."
-            await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
+            await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
             for i in full_identifiers:
                 if _cur_path.endswith("."):
                     _cur_path += self._escape_key(i)
                 else:
                     _cur_path += f".{self._escape_key(i)}"
-                await self._pool.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
+                await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None, **kwargs) -> Any:
@@ -178,7 +174,9 @@ class RedisDriver(BaseDriver):
         if not await self._pool.exists(cog_name):
             raise KeyError
         try:
-            result = await self._execute(cog_name, *full_identifiers, method=self._pool.jsonget,)
+            result = await self._execute(
+                cog_name, *full_identifiers, method=self._pool_get.jsonget,
+            )
         except aioredis.errors.ReplyError:
             raise KeyError
         if isinstance(result, str):
@@ -201,10 +199,14 @@ class RedisDriver(BaseDriver):
             await self._pre_flight(identifier_data)
             async with self._lock:
                 await self._execute(
-                    cog_name, path=identifier_string, obj=value_copy, method=self._pool.jsonset,
+                    cog_name,
+                    path=identifier_string,
+                    obj=value_copy,
+                    method=self._pool_set.jsonset,
                 )
-        except Exception as exc:
-            log.exception(exc, exc_info=exc)
+        except Exception:
+            log.exception(f"Error saving data for {self.cog_name}")
+            raise
 
     async def clear(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
@@ -239,7 +241,10 @@ class RedisDriver(BaseDriver):
                 and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)
             ):
                 await self._execute(
-                    cog_name, path=identifier_string, obj=default + 1, method=self._pool.jsonset,
+                    cog_name,
+                    path=identifier_string,
+                    obj=default + 1,
+                    method=self._pool_set.jsonset,
                 )
                 return default + 1
             elif _type == "object":
@@ -271,18 +276,18 @@ class RedisDriver(BaseDriver):
                 and not await self._pool.jsonobjlen(name=cog_name, path=identifier_string)
             ):
                 await self._execute(
-                    cog_name, path=identifier_string, obj=not value, method=self._pool.jsonset,
+                    cog_name, path=identifier_string, obj=not value, method=self._pool_set.jsonset,
                 )
                 return not value
             elif _type == "object":
                 raise StoredTypeError("The value is not a Boolean or Null")
             else:
                 result = await self._execute(
-                    cog_name, path=identifier_string, method=self._pool.jsonget,
+                    cog_name, path=identifier_string, method=self._pool_get.jsonget,
                 )
                 result = not ujson.loads(result)
                 await self._execute(
-                    cog_name, path=identifier_string, obj=result, method=self._pool.jsonset,
+                    cog_name, path=identifier_string, obj=result, method=self._pool_set.jsonset,
                 )
                 return result
 
@@ -303,18 +308,37 @@ class RedisDriver(BaseDriver):
                 yield cog, cog_id
 
     async def import_data(self, cog_data, custom_group_data):
+        log.info(f"Converting Cog: {self.cog_name}")
         for category, all_data in cog_data:
-            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
-            for pkey, data in splitted_pkey:
-                ident_data = IdentifierData(
-                    self.cog_name,
-                    self.unique_cog_identifier,
-                    category,
-                    pkey,
-                    (),
-                    *ConfigCategory.get_pkey_info(category, custom_group_data),
-                )
+            log.info(f"Converting cog category: {category}")
+            ident_data = IdentifierData(
+                self.cog_name,
+                self.unique_cog_identifier,
+                category,
+                (),
+                (),
+                *ConfigCategory.get_pkey_info(category, custom_group_data),
+            )
+            try:
+                await self.set(ident_data, all_data)
+            except Exception:
+                await self._individual_migrate(category, custom_group_data, all_data)
+
+    async def _individual_migrate(self, category, custom_group_data, all_data):
+        splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+        for pkey, data in splitted_pkey:
+            ident_data = IdentifierData(
+                self.cog_name,
+                self.unique_cog_identifier,
+                category,
+                pkey,
+                (),
+                *ConfigCategory.get_pkey_info(category, custom_group_data),
+            )
+            try:
                 await self.set(ident_data, data)
+            except Exception as err:
+                log.critical(f"Error saving: {ident_data.__repr__()}: {data}", exc_info=err)
 
     @staticmethod
     def _escape_key(key: str) -> str:
