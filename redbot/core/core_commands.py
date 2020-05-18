@@ -1945,8 +1945,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
@@ -1980,8 +1980,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
@@ -2027,8 +2027,8 @@ class Core(commands.Cog, CoreLogic):
             if await ctx.bot.is_owner(uid):
                 await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
@@ -2064,9 +2064,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} removed from the local blacklist.").format(names=humanize_list(names))

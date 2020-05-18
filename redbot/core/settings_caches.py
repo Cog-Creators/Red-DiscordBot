@@ -238,7 +238,7 @@ class WhitelistBlacklistManager:
                         curr_list.append(obj_id)
         else:
             if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = self._config.guild_from_id(gid).blacklist()
+                self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
             for obj_id in role_or_user:
                 if obj_id not in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].append(obj_id)
@@ -270,7 +270,7 @@ class WhitelistBlacklistManager:
                         curr_list.remove(obj_id)
         else:
             if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = self._config.guild_from_id(gid).blacklist()
+                self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
             for obj_id in role_or_user:
                 if obj_id in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].remove(obj_id)
