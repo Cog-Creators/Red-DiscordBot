@@ -1027,7 +1027,7 @@ class Core(commands.Cog, CoreLogic):
                     await asyncio.sleep(0)
         mod_cog = ctx.bot.get_cog("Mod")
         if mod_cog:
-            mod_config = mod_cog.settings
+            mod_config = mod_cog.config
         else:
             mod_config = Config.get_conf(None, 4961522000, force_registration=True, cog_name="Mod")
         async with mod_config._get_base_group(mod_config.MEMBER).all() as mod_member_data:

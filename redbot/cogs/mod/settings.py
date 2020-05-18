@@ -228,13 +228,13 @@ class ModSettings(MixinMeta):
     async def deletenames(self, ctx: commands.Context) -> None:
         """Delete all stored names and usernames"""
 
-        async with self.settings._get_base_group(self.settings.MEMBER).all() as mod_member_data:
+        async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
             for guild_id, guild_data in mod_member_data.items():
                 for member_id, member_data in guild_data.items():
                     if "past_nicks" in mod_member_data[guild_id][member_id]:
                         del mod_member_data[guild_id][member_id]["past_nicks"]
                         await asyncio.sleep(0)
-        async with self.settings._get_base_group(self.settings.USER).all() as mod_user_data:
+        async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
             for user_id, user_data in mod_user_data.items():
                 if "past_names" in mod_user_data[user_id]:
                     del mod_user_data[user_id]["past_names"]
