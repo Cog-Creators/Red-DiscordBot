@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -12,17 +11,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: fr_FR\n"
 
 #: redbot/cogs/audio/apis.py:213
 #, docstring
 msgid "Handles music queries to the Spotify and Youtube Data API.\\n\\n    Always tries the Cache first.\\n    "
-msgstr ""
+msgstr "Gère les requêtes musicale vers l’API de données Spotify et Youtube Data API.\\n\\n    Essaie toujours le Cache en premier.\\n    "
 
 #: redbot/cogs/audio/apis.py:508 redbot/cogs/audio/audio.py:3479
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Cela ne semble pas être une URL ou un code Spotify pris en charge."
 
 #: redbot/cogs/audio/apis.py:568 redbot/cogs/audio/audio.py:3741
 msgid "The connection was reset while loading the playlist."
@@ -30,11 +28,11 @@ msgstr "La connexion a été réinitialisée lors du chargement de la playlist."
 
 #: redbot/cogs/audio/apis.py:576
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Arrêt du lecteur, pistes restantes ignoré."
 
 #: redbot/cogs/audio/apis.py:598
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "Impossible d'obtenir les pistes, pistes ignoré."
 
 #: redbot/cogs/audio/apis.py:646
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
@@ -60,11 +58,11 @@ msgstr "Lire l'audio au travers des salons vocaux."
 
 #: redbot/cogs/audio/audio.py:177
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr ""
+msgstr "Vous avez essayer d'exécuter le serveur Lavalink d'Audio sur une architecture non supporté. Seulement les commandes relatives aux paramètres seront disponibles."
 
 #: redbot/cogs/audio/audio.py:201
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "Aucun rôle DJ détecté. Désactivation du mode DJ."
 
 #: redbot/cogs/audio/audio.py:433
 msgid "music in {} servers"
@@ -72,11 +70,11 @@ msgstr "musique dans {} serveurs"
 
 #: redbot/cogs/audio/audio.py:485 redbot/cogs/audio/audio.py:3351
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Impossible d'obtenir une piste valide."
 
 #: redbot/cogs/audio/audio.py:505
 msgid "Auto Play Started."
-msgstr ""
+msgstr "Lecture automatique démarrée."
 
 #: redbot/cogs/audio/audio.py:520 redbot/cogs/audio/audio.py:2566
 #: redbot/cogs/audio/audio.py:6296
@@ -89,19 +87,19 @@ msgstr "Durée de la piste : {length} | Demandé par {user}"
 
 #: redbot/cogs/audio/audio.py:543
 msgid "Queue Ended."
-msgstr ""
+msgstr "Liste terminée."
 
 #: redbot/cogs/audio/audio.py:585
 msgid "Multiple errors detected"
-msgstr ""
+msgstr "Plusieurs erreurs détectées"
 
 #: redbot/cogs/audio/audio.py:586
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "Fermeture du lecteur audio suite à de multiples erreurs détectées. Si cela persiste, veuillez informer le propriétaire du bot car le cog Audio peut être temporairement indisponible."
 
 #: redbot/cogs/audio/audio.py:598
 msgid "Track Stuck"
-msgstr ""
+msgstr "Piste Bloquée"
 
 #: redbot/cogs/audio/audio.py:602
 msgid "Track Error"
@@ -134,11 +132,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7876 redbot/cogs/audio/audio.py:7891
 #: redbot/cogs/audio/audio.py:7907 redbot/cogs/audio/audio.py:7923
 msgid "Setting Changed"
-msgstr ""
+msgstr "Paramètre modifié"
 
 #: redbot/cogs/audio/audio.py:689
 msgid "Daily queues: {true_or_false}."
-msgstr ""
+msgstr "Liste de lecture journalière: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -157,7 +155,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Enabled"
-msgstr ""
+msgstr "Activé"
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -176,12 +174,12 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
 
 #: redbot/cogs/audio/audio.py:697
 #, docstring
 msgid "Toggle the bot auto-disconnecting when done playing.\\n\\n        This setting takes precedence over `[p]audioset emptydisconnect`.\\n        "
-msgstr ""
+msgstr "Activer/Désactiver l'auto déconnexion du bot à la fin de la file d'attente.\\n\\n        Ce paramètre à la priorité sur `[p]audioset emptydisconnect`\\n        "
 
 #: redbot/cogs/audio/audio.py:705
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -189,163 +187,163 @@ msgstr "Déconnexion automatique à la fin de la file d'attente : {true_or_false
 
 #: redbot/cogs/audio/audio.py:709
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "\\nLecture automatique a été désactivé."
 
 #: redbot/cogs/audio/audio.py:719
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Gère les listes blanche et noire des mots-clé."
 
 #: redbot/cogs/audio/audio.py:724
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "Gère les listes blanche et noire globales des mots-clé."
 
 #: redbot/cogs/audio/audio.py:728
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "Gère la liste blanche globale des mots-clé."
 
 #: redbot/cogs/audio/audio.py:732
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "Gère la liste noire globale des mots-clé."
 
 #: redbot/cogs/audio/audio.py:736 redbot/cogs/audio/audio.py:917
 #, docstring
 msgid "Adds a keyword to the blacklist."
-msgstr ""
+msgstr "Ajoute un mot-clé à la liste noire."
 
 #: redbot/cogs/audio/audio.py:747 redbot/cogs/audio/audio.py:928
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "Le mot-clé est déjà dans la liste noire."
 
 #: redbot/cogs/audio/audio.py:751 redbot/cogs/audio/audio.py:800
 #: redbot/cogs/audio/audio.py:903 redbot/cogs/audio/audio.py:932
 #: redbot/cogs/audio/audio.py:981 redbot/cogs/audio/audio.py:1084
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "Liste noire modifiée"
 
 #: redbot/cogs/audio/audio.py:752 redbot/cogs/audio/audio.py:933
 msgid "Added: `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "Ajout de : `{blacklisted}` à la liste noire."
 
 #: redbot/cogs/audio/audio.py:759
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Ajoute un mot-clé à la liste blanche.\\n\\n        Si vous ajoutez quoi que ce soit à la liste blanche, tout le reste sera placé sur liste noire.\\n        "
 
 #: redbot/cogs/audio/audio.py:773 redbot/cogs/audio/audio.py:819
 #: redbot/cogs/audio/audio.py:954 redbot/cogs/audio/audio.py:1000
 msgid "Keyword already in the whitelist."
-msgstr ""
+msgstr "Le mot-clé est déjà dans la liste blanche."
 
 #: redbot/cogs/audio/audio.py:777 redbot/cogs/audio/audio.py:823
 #: redbot/cogs/audio/audio.py:890 redbot/cogs/audio/audio.py:958
 #: redbot/cogs/audio/audio.py:1004 redbot/cogs/audio/audio.py:1071
 msgid "Whitelist Modified"
-msgstr ""
+msgstr "Liste blanche modifiée"
 
 #: redbot/cogs/audio/audio.py:778 redbot/cogs/audio/audio.py:959
 msgid "Added: `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Ajout de : `{whitelisted}` à la liste blanche."
 
 #: redbot/cogs/audio/audio.py:785 redbot/cogs/audio/audio.py:966
 #, docstring
 msgid "Removes a keyword from the blacklist."
-msgstr ""
+msgstr "Retire un mot-clé de la liste noire."
 
 #: redbot/cogs/audio/audio.py:796 redbot/cogs/audio/audio.py:977
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "Le mot-clé n'est pas dans la liste noire."
 
 #: redbot/cogs/audio/audio.py:801 redbot/cogs/audio/audio.py:982
 msgid "Removed: `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "Suppression de : `{blacklisted}` de la liste noire."
 
 #: redbot/cogs/audio/audio.py:808 redbot/cogs/audio/audio.py:989
 #, docstring
 msgid "Removes a keyword from the whitelist."
-msgstr ""
+msgstr "Retire un mot-clé de la liste blanche."
 
 #: redbot/cogs/audio/audio.py:824 redbot/cogs/audio/audio.py:1005
 msgid "Removed: `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "Suppression de : `{whitelisted}` de la liste blanche."
 
 #: redbot/cogs/audio/audio.py:831 redbot/cogs/audio/audio.py:1012
 #, docstring
 msgid "List all keywords added to the whitelist."
-msgstr ""
+msgstr "Liste tous les mots-clé ajoutés à la liste blanche."
 
 #: redbot/cogs/audio/audio.py:834 redbot/cogs/audio/audio.py:886
 #: redbot/cogs/audio/audio.py:1015 redbot/cogs/audio/audio.py:1067
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "Rien dans la liste blanche."
 
 #: redbot/cogs/audio/audio.py:857 redbot/cogs/audio/audio.py:1038
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "Liste tous les mots-clé ajoutés à la liste noire."
 
 #: redbot/cogs/audio/audio.py:860 redbot/cogs/audio/audio.py:899
 #: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:1080
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "Rien dans la liste noire."
 
 #: redbot/cogs/audio/audio.py:883 redbot/cogs/audio/audio.py:1064
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "Retire tous les mots-clé de la liste blanche."
 
 #: redbot/cogs/audio/audio.py:891 redbot/cogs/audio/audio.py:1072
 msgid "All entries have been removed from the whitelist."
-msgstr ""
+msgstr "Toutes les entrées ont été supprimées de la liste blanche."
 
 #: redbot/cogs/audio/audio.py:896 redbot/cogs/audio/audio.py:1077
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "Retire tous les mots-clé ajoutés à la liste noire."
 
 #: redbot/cogs/audio/audio.py:904 redbot/cogs/audio/audio.py:1085
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "Toutes les entrées ont été supprimées de la liste noire."
 
 #: redbot/cogs/audio/audio.py:909
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "Gère la liste blanche des mots-clé."
 
 #: redbot/cogs/audio/audio.py:913
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "Gère la liste noire des mots-clé."
 
 #: redbot/cogs/audio/audio.py:940
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Ajoute un mot-clé à la liste blanche.\\n\\n        Si vous ajoutez quoi que ce soit à la liste blanche, tout le reste sera placé sur liste noire.\\n        "
 
 #: redbot/cogs/audio/audio.py:1091
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Changer les paramètres de lecture automatique."
 
 #: redbot/cogs/audio/audio.py:1095
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "Activer/Désactiver la lecture automatique quand il n'y a plus aucune musique dans la file d'attente."
 
 #: redbot/cogs/audio/audio.py:1099
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "Lecture automatique à la fin de la file d'attente: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1104
 msgid "\\nRepeat has been disabled."
-msgstr ""
+msgstr "\\nLa répétition a été désactivé."
 
 #: redbot/cogs/audio/audio.py:1107
 msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\\nLa déconnexion automatique à la fin de la liste de lecture a été désactivée."
 
 #: redbot/cogs/audio/audio.py:1122
 #, docstring
@@ -354,20 +352,20 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1165 redbot/cogs/audio/audio.py:1182
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Aucune playlist trouvée"
 
 #: redbot/cogs/audio/audio.py:1166 redbot/cogs/audio/audio.py:4080
 #: redbot/cogs/audio/audio.py:5395
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "Impossible de faire correspondre '{arg}' à une playlist"
 
 #: redbot/cogs/audio/audio.py:1174
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Aucunes pistes trouvées"
 
 #: redbot/cogs/audio/audio.py:1175
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "La playlist {name} n'a pas de pistes."
 
 #: redbot/cogs/audio/audio.py:1183 redbot/cogs/audio/audio.py:4088
 #: redbot/cogs/audio/audio.py:4282 redbot/cogs/audio/audio.py:4452
@@ -383,7 +381,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5192 redbot/cogs/audio/audio.py:5489
 #: redbot/cogs/audio/audio.py:5586 redbot/cogs/audio/audio.py:5863
 msgid "Missing Arguments"
-msgstr ""
+msgstr "Arguments Manquants"
 
 #: redbot/cogs/audio/audio.py:1191 redbot/cogs/audio/audio.py:4096
 #: redbot/cogs/audio/audio.py:4289 redbot/cogs/audio/audio.py:4458
@@ -392,11 +390,11 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5193 redbot/cogs/audio/audio.py:5490
 #: redbot/cogs/audio/audio.py:5587 redbot/cogs/audio/audio.py:5864
 msgid "You need to specify the Guild ID for the guild to lookup."
-msgstr ""
+msgstr "Vous devez spécifier l'ID du serveur pour le serveur à rechercher."
 
 #: redbot/cogs/audio/audio.py:1197
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "La playlist {name} (`{id}`) [**{scope}**] sera utilisé pour la lecture automatique."
 
 #: redbot/cogs/audio/audio.py:1210
 #, docstring
@@ -414,7 +412,7 @@ msgstr "Active le mode DJ.\\n\\n        Le mode DJ autorise les utilisateurs ave
 
 #: redbot/cogs/audio/audio.py:1233
 msgid "Missing DJ Role"
-msgstr ""
+msgstr "Rôle DJ introuvable"
 
 #: redbot/cogs/audio/audio.py:1234
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
@@ -426,7 +424,7 @@ msgstr "Réponse expirée, réessayez plus tard."
 
 #: redbot/cogs/audio/audio.py:1253
 msgid "DJ role: {true_or_false}."
-msgstr ""
+msgstr "Rôle DJ : {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1261
 #, docstring
@@ -436,12 +434,12 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Invalid Time"
-msgstr ""
+msgstr "Temps invalide"
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Seconds can't be less than zero."
-msgstr ""
+msgstr "Les secondes ne peut être inférieure à zéro."
 
 #: redbot/cogs/audio/audio.py:1274
 msgid "Empty disconnect disabled."
@@ -454,15 +452,15 @@ msgstr "Délai de déconnexion automatique si aucune lecture réglé à {num_sec
 #: redbot/cogs/audio/audio.py:1292
 #, docstring
 msgid "Auto-pause after x seconds when room is empty, 0 to disable."
-msgstr ""
+msgstr "Pause automatique après x secondes quand le salon est vide, 0 pour désactiver."
 
 #: redbot/cogs/audio/audio.py:1302
 msgid "Empty pause disabled."
-msgstr ""
+msgstr "Pause automatique désactivée."
 
 #: redbot/cogs/audio/audio.py:1309
 msgid "Empty pause timer set to {num_seconds}."
-msgstr ""
+msgstr "Délai de pause automatique si aucune lecture réglé à {num_seconds}."
 
 #: redbot/cogs/audio/audio.py:1319
 #, docstring
@@ -471,11 +469,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Invalid Price"
-msgstr ""
+msgstr "Prix invalid"
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Price can't be less than zero."
-msgstr ""
+msgstr "Le prix ne peut être inférieur à zéro."
 
 #: redbot/cogs/audio/audio.py:1327
 msgid "Jukebox mode disabled."
@@ -500,7 +498,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1396
 msgid "Invalid Path"
-msgstr ""
+msgstr "Chemin d'accès invalide"
 
 #: redbot/cogs/audio/audio.py:1397
 msgid "{local_path} does not seem like a valid path."
@@ -514,7 +512,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:3101 redbot/cogs/audio/audio.py:3378
 #: redbot/cogs/audio/audio.py:3462 redbot/cogs/audio/audio.py:3735
 msgid "Invalid Environment"
-msgstr ""
+msgstr "Environnement invalide"
 
 #: redbot/cogs/audio/audio.py:1416
 msgid "The localtracks path location has been set to {localpath}"
@@ -527,11 +525,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1433
 msgid "Invalid length"
-msgstr ""
+msgstr "Longueur invalide"
 
 #: redbot/cogs/audio/audio.py:1433
 msgid "Length can't be less than zero."
-msgstr ""
+msgstr "La longueur ne peut être inférieure à zéro."
 
 #: redbot/cogs/audio/audio.py:1437
 msgid "Track max length disabled."
@@ -566,7 +564,7 @@ msgstr "Défini le rôle à utiliser pour le mode DJ."
 
 #: redbot/cogs/audio/audio.py:1494
 msgid "Settings Changed"
-msgstr ""
+msgstr "Paramètres modifiés"
 
 #: redbot/cogs/audio/audio.py:1495
 msgid "DJ role set to: {role.name}."
@@ -636,11 +634,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1600
 msgid "Playlist name:    [{pname}]\\n"
-msgstr ""
+msgstr "Nom de la playlist : [{pname}]\\n"
 
 #: redbot/cogs/audio/audio.py:1601
 msgid "Playlist ID:      [{pid}]\\n"
-msgstr ""
+msgstr "ID de la playlist : [{pid}]\\n"
 
 #: redbot/cogs/audio/audio.py:1602
 msgid "Playlist scope:   [{pscope}]\\n"
@@ -732,48 +730,48 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1755
 msgid "Max age:          [{max_age}]\\n"
-msgstr ""
+msgstr "Âge max :          [{max_age}]\\n"
 
 #: redbot/cogs/audio/audio.py:1756
 msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr ""
+msgstr "Cache Spotify : [{spotify_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1757
 msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr ""
+msgstr "Cache Youtube : [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1758
 msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr ""
+msgstr "Cache Lavalink : [{lavalink_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1798
 msgid "Max age:          [{max_age}]\\n"
-msgstr ""
+msgstr "Âge max : [{max_age}]\\n"
 
 #: redbot/cogs/audio/audio.py:1799
 msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr ""
+msgstr "Cache Spotify :    [{spotify_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1800
 msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr ""
+msgstr "Cache Youtube : [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1801
 msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr ""
+msgstr "Cache Lavalink :   [{lavalink_status}]\\n"
 
 #: redbot/cogs/audio/audio.py:1816
 #, docstring
 msgid "Sets the cache max age.\\n\\n        This commands allows you to set the max number of days before an entry in the cache becomes\\n        invalid.\\n        "
-msgstr ""
+msgstr "Définit l'âge maximum du cache.\\n\\n        Cette commande vous permet de définir le nombre maximum de jours avant qu'une entrée dans le cache ne devienne\\n        invalide.\\n        "
 
 #: redbot/cogs/audio/audio.py:1823
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\\n"
-msgstr ""
+msgstr "L'âge du cache ne peut pas être inférieur à 7 jours. Si vous souhaitez le désactiver, exécutez {prefix}cache audioset.\\n"
 
 #: redbot/cogs/audio/audio.py:1828
 msgid "I've set the cache age to {age} days"
-msgstr ""
+msgstr "J'ai défini l'âge du cache à {age} jours"
 
 #: redbot/cogs/audio/audio.py:1836
 #, docstring
@@ -811,7 +809,7 @@ msgstr "Remonte un numéro de piste vers le haut de la liste."
 #: redbot/cogs/audio/audio.py:1908 redbot/cogs/audio/audio.py:1915
 #: redbot/cogs/audio/audio.py:1921
 msgid "Unable To Bump Track"
-msgstr ""
+msgstr "Impossible de remonter la piste"
 
 #: redbot/cogs/audio/audio.py:1909
 msgid "You must be in the voice channel to bump a track."
@@ -836,7 +834,7 @@ msgstr "Déconnexion du salon vocal."
 
 #: redbot/cogs/audio/audio.py:1952
 msgid "Unable to disconnect"
-msgstr ""
+msgstr "Impossible de se déconnecter"
 
 #: redbot/cogs/audio/audio.py:1953
 msgid "You need the DJ role to disconnect."
@@ -848,7 +846,7 @@ msgstr "Il y a d’autres personnes écoutant de la musique."
 
 #: redbot/cogs/audio/audio.py:1960
 msgid "Disconnecting..."
-msgstr ""
+msgstr "Déconnexion..."
 
 #: redbot/cogs/audio/audio.py:1976
 #, docstring
@@ -863,11 +861,11 @@ msgstr "Supprimer un préréglage eq enregistré."
 #: redbot/cogs/audio/audio.py:2021 redbot/cogs/audio/audio.py:2028
 #: redbot/cogs/audio/audio.py:2041
 msgid "Unable To Delete Preset"
-msgstr ""
+msgstr "Impossible de supprimer le préréglage"
 
 #: redbot/cogs/audio/audio.py:2022 redbot/cogs/audio/audio.py:2042
 msgid "You are not the author of that preset setting."
-msgstr ""
+msgstr "Vous n'êtes pas l'auteur de ces paramètres."
 
 #: redbot/cogs/audio/audio.py:2051
 #, docstring
@@ -880,11 +878,11 @@ msgstr "Aucun préréglage de l'égaliseur enregistré."
 
 #: redbot/cogs/audio/audio.py:2057
 msgid "Preset Name"
-msgstr ""
+msgstr "Nom du préréglage"
 
 #: redbot/cogs/audio/audio.py:2058
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: redbot/cogs/audio/audio.py:2080
 msgid "{num} preset(s)"
@@ -897,15 +895,15 @@ msgstr "Charger un preset eq enregistré."
 
 #: redbot/cogs/audio/audio.py:2095
 msgid "No Preset Found"
-msgstr ""
+msgstr "Aucun préréglage trouvé"
 
 #: redbot/cogs/audio/audio.py:2114
 msgid "Unable To Load Preset"
-msgstr ""
+msgstr "Impossible de charger le préréglage"
 
 #: redbot/cogs/audio/audio.py:2115
 msgid "You need the DJ role to load equalizer presets."
-msgstr ""
+msgstr "Vous avez besoin du rôle DJ pour charger les préréglages de l’égalisateur."
 
 #: redbot/cogs/audio/audio.py:2133
 #, docstring
@@ -914,11 +912,11 @@ msgstr "Réinitialiser l'eq à 0 sur toutes les bandes."
 
 #: redbot/cogs/audio/audio.py:2143
 msgid "Unable To Modify Preset"
-msgstr ""
+msgstr "Impossible de modifier le préréglage"
 
 #: redbot/cogs/audio/audio.py:2144
 msgid "You need the DJ role to reset the equalizer."
-msgstr ""
+msgstr "Vous avez besoin du rôle DJ pour réinitialiser l’égalisateur."
 
 #: redbot/cogs/audio/audio.py:2159
 msgid "Equalizer values have been reset."
@@ -932,11 +930,11 @@ msgstr "Enregistrer les paramètres eq actuels dans un préréglage."
 #: redbot/cogs/audio/audio.py:2178 redbot/cogs/audio/audio.py:2194
 #: redbot/cogs/audio/audio.py:2209
 msgid "Unable To Save Preset"
-msgstr ""
+msgstr "Impossible d'enregistrer le préréglage."
 
 #: redbot/cogs/audio/audio.py:2179
 msgid "You need the DJ role to save equalizer presets."
-msgstr ""
+msgstr "Vous devez avoir le rôle DJ pour sauvegarder les préréglages de l'égalisateur."
 
 #: redbot/cogs/audio/audio.py:2182
 msgid "Please enter a name for this equalizer preset."
@@ -969,7 +967,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:2266
 msgid "You need the DJ role to set equalizer presets."
-msgstr ""
+msgstr "Vous avez besoin du rôle DJ pour régler les préréglages de l'égalisateur."
 
 #: redbot/cogs/audio/audio.py:2305
 msgid "Invalid Band"
@@ -981,7 +979,7 @@ msgstr "Les numéros de bande valides sont de 1 à 15 ou les noms de bande list�
 
 #: redbot/cogs/audio/audio.py:2330
 msgid "Preset Modified"
-msgstr ""
+msgstr "Préréglage modifié"
 
 #: redbot/cogs/audio/audio.py:2344
 #, docstring
@@ -995,7 +993,7 @@ msgstr "Lire toutes les chansons dans un dossier localtracks."
 
 #: redbot/cogs/audio/audio.py:2362
 msgid "Folder Not Found"
-msgstr ""
+msgstr "Dossier introuvable"
 
 #: redbot/cogs/audio/audio.py:2363
 msgid "Localtracks folder named {name} does not exist."
@@ -1039,7 +1037,7 @@ msgstr "Rien."
 #: redbot/cogs/audio/audio.py:2576 redbot/cogs/audio/audio.py:6306
 #: redbot/cogs/audio/audio.py:6484
 msgid "Auto-Play"
-msgstr ""
+msgstr "Lacture automatique"
 
 #: redbot/cogs/audio/audio.py:2582 redbot/cogs/audio/audio.py:6312
 #: redbot/cogs/audio/audio.py:6490
@@ -1058,11 +1056,11 @@ msgstr "Pause ou reprise de la lecture d'une piste."
 
 #: redbot/cogs/audio/audio.py:2654 redbot/cogs/audio/audio.py:2661
 msgid "Unable To Manage Tracks"
-msgstr ""
+msgstr "Impossible de gérer les pistes"
 
 #: redbot/cogs/audio/audio.py:2655
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "Vous devez être dans un salon vocal pour mettre en pause ou reprendre la lecture."
 
 #: redbot/cogs/audio/audio.py:2662
 msgid "You need the DJ role to pause or resume tracks."
@@ -1083,7 +1081,7 @@ msgstr "Pourcentage de la liste."
 
 #: redbot/cogs/audio/audio.py:2709
 msgid "There's  nothing in the queue."
-msgstr ""
+msgstr "Il n'y a rien dans la liste."
 
 #: redbot/cogs/audio/audio.py:2731
 msgid "Queued and playing tracks:"
@@ -1116,7 +1114,7 @@ msgstr "Joue une URL ou cherche une piste."
 #: redbot/cogs/audio/audio.py:6939 redbot/cogs/audio/audio.py:7000
 #: redbot/cogs/audio/audio.py:7133
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Impossible de jouer des pistes"
 
 #: redbot/cogs/audio/audio.py:2748 redbot/cogs/audio/audio.py:2854
 #: redbot/cogs/audio/audio.py:6934
@@ -1126,13 +1124,13 @@ msgstr "Cette URL n'est pas autorisée."
 #: redbot/cogs/audio/audio.py:2752 redbot/cogs/audio/audio.py:2858
 #: redbot/cogs/audio/audio.py:6940
 msgid "That track is not allowed."
-msgstr ""
+msgstr "Cette piste n'est pas autorisée."
 
 #: redbot/cogs/audio/audio.py:2756 redbot/cogs/audio/audio.py:2862
 #: redbot/cogs/audio/audio.py:3112 redbot/cogs/audio/audio.py:3286
 #: redbot/cogs/audio/audio.py:6051 redbot/cogs/audio/audio.py:6877
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "La connexion à Lavalink a échoué"
 
 #: redbot/cogs/audio/audio.py:2759 redbot/cogs/audio/audio.py:2865
 #: redbot/cogs/audio/audio.py:3115 redbot/cogs/audio/audio.py:3289
@@ -1177,23 +1175,23 @@ msgstr "Vous devez être dans un salon vocal pour utiliser la commande play."
 #: redbot/cogs/audio/audio.py:2812 redbot/cogs/audio/audio.py:2918
 #: redbot/cogs/audio/audio.py:2943
 msgid "No tracks found for `{query}`."
-msgstr ""
+msgstr "Aucune piste trouvée pour `{query}`."
 
 #: redbot/cogs/audio/audio.py:2818 redbot/cogs/audio/audio.py:2924
 #: redbot/cogs/audio/audio.py:3209 redbot/cogs/audio/audio.py:3341
 #: redbot/cogs/audio/audio.py:3566 redbot/cogs/audio/audio.py:3635
 #: redbot/cogs/audio/audio.py:7133
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Limite de la file de lecture atteinte."
 
 #: redbot/cogs/audio/audio.py:2838
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "Forcer la lecture d'une URL ou chercher une piste."
 
 #: redbot/cogs/audio/audio.py:2843
 msgid "Unable to bump track"
-msgstr ""
+msgstr "Impossible de remonter la piste"
 
 #: redbot/cogs/audio/audio.py:2844
 msgid "Only single tracks work with bump play."
@@ -1208,19 +1206,19 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6133 redbot/cogs/audio/audio.py:6165
 #: redbot/cogs/audio/audio.py:6988 redbot/cogs/audio/audio.py:7086
 msgid "Track is not playable."
-msgstr ""
+msgstr "La piste n'est pas jouable."
 
 #: redbot/cogs/audio/audio.py:2957 redbot/cogs/audio/audio.py:3409
 #: redbot/cogs/audio/audio.py:3447 redbot/cogs/audio/audio.py:3549
 #: redbot/cogs/audio/audio.py:6134 redbot/cogs/audio/audio.py:6166
 #: redbot/cogs/audio/audio.py:6989 redbot/cogs/audio/audio.py:7087
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "**{suffix}** n'est pas un format supporté et certaines pistes peuvent ne pas être jouées."
 
 #: redbot/cogs/audio/audio.py:2989 redbot/cogs/audio/audio.py:3656
 #: redbot/cogs/audio/audio.py:7176
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Ce titre n'est pas autorisé sur le serveur."
 
 #: redbot/cogs/audio/audio.py:3004 redbot/cogs/audio/audio.py:3670
 #: redbot/cogs/audio/audio.py:7186
@@ -1229,7 +1227,7 @@ msgstr "Cette piste dépasse la limite maximale."
 
 #: redbot/cogs/audio/audio.py:3018
 msgid "{time} until track playback: #1 in queue"
-msgstr ""
+msgstr "{time} avant la lecture de la piste: #1 dans la file d'attente"
 
 #: redbot/cogs/audio/audio.py:3022 redbot/cogs/audio/audio.py:3686
 #: redbot/cogs/audio/audio.py:7162
@@ -1247,27 +1245,27 @@ msgstr "Le propriétaire doit définir l'ID client Spotify, le Spotify secret cl
 
 #: redbot/cogs/audio/audio.py:3162
 msgid "You must be in the voice channel to use the genre command."
-msgstr ""
+msgstr "Vous devez être dans un salon vocal pour utiliser la commande genre."
 
 #: redbot/cogs/audio/audio.py:3169
 msgid "No categories found"
-msgstr ""
+msgstr "Aucune catégorie trouvée"
 
 #: redbot/cogs/audio/audio.py:3173 redbot/cogs/audio/audio.py:3190
 msgid "No categories found, try again later."
-msgstr ""
+msgstr "Aucune catégorie trouvée, réessayer plus tard."
 
 #: redbot/cogs/audio/audio.py:3178
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #: redbot/cogs/audio/audio.py:3184
 msgid "No categories selected, try again later."
-msgstr ""
+msgstr "Aucune catégories sélectionnée, réessayer plus tard."
 
 #: redbot/cogs/audio/audio.py:3198
 msgid "Playlists for {friendly_name}"
-msgstr ""
+msgstr "Playlists pour {friendly_name}"
 
 #: redbot/cogs/audio/audio.py:3206
 msgid "No tracks to play."
@@ -1275,11 +1273,11 @@ msgstr "Aucune piste à jouer."
 
 #: redbot/cogs/audio/audio.py:3216
 msgid "Couldn't find tracks for the selected playlist."
-msgstr ""
+msgstr "Impossible de trouver les pistes pour la playlist sélectionnée."
 
 #: redbot/cogs/audio/audio.py:3261
 msgid "tracks"
-msgstr ""
+msgstr "pistes"
 
 #: redbot/cogs/audio/audio.py:3272 redbot/cogs/audio/audio.py:5615
 #: redbot/cogs/audio/audio.py:5635 redbot/cogs/audio/audio.py:6553
@@ -1290,19 +1288,19 @@ msgstr "Page {page_num}/{total_pages}"
 #: redbot/cogs/audio/audio.py:3283
 #, docstring
 msgid "Starts auto play."
-msgstr ""
+msgstr "Démarrer la lecture automatique."
 
 #: redbot/cogs/audio/audio.py:3337
 msgid "You must be in the voice channel to use the autoplay command."
-msgstr ""
+msgstr "Vous devez être dans un salon vocal pour utiliser la commande autoplay."
 
 #: redbot/cogs/audio/audio.py:3359
 msgid "Auto play started."
-msgstr ""
+msgstr "Lecture automatique démarrée."
 
 #: redbot/cogs/audio/audio.py:3361
 msgid "Adding a track to queue."
-msgstr ""
+msgstr "Ajout d'une piste à la file d'attente."
 
 #: redbot/cogs/audio/audio.py:3379
 msgid "The owner needs to set the Spotify client ID, Spotify client secret, and YouTube API key before Spotify URLs or codes can be used. \\nSee `{prefix}audioset youtubeapi` and `{prefix}audioset spotifyapi` for instructions."
@@ -1311,7 +1309,7 @@ msgstr "Le propriétaire doit définir l'ID client Spotify, le Spotify secret cl
 #: redbot/cogs/audio/audio.py:3390 redbot/cogs/audio/audio.py:3493
 #: redbot/cogs/audio/audio.py:6117
 msgid "Unable To Get Tracks"
-msgstr ""
+msgstr "Impossible d'obtenir les pistes"
 
 #: redbot/cogs/audio/audio.py:3391 redbot/cogs/audio/audio.py:3494
 #: redbot/cogs/audio/audio.py:6118
@@ -1330,14 +1328,14 @@ msgstr "Aucun résultat."
 #: redbot/cogs/audio/audio.py:6178 redbot/cogs/audio/audio.py:6952
 #: redbot/cogs/audio/audio.py:6968 redbot/cogs/audio/audio.py:7066
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Impossible d'obtenir la piste"
 
 #: redbot/cogs/audio/audio.py:3435 redbot/cogs/audio/audio.py:3522
 #: redbot/cogs/audio/audio.py:5977 redbot/cogs/audio/audio.py:6152
 #: redbot/cogs/audio/audio.py:6179 redbot/cogs/audio/audio.py:6953
 #: redbot/cogs/audio/audio.py:6969
 msgid "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Je n'arrive pas à obtenir la piste depuis Lavalink pour le moment, réessayer dans quelques minutes."
 
 #: redbot/cogs/audio/audio.py:3463
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
@@ -1345,23 +1343,23 @@ msgstr "La clé API de Spotify ou le secret client n'ont pas étés correctement
 
 #: redbot/cogs/audio/audio.py:3478
 msgid "Unable To Find Tracks"
-msgstr ""
+msgstr "Impossible de trouver les pistes"
 
 #: redbot/cogs/audio/audio.py:3508
 msgid "{query} is not an allowed query."
-msgstr ""
+msgstr "{query} n'est pas une requête autorisée."
 
 #: redbot/cogs/audio/audio.py:3537
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Les pistes locales ne fonctionneront pas si `Lavalink.jar` ne peut pas voir la piste.\\nCela peut être dû à cause des permissions ou car Lavalink.jar est exécuté sur une machine différente de celles des pistes locales."
 
 #: redbot/cogs/audio/audio.py:3604
 msgid "No Title"
-msgstr ""
+msgstr "Sans titre"
 
 #: redbot/cogs/audio/audio.py:3680
 msgid "Nothing found"
-msgstr ""
+msgstr "Aucun résultat"
 
 #: redbot/cogs/audio/audio.py:3689 redbot/cogs/audio/audio.py:7196
 msgid "{time} until track playback: #{position} in queue"
@@ -1369,15 +1367,15 @@ msgstr "{time} avant la lecture de la piste : #{position} dans la file d’atte
 
 #: redbot/cogs/audio/audio.py:3710
 msgid "Please wait, finding tracks..."
-msgstr ""
+msgstr "Veuillez patienter, recherche des pistes ..."
 
 #: redbot/cogs/audio/audio.py:3716
 msgid "Getting track {num}/{total}..."
-msgstr ""
+msgstr "Obtention de la piste {num}/{total}..."
 
 #: redbot/cogs/audio/audio.py:3717
 msgid "Matching track {num}/{total}..."
-msgstr ""
+msgstr "Piste correspondante {num}/{total}..."
 
 #: redbot/cogs/audio/audio.py:3718 redbot/cogs/audio/audio.py:5898
 #: redbot/cogs/audio/audio.py:5964
@@ -1390,28 +1388,28 @@ msgstr "Temps approximatif restant: {seconds}"
 
 #: redbot/cogs/audio/audio.py:3790
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "Vous n'avez pas les permissions pour gérer {name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/audio.py:3808
 msgid "You do not have the permissions to manage that playlist in {guild}."
-msgstr ""
+msgstr "Vous n'avez pas les permissions pour gérer cette playlist dans {guild}."
 
 #: redbot/cogs/audio/audio.py:3815
 msgid "You do not have the permissions to manage playlist owned by {user}."
-msgstr ""
+msgstr "Vous n'avez pas les permissions de gérer la playlist appartenant à {user}."
 
 #: redbot/cogs/audio/audio.py:3824
 msgid "No access to playlist."
-msgstr ""
+msgstr "Pas d'accès à la playlist."
 
 #: redbot/cogs/audio/audio.py:3936
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
-msgstr ""
+msgstr "{match_count} playlists correspondent à {original_input}: Essayez d'être plus spécifique, ou utilisez l'ID de la playlist."
 
 #: redbot/cogs/audio/audio.py:3952 redbot/cogs/audio/audio.py:4889
 #: redbot/cogs/audio/audio.py:4982 redbot/cogs/audio/utils.py:184
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: redbot/cogs/audio/audio.py:3953
 msgid "{number}.    <{playlist.name}>\\n - Scope:  < {scope} >\\n - ID:     < {playlist.id} >\\n - Tracks: < {tracks} >\\n - Author: < {author} >\\n\\n"
@@ -1446,27 +1444,27 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5553 redbot/cogs/audio/audio.py:5578
 #: redbot/cogs/audio/audio.py:5844 redbot/cogs/audio/audio.py:5854
 msgid "Playlist Not Found"
-msgstr ""
+msgstr "Playlist introuvable"
 
 #: redbot/cogs/audio/audio.py:4111
 msgid "Could not find a track matching your query."
-msgstr ""
+msgstr "Impossible de trouver une piste correspondant à votre requête."
 
 #: redbot/cogs/audio/audio.py:4132
 msgid "Skipping track"
-msgstr ""
+msgstr "Piste ignorée"
 
 #: redbot/cogs/audio/audio.py:4133
 msgid "{track} is already in {playlist} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "{track} est déjà dans {playlist} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/audio.py:4138 redbot/cogs/audio/audio.py:4180
 msgid "Playlist limit reached: Could not add track."
-msgstr ""
+msgstr "Limite de la playlist atteinte : impossible d'ajouter la piste."
 
 #: redbot/cogs/audio/audio.py:4161
 msgid "Track added"
-msgstr ""
+msgstr "Piste ajoutée"
 
 #: redbot/cogs/audio/audio.py:4162
 msgid "{track} appended to {playlist} (`{id}`) [**{scope}**]."
@@ -1474,7 +1472,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:4167
 msgid "{num} tracks appended to {playlist} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "{num} pistes ajoutées à {playlist} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/audio.py:4172
 msgid "\\n{existing} {plural} already in the playlist and were skipped."
@@ -1482,28 +1480,28 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:4173
 msgid "tracks are"
-msgstr ""
+msgstr "les pistes sont"
 
 #: redbot/cogs/audio/audio.py:4173
 msgid "track is"
-msgstr ""
+msgstr "la piste est"
 
 #: redbot/cogs/audio/audio.py:4176 redbot/cogs/audio/audio.py:4590
 #: redbot/cogs/audio/audio.py:5214 redbot/cogs/audio/audio.py:5225
 #: redbot/cogs/audio/audio.py:5879
 msgid "Playlist Modified"
-msgstr ""
+msgstr "Playlist modifiée"
 
 #: redbot/cogs/audio/audio.py:4265 redbot/cogs/audio/audio.py:4444
 #: redbot/cogs/audio/audio.py:4536 redbot/cogs/audio/audio.py:4676
 #: redbot/cogs/audio/audio.py:4819 redbot/cogs/audio/audio.py:5177
 #: redbot/cogs/audio/audio.py:5554 redbot/cogs/audio/audio.py:5845
 msgid "Could not match '{arg}' to a playlist."
-msgstr ""
+msgstr "Impossible de faire correspondre '{arg}' à une playlist."
 
 #: redbot/cogs/audio/audio.py:4317
 msgid "Playlist Copied"
-msgstr ""
+msgstr "Playlist copiée"
 
 #: redbot/cogs/audio/audio.py:4318
 msgid "Playlist {name} (`{from_id}`) copied from {from_scope} to {to_scope} (`{to_id}`)."
@@ -1517,22 +1515,22 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:4377 redbot/cogs/audio/audio.py:5073
 #: redbot/cogs/audio/audio.py:5287 redbot/cogs/audio/audio.py:5826
 msgid "Invalid Playlist Name"
-msgstr ""
+msgstr "Nom de playlist invalide"
 
 #: redbot/cogs/audio/audio.py:4378 redbot/cogs/audio/audio.py:5074
 #: redbot/cogs/audio/audio.py:5288 redbot/cogs/audio/audio.py:5827
 msgid "Playlist names must be a single word (up to 32 characters) and not numbers only."
-msgstr ""
+msgstr "Les noms de playlist doivent être composés d'un seul mot (jusqu'à 32 caractères), et pas uniquement de chiffres."
 
 #: redbot/cogs/audio/audio.py:4386 redbot/cogs/audio/audio.py:5109
 #: redbot/cogs/audio/audio.py:5314
 msgid "Playlist Created"
-msgstr ""
+msgstr "Playlist créée"
 
 #: redbot/cogs/audio/audio.py:4387 redbot/cogs/audio/audio.py:5910
 #: redbot/cogs/audio/audio.py:6004
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
+msgstr "Playlist vide {name} (`{id}`) [**{scope}**] créée."
 
 #: redbot/cogs/audio/audio.py:4400
 #, docstring
@@ -1541,11 +1539,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:4470
 msgid "Playlist Deleted"
-msgstr ""
+msgstr "Playlist supprimée"
 
 #: redbot/cogs/audio/audio.py:4471
 msgid "{name} (`{id}`) [**{scope}**] playlist deleted."
-msgstr ""
+msgstr "La playlist {name} (`{id}`) [**{scope}**] a été supprimée."
 
 #: redbot/cogs/audio/audio.py:4487
 #, docstring
@@ -1558,7 +1556,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:4604 redbot/cogs/audio/audio.py:5646
 msgid "Playlist Has Not Been Modified"
-msgstr ""
+msgstr "La playlist n'a pas été modifiée"
 
 #: redbot/cogs/audio/audio.py:4605
 msgid "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
@@ -1575,11 +1573,11 @@ msgstr "Cette playlist ne contient aucune piste."
 
 #: redbot/cogs/audio/audio.py:4745
 msgid "This playlist is too large to be send in this server."
-msgstr ""
+msgstr "Cette playlist est trop grande pour être envoyée sur ce serveur."
 
 #: redbot/cogs/audio/audio.py:4748
 msgid "Playlist is too large, here is the compressed version."
-msgstr ""
+msgstr "La playlist est trop grande. Voici la version compressée."
 
 #: redbot/cogs/audio/audio.py:4770
 #, docstring
@@ -1605,15 +1603,15 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:4958
 msgid "No saved playlists for {scope} created by {author}."
-msgstr ""
+msgstr "Aucune playlist enregistrée pour {scope} créée par {author}."
 
 #: redbot/cogs/audio/audio.py:4967
 msgid "No saved playlists for {scope}."
-msgstr ""
+msgstr "Aucune playlist enregistrée pour {scope}."
 
 #: redbot/cogs/audio/audio.py:4977
 msgid "ID: {id}"
-msgstr ""
+msgstr "ID : {id}"
 
 #: redbot/cogs/audio/audio.py:4978
 msgid "Tracks: {num}"
@@ -1625,7 +1623,7 @@ msgstr "Auteur : {name}\\n"
 
 #: redbot/cogs/audio/audio.py:5012
 msgid "Playlists for {scope}:"
-msgstr ""
+msgstr "Playlists pour {scope}:"
 
 #: redbot/cogs/audio/audio.py:5016
 msgid "Page {page_num}/{total_pages} | {num} playlists."
@@ -1654,7 +1652,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:5116 redbot/cogs/audio/audio.py:5318
 msgid "Playlist limit reached: Could not add {} tracks."
-msgstr ""
+msgstr "Limite de la playlist atteinte : Impossible d'ajouter {} pistes."
 
 #: redbot/cogs/audio/audio.py:5130
 #, docstring
@@ -1706,11 +1704,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:5571
 msgid "Invalid Playlist"
-msgstr ""
+msgstr "Playlist invalide"
 
 #: redbot/cogs/audio/audio.py:5572
 msgid "Custom playlists cannot be updated."
-msgstr ""
+msgstr "Les playlists personnalisées ne peuvent pas être mises à jour."
 
 #: redbot/cogs/audio/audio.py:5613
 msgid "Tracks removed"
@@ -1743,7 +1741,7 @@ msgstr "Transfert annulé."
 
 #: redbot/cogs/audio/audio.py:5718
 msgid "Only Red playlist files can be uploaded."
-msgstr ""
+msgstr "Seuls les fichiers playlist de Red peuvent être transférés."
 
 #: redbot/cogs/audio/audio.py:5723
 msgid "Not a valid playlist file."
@@ -1751,7 +1749,7 @@ msgstr "Fichier de playlist invalide."
 
 #: redbot/cogs/audio/audio.py:5735
 msgid "This playlist is too large."
-msgstr ""
+msgstr "Cette playlist est trop grande."
 
 #: redbot/cogs/audio/audio.py:5787
 #, docstring
@@ -1785,7 +1783,7 @@ msgstr "Playlist enregistrée"
 #: redbot/cogs/audio/audio.py:6065 redbot/cogs/audio/audio.py:6075
 #: redbot/cogs/audio/audio.py:6082 redbot/cogs/audio/audio.py:6095
 msgid "Unable To Get Playlists"
-msgstr ""
+msgstr "Impossible d'obtenir des playlists"
 
 #: redbot/cogs/audio/audio.py:6096
 msgid "You must be in the voice channel to use the playlist command."
@@ -1801,11 +1799,11 @@ msgstr "Revient à la piste précédente."
 #: redbot/cogs/audio/audio.py:7491 redbot/cogs/audio/audio.py:7504
 #: redbot/cogs/audio/audio.py:7513
 msgid "Unable To Skip Tracks"
-msgstr ""
+msgstr "Impossible de passer des pistes"
 
 #: redbot/cogs/audio/audio.py:6216
 msgid "You must be in the voice channel to skip the track."
-msgstr ""
+msgstr "Vous devez être dans un salon vocal pour passer une piste."
 
 #: redbot/cogs/audio/audio.py:6223 redbot/cogs/audio/audio.py:7306
 #: redbot/cogs/audio/audio.py:7691
@@ -1902,7 +1900,7 @@ msgstr "Supprime les musiques de la file d'attente si la personne qui l'a choisi
 
 #: redbot/cogs/audio/audio.py:6603
 msgid "Unable To Clean Queue"
-msgstr ""
+msgstr "Impossible de nettoyer la liste"
 
 #: redbot/cogs/audio/audio.py:6604
 msgid "You need the DJ role to clean the queue."
@@ -1941,22 +1939,22 @@ msgstr "Rechercher dans la file d'attente."
 #: redbot/cogs/audio/audio.py:6684
 #, docstring
 msgid "Shuffles the queue."
-msgstr ""
+msgstr "Mélanger la liste de lecture."
 
 #: redbot/cogs/audio/audio.py:6693 redbot/cogs/audio/audio.py:6700
 #: redbot/cogs/audio/audio.py:6712 redbot/cogs/audio/audio.py:6722
 #: redbot/cogs/audio/audio.py:6729 redbot/cogs/audio/audio.py:6736
 #: redbot/cogs/audio/audio.py:6744
 msgid "Unable To Shuffle Queue"
-msgstr ""
+msgstr "Impossible de rendre aléatoire la liste de lecture"
 
 #: redbot/cogs/audio/audio.py:6694
 msgid "You need the DJ role to shuffle the queue."
-msgstr ""
+msgstr "Vous devez avoir le rôle DJ pour mélanger la liste de lecture."
 
 #: redbot/cogs/audio/audio.py:6749
 msgid "Queue has been shuffled."
-msgstr ""
+msgstr "Liste de lecture mélangée."
 
 #: redbot/cogs/audio/audio.py:6755
 #, docstring
@@ -1965,7 +1963,7 @@ msgstr "Activer la répétition."
 
 #: redbot/cogs/audio/audio.py:6765 redbot/cogs/audio/audio.py:6776
 msgid "Unable To Toggle Repeat"
-msgstr ""
+msgstr "Impossible d'activer la répétition"
 
 #: redbot/cogs/audio/audio.py:6766
 msgid "You need the DJ role to toggle repeat."
@@ -1981,7 +1979,7 @@ msgstr "Répétition des pistes : {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:6788
 msgid "\\nAuto-play has been disabled."
-msgstr ""
+msgstr "\\nLecture automatique a été désactivé."
 
 #: redbot/cogs/audio/audio.py:6800
 #, docstring
@@ -1995,7 +1993,7 @@ msgstr "Rien dans la liste."
 #: redbot/cogs/audio/audio.py:6813 redbot/cogs/audio/audio.py:6821
 #: redbot/cogs/audio/audio.py:6827
 msgid "Unable To Modify Queue"
-msgstr ""
+msgstr "Impossible de modifier la liste de lecture"
 
 #: redbot/cogs/audio/audio.py:6814
 msgid "You need the DJ role to remove tracks."
@@ -2007,7 +2005,7 @@ msgstr "Vous devez être dans un salon vocal pour enlever des pistes."
 
 #: redbot/cogs/audio/audio.py:6835
 msgid "Removed track from queue"
-msgstr ""
+msgstr "Enlever la piste de la liste de lecture"
 
 #: redbot/cogs/audio/audio.py:6836
 msgid "Removed {track} from the queue."
@@ -2021,7 +2019,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:6890 redbot/cogs/audio/audio.py:6899
 #: redbot/cogs/audio/audio.py:6905 redbot/cogs/audio/audio.py:6917
 msgid "Unable To Search For Tracks"
-msgstr ""
+msgstr "Impossible de rechercher des pistes"
 
 #: redbot/cogs/audio/audio.py:6918
 msgid "You must be in the voice channel to enqueue tracks."
@@ -2029,7 +2027,7 @@ msgstr "Vous devez être dans un salon vocal pour ajouter des pistes."
 
 #: redbot/cogs/audio/audio.py:6978
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Les pistes locales ne fonctionneront pas si `Lavalink.jar` ne peut pas voir la piste.\\nCela peut être dû à des permissions ou parce que Lavalink.jar est exécuté sur une machine différente de celle des pistes locales."
 
 #: redbot/cogs/audio/audio.py:7041
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2122,7 +2120,7 @@ msgstr "Activer/désactiver l'aléatoire."
 #: redbot/cogs/audio/audio.py:7376 redbot/cogs/audio/audio.py:7387
 #: redbot/cogs/audio/audio.py:7419 redbot/cogs/audio/audio.py:7430
 msgid "Unable To Toggle Shuffle"
-msgstr ""
+msgstr "Impossible d'activer l'aléatoire"
 
 #: redbot/cogs/audio/audio.py:7377 redbot/cogs/audio/audio.py:7420
 msgid "You need the DJ role to toggle shuffle."
@@ -2143,7 +2141,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:7439
 msgid "Shuffle bumped tracks: {true_or_false}."
-msgstr ""
+msgstr "Mélanger les pistes remontés: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:7450
 #, docstring
@@ -2165,7 +2163,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:7505
 msgid "You can only skip the current track."
-msgstr ""
+msgstr "Vous ne pouvez passer que la piste actuelle."
 
 #: redbot/cogs/audio/audio.py:7514
 msgid "Can't skip to a specific track in vote mode without the DJ role."
@@ -2211,7 +2209,7 @@ msgstr "La lecture a été stoppée et la liste vidée."
 #: redbot/cogs/audio/audio.py:7683 redbot/cogs/audio/audio.py:7690
 #: redbot/cogs/audio/audio.py:7697
 msgid "Unable To Stop Player"
-msgstr ""
+msgstr "Impossible d’arrêter le lecteur"
 
 #: redbot/cogs/audio/audio.py:7684
 msgid "You must be in the voice channel to stop the music."
@@ -2228,17 +2226,17 @@ msgstr "Arrêt ..."
 #: redbot/cogs/audio/audio.py:7722
 #, docstring
 msgid "Summon the bot to a voice channel."
-msgstr "Invoquez le bot dans un salon vocal."
+msgstr "Invoque le bot dans un salon vocal."
 
 #: redbot/cogs/audio/audio.py:7735 redbot/cogs/audio/audio.py:7743
 #: redbot/cogs/audio/audio.py:7756 redbot/cogs/audio/audio.py:7773
 #: redbot/cogs/audio/audio.py:7780
 msgid "Unable To Join Voice Channel"
-msgstr ""
+msgstr "Impossible de rejoindre le salon vocal"
 
 #: redbot/cogs/audio/audio.py:7736
 msgid "There are other people listening."
-msgstr ""
+msgstr "Il y a d'autres personnes qui écoutent."
 
 #: redbot/cogs/audio/audio.py:7744
 msgid "You need the DJ role to summon the bot."
@@ -2255,7 +2253,7 @@ msgstr "Volume actuel :"
 
 #: redbot/cogs/audio/audio.py:7805 redbot/cogs/audio/audio.py:7814
 msgid "Unable To Change Volume"
-msgstr ""
+msgstr "Impossible de modifier le volume"
 
 #: redbot/cogs/audio/audio.py:7806
 msgid "You must be in the voice channel to change the volume."
@@ -2326,7 +2324,7 @@ msgstr "Port websocket défini sur {port}."
 
 #: redbot/cogs/audio/audio.py:8019
 msgid "Not enough {currency}"
-msgstr ""
+msgstr "Pas assez de {currency}"
 
 #: redbot/cogs/audio/audio.py:8020
 msgid "{required_credits} {currency} required, but you have {bal}."
@@ -2350,7 +2348,7 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:156
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "Impossible de faire correspondre '{}' à une playlist."
 
 #: redbot/cogs/audio/utils.py:185
 msgid " - Name:   <{pname}>\\n - Scope:  < {scope} >\\n - ID:     < {pid} >\\n - Tracks: < {ptracks} >\\n - Author: < {author} >\\n\\n"
@@ -2359,17 +2357,17 @@ msgstr ""
 #: redbot/cogs/audio/utils.py:539 redbot/cogs/audio/utils.py:541
 #: redbot/cogs/audio/utils.py:543
 msgid "the "
-msgstr ""
+msgstr "le "
 
 #: redbot/cogs/audio/utils.py:539
 msgid "Global"
-msgstr ""
+msgstr "Global"
 
 #: redbot/cogs/audio/utils.py:541
 msgid "Server"
-msgstr ""
+msgstr "Serveur"
 
 #: redbot/cogs/audio/utils.py:543
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 

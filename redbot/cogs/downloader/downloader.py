@@ -40,9 +40,9 @@ class Downloader(commands.Cog):
         super().__init__()
         self.bot = bot
 
-        self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)
+        self.config = Config.get_conf(self, identifier=998240343, force_registration=True)
 
-        self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+        self.config.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
 
         self.already_agreed = False
 
@@ -99,22 +99,22 @@ class Downloader(commands.Cog):
         self._ready.set()
 
     async def _maybe_update_config(self) -> None:
-        schema_version = await self.conf.schema_version()
+        schema_version = await self.config.schema_version()
 
         if schema_version == 0:
             await self._schema_0_to_1()
             schema_version += 1
-            await self.conf.schema_version.set(schema_version)
+            await self.config.schema_version.set(schema_version)
 
     async def _schema_0_to_1(self):
         """
         This contains migration to allow saving state
         of both installed cogs and shared libraries.
         """
-        old_conf = await self.conf.get_raw("installed", default=[])
+        old_conf = await self.config.get_raw("installed", default=[])
         if not old_conf:
             return
-        async with self.conf.installed_cogs() as new_cog_conf:
+        async with self.config.installed_cogs() as new_cog_conf:
             for cog_json in old_conf:
                 repo_name = cog_json["repo_name"]
                 module_name = cog_json["cog_name"]
@@ -126,7 +126,7 @@ class Downloader(commands.Cog):
                     "commit": "",
                     "pinned": False,
                 }
-        await self.conf.clear_raw("installed")
+        await self.config.clear_raw("installed")
         # no reliable way to get installed libraries (i.a. missing repo name)
         # but it only helps `[p]cog update` run faster so it's not an issue
 
@@ -150,7 +150,7 @@ class Downloader(commands.Cog):
             All installed cogs.
 
         """
-        installed = await self.conf.installed_cogs()
+        installed = await self.config.installed_cogs()
         # noinspection PyTypeChecker
         return tuple(
             InstalledModule.from_json(cog_json, self._repo_manager)
@@ -167,7 +167,7 @@ class Downloader(commands.Cog):
             All installed shared libraries.
 
         """
-        installed = await self.conf.installed_libraries()
+        installed = await self.config.installed_libraries()
         # noinspection PyTypeChecker
         return tuple(
             InstalledModule.from_json(lib_json, self._repo_manager)
@@ -195,21 +195,19 @@ class Downloader(commands.Cog):
             The modules to check off.
 
         """
-        installed_cogs = await self.conf.installed_cogs()
-        installed_libraries = await self.conf.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            module_json = module.to_json()
-            repo_json = installed.setdefault(module.repo_name, {})
-            repo_json[module.name] = module_json
-
-        await self.conf.installed_cogs.set(installed_cogs)
-        await self.conf.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                module_json = module.to_json()
+                repo_json = installed.setdefault(module.repo_name, {})
+                repo_json[module.name] = module_json
 
     async def _remove_from_installed(self, modules: Iterable[InstalledModule]) -> None:
         """Remove modules from the saved list
@@ -221,20 +219,18 @@ class Downloader(commands.Cog):
             The modules to remove.
 
         """
-        installed_cogs = await self.conf.installed_cogs()
-        installed_libraries = await self.conf.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            with contextlib.suppress(KeyError):
-                installed[module._json_repo_name].pop(module.name)
-
-        await self.conf.installed_cogs.set(installed_cogs)
-        await self.conf.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                with contextlib.suppress(KeyError):
+                    installed[module._json_repo_name].pop(module.name)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
         # remove in Red 3.4
@@ -504,9 +500,16 @@ class Downloader(commands.Cog):
                 # noinspection PyTypeChecker
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
-            await ctx.send(_("That git repo has already been added under another name."))
+            await ctx.send(
+                _("The repo name you provided is already in use. Please choose another name.")
+            )
         except errors.CloningError as err:
-            await ctx.send(_("Something went wrong during the cloning process."))
+            await ctx.send(
+                _(
+                    "Something went wrong during the cloning process."
+                    " See logs for more information."
+                )
+            )
             log.exception(
                 "Something went wrong whilst cloning %s (to revision: %s)",
                 repo_url,
@@ -514,16 +517,19 @@ class Downloader(commands.Cog):
                 exc_info=err,
             )
         except OSError:
+            log.exception(
+                "Something went wrong trying to add repo %s under name %s", repo_url, name,
+            )
             await ctx.send(
                 _(
                     "Something went wrong trying to add that repo."
-                    " Your repo name might have an invalid character."
+                    " See logs for more information."
                 )
             )
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg:
-                await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
@@ -738,12 +744,12 @@ class Downloader(commands.Cog):
                         _(
                             "\nThese cogs are now pinned and won't get updated automatically."
                             " To change this, use `{prefix}cog unpin <cog>`"
-                        ).format(prefix=ctx.prefix)
+                        ).format(prefix=ctx.clean_prefix)
                         if rev is not None
                         else ""
                     )
                     + _("\nYou can load them using `{prefix}load <cogs>`").format(
-                        prefix=ctx.prefix
+                        prefix=ctx.clean_prefix
                     )
                     + message
                 )
@@ -751,7 +757,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
-                await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
+                await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
 
     @cog.command(name="uninstall", usage="<cogs>")
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -794,7 +800,7 @@ class Downloader(commands.Cog):
                         "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cogs are still usable."
                         " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                    ).format(prefix=ctx.prefix, cogs=" ".join(failed_cogs))
+                    ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
                 )
         await self.send_pagified(ctx, message)
 
@@ -856,6 +862,8 @@ class Downloader(commands.Cog):
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
@@ -867,6 +875,9 @@ class Downloader(commands.Cog):
                 message += _("\nThese shared libraries can be updated: ") + humanize_list(
                     tuple(map(inline, libnames))
                 )
+            if not (cogs_to_update or libs_to_update) and filter_message:
+                message += _("No cogs can be updated.")
+            message += filter_message
 
             if not message:
                 message = _("All installed cogs are up to date.")
@@ -1278,7 +1289,7 @@ class Downloader(commands.Cog):
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
             else:

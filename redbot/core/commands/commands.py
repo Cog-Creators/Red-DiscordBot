@@ -7,13 +7,11 @@ from __future__ import annotations
 
 import inspect
 import re
+import functools
 import weakref
 from typing import (
     Awaitable,
     Callable,
-    Coroutine,
-    TypeVar,
-    Type,
     Dict,
     List,
     Optional,
@@ -21,7 +19,6 @@ from typing import (
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
@@ -38,7 +35,6 @@ from discord.ext.commands import (
     Greedy,
 )
 
-from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
@@ -307,11 +303,19 @@ class Command(CogCommandMixin, DPYCommand):
     def callback(self, function):
         """
         Below should be mostly the same as discord.py
-        The only (current) change is to filter out typing.Optional
-        if a user has specified the desire for this behavior
+
+        Currently, we modify behavior for
+
+          - functools.partial support
+          - typing.Optional behavior change as an option
         """
         self._callback = function
-        self.module = function.__module__
+        if isinstance(function, functools.partial):
+            self.module = function.func.__module__
+            globals_ = function.func.__globals__
+        else:
+            self.module = function.__module__
+            globals_ = function.__globals__
 
         signature = inspect.signature(function)
         self.params = signature.parameters.copy()
@@ -322,7 +326,7 @@ class Command(CogCommandMixin, DPYCommand):
         for key, value in self.params.items():
             if isinstance(value.annotation, str):
                 self.params[key] = value = value.replace(
-                    annotation=eval(value.annotation, function.__globals__)
+                    annotation=eval(value.annotation, globals_)
                 )
 
             # fail early for when someone passes an unparameterized Greedy type
@@ -414,7 +418,6 @@ class Command(CogCommandMixin, DPYCommand):
             Whether or not the permission state should be changed as
             a result of this call. For most cases this should be
             ``False``. Defaults to ``False``.
-
         """
         ret = await super().can_run(ctx)
         if ret is False:
@@ -781,14 +784,16 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
-                await self.can_run(ctx, change_permission_state=True)
+                if not await self.can_run(ctx, change_permission_state=True):
+                    raise CheckFailure()
                 await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
             # will skip the the invokation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
-            await self.can_run(ctx, change_permission_state=True)
+            if not await self.can_run(ctx, change_permission_state=True):
+                raise CheckFailure()
             # this is actually why we don't prepare earlier.
 
         await super().invoke(ctx)
@@ -900,15 +905,15 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
     ``False`` if the context is within the given guild.
     """
     try:
-        return __command_disablers[guild]
+        return __command_disablers[guild.id]
     except KeyError:
 
         async def disabler(ctx: "Context") -> bool:
-            if ctx.guild == guild:
+            if ctx.guild is not None and ctx.guild.id == guild.id:
                 raise DisabledCommand()
             return True
 
-        __command_disablers[guild] = disabler
+        __command_disablers[guild.id] = disabler
         return disabler
 
 

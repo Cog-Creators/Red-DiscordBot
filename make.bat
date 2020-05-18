@@ -21,6 +21,10 @@ exit /B %ERRORLEVEL%
 black --check !PYFILES!
 exit /B %ERRORLEVEL%
 
+:stylediff
+black --check --diff !PYFILES!
+exit /B %ERRORLEVEL%
+
 :newenv
 py -3.8 -m venv --clear .venv
 .\.venv\Scripts\python -m pip install -U pip setuptools
@@ -29,12 +33,6 @@ goto syncenv
 :syncenv
 .\.venv\Scripts\python -m pip install -Ur .\tools\dev-requirements.txt
 exit /B %ERRORLEVEL%
-
-:checkchangelog
-REM This should be written for windows at some point I guess.
-REM If we can swith to powershell, it can make this much easier.
-echo This doesn^'t do anything on windows ^(yet^)
-exit /b 0
 
 :help
 echo Usage:

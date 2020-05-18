@@ -5,6 +5,8 @@ reformat:
 	$(PYTHON) -m black `git ls-files "*.py"`
 stylecheck:
 	$(PYTHON) -m black --check `git ls-files "*.py"`
+stylediff:
+	$(PYTHON) -m black --check --diff `git ls-files "*.py"`
 
 # Translations
 gettext:
@@ -25,8 +27,3 @@ newenv:
 	$(MAKE) syncenv
 syncenv:
 	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
-
-# Changelog check
-checkchangelog:
-	bash tools/check_changelog_entries.sh
-	$(PYTHON) -m towncrier --draft

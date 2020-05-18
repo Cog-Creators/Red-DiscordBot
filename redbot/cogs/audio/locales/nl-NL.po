@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: nl_NL\n"
 
 #: redbot/cogs/audio/apis.py:213
@@ -318,7 +316,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:913
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "Beheert de zwarte lijst met sleutelwoorden."
 
 #: redbot/cogs/audio/audio.py:940
 #, docstring
@@ -328,24 +326,24 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1091
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Instellingen voor automatisch afspelen wijzigen."
 
 #: redbot/cogs/audio/audio.py:1095
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "Automatisch afspelen in-/uitschakelen als er geen nummers in de wachtrij staan."
 
 #: redbot/cogs/audio/audio.py:1099
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "Automatisch afspelen wanneer de wachtrij eindigt: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1104
 msgid "\\nRepeat has been disabled."
-msgstr ""
+msgstr "\\nHerhalen is uitgeschakeld."
 
 #: redbot/cogs/audio/audio.py:1107
 msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\\nAutomatisch verbinding verbreken aan het einde van de wachtrij is uitgeschakeld."
 
 #: redbot/cogs/audio/audio.py:1122
 #, docstring
@@ -354,20 +352,20 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1165 redbot/cogs/audio/audio.py:1182
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Geen afspeellijst gevonden"
 
 #: redbot/cogs/audio/audio.py:1166 redbot/cogs/audio/audio.py:4080
 #: redbot/cogs/audio/audio.py:5395
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "'{arg}' komt niet overeen met een speellijst"
 
 #: redbot/cogs/audio/audio.py:1174
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Geen nummers gevonden"
 
 #: redbot/cogs/audio/audio.py:1175
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "Afspeellijst {name} heeft geen nummers."
 
 #: redbot/cogs/audio/audio.py:1183 redbot/cogs/audio/audio.py:4088
 #: redbot/cogs/audio/audio.py:4282 redbot/cogs/audio/audio.py:4452
@@ -383,7 +381,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5192 redbot/cogs/audio/audio.py:5489
 #: redbot/cogs/audio/audio.py:5586 redbot/cogs/audio/audio.py:5863
 msgid "Missing Arguments"
-msgstr ""
+msgstr "Ontbrekende argumenten"
 
 #: redbot/cogs/audio/audio.py:1191 redbot/cogs/audio/audio.py:4096
 #: redbot/cogs/audio/audio.py:4289 redbot/cogs/audio/audio.py:4458
@@ -392,29 +390,29 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:5193 redbot/cogs/audio/audio.py:5490
 #: redbot/cogs/audio/audio.py:5587 redbot/cogs/audio/audio.py:5864
 msgid "You need to specify the Guild ID for the guild to lookup."
-msgstr ""
+msgstr "Je moet de Gilde z'n Gilde ID opgeven om te zoeken."
 
 #: redbot/cogs/audio/audio.py:1197
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "Afspeellijst {name} (`{id}`) [**{scope}**] zal worden gebruikt voor autoplay."
 
 #: redbot/cogs/audio/audio.py:1210
 #, docstring
 msgid "Resets auto-play to the default playlist."
-msgstr ""
+msgstr "Reset automatisch afspelen naar de standaard afspeellijst."
 
 #: redbot/cogs/audio/audio.py:1216
 msgid "Set auto-play playlist to default value."
-msgstr ""
+msgstr "Zet de automatische afspeellijst naar de standaardwaarde."
 
 #: redbot/cogs/audio/audio.py:1222
 #, docstring
 msgid "Toggle DJ mode.\\n\\n        DJ mode allows users with the DJ role to use audio commands.\\n        "
-msgstr ""
+msgstr "Verander DJ modus.\\n\\n        DJ modus laat gebruikers met de DJ rol audio commando's gebruiken.\\n        "
 
 #: redbot/cogs/audio/audio.py:1233
 msgid "Missing DJ Role"
-msgstr ""
+msgstr "De DJ Rol ontbreekt"
 
 #: redbot/cogs/audio/audio.py:1234
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
@@ -426,22 +424,22 @@ msgstr "Geen reactie ontvangen, probeer het later opnieuw."
 
 #: redbot/cogs/audio/audio.py:1253
 msgid "DJ role: {true_or_false}."
-msgstr ""
+msgstr "DJ role: {true_or_false}."
 
 #: redbot/cogs/audio/audio.py:1261
 #, docstring
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\\n\\n        `[p]audioset dc` takes precedence over this setting.\\n        "
-msgstr ""
+msgstr "Verbreek automatisch de verbinding met het kanaal wanneer de bot alleen is voor x seconden, 0 om uit te schakelen.\\n\\n        `[p]audioset dc` heeft voorrang op deze instelling.\\n        "
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Invalid Time"
-msgstr ""
+msgstr "Ongeldige tijd"
 
 #: redbot/cogs/audio/audio.py:1267 redbot/cogs/audio/audio.py:1295
 #: redbot/cogs/audio/audio.py:1689
 msgid "Seconds can't be less than zero."
-msgstr ""
+msgstr "Seconden kunnen niet minder zijn dan nul."
 
 #: redbot/cogs/audio/audio.py:1274
 msgid "Empty disconnect disabled."
@@ -454,28 +452,28 @@ msgstr "Lege verbinding verbreken is uingesteld op {num_seconds}."
 #: redbot/cogs/audio/audio.py:1292
 #, docstring
 msgid "Auto-pause after x seconds when room is empty, 0 to disable."
-msgstr ""
+msgstr "Auto-pauzeer na x seconden wanneer de ruimte leeg is, 0 om uit te schakelen."
 
 #: redbot/cogs/audio/audio.py:1302
 msgid "Empty pause disabled."
-msgstr ""
+msgstr "Lege pauze uitgeschakeld."
 
 #: redbot/cogs/audio/audio.py:1309
 msgid "Empty pause timer set to {num_seconds}."
-msgstr ""
+msgstr "Lege pauze timer ingesteld op {num_seconds}."
 
 #: redbot/cogs/audio/audio.py:1319
 #, docstring
 msgid "Set a price for queueing tracks for non-mods, 0 to disable."
-msgstr ""
+msgstr "Stel een prijs in voor wachtrijen voor niet-mods, 0 om uit te schakelen."
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Invalid Price"
-msgstr ""
+msgstr "Ongeldige prijs"
 
 #: redbot/cogs/audio/audio.py:1322
 msgid "Price can't be less than zero."
-msgstr ""
+msgstr "Prijs kan niet lager dan nul zijn."
 
 #: redbot/cogs/audio/audio.py:1327
 msgid "Jukebox mode disabled."

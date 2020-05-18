@@ -1,8 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:23\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: vi\n"
-"X-Crowdin-File: /cogs/admin/locales/messages.pot\n"
 "Language: vi_VN\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -234,7 +232,7 @@ msgstr ""
 msgid "The Admin cog is not loaded."
 msgstr ""
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr ""
 

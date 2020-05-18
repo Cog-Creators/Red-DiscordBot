@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: cs_CZ\n"
 
 #: redbot/cogs/audio/apis.py:213
@@ -30,15 +28,15 @@ msgstr ""
 
 #: redbot/cogs/audio/apis.py:576
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Vypršel časový limit přehrávače, přeskakuji zbývající skladby."
 
 #: redbot/cogs/audio/apis.py:598
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "Nepodařilo se získat skladby, zbývá přeskakování."
 
 #: redbot/cogs/audio/apis.py:646
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Nic nenalezeno.\\nYouTube API klíč může být neplatný nebo může být omezen na YouTube's vyhledávací službu.\\nPodívejte se znovu na YouTube API klíč a postupujte podle instrukcí na `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis.py:664 redbot/cogs/audio/audio.py:3609
 #: redbot/cogs/audio/audio.py:5460
@@ -47,7 +45,7 @@ msgstr "Playlist zařazen do fronty"
 
 #: redbot/cogs/audio/apis.py:665 redbot/cogs/audio/audio.py:3612
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Přidáno {num} skladeb do fronty.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis.py:671 redbot/cogs/audio/audio.py:3618
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
@@ -56,7 +54,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:82
 #, docstring
 msgid "Play audio through voice channels."
-msgstr ""
+msgstr "Přehrávat zvuk prostřednictvím hlasových kanálů."
 
 #: redbot/cogs/audio/audio.py:177
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
@@ -157,7 +155,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Enabled"
-msgstr ""
+msgstr "Povoleno"
 
 #: redbot/cogs/audio/audio.py:690 redbot/cogs/audio/audio.py:706
 #: redbot/cogs/audio/audio.py:1100 redbot/cogs/audio/audio.py:1254
@@ -176,7 +174,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:7397 redbot/cogs/audio/audio.py:7440
 #: redbot/cogs/audio/audio.py:7850 redbot/cogs/audio/audio.py:7861
 msgid "Disabled"
-msgstr ""
+msgstr "Zakázáno"
 
 #: redbot/cogs/audio/audio.py:697
 #, docstring
@@ -218,17 +216,17 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:747 redbot/cogs/audio/audio.py:928
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "Klíčové slovo je již na černé listině."
 
 #: redbot/cogs/audio/audio.py:751 redbot/cogs/audio/audio.py:800
 #: redbot/cogs/audio/audio.py:903 redbot/cogs/audio/audio.py:932
 #: redbot/cogs/audio/audio.py:981 redbot/cogs/audio/audio.py:1084
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "Černá listina změněna"
 
 #: redbot/cogs/audio/audio.py:752 redbot/cogs/audio/audio.py:933
 msgid "Added: `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "Přidáno: `{blacklisted}` do černé listiny."
 
 #: redbot/cogs/audio/audio.py:759
 #, docstring
@@ -248,7 +246,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:778 redbot/cogs/audio/audio.py:959
 msgid "Added: `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Přidáno: `{whitelisted}` do bílé listiny."
 
 #: redbot/cogs/audio/audio.py:785 redbot/cogs/audio/audio.py:966
 #, docstring
@@ -257,11 +255,11 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:796 redbot/cogs/audio/audio.py:977
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "Klíčové slovo není na černé listině."
 
 #: redbot/cogs/audio/audio.py:801 redbot/cogs/audio/audio.py:982
 msgid "Removed: `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "Odstraněno: `{blacklisted}` z černé listiny."
 
 #: redbot/cogs/audio/audio.py:808 redbot/cogs/audio/audio.py:989
 #, docstring
@@ -290,7 +288,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:860 redbot/cogs/audio/audio.py:899
 #: redbot/cogs/audio/audio.py:1041 redbot/cogs/audio/audio.py:1080
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "Nic na černé listině."
 
 #: redbot/cogs/audio/audio.py:883 redbot/cogs/audio/audio.py:1064
 #, docstring
@@ -328,7 +326,7 @@ msgstr ""
 #: redbot/cogs/audio/audio.py:1091
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Změnit nastavení automatického přehrávání."
 
 #: redbot/cogs/audio/audio.py:1095
 #, docstring
@@ -354,7 +352,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1165 redbot/cogs/audio/audio.py:1182
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Nenalezen žádný playlist"
 
 #: redbot/cogs/audio/audio.py:1166 redbot/cogs/audio/audio.py:4080
 #: redbot/cogs/audio/audio.py:5395
@@ -363,7 +361,7 @@ msgstr ""
 
 #: redbot/cogs/audio/audio.py:1174
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Nenalezeny žádné skladby"
 
 #: redbot/cogs/audio/audio.py:1175
 msgid "Playlist {name} has no tracks."

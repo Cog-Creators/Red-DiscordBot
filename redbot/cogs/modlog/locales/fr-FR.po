@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"PO-Revision-Date: 2020-02-08 18:19\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /cogs/modlog/locales/messages.pot\n"
 "Language: fr_FR\n"
 
 #: redbot/cogs/modlog/modlog.py:17
@@ -28,7 +26,7 @@ msgstr "Gérer les paramètres du modlog."
 #: redbot/cogs/modlog/modlog.py:32
 #, docstring
 msgid "Command to fix misbehaving casetypes."
-msgstr ""
+msgstr "Commande pour réparer les cas de mauvaise conduite."
 
 #: redbot/cogs/modlog/modlog.py:39
 #, docstring
@@ -37,7 +35,7 @@ msgstr "Définir un salon comme modlog.\\n\\n        Omettre `<channel>` pour d�
 
 #: redbot/cogs/modlog/modlog.py:48
 msgid "Mod events will be sent to {channel}."
-msgstr ""
+msgstr "Les événements de modération seront envoyés à {channel}."
 
 #: redbot/cogs/modlog/modlog.py:52
 msgid "I do not have permissions to send messages in {channel}!"
@@ -66,7 +64,7 @@ msgstr "Paramètres actuels :\\n"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "That action is not registered."
-msgstr ""
+msgstr "Cette action n’est pas enregistrée."
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "Case creation for {action_name} actions is now {enabled}."
@@ -88,7 +86,7 @@ msgstr "Afficher l'argument spécifié."
 
 #: redbot/cogs/modlog/modlog.py:109
 msgid "That case does not exist for that server."
-msgstr ""
+msgstr "Ce cas n'existe pas pour ce serveur."
 
 #: redbot/cogs/modlog/modlog.py:120
 #, docstring
@@ -114,7 +112,7 @@ msgstr "Spécifiez une raison pour un argument de modlog.\\n\\n        Veuillez 
 
 #: redbot/cogs/modlog/modlog.py:162
 msgid "There are no modlog cases in this server."
-msgstr ""
+msgstr "Il n'y a aucun cas de modlog dans ce serveur."
 
 #: redbot/cogs/modlog/modlog.py:168
 msgid "That case does not exist!"
@@ -126,5 +124,5 @@ msgstr "Vous n’êtes pas autorisé à modifier cette argument !"
 
 #: redbot/cogs/modlog/modlog.py:183
 msgid "Reason for case #{num} has been updated."
-msgstr ""
+msgstr "La raison du cas #{num} a été mise à jour."
 
