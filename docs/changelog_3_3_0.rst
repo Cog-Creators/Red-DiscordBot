@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`DariusStClair`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+| :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
 
 End-user changelog
 ------------------
@@ -38,6 +38,11 @@ Permissions
 ***********
 
 - Commands for settings ACL using yaml files now properly works on PostgreSQL data backend (:issue:`3829`, :issue:`3796`)
+
+Warnings
+********
+
+- Warnings cog no longer allows to warn bot users (:issue:`3855`, :issue:`3854`)
 
 
 Developer changelog
