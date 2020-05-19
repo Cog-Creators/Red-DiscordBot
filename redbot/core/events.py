@@ -133,6 +133,10 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
+        if not bot.owner_ids:
+            # we could possibly exit here in future
+            log.warning("Bot doesn't have any owner set!")
+
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
