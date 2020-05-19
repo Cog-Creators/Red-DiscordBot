@@ -13,6 +13,7 @@ Core Bot
 ********
 
 - Important fixes to how PostgreSQL data backend saves data in bulks (:issue:`3829`)
+- Fixed ``[p]localwhitelist`` and ``[p]localblacklist`` commands (:issue:`3857`)
 
 Admin
 *****
