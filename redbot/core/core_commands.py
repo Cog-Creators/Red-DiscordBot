@@ -2077,7 +2077,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
-        await ctx.bot._config.guild(ctx.guild).blacklist.set([])
+        await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
         await ctx.send(_("Local blacklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
