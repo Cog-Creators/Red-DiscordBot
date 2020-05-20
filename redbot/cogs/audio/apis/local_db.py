@@ -1,14 +1,17 @@
-import asyncio
 import concurrent
 import contextlib
 import datetime
 import logging
+import random
 import time
 from types import SimpleNamespace
-from typing import Callable, List, MutableMapping, Optional, Tuple, Union
+from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
+
+from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
+from redbot.core.commands import Cog
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_logging import debug_exc_log
@@ -51,13 +54,19 @@ from .api_utils import (
     YouTubeCacheFetchResult,
 )
 
+if TYPE_CHECKING:
+    from .. import Audio
+
+
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
 
 _SCHEMA_VERSION = 3
 
 
 class BaseWrapper:
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+    ):
         self.bot = bot
         self.config = config
         self.database = conn
@@ -68,6 +77,7 @@ class BaseWrapper:
         self.statement.set_user_version = PRAGMA_SET_user_version
         self.statement.get_user_version = PRAGMA_FETCH_user_version
         self.fetch_result: Optional[Callable] = None
+        self.cog = cog
 
     async def init(self) -> None:
         """Initialize the local cache"""
@@ -184,11 +194,8 @@ class BaseWrapper:
                     row_result = future.result()
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
-        for index, row in enumerate(row_result, start=1):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
+        async for row in AsyncIter(row_result):
             output.append(self.fetch_result(*row))
-            await asyncio.sleep(0)
         return output
 
     async def _fetch_random(
@@ -208,7 +215,11 @@ class BaseWrapper:
             ):
                 try:
                     row_result = future.result()
-                    row = row_result.fetchone()
+                    rows = row_result.fetchall()
+                    if rows:
+                        row = random.choice(rows)
+                    else:
+                        row = None
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed random fetch from database")
         if not row:
@@ -219,8 +230,10 @@ class BaseWrapper:
 
 
 class YouTubeTableWrapper(BaseWrapper):
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
-        super().__init__(bot, config, conn)
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+    ):
+        super().__init__(bot, config, conn, cog)
         self.statement.upsert = YOUTUBE_UPSERT
         self.statement.update = YOUTUBE_UPDATE
         self.statement.get_one = YOUTUBE_QUERY
@@ -253,8 +266,10 @@ class YouTubeTableWrapper(BaseWrapper):
 
 
 class SpotifyTableWrapper(BaseWrapper):
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
-        super().__init__(bot, config, conn)
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+    ):
+        super().__init__(bot, config, conn, cog)
         self.statement.upsert = SPOTIFY_UPSERT
         self.statement.update = SPOTIFY_UPDATE
         self.statement.get_one = SPOTIFY_QUERY
@@ -287,8 +302,10 @@ class SpotifyTableWrapper(BaseWrapper):
 
 
 class LavalinkTableWrapper(BaseWrapper):
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
-        super().__init__(bot, config, conn)
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+    ):
+        super().__init__(bot, config, conn, cog)
         self.statement.upsert = LAVALINK_UPSERT
         self.statement.update = LAVALINK_UPDATE
         self.statement.get_one = LAVALINK_QUERY
@@ -335,21 +352,21 @@ class LavalinkTableWrapper(BaseWrapper):
                     row_result = future.result()
                 except Exception as exc:
                     debug_exc_log(log, exc, "Failed to completed fetch from database")
-        for index, row in enumerate(row_result, start=1):
-            if index % 50 == 0:
-                await asyncio.sleep(0.01)
+        async for row in AsyncIter(row_result):
             output.append(self.fetch_for_global(*row))
-            await asyncio.sleep(0)
         return output
 
 
 class LocalCacheWrapper:
     """Wraps all table apis into 1 object representing the local cache"""
 
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+    ):
         self.bot = bot
         self.config = config
         self.database = conn
-        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(bot, config, conn)
-        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(bot, config, conn)
-        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(bot, config, conn)
+        self.cog = cog
+        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(bot, config, conn, self.cog)
+        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(bot, config, conn, self.cog)
+        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(bot, config, conn, self.cog)

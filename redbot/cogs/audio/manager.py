@@ -9,7 +9,7 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import ClassVar, Final, List, Optional, Tuple
+from typing import ClassVar, Final, List, Optional, Tuple, Pattern
 
 import aiohttp
 from tqdm import tqdm
@@ -31,13 +31,13 @@ LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_RE_READY_LINE: Final[re.Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[re.Pattern] = re.compile(rb"Web server failed to start. (.*)")
-_RE_BUILD_LINE: Final[re.Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
-_RE_JAVA_VERSION_LINE: Final[re.Pattern] = re.compile(
+_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
+_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start. (.*)")
+_RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
+_RE_JAVA_VERSION_LINE: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
 )
-_RE_JAVA_SHORT_VERSION: Final[re.Pattern] = re.compile(r'version "(?P<major>\d+)"')
+_RE_JAVA_SHORT_VERSION: Final[Pattern] = re.compile(r'version "(?P<major>\d+)"')
 
 
 class ServerManager:
@@ -94,7 +94,7 @@ class ServerManager:
     @classmethod
     async def _get_jar_args(cls) -> List[str]:
         (java_available, java_version) = await cls._has_java()
-        if not java_available or not java_version:
+        if not java_available:
             raise RuntimeError("You must install Java 1.8+ for Lavalink to run.")
 
         if java_version == (1, 8):
@@ -113,8 +113,8 @@ class ServerManager:
             return cls._java_available, cls._java_version
         java_available = shutil.which("java") is not None
         if not java_available:
-            cls._java_available = False
-            cls._java_version = None
+            cls.java_available = False
+            cls.java_version = None
         else:
             cls._java_version = version = await cls._get_java_version()
             cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
