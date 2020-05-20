@@ -31,6 +31,9 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
+from redbot.core._smileysend import _replace_send
+
+_replace_send()
 
 
 log = logging.getLogger("red.main")
