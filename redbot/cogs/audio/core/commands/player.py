@@ -453,7 +453,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("No categories found"),
-                description=_(error.message).format(prefix=ctx.prefix),
+                description=error.message.format(prefix=ctx.prefix),
             )
         if not category_list:
             return await self.send_embed_msg(ctx, title=_("No categories found, try again later."))

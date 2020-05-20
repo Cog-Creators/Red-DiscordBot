@@ -312,14 +312,14 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             to_guild,
         )
         if to_scope == PlaylistScope.GLOBAL.value:
-            to_scope_name = "the Global"
+            to_scope_name = _("the Global")
         elif to_scope == PlaylistScope.USER.value:
             to_scope_name = to_author
         else:
             to_scope_name = to_guild
 
         if from_scope == PlaylistScope.GLOBAL.value:
-            from_scope_name = "the Global"
+            from_scope_name = _("the Global")
         elif from_scope == PlaylistScope.USER.value:
             from_scope_name = from_author
         else:
@@ -994,7 +994,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             elif scope == PlaylistScope.USER.value:
                 name = f"{author}"
             else:
-                name = "Global"
+                name = _("Global")
 
             if not playlists and specified_user:
                 ctx.command.reset_cooldown(ctx)
@@ -1499,7 +1499,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 track_len += 1
             player.maybe_shuffle(0 if empty_queue else 1)
             if len(tracks) > track_len:
-                maxlength_msg = " {bad_tracks} tracks cannot be queued.".format(
+                maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(
                     bad_tracks=(len(tracks) - track_len)
                 )
             else:

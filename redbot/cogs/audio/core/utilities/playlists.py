@@ -95,10 +95,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 msg = _(
                     "You do not have the permissions to manage "
-                    "playlists in {scope} scope.".format(
-                        scope=self.humanize_scope(scope, the=True)
-                    )
-                )
+                    "playlists in {scope} scope."
+                ).format(scope=self.humanize_scope(scope, the=True))
 
             await self.send_embed_msg(ctx, title=_("No access to playlist."), description=msg)
             return False
