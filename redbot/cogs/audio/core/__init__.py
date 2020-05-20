@@ -1,5 +1,8 @@
+import asyncio
 from collections import Counter
 from typing import Mapping
+
+import aiohttp
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -55,6 +58,10 @@ class Audio(
         self.player_automated_timer_task = None
         self.cog_cleaned_up = False
         self.lavalink_connection_aborted = False
+
+        self.session = aiohttp.ClientSession()
+        self.cog_ready_event = asyncio.Event()
+        self.cog_init_task = None
 
         default_global = dict(
             schema_version=1,
