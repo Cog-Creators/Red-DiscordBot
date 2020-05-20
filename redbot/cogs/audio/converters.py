@@ -51,6 +51,7 @@ Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Exact guild name
 """
+)
 
 _ = T_
 
