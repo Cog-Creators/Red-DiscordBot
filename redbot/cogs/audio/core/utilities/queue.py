@@ -73,7 +73,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_("Queue for __{guild_name}__").format(guild=ctx.guild.name),
+            title=_("Queue for __{guild_name}__").format(guild_name=ctx.guild.name),
             description=queue_list,
         )
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
