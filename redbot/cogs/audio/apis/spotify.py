@@ -5,6 +5,7 @@ import time
 from typing import List, Mapping, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
 
 import aiohttp
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
@@ -15,6 +16,8 @@ from ..errors import SpotifyFetchError
 
 if TYPE_CHECKING:
     from .. import Audio
+
+_ = Translator("Audio", __file__)
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")
 
@@ -159,7 +162,7 @@ class SpotifyWrapper:
         with contextlib.suppress(KeyError):
             if result["error"]["status"] == 401:
                 raise SpotifyFetchError(
-                    message=(
+                    message=_(
                         "The Spotify API key or client secret has not been set properly. "
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
                     )

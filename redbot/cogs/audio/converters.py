@@ -27,29 +27,32 @@ __all__ = [
     "get_playlist_converter",
 ]
 
-_SCOPE_HELP: Final[
-    str
-] = """
+T_ = _
+_ = lambda s: s
+
+_SCOPE_HELP: Final[str] = _(
+    """
 Scope must be a valid version of one of the following:
 ​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 """
-_USER_HELP: Final[
-    str
-] = """
+)
+_USER_HELP: Final[str] = _(
+    """
 Author must be a valid version of one of the following:
 ​ ​ ​ ​ User ID
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123
 """
-_GUILD_HELP: Final[
-    str
-] = """
+_GUILD_HELP: Final[str] = _(
+    """
 Guild must be a valid version of one of the following:
 ​ ​ ​ ​ Guild ID
 ​ ​ ​ ​ Exact guild name
 """
+
+_ = T_
 
 MENTION_RE: Final[Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
@@ -273,7 +276,7 @@ class ScopeParser(commands.Converter):
                     "--author", user_raw, custom_help=f"{user_error}{_USER_HELP}"
                 )
         elif any(x in argument for x in ["--author", "--user", "--member"]):
-            raise commands.ArgParserFailure("--scope", "Nothing", custom_help=_USER_HELP)
+            raise commands.ArgParserFailure("--scope", _("Nothing"), custom_help=_(_USER_HELP))
 
         target_scope: Optional[str] = target_scope or None
         target_user: Union[discord.Member, discord.User] = target_user or ctx.author
@@ -462,7 +465,7 @@ class ComplexScopeParser(commands.Converter):
                     "--from-author", from_user_raw, custom_help=f"{source_user_error}{_USER_HELP}"
                 )
         elif any(x in argument for x in ["--from-author", "--from-user", "--from-member"]):
-            raise commands.ArgParserFailure("--from-user", "Nothing", custom_help=_USER_HELP)
+            raise commands.ArgParserFailure("--from-user", _("Nothing"), custom_help=_(_USER_HELP))
 
         target_scope = target_scope or PlaylistScope.GUILD.value
         target_user = target_user or ctx.author
