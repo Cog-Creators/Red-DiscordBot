@@ -36,10 +36,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     " architecture. Only settings related commands will be available."
                 )
             )
-            log.error(
+            raise RuntimeError(
                 "Not running audio command due to invalid machine architecture for Lavalink."
             )
-            raise commands.CheckFailure()
         # with contextlib.suppress(Exception):
         #     player = lavalink.get_player(ctx.guild.id)
         #     notify_channel = player.fetch("channel")
