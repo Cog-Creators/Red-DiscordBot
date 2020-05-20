@@ -45,6 +45,7 @@ Author must be a valid version of one of the following:
 ​ ​ ​ ​ User Mention
 ​ ​ ​ ​ User Name#123
 """
+)
 _GUILD_HELP: Final[str] = _(
     """
 Guild must be a valid version of one of the following:
