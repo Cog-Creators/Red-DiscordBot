@@ -318,7 +318,6 @@ YOUTUBE_DELETE_OLD_ENTRIES: Final[
 DELETE FROM youtube
 WHERE
     last_updated < :maxage
-    LIMIT 100
     ;
 """
 YOUTUBE_QUERY_LAST_FETCHED_RANDOM: Final[
@@ -416,7 +415,6 @@ SPOTIFY_DELETE_OLD_ENTRIES: Final[
 DELETE FROM spotify
 WHERE
     last_updated < :maxage
-    LIMIT 100
     ;
 """
 SPOTIFY_QUERY_LAST_FETCHED_RANDOM: Final[
@@ -520,7 +518,6 @@ LAVALINK_DELETE_OLD_ENTRIES: Final[
 DELETE FROM lavalink
 WHERE
     last_updated < :maxage
-    LIMIT 100
     ;
 """
 LAVALINK_FETCH_ALL_ENTRIES_GLOBAL: Final[
