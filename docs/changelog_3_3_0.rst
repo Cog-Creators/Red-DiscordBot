@@ -4,7 +4,7 @@ Redbot 3.3.8 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
 
 End-user changelog
 ------------------
@@ -24,6 +24,26 @@ Alias
 *****
 
 - Added pagination to ``[p]alias list`` and ``[p]alias global list`` to avoid errors for users with a lot of aliases (:issue:`3844`, :issue:`3834`)
+
+Audio
+*****
+
+- Added new option (settable with ``[p]audioset lyrics``) that makes Audio cog prefer (prioritize) tracks with lyrics (:issue:`3519`)
+- Added global daily (historical) queues (:issue:`3518`)
+- Added ``[p]audioset countrycode`` that allows to set the country code for spotify searches (:issue:`3528`)
+- Fixed ``[p]local search`` (:issue:`3528`, :issue:`3501`)
+- Local folders with special characters should work properly now (:issue:`3528`, :issue:`3467`)
+- Audio no longer fails to take the last spot in the voice channel with user limit (:issue:`3528`)
+- ``[p]local play`` no longer enqueues tracks from nested folders (:issue:`3528`)
+- Fixed ``[p]playlist dedupe`` not removing tracks (:issue:`3518`)
+- ``[p]disconnect`` now allows to disconnect if both DJ mode and voteskip aren't enabled (:issue:`3502`, :issue:`3485`)
+- Many UX improvements and fixes, including, among other things:
+
+  - Creating playlists without explicitly passing ``-scope`` no longer causes errors (:issue:`3500`)
+  - ``[p]playlist list`` now shows all accessible playlists if ``--scope`` flag isn't used (:issue:`3518`)
+  - ``[p]remove`` now also accepts a track URL in addition to queue index (:issue:`3201`)
+  - ``[p]playlist upload`` now accepts a playlist file uploaded in the message with a command (:issue:`3251`)
+  - Commands now send friendly error messages for common errors like lost Lavalink connection or bot not connected to voice channel (:issue:`3503`, :issue:`3528`, :issue:`3353`, :issue:`3712`)
 
 CustomCommands
 **************
