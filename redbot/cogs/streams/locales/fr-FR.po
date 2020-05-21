@@ -15,7 +15,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:115
 msgid "You need a client secret key to use correctly Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
-msgstr ""
+msgstr "Vous avez besoin d'un secret de client pour utiliser correctement d'API Twitch sur ce cog.\\nSuivez ces étapes :\\n1. Rendez vous sur cette page : https://dev.twitch.tv/console/apps.\\n2. Cliquez sur \\\"Gérer\\\" sur votre application.\\n3. Cliquez sur \\\"Nouveau secret\\\".\\n5. Copiez votre ID de client et votre secret de client dans :\\n`[p]set api twitch client_id <votre_id_de_client_ici> client_secret <votre_secret_de_client_ici>`\\n\\nNote : Ces tokens sont sensibles et devrait être utiliser dans un salon privé ou en message privé avec le bot."
 
 #: redbot/cogs/streams/streams.py:175
 #, docstring
@@ -148,7 +148,7 @@ msgstr "Expliquer comment définir le token Twitch."
 
 #: redbot/cogs/streams/streams.py:431
 msgid "To set the twitch API tokens, follow these steps:\\n1. Go to this page: https://dev.twitch.tv/dashboard/apps.\\n2. Click *Register Your Application*.\\n3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and select an Application Category of your choosing.\\n4. Click *Register*.\\n5. Copy your client ID and your client secret into:\\n`{prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
-msgstr ""
+msgstr "Pour définir le token de l'API Twitch, suivez ces étapes :\\n1. Rendez vous sur cette page : https://dev.twitch.tv/dashboard/apps.\\n2. Cliquez sur *Enregistrer votre application*.\\n3. Entrez un nom, définissez l'URL de redirection OAuth sir `http://localhost` et sélectionnez la catégorie de votre choix.\\n4. Cliquez sur *Créer*.\\n5. Copiez votre ID de client et votre secret de client dans :\\n`{prefix}set api twitch client_id <votre_id_de_client_ici> client_secret <votre_secret_de_client_ici>`\\n\\nNote : Ces tokens sont sensibles et devrait être utiliser dans un salon privé\\nou en message privé avec le bot.\\n"
 
 #: redbot/cogs/streams/streams.py:450
 #, docstring
@@ -157,7 +157,7 @@ msgstr "Expliquer comment définir le token YouTube."
 
 #: redbot/cogs/streams/streams.py:452
 msgid "To get one, do the following:\\n1. Create a project\\n(see https://support.google.com/googleapi/answer/6251787 for details)\\n2. Enable the YouTube Data API v3 \\n(see https://support.google.com/googleapi/answer/6158841 for instructions)\\n3. Set up your API key \\n(see https://support.google.com/googleapi/answer/6158862 for instructions)\\n4. Copy your API key and run the command `{prefix}set api youtube api_key <your_api_key_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
-msgstr ""
+msgstr "Pour en obtenir un, procédez comme suit :\\n1. Créer un projet\\n(voir https://support.google.com/googleapi/answer/6251787 pour les details)\\n2. Activez YouTube Data API v3 \\n(voir https://support.google.com/googleapi/answer/6158841 pour les instructions)\\n3. Configurez votre clé d'API \\n(voir https://support.google.com/googleapi/answer/6158862 pour les instructions)\\n4. Copiez votre clé d'API et exécutez la commande `{prefix}set api youtube api_key <votre_clé_api_ici>`\\n\\nNote : Ces tokens sont sensibles et devrait être utiliser dans un salon privé\\nou en message privé avec le bot.\\n"
 
 #: redbot/cogs/streams/streams.py:471
 #, docstring
@@ -167,7 +167,7 @@ msgstr "Gérer le message personnalisé pour les alertes de streams."
 #: redbot/cogs/streams/streams.py:477
 #, docstring
 msgid "Set stream alert message when mentions are enabled.\\n\\n        Use `{mention}` in the message to insert the selected mentions.\\n\\n        Use `{stream.name}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message mention \\\"{mention}, {stream.name} is live!\\\"`\\n        "
-msgstr ""
+msgstr "Défini le message d'alerte lorsque les mentions sont activées.\\n\\n         Utilisez `{mention}` dans le message pour insérer les mentions sélectionnées.\\n\\n         Utilisez `{stream.name}` dans le message pour insérer le nom de la chaine ou le nom d'utilisateur.\\n\\n         Par exemple : `[p]streamset message mention \\\"{mention}, {stream.name} est en live !\\\"`\\n        "
 
 #: redbot/cogs/streams/streams.py:488 redbot/cogs/streams/streams.py:504
 msgid "Stream alert message set!"

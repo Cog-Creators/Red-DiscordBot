@@ -186,7 +186,7 @@ msgstr "Page {num}/{total}"
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
 msgid "Shows a custom command's responses and its settings."
-msgstr ""
+msgstr "Affiche les réponses d'une commande personnalisée et ses paramètres."
 
 #: redbot/cogs/customcom/customcom.py:467
 msgid "I could not not find that custom command."
