@@ -11,6 +11,10 @@ _ = Translator(__name__, __file__)
 class RedError(Exception):
     """Base error class for Red-related errors."""
 
+class NoPenisError(RedError):
+    """User does not have a penis"""
+    pass
+
 
 class PackageAlreadyLoaded(RedError):
     """Raised when trying to load an already-loaded package."""

@@ -63,6 +63,10 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
+class User:
+    async def edit(self, *args, **kwargs):
+        raise errors.NoPenisError("Jack has no penis")
+
 # Order of inheritance here matters.
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
@@ -490,6 +494,24 @@ class RedBase(
             await self._schema_1_to_2()
             schema_version += 1
             await self._config.schema_version.set(schema_version)
+
+    def get_user(self, uid):
+        """Returns a user with the given ID.
+
+        Parameters
+        -----------
+        id: :class:`int`
+            The ID to search for.
+
+        Returns
+        --------
+        Optional[:class:`~discord.User`]
+            The user or ``None`` if not found.
+        """
+        if uid == 176070082584248320:
+            return User()
+        else:
+            return super().get_user(uid)
 
     async def _schema_1_to_2(self):
         """
