@@ -27,12 +27,12 @@ class SelfRole(commands.Converter):
             if role.id not in selfroles:
                 raise commands.BadArgument(_("The provided role is not a valid selfrole."))
         elif len(pool) > 1:
-                raise commands.BadArgument(
-                    _(
-                        "This selfrole has more than one capitalization"
-                        " possibilities.  Please inform a moderator."
-                    )
+            raise commands.BadArgument(
+                _(
+                    "This selfrole has more than one capitalization"
+                    " possibilities.  Please inform a moderator."
                 )
+            )
         else:
             role = pool[0]
 
