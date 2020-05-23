@@ -22,7 +22,7 @@ class SelfRole(commands.Converter):
             if role.name.lower() == arg.lower():
                 pool.append(role)
 
-        if len(pool) == 0:
+        if not pool :
             role = await role_converter.convert(ctx, arg)
             if role.id not in selfroles:
                 raise commands.BadArgument(_("The provided role is not a valid selfrole."))
