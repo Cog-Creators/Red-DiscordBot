@@ -88,7 +88,7 @@ If you have Red 3.1.X, you will need to follow the install instructions for your
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
 
 .. attention::
 
@@ -128,4 +128,4 @@ If you have Red 3.0.2 or older, you will need to follow the install instructions
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
