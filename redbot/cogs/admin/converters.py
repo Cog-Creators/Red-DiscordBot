@@ -1,6 +1,7 @@
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 _ = Translator("AdminConverters", __file__)
 
@@ -15,7 +16,7 @@ class SelfRole(commands.Converter):
         role_converter = commands.RoleConverter()
 
         pool = set()
-        for role_id in selfroles:
+        for role_id in AsyncIter(selfroles):
             role = ctx.guild.get_role(role_id)
             if role is None:
                 continue
