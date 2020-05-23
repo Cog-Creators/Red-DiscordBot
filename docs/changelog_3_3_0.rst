@@ -83,7 +83,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`, :issue:`3851`)
+- Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`, :issue:`3851`, :issue:`3861`)
 
 
 Redbot 3.3.7 (2020-04-28)
