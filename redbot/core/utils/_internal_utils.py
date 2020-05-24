@@ -8,7 +8,6 @@ import os
 import re
 import shutil
 import tarfile
-import operator as op
 from datetime import datetime
 from pathlib import Path
 from typing import (
