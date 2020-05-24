@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
+"POT-Creation-Date: 2020-05-21 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -251,7 +251,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:472
 msgid "Embeds are now {} for this channel."
-msgstr ""
+msgstr "Einbettungen für diesen Discord Server sind jetzt {}."
 
 #: redbot/core/core_commands.py:479
 #, docstring
@@ -274,7 +274,7 @@ msgstr "Keine Ausnahme ist bis jetzt aufgetreten"
 #: redbot/core/core_commands.py:518
 #, docstring
 msgid "Show's [botname]'s invite url"
-msgstr ""
+msgstr "Einladungs-Url von [botname] anzeigen"
 
 #: redbot/core/core_commands.py:530
 #, docstring
@@ -1108,7 +1108,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2003
 #, docstring
-msgid "\\n        blacklist management commands.\\n        "
+msgid "\\n        Blacklist management commands.\\n        "
 msgstr "\\n        Blacklist Management Befehle.\\n        "
 
 #: redbot/core/core_commands.py:2012
