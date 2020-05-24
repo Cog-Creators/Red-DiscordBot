@@ -19,12 +19,11 @@ from typing import (
     List,
     Optional,
     Union,
-    Set,
     TYPE_CHECKING,
 )
-from distutils.version import LooseVersion
 
 import discord
+import pkg_resources
 from fuzzywuzzy import fuzz, process
 
 from redbot.core import data_manager
@@ -45,8 +44,6 @@ __all__ = (
     "send_to_owners_with_prefix_replaced",
     "expected_version",
 )
-operator_lookup = {"<": op.lt, "<=": op.le, "==": op.eq, ">=": op.ge, ">": op.gt}
-version_req_re = re.compile(r"^(<=|<|>=|>|==)?(.*)$")
 
 
 def safe_delete(pth: Path):
