@@ -107,7 +107,7 @@ def init_events(bot, cli_flags):
                 requires_python = data["info"]["requires_python"]
                 current_python = platform.python_version()
                 extra_update = _(
-                    "\n\nWhile the following should work in most scenarios as it is "
+                    "\n\nWhile the following command should work in most scenarios as it is "
                     "based on your current OS, environment, and Python version, "
                     "**we highly recommend you to read the update docs at <{docs}> and "
                     "make sure there is nothing else that "
@@ -115,7 +115,7 @@ def init_events(bot, cli_flags):
                 ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
                 if expected_version(current_python, requires_python):
                     installed_extras = []
-                    for extra, reqs in red_pkg._dep_map:
+                    for extra, reqs in red_pkg._dep_map.items():
                         if extra is None:
                             continue
                         try:
@@ -150,13 +150,7 @@ def init_events(bot, cli_flags):
                         "You will need to follow the update instructions in our docs above, "
                         "if you still need help updating after following the docs go to our "
                         "#support channel in <https://discord.gg/red>"
-                    ).format(
-                        py_version=current_python,
-                        req_py=requires_python,
-                        docs="https://docs.discord.red/en/stable/install_windows.html"
-                        if platform.system() == "Windows"
-                        else "https://docs.discord.red/en/stable/install_linux_mac.html",
-                    )
+                    ).format(py_version=current_python, req_py=requires_python)
                 outdated_red_message += extra_update
 
         INFO2 = []
