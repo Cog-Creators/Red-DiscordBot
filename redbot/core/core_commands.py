@@ -60,6 +60,14 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
+# DEP-WARN
+# we're basing this handling on d.py's exception message which might change
+_ALREADY_REGISTERED_PATTERN = re.compile(
+    r"The alias (?P<alias>.+) is already an existing command or alias\."
+    r"|"
+    r"Command (?P<command>.+) is already registered\."
+)
+
 
 class CoreLogic:
     def __init__(self, bot: "Red"):
@@ -121,14 +129,23 @@ class CoreLogic:
             except errors.CogLoadError as e:
                 failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
-                # DEP-WARN
-                # we're basing this handling on d.py's exception message which might change
-                if isinstance(e, discord.ClientException) and (error_message := str(e)).endswith(
-                    (" is already registered.", " is already an existing command or alias.")
+                if isinstance(e, discord.ClientException) and (
+                    (match := _ALREADY_REGISTERED_PATTERN.fullmatch(str(e))) is not None
                 ):
-                    error_message = f"{error_message[:-1]} in one of the loaded cogs."
+                    if (alias_name := match.group("alias")) is not None:
+                        error_message = _(
+                            "Alias {alias_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(alias_name=inline(alias_name))
+                    else:
+                        command_name = match.group("command")
+                        error_message = _(
+                            "Command {command_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(command_name=inline(command_name))
                     failed_with_reason_packages.append((name, error_message))
                     continue
+
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of cog\n"
