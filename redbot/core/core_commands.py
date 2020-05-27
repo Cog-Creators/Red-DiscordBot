@@ -121,6 +121,14 @@ class CoreLogic:
             except errors.CogLoadError as e:
                 failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
+                # DEP-WARN
+                # we're basing this handling on d.py's exception message which might change
+                if isinstance(e, discord.ClientException) and (error_message := str(e)).endswith(
+                    (" is already registered.", " is already an existing command or alias.")
+                ):
+                    error_message = f"{error_message[:-1]} in one of the loaded cogs."
+                    failed_with_reason_packages.append((name, error_message))
+                    continue
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of cog\n"
