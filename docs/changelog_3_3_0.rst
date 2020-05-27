@@ -69,6 +69,11 @@ Warnings
 Developer changelog
 -------------------
 
+| **Important:**
+| If you're using RPC, please see the full annoucement about current state of RPC in main Red server
+  `by clicking here <https://discord.com/channels/133049272517001216/411381123101491200/714560168465137694>`_.
+
+
 Core Bot
 ********
 
@@ -78,6 +83,7 @@ Core Bot
 Documentation changes
 ---------------------
 
+- Added information about provisional status of RPC (:issue:`3862`)
 
 
 Miscellaneous
