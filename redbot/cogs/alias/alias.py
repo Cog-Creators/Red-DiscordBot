@@ -258,14 +258,7 @@ class Alias(commands.Cog):
         """Try to execute help for the base command of the alias."""
         alias = await self._aliases.get_alias(ctx.guild, alias_name=alias_name)
         if alias:
-            if self.is_command(alias.command):
-                base_cmd = alias.command
-            else:
-                base_cmd = alias.command.rsplit(" ", 1)[0]
-
-            new_msg = copy(ctx.message)
-            new_msg.content = f"{ctx.prefix}help {base_cmd}"
-            await self.bot.process_commands(new_msg)
+            await self.bot.send_help_for(ctx, alias.command)
         else:
             await ctx.send(_("No such alias exists."))
 
