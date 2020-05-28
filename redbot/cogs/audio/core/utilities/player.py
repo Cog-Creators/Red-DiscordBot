@@ -386,7 +386,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 title = _("Nothing found.")
                 embed = discord.Embed(title=title)
                 if result.exception_message:
-                    embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
+                    if "Status Code" in result.exception_message:
+                        embed.set_footer(text=result.exception_message[:2000])
+                    else:
+                        embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
