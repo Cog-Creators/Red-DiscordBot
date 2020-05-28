@@ -84,7 +84,7 @@ msgstr "{author} přidal/a {num} {currency} k účtu {user}."
 
 #: redbot/cogs/economy/economy.py:221
 msgid "{author} removed {num} {currency} from {user}'s account."
-msgstr ""
+msgstr "{author} odebral {num} {currency} z účtu {user}."
 
 #: redbot/cogs/economy/economy.py:229
 msgid "{author} set {user}'s account balance to {num} {currency}."
@@ -105,7 +105,7 @@ msgstr "tento server"
 
 #: redbot/cogs/economy/economy.py:258
 msgid "All bank accounts for {scope} have been deleted."
-msgstr ""
+msgstr "Všechny bankovní účty pro {scope} byly odstraněny."
 
 #: redbot/cogs/economy/economy.py:267
 #, docstring
@@ -186,7 +186,7 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:437
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\\n\\nYou currently have {new_balance} {currency}.\\n\\nYou are currently #{pos} on the global leaderboard!"
-msgstr ""
+msgstr "{author.mention}, tady máš, vezmi si nějaké {currency}. Užívej! (+{amount} {currency}!)\\n\\nV současné době máš {new_balance} {currency}.\\n\\nMomentálně jsi #{pos} na globálním žebříčku!"
 
 #: redbot/cogs/economy/economy.py:461
 #, docstring

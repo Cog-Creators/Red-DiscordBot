@@ -289,7 +289,7 @@ msgstr "Temps approximatif restant: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:601
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Je n'arrive pas à obtenir le titre depuis Lavalink pour le moment, réessayer dans quelques minutes."
 
 #: redbot/cogs/audio/core/utilities/player.py:610
 msgid "The connection was reset while loading the playlist."
@@ -427,7 +427,7 @@ msgstr "Demandé par : **{user} **"
 
 #: redbot/cogs/audio/core/utilities/queue.py:58
 msgid "Playing: "
-msgstr "Lecture en cours : "
+msgstr "Joue à : "
 
 #: redbot/cogs/audio/core/utilities/queue.py:72
 msgid "requested by **{user}**\\n"
@@ -435,7 +435,7 @@ msgstr "demandé par : **{user} **\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "Queue for __{guild_name}__"
-msgstr ""
+msgstr "Liste pour __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:83
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"

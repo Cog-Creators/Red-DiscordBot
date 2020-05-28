@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-05-28 12:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -481,7 +481,7 @@ msgstr "Роли администратора: {admin}\\nРоли модов: {m
 
 #: redbot/core/core_commands.py:903
 msgid "Same as bot's locale"
-msgstr ""
+msgstr "Тот же локализация как у бота"
 
 #: redbot/core/core_commands.py:906
 msgid "{bot_name} Settings:\\n\\nPrefixes: {prefixes}\\n{guild_settings}Locale: {locale}\\nRegional format: {regional_format}"
@@ -637,7 +637,7 @@ msgstr "JPG / PNG формат только."
 #: redbot/core/core_commands.py:1138
 #, docstring
 msgid "Removes [botname]'s avatar"
-msgstr ""
+msgstr "Удаляет аватар [botname]"
 
 #: redbot/core/core_commands.py:1141
 msgid "Avatar removed."
@@ -739,11 +739,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1320 redbot/core/core_commands.py:1352
 msgid "Invalid language code. Use format: `en-US`"
-msgstr ""
+msgstr "Неверный код языка. Используйте формат: `en-US`"
 
 #: redbot/core/core_commands.py:1324 redbot/core/core_commands.py:1356
 msgid "Invalid format - language code has to include country code, e.g. `en-US`"
-msgstr ""
+msgstr "Недопустимый формат - код языка должен содержать код страны, например 'en-US'"
 
 #: redbot/core/core_commands.py:1330
 msgid "Locale has been set."
@@ -756,11 +756,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1346
 msgid "Regional formatting will now be based on bot's locale."
-msgstr ""
+msgstr "Формат региона теперь будет основываться на локализации бота."
 
 #: redbot/core/core_commands.py:1363
 msgid "Regional formatting will now be based on `{language_code}` locale."
-msgstr ""
+msgstr "Формат региона теперь будет основываться на локализации `{language_code}`."
 
 #: redbot/core/core_commands.py:1371
 #, docstring
@@ -1091,7 +1091,7 @@ msgstr "{names} добавлен в белый список."
 #: redbot/core/core_commands.py:1956
 #, docstring
 msgid "\\n        Lists whitelisted users and roles.\\n        "
-msgstr ""
+msgstr "\\n        Показывает список пользователей и ролей в белом списке.\\n        "
 
 #: redbot/core/core_commands.py:1965
 msgid "Whitelisted Users and roles:"
@@ -1100,11 +1100,11 @@ msgstr "Пользователи и роли в белом списке:"
 #: redbot/core/core_commands.py:1976
 #, docstring
 msgid "\\n        Removes user or role from whitelist.\\n        "
-msgstr ""
+msgstr "\\n        Удаляет пользователя или роль из белого списка.\\n        "
 
 #: redbot/core/core_commands.py:1988
 msgid "{names} removed from the local whitelist."
-msgstr ""
+msgstr "{names} удален из локального белого списка."
 
 #: redbot/core/core_commands.py:1993
 #, docstring
@@ -1113,7 +1113,7 @@ msgstr "\\n        Очищает белый список.\\n        "
 
 #: redbot/core/core_commands.py:1997
 msgid "Local whitelist has been cleared."
-msgstr ""
+msgstr "Локальный белый список был очищен."
 
 #: redbot/core/core_commands.py:2003
 #, docstring
@@ -1123,7 +1123,7 @@ msgstr "\\n        Команды управления черным списко
 #: redbot/core/core_commands.py:2012
 #, docstring
 msgid "\\n        Adds a user or role to the blacklist.\\n        "
-msgstr ""
+msgstr "\\n        Добавлять пользователя или роль в чёрный список.\\n        "
 
 #: redbot/core/core_commands.py:2022
 msgid "You cannot blacklist yourself!"
@@ -1139,12 +1139,12 @@ msgstr "Вы не можете добавить владельца в чёрны
 
 #: redbot/core/core_commands.py:2035
 msgid "{names} added to the local blacklist."
-msgstr ""
+msgstr "{names} добавлен в локальный черный список."
 
 #: redbot/core/core_commands.py:2040
 #, docstring
 msgid "\\n        Lists blacklisted users and roles.\\n        "
-msgstr ""
+msgstr "\\n        Показывает список пользователей и ролей в черном списке.\\n        "
 
 #: redbot/core/core_commands.py:2049
 msgid "Blacklisted Users and Roles:"
@@ -1202,20 +1202,20 @@ msgstr "Список отключенных команд на этом серв�
 
 #: redbot/core/core_commands.py:2124
 msgid "There aren't any disabled commands in {}."
-msgstr ""
+msgstr "Нет отключенных комманд в {}."
 
 #: redbot/core/core_commands.py:2127
 msgid "{} commands are disabled in {}.\\n"
-msgstr ""
+msgstr "{} команды отключены в {}.\\n"
 
 #: redbot/core/core_commands.py:2131
 msgid "1 command is disabled in {}.\\n"
-msgstr ""
+msgstr "1 команда отключена в {}.\\n"
 
 #: redbot/core/core_commands.py:2138
 #, docstring
 msgid "Disable a command.\\n\\n        If you're the bot owner, this will disable commands\\n        globally by default.\\n        "
-msgstr ""
+msgstr "Отключите команду.\\n\\n        Если вы владелец бота, это отключит команды\\n        глобально по умолчанию\\n        "
 
 #: redbot/core/core_commands.py:2152
 #, docstring
@@ -1229,7 +1229,7 @@ msgstr "Я не мог найти эту команду. Обратите вни
 
 #: redbot/core/core_commands.py:2162 redbot/core/core_commands.py:2196
 msgid "The command to disable cannot be `command` or any of its subcommands."
-msgstr ""
+msgstr "Команда отключения не может быть `команда` или ни одной из подкоманд."
 
 #: redbot/core/core_commands.py:2168 redbot/core/core_commands.py:2202
 msgid "This command is designated as being always available and cannot be disabled."
@@ -1246,7 +1246,7 @@ msgstr "Отключить команду только на этом серве�
 
 #: redbot/core/core_commands.py:2207
 msgid "You are not allowed to disable that command."
-msgstr ""
+msgstr "Вы не можете отключить эту команду."
 
 #: redbot/core/core_commands.py:2217
 msgid "That command is already disabled in this server."
@@ -1340,7 +1340,7 @@ msgstr "Они не невосприимчивы"
 #: redbot/core/core_commands.py:2373
 #, docstring
 msgid "\\n        Commands for configuring owner notifications.\\n        "
-msgstr ""
+msgstr "\\n        Команды для настройки уведомлений владельца.\\n        "
 
 #: redbot/core/core_commands.py:2380
 #, docstring
@@ -1495,39 +1495,63 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max} {currency}."
 msgstr ""
 
-#: redbot/core/events.py:162
-msgid "`{user_input}` is not a valid value for `{command}`"
+#: redbot/core/events.py:103
+msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
 msgstr ""
 
-#: redbot/core/events.py:187
-msgid "Error in command '{command}'. Check your console or logs for details."
+#: redbot/core/events.py:109
+msgid "\\n\\nWhile the following command should work in most scenarios as it is based on your current OS, environment, and Python version, **we highly recommend you to read the update docs at <{docs}> and make sure there is nothing else that needs to be done during the update.**"
+msgstr ""
+
+#: redbot/core/events.py:133
+msgid "\\n\\nTo update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:\\n\\n"
+msgstr ""
+
+#: redbot/core/events.py:138
+msgid "Command Prompt"
+msgstr ""
+
+#: redbot/core/events.py:140
+msgid "Terminal"
+msgstr ""
+
+#: redbot/core/events.py:147
+msgid "\\n\\nYou have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\\n\\nYou will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
 #: redbot/core/events.py:212
-msgid "I require the {permission} permission to execute that command."
-msgstr ""
-
-#: redbot/core/events.py:216
-msgid "I require {permission_list} permissions to execute that command."
-msgstr ""
-
-#: redbot/core/events.py:224
-msgid "That command is not available in DMs."
-msgstr ""
-
-#: redbot/core/events.py:226
-msgid "That command is only available in DMs."
-msgstr ""
-
-#: redbot/core/events.py:231
-msgid "This command is on cooldown. Try again in {delay}."
-msgstr ""
-
-#: redbot/core/events.py:233
-msgid "This command is on cooldown. Try again in 1 second."
+msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
 #: redbot/core/events.py:237
+msgid "Error in command '{command}'. Check your console or logs for details."
+msgstr ""
+
+#: redbot/core/events.py:262
+msgid "I require the {permission} permission to execute that command."
+msgstr ""
+
+#: redbot/core/events.py:266
+msgid "I require {permission_list} permissions to execute that command."
+msgstr ""
+
+#: redbot/core/events.py:274
+msgid "That command is not available in DMs."
+msgstr ""
+
+#: redbot/core/events.py:276
+msgid "That command is only available in DMs."
+msgstr ""
+
+#: redbot/core/events.py:281
+msgid "This command is on cooldown. Try again in {delay}."
+msgstr ""
+
+#: redbot/core/events.py:283
+msgid "This command is on cooldown. Try again in 1 second."
+msgstr ""
+
+#: redbot/core/events.py:287
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr ""
 
@@ -1549,7 +1573,7 @@ msgstr ""
 
 #: redbot/core/modlog.py:341
 msgid "Moderator"
-msgstr ""
+msgstr "Модератор"
 
 #: redbot/core/modlog.py:343
 msgid "Until"

@@ -24,11 +24,11 @@ msgstr "Nebyl nalezen žádný prefix."
 
 #: redbot/cogs/alias/alias.py:116
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "Aliasy:\\n"
 
 #: redbot/cogs/alias/alias.py:118
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nStrana {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:129
 #, docstring
@@ -47,23 +47,23 @@ msgstr "Přidat alias pro příkaz."
 
 #: redbot/cogs/alias/alias.py:146
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový globální alias s názvem {name}, ale toto jméno je již příkazem tohoto bota."
 
 #: redbot/cogs/alias/alias.py:157
 msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový alias s názvem {name}, ale alias na tomto serveru již existuje."
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový alias s názvem {name}, ale toto jméno je neplatným názvem aliasu. Jména aliasů nesmí obsahovat mezery."
 
 #: redbot/cogs/alias/alias.py:180
 msgid "You attempted to create a new alias for a command that doesn't exist."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový alias pro příkaz, který neexistuje."
 
 #: redbot/cogs/alias/alias.py:194
 msgid "A new alias with the trigger `{name}` has been created."
-msgstr ""
+msgstr "Byl vytvořen nový alias se spouštěcím mechanismem `{name}."
 
 #: redbot/cogs/alias/alias.py:200
 #, docstring
@@ -76,20 +76,20 @@ msgstr "Pokusili jste se vytvořit nový globální alias s názvem {name}, ale 
 
 #: redbot/cogs/alias/alias.py:216
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový alias s názvem {name}, ale alias na tomto serveru již existuje."
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Pokusili jste se vytvořit nový globální alias s názvem {name}, ale toto jméno je neplatným názvem aliasu. Jména aliasů nesmí obsahovat mezery."
 
 #: redbot/cogs/alias/alias.py:243
 msgid "A new global alias with the trigger `{name}` has been created."
-msgstr ""
+msgstr "Byl vytvořen nový globální alias se spouštěcím mechanismem `{name}."
 
 #: redbot/cogs/alias/alias.py:251
 #, docstring
 msgid "Try to execute help for the base command of the alias."
-msgstr ""
+msgstr "Zkuste spustit nápovědu pro základní příkaz aliasů."
 
 #: redbot/cogs/alias/alias.py:263
 msgid "No such alias exists."
@@ -123,7 +123,7 @@ msgstr "Alias s názvem{name}` byl úspěšně smazán."
 
 #: redbot/cogs/alias/alias.py:294 redbot/cogs/alias/alias.py:309
 msgid "Alias with name `{name}` was not found."
-msgstr ""
+msgstr "Alias s názvem `{name}` nebyl nalezen."
 
 #: redbot/cogs/alias/alias.py:299
 #, docstring
@@ -132,7 +132,7 @@ msgstr "Odstranit existující globální alias."
 
 #: redbot/cogs/alias/alias.py:301
 msgid "There are no global aliases on this bot."
-msgstr ""
+msgstr "Pro tohoto bota neexistují žádné globální aliasy."
 
 #: redbot/cogs/alias/alias.py:315
 #, docstring
@@ -142,11 +142,11 @@ msgstr "Seznam dostupných aliasů na tomto serveru."
 #: redbot/cogs/alias/alias.py:324
 #, docstring
 msgid "List the available global aliases on this bot."
-msgstr ""
+msgstr "Seznam dostupných globálních aliasů pro tohoto bota."
 
 #: redbot/cogs/alias/alias.py:327
 msgid "There are no global aliases."
-msgstr ""
+msgstr "Neexistují žádné globální aliasy."
 
 #: redbot/cogs/alias/alias_entry.py:174
 msgid "Arguments must be specified with a number."

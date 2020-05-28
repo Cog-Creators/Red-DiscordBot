@@ -19,7 +19,7 @@ msgstr "La clé API de Spotify ou le secret client n'ont pas étés correctement
 
 #: redbot/cogs/audio/apis/interface.py:322
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr ""
+msgstr "Cela ne semble pas être une URL ou un album/playlist Spotify valide."
 
 #: redbot/cogs/audio/apis/interface.py:443
 msgid "This doesn't seem to be a supported Spotify URL or code."
@@ -43,7 +43,7 @@ msgstr "Rien n'a été trouvé.\\nLa clé de l'API YouTube peut être invalide o
 
 #: redbot/cogs/audio/apis/interface.py:602
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} pistes ne peuvent pas être mises en attente."
 
 #: redbot/cogs/audio/apis/interface.py:610
 msgid "Playlist Enqueued"

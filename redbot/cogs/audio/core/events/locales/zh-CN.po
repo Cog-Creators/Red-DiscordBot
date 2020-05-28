@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-05-28 12:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -59,7 +59,7 @@ msgid "Unable to Get Track"
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:131
-msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
+msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:68
