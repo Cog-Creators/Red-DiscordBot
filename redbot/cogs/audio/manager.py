@@ -95,7 +95,7 @@ class ServerManager:
     async def _get_jar_args(cls) -> List[str]:
         (java_available, java_version) = await cls._has_java()
 
-        if not java_available or java_version < (11, 0) or java_version >= (12, 0):
+        if not java_available:
             raise RuntimeError("You must install Java 11 for Lavalink to run.")
 
         return ["java", "-Djdk.tls.client.protocols=TLSv1.2", "-jar", str(LAVALINK_JAR_FILE)]
@@ -111,7 +111,7 @@ class ServerManager:
             cls.java_version = None
         else:
             cls._java_version = version = await cls._get_java_version()
-            cls._java_available = (2, 0) > version >= (1, 8) or version >= (8, 0)
+            cls._java_available = (11, 0) <= version < (12, 0)
         return cls._java_available, cls._java_version
 
     @staticmethod
