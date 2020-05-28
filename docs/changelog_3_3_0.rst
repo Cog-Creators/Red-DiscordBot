@@ -29,6 +29,8 @@ Alias
 Audio
 *****
 
+- Twitch playback is functional once again (:issue:`3873`)
+- Recent errors with YouTube playback should be resolved (:issue:`3873`)
 - Added new option (settable with ``[p]audioset lyrics``) that makes Audio cog prefer (prioritize) tracks with lyrics (:issue:`3519`)
 - Added global daily (historical) queues (:issue:`3518`)
 - Added ``[p]audioset countrycode`` that allows to set the country code for spotify searches (:issue:`3528`)
