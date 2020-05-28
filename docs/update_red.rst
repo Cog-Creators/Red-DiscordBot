@@ -16,6 +16,13 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
 Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section.
 
+**Choose the version you're currently on from the list below:**
+
+.. contents::
+    :local:
+    :depth: 1
+
+
 
 Red 3.2.0 or newer
 ******************
@@ -81,7 +88,7 @@ If you have Red 3.1.X, you will need to follow the install instructions for your
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
 
 .. attention::
 
@@ -121,4 +128,4 @@ If you have Red 3.0.2 or older, you will need to follow the install instructions
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
