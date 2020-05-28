@@ -78,7 +78,7 @@ msgstr "Vyčistit zprávy vlastněné botem.\\n\\n        Ve výchozím nastaven
 #: redbot/cogs/cleanup/cleanup.py:540
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
-msgstr ""
+msgstr "Smaže duplicitní zprávy v kanálu z posledních X zpráv a uchovává pouze jednu kopii.\\n\\n        Výchozí nastavení je 50.\\n        "
 
 #: redbot/cogs/cleanup/converters.py:12
 msgid "{} doesn't look like a valid message ID."

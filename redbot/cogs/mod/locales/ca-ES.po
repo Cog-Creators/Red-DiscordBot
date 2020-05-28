@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
+"POT-Creation-Date: 2020-05-21 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -328,7 +328,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:252
 #, docstring
-msgid "Mutes user in the server"
+msgid "Mutes user in the server."
 msgstr ""
 
 #: redbot/cogs/mod/mutes.py:276

@@ -22,6 +22,7 @@ from typing import (
 )
 
 import discord
+import pkg_resources
 from fuzzywuzzy import fuzz, process
 
 from redbot.core import data_manager
@@ -33,7 +34,15 @@ if TYPE_CHECKING:
 
 main_log = logging.getLogger("red")
 
-__all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+__all__ = (
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "create_backup",
+    "send_to_owners_with_preprocessor",
+    "send_to_owners_with_prefix_replaced",
+    "expected_version",
+)
 
 
 def safe_delete(pth: Path):
@@ -282,3 +291,8 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+
+
+def expected_version(current: str, expected: str) -> bool:
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    return current in pkg_resources.Requirement.parse(f"x{expected}")
