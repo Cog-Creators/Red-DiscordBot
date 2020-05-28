@@ -60,6 +60,11 @@ Mod
 
 - ``[p]userinfo`` now shows default avatar when no avatar is set (:issue:`3819`)
 
+Modlog
+******
+
+- Fixed (again) ``AttributeError`` for cases whose moderator doesn't share the server with the bot (:issue:`3805`, :issue:`3784`, :issue:`3778`)
+
 Permissions
 ***********
 
