@@ -1585,7 +1585,7 @@ class Core(commands.Cog, CoreLogic):
             footer += _(" | Server ID: {}").format(guild.id)
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
@@ -1690,7 +1690,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
