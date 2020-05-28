@@ -87,6 +87,7 @@ Documentation changes
 ---------------------
 
 - Added information about provisional status of RPC (:issue:`3862`)
+- Revised install instructions (:issue:`3847`)
 
 
 Miscellaneous
