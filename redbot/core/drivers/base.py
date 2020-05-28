@@ -109,6 +109,28 @@ class IdentifierData:
     def __hash__(self) -> int:
         return hash((self.uuid, self.category, self.primary_key, self.identifiers))
 
+    def get_child(self, *keys: str) -> "IdentifierData":
+        if not all(isinstance(i, str) for i in keys):
+            raise ValueError("Identifiers must be strings.")
+
+        primary_keys = self.primary_key
+        identifiers = self.identifiers
+        num_missing_pkeys = self.primary_key_len - len(self.primary_key)
+        if num_missing_pkeys > 0:
+            primary_keys += keys[:num_missing_pkeys]
+        if len(keys) > num_missing_pkeys:
+            identifiers += keys[num_missing_pkeys:]
+
+        return IdentifierData(
+            self.cog_name,
+            self.uuid,
+            self.category,
+            primary_keys,
+            identifiers,
+            self.primary_key_len,
+            self.is_custom,
+        )
+
     def add_identifier(self, *identifier: str) -> "IdentifierData":
         if not all(isinstance(i, str) for i in identifier):
             raise ValueError("Identifiers must be strings.")
