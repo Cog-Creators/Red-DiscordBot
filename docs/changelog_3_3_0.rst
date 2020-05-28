@@ -26,6 +26,7 @@ Alias
 *****
 
 - Added pagination to ``[p]alias list`` and ``[p]alias global list`` to avoid errors for users with a lot of aliases (:issue:`3844`, :issue:`3834`)
+- ``[p]alias help`` should now work more reliably (:issue:`3864`)
 
 Audio
 *****
