@@ -24,11 +24,11 @@ msgstr "Aucun préfixe trouvé."
 
 #: redbot/cogs/alias/alias.py:116
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "Alias :\\n"
 
 #: redbot/cogs/alias/alias.py:118
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nPage {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:129
 #, docstring

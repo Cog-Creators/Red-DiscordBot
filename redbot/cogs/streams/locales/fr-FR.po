@@ -302,7 +302,7 @@ msgstr "Vues totales"
 #: redbot/cogs/streams/streamtypes.py:357
 #: redbot/cogs/streams/streamtypes.py:401
 msgid "Playing: "
-msgstr "Lecture en cours : "
+msgstr "Joue à : "
 
 #: redbot/cogs/streams/streamtypes.py:443
 msgid "None"

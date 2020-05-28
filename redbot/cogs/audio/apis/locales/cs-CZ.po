@@ -19,15 +19,15 @@ msgstr "Spotify API klíč nebo klientský tajný klíč nebyl správně nastave
 
 #: redbot/cogs/audio/apis/interface.py:322
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr ""
+msgstr "Nezdá se, že by to byla platná adresa Spotify playlistu/alba nebo kód."
 
 #: redbot/cogs/audio/apis/interface.py:443
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Pravděpodobně se nejedná o podporovaný Spotify odkaz nebo kód."
 
 #: redbot/cogs/audio/apis/interface.py:509
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Připojení bylo obnoveno při načítání seznamu skladeb."
 
 #: redbot/cogs/audio/apis/interface.py:518
 msgid "Player timeout, skipping remaining tracks."
@@ -43,7 +43,7 @@ msgstr "Nic nenalezeno.\\nYouTube API klíč může být neplatný nebo může b
 
 #: redbot/cogs/audio/apis/interface.py:602
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} skladby nemůžou být zařazeny do fronty."
 
 #: redbot/cogs/audio/apis/interface.py:610
 msgid "Playlist Enqueued"
@@ -55,7 +55,7 @@ msgstr "Přidáno {num} skladeb do fronty.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:617
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} do začátku přehrávání playlistu: je na #{position} pozici ve frontě"
 
 #: redbot/cogs/audio/apis/spotify.py:165
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."

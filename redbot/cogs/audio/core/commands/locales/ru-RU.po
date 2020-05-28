@@ -57,7 +57,7 @@ msgstr "Белый список изменен"
 #: redbot/cogs/audio/core/commands/audioset.py:68
 #: redbot/cogs/audio/core/commands/audioset.py:258
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Добавлено `{whitelisted}` в белый список."
 
 #: redbot/cogs/audio/core/commands/audioset.py:76
 #: redbot/cogs/audio/core/commands/audioset.py:266
@@ -74,7 +74,7 @@ msgstr "Ничего в белом списке."
 
 #: redbot/cogs/audio/core/commands/audioset.py:95
 msgid "Global Whitelist"
-msgstr ""
+msgstr "Глобальный Белый список"
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 #: redbot/cogs/audio/core/commands/audioset.py:292
@@ -96,7 +96,7 @@ msgstr "Удаляет ключевое слово из белого списк�
 #: redbot/cogs/audio/core/commands/audioset.py:133
 #: redbot/cogs/audio/core/commands/audioset.py:323
 msgid "Removed `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "Удалено `{whitelisted}` из белого списка."
 
 #: redbot/cogs/audio/core/commands/audioset.py:140
 #, docstring
@@ -126,7 +126,7 @@ msgstr "Чёрный список изменен"
 #: redbot/cogs/audio/core/commands/audioset.py:162
 #: redbot/cogs/audio/core/commands/audioset.py:351
 msgid "Added `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "Добавлено `{blacklisted}` в черный список."
 
 #: redbot/cogs/audio/core/commands/audioset.py:170
 #: redbot/cogs/audio/core/commands/audioset.py:359
@@ -143,7 +143,7 @@ msgstr "Ничего в чёрном списке."
 
 #: redbot/cogs/audio/core/commands/audioset.py:189
 msgid "Global Blacklist"
-msgstr ""
+msgstr "Глобальный Черный список"
 
 #: redbot/cogs/audio/core/commands/audioset.py:196
 #: redbot/cogs/audio/core/commands/audioset.py:385
@@ -170,7 +170,7 @@ msgstr "Ключевое слово не в чёрном списке."
 #: redbot/cogs/audio/core/commands/audioset.py:227
 #: redbot/cogs/audio/core/commands/audioset.py:416
 msgid "Removed `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "Удалено `{blacklisted}` из чёрного списка."
 
 #: redbot/cogs/audio/core/commands/audioset.py:235
 #, docstring
@@ -184,7 +184,7 @@ msgstr "Добавляет ключевое слово в белый списо�
 
 #: redbot/cogs/audio/core/commands/audioset.py:285
 msgid "Whitelist"
-msgstr ""
+msgstr "Белый список"
 
 #: redbot/cogs/audio/core/commands/audioset.py:331
 #, docstring
@@ -193,12 +193,12 @@ msgstr "Управляет чёрным списком ключевых слов
 
 #: redbot/cogs/audio/core/commands/audioset.py:378
 msgid "Blacklist"
-msgstr ""
+msgstr "Чёрный список"
 
 #: redbot/cogs/audio/core/commands/audioset.py:424
 #, docstring
 msgid "Change global db settings."
-msgstr ""
+msgstr "Изменить глобальные настройки базы данных."
 
 #: redbot/cogs/audio/core/commands/audioset.py:429
 #, docstring
@@ -358,7 +358,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1755
 #: redbot/cogs/audio/core/commands/playlists.py:1903
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "Плейлисты недоступны"
 
 #: redbot/cogs/audio/core/commands/audioset.py:495
 #: redbot/cogs/audio/core/commands/playlists.py:100
@@ -712,16 +712,16 @@ msgstr "Пропуск голосования:    [{vote_enabled}] \\nГолос
 
 #: redbot/cogs/audio/core/commands/audioset.py:1026
 msgid "Server"
-msgstr ""
+msgstr "Сервер"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1028
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1030
 #: redbot/cogs/audio/core/commands/playlists.py:997
 msgid "Global"
-msgstr ""
+msgstr "Глобал"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1032
 #: redbot/cogs/audio/core/commands/audioset.py:1033
@@ -1179,7 +1179,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:444
 #, docstring
 msgid "Skip to the next track, or to a given track number."
-msgstr ""
+msgstr "Перейти к следующему треку, или к заданному номеру трека."
 
 #: redbot/cogs/audio/core/commands/controller.py:453
 msgid "You must be in the voice channel to skip the music."
@@ -1222,7 +1222,7 @@ msgstr "Остановить воспроизведение и очистить 
 #: redbot/cogs/audio/core/commands/controller.py:553
 #: redbot/cogs/audio/core/commands/controller.py:559
 msgid "Unable To Stop Player"
-msgstr ""
+msgstr "Остановить проигрывателя невозможно"
 
 #: redbot/cogs/audio/core/commands/controller.py:548
 msgid "You must be in the voice channel to stop the music."
@@ -1931,7 +1931,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:823
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Не удалось получить трек из Lavalink в данный момент,повторите попытку через несколько минут."
 
 #: redbot/cogs/audio/core/commands/player.py:832
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."

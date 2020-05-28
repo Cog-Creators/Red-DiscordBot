@@ -162,7 +162,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:471
 #, docstring
 msgid "Manage custom message for stream alerts."
-msgstr ""
+msgstr "Spravovat nastavení vlastní zprávy pro upozornění na vysílání."
 
 #: redbot/cogs/streams/streams.py:477
 #, docstring
@@ -195,7 +195,7 @@ msgstr "Spravovat nastavení zmínění pro upozornění na vysílání."
 #: redbot/cogs/streams/streams.py:526
 #, docstring
 msgid "Toggle the `@​everyone` mention."
-msgstr ""
+msgstr "Zapnout `@​everyone` zmínku."
 
 #: redbot/cogs/streams/streams.py:531
 msgid "`@​everyone` will no longer be mentioned for stream alerts."
@@ -203,7 +203,7 @@ msgstr "`@​everyone` již nebude zmíněn pro upozornění na vysílání."
 
 #: redbot/cogs/streams/streams.py:534
 msgid "When a stream is live, `@​everyone` will be mentioned."
-msgstr ""
+msgstr "Když někdo zapne stream, `@​everyone` bude zmíněno."
 
 #: redbot/cogs/streams/streams.py:539
 #, docstring
@@ -216,7 +216,7 @@ msgstr "`@​here` již nebude zmíněn pro upozornění na vysílání."
 
 #: redbot/cogs/streams/streams.py:547
 msgid "When a stream is live, `@​here` will be mentioned."
-msgstr ""
+msgstr "Když někdo zapne stream, `@​here` bude zmíněno."
 
 #: redbot/cogs/streams/streams.py:552
 #, docstring

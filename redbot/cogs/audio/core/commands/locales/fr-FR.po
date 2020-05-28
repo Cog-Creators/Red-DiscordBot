@@ -184,7 +184,7 @@ msgstr "Ajoute un mot-clé à la liste blanche.\\n\\n        Si vous ajoutez quo
 
 #: redbot/cogs/audio/core/commands/audioset.py:285
 msgid "Whitelist"
-msgstr ""
+msgstr "Liste blanche"
 
 #: redbot/cogs/audio/core/commands/audioset.py:331
 #, docstring
@@ -193,7 +193,7 @@ msgstr "Gère la liste noire des mots-clé."
 
 #: redbot/cogs/audio/core/commands/audioset.py:378
 msgid "Blacklist"
-msgstr ""
+msgstr "Liste noire"
 
 #: redbot/cogs/audio/core/commands/audioset.py:424
 #, docstring
@@ -727,7 +727,7 @@ msgstr "Global"
 #: redbot/cogs/audio/core/commands/audioset.py:1033
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "Cached"
-msgstr ""
+msgstr "Caché"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1036
 #: redbot/cogs/audio/core/commands/audioset.py:1037
@@ -755,7 +755,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1241
 #: redbot/cogs/audio/core/commands/audioset.py:1286
 msgid "Cache Settings"
-msgstr ""
+msgstr "Paramètres du cache"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1053
 msgid "Max age:                [{max_age}]\\n"
@@ -1919,11 +1919,11 @@ msgstr "{num} piste(s) ajoutée(s).{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/player.py:794
 msgid "folder"
-msgstr ""
+msgstr "dossier"
 
 #: redbot/cogs/audio/core/commands/player.py:796
 msgid "search"
-msgstr ""
+msgstr "recherche"
 
 #: redbot/cogs/audio/core/commands/player.py:799
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
@@ -1931,7 +1931,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:823
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Je n'arrive pas à obtenir le titre depuis Lavalink pour le moment, réessayer dans quelques minutes."
 
 #: redbot/cogs/audio/core/commands/player.py:832
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
@@ -2164,7 +2164,7 @@ msgstr "Pistes : {num}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1025
 msgid "Author: {name}"
-msgstr ""
+msgstr "Auteur : {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1030
 msgid "Scope: {scope}\\n"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-05-28 12:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "Роль DJ не найдена. Отключение режима DJ."
 
 #: redbot/cogs/audio/core/events/dpy.py:78
 msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+msgstr "`{user_input}` не является допустимым значением для `{command}`"
 
 #: redbot/cogs/audio/core/events/dpy.py:84
 msgid "Unable To Parse Argument"
@@ -32,7 +32,7 @@ msgstr ""
 #: redbot/cogs/audio/core/events/dpy.py:94
 #: redbot/cogs/audio/core/events/dpy.py:102
 msgid "Invalid Argument"
-msgstr ""
+msgstr "Недопустимый аргумент"
 
 #: redbot/cogs/audio/core/events/dpy.py:95
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
@@ -44,11 +44,11 @@ msgstr "Неверное окружение"
 
 #: redbot/cogs/audio/core/events/dpy.py:113
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Соединение с Lavalink прервалась."
 
 #: redbot/cogs/audio/core/events/dpy.py:121
 msgid "No Player Available"
-msgstr ""
+msgstr "Нет доступных проигрывателей"
 
 #: redbot/cogs/audio/core/events/dpy.py:122
 msgid "The bot is not connected to a voice channel."
@@ -59,7 +59,7 @@ msgid "Unable to Get Track"
 msgstr "Не удается получить трек"
 
 #: redbot/cogs/audio/core/events/dpy.py:131
-msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
+msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:68
@@ -84,7 +84,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:167
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Обнаружено множество ошибок"
 
 #: redbot/cogs/audio/core/events/lavalink.py:168
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."

@@ -51,17 +51,17 @@ msgstr "Impossible de faire correspondre '{}' à une playlist."
 #: redbot/cogs/audio/converters.py:429 redbot/cogs/audio/converters.py:451
 #: redbot/cogs/audio/converters.py:478
 msgid "Nothing"
-msgstr ""
+msgstr "Rien"
 
 #: redbot/cogs/audio/converters.py:259
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "Vous ne pouvez pas utiliser `--guild`"
 
 #: redbot/cogs/audio/converters.py:400
 msgid "You cannot use `--to-server`"
-msgstr ""
+msgstr "Vous ne pouvez pas utiliser `--to-server`"
 
 #: redbot/cogs/audio/converters.py:426
 msgid "You cannot use `--from-server`"
-msgstr ""
+msgstr "Vous ne pouvez pas utiliser `--from-server`"
 

@@ -204,7 +204,7 @@ msgstr "Vous avez été débanni de {server}.\\nVoici une invitation pour ce ser
 
 #: redbot/cogs/mod/kickban.py:640
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
-msgstr ""
+msgstr "Je n'ai pas réussi à envoyer une invitation à cet utilisateur. Peut-être pouvez-vous l'envoyer à ma place?\\nVoici le lien d'invitation : {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:648
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
@@ -226,20 +226,20 @@ msgstr ""
 #: redbot/cogs/mod/mod.py:126
 #, docstring
 msgid "Move ignored channels and servers to core"
-msgstr ""
+msgstr "Déplacer les salons ignorés et les serveurs vers le noyau"
 
 #: redbot/cogs/mod/mod.py:135
 msgid "Ignored channels and guilds restored."
-msgstr ""
+msgstr "Salons et serveurs ignorées restaurées."
 
 #: redbot/cogs/mod/mod.py:140
 #, docstring
 msgid "\\n            Move deletedelay settings to core\\n        "
-msgstr ""
+msgstr "\\n            Déplacer les paramètres de suppression au noyau\\n        "
 
 #: redbot/cogs/mod/mod.py:149
 msgid "Delete delay settings restored."
-msgstr ""
+msgstr "Suppression des paramètre de délai de suppression restaurée."
 
 #: redbot/cogs/mod/mutes.py:14
 msgid "That user can't send messages in this channel."
@@ -329,7 +329,7 @@ msgstr "L'utilisateur a été mis en sourdine dans ce salon."
 #: redbot/cogs/mod/mutes.py:252
 #, docstring
 msgid "Mutes user in the server."
-msgstr ""
+msgstr "Rend un utilisateur muet dans ce serveur."
 
 #: redbot/cogs/mod/mutes.py:276
 msgid "User has been muted in this server."
@@ -513,7 +513,7 @@ msgstr "Gérer les paramètres d'administration du serveur."
 
 #: redbot/cogs/mod/settings.py:33
 msgid "Delete repeats: {num_repeats}\\n"
-msgstr ""
+msgstr "Supprimer les répétitions : {num_repeats}\\n"
 
 #: redbot/cogs/mod/settings.py:34
 msgid "after {num} repeats"
@@ -527,7 +527,7 @@ msgstr "Non"
 
 #: redbot/cogs/mod/settings.py:38
 msgid "Ban mention spam: {num_mentions}\\n"
-msgstr ""
+msgstr "Bannir le spam de mention : {num_mentions}\\n"
 
 #: redbot/cogs/mod/settings.py:39
 msgid "{num} mentions"
@@ -535,7 +535,7 @@ msgstr "{num} mentions"
 
 #: redbot/cogs/mod/settings.py:43
 msgid "Respects hierarchy: {yes_or_no}\\n"
-msgstr ""
+msgstr "Respecter la hiérarchie : {yes_or_no}\\n"
 
 #: redbot/cogs/mod/settings.py:44 redbot/cogs/mod/settings.py:52
 #: redbot/cogs/mod/settings.py:55
@@ -544,7 +544,7 @@ msgstr "Oui"
 
 #: redbot/cogs/mod/settings.py:46
 msgid "Delete delay: {num_seconds}\\n"
-msgstr ""
+msgstr "Délai de suppression : {num_seconds}\\n"
 
 #: redbot/cogs/mod/settings.py:47
 msgid "{num} seconds"
@@ -654,7 +654,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:217
 msgid "Invalid number of days. Must be between 0 and 7."
-msgstr ""
+msgstr "Nombre de jours invalide. Doit être compris entre 0 et 7."
 
 #: redbot/cogs/mod/settings.py:220
 msgid "{days} days worth of messages will be deleted when a user is banned."

@@ -289,7 +289,7 @@ msgstr "Примерно времени осталось: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:601
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Не удалось получить трек из Lavalink в данный момент,повторите попытку через несколько минут."
 
 #: redbot/cogs/audio/core/utilities/player.py:610
 msgid "The connection was reset while loading the playlist."
@@ -394,7 +394,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:643
 msgid "Global"
-msgstr ""
+msgstr "Глобал"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "the Server"
@@ -402,7 +402,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "Server"
-msgstr ""
+msgstr "Сервер"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "the User"
@@ -410,7 +410,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: redbot/cogs/audio/core/utilities/queue.py:36
 msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
