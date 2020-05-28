@@ -80,7 +80,6 @@ class RedBase(
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
-        self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
         self._last_exception = None
@@ -154,8 +153,16 @@ class RedBase(
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
-        if cli_flags.owner and "owner_id" not in kwargs:
-            kwargs["owner_id"] = cli_flags.owner
+        if "owner_id" in kwargs:
+            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+
+        self._owner_id_overwrite = cli_flags.owner
+
+        if "owner_ids" in kwargs:
+            kwargs["owner_ids"] = set(kwargs["owner_ids"])
+        else:
+            kwargs["owner_ids"] = set()
+        kwargs["owner_ids"].update(cli_flags.co_owner)
 
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
@@ -538,8 +545,10 @@ class RedBase(
         init_global_checks(self)
         init_events(self, cli_flags)
 
-        if self.owner_id is None:
-            self.owner_id = await self._config.owner()
+        if self._owner_id_overwrite is None:
+            self._owner_id_overwrite = await self._config.owner()
+        if self._owner_id_overwrite is not None:
+            self.owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
@@ -709,23 +718,20 @@ class RedBase(
         -------
         bool
         """
-        if user.id in self._co_owners:
+        if user.id in self.owner_ids:
             return True
 
         ret = False
-
-        if self.owner_id:
-            return self.owner_id == user.id
-        elif self.owner_ids:
-            return user.id in self.owner_ids
-        elif not self._app_owners_fetched:
+        if not self._app_owners_fetched:
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
-                    self.owner_ids = ids = {m.id for m in app.team.members}
+                    ids = {m.id for m in app.team.members}
+                    self.owner_ids.update(ids)
                     ret = user.id in ids
-            else:
-                self.owner_id = owner_id = app.owner.id
+            elif self._owner_id_overwrite is None:
+                owner_id = app.owner.id
+                self.owner_ids.add(owner_id)
                 ret = user.id == owner_id
             self._app_owners_fetched = True
 
@@ -1168,8 +1174,7 @@ class RedBase(
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        team_ids = () if not self._use_team_features else self.owner_ids
-        for user_id in set((self.owner_id, *self._co_owners, *team_ids)):
+        for user_id in self.owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams

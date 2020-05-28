@@ -58,10 +58,9 @@ def init_events(bot, cli_flags):
 
         if app_info.team:
             if bot._use_team_features:
-                bot.owner_ids = {m.id for m in app_info.team.members}
-        else:
-            if bot.owner_id is None:
-                bot.owner_id = app_info.owner.id
+                bot.owner_ids.update(m.id for m in app_info.team.members)
+        elif bot._owner_id_overwrite is None:
+            bot.owner_ids.add(app_info.owner.id)
         bot._app_owners_fetched = True
 
         try:
@@ -183,6 +182,10 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        if not bot.owner_ids:
+            # we could possibly exit here in future
+            log.warning("Bot doesn't have any owner set!")
 
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
