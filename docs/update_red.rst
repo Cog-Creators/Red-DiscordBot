@@ -30,15 +30,17 @@ Red 3.2.0 or newer
 Windows
 -------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
-1. Activate your venv with the following command:
+1. Shut your bot down.
+
+2. Activate your venv with the following command:
 
     .. code:: none
 
         "%userprofile%\redenv\Scripts\activate.bat"
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -48,12 +50,16 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
+
 Linux & Mac
 -----------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
-1. Activate your virtual environment.
+1. Shut your bot down.
+
+2. Activate your virtual environment.
   
     If you used ``venv`` for your virtual environment, use:
 
@@ -67,7 +73,7 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
         pyenv shell <name>
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -77,11 +83,12 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
 
 Red 3.1.X
 *********
 
-If you have Red 3.1.X, you will need to follow the install instructions for your operating system:
+If you have Red 3.1.X, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
 - `Windows <install_windows>`
 - `Linux & Mac <install_linux_mac>`
@@ -121,7 +128,7 @@ Red 3.0.2 and older
 
            redbot-setup --edit
 
-If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system:
+If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
 - `Windows <install_windows>`
 - `Linux & Mac <install_linux_mac>`
