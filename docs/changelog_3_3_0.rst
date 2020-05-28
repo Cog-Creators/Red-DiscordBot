@@ -88,6 +88,7 @@ Documentation changes
 
 - Added information about provisional status of RPC (:issue:`3862`)
 - Revised install instructions (:issue:`3847`)
+- Improved navigation in `document about updating Red <update_red>` (:issue:`3856`)
 
 
 Miscellaneous
