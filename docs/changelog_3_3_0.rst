@@ -15,6 +15,7 @@ Core Bot
 - Important fixes to how PostgreSQL data backend saves data in bulks (:issue:`3829`)
 - Fixed ``[p]localwhitelist`` and ``[p]localblacklist`` commands (:issue:`3857`)
 - Red now includes information on how to update when sending information about being out of date (:issue:`3744`)
+- Using backslashes in bot's username/nickname no longer causes issues (:issue:`3826`, :issue:`3825`)
 
 Admin
 *****
