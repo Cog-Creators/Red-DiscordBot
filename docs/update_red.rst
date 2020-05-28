@@ -55,7 +55,7 @@ If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 Linux & Mac
 -----------
 
-If you have Red 3.2.0 or newer, upgrading can be achieved by following these 4 easy steps:
+If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
 1. Shut your bot down.
 
