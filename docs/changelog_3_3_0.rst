@@ -84,6 +84,9 @@ Core Bot
 
 - Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
 - Libraries using ``pkg_resources`` (like ``humanize`` or ``google-api-python-client``) that were installed through Downloader should now work properly (:issue:`3843`)
+- All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
+
+  -  Note: If you want to use this on bot startup (e.g. in cog's initialisation), you need to await ``bot.wait_until_red_ready()`` first
 
 
 Documentation changes
