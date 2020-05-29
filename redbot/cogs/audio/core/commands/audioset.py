@@ -418,11 +418,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_audioset.group(name="globaldb", enabled=False, hidden=True)
-    @commands.is_owner()
-    async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change global db settings."""
-
     @command_audioset.group(name="autoplay")
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_autoplay(self, ctx: commands.Context):
