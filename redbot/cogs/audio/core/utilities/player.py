@@ -667,6 +667,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except AttributeError:
             length = round(track / 1000)
 
-        if maxlength < length <= 92233720368547758070:  # livestreams return 9223372036854775807ms
+        if length > 900000000000000:  # livestreams return 9223372036854775807ms
+            return True
+        elif length >= maxlength:
             return False
-        return True
+        else:
+            return True
