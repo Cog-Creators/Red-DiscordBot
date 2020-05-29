@@ -418,7 +418,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-
     @command_audioset.group(name="autoplay")
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_autoplay(self, ctx: commands.Context):
@@ -1301,7 +1300,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg += _("I've set the cache age to {age} days").format(age=age)
         await self.config.cache_age.set(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
-
 
     @command_audioset.group(name="globaldb")
     @commands.is_owner()
