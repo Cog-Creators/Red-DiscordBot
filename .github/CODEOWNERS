@@ -1,6 +1,3 @@
-# Default
-*                                   @Stonedestroyer
-
 # Core
 redbot/core/bank.py                      @palmtree5
 redbot/core/checks.py                    @tekulvw
