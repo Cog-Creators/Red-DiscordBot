@@ -45,10 +45,7 @@ class GlobalCacheWrapper:
             self._token = await self.bot.get_shared_api_tokens("audiodb")
         self.api_key = self._token.get("api_key", None)
         self.has_api_key = self.api_key is not None
-        id_list = set(self.bot._co_owners)
-        id_list.update(self.bot.owner_id)
-        id_list.update(self.bot.owner_ids)
-        id_list = list(id_list)
+        id_list = list(self.bot.owner_ids)
         self._handshake_token = "||".join(map(str, id_list))
         return self.api_key
 
