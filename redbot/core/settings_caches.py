@@ -53,6 +53,32 @@ class PrefixManager:
             await self._config.guild_from_id(gid).prefix.set(prefixes)
 
 
+class I18nManager:
+    def __init__(self, config: Config):
+        self._config: Config = config
+        self._guild_locale: Dict[int, str] = {}
+
+    async def get_locale(self, guild: Union[discord.Guild, None]) -> Optional[str]:
+        """Get the guild locale from the cache"""
+        if guild is None:
+            # Return the bot's globally set locale if its None on a guild scope.
+            out = await self._config.locale()
+        elif guild.id in self._guild_locale:
+            out = self._guild_locale[guild.id]
+        else:
+            out = await self._config.guild(guild).locale()
+            if out is None:
+                out = await self._config.locale()
+            self._guild_locale[guild.id] = out
+
+        return out
+
+    async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]):
+        """Set the guild locale in the cache"""
+        self._guild_locale[guild.id] = locale
+        await self._config.guild(guild).locale.set(locale)
+
+
 class IgnoreManager:
     def __init__(self, config: Config):
         self._config: Config = config

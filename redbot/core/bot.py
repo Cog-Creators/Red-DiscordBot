@@ -40,7 +40,7 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
+from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager, I18nManager
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -131,6 +131,8 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
+            locale=None,
+            regional_format=None
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -144,6 +146,7 @@ class RedBase(
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+        self._i18n_cache = I18nManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)

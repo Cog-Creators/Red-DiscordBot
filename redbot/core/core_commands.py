@@ -1302,7 +1302,7 @@ class Core(commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, language_code: str):
+    async def globallocale(self, ctx: commands.Context, language_code: str):
         """
         Changes bot's locale.
 
@@ -1327,11 +1327,44 @@ class Core(commands.Cog, CoreLogic):
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_locale(standardized_locale_name)
         await ctx.bot._config.locale.set(standardized_locale_name)
+        await ctx.send(_("Global locale has been set."))
+
+    @_set.command()
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def locale(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's locale in this server.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
+
+        Use "default" to return to the bot's default set language.
+        To reset to English, use "en-US".
+        """
+        if language_code.lower() == "default":
+            await self.bot._i18n_cache.set_guild_locale(ctx.guild, None)
+            await ctx.send(_("Locale has been set to the default."))
+            return
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        await self.bot._i18n_cache.set_guild_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
-    @_set.command(aliases=["region"])
+    @_set.command(aliases=["globalregion"])
     @checks.is_owner()
-    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+    async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
         Changes bot's regional format. This is used for formatting date, time and numbers.
 
@@ -1364,6 +1397,7 @@ class Core(commands.Cog, CoreLogic):
                 language_code=standardized_locale_name
             )
         )
+    # TODO Regional formating i18n bullcrap what was its name again. IDFK
 
     @_set.command()
     @checks.is_owner()

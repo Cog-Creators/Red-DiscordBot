@@ -2,8 +2,11 @@ import contextlib
 import functools
 import io
 import os
+import logging
+
 from pathlib import Path
 from typing import Callable, Union, Dict, Optional
+from contextvars import ContextVar
 
 import babel.localedata
 from babel.core import Locale
@@ -17,7 +20,9 @@ __all__ = [
     "get_babel_locale",
 ]
 
-_current_locale = "en-US"
+log = logging.getLogger("red.i18n")
+
+_current_locale = ContextVar("_current_locale", default="en-US")
 _current_regional_format = None
 
 WAITING_FOR_MSGID = 1
@@ -32,12 +37,17 @@ _translators = []
 
 
 def get_locale() -> str:
-    return _current_locale
+    return str(_current_locale.get())
 
 
 def set_locale(locale: str) -> None:
     global _current_locale
-    _current_locale = locale
+    _current_locale = ContextVar("_current_locale", default=locale)
+    reload_locales()
+
+
+def set_context_locale(locale: str) -> None:
+    _current_locale.set(locale)
     reload_locales()
 
 
@@ -77,6 +87,10 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
     untranslated = ""
     translated = ""
     translations = {}
+    locale = get_locale()
+
+    translations[locale] = {}
+
     for line in translation_file:
         line = line.strip()
 
@@ -84,7 +98,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
             # New msgid
             if step is IN_MSGSTR and translated:
                 # Store the last translation
-                translations[_unescape(untranslated)] = _unescape(translated)
+                translations[locale][_unescape(untranslated)] = _unescape(translated)
             step = IN_MSGID
             untranslated = line[len(MSGID) : -1]
         elif line.startswith('"') and line.endswith('"'):
@@ -101,7 +115,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
 
     if step is IN_MSGSTR and translated:
         # Store the final translation
-        translations[_unescape(untranslated)] = _unescape(translated)
+        translations[locale][_unescape(untranslated)] = _unescape(translated)
     return translations
 
 
@@ -147,6 +161,7 @@ class Translator(Callable[[str], str]):
         self.cog_folder = Path(file_location).resolve().parent
         self.cog_name = name
         self.translations = {}
+        self.assume_loaded_locale = []
 
         _translators.append(self)
 
@@ -158,20 +173,38 @@ class Translator(Callable[[str], str]):
         This will look for the string in the translator's :code:`.pot` file,
         with respect to the current locale.
         """
+        locale = get_locale()
         try:
-            return self.translations[untranslated]
+            return self.translations[locale][untranslated]
         except KeyError:
+            log.debug(f"missed hit for {locale}/{untranslated[:10]}")
             return untranslated
+
+    def check_cache_for_locale(self, locale: str) -> bool:
+        """Check is an locale exists with in the cache"""
+        if locale in self.translations:
+            return True
+        return False
 
     def load_translations(self):
         """
         Loads the current translations.
         """
-        self.translations = {}
+        locale = get_locale()
+
+        if locale.lower() == "en-us":
+            # Red is written in en-US, no point in loading it
+            return
+        if locale in self.translations:
+            return
+        if locale in self.assume_loaded_locale:
+            return
+
         locale_path = get_locale_path(self.cog_folder, "po")
         with contextlib.suppress(IOError, FileNotFoundError):
             with locale_path.open(encoding="utf-8") as file:
                 self._parse(file)
+        self.assume_loaded_locale.append(locale)
 
     def _parse(self, translation_file):
         self.translations.update(_parse(translation_file))
