@@ -418,10 +418,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_audioset.group(name="globaldb", enabled=False, hidden=True)
-    @commands.is_owner()
-    async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change global db settings."""
 
     @command_audioset.group(name="autoplay")
     @commands.mod_or_permissions(manage_guild=True)
@@ -1306,10 +1302,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.cache_age.set(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
+
+    @command_audioset.group(name="globaldb")
     @commands.is_owner()
-    @command_audioset.group(name="audiodb")
     async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change audiodb settings."""
+        """Change global db settings."""
 
     @command_audioset_audiodb.command(name="toggle")
     async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
@@ -1336,7 +1333,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.send(_("Request timeout set to {time} second(s)").format(time=timeout))
 
     @command_audioset_audiodb.command(name="contribute")
-    async def command_audioset_audiodb_ontribute(self, ctx: commands.Context):
+    async def command_audioset_audiodb_contribute(self, ctx: commands.Context):
         """Send your local DB upstream."""
         tokens = await self.bot.get_shared_api_tokens("audiodb")
         api_key = tokens.get("api_key", None)
@@ -1363,42 +1360,3 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not pred.result:
             return await self.send_embed_msg(ctx, title=_("Cancelled."))
         await self.api_interface.contribute_to_global(ctx, db_entries)
-
-    @command_audioset.command(name="persistqueue")
-    @commands.admin()
-    async def command_audioset_persist_queue(self, ctx: commands.Context):
-        """Toggle persistent queues.
-
-        Persistent queues allows the current queue to be restored when the queue closes.
-        """
-        persist_cache = self._persist_queue_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
-        )
-        await self.config.guild(ctx.guild).persist_queue.set(not persist_cache)
-        self._persist_queue_cache[ctx.guild.id] = not persist_cache
-        await self.send_embed_msg(
-            ctx,
-            title=_("Setting Changed"),
-            description=_("Persisting queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
-            ),
-        )
-
-    @command_audioset.command(name="restart")
-    @commands.is_owner()
-    async def command_audioset_restart(self, ctx: commands.Context):
-        """Restarts the lavalink connection."""
-        async with ctx.typing():
-            lavalink.unregister_event_listener(self.lavalink_event_handler)
-            await lavalink.close()
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
-
-            self.lavalink_restart_connect()
-            lavalink.register_event_listener(self.lavalink_event_handler)
-            await self.restore_players()
-            await self.send_embed_msg(
-                ctx,
-                title=_("Restarting Lavalink"),
-                description=_("It can take a couple of minutes for Lavalink to fully start up."),
-            )
