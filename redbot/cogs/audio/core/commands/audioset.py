@@ -732,14 +732,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset.command(name="lyrics")
     @commands.guild_only()
     @commands.mod_or_permissions(administrator=True)
-    async def command_audioset_lryics(self, ctx: commands.Context):
+    async def command_audioset_lyrics(self, ctx: commands.Context):
         """Prioritise tracks with lyrics."""
         prefer_lyrics = await self.config.guild(ctx.guild).prefer_lyrics()
         await self.config.guild(ctx.guild).prefer_lyrics.set(not prefer_lyrics)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Prefer tracks with lryics: {true_or_false}.").format(
+            description=_("Prefer tracks with lyrics: {true_or_false}.").format(
                 true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
             ),
         )
