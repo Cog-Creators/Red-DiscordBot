@@ -44,7 +44,7 @@ class Streams(commands.Cog):
     currently live. Alerts can also be configured to post in a
     channel when a streamer goes live.
 
-    Twitch and YouTube need API tokens to work.
+    Twitch and YouTube need API tokens.
     """
 
     global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
