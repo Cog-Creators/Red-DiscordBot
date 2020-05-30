@@ -454,6 +454,21 @@ class RedBase(
         """
         return await self.get_prefix(NotMessage(guild))
 
+    async def set_prefixes(self, prefixes: List[str], guild: Optional[discord.Guild] = None):
+        """
+        Set server or DM prefixes.
+
+        If not provided a guild (or passed None) it will set the DM prefixes.
+
+        Parameters
+        ----------
+        prefixes : List[str]
+            The prefixes you want to set
+        guild : Optional[discord.Guild]
+            The guild you want to set prefixes for.  Omit (or pass None) to set the DM prefixes
+        """
+        await self._prefix_cache.set_prefixes(guild=guild, prefixes=prefixes)
+
     async def get_embed_color(self, location: discord.abc.Messageable) -> discord.Color:
         """
         Get the embed color for a location. This takes into account all related settings.

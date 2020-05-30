@@ -261,7 +261,7 @@ class CoreLogic:
             The current (or new) list of prefixes.
         """
         if prefixes:
-            await self.bot._prefix_cache.set_prefixes(guild=None, prefixes=prefixes)
+            await self.bot.set_prefixes(guild=None, prefixes=prefixes)
             return prefixes
         return await self.bot._prefix_cache.get_prefixes(guild=None)
 
@@ -1284,7 +1284,7 @@ class Core(commands.Cog, CoreLogic):
         if not prefixes:
             await ctx.send_help()
             return
-        await self._prefixes(prefixes)
+        await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
@@ -1293,11 +1293,11 @@ class Core(commands.Cog, CoreLogic):
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s server prefix(es)"""
         if not prefixes:
-            await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=[])
+            await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=prefixes)
+        await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command()
