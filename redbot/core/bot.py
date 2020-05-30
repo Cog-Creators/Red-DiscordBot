@@ -463,7 +463,7 @@ class RedBase(
         Parameters
         ----------
         prefixes : List[str]
-            The prefixes you want to set
+            The prefixes you want to set. Passing empty list will reset prefixes for the ``guild``
         guild : Optional[discord.Guild]
             The guild you want to set the prefixes for. Omit (or pass None) to set the global prefixes
 
