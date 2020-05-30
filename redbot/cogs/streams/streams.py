@@ -46,7 +46,7 @@ class Streams(commands.Cog):
 
     Twitch and YouTube need API tokens to work.
     """
-    
+
     global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
 
     guild_defaults = {

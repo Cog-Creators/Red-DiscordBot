@@ -29,7 +29,7 @@ class Reports(commands.Cog):
     sent to a channel in the server, where staff members can
     respond.
     """
-    
+
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
     default_report = {"report": {}}
