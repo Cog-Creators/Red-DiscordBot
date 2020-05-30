@@ -4,7 +4,7 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Drapersniper`
+| :ghuser:`Drapersniper`, :ghuser:`NeuroAssassin`
 
 End-user changelog
 ------------------
@@ -14,6 +14,10 @@ End-user changelog
 Developer changelog
 -------------------
 
+Core Bot
+********
+
+- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
