@@ -1,6 +1,3 @@
-# Default
-*                                   @Twentysix26
-
 # Core
 redbot/core/bank.py                      @palmtree5
 redbot/core/checks.py                    @tekulvw
