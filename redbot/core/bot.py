@@ -456,9 +456,9 @@ class RedBase(
 
     async def set_prefixes(self, prefixes: List[str], guild: Optional[discord.Guild] = None):
         """
-        Set server or DM prefixes.
+        Set global/server prefixes.
 
-        If not provided a guild (or passed None) it will set the DM prefixes.
+        If ``guild`` is not provided (or None is passed), this will set the global prefixes.
 
         Parameters
         ----------
@@ -466,6 +466,13 @@ class RedBase(
             The prefixes you want to set
         guild : Optional[discord.Guild]
             The guild you want to set prefixes for.  Omit (or pass None) to set the DM prefixes
+
+        Raises
+        ------
+        TypeError
+            If prefixes are not a list of strings
+        ValueError
+            If setting global prefixes and pass an empty prefix list
         """
         await self._prefix_cache.set_prefixes(guild=guild, prefixes=prefixes)
 
