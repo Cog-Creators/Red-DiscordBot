@@ -38,7 +38,15 @@ log = logging.getLogger("red.core.cogs.Streams")
 
 @cog_i18n(_)
 class Streams(commands.Cog):
+    """Various commands realting to streaming platforms.
 
+    You can check if a Twitch, YouTube, Picarto or Mixer stream is
+    currently live. Alerts can also be configured to post in a
+    channel when a streamer goes live.
+
+    Twitch and YouTube need API tokens to work.
+    """
+    
     global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
 
     guild_defaults = {
