@@ -413,10 +413,11 @@ class Warnings(commands.Cog):
 
         toggle_channel = await self.config.guild(guild).toggle_channel()
         if toggle_channel:
-            em = discord.Embed(
-                title=_("Warning from {user}").format(user=ctx.author),
-                description=reason_type["description"],
-            )
+            if showmod:
+                title = _("Warning from {user}").format(user=ctx.author)
+            else:
+                title = _("Warning")
+            em = discord.Embed(title=title, description=reason_type["description"],)
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
             if warn_channel:
