@@ -345,11 +345,11 @@ class Warnings(commands.Cog):
         if user.bot:
             await ctx.send(_("You cannot warn other bots."))
             return
-        guild_settings = await self.config.guild(ctx.guild)
-        custom_allowed = guild_settings.custom_allowed()
+        guild_settings = await self.config.guild(ctx.guild).all()
+        custom_allowed = guild_settings["custom_allowed"]
 
         reason_type = None
-        async with guild_settings.reasons() as registered_reasons:
+        async with self.config.guild.reasons() as registered_reasons:
             if reason.lower() not in registered_reasons:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
@@ -383,8 +383,8 @@ class Warnings(commands.Cog):
         await member_settings.total_points.set(current_point_count)
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
-        dm = guild_settings.toggle_dm()
-        showmod = guild_settings.show_mod()
+        dm = guild_settings["toggle_dm"]
+        showmod = guild_settings["show_mod"]
         dm_failed = False
         if dm:
             if showmod:
@@ -411,7 +411,7 @@ class Warnings(commands.Cog):
                 ).format(user=user.mention)
             )
 
-        toggle_channel = await self.config.guild(guild).toggle_channel()
+        toggle_channel = guild_settings["toggle_channel"]
         if toggle_channel:
             if showmod:
                 title = _("Warning from {user}").format(user=ctx.author)
@@ -419,7 +419,7 @@ class Warnings(commands.Cog):
                 title = _("Warning")
             em = discord.Embed(title=title, description=reason_type["description"],)
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
-            warn_channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
+            warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
             if warn_channel:
                 if channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
