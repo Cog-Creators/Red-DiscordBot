@@ -346,10 +346,10 @@ class Warnings(commands.Cog):
             await ctx.send(_("You cannot warn other bots."))
             return
         guild_settings = await self.config.guild(ctx.guild).all()
-        custom_allowed = guild_settings["custom_allowed"]
+        custom_allowed = guild_settings["allow_custom_reasons"]
 
         reason_type = None
-        async with self.config.guild.reasons() as registered_reasons:
+        async with self.config.guild(ctx.guild).reasons() as registered_reasons:
             if reason.lower() not in registered_reasons:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
@@ -421,9 +421,9 @@ class Warnings(commands.Cog):
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
             if warn_channel:
-                if channel.permissions_for(guild.me).send_messages:
+                if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
-                        await channel.send(
+                        await warn_channel.send(
                             _("{user} has been warned.").format(user=user.mention), embed=em,
                         )
 
