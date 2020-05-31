@@ -345,7 +345,7 @@ class Warnings(commands.Cog):
         if user.bot:
             await ctx.send(_("You cannot warn other bots."))
             return
-        guild_settings = self.config.guild(ctx.guild)
+        guild_settings = await self.config.guild(ctx.guild)
         custom_allowed = guild_settings.custom_allowed()
 
         reason_type = None
