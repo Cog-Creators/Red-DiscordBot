@@ -208,12 +208,12 @@ class Case:
         created_at: int,
         action_type: str,
         user: Union[discord.User, int],
-        moderator: discord.User,
+        moderator: Optional[Union[discord.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[discord.User] = None,
+        amended_by: Optional[Union[discord.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -266,6 +266,18 @@ class Case:
                 await self.message.edit(embed=case_content)
             else:
                 await self.message.edit(content=case_content)
+        except discord.Forbidden:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID due to missing permissions."
+            )
+        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+            log.exception(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s due to unexpected error.",
+                self.case_number,
+                self.guild.id,
+            )
         finally:
             return None
 
@@ -294,10 +306,14 @@ class Case:
         else:
             reason = _("**Reason:** Use the `reason` command to add it")
 
-        if self.moderator is not None:
-            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
-        else:
+        if self.moderator is None:
             moderator = _("Unknown")
+        elif isinstance(self.moderator, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            moderator = f"[{translated}] ({self.moderator})"
+        else:
+            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         until = None
         duration = None
         if self.until:
@@ -309,13 +325,14 @@ class Case:
             until = end_fmt
             duration = dur_fmt
 
-        amended_by = None
-        if self.amended_by:
-            amended_by = escape_spoilers(
-                "{}#{} ({})".format(
-                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
-                )
-            )
+        if self.amended_by is None:
+            amended_by = None
+        elif isinstance(self.amended_by, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            amended_by = f"[{translated}] ({self.amended_by})"
+        else:
+            amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
 
         last_modified = None
         if self.modified_at:
@@ -325,7 +342,9 @@ class Case:
 
         if isinstance(self.user, int):
             if self.last_known_username is None:
-                user = f"[Unknown or Deleted User] ({self.user})"
+                # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+                translated = _("Unknown or Deleted User")
+                user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
             avatar_url = None
@@ -383,10 +402,14 @@ class Case:
             The case in the form of a dict
 
         """
-        if self.moderator is not None:
-            mod = self.moderator.id
+        if self.moderator is None or isinstance(self.moderator, int):
+            mod = self.moderator
         else:
-            mod = None
+            mod = self.moderator.id
+        if self.amended_by is None or isinstance(self.amended_by, int):
+            amended_by = self.amended_by
+        else:
+            amended_by = self.amended_by.id
         if isinstance(self.user, int):
             user_id = self.user
         else:
@@ -402,7 +425,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
-            "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
+            "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
         }
@@ -811,8 +834,20 @@ async def create_case(
         else:
             msg = await mod_channel.send(case_content)
         await case.edit({"message": msg})
-    except (RuntimeError, discord.HTTPException):
+    except RuntimeError:  # modlog channel isn't set
         pass
+    except discord.Forbidden:
+        log.info(
+            "Modlog failed to edit the Discord message for"
+            " the case #%s from guild with ID due to missing permissions."
+        )
+    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        log.exception(
+            "Modlog failed to send the Discord message for"
+            " the case #%s from guild with ID %s due to unexpected error.",
+            case.case_number,
+            case.guild.id,
+        )
     finally:
         return case
 

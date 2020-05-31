@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -13,55 +13,55 @@ msgstr ""
 "X-Crowdin-Language: zh-TW\n"
 "Language: zh_TW\n"
 
-#: redbot/core/utils/chat_formatting.py:380
+#: redbot/core/utils/chat_formatting.py:388
 msgid ", and "
 msgstr "，和 "
 
-#: redbot/core/utils/chat_formatting.py:447
+#: redbot/core/utils/chat_formatting.py:455
 msgid "year"
-msgstr ""
+msgstr "年"
 
-#: redbot/core/utils/chat_formatting.py:447
+#: redbot/core/utils/chat_formatting.py:455
 msgid "years"
-msgstr ""
+msgstr "年"
 
-#: redbot/core/utils/chat_formatting.py:448
+#: redbot/core/utils/chat_formatting.py:456
 msgid "month"
-msgstr ""
+msgstr "月"
 
-#: redbot/core/utils/chat_formatting.py:448
+#: redbot/core/utils/chat_formatting.py:456
 msgid "months"
-msgstr ""
+msgstr "月"
 
-#: redbot/core/utils/chat_formatting.py:449
+#: redbot/core/utils/chat_formatting.py:457
 msgid "day"
-msgstr ""
+msgstr "日"
 
-#: redbot/core/utils/chat_formatting.py:449
+#: redbot/core/utils/chat_formatting.py:457
 msgid "days"
 msgstr "日"
 
-#: redbot/core/utils/chat_formatting.py:450
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hour"
-msgstr ""
+msgstr "時"
 
-#: redbot/core/utils/chat_formatting.py:450
+#: redbot/core/utils/chat_formatting.py:458
 msgid "hours"
 msgstr "小時"
 
-#: redbot/core/utils/chat_formatting.py:451
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minute"
-msgstr ""
+msgstr "分"
 
-#: redbot/core/utils/chat_formatting.py:451
+#: redbot/core/utils/chat_formatting.py:459
 msgid "minutes"
 msgstr "分鐘"
 
-#: redbot/core/utils/chat_formatting.py:452
+#: redbot/core/utils/chat_formatting.py:460
 msgid "second"
-msgstr ""
+msgstr "秒"
 
-#: redbot/core/utils/chat_formatting.py:452
+#: redbot/core/utils/chat_formatting.py:460
 msgid "seconds"
 msgstr "秒"
 

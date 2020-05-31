@@ -42,7 +42,7 @@ msgstr "Ваш поиск не дал результатов."
 
 #: redbot/cogs/image/image.py:75
 msgid "Search results...\\n"
-msgstr ""
+msgstr "Результаты поиска...\\n"
 
 #: redbot/cogs/image/image.py:82 redbot/cogs/image/image.py:148
 msgid "Something went wrong. Error code is {code}."

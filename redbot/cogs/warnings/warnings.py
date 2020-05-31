@@ -342,9 +342,12 @@ class Warnings(commands.Cog):
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
-        guild_settings = await self.config.guild(guild).all()
-        custom_allowed = guild_settings["allow_custom_reasons"]
-        guild_settings = self.config.guild(ctx.guild)
+        if user.bot:
+            await ctx.send(_("You cannot warn other bots."))
+            return
+        guild_settings = self.config.guild(ctx.guild).all()
+        custom_allowed = guild_settings["custom_allowed"]
+        
         reason_type = None
         async with guild_settings.reasons() as registered_reasons:
             if reason.lower() not in registered_reasons:

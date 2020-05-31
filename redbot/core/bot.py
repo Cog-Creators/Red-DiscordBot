@@ -63,21 +63,23 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
-# barely spurious warning caused by our intentional shadowing
+# Order of inheritance here matters.
+# d.py autoshardedbot should be at the end
+# all of our mixins should happen before,
+# and must include a call to super().__init__ unless they do not provide an init
 class RedBase(
-    commands.GroupMixin, dpy_commands.bot.BotBase, RPCMixin
-):  # pylint: disable=no-member
-    """Mixin for the main bot class.
-
-    This exists because `Red` inherits from `discord.AutoShardedClient`, which
-    is something other bot classes may not want to have as a parent class.
+    commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
+):  # pylint: disable=no-member # barely spurious warning caused by shadowing
+    """
+    The historical reasons for this mixin no longer apply
+    and only remains temporarily to not break people
+    relying on the publicly exposed bases existing.
     """
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
-        self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
         self._last_exception = None
@@ -151,8 +153,16 @@ class RedBase(
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
-        if cli_flags.owner and "owner_id" not in kwargs:
-            kwargs["owner_id"] = cli_flags.owner
+        if "owner_id" in kwargs:
+            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+
+        self._owner_id_overwrite = cli_flags.owner
+
+        if "owner_ids" in kwargs:
+            kwargs["owner_ids"] = set(kwargs["owner_ids"])
+        else:
+            kwargs["owner_ids"] = set()
+        kwargs["owner_ids"].update(cli_flags.co_owner)
 
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
@@ -170,6 +180,8 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
+        # to prevent multiple calls to app info in `is_owner()`
+        self._app_owners_fetched = False
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -442,6 +454,28 @@ class RedBase(
         """
         return await self.get_prefix(NotMessage(guild))
 
+    async def set_prefixes(self, prefixes: List[str], guild: Optional[discord.Guild] = None):
+        """
+        Set global/server prefixes.
+
+        If ``guild`` is not provided (or None is passed), this will set the global prefixes.
+
+        Parameters
+        ----------
+        prefixes : List[str]
+            The prefixes you want to set. Passing empty list will reset prefixes for the ``guild``
+        guild : Optional[discord.Guild]
+            The guild you want to set the prefixes for. Omit (or pass None) to set the global prefixes
+
+        Raises
+        ------
+        TypeError
+            If ``prefixes`` is not a list of strings
+        ValueError
+            If empty list is passed to ``prefixes`` when setting global prefixes
+        """
+        await self._prefix_cache.set_prefixes(guild=guild, prefixes=prefixes)
+
     async def get_embed_color(self, location: discord.abc.Messageable) -> discord.Color:
         """
         Get the embed color for a location. This takes into account all related settings.
@@ -533,8 +567,10 @@ class RedBase(
         init_global_checks(self)
         init_events(self, cli_flags)
 
-        if self.owner_id is None:
-            self.owner_id = await self._config.owner()
+        if self._owner_id_overwrite is None:
+            self._owner_id_overwrite = await self._config.owner()
+        if self._owner_id_overwrite is not None:
+            self.owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
@@ -638,6 +674,9 @@ class RedBase(
             await self.rpc.initialize(self.rpc_port)
 
     async def start(self, *args, **kwargs):
+        """
+        Overridden start which ensures cog load and other pre-connection tasks are handled
+        """
         cli_flags = kwargs.pop("cli_flags")
         await self.pre_flight(cli_flags=cli_flags)
         return await super().start(*args, **kwargs)
@@ -701,24 +740,24 @@ class RedBase(
         -------
         bool
         """
-        if user.id in self._co_owners:
+        if user.id in self.owner_ids:
             return True
 
-        if self.owner_id:
-            return self.owner_id == user.id
-        elif self.owner_ids:
-            return user.id in self.owner_ids
-        else:
+        ret = False
+        if not self._app_owners_fetched:
             app = await self.application_info()
             if app.team:
                 if self._use_team_features:
-                    self.owner_ids = ids = {m.id for m in app.team.members}
-                    return user.id in ids
-            else:
-                self.owner_id = owner_id = app.owner.id
-                return user.id == owner_id
+                    ids = {m.id for m in app.team.members}
+                    self.owner_ids.update(ids)
+                    ret = user.id in ids
+            elif self._owner_id_overwrite is None:
+                owner_id = app.owner.id
+                self.owner_ids.add(owner_id)
+                ret = user.id == owner_id
+            self._app_owners_fetched = True
 
-        return False
+        return ret
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
@@ -1157,8 +1196,7 @@ class RedBase(
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        team_ids = () if not self._use_team_features else self.owner_ids
-        for user_id in set((self.owner_id, *self._co_owners, *team_ids)):
+        for user_id in self.owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams
@@ -1232,12 +1270,6 @@ class RedBase(
         await asyncio.sleep(delay)
         await _delete_helper(message)
 
-
-class Red(RedBase, discord.AutoShardedClient):
-    """
-    You're welcome Caleb.
-    """
-
     async def logout(self):
         """Logs out of Discord and closes all connections."""
         await super().logout()
@@ -1266,6 +1298,13 @@ class Red(RedBase, discord.AutoShardedClient):
 
         await self.logout()
         sys.exit(self._shutdown_mode)
+
+
+# This can be removed, and the parent class renamed as a breaking change
+class Red(RedBase):
+    """
+    Our subclass of discord.ext.commands.AutoShardedBot
+    """
 
 
 class ExitCodes(IntEnum):

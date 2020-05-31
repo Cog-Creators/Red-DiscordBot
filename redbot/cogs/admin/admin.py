@@ -467,6 +467,7 @@ class Admin(commands.Cog):
             await ctx.send(_("The bot is now serverlocked."))
 
     # region Event Handlers
+    @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
         if await self.config.serverlocked():
             await guild.leave()
