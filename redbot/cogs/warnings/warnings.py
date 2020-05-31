@@ -345,9 +345,9 @@ class Warnings(commands.Cog):
         if user.bot:
             await ctx.send(_("You cannot warn other bots."))
             return
-        guild_settings = self.config.guild(ctx.guild).all()
-        custom_allowed = guild_settings["custom_allowed"]
-        
+        guild_settings = self.config.guild(ctx.guild)
+        custom_allowed = guild_settings.custom_allowed()
+
         reason_type = None
         async with guild_settings.reasons() as registered_reasons:
             if reason.lower() not in registered_reasons:
@@ -383,8 +383,8 @@ class Warnings(commands.Cog):
         await member_settings.total_points.set(current_point_count)
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
-        dm = guild_settings["toggle_dm"]
-        showmod = guild_settings["show_mod"]
+        dm = guild_settings.toggle_dm()
+        showmod = guild_settings.show_mod()
         dm_failed = False
         if dm:
             if showmod:
