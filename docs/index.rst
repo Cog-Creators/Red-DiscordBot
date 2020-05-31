@@ -16,6 +16,7 @@ Welcome to Red - Discord Bot's documentation!
     install_linux_mac
     update_red
     about_venv
+    autostart_windows
     autostart_systemd
     autostart_pm2
 
