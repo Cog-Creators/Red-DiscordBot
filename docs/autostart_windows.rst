@@ -8,9 +8,9 @@ Setting up auto-restart on Windows
 
 This script will setup windows schedule task to start the bot when the computer starts, it also checks for updates when the bot starts or is restarted by command ``[p]restart``.
 
--------------------------
-Creating the batch file
--------------------------
+--------------------------------------
+Creating the auto restart batch file
+--------------------------------------
 
 .. important:: If you followed the `install_windows` your virtual environment should be ``"%userprofile%\redenv"``.   
  
@@ -22,27 +22,12 @@ Then replace <path to redenv> with eg ``E:\redenv`` the directory where you inst
     @ECHO OFF
     SET venv=<path to redenv>
     SET instance_name=<your instance name>
-    SET auto_update=TRUE
-    SET setup_tasks=TRUE
-
-    :SETUP_TASKS
-    IF %setup_tasks% EQU TRUE (
-        ECHO Setting up windows scheduler task.
-        schtasks /query /TN "RedBot\autostart" >NUL 2>&1 || powershell Start-Process -Verb RunAs cmd.exe -Args '/c', 'SCHTASKS /CREATE /SC ONSTART /TN "RedBot\autostart" /TR "%venv%\%~n0%~x0" /F'
-    )
 
     :START
     PUSHD %venv%    
 
     :ACTIVATE_VENV
     CALL "%venv%\Scripts\activate.bat"
-
-    :UPDATE
-    IF %auto_update% EQU TRUE (
-        ECHO Checking for updates.
-        python -m pip install -U pip setuptools wheel
-        python -m pip install -U Red-DiscordBot
-    )
 
     ECHO starting redbot.
     CALL python -O -m redbot %instance_name%
@@ -51,6 +36,16 @@ Then replace <path to redenv> with eg ``E:\redenv`` the directory where you inst
         GOTO :START
     )
 
-.. note:: If you are getting **Access denied** when scheduled task is trying to setup it's task, try run it as administrator. Right click on the file and select **Run as administarator**.
-
 .. important:: Do not forget to change ``<path to redenv>`` and ``<your instance name>`` in the script before use.
+
+----------------------------------
+Create the windows startup task.
+----------------------------------
+
+Open command prompt and run the following command to create a new task that will run the bot on startup. 
+
+.. code-block:: batch
+
+    SCHTASKS /CREATE /SC ONSTART /TN "RedBot\autostart" /TR "<path to redenv>" /F
+
+.. important:: Do not forget to change the ``<path to redenv>``
