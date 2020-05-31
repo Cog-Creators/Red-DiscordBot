@@ -45,8 +45,6 @@ class Downloader(commands.Cog):
     group of cogs by one creator you can install. You always need
     to add the creater's repository using the `[p]repo` command
     before you can install cogs from the creator.
-
-    A list of approved repos can be found on the [Cog Board](https://cogboard.red/t/approved-repositories/210).
     """
 
     def __init__(self, bot: Red):
