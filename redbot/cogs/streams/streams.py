@@ -41,11 +41,7 @@ class Streams(commands.Cog):
     """Various commands relating to streaming platforms.
 
     You can check if a Twitch, YouTube, Picarto or Mixer stream is
-    currently live. Stream alerts can also be configured to
-    automatically post in a channel when a streamer goes live.
-
-    Twitch and YouTube require access to their API, so you need to
-    set API tokens.
+    currently live.
     """
 
     global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
