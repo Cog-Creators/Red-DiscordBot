@@ -323,7 +323,7 @@ def cli(ctx, debug):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.option(
     "--no-prompt",
     "interactive",
@@ -388,7 +388,7 @@ def delete(
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument("backend", type=click.Choice(["json", "postgres", "redis"]))
 def convert(instance, backend):
     """Convert data backend of an instance."""
@@ -417,7 +417,7 @@ def convert(instance, backend):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument(
     "destination_folder",
     type=click.Path(

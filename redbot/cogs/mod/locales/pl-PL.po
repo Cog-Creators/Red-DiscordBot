@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
+"POT-Creation-Date: 2020-05-21 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -15,25 +15,25 @@ msgstr ""
 
 #: redbot/cogs/mod/converters.py:20
 msgid "{} doesn't look like a valid user ID."
-msgstr ""
+msgstr "{} nie wygląda na prawidłowe ID użytkownika."
 
 #: redbot/cogs/mod/events.py:53 redbot/cogs/mod/events.py:67
 msgid "Mention spam (Autoban)"
-msgstr ""
+msgstr "Spam wzmiankami (Autoban)"
 
 #: redbot/cogs/mod/kickban.py:73
 msgid "I cannot let you do that. Self-harm is bad {}"
-msgstr ""
+msgstr "Nie mogę na to pozwolić. Samookaleczenie jest złe {}"
 
 #: redbot/cogs/mod/kickban.py:75 redbot/cogs/mod/kickban.py:190
 #: redbot/cogs/mod/kickban.py:467 redbot/cogs/mod/kickban.py:543
 #: redbot/cogs/mod/mutes.py:16
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
-msgstr ""
+msgstr "Nie mogę ci pozwolić by to zrobić. Nie jesteś wyższy niż użytkownik w hierarchii roli."
 
 #: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:198
 msgid "I cannot do that due to discord hierarchy rules"
-msgstr ""
+msgstr "Nie mogę tego zrobić ze względu na reguły hierarchii Discorda"
 
 #: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:314
 msgid "Invalid days. Must be between 0 and 7."
@@ -328,7 +328,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mutes.py:252
 #, docstring
-msgid "Mutes user in the server"
+msgid "Mutes user in the server."
 msgstr ""
 
 #: redbot/cogs/mod/mutes.py:276

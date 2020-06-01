@@ -261,7 +261,7 @@ class CoreLogic:
             The current (or new) list of prefixes.
         """
         if prefixes:
-            await self.bot._prefix_cache.set_prefixes(guild=None, prefixes=prefixes)
+            await self.bot.set_prefixes(guild=None, prefixes=prefixes)
             return prefixes
         return await self.bot._prefix_cache.get_prefixes(guild=None)
 
@@ -1284,7 +1284,7 @@ class Core(commands.Cog, CoreLogic):
         if not prefixes:
             await ctx.send_help()
             return
-        await self._prefixes(prefixes)
+        await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
@@ -1293,11 +1293,11 @@ class Core(commands.Cog, CoreLogic):
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s server prefix(es)"""
         if not prefixes:
-            await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=[])
+            await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot._prefix_cache.set_prefixes(guild=ctx.guild, prefixes=prefixes)
+        await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command()
@@ -1585,7 +1585,7 @@ class Core(commands.Cog, CoreLogic):
             footer += _(" | Server ID: {}").format(guild.id)
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
 
         content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
@@ -1690,7 +1690,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}", prefixes[0])
+        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
@@ -1945,8 +1945,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
@@ -1980,8 +1980,8 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
@@ -2001,7 +2001,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localblacklist(self, ctx: commands.Context):
         """
-        blacklist management commands.
+        Blacklist management commands.
         """
         pass
 
@@ -2027,8 +2027,8 @@ class Core(commands.Cog, CoreLogic):
             if await ctx.bot.is_owner(uid):
                 await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
@@ -2064,9 +2064,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        names = [getattr(users_or_roles, "name", users_or_roles) for u_or_r in users_or_roles]
-        uids = [getattr(users_or_roles, "id", users_or_roles) for u_or_r in users_or_roles]
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
             _("{names} removed from the local blacklist.").format(names=humanize_list(names))
@@ -2077,7 +2077,7 @@ class Core(commands.Cog, CoreLogic):
         """
         Clears the blacklist.
         """
-        await ctx.bot._config.guild(ctx.guild).blacklist.set([])
+        await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
         await ctx.send(_("Local blacklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)

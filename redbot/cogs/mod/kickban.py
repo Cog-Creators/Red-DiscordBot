@@ -551,8 +551,7 @@ class KickBanMixin(MixinMeta):
         # Store this channel for the case channel.
 
         try:
-            await member.move_to(discord.Object(id=None))
-            # Work around till we get D.py 1.1.0, whereby we can directly do None.
+            await member.move_to(None)
         except discord.Forbidden:  # Very unlikely that this will ever occur
             await ctx.send(_("I am unable to kick this member from the voice channel."))
             return

@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import platform
 import sys
 import codecs
 import datetime
@@ -19,7 +20,7 @@ from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results
+from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results, expected_version
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
 log = logging.getLogger("red")
@@ -57,10 +58,9 @@ def init_events(bot, cli_flags):
 
         if app_info.team:
             if bot._use_team_features:
-                bot.owner_ids = {m.id for m in app_info.team.members}
-        else:
-            if bot.owner_id is None:
-                bot.owner_id = app_info.owner.id
+                bot.owner_ids.update(m.id for m in app_info.team.members)
+        elif bot._owner_id_overwrite is None:
+            bot.owner_ids.add(app_info.owner.id)
         bot._app_owners_fetched = True
 
         try:
@@ -99,10 +99,59 @@ def init_events(bot, cli_flags):
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                outdated_red_message = (
+                outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(data["info"]["version"], red_version)
+                requires_python = data["info"]["requires_python"]
+                current_python = platform.python_version()
+                extra_update = _(
+                    "\n\nWhile the following command should work in most scenarios as it is "
+                    "based on your current OS, environment, and Python version, "
+                    "**we highly recommend you to read the update docs at <{docs}> and "
+                    "make sure there is nothing else that "
+                    "needs to be done during the update.**"
+                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
+                if expected_version(current_python, requires_python):
+                    installed_extras = []
+                    for extra, reqs in red_pkg._dep_map.items():
+                        if extra is None:
+                            continue
+                        try:
+                            pkg_resources.require(req.name for req in reqs)
+                        except pkg_resources.DistributionNotFound:
+                            pass
+                        else:
+                            installed_extras.append(extra)
+
+                    if installed_extras:
+                        package_extras = f"[{','.join(installed_extras)}]"
+                    else:
+                        package_extras = ""
+
+                    extra_update += _(
+                        "\n\nTo update your bot, first shutdown your "
+                        "bot then open a window of {console} (Not as admin) and "
+                        "run the following:\n\n"
+                    ).format(
+                        console=_("Command Prompt")
+                        if platform.system() == "Windows"
+                        else _("Terminal")
+                    )
+                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                        python=sys.executable, package_extras=package_extras
+                    )
+
+                else:
+                    extra_update += _(
+                        "\n\nYou have Python `{py_version}` and this update "
+                        "requires `{req_py}`; you cannot simply run the update command.\n\n"
+                        "You will need to follow the update instructions in our docs above, "
+                        "if you still need help updating after following the docs go to our "
+                        "#support channel in <https://discord.gg/red>"
+                    ).format(py_version=current_python, req_py=requires_python)
+                outdated_red_message += extra_update
+
         INFO2 = []
 
         reqs_installed = {"docs": None, "test": None}
@@ -133,6 +182,10 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        if not bot.owner_ids:
+            # we could possibly exit here in future
+            log.warning("Bot doesn't have any owner set!")
 
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
