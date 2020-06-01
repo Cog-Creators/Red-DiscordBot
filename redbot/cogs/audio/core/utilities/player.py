@@ -435,7 +435,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                     continue
                 elif guild_data["maxlength"] > 0:
-                    if self.is_track_too_long(track, guild_data["maxlength"]):
+                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
                         player.add(ctx.author, track)
                         self.bot.dispatch(
@@ -514,7 +514,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx, title=_("This track is not allowed in this server.")
                     )
                 elif guild_data["maxlength"] > 0:
-                    if self.is_track_too_long(single_track, guild_data["maxlength"]):
+                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                         player.add(ctx.author, single_track)
                         player.maybe_shuffle()
                         self.bot.dispatch(
@@ -661,15 +661,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             return False
 
-    def is_track_too_long(self, track: Union[lavalink.Track, int], maxlength: int) -> bool:
-        try:
-            length = round(track.length / 1000)
-        except AttributeError:
-            length = round(track / 1000)
-
-        if length > 900000000000000:  # livestreams return 9223372036854775807ms
+    def is_track_length_allowed(self, track: lavalink.Track, maxlength: int) -> bool:
+        if track.is_stream:
             return True
-        elif length >= maxlength:
+        length = track.length / 1000
+        if length > maxlength:
             return False
         else:
             return True

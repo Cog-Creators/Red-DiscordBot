@@ -165,7 +165,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def is_track_too_long(self, track: Union[lavalink.Track, int], maxlength: int) -> bool:
+    def is_track_too_long(self, track: lavalink.Track, maxlength: int) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
