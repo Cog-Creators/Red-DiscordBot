@@ -113,7 +113,7 @@ class KickBanMixin(MixinMeta):
                     author.name, author.id, user.name, user.id
                 )
             )
-            return _("An unexpected error occurred. ({})".format(e))
+            return _("An unexpected error occurred. ({})").format(e)
 
         if create_modlog_case:
             try:
