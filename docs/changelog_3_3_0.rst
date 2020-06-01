@@ -4,11 +4,16 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`
+| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`
 
 End-user changelog
 ------------------
 
+Warnings
+********
+
+- Warnings sent to users don't show the moderator who warned the user by default now. Newly added ``[p]warningset showmoderators`` command can be used to switch this behaviour (:issue:`3781`)
+- Warn channel functionality has been fixed (:issue:`3781`)
 
 
 Developer changelog
