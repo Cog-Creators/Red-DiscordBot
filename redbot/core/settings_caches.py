@@ -57,8 +57,9 @@ class I18nManager:
     def __init__(self, config: Config):
         self._config: Config = config
         self._guild_locale: Dict[int, str] = {}
+        self._guild_regional_format: Dict[int, str] = {}
 
-    async def get_locale(self, guild: Union[discord.Guild, None]) -> Optional[str]:
+    async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
         if guild is None:
             # Return the bot's globally set locale if its None on a guild scope.
@@ -69,14 +70,33 @@ class I18nManager:
             out = await self._config.guild(guild).locale()
             if out is None:
                 out = await self._config.locale()
-            self._guild_locale[guild.id] = out
-
+            else:
+                self._guild_locale[guild.id] = out
         return out
 
-    async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]):
-        """Set the guild locale in the cache"""
+    async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]) -> None:
+        """Set the guild locale in the config and cache"""
         self._guild_locale[guild.id] = locale
         await self._config.guild(guild).locale.set(locale)
+
+    async def get_regional_format(self, guild: Union[discord.Guild, None]) -> Optional[str]:
+        """Get the regional format from the cache"""
+        if guild is None:
+            out = await self._config.regional_format()
+        elif guild.id in self._guild_regional_format:
+            out = self._guild_regional_format[guild.id]
+        else:
+            out = await self._config.guild(guild).regional_format()
+            if out is None:
+                out = await self._config.regional_format()
+            else:
+                self._guild_regional_format[guild.id] = out
+        return out
+
+    async def set_regional_format(self, guild: discord.Guild, regional_format: Union[str, None]) -> None:
+        """Set the regional format in the config and cache"""
+        self._guild_regional_format[guild.id] = regional_format
+        await self._config.guild(guild).regional_format.set(regional_format)
 
 
 class IgnoreManager:

@@ -23,7 +23,7 @@ __all__ = [
 log = logging.getLogger("red.i18n")
 
 _current_locale = ContextVar("_current_locale", default="en-US")
-_current_regional_format = None
+_current_regional_format = ContextVar("_current_regional_format", default=None)
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -46,7 +46,7 @@ def set_locale(locale: str) -> None:
     reload_locales()
 
 
-def set_context_locale(locale: str) -> None:
+def set_contextual_locale(locale: str) -> None:
     _current_locale.set(locale)
     reload_locales()
 
@@ -54,12 +54,16 @@ def set_context_locale(locale: str) -> None:
 def get_regional_format() -> str:
     if _current_regional_format is None:
         return _current_locale
-    return _current_regional_format
+    return str(_current_regional_format.get())
 
 
 def set_regional_format(regional_format: Optional[str]) -> None:
     global _current_regional_format
-    _current_regional_format = regional_format
+    _current_regional_format = ContextVar("_current_regional_format", default=regional_format)
+
+
+def set_contextual_regional_format(regional_format: Optional[str]) -> None:
+    _current_regional_format.set(regional_format)
 
 
 def reload_locales() -> None:
@@ -161,7 +165,6 @@ class Translator(Callable[[str], str]):
         self.cog_folder = Path(file_location).resolve().parent
         self.cog_name = name
         self.translations = {}
-        self.assume_loaded_locale = []
 
         _translators.append(self)
 
@@ -177,7 +180,6 @@ class Translator(Callable[[str], str]):
         try:
             return self.translations[locale][untranslated]
         except KeyError:
-            log.debug(f"missed hit for {locale}/{untranslated[:10]}")
             return untranslated
 
     def check_cache_for_locale(self, locale: str) -> bool:
@@ -196,15 +198,14 @@ class Translator(Callable[[str], str]):
             # Red is written in en-US, no point in loading it
             return
         if locale in self.translations:
-            return
-        if locale in self.assume_loaded_locale:
+            # Locales cannot be loaded twice as they have an entry in
+            # self.translations, which is created in L#92.
             return
 
         locale_path = get_locale_path(self.cog_folder, "po")
         with contextlib.suppress(IOError, FileNotFoundError):
             with locale_path.open(encoding="utf-8") as file:
                 self._parse(file)
-        self.assume_loaded_locale.append(locale)
 
     def _parse(self, translation_file):
         self.translations.update(_parse(translation_file))
