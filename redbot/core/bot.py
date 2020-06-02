@@ -132,7 +132,7 @@ class RedBase(
             autoimmune_ids=[],
             delete_delay=-1,
             locale=None,
-            regional_format=None
+            regional_format=None,
         )
 
         self._config.register_channel(embeds=None, ignored=False)

@@ -93,7 +93,9 @@ class I18nManager:
                 self._guild_regional_format[guild.id] = out
         return out
 
-    async def set_regional_format(self, guild: discord.Guild, regional_format: Union[str, None]) -> None:
+    async def set_regional_format(
+        self, guild: discord.Guild, regional_format: Union[str, None]
+    ) -> None:
         """Set the regional format in the config and cache"""
         self._guild_regional_format[guild.id] = regional_format
         await self._config.guild(guild).regional_format.set(regional_format)
