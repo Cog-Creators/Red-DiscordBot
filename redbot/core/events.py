@@ -96,8 +96,14 @@ def init_events(bot, cli_flags):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
-            pypi_version = VersionInfo.from_str(data["info"]["version"])
-            if pypi_version.releaselevel == VersionInfo.FINAL and pypi_version > red_version_info:
+            releases = data["releases"]
+            valid_releases = [
+                r
+                for i in releases.keys()
+                if (r := VersionInfo.from_str(i)) and r.releaselevel == VersionInfo.FINAL
+            ]
+            pypi_version = valid_releases[-1] if valid_releases else None
+            if pypi_version and pypi_version > red_version_info:
                 INFO.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
