@@ -116,7 +116,7 @@ class Streams(commands.Cog):
                     await self.config.notified_owner.set(False)
             except KeyError:
                 message = _(
-                    "You need a client secret key to correctly use Twitch API on this cog.\n"
+                    "You need a client secret key to correctly use the Twitch API on this cog.\n"
                     "Follow these steps:\n"
                     "1. Go to this page: https://dev.twitch.tv/console/apps.\n"
                     '2. Click "Manage" on your application.\n'
