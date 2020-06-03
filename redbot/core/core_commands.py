@@ -1944,9 +1944,21 @@ class Core(commands.Cog, CoreLogic):
         if not users_or_roles:
             await ctx.send_help()
             return
+        if ctx.guild.owner not in users_or_roles:
+            users_or_roles.append(ctx.guild.owner)
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
+        theoretical_whitelist = current_whitelist + uids
+        ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
+        if ids.isdisjoint(theoretical_whitelist):
+            return await ctx.send(
+                _(
+                    "I cannot allow you to do this, as it would "
+                    "remove your ability to run commands"
+                )
+            )
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
