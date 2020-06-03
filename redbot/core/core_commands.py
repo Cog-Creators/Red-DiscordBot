@@ -336,7 +336,17 @@ class Core(commands.Cog, CoreLogic):
         except (aiohttp.ClientError, asyncio.TimeoutError):
             outdated = None
         else:
-            outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
+            releases = data["releases"]
+            valid_releases = sorted(
+                [
+                    r
+                    for i in releases.keys()
+                    if (r := VersionInfo.from_str(i)) and r.releaselevel == VersionInfo.FINAL
+                ],
+                reverse=True,
+            )
+            pypi_version = valid_releases[0] if valid_releases else None
+            outdated = pypi_version and pypi_version > red_version_info
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
