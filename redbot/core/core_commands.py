@@ -310,6 +310,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     async def info(self, ctx: commands.Context):
         """Shows info about Red"""
+        embed_links = ctx.channel.permissions_for(ctx.me).embed_links
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
         red_repo = org_repo + "/Red-DiscordBot"
@@ -320,9 +321,7 @@ class Core(commands.Cog, CoreLogic):
         python_url = "https://www.python.org/"
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
-        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
-        red_version = "[{}]({})".format(__version__, red_pypi)
+
         app_info = await self.bot.application_info()
         if app_info.team:
             owner = app_info.team.name
@@ -338,39 +337,42 @@ class Core(commands.Cog, CoreLogic):
             outdated = None
         else:
             outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
-        about = _(
-            "This bot is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and [improved by many]({}).\n\n"
-            "Red is backed by a passionate community who contributes and "
-            "creates content for everyone to enjoy. [Join us today]({}) "
-            "and help us improve!\n\n"
-            "(c) Cog Creators"
-        ).format(red_repo, author_repo, org_repo, support_server_url)
 
-        embed = discord.Embed(color=(await ctx.embed_colour()))
-        embed.add_field(name=_("Instance owned by"), value=str(owner))
-        embed.add_field(name="Python", value=python_version)
-        embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name=_("Red version"), value=red_version)
-        if outdated in (True, None):
-            if outdated is True:
-                outdated_value = _("Yes, {version} is available.").format(
-                    version=data["info"]["version"]
-                )
-            else:
-                outdated_value = _("Checking for updates failed.")
-            embed.add_field(name=_("Outdated"), value=outdated_value)
-        if custom_info:
-            embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
-        embed.add_field(name=_("About Red"), value=about, inline=False)
+        if embed_links:
+            dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+            python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
+            red_version = "[{}]({})".format(__version__, red_pypi)
 
-        embed.set_footer(
-            text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
-        )
-        try:
+            about = _(
+                "This bot is an instance of [Red, an open source Discord bot]({}) "
+                "created by [Twentysix]({}) and [improved by many]({}).\n\n"
+                "Red is backed by a passionate community who contributes and "
+                "creates content for everyone to enjoy. [Join us today]({}) "
+                "and help us improve!\n\n"
+                "(c) Cog Creators"
+            ).format(red_repo, author_repo, org_repo, support_server_url)
+
+            embed = discord.Embed(color=(await ctx.embed_colour()))
+            embed.add_field(name=_("Instance owned by"), value=str(owner))
+            embed.add_field(name="Python", value=python_version)
+            embed.add_field(name="discord.py", value=dpy_version)
+            embed.add_field(name=_("Red version"), value=red_version)
+            if outdated in (True, None):
+                if outdated is True:
+                    outdated_value = _("Yes, {version} is available.").format(
+                        version=data["info"]["version"]
+                    )
+                else:
+                    outdated_value = _("Checking for updates failed.")
+                embed.add_field(name=_("Outdated"), value=outdated_value)
+            if custom_info:
+                embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
+            embed.add_field(name=_("About Red"), value=about, inline=False)
+
+            embed.set_footer(
+                text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
+            )
             await ctx.send(embed=embed)
-        except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission to send this"))
 
     @commands.command()
     async def uptime(self, ctx: commands.Context):
