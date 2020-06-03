@@ -108,8 +108,8 @@ class Streams(commands.Cog):
 
     async def get_twitch_bearer_token(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("twitch")
-        notify_owner = await self.config.notified_owner()
         if tokens.get("client_id"):
+            notify_owner = await self.config.notified_owner()
             try:
                 tokens["client_secret"]
                 if notify_owner is True:
@@ -124,7 +124,8 @@ class Streams(commands.Cog):
                     "5. Copy your client ID and your client secret into:\n"
                     "`[p]set api twitch client_id <your_client_id_here> "
                     "client_secret <your_client_secret_here>`\n\n"
-                    "Note: These tokens are sensitive and should only be used in a private channel "
+                    "Note: These tokens are sensitive and should "
+                    "only be used in a private channel "
                     "or in DM with the bot."
                 )
                 if notify_owner is False:
