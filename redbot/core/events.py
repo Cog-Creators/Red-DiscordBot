@@ -183,6 +183,11 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
+        if not guilds:
+            print(
+                "Looking for a quick guide on setting up Red? https://docs.discord.red/en/stable/getting_started.html\n"
+            )
+
         if not bot.owner_ids:
             # we could possibly exit here in future
             log.warning("Bot doesn't have any owner set!")
