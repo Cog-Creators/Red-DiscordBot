@@ -129,6 +129,7 @@ class Streams(commands.Cog):
                 )
                 if notify_owner is False:
                     await send_to_owners_with_prefix_replaced(self.bot, message)
+                    await self.config.notified_owner.set(True)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
