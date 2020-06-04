@@ -88,9 +88,9 @@ def update_red(dev=False, custom=None, stable=True):
     old_name = updater_script + ".exe"
     new_name = updater_script + ".old"
     renamed = False
+    skip = False
     if "redbot-update" in updater_script and IS_WINDOWS:
         renamed = True
-        print("Renaming {} to {}".format(old_name, new_name))
         if os.path.exists(new_name):
             os.remove(new_name)
         os.rename(old_name, new_name)
@@ -122,7 +122,7 @@ def update_red(dev=False, custom=None, stable=True):
         outdated, new_version = loop.run_until_complete(is_outdated())
         if not outdated:
             print("You are on the latest available release.")
-            sys.exit(0)
+            skip = True
         package = "Red-DiscordBot"
         if package_extras:
             package += "{}".format(package_extras)
@@ -134,16 +134,16 @@ def update_red(dev=False, custom=None, stable=True):
         "-U",
         package,
     ]
-    code = subprocess.call(arguments)
-    if code == 0:
-        print("Red has been updated")
-    else:
-        print("Something went wrong while updating!\nError Code: {}".format(code))
+    if not skip:
+        code = subprocess.call(arguments)
+        if code == 0:
+            print("Red has been updated")
+        else:
+            print("Something went wrong while updating!\nError Code: {}".format(code))
 
     # If redbot wasn't updated, we renamed our .exe file and didn't replace it
     scripts = os.listdir(os.path.dirname(updater_script))
     if renamed and "redbot-update.exe" not in scripts:
-        print("Renaming {} to {}".format(new_name, old_name))
         os.rename(new_name, old_name)
 
 
@@ -176,7 +176,10 @@ def main_menu():
             update_red(dev=True)
             wait()
         elif choice == "3":
-            print("Enter the location to pass to pip install.")
+            print(
+                "Enter the location to pass to pip install.\n"
+                "(e.g git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot[style])"
+            )
             update_red(custom=user_choice())
             wait()
         elif choice == "0":
