@@ -916,13 +916,25 @@ class RedBase(
             and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
             and message.mentions[0].id == self.user.id
         ):
-            prefixes = await self._prefix_cache.get_prefixes(message.guild)
+            prefixes = await self.get_valid_prefixes(guild=message.guild)
+            prefixes = sorted(prefixes, key=len)
+            counter = 0
+            prefixes_string = humanize_list(
+                [
+                    pf
+                    for p in prefixes
+                    if (pf := f"`{p}`")
+                    and len(pf) < 1800
+                    and ((counter + len(pf)) < 1800)
+                    and (counter := counter + len(pf))
+                ]
+            )
             await message.channel.send(
                 _(
-                    "Hello there, my prefix here are the following:\n{}"
+                    "Hello there, my prefix here are the following:\n{}\n"
                     "Why don't you try `{}help` to see everything I can do."
                     # There's a chance help is disabled ... but that's a gray area anyways so dont think supporting it is necessary.
-                ).format(humanize_list([f"`{i}`\n" for i in prefixes]), prefixes[0])
+                ).format(prefixes_string, prefixes[0])
             )
             return
         if ctx is None or ctx.valid is False:
