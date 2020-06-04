@@ -920,7 +920,7 @@ class RedBase(
             await message.channel.send(
                 _(
                     "Hello there, my prefix here are the following:\n{}"
-                    "Why don't you try `{}help` a try to see everything I can do."
+                    "Why don't you try `{}help` to see everything I can do."
                     # There's a chance help is disabled ... but that's a gray area anyways so dont think supporting it is necessary.
                 ).format(humanize_list([f"`{i}`\n" for i in prefixes]), prefixes[0])
             )
