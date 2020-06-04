@@ -31,6 +31,9 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 from discord.ext.commands.bot import BotBase
+from redbot.core.utils.chat_formatting import humanize_list
+
+from redbot.core.i18n import Translator
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -40,7 +43,12 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
+from .settings_caches import (
+    PrefixManager,
+    IgnoreManager,
+    WhitelistBlacklistManager,
+    MentionPredixManager,
+)
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -57,6 +65,7 @@ NotMessage = namedtuple("NotMessage", "guild")
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
+_ = Translator("Red", __file__)
 
 
 def _is_submodule(parent, child):
@@ -130,6 +139,7 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
+            prefix_on_mention=True,
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -143,6 +153,7 @@ class RedBase(
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+        self._mention_prefix_cache = MentionPredixManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -898,7 +909,22 @@ class RedBase(
             await self.invoke(ctx)
         else:
             ctx = None
-
+        if (
+            not message.author.bot
+            and await self._mention_prefix_cache.get_context_value(message.guild)
+            and len(message.mentions) == 1
+            and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
+            and message.mentions[0].id == self.user.id
+        ):
+            prefixes = await self._prefix_cache.get_prefixes(message.guild)
+            await message.channel.send(
+                _(
+                    "Hello there, my prefix here are the following:\n{}"
+                    "Why don't you try `{}help` a try to see everything I can do."
+                    # There's a chance help is disabled ... but that's a gray area anyways so dont think supporting it is necessary.
+                ).format(humanize_list([f"`{i}`\n" for i in prefixes]), prefixes[0])
+            )
+            return
         if ctx is None or ctx.valid is False:
             self.dispatch("message_without_command", message)
 

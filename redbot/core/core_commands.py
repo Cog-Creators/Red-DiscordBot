@@ -1360,6 +1360,19 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
+    @_set.command(aliases=["mentionhelp"])
+    @checks.admin()
+    @commands.guild_only()
+    async def _mentionhelp(self, ctx: commands.Context):
+        """Make mentioning [botname] show a help message."""
+        value = await ctx.bot._mention_prefix_cache.get_context_value(guild=ctx.guild)
+        if value is False:
+            await ctx.bot._mention_prefix_cache.set_guild(guild=ctx.guild, set_to=True)
+            await ctx.send(_("Mentioning the bot will now send a help message."))
+            return
+        await ctx.bot._mention_prefix_cache.set_guild(guild=ctx.guild, set_to=False)
+        await ctx.send(_("Mentioning the bot will no longer send a help message."))
+
     @_set.command()
     @checks.is_owner()
     async def locale(self, ctx: commands.Context, language_code: str):
