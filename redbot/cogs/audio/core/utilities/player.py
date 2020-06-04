@@ -667,5 +667,4 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         length = track.length / 1000
         if length > maxlength:
             return False
-        else:
-            return True
+        return True
