@@ -36,6 +36,7 @@ def is_venv():
         hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
     )
 
+
 async def is_outdated():
     red_pypi = "https://pypi.org/pypi/Red-DiscordBot/json"
     current_python = platform.python_version()
@@ -47,21 +48,28 @@ async def is_outdated():
                 [
                     r
                     for i in releases.keys()
-                    if (r := VersionInfo.from_str(i)) and r.releaselevel == VersionInfo.FINAL and (expected_version(current_python, releases[i][0]["requires_python"]))
+                    if (r := VersionInfo.from_str(i))
+                    and r.releaselevel == VersionInfo.FINAL
+                    and (expected_version(current_python, releases[i][0]["requires_python"]))
                 ],
                 reverse=True,
             )
             pypi_version = valid_releases[0] if valid_releases else None
             return pypi_version and pypi_version > red_version_info, pypi_version
 
+
 def parse_cli_args():
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot's updater (V3)", allow_abbrev=False
     )
     parser.add_argument(
-        "--custom", type=str, nargs="?", help=("Updates Red using the specified string "
-                                               "(e.g git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot[style])"
-                                               ),
+        "--custom",
+        type=str,
+        nargs="?",
+        help=(
+            "Updates Red using the specified string "
+            "(e.g git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot[style])"
+        ),
     )
     parser.add_argument("--dev", help="Updates Red from the Github repo", action="store_true")
     parser.add_argument(
