@@ -47,7 +47,7 @@ from .settings_caches import (
     PrefixManager,
     IgnoreManager,
     WhitelistBlacklistManager,
-    MentionPredixManager,
+    MentionPrefixManager,
 )
 
 from .rpc import RPCMixin
@@ -153,7 +153,7 @@ class RedBase(
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
-        self._mention_prefix_cache = MentionPredixManager(self._config)
+        self._mention_prefix_cache = MentionPrefixManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)

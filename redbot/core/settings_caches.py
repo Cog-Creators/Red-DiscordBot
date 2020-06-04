@@ -278,7 +278,7 @@ class WhitelistBlacklistManager:
                         curr_list.remove(obj_id)
 
 
-class MentionPredixManager:
+class MentionPrefixManager:
     def __init__(self, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.enable_cache = enable_cache
