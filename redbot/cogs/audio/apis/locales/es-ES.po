@@ -47,7 +47,7 @@ msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:610
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Lista de reproducción en cola"
 
 #: redbot/cogs/audio/apis/interface.py:611
 msgid "Added {num} tracks to the queue.{maxlength_msg}"

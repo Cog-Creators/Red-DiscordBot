@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -50,14 +50,14 @@ msgid "You attempted to create a new alias with the name {name} but that name is
 msgstr "Hai cercato di creare un nuovo alias con il nome {name}, ma questo nome corrisponde già a un comando su questo bot."
 
 #: redbot/cogs/alias/alias.py:157
-msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
-msgstr "Hai cercato di creare un nuovo alias con il nome {name}, ma questo alias già esiste su questo bot."
+msgid "You attempted to create a new alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Hai cercato di creare un nuovo alias con il nome {name}, ma questo nome non è un nome alias valido. I nomi alias non possono contenere spazi."
 
-#: redbot/cogs/alias/alias.py:180
+#: redbot/cogs/alias/alias.py:180 redbot/cogs/alias/alias.py:239
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr ""
 
@@ -75,18 +75,18 @@ msgid "You attempted to create a new global alias with the name {name} but that 
 msgstr "Hai cercato di creare un nuovo alias globale con il nome {name}, ma questo nome corrisponde già a un comando su questo bot."
 
 #: redbot/cogs/alias/alias.py:216
-msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr "Hai cercato di creare un nuovo alias globale con il nome {name}, ma questo alias già esiste su questo server."
+msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Hai cercato di creare un nuovo alias globale con il nome {name}, ma questo nome non è un nome alias valido. I nomi alias non possono contenere spazi."
 
-#: redbot/cogs/alias/alias.py:243
+#: redbot/cogs/alias/alias.py:250
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "È stato creato un nuovo alias globale con il comando '{name}'."
 
-#: redbot/cogs/alias/alias.py:251
+#: redbot/cogs/alias/alias.py:258
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Prova a eseguire l'aiuto per il comando di base dell'alias."

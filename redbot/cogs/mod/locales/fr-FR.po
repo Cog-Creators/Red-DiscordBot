@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -92,7 +92,7 @@ msgstr "Terminé. Il était temps."
 #: redbot/cogs/mod/kickban.py:280
 #, docstring
 msgid "Preemptively bans user(s) from the server\\n\\n        User IDs need to be provided in order to ban\\n        using this command"
-msgstr ""
+msgstr "Bannissement préventif d'un utilisateur du serveur.\\n\\n        Un ID d'utilisateur sera requis afin de bannir en utilisant cette commande"
 
 #: redbot/cogs/mod/kickban.py:288
 msgid "Banned {num} users from the server."
@@ -169,44 +169,44 @@ msgstr "Terminé. Assez de chaos."
 msgid "Kick a member from a voice channel."
 msgstr "Expulse un membre d'un salon vocal."
 
-#: redbot/cogs/mod/kickban.py:557
+#: redbot/cogs/mod/kickban.py:556
 msgid "I am unable to kick this member from the voice channel."
-msgstr "Je n'arrive pas à expulser ce membre du salon vocal."
+msgstr "Impossible d'expulser ce membre du salon vocal."
 
-#: redbot/cogs/mod/kickban.py:560
+#: redbot/cogs/mod/kickban.py:559
 msgid "Something went wrong while attempting to kick that member"
 msgstr "Une erreur s'est produite lors de la tentative d'expulsion de ce membre"
 
-#: redbot/cogs/mod/kickban.py:583
+#: redbot/cogs/mod/kickban.py:582
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
 msgstr "Débanni un utilisateur de ce serveur.\\n\\n         Nécessite de spécifier l'ID de l'utilisateur. Pour le trouver, vous pouvez soit :\\n          #. Le copier à partir du cas dans les mod log (Si il a été créé), ou\\n          Activer le mode développeur, allez dans Bannissements dans les paramètres du serveur, clique\\n         droit sur l'utilisateur et sélectionner 'Copier l'ID'."
 
-#: redbot/cogs/mod/kickban.py:596
+#: redbot/cogs/mod/kickban.py:595
 msgid "It seems that user isn't banned!"
 msgstr "Il semble que l'utilisateur n'est pas banni !"
 
-#: redbot/cogs/mod/kickban.py:602
+#: redbot/cogs/mod/kickban.py:601
 msgid "Something went wrong while attempting to unban that user"
 msgstr "Une erreur s'est produite lors de la tentative de dé-bannissement de cet utilisateur"
 
-#: redbot/cogs/mod/kickban.py:619
+#: redbot/cogs/mod/kickban.py:618
 msgid "Unbanned that user from this server"
 msgstr "Cet utilisateur à été débanni du serveur"
 
-#: redbot/cogs/mod/kickban.py:625
+#: redbot/cogs/mod/kickban.py:624
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr "Je ne partage pas d'autre serveur avec cette utilisateur. Je ne peux pas le réinviter."
 
-#: redbot/cogs/mod/kickban.py:633
+#: redbot/cogs/mod/kickban.py:632
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
 msgstr "Vous avez été débanni de {server}.\\nVoici une invitation pour ce serveur : {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:640
+#: redbot/cogs/mod/kickban.py:639
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
 msgstr "Je n'ai pas réussi à envoyer une invitation à cet utilisateur. Peut-être pouvez-vous l'envoyer à ma place?\\nVoici le lien d'invitation : {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:648
+#: redbot/cogs/mod/kickban.py:647
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr "Quelque chose a mal tourné lors de l'envoi d'une invitation à cet utilisateur. Voici le lien pour que vous puissiez essayer : {invite_link}"
 
@@ -414,11 +414,11 @@ msgstr "Personnalisé : {name}"
 
 #: redbot/cogs/mod/names.py:93
 msgid "Playing: {name}"
-msgstr "Joue : {name}"
+msgstr "Joue à : {name}"
 
 #: redbot/cogs/mod/names.py:102
 msgid "Streaming: [{name}{sep}{game}]({url})"
-msgstr "Streaming : [{name}{sep}{game}]({url})"
+msgstr "Stream : [{name}{sep}{game}]({url})"
 
 #: redbot/cogs/mod/names.py:109
 msgid "Streaming: {name}"
@@ -667,7 +667,7 @@ msgstr "Change les réglages du mode lent du salon.\\n\\n        L'intervalle pe
 
 #: redbot/cogs/mod/slowmode.py:36
 msgid "Slowmode interval is now {interval}."
-msgstr "L'intervalle du mond lent est maintenant {interval}."
+msgstr "L'intervalle du mode lent est maintenant de {interval}."
 
 #: redbot/cogs/mod/slowmode.py:41
 msgid "Slowmode has been disabled."

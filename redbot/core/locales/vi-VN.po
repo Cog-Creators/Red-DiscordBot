@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-28 12:15+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -1486,131 +1486,136 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max} {currency}."
 msgstr ""
 
-#: redbot/core/events.py:103
+#: redbot/core/events.py:102
 msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
 msgstr ""
 
-#: redbot/core/events.py:109
+#: redbot/core/events.py:108
 msgid "\\n\\nWhile the following command should work in most scenarios as it is based on your current OS, environment, and Python version, **we highly recommend you to read the update docs at <{docs}> and make sure there is nothing else that needs to be done during the update.**"
 msgstr ""
 
-#: redbot/core/events.py:133
+#: redbot/core/events.py:132
 msgid "\\n\\nTo update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:\\n\\n"
 msgstr ""
 
-#: redbot/core/events.py:138
+#: redbot/core/events.py:137
 msgid "Command Prompt"
 msgstr ""
 
-#: redbot/core/events.py:140
+#: redbot/core/events.py:139
 msgid "Terminal"
 msgstr ""
 
-#: redbot/core/events.py:147
+#: redbot/core/events.py:146
 msgid "\\n\\nYou have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\\n\\nYou will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/events.py:212
+#: redbot/core/events.py:215
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
-#: redbot/core/events.py:237
+#: redbot/core/events.py:240
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/events.py:262
+#: redbot/core/events.py:265
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:266
+#: redbot/core/events.py:269
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:274
+#: redbot/core/events.py:277
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:276
+#: redbot/core/events.py:279
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:281
+#: redbot/core/events.py:284
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr ""
 
-#: redbot/core/events.py:283
+#: redbot/core/events.py:286
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:287
+#: redbot/core/events.py:290
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr ""
 
-#: redbot/core/modlog.py:289
+#: redbot/core/modlog.py:301
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:293
+#: redbot/core/modlog.py:305
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:295
+#: redbot/core/modlog.py:307
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:300
+#: redbot/core/modlog.py:310
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:341
+#: redbot/core/modlog.py:313 redbot/core/modlog.py:332
+#: redbot/core/modlog.py:346
+msgid "Unknown or Deleted User"
+msgstr ""
+
+#: redbot/core/modlog.py:360
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:343
+#: redbot/core/modlog.py:362
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:344
+#: redbot/core/modlog.py:363
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:348 redbot/core/modlog.py:353
+#: redbot/core/modlog.py:367 redbot/core/modlog.py:372
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:349
+#: redbot/core/modlog.py:368
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:355
+#: redbot/core/modlog.py:374
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:357
+#: redbot/core/modlog.py:376
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:364
+#: redbot/core/modlog.py:383
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:365
+#: redbot/core/modlog.py:384
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:368
+#: redbot/core/modlog.py:387
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:370
+#: redbot/core/modlog.py:389
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:372
+#: redbot/core/modlog.py:391
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:374
+#: redbot/core/modlog.py:393
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 
