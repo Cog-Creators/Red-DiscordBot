@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -50,14 +50,14 @@ msgid "You attempted to create a new alias with the name {name} but that name is
 msgstr "{name} adı ile yeni bir kısaltma oluşturmaya çalıştınız, ancak botta bu ad ile mevcut bir komut bulunuyor."
 
 #: redbot/cogs/alias/alias.py:157
-msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
-msgstr "{name} adı ile yeni bir kısaltma oluşturmaya çalıştınız, ancak sunucuda bu ad ile mevcut bir kısaltma bulunuyor."
+msgid "You attempted to create a new alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "{name} adı ile yeni bir kısaltma oluşturmaya çalıştınız, ancak belirttiğiniz geçersiz bir kısaltmadır. Kısaltmalar boşluk içermemelidir."
 
-#: redbot/cogs/alias/alias.py:180
+#: redbot/cogs/alias/alias.py:180 redbot/cogs/alias/alias.py:239
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr "Mevcut olmayan bir komut için kısayol oluşturmaya çalıştınız."
 
@@ -75,18 +75,18 @@ msgid "You attempted to create a new global alias with the name {name} but that 
 msgstr "{name} adı ile global bir kısaltma yaratmaya çalıştınız, ancak botta bu isimde bir komut mevcut."
 
 #: redbot/cogs/alias/alias.py:216
-msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr "{name} ile global bir kısaltma oluşturmaya çalıştınız ancak sunucuda böyle bir komut mevcut."
+msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "{name} ile yeni bir global kısaltma oluşturmaya çalıştınız ancak bu kısaltma geçerli değil. Kısaltmalar boşluk içeremez."
 
-#: redbot/cogs/alias/alias.py:243
+#: redbot/cogs/alias/alias.py:250
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "Yeni bir global kısaltma '{name}' tetikleyicisi ile oluşturuldu."
 
-#: redbot/cogs/alias/alias.py:251
+#: redbot/cogs/alias/alias.py:258
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Kısaltmada kullanılan temel komutun kullanımı için yardım komutunu kullanmayı deneyiniz."
