@@ -108,8 +108,7 @@ class Mod(
                 if e["ignored"] is not False:
                     msg = _(
                         "Ignored guilds and channels have been moved. "
-                        "Please use `[p]moveignoredchannels` if "
-                        "you were previously using these functions."
+                        "Please use `[p]moveignoredchannels` to migrate the old settings."
                     )
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
@@ -119,8 +118,7 @@ class Mod(
                 if e["delete_delay"] != -1:
                     msg = _(
                         "Delete delay settings have been moved. "
-                        "Please use `[p]movedeletedelay` if "
-                        "you were previously using these functions."
+                        "Please use `[p]movedeletedelay` to migrate the old settings."
                     )
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
