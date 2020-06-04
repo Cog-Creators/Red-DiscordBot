@@ -104,20 +104,26 @@ class Mod(
                 await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.config.version.set("1.0.0")  # set version of last update
         if await self.config.version() < "1.1.0":
-            msg = _(
-                "Ignored guilds and channels have been moved. "
-                "Please use `[p]moveignoredchannels` if "
-                "you were previously using these functions."
-            )
-            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+            for e in (await self.config.all_channels()).values():
+                if e["ignored"] is not False:
+                    msg = _(
+                        "Ignored guilds and channels have been moved. "
+                        "Please use `[p]moveignoredchannels` if "
+                        "you were previously using these functions."
+                    )
+                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
-            msg = _(
-                "Delete delay settings have been moved. "
-                "Please use `[p]movedeletedelay` if "
-                "you were previously using these functions."
-            )
-            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+            for e in (await self.config.all_guilds()).values():
+                if e["delete_delay"] != -1:
+                    msg = _(
+                        "Delete delay settings have been moved. "
+                        "Please use `[p]movedeletedelay` if "
+                        "you were previously using these functions."
+                    )
+                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    break
             await self.config.version.set("1.2.0")
 
     @commands.command()
