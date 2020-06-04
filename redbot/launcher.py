@@ -37,14 +37,6 @@ IS_MAC = sys.platform == "darwin"
 PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS", False)
 
 
-def is_venv():
-    """Return True if the process is in a venv or in a virtualenv."""
-    # credit to @calebj
-    return hasattr(sys, "real_prefix") or (
-        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
-    )
-
-
 def parse_cli_args():
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
@@ -69,7 +61,7 @@ def run_red(selected_instance, autorestart: bool = False, cliflags=None):
     interpreter = sys.executable
     while True:
         print("Starting {}...".format(selected_instance))
-        cmd_list = [interpreter, "-m", "redbot", selected_instance]
+        cmd_list = [interpreter, "-O", "-m", "redbot", selected_instance]
         if cliflags:
             cmd_list += cliflags
         status = subprocess.call(cmd_list)
