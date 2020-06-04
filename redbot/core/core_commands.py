@@ -1944,8 +1944,6 @@ class Core(commands.Cog, CoreLogic):
         if not users_or_roles:
             await ctx.send_help()
             return
-        if ctx.guild.owner not in users_or_roles:
-            users_or_roles.append(ctx.guild.owner)
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
