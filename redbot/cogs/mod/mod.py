@@ -6,6 +6,8 @@ from collections import defaultdict
 from typing import List, Tuple
 
 import discord
+from redbot.core.utils import AsyncIter
+
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -95,7 +97,7 @@ class Mod(
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
         if not await self.config.version():
             guild_dict = await self.config.all_guilds()
-            for guild_id, info in guild_dict.items():
+            async for guild_id, info in AsyncIter(guild_dict.items(), steps=25):
                 delete_repeats = info.get("delete_repeats", False)
                 if delete_repeats:
                     val = 3
@@ -104,7 +106,7 @@ class Mod(
                 await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.config.version.set("1.0.0")  # set version of last update
         if await self.config.version() < "1.1.0":
-            for e in (await self.config.all_channels()).values():
+            async for e in AsyncIter((await self.config.all_channels()).values(), steps=25):
                 if e["ignored"] is not False:
                     msg = _(
                         "Ignored guilds and channels have been moved. "
@@ -114,7 +116,7 @@ class Mod(
                     break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
-            for e in (await self.config.all_guilds()).values():
+            async for e in AsyncIter((await self.config.all_guilds()).values(), steps=25):
                 if e["delete_delay"] != -1:
                     msg = _(
                         "Delete delay settings have been moved. "
