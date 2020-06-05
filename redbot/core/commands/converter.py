@@ -189,14 +189,14 @@ class _APIToken(discord.ext.commands.Converter):
 _APIToken.__name__ = "APIToken"
 
 
-def __getattr__(name: str) -> Any:
+def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
     # honestly, this is awesome (PEP-562)
     if name == "APIToken":
         warnings.warn(
             "`APIToken` is deprecated since Red 3.3.0 and will be removed"
             " in the first minor release after 2020-08-05. Use `DictConverter` instead.",
             DeprecationWarning,
-            stacklevel=2,
+            stacklevel=stacklevel,
         )
         return globals()["_APIToken"]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

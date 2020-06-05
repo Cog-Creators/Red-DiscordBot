@@ -147,7 +147,7 @@ from discord.ext.commands import (
 
 def __getattr__(name):
     try:
-        return _converter__getattr__(name)
+        return _converter__getattr__(name, stacklevel=3)
     except AttributeError:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
 
