@@ -17,12 +17,13 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
-    Set,
-    TYPE_CHECKING,
     Generator,
 )
 
+from discord.utils import maybe_coroutine
+
 __all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
+
 
 _T = TypeVar("_T")
 
@@ -297,6 +298,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         self._iterator = iter(iterable)
         self._i = 0
         self._steps = steps
+        self._map = lambda x: x
 
     def __aiter__(self) -> AsyncIter[_T]:
         return self
@@ -310,7 +312,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             self._i = 0
             await asyncio.sleep(self._delay)
         self._i += 1
-        return item
+        return self._map(item)
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
         """Returns a list of the iterable.
@@ -339,8 +341,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         return [item async for item in self]
 
     def filter(self, function: Callable[[_T], Union[bool, Awaitable[bool]]]) -> AsyncFilter[_T]:
-        """
-        Filter the iterable with an (optionally async) predicate.
+        """Filter the iterable with an (optionally async) predicate.
 
         Parameters
         ----------
@@ -424,3 +425,61 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
                 yield item
                 _temp.add(item)
         del _temp
+
+    async def find(self, predicate: Callable, default: Optional[Any] = None):
+        """Calls `predicate` over items in iterable and return first value to match.
+
+        Parameters
+        ----------
+        predicate: Callable
+            The function to to check values with, this function should return `True` or `False`
+            and accept only a single argument, which is the value in the iterrable.
+
+        Raises
+        ------
+        TypeError
+            When ``func`` is not a callable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> await AsyncIter(range(3)).find(lambda x: x == 1):
+        1
+        """
+        while True:
+            try:
+                elem = await self.__anext__()
+            except StopAsyncIteration:
+                return default
+            ret = await maybe_coroutine(predicate, elem)
+            if ret:
+                return elem
+
+    def map(self, func: Callable):
+        """Set the mapping callable for this instance of `AsyncIter`.
+
+        Parameters
+        ----------
+        func: Callable
+            The function to map values to.
+
+        Raises
+        ------
+        TypeError
+            When ``func`` is not a callable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> async for value in AsyncIter(range(3)).map(bool):
+        ...     print(value)
+        False
+        True
+        True
+
+        """
+
+        if func and not callable(func):
+            raise TypeError("Mapping must be a callable.")
+        self._map = func
+        return self
