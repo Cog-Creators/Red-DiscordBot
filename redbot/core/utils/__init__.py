@@ -26,7 +26,7 @@ __all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "As
 
 
 _T = TypeVar("_T")
-
+_S = TypeVar("_S")
 
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
@@ -426,19 +426,21 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
                 _temp.add(item)
         del _temp
 
-    async def find(self, predicate: Callable, default: Optional[Any] = None):
-        """Calls `predicate` over items in iterable and return first value to match.
+    async def find(self, predicate: Callable, default: Optional[Any] = None) -> AsyncIterator[_T]:
+        """Calls ``predicate`` over items in iterable and return first value to match.
 
         Parameters
         ----------
         predicate: Callable
             The function to to check values with, this function should return `True` or `False`
-            and accept only a single argument, which is the value in the iterrable.
+            and accept only a single argument, which is the value in the iterable.
+        default: Optional[Any]
+            The value to return if there is no matches.
 
         Raises
         ------
         TypeError
-            When ``func`` is not a callable.
+            When ``predicate`` is not a callable.
 
         Examples
         --------
@@ -454,9 +456,13 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             ret = await maybe_coroutine(predicate, elem)
             if ret:
                 return elem
+            map()
 
-    def map(self, func: Callable):
+    def map(self, func: Callable[..., _S]) -> AsyncIter[_S]:
         """Set the mapping callable for this instance of `AsyncIter`.
+
+        .. important::
+            This should be called after AsyncIter initialization and before any other of its methods.
 
         Parameters
         ----------
