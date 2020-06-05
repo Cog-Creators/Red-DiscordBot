@@ -41,10 +41,10 @@ class Downloader(commands.Cog):
     Community cogs, also called third party cogs, are not included
     in the default Red install.
     
-    Community cogs always come in repositories. Repos are a
-    group of cogs by one creator you can install. You always need
-    to add the creater's repository using the `[p]repo` command
-    before you can install cogs from the creator.
+    Community cogs come in repositories. Repos are a group of cogs
+    you can install. You always need to add the creator's repository
+    using the `[p]repo` command before you can install one or more
+    cogs from the creator.
     """
 
     def __init__(self, bot: Red):
