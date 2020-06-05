@@ -409,7 +409,16 @@ class Core(commands.Cog, CoreLogic):
                     outdated_value = _("Checking for updates failed.")
                 extras += _("Outdated:          [{state}]\n").format(state=outdated_value)
 
-            red = _("**About Red**\n") + about + "\n" + box(extras, lang="ini") + "\n\n"
+            red = (
+                _("**About Red**\n")
+                + about
+                + "\n"
+                + box(extras, lang="ini")
+                + "\n"
+                + _("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
+                + "\n\n"
+            )
+
             await ctx.send(red)
             if custom_info:
                 custom_info = _("**About this instance**\n") + custom_info + "\n\n"
