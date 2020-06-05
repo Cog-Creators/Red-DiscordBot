@@ -456,7 +456,6 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             ret = await maybe_coroutine(predicate, elem)
             if ret:
                 return elem
-            map()
 
     def map(self, func: Callable[..., _S]) -> AsyncIter[_S]:
         """Set the mapping callable for this instance of `AsyncIter`.
