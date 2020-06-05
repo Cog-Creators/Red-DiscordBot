@@ -132,10 +132,11 @@ def get_name() -> str:
             " A-z, numbers, underscores, and hyphens."
         )
         name = input("> ")
-        if re.fullmatch(r"[a-zA-Z0-9_\-]*", name) is None:
+        if re.fullmatch(r"[a-zA-Z0-9_][a-zA-Z0-9_\-]*", name) is None:
             print(
-                "ERROR: Instance name can only include"
-                " characters A-z, numbers, underscores, and hyphens!"
+                "ERROR: Instance name can only include "
+                "characters A-z, numbers, underscores, and hyphens.\n"
+                "They can't start with a hyphen."
             )
             name = ""
     return name
