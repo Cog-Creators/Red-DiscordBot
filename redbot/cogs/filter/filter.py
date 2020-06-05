@@ -1,6 +1,5 @@
 import discord
 import re
-import shlex
 from typing import Union, Set
 
 from redbot.core import checks, Config, modlog, commands
@@ -141,7 +140,7 @@ class Filter(commands.Cog):
                     await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command("add")
-    async def filter_channel_add(self, ctx: commands.Context, *, words: str):
+    async def filter_channel_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
@@ -151,12 +150,7 @@ class Filter(commands.Cog):
         - `[p]filter channel add "This is a sentence"`
         """
         channel = ctx.channel
-        try:
-            word_list = shlex.split(words)
-        except ValueError:
-            await ctx.send(_("I could not parse your words. Double check your quotes."))
-            return
-        added = await self.add_to_filter(channel, word_list)
+        added = await self.add_to_filter(channel, words)
         if added:
             self.invalidate_cache(ctx.guild, ctx.channel)
             await ctx.send(_("Words added to filter."))
@@ -164,7 +158,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Words already in the filter."))
 
     @_filter_channel.command("remove")
-    async def filter_channel_remove(self, ctx: commands.Context, *, words: str):
+    async def filter_channel_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
@@ -174,12 +168,7 @@ class Filter(commands.Cog):
         - `[p]filter channel remove "This is a sentence"`
         """
         channel = ctx.channel
-        try:
-            word_list = shlex.split(words)
-        except ValueError:
-            await ctx.send(_("I could not parse your words. Double check your quotes."))
-            return
-        removed = await self.remove_from_filter(channel, word_list)
+        removed = await self.remove_from_filter(channel, words)
         if removed:
             await ctx.send(_("Words removed from filter."))
             self.invalidate_cache(ctx.guild, ctx.channel)
@@ -187,7 +176,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="add")
-    async def filter_add(self, ctx: commands.Context, *, words: str):
+    async def filter_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
@@ -197,12 +186,7 @@ class Filter(commands.Cog):
         - `[p]filter add "This is a sentence"`
         """
         server = ctx.guild
-        try:
-            word_list = shlex.split(words)
-        except ValueError:
-            await ctx.send(_("I could not parse your words. Double check your quotes."))
-            return
-        added = await self.add_to_filter(server, word_list)
+        added = await self.add_to_filter(server, words)
         if added:
             self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully added to filter."))
@@ -210,7 +194,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words were already in the filter."))
 
     @_filter.command(name="delete", aliases=["remove", "del"])
-    async def filter_remove(self, ctx: commands.Context, *, words: str):
+    async def filter_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
@@ -220,12 +204,7 @@ class Filter(commands.Cog):
         - `[p]filter remove "This is a sentence"`
         """
         server = ctx.guild
-        try:
-            word_list = shlex.split(words)
-        except ValueError:
-            await ctx.send(_("I could not parse your words. Double check your quotes."))
-            return
-        removed = await self.remove_from_filter(server, word_list)
+        removed = await self.remove_from_filter(server, words)
         if removed:
             self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully removed from filter."))
