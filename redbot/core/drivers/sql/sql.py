@@ -1,22 +1,19 @@
-__all__ = ["SQLDriver"]
-
 import asyncio
 import json
-import logging
-import pickle
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional, Dict, Any, AsyncIterator, Tuple, Union
+from typing import Optional, Dict, Any, AsyncIterator, Tuple, Union, Callable
 
+from .queries import _create_table
 from .. import IdentifierData, ConfigCategory
-from ...drivers import BaseDriver
+from ..log import log
 from ... import data_manager, errors
+from ...drivers import BaseDriver
 from ...utils.dbtools import APSWConnectionWrapper
-
 
 _locks = defaultdict(asyncio.Lock)
 
-log = logging.getLogger("redbot.sql_driver")
+__all__ = ["SQLDriver"]
 
 
 # noinspection PyProtectedMember
@@ -33,8 +30,8 @@ class SQLDriver(BaseDriver):
         The path in which to store the file indicated by :py:attr:`file_name`.
     """
 
-    _conn: Optional["APSWConnectionWrapper"] = None
-    _data_path: Optional[Path] = None
+    db: Optional["APSWConnectionWrapper"] = None
+    data_path: Optional[Path] = None
 
     def __init__(
         self, cog_name: str, identifier: str, *, data_path_override: Optional[Path] = None,
@@ -48,20 +45,7 @@ class SQLDriver(BaseDriver):
         else:
             data_path = data_manager.cog_data_path(raw_name=cog_name)
         data_path.mkdir(parents=True, exist_ok=True)
-        self._data_path = data_path / self.file_name
-
-    @property
-    def data_path(self) -> Optional[Path]:
-        return self._data_path
-
-    @property
-    def db(self) -> Optional["APSWConnectionWrapper"]:
-        return self._conn
-
-    @db.deleter
-    def db(self) -> None:
-        if self.db:
-            self.db.close()
+        self.data_path = data_path / self.file_name
 
     @property
     def _lock(self) -> asyncio.Lock:
@@ -78,7 +62,8 @@ class SQLDriver(BaseDriver):
     @classmethod
     async def teardown(cls) -> None:
         # No tearing down to do
-        del cls.db
+        if cls.db is not None:
+            cls.db.close()
 
     @staticmethod
     def get_config_details() -> Dict[str, Any]:
@@ -103,6 +88,7 @@ class SQLDriver(BaseDriver):
 
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
+            await self._execute(_create_table.format(table_name=identifier_data.category))
             await self._execute(
                 "SELECT red_config.set($1, $2::jsonb)",
                 encode_identifier_data(identifier_data),
@@ -120,8 +106,7 @@ class SQLDriver(BaseDriver):
             pass
 
     async def inc(
-            self, identifier_data: IdentifierData, value: Union[int, float],
-            default: Union[int, float]
+        self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
     ) -> Union[int, float]:
         try:
             return await self._execute(
@@ -129,7 +114,7 @@ class SQLDriver(BaseDriver):
                 encode_identifier_data(identifier_data),
                 value,
                 default,
-                method=self._pool.fetchval,
+                method=self.db.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
@@ -140,7 +125,7 @@ class SQLDriver(BaseDriver):
                 "SELECT red_config.inc($1, $2)",
                 encode_identifier_data(identifier_data),
                 default,
-                method=self._pool.fetchval,
+                method=self.db.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
@@ -148,12 +133,11 @@ class SQLDriver(BaseDriver):
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None) -> Any:
         if method is None:
-            method = cls._pool.execute
+            method = cls.db.cursor().execute
         log.invisible("Query: %s", query)
         if args:
             log.invisible("Args: %s", args)
         return await method(query, *args)
-
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
@@ -164,7 +148,7 @@ class SQLDriver(BaseDriver):
 
     @classmethod
     async def delete_all_data(
-            cls, *, interactive: bool = False, drop_db: Optional[bool] = None, **kwargs
+        cls, *, interactive: bool = False, drop_db: Optional[bool] = None, **kwargs
     ) -> None:
         """Delete all data being stored by this driver.
 
