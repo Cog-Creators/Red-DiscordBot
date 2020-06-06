@@ -20,8 +20,11 @@ def event_loop(request):
 
 
 def _get_backend_type():
-    if os.getenv("RED_STORAGE_TYPE") == "postgres":
+    env_var = os.getenv("RED_STORAGE_TYPE")
+    if env_var == "postgres":
         return drivers.BackendType.POSTGRES
+    elif env_var == "sql":
+        return drivers.BackendType.SQL
     else:
         return drivers.BackendType.JSON
 
