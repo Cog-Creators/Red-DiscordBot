@@ -793,7 +793,9 @@ class Downloader(commands.Cog):
 
             message = ""
             if uninstalled_cogs:
-                message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
+                message += _("Successfully uninstalled cog{plurial}: ").format(
+                    "s" if len(uninstalled_cogs) > 1 else ""
+                ) + humanize_list(uninstalled_cogs)
             if failed_cogs:
                 if len(failed_cogs) > 1:
                     message += (
