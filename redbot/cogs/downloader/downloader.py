@@ -874,7 +874,7 @@ class Downloader(commands.Cog):
         if unpinned:
             await self._save_to_installed(unpinned)
             cognames = [inline(cog.name) for cog in unpinned]
-            if len(pinned) > 1:
+            if len(unpinned) > 1:
                 message += _("Unpinned cogs: ")
             else:
                 message += _("Unpinned {cog}").format(cognames[0])
