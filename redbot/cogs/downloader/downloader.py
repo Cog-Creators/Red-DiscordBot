@@ -1093,7 +1093,7 @@ class Downloader(commands.Cog):
             )
         else:
             installed_str = (
-                _("Installed Cog: ({installed_bumber})\n").format(installed_number=len(installed))
+                _("Installed Cog: ({installed_number})\n").format(installed_number=len(installed))
                 + installed_str
             )
         available_str = "\n".join(
