@@ -548,7 +548,9 @@ class Downloader(commands.Cog):
         if len(repos) == 0:
             joined = _("There is no repo installed.")
         else:
-            joined = _("Installed Repo{plural}:\n\n").format(plural="s" if len(repos) > 1 else "")
+            joined = _("Installed {plural}:\n\n").format(
+                plural=_("Repos") if len(repos) > 1 else _("Repo")
+            )
         for repo in sorted_repos:
             joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
@@ -791,8 +793,8 @@ class Downloader(commands.Cog):
 
             message = ""
             if uninstalled_cogs:
-                message += _("Successfully uninstalled cog{plural}: ").format(
-                    "s" if len(uninstalled_cogs) > 1 else ""
+                message += _("Successfully uninstalled {plural}: ").format(
+                    _("cogs") if len(uninstalled_cogs) > 1 else _("cog")
                 ) + humanize_list(uninstalled_cogs)
             if failed_cogs:
                 if len(failed_cogs) > 1:
@@ -839,8 +841,8 @@ class Downloader(commands.Cog):
         if pinned:
             await self._save_to_installed(pinned)
             cognames = [inline(cog.name) for cog in pinned]
-            message += _("Pinned cog{plural}: ").format(
-                plural="s" if len(pinned) > 1 else ""
+            message += _("Pinned {plural}: ").format(
+                plural=_("cogs") if len(pinned) > 1 else _("cog")
             ) + humanize_list(cognames)
         if already_pinned:
             if len(already_pinned) > 1:
@@ -867,8 +869,8 @@ class Downloader(commands.Cog):
         if unpinned:
             await self._save_to_installed(unpinned)
             cognames = [inline(cog.name) for cog in unpinned]
-            message += _("Unpinned cog{plural}: ").format(
-                plural="s" if len(unpinned) > 1 else ""
+            message += _("Unpinned {plural}: ").format(
+                plural=_("cogs") if len(unpinned) > 1 else _("cog")
             ) + humanize_list(cognames)
         if not_pinned:
             if len(unpinned) > 1:
@@ -1080,8 +1082,9 @@ class Downloader(commands.Cog):
             installed_str = _("No cogs installed.")
         else:
             installed_str = (
-                _("Installed Cog{plural}: ({installed_number})\n").format(
-                    plural="s" if len(installed) > 1 else "", installed_number=len(installed)
+                _("Installed {plural}: ({installed_number})\n").format(
+                    plural=_("Cogs") if len(installed) > 1 else _("Cog"),
+                    installed_number=len(installed),
                 )
                 + installed_str
             )
@@ -1099,8 +1102,9 @@ class Downloader(commands.Cog):
             cogs = _("No cogs available.")
         else:
             cogs = (
-                _("Available Cog{plural}: ({available_number})\n").format(
-                    plural="s" if available_cogs > 1 else "", available_number=available_cogs
+                _("Available {plural}: ({available_number})\n").format(
+                    plural=_("Cogs") if available_cogs > 1 else _("Cog"),
+                    available_number=available_cogs,
                 )
                 + available_str
             )
@@ -1320,8 +1324,8 @@ class Downloader(commands.Cog):
                 )
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
-            message += _("\nFailed to update cog{plural}: ").format(
-                plural="s" if len(failed_cogs) > 1 else ""
+            message += _("\nFailed to update {plural}: ").format(
+                plural=_("cogs") if len(failed_cogs) > 1 else _("cog")
             ) + humanize_list(tuple(map(inline, cognames)))
         if not cogs_to_update:
             message = _("No cogs were updated.")
@@ -1338,8 +1342,8 @@ class Downloader(commands.Cog):
                 )
         if failed_libs:
             libnames = [lib.name for lib in failed_libs]
-            message += _("\nFailed to install shared librar{plural}: ").format(
-                "ies" if len(failed_libs) > 1 else "y"
+            message += _("\nFailed to install shared {plural}: ").format(
+                _("libraries") if len(failed_libs) > 1 else _("library")
             ) + humanize_list(tuple(map(inline, libnames)))
         return (updated_cognames, message)
 
