@@ -445,7 +445,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         Examples
         --------
         >>> from redbot.core.utils import AsyncIter
-        >>> await AsyncIter(range(3)).find(lambda x: x == 1):
+        >>> await AsyncIter(range(3)).find(lambda x: x == 1)
         1
         """
         while True:
@@ -476,7 +476,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         Examples
         --------
         >>> from redbot.core.utils import AsyncIter
-        >>> async for value in AsyncIter(range(3)).map(bool):
+        >>> async for value in AsyncIter(range(3)).map(bool)
         ...     print(value)
         False
         True
