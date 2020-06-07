@@ -1,6 +1,5 @@
 import asyncio
 import concurrent
-import ujson as json
 from collections import defaultdict
 from pathlib import Path
 from typing import Optional, Dict, Any, AsyncIterator, Tuple
@@ -18,6 +17,11 @@ from ..log import log
 from ... import data_manager
 from ...drivers import BaseDriver
 from ...utils.dbtools import APSWConnectionWrapper
+
+try:
+    import ujson as json
+except ImportError:
+    import json
 
 _locks = defaultdict(asyncio.Lock)
 
