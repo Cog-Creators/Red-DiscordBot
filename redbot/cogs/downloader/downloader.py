@@ -548,9 +548,7 @@ class Downloader(commands.Cog):
         if len(repos) == 0:
             joined = _("There is no repo installed.")
         else:
-            joined = _("Installed Repo{plural}:\n\n").format(
-                plural="s" if len(repos) > 1 else ""
-            )
+            joined = _("Installed Repo{plural}:\n\n").format(plural="s" if len(repos) > 1 else "")
         for repo in sorted_repos:
             joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
