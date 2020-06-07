@@ -1,13 +1,21 @@
 import asyncio
-import json
+import concurrent
+import ujson as json
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional, Dict, Any, AsyncIterator, Tuple, Union, Callable
+from typing import Optional, Dict, Any, AsyncIterator, Tuple
 
-from .queries import _create_table
+from .queries import (
+    _create_table,
+    _get_query,
+    _set_query,
+    _clear_query,
+    _prep_query,
+    _get_type_query,
+)
 from .. import IdentifierData, ConfigCategory
 from ..log import log
-from ... import data_manager, errors
+from ... import data_manager
 from ...drivers import BaseDriver
 from ...utils.dbtools import APSWConnectionWrapper
 
@@ -46,6 +54,9 @@ class SQLDriver(BaseDriver):
             data_path = data_manager.cog_data_path(raw_name=cog_name)
         data_path.mkdir(parents=True, exist_ok=True)
         self.data_path = data_path / self.file_name
+        if not self.data_path.exists():
+            self.data_path.touch()
+        self.db = APSWConnectionWrapper(str(self.data_path))
 
     @property
     def _lock(self) -> asyncio.Lock:
@@ -54,10 +65,7 @@ class SQLDriver(BaseDriver):
     @classmethod
     async def initialize(cls, **storage_details) -> None:
         # No initializing to do
-        if cls._conn is None and cls.data_path is not None:
-            if not cls.data_path.exists():
-                cls.data_path.touch()
-            cls._conn = APSWConnectionWrapper(str(cls.data_path))
+        return
 
     @classmethod
     async def teardown(cls) -> None:
@@ -71,73 +79,87 @@ class SQLDriver(BaseDriver):
         return {}
 
     async def get(self, identifier_data: IdentifierData):
-        try:
-            result = await self._execute(
-                "SELECT red_config.get($1)",
-                encode_identifier_data(identifier_data),
-                method=self._pool.fetchval,
-            )
-        except asyncpg.UndefinedTableError:
-            raise KeyError from None
-
-        if result is None:
-            # The result is None both when postgres yields no results, or when it yields a NULL row
-            # A 'null' JSON value would be returned as encoded JSON, i.e. the string 'null'
-            raise KeyError
-        return json.loads(result)
+        _full_identifiers = identifier_data.to_tuple()
+        cog_name, uuid, category, full_identifiers = (
+            _full_identifiers[0],
+            _full_identifiers[1],
+            _full_identifiers[2],
+            _full_identifiers[3:],
+        )
+        identifier_string = "$"
+        if full_identifiers:
+            identifier_string += "." + ".".join(full_identifiers)
+        query = _get_query.format(table_name=category, path=identifier_string)
+        type_query = _get_type_query.format(table_name=category, path=identifier_string)
+        result = await self._execute(query, category, type_query)
+        return result
 
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
-            await self._execute(_create_table.format(table_name=identifier_data.category))
-            await self._execute(
-                "SELECT red_config.set($1, $2::jsonb)",
-                encode_identifier_data(identifier_data),
-                json.dumps(value),
+            _full_identifiers = identifier_data.to_tuple()
+            cog_name, uuid, category, full_identifiers = (
+                _full_identifiers[0],
+                _full_identifiers[1],
+                _full_identifiers[2],
+                _full_identifiers[3:],
             )
-        except asyncpg.ErrorInAssignmentError:
-            raise errors.CannotSetSubfield
+            identifier_string = "$"
+            if full_identifiers:
+                identifier_string += "." + ".".join(full_identifiers)
+            value_copy = json.dumps(value)
+
+            query = _set_query.format(table_name=category, path=identifier_string, data=value_copy)
+            async with self._lock:
+                await self._execute(
+                    query, category,
+                )
+        except Exception:
+            log.exception(f"Error saving data for {self.cog_name}")
+            raise
 
     async def clear(self, identifier_data: IdentifierData):
-        try:
+        _full_identifiers = identifier_data.to_tuple()
+        cog_name, uuid, category, full_identifiers = (
+            _full_identifiers[0],
+            _full_identifiers[1],
+            _full_identifiers[2],
+            _full_identifiers[3:],
+        )
+        identifier_string = "$"
+        if full_identifiers:
+            identifier_string += "." + ".".join(full_identifiers)
+        query = _clear_query.format(table_name=category, path=identifier_string)
+        async with self._lock:
             await self._execute(
-                "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
+                query, category,
             )
-        except asyncpg.UndefinedTableError:
-            pass
 
-    async def inc(
-        self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
-    ) -> Union[int, float]:
-        try:
-            return await self._execute(
-                f"SELECT red_config.inc($1, $2, $3)",
-                encode_identifier_data(identifier_data),
-                value,
-                default,
-                method=self.db.fetchval,
-            )
-        except asyncpg.WrongObjectTypeError as exc:
-            raise errors.StoredTypeError(*exc.args)
-
-    async def toggle(self, identifier_data: IdentifierData, default: bool) -> bool:
-        try:
-            return await self._execute(
-                "SELECT red_config.inc($1, $2)",
-                encode_identifier_data(identifier_data),
-                default,
-                method=self.db.fetchval,
-            )
-        except asyncpg.WrongObjectTypeError as exc:
-            raise errors.StoredTypeError(*exc.args)
-
-    @classmethod
-    async def _execute(cls, query: str, *args, method: Optional[Callable] = None) -> Any:
-        if method is None:
-            method = cls.db.cursor().execute
+    async def _execute(self, query: str, category: str, type_query: Optional[str] = None) -> Any:
         log.invisible("Query: %s", query)
-        if args:
-            log.invisible("Args: %s", args)
-        return await method(query, *args)
+        self.db.cursor().execute(_create_table.format(table_name=category))
+        self.db.cursor().execute(_prep_query.format(table_name=category))
+        if type_query:
+            obj_type = self.db.cursor().execute(type_query)
+            obj_type = obj_type.fetchone()
+            obj_type = obj_type[0]
+            if obj_type is None:
+                raise KeyError
+        else:
+            obj_type = ...
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            for future in concurrent.futures.as_completed(
+                [executor.submit(self.db.cursor().execute, query)]
+            ):
+                output = future.result()
+                output = output.fetchone()
+                if obj_type is ...:
+                    return
+                output = output[0]
+                if obj_type not in ["text"] and isinstance(output, str):
+                    output = json.loads(output)
+
+        return output
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
@@ -168,7 +190,7 @@ class SQLDriver(BaseDriver):
         if interactive is True and drop_db is None:
             print(
                 "Please choose from one of the following options:\n"
-                " 1. Drop the entire PostgreSQL database for this instance, or\n"
+                " 1. Drop the entire SQL database for this instance, or\n"
                 " 2. Delete all of Red's data within this database, without dropping the database "
                 "itself."
             )
@@ -182,11 +204,13 @@ class SQLDriver(BaseDriver):
                 else:
                     break
         if drop_db is True:
-            if cls.data_path and cls.data_path.exists():
-                cls.data_path.unlink()
-        else:
-            with DROP_DDL_SCRIPT_PATH.open() as fs:
-                await cls._pool.execute(fs.read())
+            for cog_name in data_manager.cog_data_path().iterdir():
+                for cog_id in cog_name.iterdir():
+                    if cog_id.suffix in {".db"}:
+                        cog_id.unlink()
+        # else:
+        # with DROP_DDL_SCRIPT_PATH.open() as fs:
+        #     await cls._pool.execute(fs.read())
 
     async def import_data(self, cog_data, custom_group_data):
         log.info(f"Converting Cog: {self.cog_name}")
