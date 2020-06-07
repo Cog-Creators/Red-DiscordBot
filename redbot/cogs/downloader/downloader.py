@@ -1219,7 +1219,7 @@ class Downloader(commands.Cog):
                     already_installed
                 )
             else:
-                message += _("\n{cog} was already loaded.").format(cog=already_installed[0])
+                message += _("\n{cog} was already installed.").format(cog=already_installed[0])
         if name_already_used:
             if len(name_already_used) > 1:
                 message += _(
