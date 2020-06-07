@@ -545,7 +545,12 @@ class Downloader(commands.Cog):
         """List all installed repos."""
         repos = self._repo_manager.repos
         sorted_repos = sorted(repos, key=lambda r: str.lower(r.name))
-        joined = _("Installed Repos:\n\n")
+        if len(repos) == 0:
+            joined = _("There is no repo installed.")
+        else:
+            joined = _("Installed Repo{plurial}:\n\n").format(
+                plurial="s" if len(repos) > 1 else ""
+            )
         for repo in sorted_repos:
             joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
@@ -790,18 +795,30 @@ class Downloader(commands.Cog):
             if uninstalled_cogs:
                 message += _("Successfully uninstalled cogs: ") + humanize_list(uninstalled_cogs)
             if failed_cogs:
-                message += (
-                    _(
-                        "\nDownloader has removed these cogs from the installed cogs list"
-                        " but it wasn't able to find their files: "
+                if len(failed_cogs) > 1:
+                    message += (
+                        _(
+                            "\nDownloader has removed these cogs from the installed cogs list"
+                            " but it wasn't able to find their files: "
+                        )
+                        + humanize_list(tuple(map(inline, failed_cogs)))
+                        + _(
+                            "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
+                            "You may need to remove those files manually if the cogs are still usable."
+                            " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
+                        ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
                     )
-                    + humanize_list(tuple(map(inline, failed_cogs)))
-                    + _(
-                        "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
-                        "You may need to remove those files manually if the cogs are still usable."
-                        " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                    ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
-                )
+                else:
+                    message += _(
+                        "\nDownloader has removed the cog {cog} from the installed cogs list"
+                        " but it wasn't able to find his files."
+                    ).format(cog=inline(failed_cogs[0])) + _(
+                        "\nIt was most likely removed without using `{prefix}cog uninstall`.\n"
+                        "You may need to remove those files manually if the cog are still usable."
+                        " If so, ensure the cog have been unloaded with `{prefix}unload {cog}`."
+                    ).format(
+                        prefix=ctx.clean_prefix, cog=failed_cogs[0]
+                    )
         await self.send_pagified(ctx, message)
 
     @cog.command(name="pin", usage="<cogs>")
@@ -822,9 +839,14 @@ class Downloader(commands.Cog):
         if pinned:
             await self._save_to_installed(pinned)
             cognames = [inline(cog.name) for cog in pinned]
-            message += _("Pinned cogs: ") + humanize_list(cognames)
+            message += _("Pinned cog{plurial}: ").format(
+                plurial="s" if len(pinned) > 1 else ""
+            ) + humanize_list(cognames)
         if already_pinned:
-            message += _("\nThese cogs were already pinned: ") + humanize_list(already_pinned)
+            if len(already_pinned) > 1:
+                message += _("\nThese cogs were already pinned: ") + humanize_list(already_pinned)
+            else:
+                message += _("\n{cog} was already pinned.").format(cog=already_pinned[0])
         await self.send_pagified(ctx, message)
 
     @cog.command(name="unpin", usage="<cogs>")
@@ -845,9 +867,14 @@ class Downloader(commands.Cog):
         if unpinned:
             await self._save_to_installed(unpinned)
             cognames = [inline(cog.name) for cog in unpinned]
-            message += _("Unpinned cogs: ") + humanize_list(cognames)
+            message += _("Unpinned cog{plurial}: ").format(
+                plurial="s" if len(unpinned) > 1 else ""
+            ) + humanize_list(cognames)
         if not_pinned:
-            message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
+            if len(unpinned) > 1:
+                message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
+            else:
+                message += _("\n{cog} was already not pinned.").format(cog=not_pinned[0])
         await self.send_pagified(ctx, message)
 
     @cog.command(name="checkforupdates")
@@ -867,14 +894,22 @@ class Downloader(commands.Cog):
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
-                message += _("These cogs can be updated: ") + humanize_list(
-                    tuple(map(inline, cognames))
-                )
+                if len(cogs_to_update) > 1:
+                    message += _("These cogs can be updated: ") + humanize_list(
+                        tuple(map(inline, cognames))
+                    )
+                else:
+                    message += _("{cog} can be updated.").format(cog=inline(cognames[0]))
             if libs_to_update:
                 libnames = [cog.name for cog in libs_to_update]
-                message += _("\nThese shared libraries can be updated: ") + humanize_list(
-                    tuple(map(inline, libnames))
-                )
+                if len(libnames) > 1:
+                    message += _("\nThese shared libraries can be updated: ") + humanize_list(
+                        tuple(map(inline, libnames))
+                    )
+                else:
+                    message += _("\nShared library {library} can be updated.").format(
+                        library=inline(libnames[0])
+                    )
             if not (cogs_to_update or libs_to_update) and filter_message:
                 message += _("No cogs can be updated.")
             message += filter_message
@@ -1032,23 +1067,43 @@ class Downloader(commands.Cog):
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx: commands.Context, repo: Repo) -> None:
         """List all available cogs from a single repo."""
+        available_cogs = 0
         installed = await self.installed_cogs()
-        installed_str = ""
-        if installed:
-            installed_str = _("Installed Cogs:\n") + "\n".join(
-                [
-                    "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
-                    for i in installed
-                    if i.repo_name == repo.name
-                ]
+        installed_str = "\n".join(
+            [
+                "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
+                for i in installed
+                if i.repo_name == repo.name
+            ]
+        )
+        if installed_str == "":
+            installed_str = _("No cogs installed.")
+        else:
+            installed_str = (
+                _("Installed Cog{plurial}: ({installed_number})\n").format(
+                    plurial="s" if len(installed) > 1 else "", installed_number=len(installed)
+                )
+                + installed_str
             )
-        cogs = _("Available Cogs:\n") + "\n".join(
+        available_str = "\n".join(
             [
                 "+ {}: {}".format(cog.name, cog.short or "")
                 for cog in repo.available_cogs
                 if not (cog.hidden or cog in installed)
             ]
         )
+        for cog in repo.available_cogs:
+            if not (cog.hidden or cog in installed):
+                available_cogs += 1
+        if available_str == "":
+            cogs = _("No cogs available.")
+        else:
+            cogs = (
+                _("Available Cog{plurial}: ({available_number})\n").format(
+                    plurial="s" if available_cogs > 1 else "", available_number=available_cogs
+                )
+                + available_str
+            )
         cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
@@ -1257,22 +1312,35 @@ class Downloader(commands.Cog):
         updated_cognames: Set[str] = set()
         if installed_cogs:
             updated_cognames = {cog.name for cog in installed_cogs}
-            message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
+            if len(installed_cogs) > 1:
+                message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
+            else:
+                message += _("\n{cog} updated.").format(
+                    cog=humanize_list(tuple(map(inline, updated_cognames)))
+                )
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
-            message += _("\nFailed to update cogs: ") + humanize_list(tuple(map(inline, cognames)))
+            message += _("\nFailed to update cog{plurial}: ").format(
+                plurial="s" if len(failed_cogs) > 1 else ""
+            ) + humanize_list(tuple(map(inline, cognames)))
         if not cogs_to_update:
             message = _("No cogs were updated.")
         if installed_libs:
-            message += _(
-                "\nSome shared libraries were updated, you should restart the bot "
-                "to bring the changes into effect."
-            )
+            if len(installed_libs) > 1:
+                message += _(
+                    "\nSome shared libraries were updated, you should restart the bot "
+                    "to bring the changes into effect."
+                )
+            else:
+                message += _(
+                    "\nA shared library was updated, you should restart the "
+                    "bot to bring the changes into effect."
+                )
         if failed_libs:
             libnames = [lib.name for lib in failed_libs]
-            message += _("\nFailed to install shared libraries: ") + humanize_list(
-                tuple(map(inline, libnames))
-            )
+            message += _("\nFailed to install shared librar{plurial}: ").format(
+                "ies" if len(failed_libs) > 1 else "y"
+            ) + humanize_list(tuple(map(inline, libnames)))
         return (updated_cognames, message)
 
     async def _ask_for_cog_reload(self, ctx: commands.Context, updated_cognames: Set[str]) -> None:
@@ -1282,7 +1350,12 @@ class Downloader(commands.Cog):
             return
 
         if not ctx.assume_yes:
-            message = _("Would you like to reload the updated cogs?")
+            if len(updated_cognames) > 1:
+                message = _("Would you like to reload the updated cogs?")
+            else:
+                message = _("Would you like to reload {cog}?").format(
+                    cog=humanize_list(tuple(map(inline, updated_cognames)))
+                )
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if not can_react:
                 message += " (y/n)"
