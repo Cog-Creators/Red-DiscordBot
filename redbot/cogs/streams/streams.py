@@ -113,7 +113,16 @@ class Streams(commands.Cog):
                 tokens["client_secret"]
             except KeyError:
                 message = _(
-                    'You need a client secret key to use correctly Twitch API on this cog.\nFollow these steps:\n1. Go to this page: https://dev.twitch.tv/console/apps.\n2. Click "Manage" on your application.\n3. Click on "New secret".\n5. Copy your client ID and your client secret into:\n{commad}\n\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot.'
+                    "You need a client secret key to use correctly Twitch API on this cog.\n"
+                    "Follow these steps:\n"
+                    "1. Go to this page: https://dev.twitch.tv/console/apps.\n"
+                    '2. Click "Manage" on your application.\n'
+                    '3. Click on "New secret".\n'
+                    "5. Copy your client ID and your client secret into:\n"
+                    "{command}"
+                    "\n\n"
+                    "Note: These tokens are sensitive and should only be used in a private channel "
+                    "or in DM with the bot."
                 ).format(
                     command="`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`"
                 )
