@@ -143,7 +143,8 @@ def get_name() -> str:
             elif " " in name or name[0] == "-":
                 print("ERROR: They cannot start with a hyphen or include spaces.")
             elif confirm(
-                "The instance name provided doesn't fit the reccomended criteria. Are you sure?", default=False
+                "The instance name provided doesn't fit the reccomended criteria. Are you sure?",
+                default=False,
             ):
                 return name
             print()  # new line for ascetics
