@@ -18,6 +18,7 @@ from typing import (
     TypeVar,
     Union,
     Generator,
+    Coroutine,
 )
 
 from discord.utils import maybe_coroutine
@@ -426,12 +427,15 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
                 _temp.add(item)
         del _temp
 
-    async def find(self, predicate: Callable, default: Optional[Any] = None) -> AsyncIterator[_T]:
+    async def find(
+        self, predicate: Union[Callable, Coroutine], default: Optional[Any] = None
+    ) -> AsyncIterator[_T]:
         """Calls ``predicate`` over items in iterable and return first value to match.
 
         Parameters
         ----------
-        predicate: A function that returns a boolean-like result. The predicate provided can be a coroutine.
+        predicate: Union[Callable, Coroutine]
+            A function that returns a boolean-like result. The predicate provided can be a coroutine.
         default: Optional[Any]
             The value to return if there is no matches.
 
@@ -455,7 +459,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             if ret:
                 return elem
 
-    def map(self, func: Callable[..., _S]) -> AsyncIter[_S]:
+    def map(self, func: Union[Coroutine[..., _S], Callable[..., _S]]) -> AsyncIter[_S]:
         """Set the mapping callable for this instance of `AsyncIter`.
 
         .. important::
@@ -463,7 +467,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Parameters
         ----------
-        func: Callable
+        func: Union[Callable, Coroutine]
             The function to map values to. The function provided can be a coroutine.
 
         Raises
