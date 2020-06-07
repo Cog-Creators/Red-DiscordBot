@@ -81,7 +81,7 @@ def init_events(bot, cli_flags):
             "Red Bot Version: {}".format(red_version),
             "Discord.py Version: {}".format(dpy_version),
             "Shards: {}".format(bot.shard_count),
-            "Storage driver: {}".format(data_manager.storage_type())
+            "Storage driver: {}".format(data_manager.storage_type()),
         ]
 
         if guilds:
