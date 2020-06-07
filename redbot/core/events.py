@@ -13,6 +13,7 @@ import discord
 import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
+from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import Translator
@@ -80,6 +81,7 @@ def init_events(bot, cli_flags):
             "Red Bot Version: {}".format(red_version),
             "Discord.py Version: {}".format(dpy_version),
             "Shards: {}".format(bot.shard_count),
+            "Storage driver: {}".format(data_manager.storage_type())
         ]
 
         if guilds:
