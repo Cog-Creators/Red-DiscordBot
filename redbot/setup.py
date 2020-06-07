@@ -12,6 +12,7 @@ from typing import Dict, Any, Optional, Union
 import appdirs
 import click
 
+from redbot.core.cli import confirm
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
@@ -128,16 +129,24 @@ def get_name() -> str:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name is case-sensitive and can only include characters"
-            " A-z, numbers, underscores, and hyphens."
+            "This name is case-sensitive and should only include characters"
+            " A-z, numbers, underscores and periods."
         )
         name = input("> ")
-        if re.fullmatch(r"[a-zA-Z0-9_][a-zA-Z0-9_\-]*", name) is None:
+        if re.fullmatch(r"[a-zA-Z0-9_\.]*", name) is None:
             print(
-                "ERROR: Instance name can only include "
-                "characters A-z, numbers, underscores, and hyphens.\n"
-                "They can't start with a hyphen."
+                "Instance names should only include characters A-z, numbers, "
+                "underscores and periods as otherwise you may run into issues."
             )
+            if sys.platform == "linux" and "-" in name:
+                print("ERROR: On Linux, instance names can't include hyphens (-).")
+            elif " " in name or name[0] == "-":
+                print("ERROR: They cannot start with a hyphen or include spaces.")
+            elif confirm(
+                "The instance name provided doesn't fit the reccomended criteria. Are you sure?", default=False
+            ):
+                return name
+            print()  # new line for ascetics
             name = ""
     return name
 
