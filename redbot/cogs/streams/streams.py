@@ -474,10 +474,8 @@ class Streams(commands.Cog):
 
         Use `{stream.name}` in the message to insert the channel or user name.
 
-        For example: {command}
-        """.format(
-            command='`[p]streamset message mention "{mention}, {stream.name} is live!"`'
-        )
+        For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
+        """
         if message is not None:
             guild = ctx.guild
             await self.config.guild(guild).live_message_mention.set(message)
@@ -492,10 +490,8 @@ class Streams(commands.Cog):
 
         Use `{stream.name}` in the message to insert the channel or user name.
 
-        For example: {command}
-        """.format(
-            command='`[p]streamset message nomention "{stream.name} is live!"`'
-        )
+        For example: `[p]streamset message nomention "{stream.name} is live!"`
+        """
         if message is not None:
             guild = ctx.guild
             await self.config.guild(guild).live_message_nomention.set(message)
