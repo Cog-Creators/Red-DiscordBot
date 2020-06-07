@@ -112,7 +112,11 @@ class Streams(commands.Cog):
             try:
                 tokens["client_secret"]
             except KeyError:
-                message = _('You need a client secret key to use correctly Twitch API on this cog.\nFollow these steps:\n1. Go to this page: https://dev.twitch.tv/console/apps.\n2. Click "Manage" on your application.\n3. Click on "New secret".\n5. Copy your client ID and your client secret into:\n{commad}\n\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot.').format(command="`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`")
+                message = _(
+                    'You need a client secret key to use correctly Twitch API on this cog.\nFollow these steps:\n1. Go to this page: https://dev.twitch.tv/console/apps.\n2. Click "Manage" on your application.\n3. Click on "New secret".\n5. Copy your client ID and your client secret into:\n{commad}\n\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot.'
+                ).format(
+                    command="`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+                )
                 await send_to_owners_with_prefix_replaced(self.bot, message)
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -215,15 +219,13 @@ class Streams(commands.Cog):
         except InvalidTwitchCredentials:
             await ctx.send(
                 _(
-                    "The Twitch token is either invalid or has not been set. See "
-                    "{command}."
+                    "The Twitch token is either invalid or has not been set. See " "{command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
-                    "The YouTube API key is either invalid or has not been set. See "
-                    "{command}."
+                    "The YouTube API key is either invalid or has not been set. See " "{command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
         except APIError:
@@ -295,7 +297,9 @@ class Streams(commands.Cog):
 
         Do {command2} to disable all stream alerts in
         this server.
-        """.format(command="`[p]streamalert stop`",command2="`[p]streamalert stop yes`")
+        """.format(
+            command="`[p]streamalert stop`", command2="`[p]streamalert stop yes`"
+        )
         streams = self.streams.copy()
         local_channel_ids = [c.id for c in ctx.guild.channels]
         to_remove = []
@@ -369,8 +373,7 @@ class Streams(commands.Cog):
             except InvalidTwitchCredentials:
                 await ctx.send(
                     _(
-                        "The Twitch token is either invalid or has not been set. See "
-                        "{command}."
+                        "The Twitch token is either invalid or has not been set. See " "{command}."
                     ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
                 )
                 return
@@ -429,7 +432,9 @@ class Streams(commands.Cog):
             "\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(command=f"`{ctx.clean_prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`")
+        ).format(
+            command=f"`{ctx.clean_prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+        )
 
         await ctx.maybe_send_embed(message)
 
@@ -470,7 +475,9 @@ class Streams(commands.Cog):
         Use `{stream.name}` in the message to insert the channel or user name.
 
         For example: {command}
-        """.format(command='`[p]streamset message mention "{mention}, {stream.name} is live!"`')
+        """.format(
+            command='`[p]streamset message mention "{mention}, {stream.name} is live!"`'
+        )
         if message is not None:
             guild = ctx.guild
             await self.config.guild(guild).live_message_mention.set(message)
@@ -486,7 +493,9 @@ class Streams(commands.Cog):
         Use `{stream.name}` in the message to insert the channel or user name.
 
         For example: {command}
-        """.format(command='`[p]streamset message nomention "{stream.name} is live!"`')
+        """.format(
+            command='`[p]streamset message nomention "{stream.name} is live!"`'
+        )
         if message is not None:
             guild = ctx.guild
             await self.config.guild(guild).live_message_nomention.set(message)
