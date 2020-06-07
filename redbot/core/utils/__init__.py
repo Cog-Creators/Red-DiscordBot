@@ -312,7 +312,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             self._i = 0
             await asyncio.sleep(self._delay)
         self._i += 1
-        return self._map(item)
+        return await maybe_coroutine(self._map, item)
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
         """Returns a list of the iterable.
@@ -431,9 +431,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         Parameters
         ----------
-        predicate: Callable
-            The function to to check values with, this function should return `True` or `False`
-            and accept only a single argument, which is the value in the iterable.
+        predicate: A function that returns a boolean-like result. The predicate provided can be a coroutine.
         default: Optional[Any]
             The value to return if there is no matches.
 
@@ -466,7 +464,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         Parameters
         ----------
         func: Callable
-            The function to map values to.
+            The function to map values to. The function provided can be a coroutine.
 
         Raises
         ------
