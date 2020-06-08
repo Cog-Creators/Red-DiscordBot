@@ -252,20 +252,24 @@ class Alias(commands.Cog):
         )
 
     @alias.command(name="help")
-    @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
         """Try to execute help for the base command of the alias."""
-        alias = await self._aliases.get_alias(ctx.guild, alias_name=alias_name)
+        if ctx.guild:
+            alias = await self._aliases.get_alias(ctx.guild, alias_name=alias_name)
+        else:
+            alias = await self._aliases.get_alias(None, alias_name=alias_name)
         if alias:
             await self.bot.send_help_for(ctx, alias.command)
         else:
             await ctx.send(_("No such alias exists."))
 
     @alias.command(name="show")
-    @commands.guild_only()
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
         """Show what command the alias executes."""
-        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if ctx.guild:
+            alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        else:
+            alias = await self._aliases.get_alias(None, alias_name)
 
         if alias:
             await ctx.send(
