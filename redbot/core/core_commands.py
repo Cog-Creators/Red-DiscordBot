@@ -1570,7 +1570,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot._config.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set."))
 
-    @commands.command()
+    @commands.command(cooldown_after_parsing=True)
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner"""
