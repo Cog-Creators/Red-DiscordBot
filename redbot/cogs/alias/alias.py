@@ -124,7 +124,6 @@ class Alias(commands.Cog):
         await menu(ctx, alias_list, DEFAULT_CONTROLS)
 
     @commands.group()
-    @commands.guild_only()
     async def alias(self, ctx: commands.Context):
         """Manage command aliases."""
         pass
