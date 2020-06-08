@@ -175,7 +175,7 @@ class RedisDriver(BaseDriver):
             raise KeyError
         try:
             result = await self._execute(
-                cog_name, *full_identifiers, method=self._pool_get.jsonget,
+                cog_name, *full_identifiers, method=self._pool_get.jsonget, no_escape=True
             )
         except aioredis.errors.ReplyError:
             raise KeyError
