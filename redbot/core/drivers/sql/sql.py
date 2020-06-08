@@ -49,7 +49,7 @@ class SQLDriver(BaseDriver):
         self, cog_name: str, identifier: str, *, data_path_override: Optional[Path] = None,
     ):
         super().__init__(cog_name, identifier)
-        self.file_name = f"{identifier}.db"
+        self.file_name = f"{identifier}.rdb"
         if data_path_override is not None:
             data_path = data_path_override
         elif cog_name == "Core" and identifier == "0":
@@ -93,9 +93,9 @@ class SQLDriver(BaseDriver):
         identifier_string = "$"
         if full_identifiers:
             identifier_string += "." + ".".join(full_identifiers)
-        query = _get_query.format(table_name=category, path=identifier_string)
-        type_query = _get_type_query.format(table_name=category, path=identifier_string)
-        result = await self._execute(query, category, type_query)
+        query = _get_query.format(table_name=category)
+        type_query = _get_type_query.format(table_name=category)
+        result = await self._execute(query, category, type_query, path=identifier_string)
         return result
 
     async def set(self, identifier_data: IdentifierData, value=None):
@@ -112,13 +112,11 @@ class SQLDriver(BaseDriver):
                 identifier_string += "." + ".".join(full_identifiers)
             value_copy = json.dumps(value)
 
-            query = _set_query.format(table_name=category, path=identifier_string, data=value_copy)
+            query = _set_query.format(table_name=category)
             async with self._lock:
-                await self._execute(
-                    query, category,
-                )
+                await self._execute(query, category, path=identifier_string, data=value_copy)
         except Exception:
-            log.exception(f"Error saving data for {self.cog_name}")
+            log.exception(f"Error saving data for {self.cog_name} {self.unique_cog_identifier}")
             raise
 
     async def clear(self, identifier_data: IdentifierData):
@@ -132,28 +130,37 @@ class SQLDriver(BaseDriver):
         identifier_string = "$"
         if full_identifiers:
             identifier_string += "." + ".".join(full_identifiers)
-        query = _clear_query.format(table_name=category, path=identifier_string)
+        query = _clear_query.format(table_name=category)
         async with self._lock:
-            await self._execute(
-                query, category,
-            )
+            await self._execute(query, category, path=identifier_string)
 
-    async def _execute(self, query: str, category: str, type_query: Optional[str] = None) -> Any:
+    async def _execute(
+        self,
+        query: str,
+        category: str,
+        type_query: Optional[str] = None,
+        path: Optional[str] = None,
+        data: Optional[str] = ...,
+    ) -> Any:
         log.invisible("Query: %s", query)
         self.db.cursor().execute(_create_table.format(table_name=category))
         self.db.cursor().execute(_prep_query.format(table_name=category))
         if type_query:
-            obj_type = self.db.cursor().execute(type_query)
+            obj_type = self.db.cursor().execute(type_query, (path,))
             obj_type = obj_type.fetchone()
             obj_type = obj_type[0]
             if obj_type is None:
                 raise KeyError
         else:
             obj_type = ...
-
+        _data = {
+            "path": path,
+        }
+        if data is not ...:
+            _data.update({"value": data})
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.db.cursor().execute, query)]
+                [executor.submit(self.db.cursor().execute, query, _data)]
             ):
                 output = future.result()
                 output = output.fetchone()
@@ -170,7 +177,8 @@ class SQLDriver(BaseDriver):
         yield "Core", "0"
         for cog_name in data_manager.cog_data_path().iterdir():
             for cog_id in cog_name.iterdir():
-                yield cog_name.stem, cog_id.stem
+                if cog_id.suffix in {".rdb"}:
+                    yield cog_name.stem, cog_id.stem
 
     @classmethod
     async def delete_all_data(
@@ -194,11 +202,10 @@ class SQLDriver(BaseDriver):
         if interactive is True and drop_db is None:
             print(
                 "Please choose from one of the following options:\n"
-                " 1. Drop the entire SQL database for this instance, or\n"
-                " 2. Delete all of Red's data within this database, without dropping the database "
-                "itself."
+                "0. Keeps Reds data saved in the existing databases"
+                " 1. Delete all of Red's data."
             )
-            options = ("1", "2")
+            options = ("0", "1")
             while True:
                 resp = input("> ")
                 try:
@@ -207,14 +214,11 @@ class SQLDriver(BaseDriver):
                     print("Please type a number corresponding to one of the options.")
                 else:
                     break
-        if drop_db is True:
+        if drop_db:
             for cog_name in data_manager.cog_data_path().iterdir():
                 for cog_id in cog_name.iterdir():
-                    if cog_id.suffix in {".db"}:
+                    if cog_id.suffix in {".rdb"}:
                         cog_id.unlink()
-        # else:
-        # with DROP_DDL_SCRIPT_PATH.open() as fs:
-        #     await cls._pool.execute(fs.read())
 
     async def import_data(self, cog_data, custom_group_data):
         log.info(f"Converting Cog: {self.cog_name}")

@@ -11,13 +11,13 @@ CREATE TABLE IF NOT EXISTS {table_name} (
 _get_query: Final[
     str
 ] = """
-SELECT json_extract(target_table.data,'{path}')
+SELECT json_extract(target_table.data, :path)
 FROM {table_name} as target_table
 """
 _get_type_query: Final[
     str
 ] = """
-SELECT json_type(target_table.data,'{path}')
+SELECT json_type(target_table.data, :path)
 FROM {table_name} as target_table
 """
 
@@ -25,14 +25,14 @@ _set_query: Final[
     str
 ] = """
 UPDATE {table_name}
-  set data = json_set(data, '{path}', '{data}')
+  set data = json_set(data, :path, :value)
 """
 
 _clear_query: Final[
     str
 ] = """
 UPDATE {table_name}
-  set data = json_remove(target_table.data, '{path}')
+  set data = json_remove(target_table.data, :path)
 """
 
 _prep_query: Final[
