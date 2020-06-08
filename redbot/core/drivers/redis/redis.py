@@ -283,7 +283,7 @@ class RedisDriver(BaseDriver):
                 raise StoredTypeError("The value is not a Boolean or Null")
             else:
                 result = await self._execute(
-                    cog_name, path=identifier_string, method=self._pool_get.jsonget,
+                    cog_name, path=identifier_string, method=self._pool_get.jsonget, no_escape=True
                 )
                 result = not ujson.loads(result)
                 await self._execute(
