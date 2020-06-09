@@ -25,7 +25,7 @@ _set_query: Final[
     str
 ] = """
 UPDATE {table_name}
-  set data = json_set(data, :path, :value)
+  set data = json_set(data, :path, json(:value))
 """
 
 _clear_query: Final[
