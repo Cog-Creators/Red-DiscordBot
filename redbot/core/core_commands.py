@@ -1573,7 +1573,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx: commands.Context, *, message: str):
-        """Sends a message to the owner"""
+        """Sends a message to the owner."""
         guild = ctx.message.guild
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
@@ -1672,7 +1672,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
-        """Sends a DM to a user
+        """Sends a DM to a user.
 
         This command needs a User ID to work.
         To get a User ID, go to Discord's settings and open the
