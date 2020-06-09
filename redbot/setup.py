@@ -402,7 +402,9 @@ def convert(instance, backend):
         default_dirs["STORAGE_TYPE"] = target.value
         default_dirs["STORAGE_DETAILS"] = new_storage_details
         save_config(instance, default_dirs)
-        conversion_log.info(f"Conversion to {target} complete.")
+        conversion_log.info(
+            f"Instance '{instance}' has been converted from {current_backend} to {target}."
+        )
     else:
         conversion_log.info(
             f"Cannot convert {current_backend.value} to {target.value} at this time."
