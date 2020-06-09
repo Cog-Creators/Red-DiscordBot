@@ -1675,9 +1675,9 @@ class Core(commands.Cog, CoreLogic):
         """Sends a DM to a user
 
         This command needs a User ID to work.
-        To get a User ID, go to Discord's settings open the 'Appearance'
-        tab. Enable 'Developer Mode', then right click a user and select
-        'Copy ID'.
+        To get a User ID, go to Discord's settings and open the
+        'Appearance' tab. Enable 'Developer Mode', then right click
+        a user and select 'Copy ID'.
         """
         destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
         if destination is None or destination.bot:
