@@ -110,13 +110,17 @@ class SQLDriver(BaseDriver):
             identifier_string = "$"
             if full_identifiers:
                 identifier_string += "." + ".".join(full_identifiers)
-            value_copy = json.dumps(value)
+            value = json.dumps(value)
 
             query = _set_query.format(table_name=category)
             async with self._lock:
-                await self._execute(query, category, path=identifier_string, data=value_copy)
-        except Exception:
-            log.exception(f"Error saving data for {self.cog_name} {self.unique_cog_identifier}")
+                await self._execute(query, category, path=identifier_string, data=value)
+        except Exception as exc:
+            log.error(
+                f"{exc} when saving data for '{self.cog_name}' "
+                f"id:{self.unique_cog_identifier} "
+                f"|| {value}"
+            )
             raise
 
     async def clear(self, identifier_data: IdentifierData):
@@ -250,5 +254,5 @@ class SQLDriver(BaseDriver):
             )
             try:
                 await self.set(ident_data, data)
-            except Exception as err:
-                log.critical(f"Error saving: {ident_data.__repr__()}: {data}", exc_info=err)
+            except Exception as exc:
+                log.critical(f"{exc} when saving: {ident_data.__repr__()}: {data}")
