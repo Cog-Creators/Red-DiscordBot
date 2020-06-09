@@ -1674,8 +1674,8 @@ class Core(commands.Cog, CoreLogic):
     async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
         """Sends a DM to a user.
 
-        This command needs a User ID to work.
-        To get a User ID, go to Discord's settings and open the
+        This command needs a user ID to work.
+        To get a user ID, go to Discord's settings and open the
         'Appearance' tab. Enable 'Developer Mode', then right click
         a user and select 'Copy ID'.
         """
