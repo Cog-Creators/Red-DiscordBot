@@ -51,6 +51,7 @@ Miscellaneous
 -------------
 
 - Added missing help message for Downloader, Reports and Streams cogs (:issue:`3892`)
+- **Core Bot** - cooldown in ``[p]contact`` no longer applies when it's used without any arguments (:issue:`3942`)
 - **Alias** - ``[p]alias global`` group, ``[p]alias help``, and ``[p]alias show`` commands can now be used in DMs (:issue:`3941`, :issue:`3940`)
 - **Audio** - Typo fix (:issue:`3889`, :issue:`3900`)
 - **Audio** - Fixed ``[p]audioset autoplay`` being available in DMs (:issue:`3899`)
