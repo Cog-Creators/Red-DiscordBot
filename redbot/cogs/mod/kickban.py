@@ -398,15 +398,19 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: Optional[int] = 1,
+        duration: Optional[
+            commands.TimedeltaConverter(
+                minimum=timedelta(days=0), maximum=timedelta(days=7), default_unit="days"
+            )
+        ] = timedelta(days=1),
+        days: Optional[int] = 0,
         *,
         reason: str = None,
     ):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        days_delta = timedelta(days=int(duration))
-        unban_time = datetime.utcnow() + days_delta
+        unban_time = datetime.utcnow() + duration
 
         if author == user:
             return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
@@ -420,7 +424,7 @@ class KickBanMixin(MixinMeta):
             return _("I cannot do that due to discord hierarchy rules")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
-        invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
+        invite = await self.get_invite_for_reinvite(ctx, int(duration.total_seconds() + 86400))
         if invite is None:
             invite = ""
 
