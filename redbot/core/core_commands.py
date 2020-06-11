@@ -1449,7 +1449,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("The custom text has been set."))
             await ctx.invoke(self.info)
         else:
-            await ctx.bot.send(_("Characters must be fewer than 1024."))
+            await ctx.send(_("Text must be fewer than 1024 characters long."))
 
     @_set.command()
     @checks.is_owner()
