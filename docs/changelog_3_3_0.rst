@@ -4,7 +4,7 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`
+| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`
 
 End-user changelog
 ------------------
@@ -33,7 +33,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- **Audio** - Typo fix (:issue:`3889`)
+- **Audio** - Typo fix (:issue:`3889`, :issue:`3900`)
 - **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 
 
