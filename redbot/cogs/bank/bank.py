@@ -46,8 +46,8 @@ class Bank(commands.Cog):
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings."""
-        cur_setting = await bank.is_global()
         if ctx.invoked_subcommand is None:
+            cur_setting = await bank.is_global()
             if cur_setting:
                 group = bank._config
             else:
