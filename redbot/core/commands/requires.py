@@ -183,11 +183,15 @@ class PermState(enum.Enum):
 
     ALLOWED_BY_HOOK = enum.auto()
     """This command has been actively allowed by a permission hook.
-    check validation doesn't need this, but is useful to developers"""
+    check validation swaps this out, but the information may be useful
+    to developers. It is treated as ``ACTIVE_ALLOW` for the current command
+    and `PASSIVE_ALLOW` for subcommands."""
 
     DENIED_BY_HOOK = enum.auto()
     """This command has been actively denied by a permission hook
-    check validation doesn't need this, but is useful to developers"""
+    check validation swaps this out, but the information may be useful
+    to developers. It is treated as `ACTIVE_DENY` for the current command
+    and any subcommands."""
 
     @classmethod
     def from_bool(cls, value: Optional[bool]) -> "PermState":
@@ -263,6 +267,17 @@ PermStateAllowedStates = (
 
 
 def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
+
+    # Transforms here are used so that the
+    # informational ALLOWED_BY_HOOK/DENIED_BY_HOOK
+    # remain, while retaining the behavior desired.
+    if prev is PermState.ALLOWED_BY_HOOK:
+        # As hook allows are extremely granular,
+        # we don't want this to allow every subcommand
+        prev = PermState.PASSIVE_ALLOW
+    elif prev is PermState.DENIED_BY_HOOK:
+        # However, denying should deny every subcommand
+        prev = PermState.ACTIVE_DENY
     return PermStateTransitions[prev][next_state]
 
 
