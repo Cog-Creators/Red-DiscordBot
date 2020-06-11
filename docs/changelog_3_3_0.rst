@@ -4,7 +4,7 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -26,6 +26,23 @@ Filter
 ******
 
 - Fixed behavior of detecting quotes in commands for adding/removing filtered words (:issue:`3925`)
+
+Permissions
+***********
+
+- **Both global and server rules** can no longer prevent guild owners from accessing commands for changing server rules. Bot owners can still use ``[p]command disable`` if they wish to completely disable any command in Permissions cog (:issue:`3955`, :issue:`3107`)
+
+  Full list of affected commands:
+
+  - ``[p]permissions acl getserver``
+  - ``[p]permissions acl setserver``
+  - ``[p]permissions acl updateserver``
+  - ``[p]permissions addserverrule``
+  - ``[p]permissions removeserverrule``
+  - ``[p]permissions setdefaultserverrule``
+  - ``[p]permissions clearserverrules``
+  - ``[p]permissions canrun``
+  - ``[p]permissions explain``
 
 Warnings
 ********
