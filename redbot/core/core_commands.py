@@ -1677,7 +1677,7 @@ class Core(commands.Cog, CoreLogic):
         This command needs a user ID to work.
         To get a user ID, go to Discord's settings and open the
         'Appearance' tab. Enable 'Developer Mode', then right click
-        a user and select 'Copy ID'.
+        a user and click on 'Copy ID'.
         """
         destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
         if destination is None or destination.bot:
