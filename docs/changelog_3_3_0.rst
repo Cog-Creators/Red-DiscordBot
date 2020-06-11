@@ -34,6 +34,7 @@ Miscellaneous
 -------------
 
 - Added missing help message for Downloader, Reports and Streams cogs (:issue:`3892`)
+- **Alias** - ``[p]alias global`` group, ``[p]alias help``, and ``[p]alias show`` commands can now be used in DMs (:issue:`3941`, :issue:`3940`)
 - **Audio** - Typo fix (:issue:`3889`, :issue:`3900`)
 - **Audio** - Fixed ``[p]audioset autoplay`` being available in DMs (:issue:`3899`)
 - **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
