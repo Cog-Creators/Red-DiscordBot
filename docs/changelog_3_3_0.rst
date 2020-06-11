@@ -4,7 +4,7 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -13,6 +13,11 @@ Core Bot
 ********
 
 - ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
+
+Audio
+*****
+
+- Audio now properly ignores streams when max length is enabled (:issue:`3878`, :issue:`3877`)
 
 Warnings
 ********
