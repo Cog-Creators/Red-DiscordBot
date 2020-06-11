@@ -489,7 +489,7 @@ class Core(commands.Cog, CoreLogic):
             _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
         )
 
-    @embedset.command(name="guild")
+    @embedset.command(name="server", aliases=["guild"])
     @checks.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
