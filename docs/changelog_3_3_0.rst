@@ -20,6 +20,11 @@ Audio
 - Audio now properly ignores streams when max length is enabled (:issue:`3878`, :issue:`3877`)
 - Commands that should work in DMs no longer error (:issue:`3880`)
 
+Filter
+******
+
+- Fixed behavior of detecting quotes in commands for adding/removing filtered words (:issue:`3925`)
+
 Warnings
 ********
 
