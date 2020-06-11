@@ -1638,7 +1638,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(cooldown_after_parsing=True)
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx: commands.Context, *, message: str):
-        """Sends a message to the owner"""
+        """Sends a message to the owner."""
         guild = ctx.message.guild
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
@@ -1737,12 +1737,13 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
-        """Sends a DM to a user
+        """Sends a DM to a user.
 
-        This command needs a user id to work.
-        To get a user id enable 'developer mode' in Discord's
-        settings, 'appearance' tab. Then right click a user
-        and copy their id"""
+        This command needs a user ID to work.
+        To get a user ID, go to Discord's settings and open the
+        'Appearance' tab. Enable 'Developer Mode', then right click
+        a user and click on 'Copy ID'.
+        """
         destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
         if destination is None or destination.bot:
             await ctx.send(
