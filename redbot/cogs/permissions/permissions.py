@@ -137,12 +137,12 @@ class Permissions(commands.Cog):
                     self.permissions_acl,  # acl group
                     self.permissions_acl_setguild,
                     self.permissions_acl_getguild,
-                    self.permissions_canrun,
                     self.permissions_acl_updateguild,
                     self.permissions_addguildrule,
+                    self.permissions_clearguildrules,
                     self.permissions_removeguildrule,
                     self.permissions_setdefaultguildrule,
-                    self.permissions_clearguildrules,
+                    self.permissions_canrun,
                     self.permissions_explain,
                 ):
                     return True  # permission rules will be ignored at this case
