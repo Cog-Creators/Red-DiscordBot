@@ -1,7 +1,7 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.9 or 3.4.0 (Unreleased)
-==================================
+Redbot 3.3.9 (2020-06-12)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
