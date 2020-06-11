@@ -34,6 +34,7 @@ Miscellaneous
 -------------
 
 - **Audio** - Typo fix (:issue:`3889`, :issue:`3900`)
+- **Audio** - Fixed ``[p]audioset autoplay`` being available in DMs (:issue:`3899`)
 - **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 
 
