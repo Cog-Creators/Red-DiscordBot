@@ -14,6 +14,13 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 End-user changelog
 ------------------
 
+Security
+********
+
+**NOTE**: If you can't update immediately, we recommend disabling the affected command until you can.
+
+- **Mod** - ``[p]tempban`` now properly respects Discord's hierarchy rules (:issue:`3957`)
+
 Core Bot
 ********
 
