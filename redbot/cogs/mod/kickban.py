@@ -409,17 +409,19 @@ class KickBanMixin(MixinMeta):
         unban_time = datetime.utcnow() + days_delta
 
         if author == user:
-            return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+            await ctx.send(
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+            )
         elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
-            return _(
-                "I cannot let you do that. You are "
-                "not higher than the user in the role "
-                "hierarchy."
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
             )
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            return _("I cannot do that due to discord hierarchy rules")
-        elif not (0 <= days <= 7):
-            return _("Invalid days. Must be between 0 and 7.")
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
         invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
         if invite is None:
             invite = ""
