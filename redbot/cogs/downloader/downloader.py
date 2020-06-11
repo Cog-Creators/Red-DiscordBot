@@ -77,8 +77,9 @@ class Downloader(commands.Cog):
                 pass
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        async with ctx.typing():
-            await self._ready.wait()
+        if not self._ready.is_set():
+            async with ctx.typing():
+                await self._ready.wait()
         if self._ready_raised:
             await ctx.send(
                 "There was an error during Downloader's initialization."
