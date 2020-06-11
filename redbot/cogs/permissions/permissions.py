@@ -80,6 +80,7 @@ __version__ = "1.0.0"
 @cog_i18n(_)
 class Permissions(commands.Cog):
     """Customise permissions for commands and cogs."""
+
     # The command groups in this cog should never directly take any configuration actions
     # These should be delegated to specific commands so that it remains trivial
     # to prevent the guild owner from ever locking themselves out
