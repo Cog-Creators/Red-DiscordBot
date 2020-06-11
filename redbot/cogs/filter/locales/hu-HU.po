@@ -43,7 +43,7 @@ msgstr ""
 
 #: redbot/cogs/filter/filter.py:89
 msgid "Autoban disabled."
-msgstr ""
+msgstr "Autoban letiltva."
 
 #: redbot/cogs/filter/filter.py:94
 msgid "Count and time have been set."
@@ -138,9 +138,9 @@ msgstr ""
 
 #: redbot/cogs/filter/filter.py:465
 msgid "Filtered nickname"
-msgstr ""
+msgstr "Szűrt becenév"
 
 #: redbot/cogs/filter/filter.py:465
 msgid "Filtered name"
-msgstr ""
+msgstr "Szűrt név"
 

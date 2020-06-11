@@ -138,7 +138,7 @@ msgstr "Aucune action nommée {name} n'existe!"
 #: redbot/cogs/warnings/warnings.py:225
 #, docstring
 msgid "Manage warning reasons.\\n\\n        Reasons must be given a name, description and points value. The\\n        name of the reason must be given when a user is warned.\\n        "
-msgstr ""
+msgstr "Gérer les raisons d'avertissement.\\n\\n        Les raisons doivent avoir un nom, une description et une valeur de points. Le nom\\n        de la raison devra être donné quand un utilisateur est averti.\\n        "
 
 #: redbot/cogs/warnings/warnings.py:237
 #, docstring
@@ -248,7 +248,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:427 redbot/cogs/warnings/warnings.py:435
 msgid "{user} has been warned."
-msgstr ""
+msgstr "{user} a été averti."
 
 #: redbot/cogs/warnings/warnings.py:441
 msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."

@@ -24,11 +24,11 @@ msgstr "Es wurde kein Prefix gefunden."
 
 #: redbot/cogs/alias/alias.py:116
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "Aliase:\\n"
 
 #: redbot/cogs/alias/alias.py:118
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nSeite {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:129
 #, docstring
@@ -51,7 +51,7 @@ msgstr "Du hast versucht, einen neuen Alias ​​mit dem Namen {name} zu erstel
 
 #: redbot/cogs/alias/alias.py:157
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
-msgstr ""
+msgstr "Du hast versucht, einen neuen Alias mit dem Namen {name} zu erstellen, aber dieser Alias existiert bereits."
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
@@ -76,7 +76,7 @@ msgstr "Du hast versucht, einen neuen globalen Alias ​​mit dem Namen „{nam
 
 #: redbot/cogs/alias/alias.py:216
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
-msgstr ""
+msgstr "Du hast versucht, einen neuen globalen Alias mit dem Namen {name} zu erstellen, aber dieser Alias existiert bereits."
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."

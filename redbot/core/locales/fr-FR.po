@@ -977,7 +977,7 @@ msgstr "Chemin des données: {path}"
 #: redbot/core/core_commands.py:1737
 #, docstring
 msgid "Shows debug information useful for debugging.."
-msgstr ""
+msgstr "Affiche les informations de débogage utiles pour le débogage.."
 
 #: redbot/core/core_commands.py:1798
 #, docstring
@@ -1014,7 +1014,7 @@ msgstr "Les utilisateurs ont été retirés de la liste blanche."
 #: redbot/core/core_commands.py:1851
 #, docstring
 msgid "\\n        Clears the whitelist.\\n        "
-msgstr ""
+msgstr "\\n        Efface la liste blanche.\\n        "
 
 #: redbot/core/core_commands.py:1855
 msgid "Whitelist has been cleared."
@@ -1172,7 +1172,7 @@ msgstr ""
 #: redbot/core/core_commands.py:2104
 #, docstring
 msgid "List disabled commands globally."
-msgstr ""
+msgstr "Liste des commandes désactivées globalement."
 
 #: redbot/core/core_commands.py:2107
 msgid "There aren't any globally disabled commands."
@@ -1180,7 +1180,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2110
 msgid "{} commands are disabled globally.\\n"
-msgstr ""
+msgstr "{} commandes sont désactivées globalement.\\n"
 
 #: redbot/core/core_commands.py:2114
 msgid "1 command is disabled globally.\\n"
@@ -1197,11 +1197,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2127
 msgid "{} commands are disabled in {}.\\n"
-msgstr ""
+msgstr "{} commandes sont désactivées dans {}.\\n"
 
 #: redbot/core/core_commands.py:2131
 msgid "1 command is disabled in {}.\\n"
-msgstr ""
+msgstr "1 commande est désactivée dans {}.\\n"
 
 #: redbot/core/core_commands.py:2138
 #, docstring
@@ -1364,7 +1364,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2460
 msgid "Unknown channel with id: {id}"
-msgstr ""
+msgstr "Salon inconnu avec l'id : {id}"
 
 #: redbot/core/core_commands.py:2491
 #, docstring
@@ -1413,7 +1413,7 @@ msgstr "Salon supprimé de la liste des ignorés."
 
 #: redbot/core/core_commands.py:2551
 msgid "That channel is not in the ignore list."
-msgstr ""
+msgstr "Ce salon n'est pas dans la liste des ignorés."
 
 #: redbot/core/core_commands.py:2556
 #, docstring
@@ -1426,7 +1426,7 @@ msgstr "Ce serveur a été supprimer de la liste ignorés."
 
 #: redbot/core/core_commands.py:2562
 msgid "This server is not in the ignore list."
-msgstr ""
+msgstr "Ce serveur n'est pas dans la liste des ignorés."
 
 #: redbot/core/core_commands.py:2568
 msgid "This server is currently being ignored."

@@ -73,7 +73,7 @@ msgstr "Entfernt Nachrichten, welche von dem Bot stammen, oder Befehle sind."
 #: redbot/cogs/cleanup/cleanup.py:465
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr ""
+msgstr "Nachrichten des Bots bereinigen.\\n\\n        Standardmäßig werden alle Nachrichten gelöscht. Wenn ein drittes Argument angegeben ist,\\n        wird es für Pattern-Matching verwendet - nur Nachrichten mit dem angegebenen Text werden gelöscht.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:535
 #, docstring

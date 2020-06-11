@@ -91,7 +91,7 @@ msgstr "Erstelle einen benutzerdefinierten Befehl der eine zufällige Antwort au
 #: redbot/cogs/customcom/customcom.py:297
 #: redbot/cogs/customcom/customcom.py:326
 msgid "Custom command names cannot have spaces in them."
-msgstr ""
+msgstr "Benutzerdefinierte Befehle dürfen keine Leerzeichen enthalten."
 
 #: redbot/cogs/customcom/customcom.py:300
 #: redbot/cogs/customcom/customcom.py:329
@@ -187,7 +187,7 @@ msgstr "Seite {num}/{total}"
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
 msgid "Shows a custom command's responses and its settings."
-msgstr ""
+msgstr "Zeigt die Einstellungen und alle Antworten eines benutzerdefinierten Befehls an."
 
 #: redbot/cogs/customcom/customcom.py:467
 msgid "I could not not find that custom command."

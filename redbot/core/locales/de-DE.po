@@ -247,7 +247,7 @@ msgstr "Einbettungen für diesen Discord Server sind jetzt: {} ."
 #: redbot/core/core_commands.py:456
 #, docstring
 msgid "\\n        Toggle the channel's embed setting.\\n\\n        If enabled is None, the setting will be unset and\\n        the guild default will be used instead.\\n\\n        If set, this is used instead of the guild default\\n        to determine whether or not to use embeds. This is\\n        used for all commands done in a channel except\\n        for help commands.\\n        "
-msgstr ""
+msgstr "\\n        Wechselt die Embed-Einstellung des Kanals.\\n\\n        Wenn kein Wert angegeben wird, wird die Einstellung aufgehoben\\n        und stattdessen der Serverstandard verwendet.\\n\\n        Wenn ein Wert angegeben wird, so wird dieser anstelle des Serverstandards verwendet\\n        um zu entscheiden, ob Embeds verwendet werden oder nicht.\\n        Dies wird bei allen Befehlen die innerhalb des Kanals ausgeführt werden angewendet.\\n        Ausnahme sind hierbei Hilfebefehle.\\n        "
 
 #: redbot/core/core_commands.py:472
 msgid "Embeds are now {} for this channel."
@@ -284,12 +284,12 @@ msgstr "Die Bot-Einladung einrichten"
 #: redbot/core/core_commands.py:535
 #, docstring
 msgid "\\n        Define if the command should be accessible for the average user.\\n        "
-msgstr ""
+msgstr "\\n        Lege fest, ob der Befehl für die durchschnittlichen Benutzer zugänglich sein sollte.\\n        "
 
 #: redbot/core/core_commands.py:564
 #, docstring
 msgid "\\n        Make the bot create its own role with permissions on join.\\n\\n        The bot will create its own role with the desired permissions        when it joins a new server. This is a special role that can't be        deleted or removed from the bot.\\n\\n        For that, you need to provide a valid permissions level.\\n        You can generate one here: https://discordapi.com/permissions.html\\n\\n        Please note that you might need two factor authentication for        some permissions.\\n        "
-msgstr ""
+msgstr "\\n        Lasse den Bot seine eigene Rolle mit den notwendigen Berechtigungen beim Beitritt eines Servers erstellen.\\n\\n        Diese Rolle kann nicht gelöscht werden und sie kann nicht vom Bot entfernt werden.\\n\\n        Für diese Funktion musst du ein gültiges Berechtigungsniveau angeben.\\n        Das Berechtigungsniveau kann hier generiert werden: https://discordapi.com/permissions.html\\n\\n        Bitte beachte, dass für einige Berechtigungen die zwei Faktor-Authentifizierung benötigt wird.\\n        "
 
 #: redbot/core/core_commands.py:584
 #, docstring
@@ -386,11 +386,11 @@ msgstr "Paket konnte aus dem folgenden Grund nicht geladen werden:\\n\\n{reasons
 
 #: redbot/core/core_commands.py:719
 msgid "**WARNING**: The following repo is using shared libs which are marked for removal in Red 3.4: {repo}.\\nYou should inform maintainer of the repo about this message."
-msgstr ""
+msgstr "**ACHTUNG**: Das folgende repo verwendet \\\"shared libraries\\\", welche in Red 3.4 entfernt werden. Du solltest den Verwalter des repos über diese Nachricht informieren.\\n{repo}"
 
 #: redbot/core/core_commands.py:725
 msgid "**WARNING**: The following repos are using shared libs which are marked for removal in Red 3.4: {repos}.\\nYou should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "**ACHTUNG**: Die folgenden repos verwenden \\\"shared libraries\\\", welche in Red 3.4 entfernt werden. Du solltest die Verwalter der repos über diese Nachricht informieren.\\n{repos}"
 
 #: redbot/core/core_commands.py:740
 #, docstring
@@ -440,11 +440,11 @@ msgstr "Diese Pakete konnten aus folgenden Gründen nicht neu geladen werden:\\n
 
 #: redbot/core/core_commands.py:837
 msgid "**WARNING**: The following repo is using shared libs which are marked for removal in Red 3.4: {repo}.\\nYou should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "**ACHTUNG**: Das folgende repo verwendet \\\"shared libraries\\\", welche in Red 3.4 entfernt werden. Du solltest den Verwalter des repos über diese Nachricht informieren.\\n{repo}"
 
 #: redbot/core/core_commands.py:843
 msgid "**WARNING**: The following repos are using shared libs which are marked for removal in Red 3.4: {repos}.\\nYou should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "**ACHTUNG**: Die folgenden repos verwenden \\\"shared libraries\\\", welche in Red 3.4 entfernt werden. Du solltest die Verwalter der repos über diese Nachricht informieren.\\n{repos}"
 
 #: redbot/core/core_commands.py:858
 #, docstring
@@ -467,7 +467,7 @@ msgstr "Neustart..."
 #: redbot/core/core_commands.py:881
 #, docstring
 msgid "Changes [botname]'s settings"
-msgstr ""
+msgstr "Ändert die Einstellungen von [botname]"
 
 #: redbot/core/core_commands.py:894
 msgid "Admin roles: {admin}\\nMod roles: {mod}\\n"
@@ -475,45 +475,45 @@ msgstr "Admin Rollen: {admin}\\nMod Rollen: {mod}\\n"
 
 #: redbot/core/core_commands.py:903
 msgid "Same as bot's locale"
-msgstr ""
+msgstr "Identisch mit der Sprache des Bots"
 
 #: redbot/core/core_commands.py:906
 msgid "{bot_name} Settings:\\n\\nPrefixes: {prefixes}\\n{guild_settings}Locale: {locale}\\nRegional format: {regional_format}"
-msgstr ""
+msgstr "{bot_name} Einstellungen:\\n\\nPräfixe: {prefixes}\\n{guild_settings}Sprache: {locale}\\nRegionales Format: {regional_format}"
 
 #: redbot/core/core_commands.py:926
 #, docstring
 msgid "Set the delay until the bot removes the command message.\\n\\n        Must be between -1 and 60.\\n\\n        Set to -1 to disable this feature.\\n        "
-msgstr ""
+msgstr "Stelle die Verzögerung ein, bis der Bot Nachrichten, die einen Befehl enthalten entfernt.\\n\\n        Muss zwischen -1 und 60 liegen.\\n\\n        Setze den Wert auf -1, um diese Funktion zu deaktivieren.\\n        "
 
 #: redbot/core/core_commands.py:937
 msgid "Command deleting disabled."
-msgstr ""
+msgstr "Löschen von Befehlen deaktiviert."
 
 #: redbot/core/core_commands.py:939
 msgid "Delete delay set to {num} seconds."
-msgstr ""
+msgstr "Löschverzögerung auf {num} Sekunden eingestellt."
 
 #: redbot/core/core_commands.py:944
 msgid "Bot will delete command messages after {num} seconds. Set this value to -1 to stop deleting messages"
-msgstr ""
+msgstr "Der Bot wird Nachrichten die einen Befehl enthalten nach {num} Sekunden löschen. Setze diesen Wert auf -1, um das Löschen von Nachrichten zu stoppen"
 
 #: redbot/core/core_commands.py:951
 msgid "I will not delete command messages."
-msgstr ""
+msgstr "Ich werde keine Nachrichten die Befehle enthalten löschen."
 
 #: redbot/core/core_commands.py:956
 #, docstring
 msgid "\\n        Sets the bot's description.\\n        Use without a description to reset.\\n        This is shown in a few locations, including the help menu.\\n\\n        The default is \\\"Red V3\\\"\\n        "
-msgstr ""
+msgstr "\\n        Legt die Bot-Beschreibung fest.\\n        Verwende diesen Befehl ohne Beschreibung zum Zurücksetzen.\\n        Dies wird an einigen Stellen angezeigt, einschließlich des Hilfe-Menüs.\\n\\n        Die Standardeinstellung ist \\\"Red V3\\\"\\n        "
 
 #: redbot/core/core_commands.py:966
 msgid "Description reset."
-msgstr ""
+msgstr "Beschreibung zurückgesetzt."
 
 #: redbot/core/core_commands.py:969
 msgid "This description is too long to properly display. Please try again with below 250 characters"
-msgstr ""
+msgstr "Diese Beschreibung ist zu lang um korrekt angezeigt zu werden. Versuche es erneut mit weniger als 250 Zeichen"
 
 #: redbot/core/core_commands.py:983
 #, docstring
@@ -570,7 +570,7 @@ msgstr "Diese Rolle wird nicht mehr als Mod-Rolle betrachtet."
 #: redbot/core/core_commands.py:1035
 #, docstring
 msgid "\\n        Toggle whether to use the bot owner-configured colour for embeds.\\n\\n        Default is to use the bot's configured colour.\\n        Otherwise, the colour used will be the colour of the bot's top role.\\n        "
-msgstr ""
+msgstr "\\n        Lege fest, ob die vom Botbesitzer eingestellte Farbe für Embeds verwendet werden soll.\\n\\n        Standardmäßig wird die Blutfarbe verwendet.\\n        Andernfalls wird die Farbe der höchsten Rolle des Bots verwendet.\\n        "
 
 #: redbot/core/core_commands.py:1044
 msgid "The bot {} use its configured color for embeds."
@@ -631,55 +631,55 @@ msgstr "Nur JPG oder PNG Format."
 #: redbot/core/core_commands.py:1138
 #, docstring
 msgid "Removes [botname]'s avatar"
-msgstr ""
+msgstr "Entfernt [botname]s Profilbild"
 
 #: redbot/core/core_commands.py:1141
 msgid "Avatar removed."
-msgstr ""
+msgstr "Profilbild entfernt."
 
 #: redbot/core/core_commands.py:1147
 #, docstring
 msgid "Sets [botname]'s playing status"
-msgstr ""
+msgstr "Legt den ``Spielt``-Status von [botname] fest"
 
 #: redbot/core/core_commands.py:1159
 msgid "Status set to ``Playing {game.name}``."
-msgstr ""
+msgstr "Status auf ``Spielt von {game.name}`` gesetzt."
 
 #: redbot/core/core_commands.py:1161
 msgid "Game cleared."
-msgstr ""
+msgstr "Spiel-Status entfernt."
 
 #: redbot/core/core_commands.py:1167
 #, docstring
 msgid "Sets [botname]'s listening status"
-msgstr ""
+msgstr "Legt den ``Hört``-Status von [botname] fest"
 
 #: redbot/core/core_commands.py:1177
 msgid "Status set to ``Listening to {listening}``."
-msgstr ""
+msgstr "Status auf ``Hört {listening}`` gesetzt."
 
 #: redbot/core/core_commands.py:1180
 msgid "Listening cleared."
-msgstr ""
+msgstr "``Hört``-Status gelöscht."
 
 #: redbot/core/core_commands.py:1186
 #, docstring
 msgid "Sets [botname]'s watching status"
-msgstr ""
+msgstr "Setzt [botname] ``Schaut``-Status"
 
 #: redbot/core/core_commands.py:1195
 msgid "Status set to ``Watching {watching}``."
-msgstr ""
+msgstr "Status auf ``Schaut {watching}`` gesetzt."
 
 #: redbot/core/core_commands.py:1197
 msgid "Watching cleared."
-msgstr ""
+msgstr "``Schaut``-Status entfernt."
 
 #: redbot/core/core_commands.py:1203
 #, docstring
 msgid "Sets [botname]'s status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
-msgstr ""
+msgstr "Setzt [botname] status\\n\\n        Verfügbare Optionen:\\n            Online\\n            Abwesend\\n            Bitte nicht stören\\n            Unsichtbar\\n        "
 
 #: redbot/core/core_commands.py:1226
 msgid "Status changed to {}."
@@ -688,12 +688,12 @@ msgstr "Status zu {} geändert."
 #: redbot/core/core_commands.py:1232
 #, docstring
 msgid "Sets [botname]'s streaming status\\n        Leaving both streamer and stream_title empty will clear it."
-msgstr ""
+msgstr "Setzt [botname] ``Streaming``-Status\\n        Wenn kein Streamer und kein Stream-Titel angegeben werden, wird der Status gelöscht."
 
 #: redbot/core/core_commands.py:1253
 #, docstring
 msgid "Sets [botname]'s username"
-msgstr ""
+msgstr "Setzt [botname] Benutzername"
 
 #: redbot/core/core_commands.py:1258
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
@@ -702,7 +702,7 @@ msgstr "Fehler beim Ändern des Namens. Denke daran, dass du dies nur einmal pro
 #: redbot/core/core_commands.py:1272
 #, docstring
 msgid "Sets [botname]'s nickname"
-msgstr ""
+msgstr "Setzt [botname] Spitzname"
 
 #: redbot/core/core_commands.py:1276
 msgid "I lack the permissions to change my own nickname."
@@ -711,7 +711,7 @@ msgstr "Mir fehlen die Berechtigungen zum Ändern meines eigenen Spitznamen."
 #: redbot/core/core_commands.py:1283
 #, docstring
 msgid "Sets [botname]'s global prefix(es)"
-msgstr ""
+msgstr "Setzt [botname] globalen Präfix"
 
 #: redbot/core/core_commands.py:1288 redbot/core/core_commands.py:1301
 msgid "Prefix set."
@@ -720,7 +720,7 @@ msgstr "Der Präfix wurde festgelegt."
 #: redbot/core/core_commands.py:1294
 #, docstring
 msgid "Sets [botname]'s server prefix(es)"
-msgstr ""
+msgstr "Setzt [botname] Serverpräfix"
 
 #: redbot/core/core_commands.py:1297
 msgid "Guild prefixes have been reset."
@@ -729,15 +729,15 @@ msgstr "Server Präfixe wurden zurückgesetzt."
 #: redbot/core/core_commands.py:1306
 #, docstring
 msgid "\\n        Changes bot's locale.\\n\\n        `<language_code>` can be any language code with country code included,\\n        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.\\n\\n        Go to Red's Crowdin page to see locales that are available with translations:\\n        https://translate.discord.red\\n\\n        To reset to English, use \\\"en-US\\\".\\n        "
-msgstr ""
+msgstr "\\n        Ändert die Sprache des Bots.\\n\\n        `<language_code>` kann ein beliebiger Sprachcode inklusive Ländercode sein.\\n        z.B. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, usw.\\n\\n        Besuche die Crowdin Seite von Red um zu sehen für welche Sprachen Übersetzungen verfügbar sind:\\n       https://translate.discord.red\\n\\n        Um auf Englisch zurückzusetzen benutze den Code \\\"en-US\\\".\\n        "
 
 #: redbot/core/core_commands.py:1320 redbot/core/core_commands.py:1352
 msgid "Invalid language code. Use format: `en-US`"
-msgstr ""
+msgstr "Ungültiger Sprachcode. Verwende das Format: `en-US`"
 
 #: redbot/core/core_commands.py:1324 redbot/core/core_commands.py:1356
 msgid "Invalid format - language code has to include country code, e.g. `en-US`"
-msgstr ""
+msgstr "Ungültiges Format - Sprachcode muss Ländercode enthalten, z.B. `en-US`"
 
 #: redbot/core/core_commands.py:1330
 msgid "Locale has been set."
@@ -746,15 +746,15 @@ msgstr "Sprache wurde geändert."
 #: redbot/core/core_commands.py:1335
 #, docstring
 msgid "\\n        Changes bot's regional format. This is used for formatting date, time and numbers.\\n\\n        `<language_code>` can be any language code with country code included,\\n        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.\\n\\n        Leave `<language_code>` empty to base regional formatting on bot's locale.\\n        "
-msgstr ""
+msgstr "\\n        Ändert das regionale Format des Bots. Dies wird für die Formatierung von Datum, Zeit und Zahlen verwendet.\\n\\n        `<language_code>` kann jeder Sprachcode mit zugehörigem Ländercode sein.\\n        z. B. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, usw.\\n\\n        Lass `<language_code>` leer, um regionale Formatierung auf das Regionale Format der Botsprache zu setzen.\\n        "
 
 #: redbot/core/core_commands.py:1346
 msgid "Regional formatting will now be based on bot's locale."
-msgstr ""
+msgstr "Regionale Formatierung basiert nun auf der Botsprache."
 
 #: redbot/core/core_commands.py:1363
 msgid "Regional formatting will now be based on `{language_code}` locale."
-msgstr ""
+msgstr "Regionale Formatierung wird nun auf der Sprache `{language_code}` basieren."
 
 #: redbot/core/core_commands.py:1371
 #, docstring

@@ -667,7 +667,7 @@ msgstr "Déconnexion automatique :  [{dc}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:967
 msgid "Auto-play:        [{autoplay}]\\n"
-msgstr ""
+msgstr "Lecture automatique :        [{autoplay}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:971
 msgid "Disconnect timer: [{num_seconds}]\\n"

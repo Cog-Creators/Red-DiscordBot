@@ -57,7 +57,7 @@ msgstr "Beyaz liste değiştirildi."
 #: redbot/cogs/audio/core/commands/audioset.py:68
 #: redbot/cogs/audio/core/commands/audioset.py:258
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "`{whitelisted}` beyaz listeye eklendi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:76
 #: redbot/cogs/audio/core/commands/audioset.py:266
@@ -74,7 +74,7 @@ msgstr "Beyaz listede herhangi bir anahtar kelime mevcut değil."
 
 #: redbot/cogs/audio/core/commands/audioset.py:95
 msgid "Global Whitelist"
-msgstr ""
+msgstr "Küresel Beyaz Liste"
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 #: redbot/cogs/audio/core/commands/audioset.py:292
@@ -96,7 +96,7 @@ msgstr "Anahtar kelimeyi beyaz listeden siler."
 #: redbot/cogs/audio/core/commands/audioset.py:133
 #: redbot/cogs/audio/core/commands/audioset.py:323
 msgid "Removed `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "`{whitelisted}` beyaz listeden kaldırıldı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:140
 #, docstring
@@ -126,7 +126,7 @@ msgstr "Kara liste değiştirildi"
 #: redbot/cogs/audio/core/commands/audioset.py:162
 #: redbot/cogs/audio/core/commands/audioset.py:351
 msgid "Added `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "`{blacklisted}` kara listeye eklendi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:170
 #: redbot/cogs/audio/core/commands/audioset.py:359
@@ -143,7 +143,7 @@ msgstr "Kara listede herhangi bir anahtar kelime mevcut değil."
 
 #: redbot/cogs/audio/core/commands/audioset.py:189
 msgid "Global Blacklist"
-msgstr ""
+msgstr "Küresel Kara Liste"
 
 #: redbot/cogs/audio/core/commands/audioset.py:196
 #: redbot/cogs/audio/core/commands/audioset.py:385
@@ -170,7 +170,7 @@ msgstr "Belirtilen anahtar kelime kara listede mevcut değil."
 #: redbot/cogs/audio/core/commands/audioset.py:227
 #: redbot/cogs/audio/core/commands/audioset.py:416
 msgid "Removed `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "`{blacklisted}` kara listeden kaldırıldı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:235
 #, docstring
@@ -184,7 +184,7 @@ msgstr "Anahtar kelimeyi beyaz listeye ekler.\\n\\n        Beyaz listeye herhang
 
 #: redbot/cogs/audio/core/commands/audioset.py:285
 msgid "Whitelist"
-msgstr ""
+msgstr "Beyaz Liste"
 
 #: redbot/cogs/audio/core/commands/audioset.py:331
 #, docstring
@@ -193,7 +193,7 @@ msgstr "Kara listedeki tüm anahtar kelimeleri yönetir."
 
 #: redbot/cogs/audio/core/commands/audioset.py:378
 msgid "Blacklist"
-msgstr ""
+msgstr "Kara Liste"
 
 #: redbot/cogs/audio/core/commands/audioset.py:425
 #, docstring
@@ -353,7 +353,7 @@ msgstr "Otomatik çalınan şarkılardan çalma listesi oluştur.\\n\\n        *
 #: redbot/cogs/audio/core/commands/playlists.py:1755
 #: redbot/cogs/audio/core/commands/playlists.py:1903
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "Oynatma Listeleri Mevcut Değil"
 
 #: redbot/cogs/audio/core/commands/audioset.py:491
 #: redbot/cogs/audio/core/commands/playlists.py:100
@@ -707,16 +707,16 @@ msgstr "Şarkı geçme oylaması:        [{vote_enabled}]\\nGeçme yüzdesi:  [{
 
 #: redbot/cogs/audio/core/commands/audioset.py:1022
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1024
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1026
 #: redbot/cogs/audio/core/commands/playlists.py:997
 msgid "Global"
-msgstr ""
+msgstr "Küresel"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1028
 #: redbot/cogs/audio/core/commands/audioset.py:1029
@@ -728,7 +728,7 @@ msgstr "Önbelleğe alındı"
 #: redbot/cogs/audio/core/commands/audioset.py:1033
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "US Top 100"
-msgstr ""
+msgstr "ABD En İyi 100"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1037
 msgid "Auto-play Settings"
@@ -754,7 +754,7 @@ msgstr "Önbellek Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1049
 msgid "Max age:                [{max_age}]\\n"
-msgstr ""
+msgstr "Maksimum yaş:                [{max_age}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1050
 msgid "Local Spotify cache:    [{spotify_status}]\\n"
@@ -846,7 +846,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1186
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Geçersiz Ülke Kodu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1187
 msgid "Please use an official [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
@@ -854,7 +854,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1196
 msgid "Country Code set to {country}."
-msgstr ""
+msgstr "Ülke Kodu {country} olarak ayarlandı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1204
 #, docstring
@@ -940,7 +940,7 @@ msgstr "Hiçbir şey çalınmıyor."
 #: redbot/cogs/audio/core/commands/controller.py:44
 #: redbot/cogs/audio/core/commands/controller.py:50
 msgid "Unable To Disconnect"
-msgstr ""
+msgstr "Bağlantı Kesilemiyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:45
 #: redbot/cogs/audio/core/commands/controller.py:241
@@ -956,7 +956,7 @@ msgstr "Ses kanalından ayırmak için DJ rolüne ihtiyacınız var."
 
 #: redbot/cogs/audio/core/commands/controller.py:56
 msgid "Unable to Disconnect"
-msgstr ""
+msgstr "Bağlantı Kesilemiyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:60
 msgid "Disconnecting..."
@@ -1217,7 +1217,7 @@ msgstr "Şarkı durduruldu ve sıra temizlendi."
 #: redbot/cogs/audio/core/commands/controller.py:553
 #: redbot/cogs/audio/core/commands/controller.py:559
 msgid "Unable To Stop Player"
-msgstr ""
+msgstr "Oynatıcı Durdurulamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:548
 msgid "You must be in the voice channel to stop the music."
@@ -1242,7 +1242,7 @@ msgstr "Botu kanala çağırır"
 #: redbot/cogs/audio/core/commands/controller.py:633
 #: redbot/cogs/audio/core/commands/controller.py:640
 msgid "Unable To Join Voice Channel"
-msgstr ""
+msgstr "Ses Kanalına Bağlanılamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:597
 msgid "There are other people listening."
@@ -1294,7 +1294,7 @@ msgstr "Ses seviyesi:"
 #: redbot/cogs/audio/core/commands/controller.py:666
 #: redbot/cogs/audio/core/commands/controller.py:672
 msgid "Unable To Change Volume"
-msgstr ""
+msgstr "Ses Değiştirilemiyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:667
 msgid "You must be in the voice channel to change the volume."
@@ -1819,16 +1819,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:455
 msgid "No categories found"
-msgstr ""
+msgstr "Kategori bulunamadı"
 
 #: redbot/cogs/audio/core/commands/player.py:459
 #: redbot/cogs/audio/core/commands/player.py:477
 msgid "No categories found, try again later."
-msgstr ""
+msgstr "Kategori bulunamadı, daha sonra tekrar deneyin."
 
 #: redbot/cogs/audio/core/commands/player.py:464
 msgid "Categories"
-msgstr ""
+msgstr "Kategoriler"
 
 #: redbot/cogs/audio/core/commands/player.py:470
 msgid "No categories selected, try again later."
@@ -1914,11 +1914,11 @@ msgstr "{num} sayı da şarkı eklendi.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/player.py:794
 msgid "folder"
-msgstr ""
+msgstr "klasör"
 
 #: redbot/cogs/audio/core/commands/player.py:796
 msgid "search"
-msgstr ""
+msgstr "ara"
 
 #: redbot/cogs/audio/core/commands/player.py:799
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
@@ -2126,7 +2126,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:880
 #: redbot/cogs/audio/core/commands/playlists.py:1028
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmeyen"
 
 #: redbot/cogs/audio/core/commands/playlists.py:882
 msgid "Page {page}/{pages} | Author: {author_name} | {num} track(s)"
