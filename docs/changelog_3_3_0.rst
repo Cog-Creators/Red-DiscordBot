@@ -9,6 +9,11 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
+
 Warnings
 ********
 
