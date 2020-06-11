@@ -395,7 +395,7 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def tempban(
-        self, ctx: commands.Context, user: discord.Member, days: int = 1, *, reason: str = None
+        self, ctx: commands.Context,duration: Optional[int] = 1,user: discord.Member, days: Optional[int]=0, *, reason: str = None
     ):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
