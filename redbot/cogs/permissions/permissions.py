@@ -118,7 +118,7 @@ class Permissions(commands.Cog):
         Purpose of this hook is to prevent guild owner lockouts of permissions specifically
         without modifying rule behavior in any other case.
 
-        Guild owner is not special cased outside of these configuatation commands
+        Guild owner is not special cased outside of these configuration commands
         to allow guild owner to restrict the use of potentially damaging commands
         such as, but not limited to, cleanup to specific channels.
 
@@ -136,8 +136,8 @@ class Permissions(commands.Cog):
                 if ctx.command in (
                     self.permissions,  # main top level group
                     self.permissions_acl,  # acl group
-                    self.permissions_acl_setguild,
                     self.permissions_acl_getguild,
+                    self.permissions_acl_setguild,
                     self.permissions_acl_updateguild,
                     self.permissions_addguildrule,
                     self.permissions_clearguildrules,
