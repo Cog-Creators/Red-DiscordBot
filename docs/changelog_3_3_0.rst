@@ -4,7 +4,7 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`
+| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -28,7 +28,7 @@ Core Bot
 Documentation changes
 ---------------------
 
-
+- Added Oracle Cloud to free hosting section in :ref:`host-list` (:issue:`3916`)
 
 Miscellaneous
 -------------
