@@ -5,6 +5,11 @@ Redbot 3.3.9 or 3.4.0 (Unreleased)
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+|
+| **Read before updating**:
+| 1. Bot owners can no longer restrict access to some commands in Permissions cog using global permissions rules. Look at `Permissions changelog <important-339-2>` for full details.
+| 2. There's been a change in behavior of warning messages. Look at `Warnings changelog <important-339-1>` for full details.
+
 
 End-user changelog
 ------------------
@@ -27,6 +32,8 @@ Filter
 
 - Fixed behavior of detecting quotes in commands for adding/removing filtered words (:issue:`3925`)
 
+.. _important-339-2:
+
 Permissions
 ***********
 
@@ -43,6 +50,8 @@ Permissions
   - ``[p]permissions clearserverrules``
   - ``[p]permissions canrun``
   - ``[p]permissions explain``
+
+.. _important-339-1:
 
 Warnings
 ********
