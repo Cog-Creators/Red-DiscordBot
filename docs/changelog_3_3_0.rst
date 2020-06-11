@@ -14,6 +14,7 @@ Core Bot
 
 - ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
 - Fixed ungraceful error that happened in ``[p]set custominfo`` when provided text was too long (:issue:`3923`)
+- Red's start up message now shows storage type (:issue:`3935`)
 
 Audio
 *****
