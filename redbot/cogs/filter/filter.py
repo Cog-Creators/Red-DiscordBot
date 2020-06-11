@@ -140,7 +140,7 @@ class Filter(commands.Cog):
                     await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command("add")
-    async def filter_channel_add(self, ctx: commands.Context, *, words: str):
+    async def filter_channel_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
@@ -150,22 +150,7 @@ class Filter(commands.Cog):
         - `[p]filter channel add "This is a sentence"`
         """
         channel = ctx.channel
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        added = await self.add_to_filter(channel, word_list)
+        added = await self.add_to_filter(channel, words)
         if added:
             self.invalidate_cache(ctx.guild, ctx.channel)
             await ctx.send(_("Words added to filter."))
@@ -173,7 +158,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Words already in the filter."))
 
     @_filter_channel.command("remove")
-    async def filter_channel_remove(self, ctx: commands.Context, *, words: str):
+    async def filter_channel_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
@@ -183,22 +168,7 @@ class Filter(commands.Cog):
         - `[p]filter channel remove "This is a sentence"`
         """
         channel = ctx.channel
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        removed = await self.remove_from_filter(channel, word_list)
+        removed = await self.remove_from_filter(channel, words)
         if removed:
             await ctx.send(_("Words removed from filter."))
             self.invalidate_cache(ctx.guild, ctx.channel)
@@ -206,7 +176,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="add")
-    async def filter_add(self, ctx: commands.Context, *, words: str):
+    async def filter_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
@@ -216,22 +186,7 @@ class Filter(commands.Cog):
         - `[p]filter add "This is a sentence"`
         """
         server = ctx.guild
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        added = await self.add_to_filter(server, word_list)
+        added = await self.add_to_filter(server, words)
         if added:
             self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully added to filter."))
@@ -239,7 +194,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words were already in the filter."))
 
     @_filter.command(name="delete", aliases=["remove", "del"])
-    async def filter_remove(self, ctx: commands.Context, *, words: str):
+    async def filter_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
@@ -249,22 +204,7 @@ class Filter(commands.Cog):
         - `[p]filter remove "This is a sentence"`
         """
         server = ctx.guild
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        removed = await self.remove_from_filter(server, word_list)
+        removed = await self.remove_from_filter(server, words)
         if removed:
             self.invalidate_cache(ctx.guild)
             await ctx.send(_("Words successfully removed from filter."))
