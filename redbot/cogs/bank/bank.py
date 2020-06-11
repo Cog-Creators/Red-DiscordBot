@@ -46,8 +46,9 @@ class Bank(commands.Cog):
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings."""
+        cur_setting = await bank.is_global()
         if ctx.invoked_subcommand is None:
-            if await bank.is_global():
+            if cur_setting:
                 group = bank._config
             else:
                 if not ctx.guild:
@@ -55,7 +56,7 @@ class Bank(commands.Cog):
                 group = bank._config.guild(ctx.guild)
             group_data = await group.all()
             bank_name = group_data["bank_name"]
-            bank_scope = _("Global") if await bank.is_global() else _("Server")
+            bank_scope = _("Global") if cur_setting else _("Server")
             currency_name = group_data["currency"]
             default_balance = group_data["default_balance"]
             max_balance = group_data["max_balance"]
