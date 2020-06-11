@@ -184,7 +184,7 @@ class PermState(enum.Enum):
     ALLOWED_BY_HOOK = enum.auto()
     """This command has been actively allowed by a permission hook.
     check validation swaps this out, but the information may be useful
-    to developers. It is treated as ``ACTIVE_ALLOW` for the current command
+    to developers. It is treated as `ACTIVE_ALLOW` for the current command
     and `PASSIVE_ALLOW` for subcommands."""
 
     DENIED_BY_HOOK = enum.auto()
