@@ -267,7 +267,7 @@ class Economy(commands.Cog):
         """Prune bank accounts."""
         pass
 
-    @_prune.command(name="server", aliases=["guild", "local"])
+    @_prune.command(name="local")
     @commands.guild_only()
     @checks.guildowner()
     async def _local(self, ctx, confirmation: bool = False):

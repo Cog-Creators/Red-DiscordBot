@@ -274,7 +274,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("This track is not allowed in this server."),
             )
         elif guild_data["maxlength"] > 0:
-            if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
+            if self.is_track_too_long(single_track, guild_data["maxlength"]):
                 single_track.requester = ctx.author
                 player.queue.insert(0, single_track)
                 player.maybe_shuffle()
@@ -763,7 +763,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
                         continue
                     elif guild_data["maxlength"] > 0:
-                        if self.is_track_length_allowed(track, guild_data["maxlength"]):
+                        if self.is_track_too_long(track, guild_data["maxlength"]):
                             track_len += 1
                             player.add(ctx.author, track)
                             self.bot.dispatch(

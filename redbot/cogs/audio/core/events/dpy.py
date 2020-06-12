@@ -44,19 +44,17 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         #     notify_channel = player.fetch("channel")
         #     if not notify_channel:
         #         player.store("channel", ctx.channel.id)
-        self._daily_global_playlist_cache.setdefault(
-            self.bot.user.id, await self.config.daily_playlists()
-        )
-        if self.local_folder_current_path is None:
-            self.local_folder_current_path = Path(await self.config.localpath())
-        if not ctx.guild:
-            return
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         self._daily_playlist_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
         )
+        self._daily_global_playlist_cache.setdefault(
+            self.bot.user.id, await self.config.daily_playlists()
+        )
+        if self.local_folder_current_path is None:
+            self.local_folder_current_path = Path(await self.config.localpath())
         if dj_enabled:
             dj_role = self._dj_role_cache.setdefault(
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_role()

@@ -59,9 +59,6 @@ Others
 |`Microsoft Azure                     |Same as AWS, but it's Microsoft.                     |
 |<https://azure.microsoft.com>`_      |                                                     |
 +-------------------------------------+-----------------------------------------------------+
-|`Oracle Cloud                        |Same as AWS, but it's Oracle.                        |
-|<https://oracle.com/cloud/>`_        |                                                     |
-+-------------------------------------+-----------------------------------------------------+
 |`LowEndBox <http://lowendbox.com/>`_ |A curator for lower specced servers.                 |
 +-------------------------------------+-----------------------------------------------------+
 
@@ -79,10 +76,7 @@ server. Any modern hardware should work 100% fine.
 Free hosting
 ------------
 
-`Google Cloud Compute Free Tier <https://cloud.google.com/free/docs/gcp-free-tier>`_,
-`Oracle Cloud Compute Always Free <https://oracle.com/cloud/free/#always-free>`_ and
-`AWS EC2 Free Tier <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
-AWS EC2 is not *always* free—it's a 12 month free trial.
+Google Cloud and AWS both have free tier VPS suitable for small bots.
 Additionally, new Google Cloud customers get a $300 credit which is valid
 for 12 months.
 

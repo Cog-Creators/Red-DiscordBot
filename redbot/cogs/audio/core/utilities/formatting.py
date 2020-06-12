@@ -165,7 +165,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         elif guild_data["maxlength"] > 0:
 
-            if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
+            if self.is_track_too_long(search_choice.length, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(

@@ -23,12 +23,6 @@ log = logging.getLogger("red.reports")
 
 @cog_i18n(_)
 class Reports(commands.Cog):
-    """Create user reports that server staff can respond to.
-
-    Users can open reports using `[p]report`. These are then sent
-    to a channel in the server for staff, and the report creator
-    gets a DM. Both can be used to communicate. 
-    """
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
