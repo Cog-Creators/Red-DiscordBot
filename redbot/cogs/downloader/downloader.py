@@ -1391,8 +1391,8 @@ class Downloader(commands.Cog):
                 embed.add_field(
                     name="Repo branch:", value="`%s`" % (cog_installable.repo.branch), inline=False
                 )
-
             await ctx.send(embed=embed)
+
         else:
             msg = _(
                 "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
