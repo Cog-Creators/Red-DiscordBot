@@ -99,7 +99,7 @@ Open :code:`__init__.py`. In that file, place the following:
     from .mycog import Mycog
 
     def setup(bot):
-        bot.add_cog(Mycog())
+        bot.add_cog(Mycog(bot))
 
 Make sure that both files are saved.
 
