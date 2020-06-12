@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -50,14 +50,14 @@ msgid "You attempted to create a new alias with the name {name} but that name is
 msgstr "이름이 {name}인 새 별칭을 생성하려고 했지만, 해당 이름은 이 봇의 명령어와 중복돼요."
 
 #: redbot/cogs/alias/alias.py:157
-msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
-msgstr "이름이 {name}인 새 별칭을 생성하려고 했지만, 해당 별칭은 이미 이 서버에 등록되어 있어요."
+msgid "You attempted to create a new alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "이름이 {name}인 새 별칭을 생성하려고 했지만, 해당 이름은 사용할 수 없는 별칭 이름이에요. 별칭은 공백을 포함할 수 없어요."
 
-#: redbot/cogs/alias/alias.py:180
+#: redbot/cogs/alias/alias.py:180 redbot/cogs/alias/alias.py:239
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr "존재하지 않는 명령어에 대한 새 별칭을 생성하려고 시도하셨어요."
 
@@ -75,18 +75,18 @@ msgid "You attempted to create a new global alias with the name {name} but that 
 msgstr "이름이 {name}인 새 글로벌 별칭을 생성하려고 했지만, 해당 이름은 커맨드와 중복돼요."
 
 #: redbot/cogs/alias/alias.py:216
-msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
-msgstr "이름이 {name}인 새 글로벌 별칭을 생성하려고 했지만, 해당 별칭은 이미 이 서버에 등록되어있어요."
+msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "이름이 {name}인 새 글로벌 별칭을 생성하려고 했지만, 해당 별칭은 사용할 수 없는 별칭 이름이에요. 별칭 이름에는 공백을 포함할 수 없어요."
 
-#: redbot/cogs/alias/alias.py:243
+#: redbot/cogs/alias/alias.py:250
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "`{name}`을 실행하는 새로운 글로벌 별칭이 등록됐어요."
 
-#: redbot/cogs/alias/alias.py:251
+#: redbot/cogs/alias/alias.py:258
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "별칭의 기본 명령어에 대한 도움말을 실행해 보세요."
