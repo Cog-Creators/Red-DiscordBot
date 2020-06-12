@@ -1382,7 +1382,7 @@ class Downloader(commands.Cog):
             return
 
         if await ctx.embed_requested():
-            embed = discord.Embed()
+            embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(name="Command:", value="`%s`" % (command_name), inline=True)
             embed.add_field(name="Cog Name:", value="`%s`" % (cog_name), inline=True)
             embed.add_field(name="Made by:", value="`%s`" % (made_by), inline=True)
