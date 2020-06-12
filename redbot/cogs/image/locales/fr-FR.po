@@ -26,7 +26,7 @@ msgstr "Retrouver des images venant d'Imgur.\\n\\n        Assurez-vous de défin
 #: redbot/cogs/image/image.py:47
 #, docstring
 msgid "Search Imgur for the specified term.\\n\\n        Use `count` to choose how many images should be returned.\\n        Command can return up to 5 images.\\n        "
-msgstr "Rechercher sur Imgur pour le terme spécifié.\\n\\n        Utilisez `count` pour choisir le nombre d'images qui seront envoyer.\\n        La commande peut envoyer jusqu'à 5 images.\\n        "
+msgstr "Rechercher sur Imgur pour le terme spécifié.\\n\\n        Utilisez `count` pour choisir le nombre d'images à retourner.\\n        La commande peut retourner jusqu'à 5 images.\\n        "
 
 #: redbot/cogs/image/image.py:53 redbot/cogs/image/image.py:102
 msgid "Image count has to be between 1 and 5."
@@ -51,7 +51,7 @@ msgstr "Quelque chose s'est mal passé. Code d'erreur : {code}."
 #: redbot/cogs/image/image.py:94
 #, docstring
 msgid "Get images from a subreddit.\\n\\n        You can customize the search with the following options:\\n        - `<count>`: number of images to return (up to 5)\\n        - `<sort_type>`: new, top\\n        - `<window>`: day, week, month, year, all\\n        "
-msgstr "Obtenir des images venant d'un subreddit.\\n\\n        Vous pouvez personnaliser la recherche à l'aide des options suivantes :\\n       - `<count>`: nombre d'images à envoyer (Jusqu'à 5)\\n        - `<sort_type>`: new, top (nouveau, top)\\n        - `<window>`: day, week, month, year, all (Jour, semaine, mois, année, tout)\\n        "
+msgstr "Obtenir des images venant d'un subreddit.\\n\\n        Vous pouvez personnaliser la recherche à l'aide des options suivantes :\\n       - `<count>`: nombre d'images à retourner (Jusqu'à 5)\\n        - `<sort_type>`: new, top (nouveau, top)\\n        - `<window>`: day, week, month, year, all (Jour, semaine, mois, année, tout)\\n        "
 
 #: redbot/cogs/image/image.py:112
 msgid "Only 'new' and 'top' are a valid sort type."
@@ -100,5 +100,5 @@ msgstr "Expliquez comment définir le token d'API Giphy."
 
 #: redbot/cogs/image/image.py:243
 msgid "To get a Giphy API Key:\\n1. Login to a Giphy account.\\n2. Visit this page https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Write an app name, example: *Red Bot*.\\n5. Write an app description, example: *Used for Red Bot*.\\n6. Copy the API key shown.\\n7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\\n"
-msgstr "Pour obtenir une clé API Giphy :\\n1. Connectez-vous à un compte Giphy.\\n2. Visitez cette page https://developers.giphy.com/dashboard.\\n3. Appuyez sur *Créer une application*.\\n4. Écrivez un nom d'application, par exemple: *Red Bot*.\\n5. Écrivez une description de l'application, exemple : *Utilisé pour Red Bot*.\\n6. Copiez la clé API affichée.\\n7. Exécutez la commande `{prefix}set api GIPHY api_key <your_api_key_here>`.\\n"
+msgstr "Pour obtenir une clé API Giphy :\\n1. Connectez-vous à un compte Giphy.\\n2. Visitez cette page https://developers. iphy.com/dashboard.\\n3. Appuyez sur *Créer une application*.\\n4. Écrivez un nom d'application, par exemple: *Red Bot*.\\n5. Écrivez une description de l'application, exemple : *Utilisé pour Red Bot*.\\n6. Copiez la clé API affichée.\\n7. Exécutez la commande `{prefix}set api GIPHY api_key <your_api_key_here>`.\\n"
 

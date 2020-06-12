@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-05-28 12:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:401
 msgid "Paths reordered."
-msgstr "Path-urile au fost reordonate."
+msgstr ""
 
 #: redbot/core/cog_manager.py:406
 #, docstring
@@ -89,11 +89,11 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:419
 msgid "That path does not exist."
-msgstr "Path-ul specificat nu există."
+msgstr ""
 
 #: redbot/core/cog_manager.py:424
 msgid "The bot will install new cogs to the `{}` directory."
-msgstr "Bot-ul va instala noile plugin-uri(cogs) în directorul `{}`."
+msgstr ""
 
 #: redbot/core/cog_manager.py:430
 #, docstring
@@ -102,34 +102,34 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:443
 msgid "**{} loaded:**\\n"
-msgstr "**{} încărcat:**\\n"
+msgstr ""
 
 #: redbot/core/cog_manager.py:444
 msgid "**{} unloaded:**\\n"
-msgstr "**{} neîncărcat:**\\n"
+msgstr ""
 
 #: redbot/core/cog_manager.py:454
 msgid "**{} loaded:**\\n"
-msgstr "**{} încărcat:**\\n"
+msgstr ""
 
 #: redbot/core/cog_manager.py:456
 msgid "**{} unloaded:**\\n"
-msgstr "**{} neîncărcat:**\\n"
+msgstr ""
 
 #: redbot/core/core_commands.py:303
 #, docstring
 msgid "Commands related to core functions"
-msgstr "Comenzi legate de funcțiile de bază"
+msgstr ""
 
 #: redbot/core/core_commands.py:307
 #, docstring
 msgid "Pong."
-msgstr "Pong!"
+msgstr ""
 
 #: redbot/core/core_commands.py:312
 #, docstring
 msgid "Shows info about Red"
-msgstr "Afișează informații despre Red"
+msgstr ""
 
 #: redbot/core/core_commands.py:341
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n(c) Cog Creators"
@@ -141,44 +141,44 @@ msgstr ""
 
 #: redbot/core/core_commands.py:354
 msgid "Red version"
-msgstr "Versiunea Red"
+msgstr ""
 
 #: redbot/core/core_commands.py:357
 msgid "Yes, {version} is available."
-msgstr "Da, versiunea {version} este disponibilă."
+msgstr ""
 
 #: redbot/core/core_commands.py:361
 msgid "Checking for updates failed."
-msgstr "Verificarea pentru actualizări a eșuat."
+msgstr ""
 
 #: redbot/core/core_commands.py:362
 msgid "Outdated"
-msgstr "Neactualizat"
+msgstr ""
 
 #: redbot/core/core_commands.py:364
 msgid "About this instance"
-msgstr "Despre această instanță"
+msgstr ""
 
 #: redbot/core/core_commands.py:365
 msgid "About Red"
-msgstr "Despre Red"
+msgstr ""
 
 #: redbot/core/core_commands.py:368
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
-msgstr "Aducând bucurie din 02 Ianuarie 2016 (peste {} zile în urmă)!"
+msgstr ""
 
 #: redbot/core/core_commands.py:373
 msgid "I need the `Embed links` permission to send this"
-msgstr "Am nevoie de permisiunea `Embed links` pentru a trimite acest lucru!"
+msgstr ""
 
 #: redbot/core/core_commands.py:377
 #, docstring
 msgid "Shows [botname]'s uptime"
-msgstr "Afișează timpul de când bot-ul, [botname], este pornit"
+msgstr ""
 
 #: redbot/core/core_commands.py:380
 msgid "Less than one second"
-msgstr "Mai puțin de o secundă"
+msgstr ""
 
 #: redbot/core/core_commands.py:382
 msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
@@ -207,7 +207,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:408
 msgid "User setting: {}"
-msgstr "Setare de utilizator: {}"
+msgstr ""
 
 #: redbot/core/core_commands.py:414
 #, docstring
@@ -222,13 +222,13 @@ msgstr ""
 #: redbot/core/core_commands.py:473 redbot/core/core_commands.py:495
 #: redbot/core/core_commands.py:1062 redbot/core/core_commands.py:1078
 msgid "disabled"
-msgstr "dezactivat"
+msgstr ""
 
 #: redbot/core/core_commands.py:424 redbot/core/core_commands.py:448
 #: redbot/core/core_commands.py:473 redbot/core/core_commands.py:495
 #: redbot/core/core_commands.py:1062 redbot/core/core_commands.py:1078
 msgid "enabled"
-msgstr "activat"
+msgstr ""
 
 #: redbot/core/core_commands.py:431
 #, docstring
@@ -306,7 +306,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:595
 msgid "Alright. Bye :wave:"
-msgstr "În regulă. Pa-paaa :wave:"
+msgstr ""
 
 #: redbot/core/core_commands.py:596
 msgid "Leaving guild '{}'"
@@ -697,34 +697,34 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1258
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
-msgstr "Schimbarea numelui a eșuat. Nu uitați că puteți face acest lucru de până la 2 ori pe oră. Utilizați nickname dacă aveți nevoie de modificări frecvente. `{}set nickname`"
+msgstr ""
 
 #: redbot/core/core_commands.py:1272
 #, docstring
 msgid "Sets [botname]'s nickname"
-msgstr "Setează nickname-ul bot-ului, [botname]"
+msgstr ""
 
 #: redbot/core/core_commands.py:1276
 msgid "I lack the permissions to change my own nickname."
-msgstr "Îmi lipsesc permisiunile de a-mi schimba porecla."
+msgstr ""
 
 #: redbot/core/core_commands.py:1283
 #, docstring
 msgid "Sets [botname]'s global prefix(es)"
-msgstr "Setează prefix(urile) globale ale bot-ului, [botname]"
+msgstr ""
 
 #: redbot/core/core_commands.py:1288 redbot/core/core_commands.py:1301
 msgid "Prefix set."
-msgstr "Prefix setat."
+msgstr ""
 
 #: redbot/core/core_commands.py:1294
 #, docstring
 msgid "Sets [botname]'s server prefix(es)"
-msgstr "Setează prefix(urile) bot-ului, [botname], pe acest server"
+msgstr ""
 
 #: redbot/core/core_commands.py:1297
 msgid "Guild prefixes have been reset."
-msgstr "Prefixele serverului au fost resetate."
+msgstr ""
 
 #: redbot/core/core_commands.py:1306
 #, docstring
@@ -733,15 +733,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1320 redbot/core/core_commands.py:1352
 msgid "Invalid language code. Use format: `en-US`"
-msgstr "Cod de localizare invalid. Utilizați formatul: `ro-RO`"
+msgstr ""
 
 #: redbot/core/core_commands.py:1324 redbot/core/core_commands.py:1356
 msgid "Invalid format - language code has to include country code, e.g. `en-US`"
-msgstr "Format invalid - codul de localizare trebuie să includă codul de țară, ex. `ro-RO`"
+msgstr ""
 
 #: redbot/core/core_commands.py:1330
 msgid "Locale has been set."
-msgstr "Localizarea a fost setată."
+msgstr ""
 
 #: redbot/core/core_commands.py:1335
 #, docstring
@@ -1486,136 +1486,131 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max} {currency}."
 msgstr ""
 
-#: redbot/core/events.py:102
+#: redbot/core/events.py:103
 msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
 msgstr ""
 
-#: redbot/core/events.py:108
+#: redbot/core/events.py:109
 msgid "\\n\\nWhile the following command should work in most scenarios as it is based on your current OS, environment, and Python version, **we highly recommend you to read the update docs at <{docs}> and make sure there is nothing else that needs to be done during the update.**"
 msgstr ""
 
-#: redbot/core/events.py:132
+#: redbot/core/events.py:133
 msgid "\\n\\nTo update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:\\n\\n"
 msgstr ""
 
-#: redbot/core/events.py:137
+#: redbot/core/events.py:138
 msgid "Command Prompt"
 msgstr ""
 
-#: redbot/core/events.py:139
+#: redbot/core/events.py:140
 msgid "Terminal"
 msgstr ""
 
-#: redbot/core/events.py:146
+#: redbot/core/events.py:147
 msgid "\\n\\nYou have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\\n\\nYou will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/events.py:215
+#: redbot/core/events.py:212
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
-#: redbot/core/events.py:240
+#: redbot/core/events.py:237
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/events.py:265
+#: redbot/core/events.py:262
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:269
+#: redbot/core/events.py:266
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:277
+#: redbot/core/events.py:274
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:279
+#: redbot/core/events.py:276
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:284
+#: redbot/core/events.py:281
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr ""
 
-#: redbot/core/events.py:286
+#: redbot/core/events.py:283
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:290
+#: redbot/core/events.py:287
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr ""
 
-#: redbot/core/modlog.py:301
+#: redbot/core/modlog.py:289
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:305
+#: redbot/core/modlog.py:293
 msgid "**Reason:** {}"
 msgstr ""
 
-#: redbot/core/modlog.py:307
+#: redbot/core/modlog.py:295
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:310
+#: redbot/core/modlog.py:300
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:313 redbot/core/modlog.py:332
-#: redbot/core/modlog.py:346
-msgid "Unknown or Deleted User"
-msgstr ""
-
-#: redbot/core/modlog.py:360
+#: redbot/core/modlog.py:341
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:362
+#: redbot/core/modlog.py:343
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:363
+#: redbot/core/modlog.py:344
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:367 redbot/core/modlog.py:372
+#: redbot/core/modlog.py:348 redbot/core/modlog.py:353
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:368
+#: redbot/core/modlog.py:349
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:374
+#: redbot/core/modlog.py:355
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:376
+#: redbot/core/modlog.py:357
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:383
+#: redbot/core/modlog.py:364
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:384
+#: redbot/core/modlog.py:365
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:387
+#: redbot/core/modlog.py:368
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:389
+#: redbot/core/modlog.py:370
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:391
+#: redbot/core/modlog.py:372
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:393
+#: redbot/core/modlog.py:374
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

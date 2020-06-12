@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-05-21 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -50,14 +50,14 @@ msgid "You attempted to create a new alias with the name {name} but that name is
 msgstr "Du hast versucht, einen neuen Alias ​​mit dem Namen {name} zu erstellen, aber dieser Name wird bereits für einen Befehl des Bots genutzt."
 
 #: redbot/cogs/alias/alias.py:157
-msgid "You attempted to create a new alias with the name {name} but that alias already exists."
-msgstr ""
+msgid "You attempted to create a new alias with the name {name} but that alias already exists on this server."
+msgstr "Du hast versucht einen neuen Alias mit dem Namen {name} zu erstellen, aber dieser Alias existiert bereits auf dem Server."
 
 #: redbot/cogs/alias/alias.py:168
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Du hast versucht einen neuen Alias mit dem Namen {name} zu erstellen, aber dieser Name ist ein ungültiger Alias-Name. Alias-Namen dürfen keine Leerzeichen enthalten."
 
-#: redbot/cogs/alias/alias.py:180 redbot/cogs/alias/alias.py:239
+#: redbot/cogs/alias/alias.py:180
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr "Du hast versucht einen Alias für einen Befehl zu erstellen, der nicht existiert."
 
@@ -75,18 +75,18 @@ msgid "You attempted to create a new global alias with the name {name} but that 
 msgstr "Du hast versucht, einen neuen globalen Alias ​​mit dem Namen „{name}“ zu erstellen, aber dieser Name ist bereits ein Befehl für diesen Bot."
 
 #: redbot/cogs/alias/alias.py:216
-msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
-msgstr ""
+msgid "You attempted to create a new global alias with the name {name} but that alias already exists on this server."
+msgstr "Du hast versucht, einen neuen globalen Alias mit dem Namen „{name}“ zu erstellen, dieser ist jedoch bereits auf diesem Server vorhanden."
 
 #: redbot/cogs/alias/alias.py:227
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "Du hast versucht, einen neuen globalen Alias mit dem Namen „{name}“ zu erstellen, dieser Name ist jedoch ein ungültiger Alias-Name. Alias-Namen dürfen keine Leerzeichen enthalten."
 
-#: redbot/cogs/alias/alias.py:250
+#: redbot/cogs/alias/alias.py:243
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "Ein neuer globaler Alias mit dem Trigger `{name}` wurde erstellt."
 
-#: redbot/cogs/alias/alias.py:258
+#: redbot/cogs/alias/alias.py:251
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Versuche die Hilfe für den Basisbefehl des Alias auszuführen."
@@ -146,7 +146,7 @@ msgstr "Zeige die verfügbaren globalen Alias von diesem Bot."
 
 #: redbot/cogs/alias/alias.py:327
 msgid "There are no global aliases."
-msgstr "Es gibt keine globalen Aliasse."
+msgstr "Es gibt keinen globalen Alias."
 
 #: redbot/cogs/alias/alias_entry.py:174
 msgid "Arguments must be specified with a number."

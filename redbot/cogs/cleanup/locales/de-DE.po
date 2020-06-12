@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -72,10 +72,10 @@ msgstr "Entfernt Nachrichten, welche von dem Bot stammen, oder Befehle sind."
 
 #: redbot/cogs/cleanup/cleanup.py:465
 #, docstring
-msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr ""
+msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching: If it begins with r( and ends with ),\\n        then it is interpreted as a regex, and messages that match it are\\n        deleted. Otherwise, it is used in a simple substring test.\\n\\n        Some helpful regex flags to include in your pattern:\\n        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)\\n        "
+msgstr "Lösche Nachrichten vom Bot.\\n\\n        Standardmäßig werden alle Nachrichten entfernt. Wenn ein drittes Argument hinzugefügt wird, dient dies zur Mustererkennung: Wenn es mit r beginnt (und endet), wird es als Regex interpretiert und Nachrichten die diesem entsprechen werden gelöscht. Andernfalls wird sie in einem einfachen Substring-Test verwendet.\\n\\n        Einige hilfreiche Regex Flag für dein Muser:\\n        Punkte treffen auf Zeilenumbrüche zu: (?s); Ignoriere Groß- und Kleinschreibung: (?i); Beides: (?si)\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:535
+#: redbot/cogs/cleanup/cleanup.py:540
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "Löscht doppelte Nachrichten im Kanal aus den letzten X-Nachrichten und behält nur eine Kopie. \\n \\n Der Standardwert ist 50. \\n        "

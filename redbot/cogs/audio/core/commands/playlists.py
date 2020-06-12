@@ -1367,7 +1367,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 return await self.send_embed_msg(
                     ctx,
-                    title=_("Playlist Couldn't Be Created"),
+                    title=_("Playlist Couldn't be created"),
                     description=_("Unable to create your playlist."),
                 )
 
