@@ -1388,7 +1388,9 @@ class Downloader(commands.Cog):
             embed.add_field(name="Made by:", value="`%s`" % (made_by), inline=True)
             embed.add_field(name="Repo URL:", value=repo_url)
             if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
-                embed.add_field(name="Repo branch:", value="`%s`" % (cog_installable.repo.branch), inline=False)
+                embed.add_field(
+                    name="Repo branch:", value="`%s`" % (cog_installable.repo.branch), inline=False
+                )
 
             await ctx.send(embed=embed)
         else:
