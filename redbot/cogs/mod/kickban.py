@@ -394,16 +394,12 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def tempban(
+   async def tempban(
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: Optional[
-            commands.TimedeltaConverter(
-                minimum=timedelta(days=0), maximum=timedelta(days=7), default_unit="days"
-            )
-        ] = timedelta(days=1),
-        days: Optional[int] = 0,
+        duration: Optional[commands.TimedeltaConverter] = timedelta(days=1),
+        days: Optional[int]=0,
         *,
         reason: str = None,
     ):
@@ -446,7 +442,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
         try:
-            await guild.ban(user)
+            await guild.ban(user,reason=reason, delete_message_days=days)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
