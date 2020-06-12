@@ -395,14 +395,36 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def tempban(
-        self, ctx: commands.Context, user: discord.Member, days: int = 1, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        duration: Optional[int] = 1,
+        *,
+        reason: str = None,
     ):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        days_delta = timedelta(days=int(days))
+        days_delta = timedelta(days=int(duration))
         unban_time = datetime.utcnow() + days_delta
 
+        if author == user:
+            await ctx.send(
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+            )
+            return
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
+            )
+            return
+        elif guild.me.top_role <= user.top_role or user == guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            return
         invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
         if invite is None:
             invite = ""

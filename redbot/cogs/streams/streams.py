@@ -38,6 +38,11 @@ log = logging.getLogger("red.core.cogs.Streams")
 
 @cog_i18n(_)
 class Streams(commands.Cog):
+    """Various commands relating to streaming platforms.
+
+    You can check if a Twitch, YouTube, Picarto or Mixer stream is
+    currently live.
+    """
 
     global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
 
