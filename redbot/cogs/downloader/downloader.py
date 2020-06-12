@@ -1362,7 +1362,7 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                is_installable = True
+                from_git = True
                 made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
                 repo_url = (
                     _("Missing from installed repos")
@@ -1370,12 +1370,16 @@ class Downloader(commands.Cog):
                     else cog_installable.repo.clean_url
                 )
                 cog_name = cog_installable.name
-            else:
-                # Assume it's in a base cog
-                is_installable = False
-                made_by = "26 & co."
+            elif cog.__module__.startswith("redbot."):  # core commands or core cog
+                from_git = False
+                made_by = "26 & Contributors"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 cog_name = cog.__class__.__name__
+            else:  # assume not installed via downloader
+                from_git = False
+                made_by = "Unknown"
+                repo_url = "None - this cog wasn't installed via downloader"
+
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
@@ -1387,17 +1391,17 @@ class Downloader(commands.Cog):
             embed.add_field(name="Cog Name:", value="`%s`" % (cog_name), inline=True)
             embed.add_field(name="Made by:", value="`%s`" % (made_by), inline=True)
             embed.add_field(name="Repo URL:", value=repo_url)
-            if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
+            if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
                     name="Repo branch:", value="`%s`" % (cog_installable.repo.branch), inline=False
                 )
-
             await ctx.send(embed=embed)
+
         else:
             msg = _(
                 "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
             ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
-            if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
+            if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
                 msg += _("Repo branch: {branch_name}\n").format(
                     branch_name=cog_installable.repo.branch
                 )
