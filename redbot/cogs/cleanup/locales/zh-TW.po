@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-04-30 12:08+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -72,10 +72,10 @@ msgstr "清理命令訊息和來自機器人的訊息。"
 
 #: redbot/cogs/cleanup/cleanup.py:465
 #, docstring
-msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr ""
+msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching: If it begins with r( and ends with ),\\n        then it is interpreted as a regex, and messages that match it are\\n        deleted. Otherwise, it is used in a simple substring test.\\n\\n        Some helpful regex flags to include in your pattern:\\n        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)\\n        "
+msgstr "刪除來自機器人的訊息。\\n\\n       在預設情況下，所有訊息都會被清除。 如果指定了第三個參數，\\n       則用於匹配模式：如果它以r(開頭和結尾)，\\n        則將其解釋為正規表達式，並刪除與之相符的訊息。\\n         否則，它將在簡單的字串切割測試中使用。\\n\\n        一些有用的正規表達式標誌包括:\\n        點匹配換行符:(?s)、忽略大小寫:(?i)、兩者:(?si)\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:535
+#: redbot/cogs/cleanup/cleanup.py:540
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "從最新的X則訊息中刪除的重複訊息，僅保留一則訊息。\\n\\n        預設是50。\\n        "

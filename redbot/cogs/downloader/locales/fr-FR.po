@@ -67,7 +67,7 @@ msgstr "Le nom du repo que vous avez fourni est déjà utilisé. Veuillez choisi
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Something went wrong during the cloning process. See logs for more information."
-msgstr "Quelque chose s'est mal passé pendant le processus de clonage de ce repo. Voir les logs pour plus d'informations."
+msgstr "Quelque chose s'est mal passé pendant le processus de clonage. Voir les logs pour plus d'informations."
 
 #: redbot/cogs/downloader/downloader.py:524
 msgid "Something went wrong trying to add that repo. See logs for more information."
@@ -275,7 +275,7 @@ msgstr "\\nCes bibliothèques partagées peuvent être mises à jour : "
 
 #: redbot/cogs/downloader/downloader.py:879
 msgid "No cogs can be updated."
-msgstr "Aucun cog ne peut être mis à jour."
+msgstr "Aucun cogs ne peut être mise à jour."
 
 #: redbot/cogs/downloader/downloader.py:883
 msgid "All installed cogs are up to date."
@@ -310,7 +310,7 @@ msgstr "\\nCes cogs sont épinglés et n'ont donc pas été vérifiés : "
 
 #: redbot/cogs/downloader/downloader.py:992
 msgid "Cogs from provided repos are already up to date."
-msgstr "Les cogs de ces repos sont déjà à jour."
+msgstr "Les cogs du repo fourni sont déjà mis à jour."
 
 #: redbot/cogs/downloader/downloader.py:995
 msgid "Provided cogs are already up to date with this revision."
@@ -322,7 +322,7 @@ msgstr "Les cogs du repo fourni sont déjà mis à jour."
 
 #: redbot/cogs/downloader/downloader.py:1004
 msgid "Provided cogs are already up to date."
-msgstr "Ces cogs sont déjà à jour."
+msgstr "Les cogs fournis sont déjà à jour."
 
 #: redbot/cogs/downloader/downloader.py:1006
 msgid "All installed cogs are already up to date."
