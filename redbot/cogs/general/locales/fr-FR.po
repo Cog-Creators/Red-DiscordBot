@@ -405,7 +405,7 @@ msgstr "Commerce"
 
 #: redbot/cogs/general/general.py:374
 msgid "News Channels"
-msgstr "Salons de mises à jour"
+msgstr "Salons d'annonces"
 
 #: redbot/cogs/general/general.py:375
 msgid "Animated Icon"

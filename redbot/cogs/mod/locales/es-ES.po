@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-06-04 12:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -169,44 +169,44 @@ msgstr "Hecho. Suficiente caos."
 msgid "Kick a member from a voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:557
+#: redbot/cogs/mod/kickban.py:556
 msgid "I am unable to kick this member from the voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:560
+#: redbot/cogs/mod/kickban.py:559
 msgid "Something went wrong while attempting to kick that member"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:583
+#: redbot/cogs/mod/kickban.py:582
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:596
+#: redbot/cogs/mod/kickban.py:595
 msgid "It seems that user isn't banned!"
 msgstr "Parece que ese usuario no está baneado!"
 
-#: redbot/cogs/mod/kickban.py:602
+#: redbot/cogs/mod/kickban.py:601
 msgid "Something went wrong while attempting to unban that user"
 msgstr "Algo malo paso mientras intentabamos desbanear a ese usuario"
 
-#: redbot/cogs/mod/kickban.py:619
+#: redbot/cogs/mod/kickban.py:618
 msgid "Unbanned that user from this server"
 msgstr "Desbanea a ese usuario de este servidor"
 
-#: redbot/cogs/mod/kickban.py:625
+#: redbot/cogs/mod/kickban.py:624
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:633
+#: redbot/cogs/mod/kickban.py:632
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:640
+#: redbot/cogs/mod/kickban.py:639
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:648
+#: redbot/cogs/mod/kickban.py:647
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
