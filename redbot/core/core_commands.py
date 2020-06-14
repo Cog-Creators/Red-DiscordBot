@@ -556,9 +556,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
             await ctx.send(
-                _("Embeds are now {} for you, in DMs.").format(
-                    _("enabled") if enabled else _("disabled")
-                )
+                _("Embeds are now enabled for you in DMs.")
+                if enabled
+                else _("Embeds are now disabled for you in DMs.")
             )
 
     @commands.command()
