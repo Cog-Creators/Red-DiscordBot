@@ -916,26 +916,7 @@ class RedBase(
             and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
             and message.mentions[0].id == self.user.id
         ):
-            prefixes = await self.get_valid_prefixes(guild=message.guild)
-            prefixes = sorted(prefixes, key=len)
-            counter = 0
-            prefixes_string = humanize_list(
-                [
-                    pf
-                    for p in prefixes
-                    if (pf := f"`{p}`")
-                    and len(pf) < 1800
-                    and ((counter + len(pf)) < 1800)
-                    and (counter := counter + len(pf))
-                ]
-            )
-            await message.channel.send(
-                _(
-                    "Hello there, my prefix here are the following:\n{}\n"
-                    "Why don't you try `{}help` to see everything I can do."
-                    # There's a chance help is disabled ... but that's a gray area anyways so dont think supporting it is necessary.
-                ).format(prefixes_string, prefixes[0])
-            )
+            self.dispatch("message_bot_mention", message)
             return
         if ctx is None or ctx.valid is False:
             self.dispatch("message_without_command", message)
