@@ -31,9 +31,6 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 from discord.ext.commands.bot import BotBase
-from redbot.core.utils.chat_formatting import humanize_list
-
-from redbot.core.i18n import Translator
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -65,7 +62,6 @@ NotMessage = namedtuple("NotMessage", "guild")
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
-_ = Translator("Red", __file__)
 
 
 def _is_submodule(parent, child):
