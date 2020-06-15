@@ -27,8 +27,13 @@ from .utils._internal_utils import (
     expected_version,
     fetch_latest_red_version_info,
 )
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
-
+from .utils.chat_formatting import (
+    inline,
+    bordered,
+    format_perms_list,
+    humanize_list,
+    humanize_timedelta,
+)
 log = logging.getLogger("red")
 init()
 
@@ -317,6 +322,29 @@ def init_events(bot, cli_flags):
                     diff,
                 )
             bot._checked_time_accuracy = discord_now
+
+    @bot.event
+    async def on_red_message_bot_mention(message):
+        prefixes = await bot.get_valid_prefixes(guild=message.guild)
+        prefixes = sorted(prefixes, key=len)
+        counter = 0
+        prefixes_string = humanize_list(
+            [
+                pf
+                for p in prefixes
+                if (pf := f"`{p}`")
+                and len(pf) < 1800
+                and ((counter + len(pf)) < 1800)
+                and (counter := counter + len(pf))
+            ]
+        )
+        await message.channel.send(
+            _(
+                "Hello there, my prefix here are the following:\n{}\n"
+                "Why don't you try `{}help` to see everything I can do."
+                # There's a chance help is disabled ... but that's a gray area anyways so dont think supporting it is necessary.
+            ).format(prefixes_string, prefixes[0])
+        )
 
     @bot.event
     async def on_command_add(command: commands.Command):
