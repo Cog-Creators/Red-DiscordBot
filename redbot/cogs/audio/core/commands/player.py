@@ -593,7 +593,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Pick a track with a search.
 
         Use `[p]search list <search term>` to queue all tracks found on YouTube.
-        Use `[p]search sc<search term>` will search SoundCloud instead of YouTube.
+        Use `[p]search sc <search term>` will search SoundCloud instead of YouTube.
         """
 
         async def _search_menu(
