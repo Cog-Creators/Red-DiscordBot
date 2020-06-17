@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-|
+| :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
