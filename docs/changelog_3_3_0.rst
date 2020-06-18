@@ -14,6 +14,12 @@ Trivia
 
 - Fix URLs in whosthatpokemon (:issue:`3975`)
 
+Downloader
+**********
+
+- Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
+
+
 Developer changelog
 -------------------
 
