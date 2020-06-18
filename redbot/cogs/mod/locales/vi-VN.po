@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: vi\n"
+"X-Crowdin-File-ID: 34\n"
 "Language: vi_VN\n"
 
 #: redbot/cogs/mod/converters.py:20
@@ -21,17 +23,18 @@ msgstr ""
 msgid "Mention spam (Autoban)"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:73
+#: redbot/cogs/mod/kickban.py:73 redbot/cogs/mod/kickban.py:413
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:75 redbot/cogs/mod/kickban.py:190
-#: redbot/cogs/mod/kickban.py:467 redbot/cogs/mod/kickban.py:543
-#: redbot/cogs/mod/mutes.py:16
+#: redbot/cogs/mod/kickban.py:418 redbot/cogs/mod/kickban.py:489
+#: redbot/cogs/mod/kickban.py:565 redbot/cogs/mod/mutes.py:16
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:198
+#: redbot/cogs/mod/kickban.py:426
 msgid "I cannot do that due to discord hierarchy rules"
 msgstr ""
 
@@ -68,7 +71,7 @@ msgstr ""
 msgid "Kick a user.\\n\\n        If a reason is specified, it will be the reason that shows up\\n        in the audit log.\\n        "
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:183 redbot/cogs/mod/kickban.py:460
+#: redbot/cogs/mod/kickban.py:183 redbot/cogs/mod/kickban.py:482
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr ""
 
@@ -126,87 +129,87 @@ msgstr ""
 msgid "Failed to create modlog case: {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:400
+#: redbot/cogs/mod/kickban.py:405
 #, docstring
 msgid "Temporarily ban a user from this server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:418
+#: redbot/cogs/mod/kickban.py:440
 msgid "You have been temporarily banned from {server_name} until {date}. Here is an invite for when your ban expires: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:430
+#: redbot/cogs/mod/kickban.py:452
 msgid "I can't do that for some reason."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:432
+#: redbot/cogs/mod/kickban.py:454
 msgid "Something went wrong while banning"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:447
+#: redbot/cogs/mod/kickban.py:469
 msgid "Done. Enough chaos for now"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:454
+#: redbot/cogs/mod/kickban.py:476
 #, docstring
 msgid "Kick a user and delete 1 day's worth of their messages."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:484
+#: redbot/cogs/mod/kickban.py:506
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\\nYou can now join the server again. {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:495
+#: redbot/cogs/mod/kickban.py:517
 msgid "My role is not high enough to softban that user."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:526
+#: redbot/cogs/mod/kickban.py:548
 msgid "Done. Enough chaos."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:534
+#: redbot/cogs/mod/kickban.py:556
 #, docstring
 msgid "Kick a member from a voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:556
+#: redbot/cogs/mod/kickban.py:578
 msgid "I am unable to kick this member from the voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:559
+#: redbot/cogs/mod/kickban.py:581
 msgid "Something went wrong while attempting to kick that member"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:582
+#: redbot/cogs/mod/kickban.py:604
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:595
+#: redbot/cogs/mod/kickban.py:617
 msgid "It seems that user isn't banned!"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:601
+#: redbot/cogs/mod/kickban.py:623
 msgid "Something went wrong while attempting to unban that user"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:618
+#: redbot/cogs/mod/kickban.py:640
 msgid "Unbanned that user from this server"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:624
+#: redbot/cogs/mod/kickban.py:646
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:632
+#: redbot/cogs/mod/kickban.py:654
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:639
+#: redbot/cogs/mod/kickban.py:661
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:647
+#: redbot/cogs/mod/kickban.py:669
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
@@ -590,6 +593,10 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:104
 msgid "Autoban for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autobanned."
+msgstr ""
+
+#: redbot/cogs/mod/settings.py:113
+msgid "Autoban for mention spam is already disabled."
 msgstr ""
 
 #: redbot/cogs/mod/settings.py:116
