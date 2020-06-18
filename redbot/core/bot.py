@@ -906,11 +906,13 @@ class RedBase(
         else:
             ctx = None
         if (
-            not message.author.bot
-            and await self._mention_prefix_cache.get_context_value(message.guild)
+            ctx
+            and ctx.valid
+            and ctx.channel.permissions_for(ctx.me).send_messages
             and len(message.mentions) == 1
-            and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
             and message.mentions[0].id == self.user.id
+            and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
+            and await self._mention_prefix_cache.get_context_value(message.guild)
             and not await self.ignored_channel_or_guild(ctx=ctx)
             and await self.allowed_by_whitelist_blacklist(who=message.author)
         ):
