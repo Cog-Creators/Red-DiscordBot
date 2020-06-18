@@ -5,7 +5,7 @@ from typing import Union, Set
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
 
@@ -112,7 +112,7 @@ class Filter(commands.Cog):
         if not word_list:
             await ctx.send(_("There is no current words setup to be filtered in this server."))
             return
-        words = ", ".join(word_list)
+        words = humanize_list(word_list)
         words = _("Filtered in this server:") + "\n\n" + words
         try:
             for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
@@ -137,7 +137,7 @@ class Filter(commands.Cog):
         if not word_list:
             await ctx.send(_("There is no current words setup to be filtered in this channel."))
             return
-        words = ", ".join(word_list)
+        words = humanize_list(word_list)
         words = _("Filtered in this channel:") + "\n\n" + words
         try:
             for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
