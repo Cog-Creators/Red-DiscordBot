@@ -311,15 +311,7 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
     except (aiohttp.ClientError, asyncio.TimeoutError):
         return None, None
     else:
-        releases = data["releases"]
-        valid_releases = sorted(
-            [
-                (release, data[0]["requires_python"])
-                for version, data in releases.items()
-                if (release := VersionInfo.from_str(version))
-                and release.releaselevel == VersionInfo.FINAL
-            ],
-            key=lambda x: x[0],
-            reverse=True,
-        )
-        return valid_releases[0] if valid_releases else (None, None)
+        release = VersionInfo.from_str(data["info"]["version"])
+        required_python = data["info"]["requires_python"]
+
+        return release, required_python
