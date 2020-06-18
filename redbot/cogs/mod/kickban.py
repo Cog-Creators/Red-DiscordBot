@@ -398,15 +398,15 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: Optional[int] = 1,
+        duration: Optional[commands.TimedeltaConverter] = timedelta(days=1),
+        days: Optional[int] = 0,
         *,
         reason: str = None,
     ):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        days_delta = timedelta(days=int(duration))
-        unban_time = datetime.utcnow() + days_delta
+        unban_time = datetime.utcnow() + duration
 
         if author == user:
             await ctx.send(
@@ -425,7 +425,10 @@ class KickBanMixin(MixinMeta):
         elif guild.me.top_role <= user.top_role or user == guild.owner:
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
-        invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
+        elif not (0 <= days <= 7):
+            await ctx.send(_("Invalid days. Must be between 0 and 7."))
+            return
+        invite = await self.get_invite_for_reinvite(ctx, int(duration.total_seconds() + 86400))
         if invite is None:
             invite = ""
 
@@ -447,7 +450,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
         try:
-            await guild.ban(user)
+            await guild.ban(user, reason=reason, delete_message_days=days)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
