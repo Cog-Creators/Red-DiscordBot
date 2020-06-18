@@ -25,6 +25,7 @@ Trivia Lists
 
 - Fixed URLs in ``whosthatpokemon`` (:issue:`3975`, :issue:`3023`)
 - Updated ``greekmyth`` to include more answer variations (:issue:`3970`)
+- Added new ``lotr`` trivia list (:issue:`3980`)
 
 
 Developer changelog
