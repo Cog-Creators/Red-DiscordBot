@@ -542,22 +542,23 @@ class Core(commands.Cog, CoreLogic):
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the user's embed setting.
+        Toggle the user's embed setting for DMs.
 
         If enabled is None, the setting will be unset and
         the global default will be used instead.
 
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
-        used for all commands done in a DM with the bot, as
-        well as all help commands everywhere.
+        used for all commands executed in a DM with the bot.
         """
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
             await ctx.send(
-                _("Embeds are now {} for you.").format(_("enabled") if enabled else _("disabled"))
+                _("Embeds are now enabled for you in DMs.")
+                if enabled
+                else _("Embeds are now disabled for you in DMs.")
             )
 
     @commands.command()
