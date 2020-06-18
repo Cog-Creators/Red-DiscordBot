@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -19,6 +19,11 @@ Downloader
 
 - Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
 - Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
+
+Filter
+******
+
+- Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
 
 Trivia Lists
 ************
