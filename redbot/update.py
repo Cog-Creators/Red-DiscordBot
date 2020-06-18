@@ -8,12 +8,11 @@ import platform
 import subprocess
 import sys
 import argparse
-import aiohttp
 
 import pkg_resources
 from redbot import MIN_PYTHON_VERSION
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.utils._internal_utils import expected_version
+from redbot.core import __version__, version_info as red_version_info
+from redbot.core.utils._internal_utils import expected_version, fetch_latest_red_version_info
 from redbot.launcher import clear_screen
 
 if sys.platform == "linux":
@@ -38,24 +37,17 @@ def is_venv():
 
 
 async def is_outdated():
-    red_pypi = "https://pypi.org/pypi/Red-DiscordBot/json"
     current_python = platform.python_version()
-    async with aiohttp.ClientSession() as session:
-        async with session.get("{}".format(red_pypi)) as r:
-            data = await r.json()
-            releases = data["releases"]
-            valid_releases = sorted(
-                [
-                    r
-                    for i in releases.keys()
-                    if (r := VersionInfo.from_str(i))
-                    and r.releaselevel == VersionInfo.FINAL
-                    and (expected_version(current_python, releases[i][0]["requires_python"]))
-                ],
-                reverse=True,
-            )
-            pypi_version = valid_releases[0] if valid_releases else None
-            return pypi_version and pypi_version > red_version_info, pypi_version
+    latest_pypi_version, py_version_req = await fetch_latest_red_version_info()
+    outdated = latest_pypi_version and latest_pypi_version > red_version_info
+    can_update = expected_version(current_python, py_version_req)
+    return (
+        outdated,
+        latest_pypi_version,
+        py_version_req,
+        can_update,
+        current_python,
+    )
 
 
 def parse_cli_args():
@@ -78,7 +70,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, custom=None, stable=True):
+def update_red(dev=False, custom=None):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-update.exe, updating with pip will fail
@@ -89,11 +81,6 @@ def update_red(dev=False, custom=None, stable=True):
     new_name = updater_script + ".old"
     renamed = False
     skip = False
-    if "redbot-update" in updater_script and IS_WINDOWS:
-        renamed = True
-        if os.path.exists(new_name):
-            os.remove(new_name)
-        os.rename(old_name, new_name)
 
     red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
     installed_extras = []
@@ -119,32 +106,51 @@ def update_red(dev=False, custom=None, stable=True):
             package += "#egg=Red-DiscordBot{}".format(package_extras)
     else:
         loop = asyncio.get_event_loop()
-        outdated, new_version = loop.run_until_complete(is_outdated())
+        (
+            outdated,
+            latest_pypi_version,
+            py_version_req,
+            can_update,
+            current_python,
+        ) = loop.run_until_complete(is_outdated())
         if not outdated:
             print("You are on the latest available release.")
+            skip = True
+        if not can_update:
+            print(f"Red Version {latest_pypi_version} requires Python version {py_version_req}")
+            print(f"You have Python version {current_python}")
+            print(
+                "Please go to https://docs.discord.red/en/stable/update_red.html "
+                "for instructions on how to update to the latest release."
+            )
             skip = True
         package = "Red-DiscordBot"
         if package_extras:
             package += "{}".format(package_extras)
-    arguments = [
-        interpreter,
-        "-m",
-        "pip",
-        "install",
-        "-U",
-        package,
-    ]
     if not skip:
+        arguments = [
+            interpreter,
+            "-m",
+            "pip",
+            "install",
+            "-U",
+            package,
+        ]
+        if "redbot-update" in updater_script and IS_WINDOWS:
+            renamed = True
+            if os.path.exists(new_name):
+                os.remove(new_name)
+            os.rename(old_name, new_name)
         code = subprocess.call(arguments)
         if code == 0:
             print("Red has been updated")
         else:
             print("Something went wrong while updating!\nError Code: {}".format(code))
 
-    # If redbot wasn't updated, we renamed our .exe file and didn't replace it
-    scripts = os.listdir(os.path.dirname(updater_script))
-    if renamed and "redbot-update.exe" not in scripts:
-        os.rename(new_name, old_name)
+        # If redbot wasn't updated, we renamed our .exe file and didn't replace it
+        scripts = os.listdir(os.path.dirname(updater_script))
+        if renamed and "redbot-update.exe" not in scripts:
+            os.rename(new_name, old_name)
 
 
 def wait():
@@ -170,7 +176,7 @@ def main_menu():
         print("0. Exit")
         choice = user_choice()
         if choice == "1":
-            update_red(stable=True)
+            update_red()
             wait()
         elif choice == "2":
             update_red(dev=True)
