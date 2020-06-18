@@ -117,7 +117,9 @@ class Streams(commands.Cog):
         await self.config.tokens.clear()
 
     async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
-        tokens = await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
+        tokens = (
+            await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
+        )
         if tokens.get("client_id"):
             try:
                 tokens["client_secret"]
