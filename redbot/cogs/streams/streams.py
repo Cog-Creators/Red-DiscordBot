@@ -301,14 +301,12 @@ class Streams(commands.Cog):
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
         """Disable all stream alerts in this channel or server.
 
-        {command} will disable this channel's stream
+        `[p]streamalert stop` will disable this channel's stream
         alerts.
 
-        Do {command2} to disable all stream alerts in
+        Do `[p]streamalert stop yes` to disable all stream alerts in
         this server.
-        """.format(
-            command="`[p]streamalert stop`", command2="`[p]streamalert stop yes`"
-        )
+        """
         streams = self.streams.copy()
         local_channel_ids = [c.id for c in ctx.guild.channels]
         to_remove = []
