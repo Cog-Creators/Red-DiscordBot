@@ -35,6 +35,7 @@ from . import (
     config,
 )
 from .utils import AsyncIter
+from .utils._internal_utils import fetch_latest_red_version_info
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -315,7 +316,6 @@ class Core(commands.Cog, CoreLogic):
         org_repo = "https://github.com/Cog-Creators"
         red_repo = org_repo + "/Red-DiscordBot"
         red_pypi = "https://pypi.org/project/Red-DiscordBot"
-        red_pypi_json = "https://pypi.org/pypi/Red-DiscordBot/json"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
@@ -329,24 +329,8 @@ class Core(commands.Cog, CoreLogic):
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(red_pypi_json) as r:
-                    data = await r.json()
-        except (aiohttp.ClientError, asyncio.TimeoutError):
-            outdated = None
-        else:
-            releases = data["releases"]
-            valid_releases = sorted(
-                [
-                    r
-                    for i in releases.keys()
-                    if (r := VersionInfo.from_str(i)) and r.releaselevel == VersionInfo.FINAL
-                ],
-                reverse=True,
-            )
-            pypi_version = valid_releases[0] if valid_releases else None
-            outdated = pypi_version and pypi_version > red_version_info
+        pypi_version, py_version_req = await fetch_latest_red_version_info()
+        outdated = pypi_version and pypi_version > red_version_info
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
@@ -370,7 +354,7 @@ class Core(commands.Cog, CoreLogic):
             if outdated in (True, None):
                 if outdated is True:
                     outdated_value = _("Yes, {version} is available.").format(
-                        version=data["info"]["version"]
+                        version=str(pypi_version)
                     )
                 else:
                     outdated_value = _("Checking for updates failed.")
@@ -413,7 +397,7 @@ class Core(commands.Cog, CoreLogic):
             if outdated in (True, None):
                 if outdated is True:
                     outdated_value = _("Yes, {version} is available.").format(
-                        version=data["info"]["version"]
+                        version=str(pypi_version)
                     )
                 else:
                     outdated_value = _("Checking for updates failed.")
