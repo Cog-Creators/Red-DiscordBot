@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Vexed01`, :ghuser:`jack1142`, :ghuser:`aikaterna`
+| :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -12,18 +12,18 @@ End-user changelog
 Core Bot
 ********
 
-- Fix delayed help when ``[p]set deletedelay`` is enabled (:issue:`3884`, :issue:`3883`)
-
-Trivia
-******
-
-- Fix URLs in whosthatpokemon (:issue:`3975`)
+- Fixed delayed help when ``[p]set deletedelay`` is enabled (:issue:`3884`, :issue:`3883`)
 
 Downloader
 **********
 
 - Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
-- Fixed unnecessary typing when running downloader commands (:issue:`3964`)
+- Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
+
+Trivia
+******
+
+- Fixed URLs in whosthatpokemon (:issue:`3975`, :issue:`3023`)
 
 
 Developer changelog
@@ -39,7 +39,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- Improved error responses for when Modlog and Autoban on mention spam were already disabled (:issue:`3951`)
+- Improved error responses for when Modlog and Autoban on mention spam were already disabled (:issue:`3951`, :issue:`3949`)
 
 
 Redbot 3.3.8 (2020-05-29)
