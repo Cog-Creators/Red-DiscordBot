@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: de\n"
+"X-Crowdin-File-ID: 31\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/cleanup/cleanup.py:22
@@ -73,7 +75,7 @@ msgstr "Entfernt Nachrichten, welche von dem Bot stammen, oder Befehle sind."
 #: redbot/cogs/cleanup/cleanup.py:465
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr ""
+msgstr "Nachrichten des Bots bereinigen.\\n\\n        Standardmäßig werden alle Nachrichten gelöscht. Wenn ein drittes Argument angegeben ist,\\n        wird es für Pattern-Matching verwendet - nur Nachrichten mit dem angegebenen Text werden gelöscht.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:535
 #, docstring
