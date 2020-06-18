@@ -32,6 +32,11 @@ Permissions
 - Uploaded YAML files now accept integer commands without quotes (:issue:`3987`, :issue:`3185`)
 - Uploaded YAML files now accept command rules with empty dictionaries (:issue:`3987`, :issue:`3961`)
 
+Streams
+*******
+
+- Fixed streams cog sending multiple DMs about twitch secret not set (:issue:`3901`, :issue:`3587`)
+
 Trivia Lists
 ************
 
