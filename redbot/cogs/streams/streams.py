@@ -39,7 +39,12 @@ log = logging.getLogger("red.core.cogs.Streams")
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": [], "notified_owner": False}
+    global_defaults = {
+        "refresh_timer": 300,
+        "tokens": {},
+        "streams": [],
+        "notified_owner_invalidated_token": False,
+    }
 
     guild_defaults = {
         "autodelete": False,
@@ -109,11 +114,11 @@ class Streams(commands.Cog):
     async def get_twitch_bearer_token(self) -> None:
         tokens = await self.bot.get_shared_api_tokens("twitch")
         if tokens.get("client_id"):
-            notify_owner = await self.config.notified_owner()
+            notified_owner_invalidated_token = await self.config.notified_owner_invalidated_token()
             try:
                 tokens["client_secret"]
-                if notify_owner is True:
-                    await self.config.notified_owner.set(False)
+                if notified_owner_invalidated_token is True:
+                    await self.config.notified_owner_invalidated_token.set(False)
             except KeyError:
                 message = _(
                     "You need a client secret key if you want to use the Twitch API on this cog.\n"
@@ -128,9 +133,9 @@ class Streams(commands.Cog):
                     "only be used in a private channel "
                     "or in DM with the bot."
                 )
-                if notify_owner is False:
+                if notified_owner_invalidated_token is False:
                     await send_to_owners_with_prefix_replaced(self.bot, message)
-                    await self.config.notified_owner.set(True)
+                    await self.config.notified_owner_invalidated_token.set(True)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
