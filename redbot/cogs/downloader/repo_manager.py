@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import json
 import os
 import pkgutil
 import shlex
@@ -1215,3 +1216,45 @@ class RepoManager:
                 if branch is None:
                     branch = tree_url_match["branch"]
         return url, branch
+
+    async def _restore_from_backup(self) -> None:
+        """Restore cogs using `repos.json` in cog's data path.
+
+        Used by `redbot-setup restore` cli command.
+        """
+        with open(data_manager.cog_data_path(self) / "repos.json") as fp:
+            raw_repos = json.load(fp)
+
+        from tqdm import tqdm
+
+        progress_bar = tqdm(raw_repos, desc="Downloading repos", unit="repo", dynamic_ncols=True)
+
+        for repo_data in progress_bar:
+            try:
+                await self.add_repo(repo_data["url"], repo_data["name"], repo_data["branch"])
+            except errors.CloningError:
+                log.exception(
+                    "Something went wrong whilst cloning %s (to branch: %s)",
+                    repo_data["url"],
+                    repo_data["branch"],
+                )
+            except OSError:
+                log.exception(
+                    "Something went wrong trying to add repo %s under name %s",
+                    repo_data["url"],
+                    repo_data["name"],
+                )
+
+        from .downloader import Downloader
+
+        # this solution is far from perfect, but a better one requires a rewrite
+        conf = Config.get_conf(None, identifier=998240343, cog_name="Downloader")
+        self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+        await Downloader._maybe_update_config(conf)
+        # clear out saved commit so that `[p]cog update` triggers install for all cogs
+        async with self.conf.installed_cogs() as installed_cogs:
+            for repo_data in installed_cogs.values():
+                for cog_data in repo_data.values():
+                    cog_data["commit"] = ""
+                    cog_data["pinned"] = False
+        await self.conf.installed_libraries.set({})

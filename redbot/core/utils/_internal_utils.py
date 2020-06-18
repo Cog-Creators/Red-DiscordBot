@@ -8,8 +8,11 @@ import os
 import re
 import shutil
 import tarfile
+import time
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
+from tarfile import TarInfo
 from typing import (
     AsyncIterator,
     Awaitable,
@@ -24,6 +27,7 @@ from typing import (
 import discord
 import pkg_resources
 from fuzzywuzzy import fuzz, process
+from tqdm import tqdm
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -191,7 +195,23 @@ async def format_fuzzy_results(
         return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
 
 
+def _tar_addfile_from_string(tar: tarfile.TarFile, name: str, string: str) -> None:
+    encoded = string.encode("utf-8")
+    fp = BytesIO(encoded)
+
+    # TarInfo needs `mtime` and `size`
+    # https://stackoverflow.com/q/53306000
+    tar_info = tarfile.TarInfo(name)
+    tar_info.mtime = time.time()
+    tar_info.size = len(encoded)
+
+    tar.addfile(tar_info, fp)
+
+
 async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
+    # version of backup
+    BACKUP_VERSION = 2
+
     data_path = Path(data_manager.core_data_path().parent)
     if not data_path.exists():
         return None
@@ -201,12 +221,19 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
 
     to_backup = []
+    # we need trailing separator to not exclude files and folders that only start with these names
     exclusions = [
         "__pycache__",
+        # Lavalink will be downloaded on Audio load
         "Lavalink.jar",
-        os.path.join("Downloader", "lib"),
-        os.path.join("CogManager", "cogs"),
-        os.path.join("RepoManager", "repos"),
+        # cogs and repos installed through Downloader can be reinstalled using restore command
+        os.path.join("Downloader", "lib", ""),
+        os.path.join("CogManager", "cogs", ""),
+        os.path.join("RepoManager", "repos", ""),
+        # these files are created during backup so we exclude them from data path backup
+        os.path.join("RepoManager", "repos.json"),
+        "instance.json",
+        "backup.version",
     ]
 
     # Avoiding circular imports
@@ -217,19 +244,28 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     repo_output = []
     for repo in repo_mgr.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
-    repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
-    with repos_file.open("w") as fs:
-        json.dump(repo_output, fs, indent=4)
-    instance_file = data_path / "instance.json"
-    with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
-        for f in to_backup:
+        progress_bar = tqdm(to_backup, desc="Compressing data", unit=" files", dynamic_ncols=True)
+        for f in progress_bar:
             tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
+
+        # add repos backup
+        repos_data = json.dumps(repo_output, indent=4)
+        _tar_addfile_from_string(tar, "cogs/RepoManager/repos.json", repos_data)
+
+        # add instance's original data
+        instance_data = json.dumps(
+            {data_manager.instance_name: data_manager.basic_config}, indent=4
+        )
+        _tar_addfile_from_string(tar, "instance.json", instance_data)
+
+        # add info about backup version
+        _tar_addfile_from_string(tar, "backup.version", str(BACKUP_VERSION))
     return backup_fpath
 
 
