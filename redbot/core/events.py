@@ -209,7 +209,7 @@ def init_events(bot, cli_flags):
                 if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
                     return
         if not isinstance(error, commands.CommandNotFound):
-            await bot._delete_delay(ctx)
+            asyncio.create_task(bot._delete_delay(ctx))
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
