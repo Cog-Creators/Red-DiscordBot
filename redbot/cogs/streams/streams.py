@@ -124,7 +124,9 @@ class Streams(commands.Cog):
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
                 ).format(
-                    command="`[p]set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+                    command="`[p]set api twitch client_id {} client_secret {}`".format(
+                        _("<your_client_id_here>"), _("<your_client_secret_here>")
+                    )
                 )
                 await send_to_owners_with_prefix_replaced(self.bot, message)
         async with aiohttp.ClientSession() as session:
@@ -426,7 +428,6 @@ class Streams(commands.Cog):
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
         """Explain how to set the twitch token."""
-
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
@@ -440,7 +441,9 @@ class Streams(commands.Cog):
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(
-            command=f"`{ctx.clean_prefix}set api twitch client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+            command="`{}set api twitch client_id {} client_secret {}`".format(
+                ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
+            )
         )
 
         await ctx.maybe_send_embed(message)
