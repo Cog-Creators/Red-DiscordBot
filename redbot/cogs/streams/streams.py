@@ -30,7 +30,7 @@ import aiohttp
 import contextlib
 from datetime import datetime
 from collections import defaultdict
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List, Tuple, Union, Dict
 
 _ = Translator("Streams", __file__)
 log = logging.getLogger("red.core.cogs.Streams")
@@ -98,7 +98,7 @@ class Streams(commands.Cog):
     @commands.Cog.listener()
     async def on_red_api_tokens_update(self, service_name, api_tokens):
         if service_name == "twitch":
-            await self.get_twitch_bearer_token()
+            await self.get_twitch_bearer_token(api_tokens)
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready_event.wait()
@@ -116,8 +116,8 @@ class Streams(commands.Cog):
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.config.tokens.clear()
 
-    async def get_twitch_bearer_token(self) -> None:
-        tokens = await self.bot.get_shared_api_tokens("twitch")
+    async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
+        tokens = await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
         if tokens.get("client_id"):
             try:
                 tokens["client_secret"]
