@@ -20,8 +20,8 @@ Downloader
 - Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
 - Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
 
-Trivia
-******
+Trivia Lists
+************
 
 - Fixed URLs in whosthatpokemon (:issue:`3975`, :issue:`3023`)
 
@@ -40,6 +40,7 @@ Miscellaneous
 -------------
 
 - Improved error responses for when Modlog and Autoban on mention spam were already disabled (:issue:`3951`, :issue:`3949`)
+- Clarified that ``[p]embedset user`` only affects commands executed in DMs (:issue:`3972`, :issue:`3953`)
 
 
 Redbot 3.3.8 (2020-05-29)
