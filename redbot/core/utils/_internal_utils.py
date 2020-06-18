@@ -19,11 +19,14 @@ from typing import (
     Optional,
     Union,
     TYPE_CHECKING,
+    Tuple,
 )
 
+import aiohttp
 import discord
 import pkg_resources
 from fuzzywuzzy import fuzz, process
+from redbot import VersionInfo
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -298,3 +301,25 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 def expected_version(current: str, expected: str) -> bool:
     # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
     return current in pkg_resources.Requirement.parse(f"x{expected}")
+
+
+async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+                data = await r.json()
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None, None
+    else:
+        releases = data["releases"]
+        valid_releases = sorted(
+            [
+                (release, data[0]["requires_python"])
+                for version, data in releases.items()
+                if (release := VersionInfo.from_str(version))
+                and release.releaselevel == VersionInfo.FINAL
+            ],
+            key=lambda x: x[0],
+            reverse=True,
+        )
+        return valid_releases[0] if valid_releases else (None, None)

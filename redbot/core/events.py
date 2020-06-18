@@ -21,7 +21,12 @@ from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
-from .utils._internal_utils import fuzzy_command_search, format_fuzzy_results, expected_version
+from .utils._internal_utils import (
+    fuzzy_command_search,
+    format_fuzzy_results,
+    expected_version,
+    fetch_latest_red_version_info,
+)
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
 log = logging.getLogger("red")
@@ -93,29 +98,17 @@ def init_events(bot, cli_flags):
 
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
-            async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.org/pypi/red-discordbot/json") as r:
-                    data = await r.json()
-            releases = data["releases"]
-            valid_releases = sorted(
-                [
-                    r
-                    for i in releases.keys()
-                    if (r := VersionInfo.from_str(i)) and r.releaselevel == VersionInfo.FINAL
-                ],
-                reverse=True,
-            )
-            pypi_version = valid_releases[0] if valid_releases else None
-            if pypi_version and pypi_version > red_version_info:
+            pypi_version, py_version_req = await fetch_latest_red_version_info()
+            outdated = pypi_version and pypi_version > red_version_info
+            if outdated:
                 INFO.append(
                     "Outdated version! {} is available "
-                    "but you're using {}".format(data["info"]["version"], red_version)
+                    "but you're using {}".format(pypi_version, red_version)
                 )
                 outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
-                ).format(data["info"]["version"], red_version)
-                requires_python = data["info"]["requires_python"]
+                ).format(pypi_version, red_version)
                 current_python = platform.python_version()
                 extra_update = _(
                     "\n\nWhile the following command should work in most scenarios as it is "
@@ -124,7 +117,7 @@ def init_events(bot, cli_flags):
                     "make sure there is nothing else that "
                     "needs to be done during the update.**"
                 ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
-                if expected_version(current_python, requires_python):
+                if expected_version(current_python, py_version_req):
                     installed_extras = []
                     for extra, reqs in red_pkg._dep_map.items():
                         if extra is None:
@@ -161,7 +154,7 @@ def init_events(bot, cli_flags):
                         "You will need to follow the update instructions in our docs above, "
                         "if you still need help updating after following the docs go to our "
                         "#support channel in <https://discord.gg/red>"
-                    ).format(py_version=current_python, req_py=requires_python)
+                    ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
         INFO2 = []
