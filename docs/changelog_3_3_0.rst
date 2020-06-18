@@ -4,12 +4,15 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Vexed01`, :ghuser:`jack1142`
+| :ghuser:`Vexed01`, :ghuser:`jack1142`, :ghuser:`aikaterna`
 
 End-user changelog
 ------------------
 
+Trivia
+******
 
+- Fix URLs in whosthatpokemon (:issue:`3975`)
 
 Developer changelog
 -------------------
