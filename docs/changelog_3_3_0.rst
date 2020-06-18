@@ -9,6 +9,11 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Fix delayed help when ``[p]set deletedelay`` is enabled (:issue:`3884`, :issue:`3883`)
+
 Trivia
 ******
 
