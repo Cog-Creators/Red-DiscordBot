@@ -40,12 +40,13 @@ YAML_SCHEMA = Schema(
         {
             UseOptional(COMMAND): Or(
                 {
-                    str: And(
+                    Or(str, int): Or(
                         {
                             Or(int, "default"): And(
                                 bool, error=_("Rules must be either `true` or `false`.")
                             )
                         },
+                        {},
                         error=_("Keys under command names must be IDs (numbers) or `default`."),
                     )
                 },
@@ -54,7 +55,7 @@ YAML_SCHEMA = Schema(
             ),
             UseOptional(COG): Or(
                 {
-                    str: Or(
+                    Or(str, int): Or(
                         {
                             Or(int, "default"): And(
                                 bool, error=_("Rules must be either `true` or `false`.")
@@ -664,7 +665,7 @@ class Permissions(commands.Cog):
             for cmd_name, cmd_rules in rules_dict.items():
                 cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
                 await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
-                cmd_obj = getter(cmd_name)
+                cmd_obj = getter(str(cmd_name))
                 if cmd_obj is not None:
                     self._load_rules_for(cmd_obj, {guild_id: cmd_rules})
 
