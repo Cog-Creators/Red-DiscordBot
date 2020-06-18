@@ -1387,13 +1387,13 @@ class Downloader(commands.Cog):
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name="Command:", value=command_name, inline=False)
-            embed.add_field(name="Cog Name:", value=cog_name, inline=False)
-            embed.add_field(name="Made by:", value=made_by, inline=False)
-            embed.add_field(name="Repo URL:", value=repo_url, inline=False)
+            embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Made by:"), value=made_by, inline=False)
+            embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
-                    name="Repo branch:", value=cog_installable.repo.branch, inline=False
+                    name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
                 )
             await ctx.send(embed=embed)
 
