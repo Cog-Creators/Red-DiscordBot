@@ -19,6 +19,7 @@ Downloader
 
 - Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
 - Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
+- Added embed version of ``[p]findcog`` (:issue:`3965`, :issue:`3944`)
 
 Filter
 ******
