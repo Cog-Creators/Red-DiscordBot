@@ -549,7 +549,7 @@ class Core(commands.Cog, CoreLogic):
 
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
-        used for all commands done in a DM with the bot.
+        used for all commands executed in a DM with the bot.
         """
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
