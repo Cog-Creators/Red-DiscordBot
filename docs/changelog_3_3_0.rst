@@ -23,7 +23,8 @@ Downloader
 Trivia Lists
 ************
 
-- Fixed URLs in whosthatpokemon (:issue:`3975`, :issue:`3023`)
+- Fixed URLs in ``whosthatpokemon`` (:issue:`3975`, :issue:`3023`)
+- Updated ``greekmyth`` to include more answer variations (:issue:`3970`)
 
 
 Developer changelog
