@@ -1363,7 +1363,7 @@ class Downloader(commands.Cog):
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
                 is_installable = True
-                made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
+                made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
                 repo_url = (
                     _("Missing from installed repos")
                     if cog_installable.repo is None
@@ -1383,13 +1383,13 @@ class Downloader(commands.Cog):
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name="Command:", value="`%s`" % (command_name), inline=True)
-            embed.add_field(name="Cog Name:", value="`%s`" % (cog_name), inline=True)
-            embed.add_field(name="Made by:", value="`%s`" % (made_by), inline=True)
-            embed.add_field(name="Repo URL:", value=repo_url)
+            embed.add_field(name="Command:", value=command_name, inline=False)
+            embed.add_field(name="Cog Name:", value=cog_name, inline=False)
+            embed.add_field(name="Made by:", value=made_by, inline=False)
+            embed.add_field(name="Repo URL:", value=repo_url, inline=False)
             if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
-                    name="Repo branch:", value="`%s`" % (cog_installable.repo.branch), inline=False
+                    name="Repo branch:", value=cog_installable.repo.branch, inline=False
                 )
             await ctx.send(embed=embed)
 
