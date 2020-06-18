@@ -20,15 +20,15 @@ msgid "I attempted to do something that Discord denied me permissions for. Your 
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:22
-msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than my highest role in the Discord hierarchy so I was unable to successfully add it. Please give me a higher role and try again."
+msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than my highest role in Discord so I was unable to successfully add it. Please give me a higher role and try again."
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:29
-msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
+msgid "I tried to {verb} {role.name} to {member.display_name} but that role is higher than your highest role in Discord so I was unable to successfully add it. Please get a higher role and try again."
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:36
-msgid "I tried to edit {role.name} but that role is higher than your highest role in the Discord hierarchy so I was unable to successfully add it. Please get a higher role and try again."
+msgid "I tried to edit {role.name} but that role is higher than your highest role in Discord so I was unable to successfully add it. Please get a higher role and try again."
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:43
