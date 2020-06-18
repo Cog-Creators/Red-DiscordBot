@@ -33,6 +33,7 @@ import aiohttp
 import discord
 import pkg_resources
 from fuzzywuzzy import fuzz, process
+from redbot import VersionInfo
 from tqdm import tqdm
 
 from redbot import VersionInfo
