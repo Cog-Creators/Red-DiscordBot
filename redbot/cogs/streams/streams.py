@@ -95,6 +95,11 @@ class Streams(commands.Cog):
 
         self._ready_event.set()
 
+    @commands.Cog.listener()
+    async def on_red_api_tokens_update(self, service_name, api_tokens):
+        if service_name == "twitch":
+            await self.get_twitch_bearer_token()
+
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready_event.wait()
 
