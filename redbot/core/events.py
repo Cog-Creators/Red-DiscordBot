@@ -34,6 +34,7 @@ from .utils.chat_formatting import (
     humanize_list,
     humanize_timedelta,
 )
+
 log = logging.getLogger("red")
 init()
 

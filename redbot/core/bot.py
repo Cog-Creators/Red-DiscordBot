@@ -911,8 +911,10 @@ class RedBase(
             and len(message.mentions) == 1
             and message.clean_content.strip() == f"@{message.mentions[0].display_name}"
             and message.mentions[0].id == self.user.id
+            and not await self.ignored_channel_or_guild(ctx=ctx)
+            and await self.allowed_by_whitelist_blacklist(who=message.author)
         ):
-            self.dispatch("message_bot_mention", message)
+            self.dispatch("red_message_bot_mention", message)
             return
         if ctx is None or ctx.valid is False:
             self.dispatch("message_without_command", message)
