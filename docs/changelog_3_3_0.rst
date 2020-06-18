@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -25,6 +25,12 @@ Filter
 ******
 
 - Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
+
+Permissions
+***********
+
+- Uploaded YAML files now accept integer commands without quotes (:issue:`3987`, :issue:`3185`)
+- Uploaded YAML files now accept command rules with empty dictionaries (:issue:`3987`, :issue:`3961`)
 
 Trivia Lists
 ************
