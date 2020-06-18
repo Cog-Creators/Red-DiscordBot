@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Vexed01`
+| :ghuser:`Vexed01`, :ghuser:`jack1142`
 
 End-user changelog
 ------------------
@@ -24,6 +24,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- Improved error responses for when Modlog and Autoban on mention spam were already disabled (:issue:`3951`)
 
 
 Redbot 3.3.8 (2020-05-29)
