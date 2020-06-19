@@ -68,6 +68,8 @@ Miscellaneous
 - Clarified that ``[p]embedset user`` only affects commands executed in DMs (:issue:`3972`, :issue:`3953`)
 - Added link to Getting Started guide if the bot was not in any guilds (:issue:`3906`)
 - Fixed exceptions being ignored or not sent to log files in special cases (:issue:`3895`)
+- Added the option of using dots in the instance name when creating your instances (:issue:`3920`)
+- Added a confirmation when using hyphens in instance names to discourage the use of them (:issue:`3920`)
 
 
 Redbot 3.3.8 (2020-05-29)
