@@ -147,7 +147,7 @@ def get_name() -> str:
                 default=False,
             ):
                 return name
-            print()  # new line for ascetics
+            print()  # new line for aesthetics
             name = ""
     return name
 
