@@ -299,7 +299,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         self._iterator = iter(iterable)
         self._i = 0
         self._steps = steps
-        self._map = lambda x: x
+        self._map = None
 
     def __aiter__(self) -> AsyncIter[_T]:
         return self
@@ -313,7 +313,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             self._i = 0
             await asyncio.sleep(self._delay)
         self._i += 1
-        return await maybe_coroutine(self._map, item)
+        return await maybe_coroutine(self._map, item) if self._map is not None else item
 
     def __await__(self) -> Generator[Any, None, List[_T]]:
         """Returns a list of the iterable.
