@@ -130,25 +130,24 @@ def get_name() -> str:
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
             "This name is case-sensitive and should only include characters"
-            " A-z, numbers, underscores and periods."
+            " A-z, numbers, underscores (_) and periods (.)."
         )
         name = input("> ")
-        if re.fullmatch(r"[a-zA-Z0-9_\.]*", name) is None:
+        if re.fullmatch(r"[A-Za-z0-9_\.\-]*", name) is None:
             print(
-                "Instance names should only include characters A-z, numbers, "
-                "underscores and periods as otherwise you may run into issues."
+                "ERROR: Instance names can only include characters A-z, numbers, "
+                "underscores (_) and periods(.)."
             )
-            if sys.platform == "linux" and "-" in name:
-                print("ERROR: On Linux, instance names can't include hyphens (-).")
-            elif " " in name or name[0] == "-":
-                print("ERROR: They cannot start with a hyphen or include spaces.")
-            elif confirm(
-                "The instance name provided doesn't fit the reccomended criteria. Are you sure?",
-                default=False,
-            ):
-                return name
-            print()  # new line for aesthetics
-            name = ""
+        elif "-" in name and confirm(
+            "Hyphen (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
+            default=False,
+        ):
+            return name
+        else:
+            return name
+
+        print()  # new line for aesthetics
+        name = ""
     return name
 
 
