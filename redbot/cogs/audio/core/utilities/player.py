@@ -208,6 +208,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except (IndexError, KeyError):
             return False
 
+    async def self_deafen(self, player: lavalink.Player) -> None:
+        guild_id = player.channel.guild.id
+        channel_id = player.channel.id
+        node = player.manager.node
+        voice_ws = node.get_voice_ws(guild_id)
+        await voice_ws.voice_state(guild_id, channel_id, self_deaf=True)
+
     async def _get_spotify_tracks(
         self, ctx: commands.Context, query: Query, forced: bool = False
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
@@ -657,6 +664,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 and len(player.queue) == 0
             ):
                 await player.move_to(user_channel)
+                await self.self_deafen(player)
                 return True
         else:
             return False

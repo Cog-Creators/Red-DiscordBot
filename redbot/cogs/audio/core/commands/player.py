@@ -63,6 +63,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -167,6 +168,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -415,6 +417,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -529,6 +532,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -643,6 +647,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,

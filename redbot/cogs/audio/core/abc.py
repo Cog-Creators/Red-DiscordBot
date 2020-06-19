@@ -502,3 +502,7 @@ class MixinMeta(ABC):
     @abstractmethod
     async def command_prev(self, ctx: commands.Context):
         raise NotImplementedError()
+
+    @abstractmethod
+    async def self_deafen(self, player: lavalink.Player) -> None:
+        raise NotImplementedError()

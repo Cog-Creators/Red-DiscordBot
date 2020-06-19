@@ -325,6 +325,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             await lavalink.connect(ctx.author.voice.channel)
             player = lavalink.get_player(ctx.guild.id)
             player.store("connect", datetime.datetime.utcnow())
+            await self.self_deafen(player)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(

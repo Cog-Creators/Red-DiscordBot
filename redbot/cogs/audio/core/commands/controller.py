@@ -620,12 +620,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 if ctx.author.voice.channel == player.channel:
                     ctx.command.reset_cooldown(ctx)
                     return
                 await player.move_to(ctx.author.voice.channel)
+                await self.self_deafen(player)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
