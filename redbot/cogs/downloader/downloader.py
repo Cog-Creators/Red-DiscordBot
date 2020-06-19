@@ -1416,7 +1416,9 @@ class Downloader(commands.Cog):
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
-                embed.add_field(name=_("Repo branch:"), value=cog_installable.repo.branch
+                embed.add_field(
+                    name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
+                )
             await ctx.send(embed=embed)
 
         else:
