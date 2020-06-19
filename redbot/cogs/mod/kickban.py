@@ -78,7 +78,7 @@ class KickBanMixin(MixinMeta):
                 "hierarchy."
             )
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            return _("I cannot do that due to discord hierarchy rules")
+            return _("I cannot do that due to discord hierarchy rules.")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
@@ -101,14 +101,19 @@ class KickBanMixin(MixinMeta):
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
             log.info(
-                "{}({}) banned {}({}), deleting {} days worth of messages".format(
+                "{}({}) banned {}({}), deleting {} days worth of messages.".format(
                     author.name, author.id, user.name, user.id, str(days)
                 )
             )
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except Exception as e:
-            return e  # TODO: improper return type? Is this intended to be re-raised?
+            log.exception(
+                "{}({}) attempted to kick {}({}), but an error occurred.".format(
+                    author.name, author.id, user.name, user.id
+                )
+            )
+            return _("An unexpected error occurred.")
 
         if create_modlog_case:
             try:
@@ -156,7 +161,7 @@ class KickBanMixin(MixinMeta):
                                 if e.code == 50013 or e.status == 403:
                                     log.info(
                                         f"Failed to unban ({uid}) user from "
-                                        f"{guild.name}({guild.id}) guild due to permissions"
+                                        f"{guild.name}({guild.id}) guild due to permissions."
                                     )
                                     break  # skip the rest of this guild
                                 log.info(f"Failed to unban member: error code: {e.code}")
@@ -195,7 +200,7 @@ class KickBanMixin(MixinMeta):
             )
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            await ctx.send(_("I cannot do that due to discord hierarchy rules."))
             return
         audit_reason = get_audit_reason(author, reason)
         toggle = await self.config.guild(guild).dm_on_kickban()
@@ -216,7 +221,11 @@ class KickBanMixin(MixinMeta):
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
-            print(e)
+            log.exception(
+                "{}({}) attempted to kick {}({}), but an error occurred.".format(
+                    author.name, author.id, user.name, user.id
+                )
+            )
         else:
             try:
                 await modlog.create_case(
@@ -454,7 +463,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
-            await ctx.send(_("Something went wrong while banning"))
+            await ctx.send(_("Something went wrong while banning."))
         else:
             try:
                 await modlog.create_case(
@@ -469,7 +478,7 @@ class KickBanMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-            await ctx.send(_("Done. Enough chaos for now"))
+            await ctx.send(_("Done. Enough chaos for now."))
 
     @commands.command()
     @commands.guild_only()
@@ -522,17 +531,25 @@ class KickBanMixin(MixinMeta):
                 await msg.delete()
             return
         except discord.HTTPException as e:
-            print(e)
+            log.exception(
+                "{}({}) attempted to softban {}({}), but an error occurred trying to ban them.".format(
+                    author.name, author.id, user.name, user.id
+                )
+            )
             return
         try:
             await guild.unban(user)
         except discord.HTTPException as e:
-            print(e)
+            log.exception(
+                "{}({}) attempted to softban {}({}), but an error occurred trying to unban them.".format(
+                    author.name, author.id, user.name, user.id
+                )
+            )
             return
         else:
             log.info(
                 "{}({}) softbanned {}({}), deleting 1 day worth "
-                "of messages".format(author.name, author.id, user.name, user.id)
+                "of messages.".format(author.name, author.id, user.name, user.id)
             )
             try:
                 await modlog.create_case(
@@ -581,7 +598,7 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I am unable to kick this member from the voice channel."))
             return
         except discord.HTTPException:
-            await ctx.send(_("Something went wrong while attempting to kick that member"))
+            await ctx.send(_("Something went wrong while attempting to kick that member."))
             return
         else:
             try:
@@ -623,7 +640,7 @@ class KickBanMixin(MixinMeta):
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
-            await ctx.send(_("Something went wrong while attempting to unban that user"))
+            await ctx.send(_("Something went wrong while attempting to unban that user."))
             return
         else:
             try:
@@ -640,7 +657,7 @@ class KickBanMixin(MixinMeta):
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-            await ctx.send(_("Unbanned that user from this server"))
+            await ctx.send(_("Unbanned that user from this server."))
 
         if await self.config.guild(guild).reinvite_on_unban():
             user = ctx.bot.get_user(user_id)
