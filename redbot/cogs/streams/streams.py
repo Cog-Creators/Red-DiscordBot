@@ -230,7 +230,7 @@ class Streams(commands.Cog):
         except InvalidTwitchCredentials:
             await ctx.send(
                 _(
-                    "The Twitch token is either invalid or has not been set. See " "{command}."
+                    "The Twitch token is either invalid or has not been set. See {command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
             )
         except InvalidYoutubeCredentials:
