@@ -138,16 +138,14 @@ def get_name() -> str:
                 "ERROR: Instance names can only include characters A-z, numbers, "
                 "underscores (_) and periods(.)."
             )
-        elif "-" in name and confirm(
+            name = ""
+        elif "-" in name and not confirm(
             "Hyphen (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
             default=False,
         ):
-            return name
-        else:
-            return name
+            name = ""
 
         print()  # new line for aesthetics
-        name = ""
     return name
 
 
