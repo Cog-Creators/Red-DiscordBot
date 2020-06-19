@@ -5,7 +5,7 @@ from typing import Union, Set
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
 
@@ -100,44 +100,50 @@ class Filter(commands.Cog):
         """Add or remove words from server filter.
 
         Use double quotes to add or remove sentences.
-
-        Using this command with no subcommands will send the list of
-        the server's filtered words.
         """
-        if ctx.invoked_subcommand is None:
-            server = ctx.guild
-            author = ctx.author
-            word_list = await self.config.guild(server).filter()
-            if word_list:
-                words = ", ".join(word_list)
-                words = _("Filtered in this server:") + "\n\n" + words
-                try:
-                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
-                        await author.send(page)
-                except discord.Forbidden:
-                    await ctx.send(_("I can't send direct messages to you."))
+        pass
+
+    @_filter.command(name="list")
+    async def _global_list(self, ctx: commands.Context):
+        """Send a list of this servers filtered words."""
+        server = ctx.guild
+        author = ctx.author
+        word_list = await self.config.guild(server).filter()
+        if not word_list:
+            await ctx.send(_("There is no current words setup to be filtered in this server."))
+            return
+        words = humanize_list(word_list)
+        words = _("Filtered in this server:") + "\n\n" + words
+        try:
+            for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                await author.send(page)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
         """Add or remove words from channel filter.
 
         Use double quotes to add or remove sentences.
-
-        Using this command with no subcommands will send the list of
-        the channel's filtered words.
         """
-        if ctx.invoked_subcommand is None:
-            channel = ctx.channel
-            author = ctx.author
-            word_list = await self.config.channel(channel).filter()
-            if word_list:
-                words = ", ".join(word_list)
-                words = _("Filtered in this channel:") + "\n\n" + words
-                try:
-                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
-                        await author.send(page)
-                except discord.Forbidden:
-                    await ctx.send(_("I can't send direct messages to you."))
+        pass
+
+    @_filter_channel.command(name="list")
+    async def _channel_list(self, ctx: commands.Context):
+        """Send the list of the channel's filtered words."""
+        channel = ctx.channel
+        author = ctx.author
+        word_list = await self.config.channel(channel).filter()
+        if not word_list:
+            await ctx.send(_("There is no current words setup to be filtered in this channel."))
+            return
+        words = humanize_list(word_list)
+        words = _("Filtered in this channel:") + "\n\n" + words
+        try:
+            for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                await author.send(page)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command("add")
     async def filter_channel_add(self, ctx: commands.Context, *words: str):
