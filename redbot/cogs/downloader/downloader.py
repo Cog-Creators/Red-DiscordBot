@@ -1388,7 +1388,6 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                from_git = True
                 made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
                 repo_url = (
                     _("Missing from installed repos")
@@ -1397,11 +1396,10 @@ class Downloader(commands.Cog):
                 )
                 cog_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
-                from_git = False
                 made_by = "Cog Creators"
+                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 cog_name = cog.__class__.__name__
             else:  # assume not installed via downloader
-                from_git = False
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
         else:
@@ -1415,7 +1413,7 @@ class Downloader(commands.Cog):
             embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
-            if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
+            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
                     name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
                 )
@@ -1425,7 +1423,7 @@ class Downloader(commands.Cog):
             msg = _(
                 "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
             ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
-            if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
+            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
                 msg += _("Repo branch: {branch_name}\n").format(
                     branch_name=cog_installable.repo.branch
                 )
