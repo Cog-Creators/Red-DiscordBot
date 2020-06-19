@@ -1399,7 +1399,6 @@ class Downloader(commands.Cog):
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 from_git = False
                 made_by = "Cog Creators"
-                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 cog_name = cog.__class__.__name__
             else:  # assume not installed via downloader
                 from_git = False
@@ -1407,8 +1406,6 @@ class Downloader(commands.Cog):
                 repo_url = _("None - this cog wasn't installed via downloader")
         else:
             msg = _("This command is not provided by a cog.")
-            await ctx.send(msg)
-            return
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
