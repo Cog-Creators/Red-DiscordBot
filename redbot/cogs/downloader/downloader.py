@@ -1402,6 +1402,7 @@ class Downloader(commands.Cog):
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
+                cog_name = cog.__class__.__name__
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
