@@ -236,7 +236,7 @@ class Streams(commands.Cog):
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
-                    "The YouTube API key is either invalid or has not been set. See " "{command}."
+                    "The YouTube API key is either invalid or has not been set. See {command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
         except APIError:
