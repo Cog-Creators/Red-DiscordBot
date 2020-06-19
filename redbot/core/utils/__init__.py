@@ -428,7 +428,9 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         del _temp
 
     async def find(
-        self, predicate: Union[Callable, Coroutine], default: Optional[Any] = None
+        self,
+        predicate: Callable[[_T], Union[bool, Awaitable[bool]]],
+        default: Optional[Any] = None,
     ) -> AsyncIterator[_T]:
         """Calls ``predicate`` over items in iterable and return first value to match.
 
@@ -437,7 +439,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         predicate: Union[Callable, Coroutine]
             A function that returns a boolean-like result. The predicate provided can be a coroutine.
         default: Optional[Any]
-            The value to return if there is no matches.
+            The value to return if there are no matches.
 
         Raises
         ------
@@ -459,7 +461,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             if ret:
                 return elem
 
-    def map(self, func: Union[Coroutine[..., _S], Callable[..., _S]]) -> AsyncIter[_S]:
+    def map(self, func: Callable[[_T], Union[_S, Awaitable[_S]]]) -> AsyncIter[_S]:
         """Set the mapping callable for this instance of `AsyncIter`.
 
         .. important::
@@ -486,7 +488,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
         """
 
-        if func and not callable(func):
+        if not callable(func):
             raise TypeError("Mapping must be a callable.")
         self._map = func
         return self
