@@ -1389,7 +1389,6 @@ class Downloader(commands.Cog):
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
                 from_git = True
-
                 made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
                 repo_url = (
                     _("Missing from installed repos")
