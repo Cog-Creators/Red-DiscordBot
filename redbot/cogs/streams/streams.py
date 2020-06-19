@@ -465,7 +465,11 @@ class Streams(commands.Cog):
             "{command}\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(command=f"`{ctx.clean_prefix}set api youtube api_key <your_api_key_here>`")
+        ).format(
+            command="`{}set api youtube api_key {}`".format(
+                ctx.clean_prefix, _("<your_api_key_here>")
+            )
+        )
 
         await ctx.maybe_send_embed(message)
 
