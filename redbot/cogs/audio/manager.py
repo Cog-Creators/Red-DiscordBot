@@ -224,8 +224,7 @@ class ServerManager:
         await self._proc.wait()
         self._shutdown = True
 
-    @staticmethod
-    async def _download_jar() -> None:
+    async def _download_jar(self) -> None:
         log.info("Downloading Lavalink.jar...")
         async with aiohttp.ClientSession() as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
@@ -268,6 +267,7 @@ class ServerManager:
                 shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
+        await self._is_up_to_date()
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
