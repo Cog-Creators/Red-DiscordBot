@@ -252,8 +252,8 @@ class Image(commands.Cog):
             "8. Copy the API Key.\n"
             "9. In Discord, run the command {command}.\n"
         ).format(
-            command="`{prefix}set api GIPHY api_key <your_api_key_here>`".format(
-                prefix=ctx.clean_prefix
+            command="`{prefix}set api GIPHY api_key {placeholder}`".format(
+                prefix=ctx.clean_prefix, placeholder=_("<your_api_key_here>")
             )
         )
 
