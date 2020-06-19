@@ -137,7 +137,6 @@ class Streams(commands.Cog):
                     "{command}"
                     "\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
-
                     "or in DM with the bot."
                 ).format(
                     command="`[p]set api twitch client_id {} client_secret {}`".format(
@@ -247,9 +246,9 @@ class Streams(commands.Cog):
             await ctx.send(_("That channel doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
-                _(
-                    "The Twitch token is either invalid or has not been set. See {command}."
-                ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
+                _("The Twitch token is either invalid or has not been set. See {command}.").format(
+                    command=f"`{ctx.clean_prefix}streamset twitchtoken`"
+                )
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
