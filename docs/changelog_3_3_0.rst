@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -25,6 +25,12 @@ Filter
 ******
 
 - Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
+
+Mod
+***
+
+- Added option to delete messages within the passed amount of days with ``[p]tempban`` (:issue:`3958`)
+- Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 
 Permissions
 ***********
