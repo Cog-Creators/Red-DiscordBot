@@ -136,7 +136,7 @@ def get_name() -> str:
         if re.fullmatch(r"[A-Za-z0-9_\.\-]*", name) is None:
             print(
                 "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods(.)."
+                "underscores (_) and periods (.)."
             )
             name = ""
         elif "-" in name and not confirm(
