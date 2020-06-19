@@ -1406,6 +1406,8 @@ class Downloader(commands.Cog):
                 repo_url = _("None - this cog wasn't installed via downloader")
         else:
             msg = _("This command is not provided by a cog.")
+            await ctx.send(msg)
+            return
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
@@ -1414,7 +1416,7 @@ class Downloader(commands.Cog):
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             if from_git and cog_installable.repo is not None and cog_installable.repo.branch:
-                embed.add_field(name=_("Repo branch:"), value=cog_installable.repo.branch)
+                embed.add_field(name=_("Repo branch:"), value=cog_installable.repo.branch
             await ctx.send(embed=embed)
 
         else:
