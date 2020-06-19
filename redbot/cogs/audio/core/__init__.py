@@ -76,6 +76,7 @@ class Audio(
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
+            java_exc_path="java",
             **self._default_lavalink_settings,
         )
 

@@ -46,6 +46,7 @@ class ServerManager:
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
     _blacklisted_archs: List[str] = []
+    _java_exc: ClassVar[str] = "java"
 
     def __init__(self) -> None:
         self.ready: asyncio.Event = asyncio.Event()
@@ -54,8 +55,9 @@ class ServerManager:
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
 
-    async def start(self) -> None:
+    async def start(self, java_path: str) -> None:
         arch_name = platform.machine()
+        self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise asyncio.CancelledError(
                 "You are attempting to run Lavalink audio on an unsupported machine architecture."
@@ -91,34 +93,43 @@ class ServerManager:
 
         self._monitor_task = asyncio.create_task(self._monitor())
 
-    @classmethod
-    async def _get_jar_args(cls) -> List[str]:
-        (java_available, java_version) = await cls._has_java()
+    async def _get_jar_args(self) -> List[str]:
+        (java_available, java_version) = await self._has_java()
 
+        if java_version is None:
+            raise RuntimeError(
+                f"`{self._java_exc}` is not a valid java executable in your machine."
+            )
         if not java_available:
             raise RuntimeError("You must install Java 11 for Lavalink to run.")
 
-        return ["java", "-Djdk.tls.client.protocols=TLSv1.2", "-jar", str(LAVALINK_JAR_FILE)]
+        return [
+            self._java_exc,
+            "-Djdk.tls.client.protocols=TLSv1.2",
+            "-jar",
+            str(LAVALINK_JAR_FILE),
+        ]
 
-    @classmethod
-    async def _has_java(cls) -> Tuple[bool, Optional[Tuple[int, int]]]:
-        if cls._java_available is not None:
+    async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
+        if self._java_available is not None:
             # Return cached value if we've checked this before
-            return cls._java_available, cls._java_version
-        java_available = shutil.which("java") is not None
+            return self._java_available, self._java_version
+        java_available = shutil.which(self._java_exc) is not None
         if not java_available:
-            cls.java_available = False
-            cls.java_version = None
+            self.java_available = False
+            self.java_version = None
         else:
-            cls._java_version = version = await cls._get_java_version()
-            cls._java_available = (11, 0) <= version < (12, 0)
-        return cls._java_available, cls._java_version
+            self._java_version = version = await self._get_java_version()
+            self._java_available = (11, 0) <= version < (12, 0)
+        return self._java_available, self._java_version
 
-    @staticmethod
-    async def _get_java_version() -> Tuple[int, int]:
+    async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
         _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-            "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            self._java_exc,
+            "-version",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()
@@ -140,10 +151,7 @@ class ServerManager:
             elif short_match:
                 return int(short_match["major"]), 0
 
-        raise RuntimeError(
-            "The output of `java -version` was unexpected. Please report this issue on Red's "
-            "issue tracker."
-        )
+        raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
@@ -171,7 +179,7 @@ class ServerManager:
         log.info("Internal Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
             log.info("Restarting internal Lavalink server")
-            await self.start()
+            await self.start(self._java_exc)
         else:
             log.critical(
                 "Your Java is borked. Please find the hs_err_pid%d.log file"
@@ -240,12 +248,11 @@ class ServerManager:
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
 
-    @classmethod
-    async def _is_up_to_date(cls):
-        if cls._up_to_date is True:
+    async def _is_up_to_date(self):
+        if self._up_to_date is True:
             # Return cached value if we've checked this before
             return True
-        args = await cls._get_jar_args()
+        args = await self._get_jar_args()
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
@@ -259,10 +266,9 @@ class ServerManager:
             # Output is unexpected, suspect corrupted jarfile
             return False
         build = int(match["build"])
-        cls._up_to_date = build >= JAR_BUILD
-        return cls._up_to_date
+        self._up_to_date = build >= JAR_BUILD
+        return self._up_to_date
 
-    @classmethod
-    async def maybe_download_jar(cls):
-        if not (LAVALINK_JAR_FILE.exists() and await cls._is_up_to_date()):
-            await cls._download_jar()
+    async def maybe_download_jar(self):
+        if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
+            await self._download_jar()
