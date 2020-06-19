@@ -140,7 +140,7 @@ def get_name() -> str:
             )
             name = ""
         elif "-" in name and not confirm(
-            "Hyphen (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
+            "Hyphens (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
             default=False,
         ):
             name = ""
