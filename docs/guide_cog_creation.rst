@@ -35,8 +35,8 @@ Open a terminal or command prompt and type one of the following
   intended for normal users.** We will not support anyone using the development version in any
   support channels. Using the development version may break third party cogs and not all core
   commands may work. Downgrading to stable after installing the development version may cause
-  data loss, crashes or worse. Please keep this in mind when using the Development version
-  While working on cog creation.
+  data loss, crashes or worse. Please keep this in mind when using the development version
+  while working on cog creation.
 
   .. code-block:: none
 

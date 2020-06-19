@@ -36,6 +36,17 @@ DEPRECATION_NOTICE = _(
 
 @cog_i18n(_)
 class Downloader(commands.Cog):
+    """Install community cogs made by Cog Creators.
+
+    Community cogs, also called third party cogs, are not included
+    in the default Red install.
+    
+    Community cogs come in repositories. Repos are a group of cogs
+    you can install. You always need to add the creator's repository
+    using the `[p]repo` command before you can install one or more
+    cogs from the creator.
+    """
+
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
@@ -66,8 +77,9 @@ class Downloader(commands.Cog):
                 pass
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        async with ctx.typing():
-            await self._ready.wait()
+        if not self._ready.is_set():
+            async with ctx.typing():
+                await self._ready.wait()
         if self._ready_raised:
             await ctx.send(
                 "There was an error during Downloader's initialization."
@@ -850,6 +862,31 @@ class Downloader(commands.Cog):
             message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
         await self.send_pagified(ctx, message)
 
+    @cog.command(name="listpinned")
+    async def _cog_listpinned(self, ctx: commands.Context):
+        """List currently pinned cogs."""
+        installed = await self.installed_cogs()
+        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        if pinned_list:
+            message = humanize_list(pinned_list)
+        else:
+            message = _("None.")
+        if await ctx.embed_requested():
+            embed = discord.Embed(color=(await ctx.embed_colour()))
+            for page in pagify(message, delims=[", "], page_length=900):
+                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
+                if page.startswith(", "):
+                    page = page[2:]
+                embed.add_field(name=name, value=page, inline=False)
+            await ctx.send(embed=embed)
+        else:
+            for page in pagify(message, delims=[", "], page_length=1900):
+                if page.startswith(", "):
+                    page = page[2:]
+                else:
+                    page = _("Pinned Cogs: \n") + page
+                await ctx.send(box(page))
+
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
         """
@@ -1314,49 +1351,6 @@ class Downloader(commands.Cog):
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
-    def format_findcog_info(
-        self, command_name: str, cog_installable: Union[Installable, object] = None
-    ) -> str:
-        """Format a cog's info for output to discord.
-
-        Parameters
-        ----------
-        command_name : str
-            Name of the command which belongs to the cog.
-        cog_installable : `Installable` or `object`
-            Can be an `Installable` instance or a Cog instance.
-
-        Returns
-        -------
-        str
-            A formatted message for the user.
-
-        """
-        if isinstance(cog_installable, Installable):
-            is_installable = True
-            made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
-            repo_url = (
-                _("Missing from installed repos")
-                if cog_installable.repo is None
-                else cog_installable.repo.clean_url
-            )
-            cog_name = cog_installable.name
-        else:
-            is_installable = False
-            made_by = "26 & co."
-            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-            cog_name = cog_installable.__class__.__name__
-
-        msg = _(
-            "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo: {repo_url}\n"
-        ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
-        if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
-            msg += _("Repo branch: {branch_name}\n").format(
-                branch_name=cog_installable.repo.branch
-            )
-
-        return msg
-
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
 
@@ -1394,14 +1388,46 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                msg = self.format_findcog_info(command_name, cog_installable)
+                is_installable = True
+                made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
+                repo_url = (
+                    _("Missing from installed repos")
+                    if cog_installable.repo is None
+                    else cog_installable.repo.clean_url
+                )
+                cog_name = cog_installable.name
             else:
                 # Assume it's in a base cog
-                msg = self.format_findcog_info(command_name, cog)
+                is_installable = False
+                made_by = "26 & co."
+                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
+                cog_name = cog.__class__.__name__
         else:
             msg = _("This command is not provided by a cog.")
+            await ctx.send(msg)
+            return
 
-        await ctx.send(box(msg))
+        if await ctx.embed_requested():
+            embed = discord.Embed(color=(await ctx.embed_colour()))
+            embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Made by:"), value=made_by, inline=False)
+            embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
+            if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
+                embed.add_field(
+                    name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
+                )
+            await ctx.send(embed=embed)
+
+        else:
+            msg = _(
+                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
+            ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
+            if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
+                msg += _("Repo branch: {branch_name}\n").format(
+                    branch_name=cog_installable.repo.branch
+                )
+            await ctx.send(box(msg))
 
     @staticmethod
     def format_failed_repos(failed: Collection[str]) -> str:

@@ -57,7 +57,7 @@ class ModLog(commands.Cog):
             try:
                 await modlog.get_modlog_channel(guild)
             except RuntimeError:
-                await ctx.send_help()
+                await ctx.send(_("Mod log is already disabled."))
             else:
                 await modlog.set_modlog_channel(guild, None)
                 await ctx.send(_("Mod log deactivated."))

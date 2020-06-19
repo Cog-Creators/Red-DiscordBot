@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-File-ID: 676\n"
 "Language: zh_TW\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:29
@@ -334,7 +336,7 @@ msgstr "已變更設定"
 #: redbot/cogs/audio/core/commands/audioset.py:457
 #, docstring
 msgid "Set a playlist to auto-play songs from.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
-msgstr ""
+msgstr "設定播放清單以便自動播放歌曲。\\n\\n        **用法**:\\n        ​ ​ ​ ​ `[p]audioset autoplay 播放清單名稱或ID [參數]`\\n\\n        **參數**:\\n        ​ ​ ​ ​ 以下是可選參數:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <範圍>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [作者]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [伺服器] **此命令只有機器人擁有者可使用**\\n\\n        **範圍** 可選擇:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **作者** can be one of the following:\\n        ​ ​ ​ ​ 使用者ID\\n        ​ ​ ​ ​ 提及使用者\\n        ​ ​ ​ ​ 使用者名稱#0000\\n\\n        **伺服器** 可選擇:\\n        ​ ​ ​ ​ 伺服器ID\\n        ​ ​ ​ ​ 伺服器全名\\n\\n        範例:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:490
 #: redbot/cogs/audio/core/commands/playlists.py:99
@@ -416,7 +418,7 @@ msgstr "播放清單{name}中沒有歌曲。"
 #: redbot/cogs/audio/core/commands/playlists.py:1536
 #: redbot/cogs/audio/core/commands/playlists.py:1641
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "播放清單{id}在{scope}範圍內不存在。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:988
@@ -1869,7 +1871,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:593
 #, docstring
-msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube.\\n        Use `[p]search sc<search term>` will search SoundCloud instead of YouTube.\\n        "
+msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube.\\n        Use `[p]search sc <search term>` will search SoundCloud instead of YouTube.\\n        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:640

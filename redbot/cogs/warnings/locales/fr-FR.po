@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: fr\n"
+"X-Crowdin-File-ID: 57\n"
 "Language: fr_FR\n"
 
 #: redbot/cogs/warnings/helpers.py:72
@@ -138,7 +140,7 @@ msgstr "Aucune action nommée {name} n'existe!"
 #: redbot/cogs/warnings/warnings.py:225
 #, docstring
 msgid "Manage warning reasons.\\n\\n        Reasons must be given a name, description and points value. The\\n        name of the reason must be given when a user is warned.\\n        "
-msgstr ""
+msgstr "Gérer les raisons d'avertissement.\\n\\n        Les raisons doivent avoir un nom, une description et une valeur de points. Le nom\\n        de la raison devra être donné quand un utilisateur est averti.\\n        "
 
 #: redbot/cogs/warnings/warnings.py:237
 #, docstring
@@ -248,7 +250,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:427 redbot/cogs/warnings/warnings.py:435
 msgid "{user} has been warned."
-msgstr ""
+msgstr "{user} a été averti."
 
 #: redbot/cogs/warnings/warnings.py:441
 msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."
