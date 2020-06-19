@@ -250,7 +250,11 @@ class Image(commands.Cog):
             "6. Add an app description, for example *Used for Red's image cog*.\n"
             "7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\n"
             "8. Copy the API Key.\n"
-            "9. In Discord, run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
-        ).format(prefix=ctx.clean_prefix)
+            "9. In Discord, run the command {command}.\n"
+        ).format(
+            command="`{prefix}set api GIPHY api_key <your_api_key_here>`".format(
+                prefix=ctx.clean_prefix
+            )
+        )
 
         await ctx.maybe_send_embed(message)
