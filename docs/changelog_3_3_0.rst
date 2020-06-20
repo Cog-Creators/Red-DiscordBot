@@ -9,6 +9,11 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 End-user changelog
 ------------------
 
+Audio
+*****
+
+- Added internally managed jar settings to ``[p]audioset info`` (:issue:`3915`)
+
 Core Bot
 ********
 
