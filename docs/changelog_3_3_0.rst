@@ -12,7 +12,7 @@ End-user changelog
 Audio
 *****
 
-- Added internally managed jar settings to ``[p]audioset info`` (:issue:`3915`)
+- Added info about internally managed jar to ``[p]audioset info`` (:issue:`3915`)
 
 Core Bot
 ********
