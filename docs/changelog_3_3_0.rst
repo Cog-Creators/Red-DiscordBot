@@ -48,6 +48,7 @@ Streams
 *******
 
 - Fixed streams cog sending multiple DMs about twitch secret not set (:issue:`3901`, :issue:`3587`)
+- Fixed old bearer tokens not being invalidated when the API key is updated (:issue:`3990`, :issue:`3917`)
 
 Trivia Lists
 ************
