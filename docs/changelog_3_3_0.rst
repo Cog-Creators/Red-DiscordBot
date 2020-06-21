@@ -61,6 +61,7 @@ Trivia Lists
 Developer changelog
 -------------------
 
+- Added the utility functions ``map``, ``find``, and ``next`` to ``AsyncIter`` (:issue:`3921`, :issue:`3887`)
 
 
 Documentation changes
