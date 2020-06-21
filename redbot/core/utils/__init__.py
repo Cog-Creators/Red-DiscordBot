@@ -328,6 +328,37 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         """
         return self.flatten().__await__()
 
+    async def next(self, default: Any = ...) -> _T:
+        """Returns a next entry of the iterable.
+
+        Parameters
+        ----------
+        default: Optional[Any]
+            The value to return if the iterator is exhausted.
+
+        Raises
+        ------
+        StopAsyncIteration
+            When ``default`` is not specified and the iterator has been exhausted.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator.next()
+        0
+        >>> await iterator.next()
+        1
+
+        """
+        try:
+            value = await self.__anext__()
+        except StopAsyncIteration:
+            if default is ...:
+                raise
+            value = default
+        return value
+
     async def flatten(self) -> List[_T]:
         """Returns a list of the iterable.
 
