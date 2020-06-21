@@ -106,6 +106,7 @@ class Mod(
                 await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
             await self.config.version.set("1.0.0")  # set version of last update
         if await self.config.version() < "1.1.0":
+            message_sent = False
             async for e in AsyncIter((await self.config.all_channels()).values(), steps=25):
                 if e["ignored"] is not False:
                     msg = _(
@@ -113,7 +114,19 @@ class Mod(
                         "Please use `[p]moveignoredchannels` to migrate the old settings."
                     )
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    message_sent = True
                     break
+            if message_sent is False:
+                async for e in AsyncIter((await self.config.all_guilds()).values(), steps=25):
+                    if e["ignored"] is not False:
+                        msg = _(
+                            "Ignored guilds and channels have been moved. "
+                            "Please use `[p]moveignoredchannels` to migrate the old settings."
+                        )
+                        self.bot.loop.create_task(
+                            send_to_owners_with_prefix_replaced(self.bot, msg)
+                        )
+                        break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
             async for e in AsyncIter((await self.config.all_guilds()).values(), steps=25):
