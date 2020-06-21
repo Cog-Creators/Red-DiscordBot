@@ -221,6 +221,7 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
+        self._true_owner_ids = kwargs.pop("owner_ids", set())
         # to prevent multiple calls to app info during startup
         self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
@@ -1083,7 +1084,7 @@ class Red(
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
         if self._owner_id_overwrite is not None:
-            self.owner_ids.add(self._owner_id_overwrite)
+            self._true_owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
@@ -1202,13 +1203,13 @@ class Red(
 
         if app_info.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in app_info.team.members)
+                self._true_owner_ids.update(m.id for m in app_info.team.members)
         elif self._owner_id_overwrite is None:
-            self.owner_ids.add(app_info.owner.id)
+            self._true_owner_ids.add(app_info.owner.id)
 
         self._app_info = app_info
 
-        if not self.owner_ids:
+        if not self._true_owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
     async def start(self, *args, **kwargs):
@@ -1781,7 +1782,7 @@ class Red(
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        for user_id in self.owner_ids:
+        for user_id in self._true_owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams
