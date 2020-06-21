@@ -47,7 +47,7 @@ Permissions
 Streams
 *******
 
-- Fixed streams cog sending multiple DMs about twitch secret not set (:issue:`3901`, :issue:`3587`)
+- Fixed streams cog sending multiple owner notifications about twitch secret not set (:issue:`3901`, :issue:`3587`)
 - Fixed old bearer tokens not being invalidated when the API key is updated (:issue:`3990`, :issue:`3917`)
 
 Trivia Lists
@@ -77,6 +77,7 @@ Miscellaneous
 - Fixed exceptions being ignored or not sent to log files in special cases (:issue:`3895`)
 - Added the option of using dots in the instance name when creating your instances (:issue:`3920`)
 - Added a confirmation when using hyphens in instance names to discourage the use of them (:issue:`3920`)
+- Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
 
 
 Redbot 3.3.8 (2020-05-29)
