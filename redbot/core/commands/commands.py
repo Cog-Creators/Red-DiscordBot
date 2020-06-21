@@ -1166,3 +1166,23 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _IsTrueBotOwner(Command):
+    """
+    These commands cannot belong to a cog.
+
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.cog is not None:
+            raise TypeError("This command may not be added to a cog")
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return not ctx.author.bot and ctx.author.id in ctx.bot._true_owner_ids
