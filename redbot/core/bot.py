@@ -226,10 +226,10 @@ class RedBase(
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
-        if self._sudo_enabled is False:
-            self._true_owner_ids = self.owner_ids
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
+        if self._sudo_enabled is False:
+            self._true_owner_ids = self.owner_ids
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
