@@ -4814,10 +4814,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         await ctx.send(_("Your bot owner privileges are already enabled."))
 
-    @commands.command()
+    @_set.command()
     @is_sudo_enabled()
     @checks.is_owner()
-    async def sudotimer(
+    async def sudotimeout(
         self,
         ctx: commands.Context,
         *,
@@ -4828,7 +4828,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ) = datetime.timedelta(minutes=15),
     ):
         """
-        Set the interval for sudo permissions to auto expire
+        Set the interval for sudo permissions to auto expire.
         """
         await self.bot._config.sudotime.set(interval.total_seconds())
         await ctx.send(
