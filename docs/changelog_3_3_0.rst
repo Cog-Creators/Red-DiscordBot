@@ -79,6 +79,7 @@ Miscellaneous
 - Added the option of using dots in the instance name when creating your instances (:issue:`3920`)
 - Added a confirmation when using hyphens in instance names to discourage the use of them (:issue:`3920`)
 - Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
+- Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
 
 
 Redbot 3.3.8 (2020-05-29)
