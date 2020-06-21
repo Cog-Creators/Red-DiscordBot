@@ -2008,7 +2008,16 @@ class Core(commands.Cog, CoreLogic):
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
-        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+
+        try:
+            await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+        except RuntimeError:
+            await ctx.send(
+                _(
+                    "Please clear the local blacklist with `{prefix}localblacklist clear` before adding a user to the whitelist"
+                ).format(prefix=ctx.prefix)
+            )
+            return
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
 
@@ -2090,7 +2099,16 @@ class Core(commands.Cog, CoreLogic):
                 return
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
-        await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
+
+        try:
+            await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
+        except RuntimeError:
+            await ctx.send(
+                _(
+                    "Please clear the local whitelist with `{prefix}localwhitelist clear` before adding a user to the blacklist"
+                ).format(prefix=ctx.prefix)
+            )
+            return
 
         await ctx.send(
             _("{names} added to the local blacklist.").format(names=humanize_list(names))

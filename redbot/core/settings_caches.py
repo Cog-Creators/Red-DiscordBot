@@ -161,6 +161,11 @@ class WhitelistBlacklistManager:
                     async with self._config.whitelist() as curr_list:
                         curr_list.append(obj_id)
         else:
+            blacklist = await self.get_blacklist(guild)
+            if blacklist:
+                raise RuntimeError(
+                    "The local blacklist must be cleared before adding to the local whitelist"
+                )
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
             for obj_id in role_or_user:
@@ -237,6 +242,11 @@ class WhitelistBlacklistManager:
                     async with self._config.blacklist() as curr_list:
                         curr_list.append(obj_id)
         else:
+            whitelist = await self.get_whitelist(guild)
+            if whitelist:
+                raise RuntimeError(
+                    "The local whitelist must be cleared before adding to the local blacklist"
+                )
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
             for obj_id in role_or_user:
