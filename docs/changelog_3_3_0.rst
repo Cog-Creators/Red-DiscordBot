@@ -62,6 +62,7 @@ Developer changelog
 -------------------
 
 - Added the utility functions ``map``, ``find``, and ``next`` to ``AsyncIter`` (:issue:`3921`, :issue:`3887`)
+- Updated deprecation times for ``APIToken``, shared libs and loops being passed to various functions to 2020-08-05 (:issue:`3608`)
 
 
 Documentation changes
