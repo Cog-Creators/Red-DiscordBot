@@ -1,4 +1,5 @@
 # Core
+redbot/core/apis/audio/**                @aikaterna @Drapersniper
 redbot/core/bank.py                      @palmtree5
 redbot/core/checks.py                    @tekulvw
 redbot/core/cli.py                       @tekulvw
