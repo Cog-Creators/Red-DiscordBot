@@ -4,8 +4,8 @@ import copy
 import typing
 
 from .managed import managed_lavalink_connect_task_event
-from .. import constants
-from .. import config
+from redbot.core.apis.audio import constants
+from redbot.core.apis.audio import config
 
 if typing.TYPE_CHECKING:
     from redbot.core.bot import Red

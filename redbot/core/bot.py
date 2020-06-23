@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import platform
-import re
 import shutil
 import sys
 import contextlib
@@ -19,7 +18,6 @@ from typing import (
     Dict,
     NoReturn,
     Set,
-    Coroutine,
     TypeVar,
     Callable,
     Awaitable,
@@ -30,7 +28,6 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
-from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -191,7 +188,7 @@ class RedBase(
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
-        from .apis.audio.wavelink.overwrites import (
+        from redbot.core.apis.audio._internal.wavelink import (
             RedClient,
         )  # This is needed to avoid objects not being ready
 
@@ -593,7 +590,7 @@ class RedBase(
         from .apis import audio  # This is needed to avoid objects not being ready
 
         await audio._init(self)
-        self.add_cog(audio.nodes.AudioAPIEvents(self))
+        self.add_cog(redbot.core.apis.audio._internal.nodes.AudioAPIEvents(self))
 
         packages = []
 

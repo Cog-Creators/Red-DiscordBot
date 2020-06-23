@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 from redbot.core import Config
 
 from . import SettingCacheManager, constants
-from .playlists.enums import PlaylistScope
+from ._internal.playlists.enums import PlaylistScope
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red

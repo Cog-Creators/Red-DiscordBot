@@ -15,7 +15,7 @@ import aiohttp
 from tqdm import tqdm
 
 from redbot.core import Config
-from .. import constants, regex, errors
+from redbot.core.apis.audio import constants, regex, errors
 
 __all__ = [
     "managed_lavalink_connect_task_event",
