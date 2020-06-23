@@ -22,9 +22,9 @@ async def _init(bot: Red):
     global _config
     global _bot_ref
     global config_cache
+
     _bot_ref = bot
     _config = Config.get_conf(None, 2711759130, force_registration=True, cog_name="Audio")
-    config_cache = SettingCacheManager(bot, _config, enable_cache=True)
     _config.init_custom("EQUALIZER", 1)
     _config.init_custom(PlaylistScope.GLOBAL.value, 1)
     _config.init_custom(PlaylistScope.GUILD.value, 2)
@@ -37,3 +37,5 @@ async def _init(bot: Red):
     _config.register_global(**constants.DEFAULT_COG_GLOBAL_SETTINGS)
     _config.register_user(**constants.DEFAULT_COG_USER_SETTINGS)
     _config.register_channel(**constants.DEFAULT_COG_CHANNEL_SETTINGS)
+
+    config_cache = SettingCacheManager(bot, _config, enable_cache=True)
