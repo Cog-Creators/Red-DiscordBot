@@ -33,7 +33,6 @@ from discord.ext.commands import when_mentioned_or
 from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
-from .apis.audio.wavelink.overwrites import RedClient
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import license_info_command, Core
 from .data_manager import cog_data_path
@@ -192,6 +191,10 @@ class RedBase(
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+        from .apis.audio.wavelink.overwrites import (
+            RedClient,
+        )  # This is needed to avoid objects not being ready
+
         self.wavelink = RedClient(bot=self)
 
     def get_command(self, name: str) -> Optional[commands.Command]:
@@ -587,6 +590,10 @@ class RedBase(
 
         await modlog._init(self)
         bank._init()
+        from .apis import audio  # This is needed to avoid objects not being ready
+
+        await audio._init(self)
+        self.add_cog(audio.nodes.AudioAPIEvents(self))
 
         packages = []
 
