@@ -188,7 +188,7 @@ class RedBase(
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
-        from redbot.core.apis.audio._internal.wavelink import (
+        from redbot.core.apis.audio import (
             RedClient,
         )  # This is needed to avoid objects not being ready
 
@@ -590,7 +590,7 @@ class RedBase(
         from .apis import audio  # This is needed to avoid objects not being ready
 
         await audio._init(self)
-        self.add_cog(redbot.core.apis.audio._internal.nodes.AudioAPIEvents(self))
+        self.add_cog(audio._internal.nodes.AudioAPIEvents(self))
 
         packages = []
 

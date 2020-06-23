@@ -7,7 +7,7 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
-from redbot.core.apis.audio._internal.abstract import CacheLevel
+from ..abstract import CacheLevel
 
 
 class LocalCacheLevelManager:

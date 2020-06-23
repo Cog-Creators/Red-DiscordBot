@@ -14,7 +14,6 @@ from ._internal.wavelink.overwrites import (
 )
 from ._internal.wavelink.events import QueueEnd as QueueEnd
 from ._internal.playlists.enums import PlaylistScope as PlaylistScope
-
 from . import config
 from .config import _init as _init
-
+from . import _internal as _internal

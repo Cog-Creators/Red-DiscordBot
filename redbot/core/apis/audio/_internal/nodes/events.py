@@ -8,8 +8,8 @@ import wavelink
 
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.apis.audio._internal.wavelink.events import QueueEnd
-from redbot.core.apis.audio._internal.wavelink import RedNode
+from ..wavelink.events import QueueEnd
+from ..wavelink.overwrites import RedNode
 
 log = logging.getLogger("red.core.apis.audio.nodes")
 
