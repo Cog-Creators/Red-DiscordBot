@@ -22,8 +22,7 @@ from discord.http import Route
 
 from redbot.core import commands
 
-from .. import regex
-from . import constants
+from ... import regex, constants
 from .events import QueueEnd
 
 __all__ = [
