@@ -208,6 +208,52 @@ class RedBase(
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
 
+    def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
+        """
+        Set's Red's help formatter.
+
+        The formatter must implement all methods in
+        ``commands.help.HelpFormatterABC``
+
+        Cogs which set a help formatter should inform users of this.
+        Users should not use multiple cogs which set a help formatter.
+
+        This should specifically be an instance of a formatter.
+        This allows cogs to pass a config object or similar to the
+        formatter prior to the bot using it.
+
+        See ``commands.help.HelpFormatterABC`` for more details.
+
+        Raises
+        ------
+        RuntimeError
+            If the default formatter has already been replaced
+        TypeError
+            If given an invalid formatter
+        """
+
+        if not isinstance(formatter, commands.help.HelpFormatterABC):
+            raise TypeError(
+                "Help formatters must inherit from `commands.help.HelpFormatterABC` "
+                "and implement the required interfaces."
+            )
+
+        # do not switch to isinstance, we want to know that this has not been overriden,
+        # even with a subclass.
+        if type(self._help_formatter) is commands.help.RedHelpFormatter:
+            self._help_formatter = formatter
+        else:
+            raise RuntimeError("The formatter has already been overriden.")
+
+    def reset_help_formatter(self):
+        """
+        Resets Red's help formatter.
+
+        This exits for use in cog_unload for cogs which replace the formatter
+        as well as for a rescue command in core_commands.
+        """
+        self._help_formatter = commands.help.RedHelpFormatter()
+
     def get_command(self, name: str) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
@@ -786,12 +832,18 @@ class RedBase(
         return await super().start(*args, **kwargs)
 
     async def send_help_for(
-        self, ctx: commands.Context, help_for: Union[commands.Command, commands.GroupMixin, str]
+        self,
+        ctx: commands.Context,
+        help_for: Union[commands.Command, commands.GroupMixin, str],
+        *,
+        from_help_command: bool = False,
     ):
         """
         Invokes Red's helpformatter for a given context and object.
         """
-        return await self._help_formatter.send_help(ctx, help_for)
+        return await self._help_formatter.send_help(
+            ctx, help_for, from_help_command=from_help_command
+        )
 
     async def embed_requested(self, channel, user, command=None) -> bool:
         """

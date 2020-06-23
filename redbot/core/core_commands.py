@@ -27,7 +27,6 @@ from redbot.core.data_manager import storage_type
 from . import (
     __version__,
     version_info as red_version_info,
-    VersionInfo,
     checks,
     commands,
     errors,
@@ -2079,6 +2078,34 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
         pass
+
+    @helpset.command(name="resetformatter")
+    async def helpset_resetformatter(self, ctx: commands.Context):
+        """ This resets [botname]'s help formatter to the default formatter """
+
+        ctx.bot.reset_help_formatter()
+        await ctx.send(
+            _(
+                "The help formatter has been reset. "
+                "This will not prevent cogs from modifying help, "
+                "you may need to remove a cog if this has been an issue."
+            )
+        )
+
+    @helpset.command(name="resetsettings")
+    async def helpset_resetsettings(self, ctx: commands.Context):
+        """
+        This resets [botname]'s help settings to their defaults.
+
+        This may not have an impact when using custom formatters from 3rd party cogs
+        """
+        await ctx.bot._config.help.clear()
+        await ctx.send(
+            _(
+                "The help settings have been reset to their defaults. "
+                "This may not have an impact when using 3rd party help formatters."
+            )
+        )
 
     @helpset.command(name="usemenus")
     async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
