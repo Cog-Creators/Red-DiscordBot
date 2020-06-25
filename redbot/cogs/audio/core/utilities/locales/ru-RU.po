@@ -196,7 +196,7 @@ msgstr "Ничего не найдено."
 #: redbot/cogs/audio/core/utilities/playlists.py:575
 #: redbot/cogs/audio/core/utilities/playlists.py:605
 msgid "Track is not playable."
-msgstr ""
+msgstr "Трек не воспроизводится."
 
 #: redbot/cogs/audio/core/utilities/player.py:259
 #: redbot/cogs/audio/core/utilities/player.py:297
