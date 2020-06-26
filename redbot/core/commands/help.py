@@ -30,7 +30,7 @@
 import abc
 import asyncio
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict as dc_asdict
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -93,6 +93,40 @@ class HelpSettings:
         """
         settings = await context.bot._config.help.all()
         return cls(**settings)
+
+    @property
+    def pretty(self):
+        """ Returns a discord safe representation of the settings """
+
+        def bool_transformer(val):
+            if val is False:
+                return _("No")
+            if val is True:
+                return _("Yes")
+            return val
+
+        data = {k: bool_transformer(v) for k, v in dc_asdict(self).items()}
+
+        if not self.delete_delay:
+            data["delete_delay"] = _("Disabled")
+
+        if tag := data.pop("tagline", ""):
+            tagline_info = _("\nCustom Tagline: {tag}").format(tag)
+        else:
+            tagline_info = ""
+
+        data["tagline_info"] = tagline_info
+
+        return _(
+            "Maximum characters per page: {page_char_limit}"
+            "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
+            "\nHelp is a menu: {use_menus}"
+            "\nHelp shows hidden commands: {show_hidden}"
+            "\nHelp only shows commands which can be used: {verify_checks}"
+            "\nHelp shows unusable commands when asked directly: {verify_exists}"
+            "\nDelete delay: {delete_delay}"
+            "{tagline_info}"
+        ).format_map(data)
 
 
 class NoCommand(Exception):
