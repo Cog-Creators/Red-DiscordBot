@@ -126,15 +126,29 @@ class SQLDriver(BaseDriver):
     async def clear(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, uuid, category, full_identifiers = (
-            _full_identifiers[0],
-            _full_identifiers[1],
-            _full_identifiers[2],
+            _full_identifiers[0:1],
+            _full_identifiers[1:2],
+            _full_identifiers[2:3],
             _full_identifiers[3:],
         )
+        if cog_name:
+            (cog_name,) = cog_name
+        if uuid:
+            (uuid,) = uuid
+        if category:
+            (category,) = category
+
         identifier_string = "$"
         if full_identifiers:
             identifier_string += "." + ".".join(full_identifiers)
-        query = _clear_query.format(table_name=category)
+        if not category:
+            async with self._lock:  # Changing the generic schema ... is painful...
+                self.db.close()
+                self.data_path.unlink()
+                self.db = APSWConnectionWrapper(str(self.data_path))
+            return
+        else:
+            query = _clear_query.format(table_name=category)
         async with self._lock:
             await self._execute(query, category, path=identifier_string)
 
@@ -147,8 +161,9 @@ class SQLDriver(BaseDriver):
         data: Optional[str] = ...,
     ) -> Any:
         log.invisible("Query: %s", query)
-        self.db.cursor().execute(_create_table.format(table_name=category))
-        self.db.cursor().execute(_prep_query.format(table_name=category))
+        if category:
+            self.db.cursor().execute(_create_table.format(table_name=category))
+            self.db.cursor().execute(_prep_query.format(table_name=category))
         if type_query:
             obj_type = self.db.cursor().execute(type_query, (path,))
             obj_type = obj_type.fetchone()
@@ -171,7 +186,9 @@ class SQLDriver(BaseDriver):
                 if obj_type is ...:
                     return
                 output = output[0]
-                if obj_type not in ["text"] and isinstance(output, str):
+                if obj_type in ["true", "false"] and isinstance(output, int):
+                    output = bool(output)
+                elif obj_type not in ["text"] and isinstance(output, str):
                     output = json.loads(output)
 
         return output
