@@ -32,7 +32,7 @@ _clear_query: Final[
     str
 ] = """
 UPDATE {table_name}
-  set data = json_remove(target_table.data, :path)
+  set data = json_remove(data, :path)
 """
 
 _prep_query: Final[
