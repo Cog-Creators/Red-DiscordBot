@@ -2365,9 +2365,8 @@ class Core(commands.Cog, CoreLogic):
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):
         """
-        Gets the current members and roles.
-
-        Configured for automatic moderation action immunity.
+        Gets the current members and roles configured for automatic
+        moderation action immunity.
         """
         ai_ids = await ctx.bot._config.guild(ctx.guild).autoimmune_ids()
 
