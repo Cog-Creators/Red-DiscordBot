@@ -311,7 +311,6 @@ class KickBanMixin(MixinMeta):
 
         author = ctx.author
         guild = ctx.guild
-        tempbans = await self.config.guild(guild).current_tempbans()
 
         if not user_ids:
             await ctx.send_help()
@@ -326,6 +325,8 @@ class KickBanMixin(MixinMeta):
 
         if not guild.me.guild_permissions.ban_members:
             return await ctx.send(_("I lack the permissions to do this."))
+
+        tempbans = await self.config.guild(guild).current_tempbans()
 
         ban_list = await guild.bans()
         for entry in ban_list:
