@@ -372,18 +372,24 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
-                    log.info("{}({}) upgraded the tempban for {} to a permaban.".format(author.name,author.id,user_id)
+                    log.info(
+                        "{}({}) upgraded the tempban for {} to a permaban.".format(
+                            author.name, author.id, user_id
+                        )
+                    )
                 else:
                     try:
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
-                        errors[user_id] = _("User {user_id} does not exist.").format(user_id=user_id)
-                        continue
-                    except discord.Forbidden:
-                        errors[user_id] = _("Could not ban {user_id}: missing permissions.").format(
+                        errors[user_id] = _("User {user_id} does not exist.").format(
                             user_id=user_id
                         )
+                        continue
+                    except discord.Forbidden:
+                        errors[user_id] = _(
+                            "Could not ban {user_id}: missing permissions."
+                        ).format(user_id=user_id)
                         continue
                     else:
                         banned.append(user_id)
