@@ -311,6 +311,7 @@ class KickBanMixin(MixinMeta):
 
         author = ctx.author
         guild = ctx.guild
+        tempbans = await self.config.guild(guild).current_tempbans()
 
         if not user_ids:
             await ctx.send_help()
@@ -330,7 +331,7 @@ class KickBanMixin(MixinMeta):
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    if user_id in await self.config.guild(guild).current_tempbans():
+                    if user_id in tempbans:
                         # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
                         continue
                     else:
@@ -347,7 +348,7 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = guild.get_member(user_id)
             if user is not None:
-                if user_id in await self.config.guild(guild).current_tempbans():
+                if user_id in tempbans:
                     # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
                     continue
                 else:
