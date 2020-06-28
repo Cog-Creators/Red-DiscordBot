@@ -380,6 +380,9 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
+                    errors[user_id] = _("Upgraded tempban for {user_id} to a permaban.").format(
+                        user_id=user_id
+                    )
                     log.info(
                         "{}({}) upgraded the tempban for {} to a permaban.".format(
                             author.name, author.id, user_id
