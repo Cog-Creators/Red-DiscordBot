@@ -385,6 +385,7 @@ class KickBanMixin(MixinMeta):
                             author.name, author.id, user_id
                         )
                     )
+                    banned.append(user_id)
                 else:
                     try:
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
