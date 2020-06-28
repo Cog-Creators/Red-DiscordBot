@@ -330,9 +330,13 @@ class KickBanMixin(MixinMeta):
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    errors[user_id] = _("User {user_id} is already banned.").format(
-                        user_id=user_id
-                    )
+                    if user_id in await self.config.guild(guild).current_tempbans():
+                        # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                        continue
+                    else:
+                        errors[user_id] = _("User {user_id} is already banned.").format(
+                            user_id=user_id
+                        )
 
         user_ids = remove_processed(user_ids)
 
@@ -343,21 +347,25 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = guild.get_member(user_id)
             if user is not None:
-                # Instead of replicating all that handling... gets attr from decorator
-                try:
-                    result = await self.ban_user(
-                        user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
-                    )
-                    if result is True:
-                        banned.append(user_id)
-                    else:
-                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                            user_id=user_id, reason=result
+                if user_id in await self.config.guild(guild).current_tempbans():
+                    # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                    continue
+                else:
+                    # Instead of replicating all that handling... gets attr from decorator
+                    try:
+                        result = await self.ban_user(
+                            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                         )
-                except Exception as e:
-                    errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                        user_id=user_id, reason=e
-                    )
+                        if result is True:
+                            banned.append(user_id)
+                        else:
+                            errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                                user_id=user_id, reason=result
+                            )
+                    except Exception as e:
+                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                            user_id=user_id, reason=e
+                        )
 
         user_ids = remove_processed(user_ids)
 
