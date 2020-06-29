@@ -214,7 +214,8 @@ def start_adding_reactions(
         loop = asyncio.get_running_loop()
     else:
         warnings.warn(
-            "Explicitly passing the loop will not work in Red 3.4+",
+            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
+            " and will be removed in the first minor release after 2020-08-05.",
             DeprecationWarning,
             stacklevel=2,
         )

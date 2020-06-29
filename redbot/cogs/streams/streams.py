@@ -30,7 +30,7 @@ import aiohttp
 import contextlib
 from datetime import datetime
 from collections import defaultdict
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List, Tuple, Union, Dict
 
 _ = Translator("Streams", __file__)
 log = logging.getLogger("red.core.cogs.Streams")
@@ -38,8 +38,18 @@ log = logging.getLogger("red.core.cogs.Streams")
 
 @cog_i18n(_)
 class Streams(commands.Cog):
+    """Various commands relating to streaming platforms.
 
-    global_defaults = {"refresh_timer": 300, "tokens": {}, "streams": []}
+    You can check if a Twitch, YouTube, Picarto or Mixer stream is
+    currently live.
+    """
+
+    global_defaults = {
+        "refresh_timer": 300,
+        "tokens": {},
+        "streams": [],
+        "notified_owner_missing_twitch_secret": False,
+    }
 
     guild_defaults = {
         "autodelete": False,
@@ -90,6 +100,11 @@ class Streams(commands.Cog):
 
         self._ready_event.set()
 
+    @commands.Cog.listener()
+    async def on_red_api_tokens_update(self, service_name, api_tokens):
+        if service_name == "twitch":
+            await self.get_twitch_bearer_token(api_tokens)
+
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready_event.wait()
 
@@ -106,25 +121,38 @@ class Streams(commands.Cog):
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.config.tokens.clear()
 
-    async def get_twitch_bearer_token(self) -> None:
-        tokens = await self.bot.get_shared_api_tokens("twitch")
+    async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
+        tokens = (
+            await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
+        )
         if tokens.get("client_id"):
+            notified_owner_missing_twitch_secret = (
+                await self.config.notified_owner_missing_twitch_secret()
+            )
             try:
                 tokens["client_secret"]
+                if notified_owner_missing_twitch_secret is True:
+                    await self.config.notified_owner_missing_twitch_secret.set(False)
             except KeyError:
                 message = _(
-                    "You need a client secret key to use correctly Twitch API on this cog.\n"
+                    "You need a client secret key if you want to use the Twitch API on this cog.\n"
                     "Follow these steps:\n"
                     "1. Go to this page: https://dev.twitch.tv/console/apps.\n"
                     '2. Click "Manage" on your application.\n'
                     '3. Click on "New secret".\n'
                     "5. Copy your client ID and your client secret into:\n"
-                    "`[p]set api twitch client_id <your_client_id_here> "
-                    "client_secret <your_client_secret_here>`\n\n"
+                    "{command}"
+                    "\n\n"
                     "Note: These tokens are sensitive and should only be used in a private channel "
                     "or in DM with the bot."
+                ).format(
+                    command="`[p]set api twitch client_id {} client_secret {}`".format(
+                        _("<your_client_id_here>"), _("<your_client_secret_here>")
+                    )
                 )
-                await send_to_owners_with_prefix_replaced(self.bot, message)
+                if notified_owner_missing_twitch_secret is False:
+                    await send_to_owners_with_prefix_replaced(self.bot, message)
+                    await self.config.notified_owner_missing_twitch_secret.set(True)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
@@ -225,17 +253,15 @@ class Streams(commands.Cog):
             await ctx.send(_("That channel doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
-                _(
-                    "The Twitch token is either invalid or has not been set. See "
-                    "`{prefix}streamset twitchtoken`."
-                ).format(prefix=ctx.clean_prefix)
+                _("The Twitch token is either invalid or has not been set. See {command}.").format(
+                    command=f"`{ctx.clean_prefix}streamset twitchtoken`"
+                )
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
-                    "The YouTube API key is either invalid or has not been set. See "
-                    "`{prefix}streamset youtubekey`."
-                ).format(prefix=ctx.clean_prefix)
+                    "The YouTube API key is either invalid or has not been set. See {command}."
+                ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
         except APIError:
             await ctx.send(
@@ -380,17 +406,16 @@ class Streams(commands.Cog):
             except InvalidTwitchCredentials:
                 await ctx.send(
                     _(
-                        "The Twitch token is either invalid or has not been set. See "
-                        "`{prefix}streamset twitchtoken`."
-                    ).format(prefix=ctx.clean_prefix)
+                        "The Twitch token is either invalid or has not been set. See {command}."
+                    ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
                 )
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
                     _(
                         "The YouTube API key is either invalid or has not been set. See "
-                        "`{prefix}streamset youtubekey`."
-                    ).format(prefix=ctx.clean_prefix)
+                        "{command}."
+                    ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
                 )
                 return
             except APIError:
@@ -427,7 +452,6 @@ class Streams(commands.Cog):
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
         """Explain how to set the twitch token."""
-
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
@@ -436,11 +460,15 @@ class Streams(commands.Cog):
             "select an Application Category of your choosing.\n"
             "4. Click *Register*.\n"
             "5. Copy your client ID and your client secret into:\n"
-            "`{prefix}set api twitch client_id <your_client_id_here> "
-            "client_secret <your_client_secret_here>`\n\n"
+            "{command}"
+            "\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.clean_prefix)
+        ).format(
+            command="`{}set api twitch client_id {} client_secret {}`".format(
+                ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
+            )
+        )
 
         await ctx.maybe_send_embed(message)
 
@@ -458,10 +486,14 @@ class Streams(commands.Cog):
             "3. Set up your API key \n"
             "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
             "4. Copy your API key and run the command "
-            "`{prefix}set api youtube api_key <your_api_key_here>`\n\n"
+            "{command}\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
-        ).format(prefix=ctx.clean_prefix)
+        ).format(
+            command="`{}set api youtube api_key {}`".format(
+                ctx.clean_prefix, _("<your_api_key_here>")
+            )
+        )
 
         await ctx.maybe_send_embed(message)
 

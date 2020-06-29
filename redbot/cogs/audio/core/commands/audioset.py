@@ -1065,9 +1065,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\n---"
             + _("Lavalink Settings")
             + "---        \n"
-            + _("Cog version:      [{version}]\n")
-            + _("Red-Lavalink:     [{lavalink_version}]\n")
-            + _("External server:  [{use_external_lavalink}]\n")
+            + _("Cog version:            [{version}]\n")
+            + _("Red-Lavalink:           [{lavalink_version}]\n")
+            + _("External server:        [{use_external_lavalink}]\n")
         ).format(
             version=__version__,
             lavalink_version=lavalink.__version__,
@@ -1075,8 +1075,22 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
+        if not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+            msg += _(
+                "Lavalink build:         [{llbuild}]\n"
+                "Lavalink branch:        [{llbranch}]\n"
+                "Release date:           [{build_time}]\n"
+                "Lavaplayer version:     [{lavaplayer}]\n"
+                "Java version:           [{jvm}]\n"
+            ).format(
+                build_time=self.player_manager.build_time,
+                llbuild=self.player_manager.ll_build,
+                llbranch=self.player_manager.ll_branch,
+                lavaplayer=self.player_manager.lavaplayer,
+                jvm=self.player_manager.jvm,
+            )
         if is_owner:
-            msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
+            msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
 
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 

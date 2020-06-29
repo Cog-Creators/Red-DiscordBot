@@ -34,3 +34,5 @@ extend functionalities used throughout the bot, as outlined below.
     :members:
     :exclude-members: convert
     :no-undoc-members:
+
+    .. autoclass:: APIToken

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-05-14 12:27+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: de\n"
+"X-Crowdin-File-ID: 41\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/customcom/customcom.py:53
@@ -91,7 +93,7 @@ msgstr "Erstelle einen benutzerdefinierten Befehl der eine zufällige Antwort au
 #: redbot/cogs/customcom/customcom.py:297
 #: redbot/cogs/customcom/customcom.py:326
 msgid "Custom command names cannot have spaces in them."
-msgstr ""
+msgstr "Benutzerdefinierte Befehle dürfen keine Leerzeichen enthalten."
 
 #: redbot/cogs/customcom/customcom.py:300
 #: redbot/cogs/customcom/customcom.py:329
@@ -187,7 +189,7 @@ msgstr "Seite {num}/{total}"
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
 msgid "Shows a custom command's responses and its settings."
-msgstr ""
+msgstr "Zeigt die Einstellungen und alle Antworten eines benutzerdefinierten Befehls an."
 
 #: redbot/cogs/customcom/customcom.py:467
 msgid "I could not not find that custom command."

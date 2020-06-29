@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File-ID: 38\n"
 "Language: sv_SE\n"
 
 #: redbot/cogs/modlog/modlog.py:17
@@ -39,6 +41,10 @@ msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:52
 msgid "I do not have permissions to send messages in {channel}!"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:60
+msgid "Mod log is already disabled."
 msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:63
