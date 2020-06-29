@@ -1367,7 +1367,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 return await self.send_embed_msg(
                     ctx,
-                    title=_("Playlist Couldn't be created"),
+                    title=_("Playlist Couldn't Be Created"),
                     description=_("Unable to create your playlist."),
                 )
 
@@ -1489,7 +1489,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         pass
                     if not local_path.exists() and not local_path.is_file():
                         continue
-                if maxlength > 0 and not self.is_track_too_long(track.length, maxlength):
+                if maxlength > 0 and not self.is_track_length_allowed(track, maxlength):
                     continue
 
                 player.add(author_obj, track)

@@ -49,7 +49,7 @@ class PrefixManager:
             self._cached.clear()
             await self._config.prefix.set(prefixes)
         else:
-            del self._cached[gid]
+            self._cached.pop(gid, None)
             await self._config.guild_from_id(gid).prefix.set(prefixes)
 
 
