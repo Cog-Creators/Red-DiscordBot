@@ -64,7 +64,7 @@ def filter_urls(to_filter: str) -> str:
 def filter_invites(to_filter: str) -> str:
     """Get a string with discord invites sanitized.
 
-    Will match any discord.gg, discordapp.com/invite, discord.me, or discord.io/discord.li
+    Will match any discord.gg, discordapp.com/invite, discord.com/invite, discord.me, or discord.io/discord.li
     invite URL.
 
     Parameters
