@@ -35,7 +35,7 @@ msgstr "Serveur"
 
 #: redbot/cogs/bank/bank.py:64
 msgid "Bank settings:\\n\\nBank name: {bank_name}\\nBank scope: {bank_scope}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}\\n"
-msgstr ""
+msgstr "Paramètres de la banque :\\n\\nNom de la banque : {bank_name}\\nContexte de la banque : {bank_scope}\\nDevise : {currency_name}\\nSolde de départ : {default_balance}\\nSolde maximum autorisé : {maximum_bal}\\n"
 
 #: redbot/cogs/bank/bank.py:80
 #, docstring

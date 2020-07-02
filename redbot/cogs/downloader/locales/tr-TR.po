@@ -70,7 +70,7 @@ msgstr "Repo adları yalnızca A-z karakterleri, sayılar, alt çizgiler ve tire
 
 #: redbot/cogs/downloader/downloader.py:515
 msgid "The repo name you provided is already in use. Please choose another name."
-msgstr ""
+msgstr "Bu isim zaten kullanılıyor. Başka bir isim seçiniz."
 
 #: redbot/cogs/downloader/downloader.py:519
 msgid "Something went wrong during the cloning process. See logs for more information."
@@ -167,7 +167,7 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:644
 #: redbot/cogs/downloader/downloader.py:1285
 msgid "Failed to install requirements: "
-msgstr ""
+msgstr "Gereksinimleri yüklerken bir hata oldu: "
 
 #: redbot/cogs/downloader/downloader.py:649
 msgid "\\nFailed to install shared libraries: "

@@ -54,16 +54,16 @@ msgstr "Le compteur et le temps ont été définis."
 #: redbot/cogs/filter/filter.py:100
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Ajoute ou supprime des mots du filtre du serveur.\\n\\n        Utilisez des doubles guillemets pour ajouter ou supprimer des phrases.\\n        "
 
 #: redbot/cogs/filter/filter.py:108
 #, docstring
 msgid "Send a list of this servers filtered words."
-msgstr ""
+msgstr "Envoie une liste des mots filtrés de ce serveur."
 
 #: redbot/cogs/filter/filter.py:113
 msgid "There is no current words setup to be filtered in this server."
-msgstr ""
+msgstr "Il n'y a aucun mots configuré pour être filtré sur ce serveur."
 
 #: redbot/cogs/filter/filter.py:116
 msgid "Filtered in this server:"
@@ -76,16 +76,16 @@ msgstr "Je ne peux pas vous envoyer de messages privé."
 #: redbot/cogs/filter/filter.py:125
 #, docstring
 msgid "Add or remove words from channel filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Ajoute ou supprime des mots du filtre du salon.\\n\\n        Utilisez des doubles guillemets pour ajouter ou supprimer des phrases.\\n        "
 
 #: redbot/cogs/filter/filter.py:133
 #, docstring
 msgid "Send the list of the channel's filtered words."
-msgstr ""
+msgstr "Envoie une liste des mots filtrés dans ce salon."
 
 #: redbot/cogs/filter/filter.py:138
 msgid "There is no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "Il n'y a aucun mots configuré pour être filtré dans ce salon."
 
 #: redbot/cogs/filter/filter.py:141
 msgid "Filtered in this channel:"
