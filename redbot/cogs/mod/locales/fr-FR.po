@@ -35,7 +35,7 @@ msgstr "Je ne peux pas vous laisser faire ça. Vous n'êtes pas supérieur à l'
 
 #: redbot/cogs/mod/kickban.py:81 redbot/cogs/mod/kickban.py:203
 msgid "I cannot do that due to discord hierarchy rules."
-msgstr ""
+msgstr "Je ne peux pas faire ça à cause des règles de hiérarchie de Discord."
 
 #: redbot/cogs/mod/kickban.py:83 redbot/cogs/mod/kickban.py:323
 #: redbot/cogs/mod/kickban.py:438
@@ -60,7 +60,7 @@ msgstr "Je ne suis pas autorisé à faire cela."
 
 #: redbot/cogs/mod/kickban.py:116
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "Une erreur inattendue s'est produite."
 
 #: redbot/cogs/mod/kickban.py:132
 msgid "The user was banned but an error occurred when trying to create the modlog entry: {reason}"
@@ -152,11 +152,11 @@ msgstr "Je ne peux pas le faire pour une raison quelconque."
 
 #: redbot/cogs/mod/kickban.py:466
 msgid "Something went wrong while banning."
-msgstr ""
+msgstr "Quelque chose s'est mal passé durant le bannissement."
 
 #: redbot/cogs/mod/kickban.py:481
 msgid "Done. Enough chaos for now."
-msgstr ""
+msgstr "Terminé. Assez de chaos pour l'instant."
 
 #: redbot/cogs/mod/kickban.py:488
 #, docstring
@@ -186,7 +186,7 @@ msgstr "Impossible d'expulser ce membre du salon vocal."
 
 #: redbot/cogs/mod/kickban.py:601
 msgid "Something went wrong while attempting to kick that member."
-msgstr ""
+msgstr "Quelque chose s'est mal passé lors de la tentative d'expulsion de ce membre."
 
 #: redbot/cogs/mod/kickban.py:624
 #, docstring
@@ -199,11 +199,11 @@ msgstr "Il semble que l'utilisateur n'est pas banni !"
 
 #: redbot/cogs/mod/kickban.py:643
 msgid "Something went wrong while attempting to unban that user."
-msgstr ""
+msgstr "Quelque chose s'est mal passé lors de la tentative de dé-bannissement de cet utilisateur."
 
 #: redbot/cogs/mod/kickban.py:660
 msgid "Unbanned that user from this server."
-msgstr ""
+msgstr "Cet utilisateur a été débanni de ce serveur."
 
 #: redbot/cogs/mod/kickban.py:666
 msgid "I don't share another server with this user. I can't reinvite them."
@@ -228,11 +228,11 @@ msgstr "Outils de modération."
 
 #: redbot/cogs/mod/mod.py:112 redbot/cogs/mod/mod.py:122
 msgid "Ignored guilds and channels have been moved. Please use `[p]moveignoredchannels` to migrate the old settings."
-msgstr ""
+msgstr "Les serveurs et les salons ignorés ont été déplacés. Veuillez utiliser `[p]moveignoredchannels` pour migrer les anciens paramètres."
 
 #: redbot/cogs/mod/mod.py:134
 msgid "Delete delay settings have been moved. Please use `[p]movedeletedelay` to migrate the old settings."
-msgstr ""
+msgstr "Les paramètres de délai ont été déplacés. Veuillez utiliser `[p]movedeletedelay` pour migrer les anciens paramètres."
 
 #: redbot/cogs/mod/mod.py:145
 #, docstring
@@ -606,7 +606,7 @@ msgstr "Bannissement automatique pour spam de mention activé. Toute personne me
 
 #: redbot/cogs/mod/settings.py:113
 msgid "Autoban for mention spam is already disabled."
-msgstr ""
+msgstr "Le bannissement automatique du spam de mention est déjà désactivé."
 
 #: redbot/cogs/mod/settings.py:116
 msgid "Autoban for mention spam disabled."
@@ -649,19 +649,19 @@ msgstr "Les utilisateurs débanni avec `{command}` ne seront pas réinvités."
 #: redbot/cogs/mod/settings.py:188
 #, docstring
 msgid "Toggle whether a message should be sent to a user when they are kicked/banned.\\n\\n        If this option is enabled, the bot will attempt to DM the user with the guild name\\n        and reason as to why they were kicked/banned.\\n        "
-msgstr "Permet d'envoyer ou non un message à un utilisateur lorsqu'il est expulsé/banni.\\n\\n        Si cette option est activée, le bot tentera d'envoyer un DM à l'utilisateur avec le nom du serveur\\n        et la raison pour laquelle il a été expulsé/banni.\\n        "
+msgstr "Permet d'envoyer ou non un message à un utilisateur lorsqu'il est expulsé/banni.\\n\\n        Si cette option est activée, le bot tentera d'envoyer un message privé à l'utilisateur avec le nom du serveur\\n        et la raison pour laquelle il a été expulsé/banni.\\n        "
 
 #: redbot/cogs/mod/settings.py:197
 msgid "DM when kicked/banned is currently set to: {setting}"
-msgstr "DM en cas d'expulsion/bannissement actuellement réglé sur : {setting}"
+msgstr "Message privé en cas d'expulsion/bannissement actuellement réglé sur : {setting}"
 
 #: redbot/cogs/mod/settings.py:202
 msgid "Bot will now attempt to send a DM to user before kick and ban."
-msgstr "Le bot va maintenant essayer d'envoyer un DM à l'utilisateur avant de l'expulser et de bannir."
+msgstr "Le bot va maintenant essayer d'envoyer un message privé à l'utilisateur avant de l'expulser et de bannir."
 
 #: redbot/cogs/mod/settings.py:205
 msgid "Bot will no longer attempt to send a DM to user before kick and ban."
-msgstr "Le bot n'essayera plus d'envoyer un DM à l'utilisateur avant de l'expulser et de bannir."
+msgstr "Le bot n'essayera plus d'envoyer un message privé à l'utilisateur avant de l'expulser et de bannir."
 
 #: redbot/cogs/mod/settings.py:211
 #, docstring

@@ -74,15 +74,15 @@ msgstr "Les avertissements ne seront plus envoyés aux utilisateurs par message 
 #: redbot/cogs/warnings/warnings.py:102
 #, docstring
 msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user."
-msgstr ""
+msgstr "Décide si le nom du modérateur de l'avertissement doit être inclus en message privé avec l'utilisateur."
 
 #: redbot/cogs/warnings/warnings.py:106
 msgid "I will include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "J'inclurais le nom du modérateur qui a émis l'avertissement lors de l'envoi d'un message privé à un utilisateur."
 
 #: redbot/cogs/warnings/warnings.py:112
 msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "Je n'inclurais pas le nom du modérateur qui a émis l'avertissement lors de l'envoi d'un message privé à un utilisateur."
 
 #: redbot/cogs/warnings/warnings.py:120
 #, docstring
@@ -91,11 +91,11 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:128
 msgid "The warn channel has been set to {channel}."
-msgstr ""
+msgstr "Le salon d'avertissement a été réglé sur {channel}."
 
 #: redbot/cogs/warnings/warnings.py:132 redbot/cogs/warnings/warnings.py:150
 msgid "Warnings will now be sent in the channel command was used in."
-msgstr ""
+msgstr "Les avertissements seront maintenant envoyés dans le salon où la commande a été invoqué."
 
 #: redbot/cogs/warnings/warnings.py:137
 #, docstring
@@ -180,7 +180,7 @@ msgstr "Points"
 
 #: redbot/cogs/warnings/warnings.py:283
 msgid "Name: {reason_name}\\nPoints: {points}\\nDescription: {description}"
-msgstr ""
+msgstr "Nom : {reason_name}\\nPoints : {points}\\nDescription : {description}"
 
 #: redbot/cogs/warnings/warnings.py:290
 msgid "There are no reasons configured!"
@@ -222,7 +222,7 @@ msgstr "Vous ne pouvez pas vous avertir vous-même."
 
 #: redbot/cogs/warnings/warnings.py:346
 msgid "You cannot warn other bots."
-msgstr ""
+msgstr "Vous ne pouvez pas avertir les autres bots."
 
 #: redbot/cogs/warnings/warnings.py:354
 msgid "That is not a registered reason!"
@@ -238,7 +238,7 @@ msgstr "Avertissement de {user}"
 
 #: redbot/cogs/warnings/warnings.py:393 redbot/cogs/warnings/warnings.py:419
 msgid "Warning"
-msgstr ""
+msgstr "Avertissement"
 
 #: redbot/cogs/warnings/warnings.py:398
 msgid "You have received a warning in {guild_name}."
@@ -246,7 +246,7 @@ msgstr "Vous avez reçu un avertissement dans {guild_name}."
 
 #: redbot/cogs/warnings/warnings.py:408
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
-msgstr ""
+msgstr "Un avertissement pour {user} a été émis, mais je n'ai pas pu leur envoyer un message d'avertissement."
 
 #: redbot/cogs/warnings/warnings.py:427 redbot/cogs/warnings/warnings.py:435
 msgid "{user} has been warned."
