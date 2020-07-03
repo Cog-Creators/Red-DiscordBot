@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import datetime
+from datetime import datetime, timezone
 from typing import Union, List, Optional, TYPE_CHECKING
 from functools import wraps
 
@@ -82,7 +82,7 @@ class Account:
 
     This class should ONLY be instantiated by the bank itself."""
 
-    def __init__(self, name: str, balance: int, created_at: datetime.datetime):
+    def __init__(self, name: str, balance: int, created_at: datetime):
         self.name = name
         self.balance = balance
         self.created_at = created_at
@@ -90,25 +90,25 @@ class Account:
 
 def _encoded_current_time() -> int:
     """Get the current UTC time as a timestamp.
-    
+
     Returns
     -------
     int
         The current UTC timestamp.
 
     """
-    now = datetime.datetime.utcnow()
+    now = datetime.now(timezone.utc)
     return _encode_time(now)
 
 
-def _encode_time(time: datetime.datetime) -> int:
+def _encode_time(time: datetime) -> int:
     """Convert a datetime object to a serializable int.
-    
+
     Parameters
     ----------
     time : datetime.datetime
         The datetime to convert.
-        
+
     Returns
     -------
     int
@@ -119,21 +119,21 @@ def _encode_time(time: datetime.datetime) -> int:
     return ret
 
 
-def _decode_time(time: int) -> datetime.datetime:
+def _decode_time(time: int) -> datetime:
     """Convert a timestamp to a datetime object.
-    
+
     Parameters
     ----------
     time : int
         The timestamp to decode.
-        
+
     Returns
     -------
     datetime.datetime
         The datetime object from the timestamp.
 
     """
-    return datetime.datetime.utcfromtimestamp(time)
+    return datetime.utcfromtimestamp(time)
 
 
 async def get_balance(member: discord.Member) -> int:

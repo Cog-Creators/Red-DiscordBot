@@ -1,7 +1,7 @@
 import asyncio
 import contextlib
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
 
 import discord
@@ -147,7 +147,7 @@ class KickBanMixin(MixinMeta):
                         unban_time = datetime.utcfromtimestamp(
                             await self.config.member_from_ids(guild.id, uid).banned_until()
                         )
-                        if datetime.utcnow() > unban_time:  # Time to unban the user
+                        if datetime.now(timezone.utc) > unban_time:  # Time to unban the user
                             queue_entry = (guild.id, uid)
                             try:
                                 await guild.unban(
@@ -415,7 +415,7 @@ class KickBanMixin(MixinMeta):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        unban_time = datetime.utcnow() + duration
+        unban_time = datetime.now(timezone.utc) + duration
 
         if author == user:
             await ctx.send(
