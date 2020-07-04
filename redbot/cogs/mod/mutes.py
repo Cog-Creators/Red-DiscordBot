@@ -1,4 +1,5 @@
 import asyncio
+from datetime import timezone
 from typing import cast, Optional
 
 import discord
@@ -107,7 +108,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "voiceunban",
                 user,
                 author,
@@ -151,7 +152,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "voiceban",
                 user,
                 author,
@@ -194,7 +195,7 @@ class MuteMixin(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    ctx.message.created_at,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
                     "vmute",
                     user,
                     author,
@@ -230,7 +231,7 @@ class MuteMixin(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    ctx.message.created_at,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
                     "cmute",
                     user,
                     author,
@@ -263,7 +264,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "smute",
                 user,
                 author,
@@ -309,7 +310,7 @@ class MuteMixin(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    ctx.message.created_at,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
                     "vunmute",
                     user,
                     author,
@@ -345,7 +346,7 @@ class MuteMixin(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    ctx.message.created_at,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
                     "cunmute",
                     user,
                     author,
@@ -380,7 +381,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "sunmute",
                 user,
                 author,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Union, Optional, cast, TYPE_CHECKING
 
 import discord
@@ -96,7 +96,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
@@ -132,7 +133,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -317,8 +319,8 @@ class Case:
         until = None
         duration = None
         if self.until:
-            start = datetime.fromtimestamp(self.created_at)
-            end = datetime.fromtimestamp(self.until)
+            start = datetime.utcfromtimestamp(self.created_at)
+            end = datetime.utcfromtimestamp(self.until)
             end_fmt = end.strftime("%Y-%m-%d %H:%M:%S")
             duration = end - start
             dur_fmt = _strfdelta(duration)
@@ -337,7 +339,7 @@ class Case:
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
+                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
         if isinstance(self.user, int):
@@ -374,7 +376,7 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.fromtimestamp(self.created_at)
+            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
             return emb
         else:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
