@@ -347,7 +347,7 @@ class Filter(commands.Cog):
                 if filter_count > 0 and filter_time > 0:
                     user_count += 1
                     await self.config.member(author).filter_count.set(user_count)
-                    if (user_count >= filter_count and created_at.timestamp() < next_reset_time):
+                    if user_count >= filter_count and created_at.timestamp() < next_reset_time:
                         reason = _("Autoban (too many filtered messages.)")
                         try:
                             await guild.ban(author, reason=reason)
