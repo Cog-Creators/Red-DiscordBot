@@ -50,7 +50,7 @@ class Mod(
     default_global_settings = {"version": ""}
 
     default_guild_settings = {
-        "ban_mention_spam": False,
+        "mention_spam": {"ban": None, "kick": None, "warn": None},
         "delete_repeats": -1,
         "ignored": False,
         "respect_hierarchy": True,
