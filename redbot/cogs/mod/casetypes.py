@@ -103,4 +103,10 @@ CASETYPES = [
         "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
         "case_str": "Voice Kick",
     },
+    {
+        "name": "warning",
+        "default_setting": True,
+        "image": "\N{WARNING SIGN}",
+        "case_str": "Warning",
+    },
 ]
