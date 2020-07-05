@@ -43,13 +43,11 @@ class Events(MixinMeta):
 
     async def check_mention_spam(self, message):
         guild, author = message.guild, message.author
-        warn_mentions = await self.config.guild(guild).mention_spam.warn()
-        kick_mentions = await self.config.guild(guild).mention_spam.kick()
-        ban_mentions = await self.config.guild(guild).mention_spam.ban()
+        mention_spam = await self.config.guild(guild).mention_spam.all()
 
         mentions = set(message.mentions)
-        if ban_mentions:
-            if len(mentions) >= ban_mentions:
+        if mention_spam["ban"]:
+            if len(mentions) >= mention_spam["ban"]:
                 try:
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
@@ -74,8 +72,8 @@ class Events(MixinMeta):
                         return False
                     return True
 
-        if kick_mentions:
-            if len(mentions) >= kick_mentions:
+        if mention_spam["kick"]:
+            if len(mentions) >= mention_spam["kick"]:
                 try:
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
@@ -100,12 +98,12 @@ class Events(MixinMeta):
                         return False
                     return True
 
-        if warn_mentions:
-            if len(mentions) >= warn_mentions:
+        if mention_spam["warn"]:
+            if len(mentions) >= mention_spam["warn"]:
                 try:
                     await author.send(
-                        _("Please do not mention {} or more people!".format(warn_mentions))
-                    )  # Note to reviewers, this can be changed
+                        _("Please do not mention {} or more people!".format(mention_spam["warn"]))
+                    )
                 except (discord.HTTPException, discord.Forbidden):
                     log.info(
                         "Failed to warn member for mention spam in server {}".format(guild.id)
