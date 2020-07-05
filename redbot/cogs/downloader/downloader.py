@@ -474,14 +474,25 @@ class Downloader(commands.Cog):
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
-            await ctx.send(_("Libraries installed."))
+            if deps > 1:
+                await ctx.send(_("Libraries installed."))
+            else:
+                await ctx.send(_("Library installed."))
         else:
-            await ctx.send(
-                _(
-                    "Some libraries failed to install. Please check"
-                    " your logs for a complete list."
+            if deps > 1:
+                await ctx.send(
+                    _(
+                        "Some libraries failed to install. Please check"
+                        " your logs for a complete list."
+                    )
                 )
-            )
+            else:
+                await ctx.send(
+                    _(
+                        "The library failed to install. Please check "
+                        "your logs for a complete list."
+                    )
+                )
 
     @commands.group()
     @checks.is_owner()
