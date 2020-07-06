@@ -157,7 +157,7 @@ class CoreLogic:
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Interally reloads modules so that changes are detected."""
+        """Internally reloads modules so that changes are detected."""
         splitted = module_name.split(".")
 
         def maybe_reload(new_name):
@@ -1429,7 +1429,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.is_owner()
     async def custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of [p]info.
+        """Customizes a section of `[p]info`.
 
         The maximum amount of allowed characters is 1024.
         Supports markdown, links and "mentions".
@@ -2394,7 +2394,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or roles immune from automated moderation actions.
+        Makes a user or role immune from automated moderation actions.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id in ai_ids:
@@ -2407,7 +2407,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or roles immune from automated moderation actions.
+        Makes a user or role immune from automated moderation actions.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id not in ai_ids:
@@ -2465,7 +2465,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to recieve owner notifications.
+        Adds a destination text channel to receive owner notifications.
         """
 
         try:
