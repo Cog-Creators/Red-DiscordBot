@@ -453,19 +453,22 @@ class Core(commands.Cog, CoreLogic):
         commands that support it). The default is to
         use embeds.
         """
-        if ctx.invoked_subcommand is None:
-            text = _("Embed settings:\n\n")
-            global_default = await self.bot._config.embeds()
-            text += _("Global default: {}\n").format(global_default)
-            if ctx.guild:
-                guild_setting = await self.bot._config.guild(ctx.guild).embeds()
-                text += _("Guild setting: {}\n").format(guild_setting)
-            if ctx.channel:
-                channel_setting = await self.bot._config.channel(ctx.channel).embeds()
-                text += _("Channel setting: {}\n").format(channel_setting)
-            user_setting = await self.bot._config.user(ctx.author).embeds()
-            text += _("User setting: {}").format(user_setting)
-            await ctx.send(box(text))
+
+    @embedset.command(name="showsettings")
+    async def embedset_showsettings(self, ctx: commands.Context):
+        """Show the current embed settings."""
+        text = _("Embed settings:\n\n")
+        global_default = await self.bot._config.embeds()
+        text += _("Global default: {}\n").format(global_default)
+        if ctx.guild:
+            guild_setting = await self.bot._config.guild(ctx.guild).embeds()
+            text += _("Guild setting: {}\n").format(guild_setting)
+        if ctx.channel:
+            channel_setting = await self.bot._config.channel(ctx.channel).embeds()
+            text += _("Channel setting: {}\n").format(channel_setting)
+        user_setting = await self.bot._config.user(ctx.author).embeds()
+        text += _("User setting: {}").format(user_setting)
+        await ctx.send(box(text))
 
     @embedset.command(name="global")
     @checks.is_owner()
@@ -939,45 +942,48 @@ class Core(commands.Cog, CoreLogic):
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
         """Changes [botname]'s settings."""
-        if ctx.invoked_subcommand is None:
-            if ctx.guild:
-                guild_data = await ctx.bot._config.guild(ctx.guild).all()
-                guild = ctx.guild
-                admin_role_ids = guild_data["admin_role"]
-                admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
-                admin_roles_str = (
-                    humanize_list(admin_role_names) if admin_role_names else "Not Set."
-                )
-                mod_role_ids = guild_data["mod_role"]
-                mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
-                mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-                guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
-                    admin=admin_roles_str, mod=mod_roles_str
-                )
-            else:
-                guild_settings = ""
 
-            prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
-            global_data = await ctx.bot._config.all()
-            locale = global_data["locale"]
-            regional_format = global_data["regional_format"] or _("Same as bot's locale")
-
-            prefix_string = " ".join(prefixes)
-            settings = _(
-                "{bot_name} Settings:\n\n"
-                "Prefixes: {prefixes}\n"
-                "{guild_settings}"
-                "Locale: {locale}\n"
-                "Regional format: {regional_format}"
-            ).format(
-                bot_name=ctx.bot.user.name,
-                prefixes=prefix_string,
-                guild_settings=guild_settings,
-                locale=locale,
-                regional_format=regional_format,
+    @_set.command("showsettings")
+    async def set_showsettings(self, ctx: commands.Context):
+        """
+        Show the current settings for [botname].
+        """
+        if ctx.guild:
+            guild_data = await ctx.bot._config.guild(ctx.guild).all()
+            guild = ctx.guild
+            admin_role_ids = guild_data["admin_role"]
+            admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
+            admin_roles_str = humanize_list(admin_role_names) if admin_role_names else "Not Set."
+            mod_role_ids = guild_data["mod_role"]
+            mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
+            mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
+            guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
+                admin=admin_roles_str, mod=mod_roles_str
             )
-            for page in pagify(settings):
-                await ctx.send(box(page))
+        else:
+            guild_settings = ""
+
+        prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
+        global_data = await ctx.bot._config.all()
+        locale = global_data["locale"]
+        regional_format = global_data["regional_format"] or _("Same as bot's locale")
+
+        prefix_string = " ".join(prefixes)
+        settings = _(
+            "{bot_name} Settings:\n\n"
+            "Prefixes: {prefixes}\n"
+            "{guild_settings}"
+            "Locale: {locale}\n"
+            "Regional format: {regional_format}"
+        ).format(
+            bot_name=ctx.bot.user.name,
+            prefixes=prefix_string,
+            guild_settings=guild_settings,
+            locale=locale,
+            regional_format=regional_format,
+        )
+        for page in pagify(settings):
+            await ctx.send(box(page))
 
     @checks.guildowner_or_permissions(administrator=True)
     @_set.command(name="deletedelay")
@@ -2550,9 +2556,14 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
         """Add servers or channels to the ignore list."""
-        if ctx.invoked_subcommand is None:
-            for page in pagify(await self.count_ignored(ctx)):
-                await ctx.maybe_send_embed(page)
+
+    @ignore.command(name="list")
+    async def ignore_list(self, ctx: commands.Context):
+        """
+        List the currently ignored servers and channels
+        """
+        for page in pagify(await self.count_ignored(ctx)):
+            await ctx.maybe_send_embed(page)
 
     @ignore.command(name="channel")
     async def ignore_channel(
@@ -2588,9 +2599,6 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):
         """Remove servers or channels from the ignore list."""
-        if ctx.invoked_subcommand is None:
-            for page in pagify(await self.count_ignored(ctx)):
-                await ctx.maybe_send_embed(page)
 
     @unignore.command(name="channel")
     async def unignore_channel(
