@@ -10,7 +10,7 @@ stylediff:
 
 # Translations
 gettext:
-	$(PYTHON) -m redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
+	$(PYTHON) -m redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*" --excluded-files "redbot/vendored/**/*"
 upload_translations:
 	crowdin upload sources
 download_translations:

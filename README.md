@@ -128,4 +128,4 @@ Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art f
 Bot Project.
 
 This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package  made by Danny Y. (Rapptz) which is distributed under MIT License.
-Copy of this license can be found in [LICENSE](redbot/vendored/LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.
+Copy of this license can be found in [LICENSE](redbot/vendored/discord/LICENSE) file in [redbot/vendored/discord](redbot/vendored/discord) folder of this repository.
