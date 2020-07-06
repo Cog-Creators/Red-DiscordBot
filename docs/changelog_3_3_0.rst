@@ -68,6 +68,7 @@ Developer changelog
 - Updated deprecation warnings for shared libs to reflect that they have been moved for an undefined time (:issue:`3608`)
 - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
 - Fixed incorrect role mention regex in ``MessagePredicate`` (:issue:`4030`)
+- Vendor the ``discord.ext.menus`` module (:issue:`4039`)
 
 
 Documentation changes
