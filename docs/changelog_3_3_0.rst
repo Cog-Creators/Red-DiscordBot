@@ -42,6 +42,7 @@ Mod
 
 - Added option to delete messages within the passed amount of days with ``[p]tempban`` (:issue:`3958`)
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
+- Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
 
 Permissions
 ***********
