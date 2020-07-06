@@ -93,6 +93,7 @@ Miscellaneous
 - Added a confirmation when using hyphens in instance names to discourage the use of them (:issue:`3920`)
 - Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
 - Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
+- Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
 
 
 Redbot 3.3.8 (2020-05-29)
