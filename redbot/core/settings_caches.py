@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterable
+from typing import Dict, List, Optional, Union, Set, Iterable, Tuple
 from argparse import Namespace
 
 import discord
@@ -254,3 +254,105 @@ class WhitelistBlacklistManager:
                 )
             self._cached_blacklist[gid].difference_update(role_or_user)
             await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
+
+
+class DisabledCogCache:
+    def __init__(self, config: Config):
+        self._config = config
+        self._guild_map: Dict[int, List[str]] = {}
+
+    async def list_disabled_for_guild(self, guild_id: int) -> Tuple[str]:
+        """
+        Gets the disabled cogs in this guild
+        """
+        gsettings = self._guild_map.get(guild_id, None)
+        if gsettings is None:
+            # we're using this lock
+            async with self._config.guild_from_id(guild_id).disabled_cogs() as gsettings:
+                self._guild_map[guild_id] = gsettings
+
+        return tuple(gsettings)
+
+    async def cog_disabled_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Check if a cog is disabled in a guild
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+        """
+
+        gsettings = self._guild_map.get(guild_id, None)
+        if gsettings is None:
+            # we're using this lock
+            async with self._config.guild_from_id(guild_id).disabled_cogs() as gsettings:
+                self._guild_map[guild_id] = gsettings
+
+        return cog_name in gsettings
+
+    async def disable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Disable a cog in a guild.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+            Whether or not any change was made.
+            This may be useful for settings commands.
+        """
+
+        gsettings = self._guild_map.setdefault(guild_id, [])
+        if cog_name in gsettings:
+            return False
+
+        gsettings.append(cog_name)
+        await self._config.guild_from_id(guild_id).disabled_cogs.set(gsettings)
+        return True
+
+    async def enable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Enable a cog in a guild.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+            Whether or not any change was made.
+            This may be useful for settings commands.
+        """
+        gsettings = self._guild_map.get(guild_id, None)
+
+        # seperate paths here for performance and locking reasons.
+        if gsettings is None:
+
+            async with self._config.guild_from_id(guild_id).disabled_cogs() as gsettings:
+                if cog_name not in gsettings:
+                    return False
+
+                gsettings.remove(cog_name)
+                self._guild_map[guild_id] = gsettings
+                return True
+
+        elif cog_name not in gsettings:
+            return False
+
+        gsettings.remove(cog_name)
+        await self._config.guild_from_id(guild_id).disabled_cogs.set(gsettings)
+        return True

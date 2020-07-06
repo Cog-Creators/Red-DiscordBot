@@ -2177,6 +2177,52 @@ class Core(commands.Cog, CoreLogic):
         """Manage the bot's commands."""
         pass
 
+    @commands.guild_only()
+    @command_manager.command(name="disablecog")
+    async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Disable a cog in this guild."""
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("No such cog"))
+        if cog == self:
+            return await ctx.send(_("You can't disable this cog as you would lock yourself out."))
+        if await self.bot._disabled_cog_cache.disable_cog_in_guild(cogname, ctx.guild.id):
+            await ctx.send(_("{cogname} has been disabled in this guild.").format(cogname=cogname))
+        else:
+            await ctx.send(
+                _("{cogname} was already disabled (nothing to do).").format(cogname=cogname)
+            )
+
+    @commands.guild_only()
+    @command_manager.command(name="enablecog")
+    async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Enable a cog in this guild."""
+        if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
+            await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
+        else:
+            # putting this here allows enabling a cog that isn't loaded but was disabled.
+            cog = self.bot.get_cog(cogname)
+            if not cog:
+                return await ctx.send(_("No such cog"))
+
+            await ctx.send(
+                _("{cogname} was not disabled (nothing to do).").format(cogname=cogname)
+            )
+
+    @commands.guild_only()
+    @command_manager.command(name="listdisabledcogs")
+    async def command_list_disabled_cogs(self, ctx: commands.Context):
+        """List the cogs which are disabled in this guild."""
+        disabled = await self.bot._disabled_cog_cache.list_disabled_for_guild(ctx.guild.id)
+        if disabled:
+            output = _("The following cogs are disabled in this guild:\n")
+            output += humanize_list(disabled)
+
+            for page in pagify(output):
+                await ctx.send(page)
+        else:
+            await ctx.send(_("There are no disabled cogs in this guild."))
+
     @command_manager.group(name="listdisabled", invoke_without_command=True)
     async def list_disabled(self, ctx: commands.Context):
         """

@@ -369,6 +369,10 @@ class Filter(commands.Cog):
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
@@ -395,6 +399,11 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
+
+        guild = member.guild
+        if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+            return
+
         if not member.guild.me.guild_permissions.manage_nicknames:
             return  # No permissions to manage nicknames, so can't do anything
         if member.top_role >= member.guild.me.top_role:

@@ -293,10 +293,15 @@ class Reports(commands.Cog):
                     pass
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """
         oh dear....
         """
+        guild_id = payload.guild_id
+        if guild_id:
+            if await self.bot.cog_disabled_in_guild_raw(self.qualified_name, guild_id):
+                return
+
         if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
             return
 
@@ -314,8 +319,20 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+
+        source_guild = message.guild
+        if source_guild:
+            if await self.bot.cog_disabled_in_guild(self, source_guild):
+                return
+
         for k, v in self.tunnel_store.items():
-            topic = _("Re: ticket# {1} in {0.name}").format(*k)
+
+            guild, ticket_number = k
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                continue
+            topic = _("Re: ticket# {ticket_numer} in {guild.name}").format(
+                ticket_number=ticket_number, guild=guild
+            )
             # Tunnels won't forward unintended messages, this is safe
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:

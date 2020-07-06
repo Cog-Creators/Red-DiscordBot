@@ -25,6 +25,10 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
+
+        if not await self.bot.cog_disabled_in_guild(self, guild):
+            return
+
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
             daily_cache = self._daily_playlist_cache.setdefault(

@@ -37,7 +37,12 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
+from .settings_caches import (
+    PrefixManager,
+    IgnoreManager,
+    WhitelistBlacklistManager,
+    DisabledCogCache,
+)
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -127,6 +132,7 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
+            disabled_cogs=[],
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -138,6 +144,7 @@ class RedBase(
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
+        self._disabled_cog_cache = DisabledCogCache(self._config)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
 
@@ -216,6 +223,37 @@ class RedBase(
                 *(coro(ctx) for coro in self._red_before_invoke_objs),
                 return_exceptions=return_exceptions,
             )
+
+    async def cog_disabled_in_guild(self, cog: commands.Cog, guild: discord.Guild) -> bool:
+        """
+        Check if a cog is disabled in a guild
+
+        Parameters
+        ----------
+        cog: commands.Cog
+        guild: discord.Guild
+        
+        Returns
+        -------
+        bool
+        """
+        return await self._disabled_cog_cache.cog_disabled_in_guild(cog.qualified_name, guild.id)
+
+    async def cog_disabled_in_guild_raw(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Check if a cog is disabled in a guild without the cog or guild object
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+        """
+        return await self._disabled_cog_cache.cog_disabled_in_guild(cog_name, guild_id)
 
     def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
         """
