@@ -1,12 +1,14 @@
 PYTHON ?= python3.8
 
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 # Python Code Style
 reformat:
-	$(PYTHON) -m black
+	$(PYTHON) -m black $(ROOT_DIR)
 stylecheck:
-	$(PYTHON) -m black --check
+	$(PYTHON) -m black --check $(ROOT_DIR)
 stylediff:
-	$(PYTHON) -m black --check --diff
+	$(PYTHON) -m black --check --diff $(ROOT_DIR)
 
 # Translations
 gettext:

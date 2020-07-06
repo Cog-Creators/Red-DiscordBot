@@ -8,15 +8,15 @@ setlocal ENABLEDELAYEDEXPANSION
 goto %1
 
 :reformat
-black
+black "%~dp0."
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black --check
+black --check "%~dp0."
 exit /B %ERRORLEVEL%
 
 :stylediff
-black --check --diff
+black --check --diff "%~dp0."
 exit /B %ERRORLEVEL%
 
 :newenv
