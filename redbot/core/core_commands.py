@@ -1809,7 +1809,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        uids = [getattr(user, "id", user) for user in users]
+        uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
         await ctx.send(_("Users added to whitelist."))
@@ -1841,7 +1841,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        uids = [getattr(user, "id", user) for user in users]
+        uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
         await ctx.send(_("Users have been removed from whitelist."))
@@ -1880,7 +1880,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(_("You cannot blacklist an owner!"))
                 return
 
-        uids = [getattr(user, "id", user) for user in users]
+        uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
 
         await ctx.send(_("User added to blacklist."))
@@ -1912,7 +1912,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send_help()
             return
 
-        uids = [getattr(user, "id", user) for user in users]
+        uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
         await ctx.send(_("Users have been removed from blacklist."))
@@ -1946,7 +1946,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
-        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
@@ -1981,7 +1981,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
-        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
@@ -2028,7 +2028,7 @@ class Core(commands.Cog, CoreLogic):
                 await ctx.send(_("You cannot blacklist a bot owner!"))
                 return
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
-        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
@@ -2065,7 +2065,7 @@ class Core(commands.Cog, CoreLogic):
             return
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
-        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
