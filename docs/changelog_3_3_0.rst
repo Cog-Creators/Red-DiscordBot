@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -54,8 +54,10 @@ Trivia Lists
 ************
 
 - Fixed URLs in ``whosthatpokemon`` (:issue:`3975`, :issue:`3023`)
+- Fixed trivia files ``leagueults`` and ``sports`` (:issue:`4026`)
 - Updated ``greekmyth`` to include more answer variations (:issue:`3970`)
 - Added new ``lotr`` trivia list (:issue:`3980`)
+- Added new ``r6seige`` trivia list (:issue:`4026`)
 
 
 Developer changelog
