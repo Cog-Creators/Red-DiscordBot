@@ -702,4 +702,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 This project vendors discord.ext.menus package (https://github.com/Rapptz/discord-ext-menus) made by Danny Y. (Rapptz) which is distributed under MIT License.
-Copy of this license can be found in LICENSE file in redbot/vendored folder of this repository.
+Copy of this license can be found in discord-ext-menus.LICENSE file in redbot/vendored folder of this repository.
