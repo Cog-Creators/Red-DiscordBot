@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: de\n"
+"X-Crowdin-File-ID: 57\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/warnings/helpers.py:72
@@ -67,20 +69,20 @@ msgstr "Ich werde nun versuchen verwarnte Nutzer per DM zu informieren."
 
 #: redbot/cogs/warnings/warnings.py:97
 msgid "Warnings will no longer be sent to users DMs."
-msgstr ""
+msgstr "Ich werde nicht mehr versuchen verwarnte Nutzer per DM zu informieren."
 
 #: redbot/cogs/warnings/warnings.py:102
 #, docstring
 msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user."
-msgstr ""
+msgstr "Lege fest, ob der Name des Moderators der die Verwarnung erteilt in der DM an den Nutzer enthalten sein sollte."
 
 #: redbot/cogs/warnings/warnings.py:106
 msgid "I will include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "Ich werde den Namen der Moderators der die Verwarnung erteilt hat in der DM nennen."
 
 #: redbot/cogs/warnings/warnings.py:112
 msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "Ich werde den Namen der Moderators der die Verwarnung erteilt hat nicht in der DM nennen."
 
 #: redbot/cogs/warnings/warnings.py:120
 #, docstring
@@ -236,7 +238,7 @@ msgstr "Verwarnung von {user}"
 
 #: redbot/cogs/warnings/warnings.py:393 redbot/cogs/warnings/warnings.py:419
 msgid "Warning"
-msgstr ""
+msgstr "Verwarnung"
 
 #: redbot/cogs/warnings/warnings.py:398
 msgid "You have received a warning in {guild_name}."

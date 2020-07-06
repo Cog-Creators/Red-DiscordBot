@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: de\n"
+"X-Crowdin-File-ID: 688\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:71
@@ -50,7 +52,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:420
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Maximale Warteschlangengröße erreicht."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:147
 #: redbot/cogs/audio/core/utilities/player.py:546
@@ -243,7 +245,7 @@ msgstr "Lokale Tracks funktionieren nicht, wenn die `Lavalink.jar` den Track nic
 
 #: redbot/cogs/audio/core/utilities/player.py:454
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} Tracks können nicht zur Warteschlange hinzugefügt werden."
 
 #: redbot/cogs/audio/core/utilities/player.py:460
 msgid "No Title"
@@ -352,7 +354,7 @@ msgstr "Bitte warten, füge Lieder hinzu..."
 #: redbot/cogs/audio/core/utilities/playlists.py:345
 #: redbot/cogs/audio/core/utilities/playlists.py:445
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
+msgstr "Leere Playlist {name} (`{id}`) [**{scope}**] erstellt."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:350
 #: redbot/cogs/audio/core/utilities/playlists.py:450
@@ -371,7 +373,7 @@ msgstr "Wiedergabeliste gespeichert"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:495
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "Verbindung zu Lavalink ist fehlgeschlagen"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:509
 #: redbot/cogs/audio/core/utilities/playlists.py:519
@@ -394,7 +396,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:643
 msgid "Global"
-msgstr ""
+msgstr "Überall"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "the Server"
@@ -402,7 +404,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "the User"
@@ -410,7 +412,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 
 #: redbot/cogs/audio/core/utilities/queue.py:36
 msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"

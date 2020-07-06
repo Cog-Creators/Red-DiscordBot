@@ -110,7 +110,7 @@ class ModSettings(MixinMeta):
         else:
             cur_setting = await self.config.guild(guild).ban_mention_spam()
             if not cur_setting:
-                await ctx.send_help()
+                await ctx.send(_("Autoban for mention spam is already disabled."))
                 return
             await self.config.guild(guild).ban_mention_spam.set(False)
             await ctx.send(_("Autoban for mention spam disabled."))

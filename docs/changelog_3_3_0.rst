@@ -1,10 +1,20 @@
 .. 3.3.x Changelogs
 
 Redbot 3.3.10 or 3.4.0 (Unreleased)
-===================================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+=======
+Redbot 3.3.9 (2020-06-12)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+|
+| **Read before updating**:
+| 1. Bot owners can no longer restrict access to some commands in Permissions cog using global permissions rules. Look at `Permissions changelog <important-339-2>` for full details.
+| 2. There's been a change in behavior of warning messages. Look at `Warnings changelog <important-339-1>` for full details.
+
 
 End-user changelog
 ------------------
@@ -13,6 +23,12 @@ Audio
 *****
 
 - Added information about internally managed jar to ``[p]audioset info`` (:issue:`3915`)
+Security
+********
+
+**NOTE**: If you can't update immediately, we recommend disabling the affected command until you can.
+
+- **Mod** - ``[p]tempban`` now properly respects Discord's hierarchy rules (:issue:`3957`)
 
 Core Bot
 ********
@@ -26,6 +42,15 @@ Downloader
 - Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
 - Added embed version of ``[p]findcog`` (:issue:`3965`, :issue:`3944`)
 - Fixed ``[p]findcog`` not differentiating between core cogs and local cogs(:issue:`3969`, :issue:`3966`)
+- ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
+- Fixed ungraceful error that happened in ``[p]set custominfo`` when provided text was too long (:issue:`3923`)
+- Red's start up message now shows storage type (:issue:`3935`)
+
+Audio
+*****
+
+- Audio now properly ignores streams when max length is enabled (:issue:`3878`, :issue:`3877`)
+- Commands that should work in DMs no longer error (:issue:`3880`)
 
 Filter
 ******
@@ -43,6 +68,9 @@ Mod
 - Added option to delete messages within the passed amount of days with ``[p]tempban`` (:issue:`3958`)
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 - Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
+- Fixed behavior of detecting quotes in commands for adding/removing filtered words (:issue:`3925`)
+
+.. _important-339-2:
 
 Permissions
 ***********
@@ -64,6 +92,27 @@ Trivia Lists
 - Updated ``greekmyth`` to include more answer variations (:issue:`3970`)
 - Added new ``lotr`` trivia list (:issue:`3980`)
 - Added new ``r6seige`` trivia list (:issue:`4026`)
+- **Both global and server rules** can no longer prevent guild owners from accessing commands for changing server rules. Bot owners can still use ``[p]command disable`` if they wish to completely disable any command in Permissions cog (:issue:`3955`, :issue:`3107`)
+
+  Full list of affected commands:
+
+  - ``[p]permissions acl getserver``
+  - ``[p]permissions acl setserver``
+  - ``[p]permissions acl updateserver``
+  - ``[p]permissions addserverrule``
+  - ``[p]permissions removeserverrule``
+  - ``[p]permissions setdefaultserverrule``
+  - ``[p]permissions clearserverrules``
+  - ``[p]permissions canrun``
+  - ``[p]permissions explain``
+
+.. _important-339-1:
+
+Warnings
+********
+
+- Warnings sent to users don't show the moderator who warned the user by default now. Newly added ``[p]warningset showmoderators`` command can be used to switch this behaviour (:issue:`3781`)
+- Warn channel functionality has been fixed (:issue:`3781`)
 
 
 Developer changelog
@@ -75,12 +124,17 @@ Developer changelog
 - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
 - Fixed incorrect role mention regex in ``MessagePredicate`` (:issue:`4030`)
 - Vendor the ``discord.ext.menus`` module (:issue:`4039`)
+Core Bot
+********
+
+- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
 ---------------------
 
 
+- Added Oracle Cloud to free hosting section in :ref:`host-list` (:issue:`3916`)
 
 Miscellaneous
 -------------
@@ -94,6 +148,14 @@ Miscellaneous
 - Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
 - Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
 - Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
+- Added missing help message for Downloader, Reports and Streams cogs (:issue:`3892`)
+- **Core Bot** - cooldown in ``[p]contact`` no longer applies when it's used without any arguments (:issue:`3942`)
+- **Core Bot** - improved instructions on obtaining user ID in help of ``[p]dm`` command (:issue:`3946`)
+- **Alias** - ``[p]alias global`` group, ``[p]alias help``, and ``[p]alias show`` commands can now be used in DMs (:issue:`3941`, :issue:`3940`)
+- **Audio** - Typo fix (:issue:`3889`, :issue:`3900`)
+- **Audio** - Fixed ``[p]audioset autoplay`` being available in DMs (:issue:`3899`)
+- **Bank** - ``[p]bankset`` now displays bank's scope (:issue:`3954`)
+- **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 
 
 Redbot 3.3.8 (2020-05-29)
