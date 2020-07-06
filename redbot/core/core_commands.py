@@ -1946,19 +1946,20 @@ class Core(commands.Cog, CoreLogic):
             return
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
-        uids = [getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles]
-        current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
-        theoretical_whitelist = current_whitelist + uids
-        ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
-        if ids.isdisjoint(theoretical_whitelist):
-            return await ctx.send(
-                _(
-                    "I cannot allow you to do this, as it would "
-                    "remove your ability to run commands, "
-                    "please ensure to add yourself to the whitelist first."
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
+        if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
+            current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
+            theoretical_whitelist = current_whitelist + uids
+            ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
+            if ids.isdisjoint(theoretical_whitelist):
+                return await ctx.send(
+                    _(
+                        "I cannot allow you to do this, as it would "
+                        "remove your ability to run commands, "
+                        "please ensure to add yourself to the whitelist first."
+                    )
                 )
-            )
-        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, list(uids))
 
         await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
 
@@ -1993,16 +1994,17 @@ class Core(commands.Cog, CoreLogic):
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
-        current_whitelist = set(await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild))
-        theoretical_whitelist = current_whitelist - uids
-        ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
-        if theoretical_whitelist and ids.isdisjoint(theoretical_whitelist):
-            return await ctx.send(
-                _(
-                    "I cannot allow you to do this, as it would "
-                    "remove your ability to run commands."
+        if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
+            current_whitelist = set(await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild))
+            theoretical_whitelist = current_whitelist - uids
+            ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
+            if theoretical_whitelist and ids.isdisjoint(theoretical_whitelist):
+                return await ctx.send(
+                    _(
+                        "I cannot allow you to do this, as it would "
+                        "remove your ability to run commands."
+                    )
                 )
-            )
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, list(uids))
 
         await ctx.send(
