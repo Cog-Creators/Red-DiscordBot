@@ -65,6 +65,7 @@ Developer changelog
 - Updated deprecation times for ``APIToken``, and loops being passed to various functions to the first minor release (represented by ``X`` in ``3.X.0``) after 2020-08-05 (:issue:`3608`)
 - Updated deprecation warnings for shared libs to reflect that they have been moved for an undefined time (:issue:`3608`)
 - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
+- Fixed incorrect role mention regex in ``MessagePredicate`` (:issue:`4030`)
 
 
 Documentation changes
