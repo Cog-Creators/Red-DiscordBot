@@ -37,7 +37,7 @@ We recommend using redgettext a modified version of pygettext for Red.
 You can install redgettext by running :code:`pip install redgettext` in a command prompt.
 
 To generate the :code:`messages.pot` file, you will now need to run
-:code:`python -m redgettext -D [path_to_cog]`
+:code:`python -m redgettext -c [path_to_cog]`
 This file will contain all strings to be translated, including
 docstrings.
 
