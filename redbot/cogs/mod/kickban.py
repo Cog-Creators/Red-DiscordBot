@@ -448,16 +448,14 @@ class KickBanMixin(MixinMeta):
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
-            await user.send(
-                _(
-                    "You have been temporarily banned from {server_name} until {date}. "
-                    "Here is an invite for when your ban expires: {invite_link}"
-                ).format(
-                    server_name=guild.name,
-                    date=unban_time.strftime("%m-%d-%Y %H:%M:%S"),
-                    invite_link=invite,
-                )
+            msg = _("You have been temporarily banned from {server_name} until {date}.").format(
+                server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
             )
+            if invite:
+                msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
+                    invite_link=invite
+                )
+            await user.send(msg)
         try:
             await guild.ban(user, reason=reason, delete_message_days=days)
         except discord.Forbidden:
