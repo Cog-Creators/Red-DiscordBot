@@ -185,7 +185,10 @@ class RedisDriver(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
             _full_identifiers = identifier_data.to_tuple()
-            cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
+            cog_name, full_identifiers = (
+                self._escape_key(_full_identifiers[0]),
+                _full_identifiers[1:],
+            )
             identifier_string = "."
             identifier_string += ".".join(map(self._escape_key, full_identifiers))
             value_copy = json.loads(json.dumps(value))
