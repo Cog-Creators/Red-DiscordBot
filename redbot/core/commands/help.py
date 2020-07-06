@@ -50,7 +50,7 @@ from ..utils.chat_formatting import box, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
-T_ = Translator("Help", __file__)
+_ = Translator("Help", __file__)
 
 HelpTarget = Union[commands.Command, commands.Group, commands.Cog, dpy_commands.bot.BotBase, str]
 
@@ -179,7 +179,7 @@ class RedHelpFormatter:
 
     @staticmethod
     def get_default_tagline(ctx: Context):
-        return T_(
+        return _(
             "Type {ctx.clean_prefix}help <command> for more info on a command. "
             "You can also type {ctx.clean_prefix}help <category> for more info on a category."
         ).format(ctx=ctx)
@@ -209,9 +209,9 @@ class RedHelpFormatter:
         description = command.description or ""
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
-        signature = (
-            f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-        )
+        signature = _(
+            "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+        ).format(ctx=ctx, command=command)
         subcommands = None
 
         if hasattr(command, "all_commands"):
@@ -250,9 +250,9 @@ class RedHelpFormatter:
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = T_("**__Subcommands:__**")
+                        title = _("**__Subcommands:__**")
                     else:
-                        title = T_("**__Subcommands:__** (continued)")
+                        title = _("**__Subcommands:__** (continued)")
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -263,7 +263,7 @@ class RedHelpFormatter:
             subtext = None
             subtext_header = None
             if subcommands:
-                subtext_header = T_("Subcommands:")
+                subtext_header = _("Subcommands:")
                 max_width = max(discord.utils._string_width(name) for name in subcommands.keys())
 
                 def width_maker(cmds):
@@ -327,7 +327,7 @@ class RedHelpFormatter:
         page_char_limit = min(page_char_limit, 5500)  # Just in case someone was manually...
 
         author_info = {
-            "name": f"{ctx.me.display_name} {T_('Help Menu')}",
+            "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
             "icon_url": ctx.me.avatar_url,
         }
 
@@ -374,9 +374,9 @@ class RedHelpFormatter:
             embed = discord.Embed(color=color, **embed_dict["embed"])
 
             if page_count > 1:
-                description = T_(
-                    "*Page {page_num} of {page_count}*\n{content_description}"
-                ).format(content_description=embed.description, page_num=i, page_count=page_count)
+                description = _("*Page {page_num} of {page_count}*\n{content_description}").format(
+                    content_description=embed.description, page_num=i, page_count=page_count
+                )
                 embed.description = description
 
             embed.set_author(**author_info)
@@ -425,9 +425,9 @@ class RedHelpFormatter:
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = T_("**__Commands:__**")
+                        title = _("**__Commands:__**")
                     else:
-                        title = T_("**__Commands:__** (continued)")
+                        title = _("**__Commands:__** (continued)")
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -437,7 +437,7 @@ class RedHelpFormatter:
             subtext = None
             subtext_header = None
             if coms:
-                subtext_header = T_("Commands:")
+                subtext_header = _("Commands:")
                 max_width = max(discord.utils._string_width(name) for name in coms.keys())
 
                 def width_maker(cmds):
@@ -479,7 +479,7 @@ class RedHelpFormatter:
                 if cog_name:
                     title = f"**__{cog_name}:__**"
                 else:
-                    title = f"**__{T_('No Category')}:__**"
+                    title = _("**__('No Category'):__**")
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
@@ -492,7 +492,7 @@ class RedHelpFormatter:
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
-                    title = title if i < 1 else f"{title} {T_('(continued)')}"
+                    title = title if i < 1 else _("{title} (continued)").format(title=title)
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -508,7 +508,7 @@ class RedHelpFormatter:
                 names.extend(list(v.name for v in v.values()))
 
             max_width = max(
-                discord.utils._string_width((name or T_("No Category:"))) for name in names
+                discord.utils._string_width((name or _("No Category:"))) for name in names
             )
 
             def width_maker(cmds):
@@ -522,7 +522,7 @@ class RedHelpFormatter:
 
             for cog_name, data in coms:
 
-                title = f"{cog_name}:" if cog_name else T_("No Category:")
+                title = f"{cog_name}:" if cog_name else _("No Category:")
                 to_join.append(title)
 
                 for name, doc, width in width_maker(sorted(data.items())):
@@ -579,7 +579,8 @@ class RedHelpFormatter:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
                 ret.set_author(
-                    name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+                    name=_("{ctx.me.display_name} 'Help Menu'").format(ctx=ctx),
+                    icon_url=ctx.me.avatar_url,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -587,11 +588,11 @@ class RedHelpFormatter:
             else:
                 await ctx.send(ret)
         elif help_settings.verify_exists:
-            ret = T_("Help topic for *{command_name}* not found.").format(command_name=help_for)
+            ret = _("Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
-                    name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+                    name=f"{ctx.me.display_name} {_('Help Menu')}", icon_url=ctx.me.avatar_url
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -603,13 +604,14 @@ class RedHelpFormatter:
         """
         Sends an error
         """
-        ret = T_("Command *{command_name}* has no subcommand named *{not_found}*.").format(
+        ret = _("Command *{command_name}* has no subcommand named *{not_found}*.").format(
             command_name=command.qualified_name, not_found=not_found[0]
         )
         if await ctx.embed_requested():
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
-                name=f"{ctx.me.display_name} {T_('Help Menu')}", icon_url=ctx.me.avatar_url
+                name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
+                icon_url=ctx.me.avatar_url,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
@@ -677,7 +679,7 @@ class RedHelpFormatter:
                         msg = await destination.send(page)
                 except discord.Forbidden:
                     return await ctx.send(
-                        T_(
+                        _(
                             "I couldn't send the help message to you in DM. "
                             "Either you blocked me or you disabled DMs in this server."
                         )
@@ -713,7 +715,7 @@ class RedHelpFormatter:
             menus.start_adding_reactions(m, c.keys())
 
 
-@commands.command(name="help", hidden=True, i18n=T_)
+@commands.command(name="help", hidden=True, i18n=_)
 async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
     """
     I need somebody
