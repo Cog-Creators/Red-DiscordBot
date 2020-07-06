@@ -11,7 +11,7 @@ from secrets import compare_digest
 try:
     # pylint: disable=import-error
     import aioredis
-    from .client_interface import Client, create_redis_pool
+    from .client_interface import Client, create_redis_pool, str_path
 except ImportError:
     aioredis = None
     Client = None
@@ -142,15 +142,23 @@ class RedisDriver(BaseDriver):
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
-        async with self._lock:
-            _cur_path = "."
-            await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
-            for i in full_identifiers:
-                if _cur_path.endswith("."):
-                    _cur_path += self._escape_key(i)
-                else:
-                    _cur_path += f".{self._escape_key(i)}"
+        full_identifiers_test = list(map(self._escape_key, full_identifiers))
+
+        try:
+            string = "."
+            string += ".".join([str_path(p) for p in full_identifiers_test])
+            result = await self._pool_pre_flight.jsonset(cog_name, path=string, obj={}, nx=True
+            )
+        except aioredis.errors.ReplyError:
+            async with self._lock:
+                _cur_path = "."
                 await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
+                for i in full_identifiers:
+                    if _cur_path.endswith("."):
+                        _cur_path += self._escape_key(i)
+                    else:
+                        _cur_path += f".{self._escape_key(i)}"
+                    await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None, **kwargs) -> Any:
