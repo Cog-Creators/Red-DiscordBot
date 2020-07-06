@@ -242,7 +242,7 @@ class Image(commands.Cog):
 
         message = _(
             "To get a GIPHY API Key:\n"
-            "1. Login to, or create, a GIPHY account.\n"
+            "1. Login to (or create) a GIPHY account.\n"
             "2. Visit this page: https://developers.giphy.com/dashboard.\n"
             "3. Press *Create an App*.\n"
             "4. Click *Select API*, then *Next Step*.\n"
