@@ -157,7 +157,7 @@ class CoreLogic:
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Interally reloads modules so that changes are detected"""
+        """Internally reloads modules so that changes are detected."""
         splitted = module_name.split(".")
 
         def maybe_reload(new_name):
@@ -301,7 +301,7 @@ class CoreLogic:
 
 @i18n.cog_i18n(_)
 class Core(commands.Cog, CoreLogic):
-    """Commands related to core functions"""
+    """Commands related to core functions."""
 
     @commands.command(hidden=True)
     async def ping(self, ctx: commands.Context):
@@ -310,7 +310,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about Red"""
+        """Shows info about Red."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -433,7 +433,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command()
     async def uptime(self, ctx: commands.Context):
-        """Shows [botname]'s uptime"""
+        """Shows [botname]'s uptime."""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         delta = datetime.datetime.utcnow() - self.bot.uptime
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second")
@@ -558,9 +558,9 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx: commands.Context, public: bool = False):
-        """Sends to the owner the last command exception that has occurred
+        """Sends to the owner the last command exception that has occurred.
 
-        If public (yes is specified), it will be sent to the chat instead"""
+        If public (yes is specified), it will be sent to the chat instead."""
         if not public:
             destination = ctx.author
         else:
@@ -575,7 +575,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
-        """Show's [botname]'s invite url"""
+        """Show's [botname]'s invite url."""
         try:
             await ctx.author.send(await self._invite_url())
         except discord.errors.Forbidden:
@@ -587,7 +587,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.group()
     @checks.is_owner()
     async def inviteset(self, ctx):
-        """Setup the bot's invite"""
+        """Setup the bot's invite."""
         pass
 
     @inviteset.command()
@@ -641,7 +641,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.guild_only()
     @checks.is_owner()
     async def leave(self, ctx: commands.Context):
-        """Leaves server"""
+        """Leaves the current server."""
         await ctx.send(_("Are you sure you want me to leave this server? (y/n)"))
 
         pred = MessagePredicate.yes_or_no(ctx)
@@ -661,7 +661,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx: commands.Context):
-        """Lists and allows to leave servers"""
+        """Lists and allows [botname] to leave servers."""
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
         responses = []
@@ -706,7 +706,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
-        """Loads packages"""
+        """Loads packages."""
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
@@ -797,7 +797,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
-        """Unloads packages"""
+        """Unloads packages."""
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
@@ -835,7 +835,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(name="reload")
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
-        """Reloads packages"""
+        """Reloads packages."""
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
@@ -915,7 +915,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(name="shutdown")
     @checks.is_owner()
     async def _shutdown(self, ctx: commands.Context, silently: bool = False):
-        """Shuts down the bot"""
+        """Shuts down the bot."""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         with contextlib.suppress(discord.HTTPException):
@@ -926,11 +926,11 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
-        """Attempts to restart Red
+        """Attempts to restart Red.
 
-        Makes Red quit with exit code 26
+        Makes Red quit with exit code 26.
         The restart is not guaranteed: it must be dealt
-        with by the process manager in use"""
+        with by the process manager in use."""
         with contextlib.suppress(discord.HTTPException):
             if not silently:
                 await ctx.send(_("Restarting..."))
@@ -938,7 +938,7 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
-        """Changes [botname]'s settings"""
+        """Changes [botname]'s settings."""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
                 guild_data = await ctx.bot._config.guild(ctx.guild).all()
@@ -1018,7 +1018,7 @@ class Core(commands.Cog, CoreLogic):
         Use without a description to reset.
         This is shown in a few locations, including the help menu.
 
-        The default is "Red V3"
+        The default is "Red V3".
         """
         if not description:
             await ctx.bot._config.description.clear()
@@ -1195,7 +1195,7 @@ class Core(commands.Cog, CoreLogic):
     @avatar.command(name="remove", aliases=["clear"])
     @checks.is_owner()
     async def avatar_remove(self, ctx: commands.Context):
-        """Removes [botname]'s avatar"""
+        """Removes [botname]'s avatar."""
         async with ctx.typing():
             await ctx.bot.user.edit(avatar=None)
         await ctx.send(_("Avatar removed."))
@@ -1204,7 +1204,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
-        """Sets [botname]'s playing status"""
+        """Sets [botname]'s playing status."""
 
         if game:
             if len(game) > 128:
@@ -1224,7 +1224,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx: commands.Context, *, listening: str = None):
-        """Sets [botname]'s listening status"""
+        """Sets [botname]'s listening status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -1243,7 +1243,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx: commands.Context, *, watching: str = None):
-        """Sets [botname]'s watching status"""
+        """Sets [botname]'s watching status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -1260,7 +1260,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx: commands.Context, *, status: str):
-        """Sets [botname]'s status
+        """Sets [botname]'s status.
 
         Available statuses:
             online
@@ -1289,7 +1289,8 @@ class Core(commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
-        """Sets [botname]'s streaming status
+        """Sets [botname]'s streaming status.
+
         Leaving both streamer and stream_title empty will clear it."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
@@ -1310,7 +1311,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(name="username", aliases=["name"])
     @checks.is_owner()
     async def _username(self, ctx: commands.Context, *, username: str):
-        """Sets [botname]'s username"""
+        """Sets [botname]'s username."""
         try:
             await self._name(name=username)
         except discord.HTTPException:
@@ -1329,7 +1330,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin()
     @commands.guild_only()
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
-        """Sets [botname]'s nickname"""
+        """Sets [botname]'s nickname."""
         try:
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
@@ -1340,7 +1341,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command(aliases=["prefixes"])
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets [botname]'s global prefix(es)"""
+        """Sets [botname]'s global prefix(es)."""
         if not prefixes:
             await ctx.send_help()
             return
@@ -1351,7 +1352,7 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin()
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets [botname]'s server prefix(es)"""
+        """Sets [botname]'s server prefix(es)."""
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
@@ -1428,7 +1429,7 @@ class Core(commands.Cog, CoreLogic):
     @_set.command()
     @checks.is_owner()
     async def custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of [p]info
+        """Customizes a section of `[p]info`.
 
         The maximum amount of allowed characters is 1024.
         Supports markdown, links and "mentions".
@@ -1473,7 +1474,7 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="usemenus")
     async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
         """
-        Allows the help command to be sent as a paginated menu instead of seperate
+        Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
         This defaults to False.
@@ -1490,7 +1491,7 @@ class Core(commands.Cog, CoreLogic):
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
         """
-        This allows the help command to show hidden commands
+        This allows the help command to show hidden commands.
 
         This defaults to False.
         Using this without a setting will toggle.
@@ -1507,7 +1508,7 @@ class Core(commands.Cog, CoreLogic):
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
         Sets if commands which can't be run in the current context should be
-        filtered from help
+        filtered from help.
 
         Defaults to True.
         Using this without a setting will toggle.
@@ -1795,7 +1796,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.command(hidden=True)
     @checks.is_owner()
     async def debuginfo(self, ctx: commands.Context):
-        """Shows debug information useful for debugging.."""
+        """Shows debug information useful for debugging."""
 
         if sys.platform == "linux":
             import distro  # pylint: disable=import-error
@@ -2357,16 +2358,15 @@ class Core(commands.Cog, CoreLogic):
     @commands.group(name="autoimmune")
     async def autoimmune_group(self, ctx: commands.Context):
         """
-        Server settings for immunity from automated actions
+        Server settings for immunity from automated actions.
         """
         pass
 
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):
         """
-        Get's the current members and roles
-
-        configured for automatic moderation action immunity
+        Gets the current members and roles configured for automatic
+        moderation action immunity.
         """
         ai_ids = await ctx.bot._config.guild(ctx.guild).autoimmune_ids()
 
@@ -2394,7 +2394,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or roles immune from automated moderation actions
+        Makes a user or role immune from automated moderation actions.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id in ai_ids:
@@ -2407,7 +2407,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or roles immune from automated moderation actions
+        Makes a user or role immune from automated moderation actions.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id not in ai_ids:
@@ -2420,7 +2420,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Checks if a user or role would be considered immune from automated actions
+        Checks if a user or role would be considered immune from automated actions.
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
@@ -2439,7 +2439,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optin(self, ctx: commands.Context):
         """
-        Opt-in on recieving owner notifications.
+        Opt-in on receiving owner notifications.
 
         This is the default state.
         """
@@ -2452,7 +2452,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def optout(self, ctx: commands.Context):
         """
-        Opt-out of recieving owner notifications.
+        Opt-out of receiving owner notifications.
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
@@ -2465,7 +2465,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Adds a destination text channel to recieve owner notifications
+        Adds a destination text channel to receive owner notifications.
         """
 
         try:
@@ -2484,7 +2484,7 @@ class Core(commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
     ):
         """
-        Removes a destination text channel from recieving owner notifications.
+        Removes a destination text channel from receiving owner notifications.
         """
 
         try:
@@ -2501,7 +2501,7 @@ class Core(commands.Cog, CoreLogic):
     @ownernotifications.command()
     async def listdestinations(self, ctx: commands.Context):
         """
-        Lists the configured extra destinations for owner notifications
+        Lists the configured extra destinations for owner notifications.
         """
 
         channel_ids = await ctx.bot._config.extra_owner_destinations()
@@ -2654,7 +2654,7 @@ class Core(commands.Cog, CoreLogic):
 )
 async def license_info_command(ctx):
     """
-    Get info about Red's licenses
+    Get info about Red's licenses.
     """
 
     message = (
