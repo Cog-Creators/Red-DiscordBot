@@ -126,3 +126,6 @@ Red is named after the main character of "Transistor", a video game by
 
 Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art for the Red Discord
 Bot Project.
+
+This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package  made by Danny Y. (Rapptz) which is distributed under MIT License.
+Copy of this license can be found in [LICENSE](redbot/vendored/LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.

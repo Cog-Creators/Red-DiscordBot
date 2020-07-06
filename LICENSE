@@ -700,3 +700,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+This project vendors discord.ext.menus package (https://github.com/Rapptz/discord-ext-menus) made by Danny Y. (Rapptz) which is distributed under MIT License.
+Copy of this license can be found in LICENSE file in redbot/vendored folder of this repository.
