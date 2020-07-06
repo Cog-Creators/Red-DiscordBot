@@ -18,9 +18,9 @@ except ImportError:
 
 try:
     # pylint: disable=import-error
-    import ujson
+    import ujson as json
 except ImportError:
-    import json as ujson
+    import json
 
 from ..base import BaseDriver, IdentifierData, ConfigCategory
 from ...errors import StoredTypeError
@@ -34,10 +34,7 @@ class RedisDriver(BaseDriver):
     _pool_set: Optional["Client"] = None
     _pool_get: Optional["Client"] = None
     _pool_pre_flight: Optional["Client"] = None
-
     _lock: Optional["asyncio.Lock"] = None
-    _save_task: Optional["asyncio.Task"] = None
-    _backup_task: Optional["asyncio.Task"] = None
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
@@ -63,8 +60,6 @@ class RedisDriver(BaseDriver):
             address=address, db=database, password=password, encoding="utf-8", maxsize=50,
         )
         cls._lock = asyncio.Lock()
-        # cls._save_task = asyncio.create_task(cls._save_periodically())
-        # cls._backup_task = asyncio.create_task(cls._backup_periodically())
 
     @classmethod
     async def teardown(cls) -> None:
@@ -146,7 +141,7 @@ class RedisDriver(BaseDriver):
 
     async def _pre_flight(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+        cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         async with self._lock:
             _cur_path = "."
             await self._pool_pre_flight.jsonset(cog_name, path=_cur_path, obj={}, nx=True)
@@ -169,7 +164,7 @@ class RedisDriver(BaseDriver):
 
     async def get(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+        cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         full_identifiers = list(map(self._escape_key, full_identifiers))
         if not await self._pool.exists(cog_name):
             raise KeyError
@@ -180,7 +175,7 @@ class RedisDriver(BaseDriver):
         except aioredis.errors.ReplyError:
             raise KeyError
         if isinstance(result, str):
-            result = ujson.loads(result)
+            result = json.loads(result)
         if isinstance(result, dict):
             if result == {}:
                 raise KeyError
@@ -190,10 +185,10 @@ class RedisDriver(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
             _full_identifiers = identifier_data.to_tuple()
-            cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+            cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
             identifier_string = "."
             identifier_string += ".".join(map(self._escape_key, full_identifiers))
-            value_copy = ujson.loads(ujson.dumps(value))
+            value_copy = json.loads(json.dumps(value))
             if isinstance(value_copy, dict):
                 value_copy = self._escape_dict_keys(value_copy)
             await self._pre_flight(identifier_data)
@@ -210,7 +205,7 @@ class RedisDriver(BaseDriver):
 
     async def clear(self, identifier_data: IdentifierData):
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+        cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         identifier_string = "."
         identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
@@ -226,7 +221,7 @@ class RedisDriver(BaseDriver):
         default: Union[int, float] = 0,
     ) -> Union[int, float]:
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+        cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         identifier_string = "."
         identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
@@ -256,13 +251,13 @@ class RedisDriver(BaseDriver):
                     number=value,
                     method=self._pool.jsonnumincrby,
                 )
-                return ujson.loads(applying)
+                return json.loads(applying)
 
     async def toggle(
         self, identifier_data: IdentifierData, value: bool = None, default: Optional[bool] = None
     ) -> bool:
         _full_identifiers = identifier_data.to_tuple()
-        cog_name, full_identifiers = _full_identifiers[0], _full_identifiers[1:]
+        cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         identifier_string = "."
         identifier_string += ".".join(map(self._escape_key, full_identifiers))
         await self._pre_flight(identifier_data)
@@ -285,7 +280,7 @@ class RedisDriver(BaseDriver):
                 result = await self._execute(
                     cog_name, path=identifier_string, method=self._pool_get.jsonget, no_escape=True
                 )
-                result = not ujson.loads(result)
+                result = not json.loads(result)
                 await self._execute(
                     cog_name, path=identifier_string, obj=result, method=self._pool_set.jsonset,
                 )
