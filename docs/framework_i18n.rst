@@ -40,6 +40,7 @@ To generate the :code:`messages.pot` file, you will now need to run
 :code:`python -m redgettext -c [path_to_cog]`
 This file will contain all strings to be translated, including
 docstrings.
+(For advanced usage check :code:`python -m redgettext -h`)
 
 You can now use a tool like `poedit
 <https://poedit.net/>`_ to translate the strings in your messages.pot file.
