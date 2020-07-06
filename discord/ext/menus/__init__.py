@@ -324,7 +324,7 @@ class Menu(metaclass=_MenuMeta):
         self.clear_reactions_after = clear_reactions_after
         self.check_embeds = check_embeds
         self._can_remove_reactions = False
-        self.__task = None
+        self.__tasks = []
         self._running = True
         self.message = message
         self.ctx = None
@@ -390,7 +390,7 @@ class Menu(metaclass=_MenuMeta):
         self._buttons[button.emoji] = button
 
         if react:
-            if self.__task is not None:
+            if self.__tasks:
                 async def wrapped():
                     # Add the reaction
                     try:
@@ -438,7 +438,7 @@ class Menu(metaclass=_MenuMeta):
         self._buttons.pop(emoji, None)
 
         if react:
-            if self.__task is not None:
+            if self.__tasks:
                 async def wrapped():
                     # Remove the reaction from being processable
                     # Removing it from the cache first makes it so the check
@@ -478,7 +478,7 @@ class Menu(metaclass=_MenuMeta):
         self._buttons.clear()
 
         if react:
-            if self.__task is not None:
+            if self.__tasks:
                 async def wrapped():
                     # A fast path if we have permissions
                     if self._can_remove_reactions:
@@ -686,14 +686,17 @@ class Menu(metaclass=_MenuMeta):
 
         if self.should_add_reactions():
             # Start the task first so we can listen to reactions before doing anything
-            if self.__task is not None:
-                self.__task.cancel()
+            for task in self.__tasks:
+                task.cancel()
+            self.__tasks.clear()
 
             self._running = True
-            self.__task = bot.loop.create_task(self._internal_loop())
+            self.__tasks.append(bot.loop.create_task(self._internal_loop()))
 
-            for emoji in self.buttons:
-                await msg.add_reaction(emoji)
+            async def add_reactions_task():
+                for emoji in self.buttons:
+                    await msg.add_reaction(emoji)
+            self.__tasks.append(bot.loop.create_task(add_reactions_task()))
 
             if wait:
                 await self._event.wait()
@@ -735,9 +738,9 @@ class Menu(metaclass=_MenuMeta):
     def stop(self):
         """Stops the internal loop."""
         self._running = False
-        if self.__task is not None:
-            self.__task.cancel()
-            self.__task = None
+        for task in self.__tasks:
+            task.cancel()
+        self.__tasks.clear()
 
 class PageSource:
     """An interface representing a menu page's data source for the actual menu page.
