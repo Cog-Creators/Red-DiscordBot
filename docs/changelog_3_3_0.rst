@@ -32,6 +32,11 @@ Filter
 
 - Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
 
+Image
+*****
+
+- Updated instructions for obtaining and setting the GIPHY API key (:issue:`3994`)
+
 Mod
 ***
 
