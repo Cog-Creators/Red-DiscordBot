@@ -1,8 +1,8 @@
 try:
     # pylint: disable=import-error
-    import ujson
+    import ujson as json
 except ImportError:
-    import json as ujson
+    import json
 
 from aioredis import Redis, create_pool
 from aioredis.commands import Pipeline
@@ -85,7 +85,7 @@ class Client(Redis):
         ``nx`` if set to True, set ``value`` only if it does not exist
         ``xx`` if set to True, set ``value`` only if it exists
         """
-        pieces = [name, str_path(path), ujson.dumps(obj)]
+        pieces = [name, str_path(path), json.dumps(obj)]
 
         # Handle existential modifiers
         if nx and xx:
@@ -109,21 +109,21 @@ class Client(Redis):
         Increments the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` by the provided ``number``
         """
-        return await self.execute(b"JSON.NUMINCRBY", name, str_path(path), ujson.dumps(number))
+        return await self.execute(b"JSON.NUMINCRBY", name, str_path(path), json.dumps(number))
 
     async def jsonnummultby(self, name, path, number):
         """
         Multiplies the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` with the provided ``number``
         """
-        return await self.execute(b"JSON.NUMMULTBY", name, str_path(path), ujson.dumps(number))
+        return await self.execute(b"JSON.NUMMULTBY", name, str_path(path), json.dumps(number))
 
     async def jsonstrappend(self, name, string, path=Path.rootPath()):
         """
         Appends to the string JSON value under ``path`` at key ``name`` the
         provided ``string``
         """
-        return await self.execute(b"JSON.STRAPPEND", name, str_path(path), ujson.dumps(string))
+        return await self.execute(b"JSON.STRAPPEND", name, str_path(path), json.dumps(string))
 
     async def jsonstrlen(self, name, path=Path.rootPath()):
         """
@@ -139,7 +139,7 @@ class Client(Redis):
         """
         pieces = [name, str_path(path)]
         for o in args:
-            pieces.append(ujson.dumps(o))
+            pieces.append(json.dumps(o))
         return await self.execute(b"JSON.ARRAPPEND", *pieces)
 
     async def jsonarrindex(self, name, path, scalar, start=0, stop=-1):
@@ -149,7 +149,7 @@ class Client(Redis):
         ``start`` and exclusive ``stop`` indices.
         """
         return await self.execute(
-            b"JSON.ARRINDEX", name, str_path(path), ujson.dumps(scalar), start, stop
+            b"JSON.ARRINDEX", name, str_path(path), json.dumps(scalar), start, stop
         )
 
     async def jsonarrinsert(self, name, path, index, *args):
@@ -159,7 +159,7 @@ class Client(Redis):
         """
         pieces = [name, str_path(path), index]
         for o in args:
-            pieces.append(ujson.dumps(o))
+            pieces.append(json.dumps(o))
         return await self.execute(b"JSON.ARRINSERT", *pieces)
 
     async def jsonarrlen(self, name, path=Path.rootPath()):
