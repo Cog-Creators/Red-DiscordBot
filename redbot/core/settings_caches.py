@@ -155,19 +155,18 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = await self._config.whitelist()
-            async with self._config.whitelist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id not in self._cached_whitelist[gid]:
-                        self._cached_whitelist[gid].append(obj_id)
-                        curr_list.append(obj_id)
+            for obj_id in role_or_user:
+                if obj_id not in self._cached_whitelist[gid]:
+                    self._cached_whitelist[gid].append(obj_id)
+            await self._config.whitelist.set(self._cached_whitelist[gid])
+
         else:
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
-            async with self._config.guild_from_id(gid).whitelist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id not in self._cached_whitelist[gid]:
-                        self._cached_whitelist[gid].append(obj_id)
-                        curr_list.append(obj_id)
+            for obj_id in role_or_user:
+                if obj_id not in self._cached_whitelist[gid]:
+                    self._cached_whitelist[gid].append(obj_id)
+            await self._config.guild_from_id(gid).whitelist.set(self._cached_whitelist[gid])
 
     async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
         gid: Optional[int] = guild.id if guild else None
@@ -191,16 +190,15 @@ class WhitelistBlacklistManager:
             for obj_id in role_or_user:
                 if obj_id in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].remove(obj_id)
-                    async with self._config.whitelist() as curr_list:
-                        curr_list.remove(obj_id)
+            await self._config.whitelist.set(self._cached_whitelist[gid])
+
         else:
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
-            async with self._config.guild_from_id(gid).whitelist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id in self._cached_whitelist[gid]:
-                        self._cached_whitelist[gid].remove(obj_id)
-                        curr_list.remove(obj_id)
+            for obj_id in role_or_user:
+                if obj_id in self._cached_whitelist[gid]:
+                    self._cached_whitelist[gid].remove(obj_id)
+            await self._config.guild_from_id(gid).whitelist.set(self._cached_whitelist[gid])
 
     async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> List[int]:
         ret: List[int]
@@ -231,19 +229,17 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.blacklist()
-            async with self._config.blacklist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id not in self._cached_blacklist[gid]:
-                        self._cached_blacklist[gid].append(obj_id)
-                        curr_list.append(obj_id)
+            for obj_id in role_or_user:
+                if obj_id not in self._cached_blacklist[gid]:
+                    self._cached_blacklist[gid].append(obj_id)
+            await self._config.blacklist.set(self._cached_blacklist[gid])
         else:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
-            async with self._config.guild_from_id(gid).blacklist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id not in self._cached_blacklist[gid]:
-                        self._cached_blacklist[gid].append(obj_id)
-                        curr_list.append(obj_id)
+            for obj_id in role_or_user:
+                if obj_id not in self._cached_blacklist[gid]:
+                    self._cached_blacklist[gid].append(obj_id)
+            await self._config.guild_from_id(gid).blacklist.set(self._cached_blacklist[gid])
 
     async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
         gid: Optional[int] = guild.id if guild else None
@@ -263,16 +259,14 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.blacklist()
-            async with self._config.blacklist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id in self._cached_blacklist[gid]:
-                        self._cached_blacklist[gid].remove(obj_id)
-                        curr_list.remove(obj_id)
+            for obj_id in role_or_user:
+                if obj_id in self._cached_blacklist[gid]:
+                    self._cached_blacklist[gid].remove(obj_id)
+            await self._config.blacklist.set(self._cached_blacklist[gid])
         else:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
-            async with self._config.guild_from_id(gid).blacklist() as curr_list:
-                for obj_id in role_or_user:
-                    if obj_id in self._cached_blacklist[gid]:
-                        self._cached_blacklist[gid].remove(obj_id)
-                        curr_list.remove(obj_id)
+            for obj_id in role_or_user:
+                if obj_id in self._cached_blacklist[gid]:
+                    self._cached_blacklist[gid].remove(obj_id)
+            await self._config.guild_from_id(gid).blacklist.set(self._cached_blacklist[gid])
