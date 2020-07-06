@@ -14,6 +14,6 @@
         | buck-out
         | build
         | dist
-        | redbot/vendored
+        | redbot\/vendored
     )/
     '''
