@@ -15,8 +15,8 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import NoReturn
 
+import appdirs
 import discord
 
 # Set the event loop policies here so any subsequent `new_event_loop()`
@@ -29,7 +29,7 @@ _update_event_loop_policy()
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.setup import get_data_dir, get_name, save_config
+from redbot.setup import get_data_dir, get_name, save_config, load_existing_config
 from redbot.core import data_manager, drivers
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -316,6 +316,24 @@ def handle_edit(cli_flags: Namespace):
         sys.exit(0)
 
 
+def make_instance(cli_flags: Namespace):
+    appdir = appdirs.AppDirs("Red-DiscordBot")
+    data_path = Path(appdir.user_data_dir) / "data" / cli_flags.instance_name
+    data_path.mkdir(parents=True, exist_ok=True)
+    default_dirs = deepcopy(data_manager.basic_config_default)
+    default_dirs["DATA_PATH"] = str(data_path.resolve())
+    default_dirs["STORAGE_TYPE"] = drivers.BackendType.JSON.value
+    driver_cls = drivers.get_driver_class(drivers.BackendType.JSON)
+    default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
+
+    existing = load_existing_config() or {}
+    if cli_flags.instance_name in existing:
+        print("Instance already exists. (Exiting with nothing to do)")
+    else:
+        save_config(cli_flags.instance_name, default_dirs)
+        print("Created instance.")
+
+
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
     """
     This runs the bot.
@@ -470,6 +488,9 @@ def main():
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
         handle_edit(cli_flags)
+        return
+    if cli_flags.make_instance:
+        make_instance(cli_flags)
         return
     try:
         loop = asyncio.new_event_loop()

@@ -237,6 +237,11 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--no-message-cache", action="store_true", help="Disable the internal message cache.",
     )
+    parser.add_argument(
+        "--make-instance",
+        action="store_true",
+        help="make an instance with the provided instance name and the default paths",
+    )
 
     args = parser.parse_args(args)
 
