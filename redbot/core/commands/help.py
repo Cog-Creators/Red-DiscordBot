@@ -579,7 +579,7 @@ class RedHelpFormatter:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
                 ret.set_author(
-                    name=_("{ctx.me.display_name} 'Help Menu'").format(ctx=ctx),
+                    name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.avatar_url,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
