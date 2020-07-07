@@ -33,7 +33,7 @@ Tutorial
 
 After making your cog, generate a :code:`messages.pot` file
 
-We recommend using redgettext a modified version of pygettext for Red.
+We recommend using redgettext - a modified version of pygettext for Red.
 You can install redgettext by running :code:`pip install redgettext` in a command prompt.
 
 To generate the :code:`messages.pot` file, you will now need to run
