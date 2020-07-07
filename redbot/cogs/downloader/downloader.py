@@ -29,7 +29,7 @@ _ = Translator("Downloader", __file__)
 
 DEPRECATION_NOTICE = _(
     "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in Red 3.4: {repo_list}.\n"
+    " which are marked for removal in the future: {repo_list}.\n"
     " You should inform maintainers of these repos about this message."
 )
 
@@ -245,7 +245,6 @@ class Downloader(commands.Cog):
                     installed[module._json_repo_name].pop(module.name)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
-        # remove in Red 3.4
         is_installed, cog = await self.is_installed(cog_name)
         # it's not gonna be None when `is_installed` is True
         # if we'll use typing_extensions in future, `Literal` can solve this

@@ -107,7 +107,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:87
 msgid "Not enough options to pick from."
-msgstr "Seçim yapmak için yeterli seçenekleri."
+msgstr "Seçim için yeterli seçenek yok."
 
 #: redbot/cogs/general/general.py:93
 #, docstring
@@ -146,7 +146,7 @@ msgstr "KUYRUKLARI! *"
 #: redbot/cogs/general/general.py:141
 #, docstring
 msgid "Play Rock Paper Scissors."
-msgstr "Rock Paper Scissors oynamak."
+msgstr "Taş Kağıt Makas oyna."
 
 #: redbot/cogs/general/general.py:146
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
@@ -154,11 +154,11 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:167
 msgid "{choice} You win {author.mention}!"
-msgstr "{choice} {author.mention} kazanın!"
+msgstr "{choice} {author.mention} kazandın!"
 
 #: redbot/cogs/general/general.py:173
 msgid "{choice} You lose {author.mention}!"
-msgstr "{choice} {author.mention} kaybedersin!"
+msgstr "{choice} {author.mention} kaybettin!"
 
 #: redbot/cogs/general/general.py:179
 msgid "{choice} We're square {author.mention}!"
@@ -239,7 +239,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:302
 msgid "Humans: "
-msgstr ""
+msgstr "İnsanlar: "
 
 #: redbot/cogs/general/general.py:303
 msgid " • Bots: "
@@ -343,35 +343,35 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:355
 msgid "0 - None"
-msgstr ""
+msgstr "0 - Yok"
 
 #: redbot/cogs/general/general.py:356
 msgid "1 - Low"
-msgstr ""
+msgstr "1 - Düşük"
 
 #: redbot/cogs/general/general.py:357
 msgid "2 - Medium"
-msgstr ""
+msgstr "2 - Orta"
 
 #: redbot/cogs/general/general.py:358
 msgid "3 - High"
-msgstr ""
+msgstr "3 - Yüksek"
 
 #: redbot/cogs/general/general.py:359
 msgid "4 - Extreme"
-msgstr ""
+msgstr "4 - Çok Yüksek"
 
 #: redbot/cogs/general/general.py:363
 msgid "Partnered"
-msgstr ""
+msgstr "Ortak"
 
 #: redbot/cogs/general/general.py:364
 msgid "Verified"
-msgstr ""
+msgstr "Doğrulanmış"
 
 #: redbot/cogs/general/general.py:365
 msgid "Server Discovery"
-msgstr ""
+msgstr "Sunucu Keşfi"
 
 #: redbot/cogs/general/general.py:366
 msgid "Featurable"
@@ -379,15 +379,15 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:367
 msgid "Public"
-msgstr ""
+msgstr "Herkese Açık"
 
 #: redbot/cogs/general/general.py:368
 msgid "Public disabled"
-msgstr ""
+msgstr "Özel"
 
 #: redbot/cogs/general/general.py:369
 msgid "Splash Invite"
-msgstr ""
+msgstr "Sunucu Davet Ekranı"
 
 #: redbot/cogs/general/general.py:370
 msgid "VIP Voice Servers"
@@ -439,48 +439,48 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:414
 msgid "Utility:"
-msgstr ""
+msgstr "Sunucu bilgileri:"
 
 #: redbot/cogs/general/general.py:415
 msgid "Owner: {owner}\\nVoice region: {region}\\nVerif. level: {verif}\\nServer ID: {id}{shard_info}"
-msgstr ""
+msgstr "Kurucu: {owner}\\nSes Sunucusu: {region}\\nDğrlnma Seviyesi: {verif}\\nSunucu ID: {id}{shard_info}"
 
 #: redbot/cogs/general/general.py:427
 msgid "Misc:"
-msgstr ""
+msgstr "Diğer:"
 
 #: redbot/cogs/general/general.py:428
 msgid "AFK channel: {afk_chan}\\nAFK timeout: {afk_timeout}\\nCustom emojis: {emoji_count}\\nRoles: {role_count}"
-msgstr ""
+msgstr "AFK kanalı: {afk_chan}\\nAFK zamanı: {afk_timeout}\\nÖzel emojiler: {emoji_count}\\nRoller: {role_count}"
 
 #: redbot/cogs/general/general.py:433
 msgid "Not set"
-msgstr ""
+msgstr "Ayarlı değil"
 
 #: redbot/cogs/general/general.py:441
 msgid "Server features:"
-msgstr ""
+msgstr "Sunucu Özellikleri:"
 
 #: redbot/cogs/general/general.py:443
 msgid "Tier {boostlevel} with {nitroboosters} boosters\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "Seviye {boostlevel} boost ile {nitroboosters} kişi var.\\nDosya yükleme limiti: {filelimit}\\nEmoji limiti: {emojis_limit}\\nKonuşma kanalı kalitesi: {bitrate}"
 
 #: redbot/cogs/general/general.py:455
 msgid "Nitro Boost:"
-msgstr ""
+msgstr "Nitro Boost:"
 
 #: redbot/cogs/general/general.py:464
 #, docstring
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
-msgstr ""
+msgstr "Urban sözlük arama.\\n\\n        Bu resmi olmayan Urban Sözlük API kullanır.\\n        "
 
 #: redbot/cogs/general/general.py:480 redbot/cogs/general/general.py:546
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
-msgstr ""
+msgstr "Hiç bir Urban Sözlük bulunamadı ya da işlem gerçekleşirken bir hata oluştu."
 
 #: redbot/cogs/general/general.py:486
 msgid "No Urban Dictionary entries were found."
-msgstr ""
+msgstr "Hiç bir Urban sözlük bulunamadı."
 
 #: redbot/cogs/general/general.py:492
 msgid "{word} by {author}"
@@ -488,7 +488,7 @@ msgstr "{word} {author}"
 
 #: redbot/cogs/general/general.py:497
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Örneğin:** {example}"
 
 #: redbot/cogs/general/general.py:503
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -496,9 +496,9 @@ msgstr "aşağı {thumbs_down} / {thumbs_up}, Kentsel Sözlük tarafından deste
 
 #: redbot/cogs/general/general.py:522
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Urban sözlük tarafından ayarlandı."
 
 #: redbot/cogs/general/general.py:528
 msgid "{definition}\\n\\n**Example:** {example}"
-msgstr ""
+msgstr "{definition}\\n\\n**Örneğin:** {example}"
 
