@@ -2014,7 +2014,8 @@ class Core(commands.Cog, CoreLogic):
         except RuntimeError:
             await ctx.send(
                 _(
-                    "Please clear the local blacklist with `{prefix}localblacklist clear` before adding a user to the whitelist"
+                    "Users cannot be in the local whitelist when the local blacklist is not empty.  "
+                    "Please clear the local blacklist with `{prefix}localblacklist clear` if you wish to add a user to the local whitelist."
                 ).format(prefix=ctx.prefix)
             )
             return
@@ -2105,7 +2106,8 @@ class Core(commands.Cog, CoreLogic):
         except RuntimeError:
             await ctx.send(
                 _(
-                    "Please clear the local whitelist with `{prefix}localwhitelist clear` before adding a user to the blacklist"
+                    "Users cannot be in the local blacklist when the local whitelist is not empty.  "
+                    "Please clear the local whitelist with `{prefix}localwhitelist clear` if you wish to add a user to the local blacklist."
                 ).format(prefix=ctx.prefix)
             )
             return

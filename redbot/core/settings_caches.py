@@ -164,7 +164,7 @@ class WhitelistBlacklistManager:
             blacklist = await self.get_blacklist(guild)
             if blacklist:
                 raise RuntimeError(
-                    "The local blacklist must be cleared before adding to the local whitelist"
+                    "Users cannot be in the local whitelist when the local blacklist is not empty"
                 )
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
@@ -245,7 +245,7 @@ class WhitelistBlacklistManager:
             whitelist = await self.get_whitelist(guild)
             if whitelist:
                 raise RuntimeError(
-                    "The local whitelist must be cleared before adding to the local blacklist"
+                    "Users cannot be in the local blacklist when the local whitelist is not empty"
                 )
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
