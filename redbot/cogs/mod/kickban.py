@@ -7,7 +7,7 @@ from typing import Optional, Union
 import discord
 from redbot.core import commands, i18n, checks, modlog
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
+from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -292,7 +292,7 @@ class KickBanMixin(MixinMeta):
         using this command"""
         banned = []
         errors = {}
-        upgrades = {}
+        upgrades = []
 
         async def show_results():
             text = _("Banned {num} users from the server.").format(
@@ -305,7 +305,7 @@ class KickBanMixin(MixinMeta):
                 text += _(
                     "\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\n"
                 )
-                text += "\n".join(upgrades.values())
+                text += humanize_list(upgrades)
 
             for p in pagify(text):
                 await ctx.send(p)
@@ -388,7 +388,7 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
-                    upgrades[user_id] = str(user_id)
+                    upgrades.append(str(user_id))
                     log.info(
                         "{}({}) upgraded the tempban for {} to a permaban.".format(
                             author.name, author.id, user_id
