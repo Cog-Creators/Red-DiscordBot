@@ -292,6 +292,7 @@ class KickBanMixin(MixinMeta):
         using this command"""
         banned = []
         errors = {}
+        upgrades = {}
 
         async def show_results():
             text = _("Banned {num} users from the server.").format(
@@ -300,6 +301,11 @@ class KickBanMixin(MixinMeta):
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
+            if upgrades:
+                text += _(
+                    "\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\n"
+                )
+                text += "\n".join(upgrades.values())
 
             for p in pagify(text):
                 await ctx.send(p)
@@ -382,9 +388,7 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
-                    errors[user_id] = _("Upgraded tempban for {user_id} to a permaban.").format(
-                        user_id=user_id
-                    )
+                    upgrades[user_id] = str(user_id)
                     log.info(
                         "{}({}) upgraded the tempban for {} to a permaban.".format(
                             author.name, author.id, user_id
