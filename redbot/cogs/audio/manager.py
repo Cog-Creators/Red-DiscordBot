@@ -50,7 +50,7 @@ class ServerManager:
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
-    _blacklisted_archs: List[str] = []
+    _denylisted_archs: List[str] = []
 
     _lavaplayer: ClassVar[Optional[str]] = None
     _lavalink_build: ClassVar[Optional[int]] = None
@@ -87,7 +87,7 @@ class ServerManager:
 
     async def start(self) -> None:
         arch_name = platform.machine()
-        if arch_name in self._blacklisted_archs:
+        if arch_name in self._denylisted_archs:
             raise asyncio.CancelledError(
                 "You are attempting to run Lavalink audio on an unsupported machine architecture."
             )

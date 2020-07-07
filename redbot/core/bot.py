@@ -40,7 +40,7 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
+from .settings_caches import PrefixManager, IgnoreManager, AllowlistDenylistManager
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -88,8 +88,8 @@ class RedBase(
             prefix=[],
             packages=[],
             owner=None,
-            whitelist=[],
-            blacklist=[],
+            allowlist=[],
+            denylist=[],
             locale="en-US",
             regional_format=None,
             embeds=True,
@@ -119,8 +119,8 @@ class RedBase(
 
         self._config.register_guild(
             prefix=[],
-            whitelist=[],
-            blacklist=[],
+            allowlist=[],
+            denylist=[],
             admin_role=[],
             mod_role=[],
             embeds=None,
@@ -142,7 +142,7 @@ class RedBase(
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._ignored_cache = IgnoreManager(self._config)
-        self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+        self._whitedenylist_cache = AllowlistDenylistManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -301,7 +301,7 @@ class RedBase(
     def max_messages(self) -> Optional[int]:
         return self._max_messages
 
-    async def allowed_by_whitelist_blacklist(
+    async def allowed_by_allowlist_denylist(
         self,
         who: Optional[Union[discord.Member, discord.User]] = None,
         *,
@@ -311,7 +311,7 @@ class RedBase(
     ) -> bool:
         """
         This checks if a user or member is allowed to run things,
-        as considered by Red's whitelist and blacklist.
+        as considered by Red's allowlist and denylist.
 
         If given a user object, this function will check the global lists
 
@@ -370,14 +370,14 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
-        if global_whitelist:
-            if who.id not in global_whitelist:
+        global_allowlist = await self._whitedenylist_cache.get_allowlist()
+        if global_allowlist:
+            if who.id not in global_allowlist:
                 return False
         else:
-            # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
-            if who.id in global_blacklist:
+            # denylist is only used when allowlist doesn't exist.
+            global_denylist = await self._whitedenylist_cache.get_denylist()
+            if who.id in global_denylist:
                 return False
 
         if guild:
@@ -392,16 +392,16 @@ class RedBase(
                 # DEP-WARN
                 # This uses member._roles (getattr is for the user case)
                 # If this is removed upstream (undocumented)
-                # there is a silent failure potential, and role blacklist/whitelists will break.
+                # there is a silent failure potential, and role denylist/allowlists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
-            if guild_whitelist:
-                if ids.isdisjoint(guild_whitelist):
+            guild_allowlist = await self._whitedenylist_cache.get_allowlist(guild)
+            if guild_allowlist:
+                if ids.isdisjoint(guild_allowlist):
                     return False
             else:
-                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
-                if not ids.isdisjoint(guild_blacklist):
+                guild_denylist = await self._whitedenylist_cache.get_denylist(guild)
+                if not ids.isdisjoint(guild_denylist):
                     return False
 
         return True
@@ -409,7 +409,7 @@ class RedBase(
     async def ignored_channel_or_guild(self, ctx: commands.Context) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
-        as considered by Red's whitelist and blacklist.
+        as considered by Red's allowlist and denylist.
 
         Parameters
         ----------

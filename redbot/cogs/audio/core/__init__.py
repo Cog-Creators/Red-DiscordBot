@@ -74,8 +74,8 @@ class Audio(
             use_external_lavalink=False,
             restrict=True,
             localpath=str(cog_data_path(raw_name="Audio")),
-            url_keyword_blacklist=[],
-            url_keyword_whitelist=[],
+            url_keyword_denylist=[],
+            url_keyword_allowlist=[],
             **self._default_lavalink_settings,
         )
 
@@ -103,8 +103,8 @@ class Audio(
             vote_enabled=False,
             vote_percent=0,
             room_lock=None,
-            url_keyword_blacklist=[],
-            url_keyword_whitelist=[],
+            url_keyword_denylist=[],
+            url_keyword_allowlist=[],
             country_code="US",
         )
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])

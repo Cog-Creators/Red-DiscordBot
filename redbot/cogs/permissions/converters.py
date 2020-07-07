@@ -153,9 +153,9 @@ class CogOrCommand(NamedTuple):
 
 
 def RuleType(arg: str) -> bool:
-    if arg.lower() in ("allow", "whitelist", "allowed"):
+    if arg.lower() in ("allow", "allowlist", "allowed"):
         return True
-    if arg.lower() in ("deny", "blacklist", "denied"):
+    if arg.lower() in ("deny", "denylist", "denied"):
         return False
 
     raise commands.BadArgument(
@@ -164,9 +164,9 @@ def RuleType(arg: str) -> bool:
 
 
 def ClearableRuleType(arg: str) -> Optional[bool]:
-    if arg.lower() in ("allow", "whitelist", "allowed"):
+    if arg.lower() in ("allow", "allowlist", "allowed"):
         return True
-    if arg.lower() in ("deny", "blacklist", "denied"):
+    if arg.lower() in ("deny", "denylist", "denied"):
         return False
     if arg.lower() in ("clear", "reset"):
         return None

@@ -63,20 +63,20 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
                 "scsearch:", "soundcloudsearch"
             )
-        global_whitelist = set(await config.url_keyword_whitelist())
-        global_whitelist = [i.lower() for i in global_whitelist]
-        if global_whitelist:
-            return any(i in query for i in global_whitelist)
-        global_blacklist = set(await config.url_keyword_blacklist())
-        global_blacklist = [i.lower() for i in global_blacklist]
-        if any(i in query for i in global_blacklist):
+        global_allowlist = set(await config.url_keyword_allowlist())
+        global_allowlist = [i.lower() for i in global_allowlist]
+        if global_allowlist:
+            return any(i in query for i in global_allowlist)
+        global_denylist = set(await config.url_keyword_denylist())
+        global_denylist = [i.lower() for i in global_denylist]
+        if any(i in query for i in global_denylist):
             return False
         if guild is not None:
-            whitelist_unique: Set[str] = set(await config.guild(guild).url_keyword_whitelist())
-            whitelist: List[str] = [i.lower() for i in whitelist_unique]
-            if whitelist:
-                return any(i in query for i in whitelist)
-            blacklist_unique: Set[str] = set(await config.guild(guild).url_keyword_blacklist())
-            blacklist: List[str] = [i.lower() for i in blacklist_unique]
-            return not any(i in query for i in blacklist)
+            allowlist_unique: Set[str] = set(await config.guild(guild).url_keyword_allowlist())
+            allowlist: List[str] = [i.lower() for i in allowlist_unique]
+            if allowlist:
+                return any(i in query for i in allowlist)
+            denylist_unique: Set[str] = set(await config.guild(guild).url_keyword_denylist())
+            denylist: List[str] = [i.lower() for i in denylist_unique]
+            return not any(i in query for i in denylist)
         return True

@@ -14,8 +14,8 @@ def init_global_checks(bot):
         return ctx.channel.permissions_for(ctx.me).send_messages
 
     @bot.check_once
-    async def whiteblacklist_checks(ctx) -> bool:
-        return await ctx.bot.allowed_by_whitelist_blacklist(ctx.author)
+    async def whitedenylist_checks(ctx) -> bool:
+        return await ctx.bot.allowed_by_allowlist_denylist(ctx.author)
 
     @bot.check_once
     async def ignore_checks(ctx) -> bool:

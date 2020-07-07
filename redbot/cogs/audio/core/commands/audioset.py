@@ -31,57 +31,57 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset.group(name="restrictions")
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_perms(self, ctx: commands.Context):
-        """Manages the keyword whitelist and blacklist."""
+        """Manages the keyword allowlist and denylist."""
 
     @commands.is_owner()
     @command_audioset_perms.group(name="global")
     async def command_audioset_perms_global(self, ctx: commands.Context):
-        """Manages the global keyword whitelist/blacklist."""
+        """Manages the global keyword allowlist/denylist."""
 
-    @command_audioset_perms_global.group(name="whitelist")
-    async def command_audioset_perms_global_whitelist(self, ctx: commands.Context):
-        """Manages the global keyword whitelist."""
+    @command_audioset_perms_global.group(name="allowlist")
+    async def command_audioset_perms_global_allowlist(self, ctx: commands.Context):
+        """Manages the global keyword allowlist."""
 
-    @command_audioset_perms_global_whitelist.command(name="add")
-    async def command_audioset_perms_global_whitelist_add(
+    @command_audioset_perms_global_allowlist.command(name="add")
+    async def command_audioset_perms_global_allowlist_add(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Adds a keyword to the whitelist.
+        """Adds a keyword to the allowlist.
 
-        If anything is added to whitelist, it will blacklist everything else.
+        If anything is added to allowlist, it will denylist everything else.
         """
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = False
-        async with self.config.url_keyword_whitelist() as whitelist:
-            if keyword in whitelist:
+        async with self.config.url_keyword_allowlist() as allowlist:
+            if keyword in allowlist:
                 exists = True
             else:
-                whitelist.append(keyword)
+                allowlist.append(keyword)
         if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the allowlist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Whitelist Modified"),
-                description=_("Added `{whitelisted}` to the whitelist.").format(
-                    whitelisted=keyword
+                title=_("Allowlist Modified"),
+                description=_("Added `{allowlisted}` to the allowlist.").format(
+                    allowlisted=keyword
                 ),
             )
 
-    @command_audioset_perms_global_whitelist.command(name="list")
+    @command_audioset_perms_global_allowlist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
-        """List all keywords added to the whitelist."""
-        whitelist = await self.config.url_keyword_whitelist()
-        if not whitelist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        whitelist.sort()
+    async def command_audioset_perms_global_allowlist_list(self, ctx: commands.Context):
+        """List all keywords added to the allowlist."""
+        allowlist = await self.config.url_keyword_allowlist()
+        if not allowlist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the allowlist."))
+        allowlist.sort()
         text = ""
-        total = len(whitelist)
+        total = len(allowlist)
         pages = []
-        for i, entry in enumerate(whitelist, 1):
+        for i, entry in enumerate(allowlist, 1):
             text += f"{i}. [{entry}]"
             if i != total:
                 text += "\n"
@@ -92,90 +92,90 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Global Allowlist"), description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @command_audioset_perms_global_whitelist.command(name="clear")
-    async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
-        """Clear all keywords from the whitelist."""
-        whitelist = await self.config.url_keyword_whitelist()
-        if not whitelist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        await self.config.url_keyword_whitelist.clear()
+    @command_audioset_perms_global_allowlist.command(name="clear")
+    async def command_audioset_perms_global_allowlist_clear(self, ctx: commands.Context):
+        """Clear all keywords from the allowlist."""
+        allowlist = await self.config.url_keyword_allowlist()
+        if not allowlist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the allowlist."))
+        await self.config.url_keyword_allowlist.clear()
         return await self.send_embed_msg(
             ctx,
-            title=_("Whitelist Modified"),
-            description=_("All entries have been removed from the whitelist."),
+            title=_("Allowlist Modified"),
+            description=_("All entries have been removed from the allowlist."),
         )
 
-    @command_audioset_perms_global_whitelist.command(name="delete", aliases=["del", "remove"])
-    async def command_audioset_perms_global_whitelist_delete(
+    @command_audioset_perms_global_allowlist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_global_allowlist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Removes a keyword from the whitelist."""
+        """Removes a keyword from the allowlist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = True
-        async with self.config.url_keyword_whitelist() as whitelist:
-            if keyword not in whitelist:
+        async with self.config.url_keyword_allowlist() as allowlist:
+            if keyword not in allowlist:
                 exists = False
             else:
-                whitelist.remove(keyword)
+                allowlist.remove(keyword)
         if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the allowlist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Whitelist Modified"),
-                description=_("Removed `{whitelisted}` from the whitelist.").format(
-                    whitelisted=keyword
+                title=_("Allowlist Modified"),
+                description=_("Removed `{allowlisted}` from the allowlist.").format(
+                    allowlisted=keyword
                 ),
             )
 
-    @command_audioset_perms_global.group(name="blacklist")
-    async def command_audioset_perms_global_blacklist(self, ctx: commands.Context):
-        """Manages the global keyword blacklist."""
+    @command_audioset_perms_global.group(name="denylist")
+    async def command_audioset_perms_global_denylist(self, ctx: commands.Context):
+        """Manages the global keyword denylist."""
 
-    @command_audioset_perms_global_blacklist.command(name="add")
-    async def command_audioset_perms_global_blacklist_add(
+    @command_audioset_perms_global_denylist.command(name="add")
+    async def command_audioset_perms_global_denylist_add(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Adds a keyword to the blacklist."""
+        """Adds a keyword to the denylist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = False
-        async with self.config.url_keyword_blacklist() as blacklist:
-            if keyword in blacklist:
+        async with self.config.url_keyword_denylist() as denylist:
+            if keyword in denylist:
                 exists = True
             else:
-                blacklist.append(keyword)
+                denylist.append(keyword)
         if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the blacklist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the denylist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Blacklist Modified"),
-                description=_("Added `{blacklisted}` to the blacklist.").format(
-                    blacklisted=keyword
+                title=_("Denylist Modified"),
+                description=_("Added `{denylisted}` to the denylist.").format(
+                    denylisted=keyword
                 ),
             )
 
-    @command_audioset_perms_global_blacklist.command(name="list")
+    @command_audioset_perms_global_denylist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
-        """List all keywords added to the blacklist."""
-        blacklist = await self.config.url_keyword_blacklist()
-        if not blacklist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        blacklist.sort()
+    async def command_audioset_perms_global_denylist_list(self, ctx: commands.Context):
+        """List all keywords added to the denylist."""
+        denylist = await self.config.url_keyword_denylist()
+        if not denylist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the denylist."))
+        denylist.sort()
         text = ""
-        total = len(blacklist)
+        total = len(denylist)
         pages = []
-        for i, entry in enumerate(blacklist, 1):
+        for i, entry in enumerate(denylist, 1):
             text += f"{i}. [{entry}]"
             if i != total:
                 text += "\n"
@@ -186,92 +186,92 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Global Denylist"), description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @command_audioset_perms_global_blacklist.command(name="clear")
-    async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
-        """Clear all keywords added to the blacklist."""
-        blacklist = await self.config.url_keyword_blacklist()
-        if not blacklist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        await self.config.url_keyword_blacklist.clear()
+    @command_audioset_perms_global_denylist.command(name="clear")
+    async def command_audioset_perms_global_denylist_clear(self, ctx: commands.Context):
+        """Clear all keywords added to the denylist."""
+        denylist = await self.config.url_keyword_denylist()
+        if not denylist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the denylist."))
+        await self.config.url_keyword_denylist.clear()
         return await self.send_embed_msg(
             ctx,
-            title=_("Blacklist Modified"),
-            description=_("All entries have been removed from the blacklist."),
+            title=_("Denylist Modified"),
+            description=_("All entries have been removed from the denylist."),
         )
 
-    @command_audioset_perms_global_blacklist.command(name="delete", aliases=["del", "remove"])
-    async def command_audioset_perms_global_blacklist_delete(
+    @command_audioset_perms_global_denylist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_global_denylist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Removes a keyword from the blacklist."""
+        """Removes a keyword from the denylist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = True
-        async with self.config.url_keyword_blacklist() as blacklist:
-            if keyword not in blacklist:
+        async with self.config.url_keyword_denylist() as denylist:
+            if keyword not in denylist:
                 exists = False
             else:
-                blacklist.remove(keyword)
+                denylist.remove(keyword)
         if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword is not in the blacklist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword is not in the denylist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Blacklist Modified"),
-                description=_("Removed `{blacklisted}` from the blacklist.").format(
-                    blacklisted=keyword
+                title=_("Denylist Modified"),
+                description=_("Removed `{denylisted}` from the denylist.").format(
+                    denylisted=keyword
                 ),
             )
 
-    @command_audioset_perms.group(name="whitelist")
+    @command_audioset_perms.group(name="allowlist")
     @commands.guild_only()
-    async def command_audioset_perms_whitelist(self, ctx: commands.Context):
-        """Manages the keyword whitelist."""
+    async def command_audioset_perms_allowlist(self, ctx: commands.Context):
+        """Manages the keyword allowlist."""
 
-    @command_audioset_perms_whitelist.command(name="add")
-    async def command_audioset_perms_whitelist_add(self, ctx: commands.Context, *, keyword: str):
-        """Adds a keyword to the whitelist.
+    @command_audioset_perms_allowlist.command(name="add")
+    async def command_audioset_perms_allowlist_add(self, ctx: commands.Context, *, keyword: str):
+        """Adds a keyword to the allowlist.
 
-        If anything is added to whitelist, it will blacklist everything else.
+        If anything is added to allowlist, it will denylist everything else.
         """
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = False
-        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if keyword in whitelist:
+        async with self.config.guild(ctx.guild).url_keyword_allowlist() as allowlist:
+            if keyword in allowlist:
                 exists = True
             else:
-                whitelist.append(keyword)
+                allowlist.append(keyword)
         if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the allowlist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Whitelist Modified"),
-                description=_("Added `{whitelisted}` to the whitelist.").format(
-                    whitelisted=keyword
+                title=_("Allowlist Modified"),
+                description=_("Added `{allowlisted}` to the allowlist.").format(
+                    allowlisted=keyword
                 ),
             )
 
-    @command_audioset_perms_whitelist.command(name="list")
+    @command_audioset_perms_allowlist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
-        """List all keywords added to the whitelist."""
-        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
-        if not whitelist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        whitelist.sort()
+    async def command_audioset_perms_allowlist_list(self, ctx: commands.Context):
+        """List all keywords added to the allowlist."""
+        allowlist = await self.config.guild(ctx.guild).url_keyword_allowlist()
+        if not allowlist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the allowlist."))
+        allowlist.sort()
         text = ""
-        total = len(whitelist)
+        total = len(allowlist)
         pages = []
-        for i, entry in enumerate(whitelist, 1):
+        for i, entry in enumerate(allowlist, 1):
             text += f"{i}. [{entry}]"
             if i != total:
                 text += "\n"
@@ -282,89 +282,89 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Allowlist"), description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @command_audioset_perms_whitelist.command(name="clear")
-    async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
-        """Clear all keywords from the whitelist."""
-        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
-        if not whitelist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        await self.config.guild(ctx.guild).url_keyword_whitelist.clear()
+    @command_audioset_perms_allowlist.command(name="clear")
+    async def command_audioset_perms_allowlist_clear(self, ctx: commands.Context):
+        """Clear all keywords from the allowlist."""
+        allowlist = await self.config.guild(ctx.guild).url_keyword_allowlist()
+        if not allowlist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the allowlist."))
+        await self.config.guild(ctx.guild).url_keyword_allowlist.clear()
         return await self.send_embed_msg(
             ctx,
-            title=_("Whitelist Modified"),
-            description=_("All entries have been removed from the whitelist."),
+            title=_("Allowlist Modified"),
+            description=_("All entries have been removed from the allowlist."),
         )
 
-    @command_audioset_perms_whitelist.command(name="delete", aliases=["del", "remove"])
-    async def command_audioset_perms_whitelist_delete(
+    @command_audioset_perms_allowlist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_allowlist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Removes a keyword from the whitelist."""
+        """Removes a keyword from the allowlist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = True
-        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if keyword not in whitelist:
+        async with self.config.guild(ctx.guild).url_keyword_allowlist() as allowlist:
+            if keyword not in allowlist:
                 exists = False
             else:
-                whitelist.remove(keyword)
+                allowlist.remove(keyword)
         if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the allowlist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Whitelist Modified"),
-                description=_("Removed `{whitelisted}` from the whitelist.").format(
-                    whitelisted=keyword
+                title=_("Allowlist Modified"),
+                description=_("Removed `{allowlisted}` from the allowlist.").format(
+                    allowlisted=keyword
                 ),
             )
 
-    @command_audioset_perms.group(name="blacklist")
+    @command_audioset_perms.group(name="denylist")
     @commands.guild_only()
-    async def command_audioset_perms_blacklist(self, ctx: commands.Context):
-        """Manages the keyword blacklist."""
+    async def command_audioset_perms_denylist(self, ctx: commands.Context):
+        """Manages the keyword denylist."""
 
-    @command_audioset_perms_blacklist.command(name="add")
-    async def command_audioset_perms_blacklist_add(self, ctx: commands.Context, *, keyword: str):
-        """Adds a keyword to the blacklist."""
+    @command_audioset_perms_denylist.command(name="add")
+    async def command_audioset_perms_denylist_add(self, ctx: commands.Context, *, keyword: str):
+        """Adds a keyword to the denylist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = False
-        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if keyword in blacklist:
+        async with self.config.guild(ctx.guild).url_keyword_denylist() as denylist:
+            if keyword in denylist:
                 exists = True
             else:
-                blacklist.append(keyword)
+                denylist.append(keyword)
         if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the blacklist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword already in the denylist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Blacklist Modified"),
-                description=_("Added `{blacklisted}` to the blacklist.").format(
-                    blacklisted=keyword
+                title=_("Denylist Modified"),
+                description=_("Added `{denylisted}` to the denylist.").format(
+                    denylisted=keyword
                 ),
             )
 
-    @command_audioset_perms_blacklist.command(name="list")
+    @command_audioset_perms_denylist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
-    async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
-        """List all keywords added to the blacklist."""
-        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
-        if not blacklist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        blacklist.sort()
+    async def command_audioset_perms_denylist_list(self, ctx: commands.Context):
+        """List all keywords added to the denylist."""
+        denylist = await self.config.guild(ctx.guild).url_keyword_denylist()
+        if not denylist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the denylist."))
+        denylist.sort()
         text = ""
-        total = len(blacklist)
+        total = len(denylist)
         pages = []
-        for i, entry in enumerate(blacklist, 1):
+        for i, entry in enumerate(denylist, 1):
             text += f"{i}. [{entry}]"
             if i != total:
                 text += "\n"
@@ -375,46 +375,46 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Denylist"), description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
 
-    @command_audioset_perms_blacklist.command(name="clear")
-    async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
-        """Clear all keywords added to the blacklist."""
-        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
-        if not blacklist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        await self.config.guild(ctx.guild).url_keyword_blacklist.clear()
+    @command_audioset_perms_denylist.command(name="clear")
+    async def command_audioset_perms_denylist_clear(self, ctx: commands.Context):
+        """Clear all keywords added to the denylist."""
+        denylist = await self.config.guild(ctx.guild).url_keyword_denylist()
+        if not denylist:
+            return await self.send_embed_msg(ctx, title=_("Nothing in the denylist."))
+        await self.config.guild(ctx.guild).url_keyword_denylist.clear()
         return await self.send_embed_msg(
             ctx,
-            title=_("Blacklist Modified"),
-            description=_("All entries have been removed from the blacklist."),
+            title=_("Denylist Modified"),
+            description=_("All entries have been removed from the denylist."),
         )
 
-    @command_audioset_perms_blacklist.command(name="delete", aliases=["del", "remove"])
-    async def command_audioset_perms_blacklist_delete(
+    @command_audioset_perms_denylist.command(name="delete", aliases=["del", "remove"])
+    async def command_audioset_perms_denylist_delete(
         self, ctx: commands.Context, *, keyword: str
     ):
-        """Removes a keyword from the blacklist."""
+        """Removes a keyword from the denylist."""
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
         exists = True
-        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if keyword not in blacklist:
+        async with self.config.guild(ctx.guild).url_keyword_denylist() as denylist:
+            if keyword not in denylist:
                 exists = False
             else:
-                blacklist.remove(keyword)
+                denylist.remove(keyword)
         if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword is not in the blacklist."))
+            return await self.send_embed_msg(ctx, title=_("Keyword is not in the denylist."))
         else:
             return await self.send_embed_msg(
                 ctx,
-                title=_("Blacklist Modified"),
-                description=_("Removed `{blacklisted}` from the blacklist.").format(
-                    blacklisted=keyword
+                title=_("Denylist Modified"),
+                description=_("Removed `{denylisted}` from the denylist.").format(
+                    denylisted=keyword
                 ),
             )
 
