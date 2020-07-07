@@ -267,7 +267,7 @@ class Economy(commands.Cog):
         """Prune bank accounts."""
         pass
 
-    @_prune.command(name="local")
+    @_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
     @checks.guildowner()
     async def _local(self, ctx, confirmation: bool = False):
@@ -655,34 +655,39 @@ class Economy(commands.Cog):
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Manage Economy settings."""
+
+    @economyset.command(name="showsettings")
+    async def economyset_showsettings(self, ctx: commands.Context):
+        """
+        Shows the current economy settings
+        """
         guild = ctx.guild
-        if ctx.invoked_subcommand is None:
-            if await bank.is_global():
-                conf = self.config
-            else:
-                conf = self.config.guild(ctx.guild)
-            await ctx.send(
-                box(
-                    _(
-                        "----Economy Settings---\n"
-                        "Minimum slot bid: {slot_min}\n"
-                        "Maximum slot bid: {slot_max}\n"
-                        "Slot cooldown: {slot_time}\n"
-                        "Payday amount: {payday_amount}\n"
-                        "Payday cooldown: {payday_time}\n"
-                        "Amount given at account registration: {register_amount}\n"
-                        "Maximum allowed balance: {maximum_bal}"
-                    ).format(
-                        slot_min=humanize_number(await conf.SLOT_MIN()),
-                        slot_max=humanize_number(await conf.SLOT_MAX()),
-                        slot_time=humanize_number(await conf.SLOT_TIME()),
-                        payday_time=humanize_number(await conf.PAYDAY_TIME()),
-                        payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
-                        register_amount=humanize_number(await bank.get_default_balance(guild)),
-                        maximum_bal=humanize_number(await bank.get_max_balance(guild)),
-                    )
+        if await bank.is_global():
+            conf = self.config
+        else:
+            conf = self.config.guild(guild)
+        await ctx.send(
+            box(
+                _(
+                    "----Economy Settings---\n"
+                    "Minimum slot bid: {slot_min}\n"
+                    "Maximum slot bid: {slot_max}\n"
+                    "Slot cooldown: {slot_time}\n"
+                    "Payday amount: {payday_amount}\n"
+                    "Payday cooldown: {payday_time}\n"
+                    "Amount given at account registration: {register_amount}\n"
+                    "Maximum allowed balance: {maximum_bal}"
+                ).format(
+                    slot_min=humanize_number(await conf.SLOT_MIN()),
+                    slot_max=humanize_number(await conf.SLOT_MAX()),
+                    slot_time=humanize_number(await conf.SLOT_TIME()),
+                    payday_time=humanize_number(await conf.PAYDAY_TIME()),
+                    payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
+                    register_amount=humanize_number(await bank.get_default_balance(guild)),
+                    maximum_bal=humanize_number(await bank.get_max_balance(guild)),
                 )
             )
+        )
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: int):

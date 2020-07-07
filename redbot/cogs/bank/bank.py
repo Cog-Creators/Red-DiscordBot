@@ -43,32 +43,39 @@ class Bank(commands.Cog):
 
     @is_owner_if_bank_global()
     @checks.guildowner_or_permissions(administrator=True)
-    @commands.group(autohelp=True)
+    @commands.group()
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings."""
-        if ctx.invoked_subcommand is None:
-            if await bank.is_global():
-                group = bank._config
-            else:
-                if not ctx.guild:
-                    return
-                group = bank._config.guild(ctx.guild)
-            group_data = await group.all()
-            bank_name = group_data["bank_name"]
-            currency_name = group_data["currency"]
-            default_balance = group_data["default_balance"]
-            max_balance = group_data["max_balance"]
 
-            settings = _(
-                "Bank settings:\n\nBank name: {bank_name}\nCurrency: {currency_name}\n"
-                "Default balance: {default_balance}\nMaximum allowed balance: {maximum_bal}"
-            ).format(
-                bank_name=bank_name,
-                currency_name=currency_name,
-                default_balance=humanize_number(default_balance),
-                maximum_bal=humanize_number(max_balance),
-            )
-            await ctx.send(box(settings))
+    @bankset.command(name="showsettings")
+    async def bankset_showsettings(self, ctx: commands.Context):
+        """Show the current bank settings."""
+        cur_setting = await bank.is_global()
+        if cur_setting:
+            group = bank._config
+        else:
+            if not ctx.guild:
+                return
+            group = bank._config.guild(ctx.guild)
+        group_data = await group.all()
+        bank_name = group_data["bank_name"]
+        bank_scope = _("Global") if cur_setting else _("Server")
+        currency_name = group_data["currency"]
+        default_balance = group_data["default_balance"]
+        max_balance = group_data["max_balance"]
+
+        settings = _(
+            "Bank settings:\n\nBank name: {bank_name}\nBank scope: {bank_scope}\n"
+            "Currency: {currency_name}\nDefault balance: {default_balance}\n"
+            "Maximum allowed balance: {maximum_bal}\n"
+        ).format(
+            bank_name=bank_name,
+            bank_scope=bank_scope,
+            currency_name=currency_name,
+            default_balance=humanize_number(default_balance),
+            maximum_bal=humanize_number(max_balance),
+        )
+        await ctx.send(box(settings))
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()

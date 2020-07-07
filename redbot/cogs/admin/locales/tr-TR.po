@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-04-23 12:07+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: tr\n"
+"X-Crowdin-File-ID: 42\n"
 "Language: tr_TR\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -31,15 +33,15 @@ msgstr "{role.name} kullanıcısının rolünü düzenleyemiyorum, çünkü bu r
 
 #: redbot/cogs/admin/admin.py:40
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "{member.display_name} kullanıcısına {role.name} rolünü vermene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
+msgstr "{member.display_name} kullanıcısına {role.name} rolünü verilemedi çünkü bu rol discord hiyerarşisinde senin mevcut rolünden daha yüksek durumda."
 
 #: redbot/cogs/admin/admin.py:46
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "{member.display_name} kullanıcısının {role.name} rolünü silmene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
+msgstr "{member.display_name} kullanıcısının {role.name} rolünü silmene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek durumda."
 
 #: redbot/cogs/admin/admin.py:52
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "{role.name} rolünü düzenlemene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
+msgstr "{role.name} rolünü düzenlemene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek durumda."
 
 #: redbot/cogs/admin/admin.py:58
 msgid "I need manage roles permission to do that."
@@ -52,7 +54,7 @@ msgstr "Zaten şu anda bir duyuru yapmaktayım. Başka bir duyuru yapmak istiyor
 #: redbot/cogs/admin/admin.py:70
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr "Sunucu yönetim araçları için bir kolleksiyon."
+msgstr "Sunucu yönetimiyle ilgili ayarlar."
 
 #: redbot/cogs/admin/admin.py:126
 msgid "{member.display_name} already has the role {role.name}."
@@ -68,7 +70,7 @@ msgstr "{member.display_name} kullanıcısı {role.name} rolüne sahip değil."
 
 #: redbot/cogs/admin/admin.py:176
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr "{role.name} rolünü {member.display_name} kullanıcısından başarılı bir şekilde kaldırdım."
+msgstr "{role.name} rolünü {member.display_name} kullanıcısından başarılı bir şekilde kaldırdım"
 
 #: redbot/cogs/admin/admin.py:187
 #, docstring
@@ -133,7 +135,7 @@ msgstr "\\n        Botun anonsları hangi kanalda yapacağını belirleyin.\\n  
 
 #: redbot/cogs/admin/admin.py:330
 msgid "The announcement channel has been set to {channel.mention}"
-msgstr "{channel.mention} duyuru kanalı olarak ayarlandı."
+msgstr "{channel.mention} duyuru kanalı olarak ayarlandı"
 
 #: redbot/cogs/admin/admin.py:335
 #, docstring
@@ -184,7 +186,7 @@ msgstr "\\n        Kullanılabilir kişisel roller listesine rol ekler.\\n\\n   
 
 #: redbot/cogs/admin/admin.py:425
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "{role.name} kullanıcısına belirttiğin rolü vermene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
+msgstr "{role.name} kullanıcısına belirttiğin rolü vermene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
 #: redbot/cogs/admin/admin.py:433
 msgid "Added."
@@ -201,7 +203,7 @@ msgstr "\\n        Kullanılabilir kişisel roller listesinden rol siler.\\n\\n 
 
 #: redbot/cogs/admin/admin.py:447
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "{role.name} kullanıcısından belirttiğin rolü silmene müsaade edemem çünkü bu rol Discord hiyerarşisinde senin rolüne eşit veya daha yüksek."
+msgstr "{role.name} kullanıcısından belirttiğin rolü silmene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
 #: redbot/cogs/admin/admin.py:455
 msgid "Removed."
@@ -226,7 +228,7 @@ msgstr "Bu sunucuya duyuru yapamıyorum: "
 
 #: redbot/cogs/admin/announcer.py:77
 msgid "I could not announce to the following servers: "
-msgstr "Bu sunucuya duyuru yapamıyorum: "
+msgstr "Bu sunuculara duyuru yapamıyorum: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
