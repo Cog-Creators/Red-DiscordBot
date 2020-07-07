@@ -592,7 +592,8 @@ class RedHelpFormatter:
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
-                    name=f"{ctx.me.display_name} {_('Help Menu')}", icon_url=ctx.me.avatar_url
+                    name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
+                    icon_url=ctx.me.avatar_url,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
