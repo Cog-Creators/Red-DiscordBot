@@ -53,6 +53,7 @@ from .utils import common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
+COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
@@ -154,6 +155,12 @@ class RedBase(
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
+
+        # {COMMAND_NAME: {GUILD_ID: {...}}}
+        # GUILD_ID=0 for global setting
+        self._config.init_custom(COMMAND_SCOPE, 2)
+        self._config.register_custom(COMMAND_SCOPE, embeds=None)
+        # TODO: add cache for embed settings
 
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
@@ -1022,7 +1029,12 @@ class RedBase(
             ctx, help_for, from_help_command=from_help_command
         )
 
-    async def embed_requested(self, channel, user, command=None) -> bool:
+    async def embed_requested(
+        self,
+        channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
+        user: discord.abc.User,
+        command: Optional[commands.Command] = None,
+    ) -> bool:
         """
         Determine if an embed is requested for a response.
 
@@ -1032,25 +1044,37 @@ class RedBase(
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
-        command
-            (Optional) the command ran.
+        command : `commands.Command`, optional
+            The command ran.
 
         Returns
         -------
         bool
             :code:`True` if an embed is requested
         """
+
+        async def get_command_setting(guild_id: int) -> Optional[bool]:
+            if command is None:
+                return None
+            scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
+            return await scope.embeds()
+
         if isinstance(channel, discord.abc.PrivateChannel):
-            user_setting = await self._config.user(user).embeds()
-            if user_setting is not None:
+            if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
         else:
-            channel_setting = await self._config.channel(channel).embeds()
-            if channel_setting is not None:
+            if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
-            guild_setting = await self._config.guild(channel.guild).embeds()
-            if guild_setting is not None:
+
+            if (command_setting := await get_command_setting(channel.guild.id)) is not None:
+                return command_setting
+
+            if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
+
+        # XXX: maybe this should be checked before guild setting?
+        if (global_command_setting := await get_command_setting(0)) is not None:
+            return global_command_setting
 
         global_setting = await self._config.embeds()
         return global_setting
