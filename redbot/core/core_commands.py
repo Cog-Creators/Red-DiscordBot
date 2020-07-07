@@ -1948,7 +1948,7 @@ class Core(commands.Cog, CoreLogic):
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
-            current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
+            current_whitelist = set(await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild))
             theoretical_whitelist = current_whitelist + uids
             ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
             if ids.isdisjoint(theoretical_whitelist):
