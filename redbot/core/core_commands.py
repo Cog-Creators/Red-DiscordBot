@@ -75,27 +75,28 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(
-        self, cog_names: Iterable[str]
+        self, pkg_names: Iterable[str]
     ) -> Tuple[
         List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
     ]:
         """
-        Loads cogs by name.
+        Loads packages by name.
 
         Parameters
         ----------
-        cog_names : list of str
+        pkg_names : `list` of `str`
+            List of names of packages to load.
 
         Returns
         -------
         tuple
             7-tuple of:
-              1. List of names of cogs that loaded successfully
-              2. List of names of cogs that failed to load without specified reason
-              3. List of names of cogs that don't have a valid package name
-              4. List of names of cogs that weren't found in any cog path
-              5. List of names of cogs that are already loaded
-              6. List of 2-tuples (cog_name, reason) for cogs
+              1. List of names of packages that loaded successfully
+              2. List of names of packages that failed to load without specified reason
+              3. List of names of packages that don't have a valid package name
+              4. List of names of packages that weren't found in any cog path
+              5. List of names of packages that are already loaded
+              6. List of 2-tuples (pkg_name, reason) for packages
               that failed to load with a specified reason
               7. Set of repo names that use deprecated shared libraries
         """
@@ -109,27 +110,27 @@ class CoreLogic:
 
         bot = self.bot
 
-        cogspecs = []
+        pkg_specs = []
 
-        for name in cog_names:
+        for name in pkg_names:
             if not name.isidentifier() or keyword.iskeyword(name):
                 invalid_pkg_names.append(name)
                 continue
             try:
                 spec = await bot._cog_mgr.find_cog(name)
                 if spec:
-                    cogspecs.append((spec, name))
+                    pkg_specs.append((spec, name))
                 else:
                     notfound_packages.append(name)
             except Exception as e:
                 log.exception("Package import failed", exc_info=e)
 
-                exception_log = "Exception during import of cog\n"
+                exception_log = "Exception during import of package\n"
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
-        async for spec, name in AsyncIter(cogspecs, steps=10):
+        async for spec, name in AsyncIter(pkg_specs, steps=10):
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
@@ -140,7 +141,7 @@ class CoreLogic:
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
 
-                exception_log = "Exception during loading of cog\n"
+                exception_log = "Exception during loading of package\n"
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
@@ -194,13 +195,14 @@ class CoreLogic:
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
-    async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
+    async def _unload(self, pkg_names: Iterable[str]) -> Tuple[List[str], List[str]]:
         """
-        Unloads cogs with the given names.
+        Unloads packages with the given names.
 
         Parameters
         ----------
-        cog_names : list of str
+        pkg_names : `list` of `str`
+            List of names of packages to unload.
 
         Returns
         -------
@@ -212,7 +214,7 @@ class CoreLogic:
 
         bot = self.bot
 
-        for name in cog_names:
+        for name in pkg_names:
             if name in bot.extensions:
                 bot.unload_extension(name)
                 await bot.remove_loaded_package(name)
@@ -223,11 +225,24 @@ class CoreLogic:
         return unloaded_packages, failed_packages
 
     async def _reload(
-        self, cog_names: Sequence[str]
+        self, pkg_names: Sequence[str]
     ) -> Tuple[
         List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
     ]:
-        await self._unload(cog_names)
+        """
+        Reloads packages with the given names.
+
+        Parameters
+        ----------
+        pkg_names : `list` of `str`
+            List of names of packages to reload.
+
+        Returns
+        -------
+        tuple
+            Tuple as returned by `CoreLogic._load()`
+        """
+        await self._unload(pkg_names)
 
         (
             loaded,
@@ -237,7 +252,7 @@ class CoreLogic:
             already_loaded,
             load_failed_with_reason,
             repos_with_shared_libs,
-        ) = await self._load(cog_names)
+        ) = await self._load(pkg_names)
 
         return (
             loaded,
