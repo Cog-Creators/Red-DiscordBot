@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from typing import Dict, List, Optional, Union, Set, Iterable, Tuple
+import asyncio
 from argparse import Namespace
 from collections import defaultdict
 
 import discord
 
 from .config import Config
+from .utils import AsyncIter
 
 
 class PrefixManager:
@@ -125,136 +127,184 @@ class WhitelistBlacklistManager:
         self._config: Config = config
         self._cached_whitelist: Dict[Optional[int], Set[int]] = {}
         self._cached_blacklist: Dict[Optional[int], Set[int]] = {}
+        # because of discord deletion
+        # we now have sync and async access that may need to happen at the
+        # same time.
+        # blame discord for this.
+        self._access_lock = asyncio.Lock()
+
+    async def discord_deleted_user(self, user_id: int):
+
+        async with self._access_lock:
+            wl_guilds, bl_guilds = [], []
+
+            async for guild_id_or_none, ids in AsyncIter(
+                self._cached_whitelist.items(), steps=100
+            ):
+                if user_id in ids:
+                    wl_guilds.append(user_id)
+                ids.discard(user_id)
+
+            async for guild_id_or_none, ids in AsyncIter(
+                self._cached_blacklist.items(), steps=100
+            ):
+                if user_id in ids:
+                    bl_guilds.append(user_id)
+                ids.discard(user_id)
+
+            for gid in wl_guilds:
+                grp = self._config.guild_from_id(gid) if gid else self._config
+                s = set(await grp.whitelist())
+                s.discard(user_id)
+                await grp.whitelist.set(list(s))
+
+            for gid in bl_guilds:
+                grp = self._config.guild_from_id(gid) if gid else self._config
+                s = set(await grp.blacklist())
+                s.discard(user_id)
+                await grp.blacklist.set(list(s))
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
-        ret: Set[int]
-
-        gid: Optional[int] = guild.id if guild else None
-
-        if gid in self._cached_whitelist:
-            ret = self._cached_whitelist[gid].copy()
-        else:
-            if gid is not None:
-                ret = set(await self._config.guild_from_id(gid).whitelist())
+        async with self._access_lock:
+            ret: Set[int]
+            gid: Optional[int] = guild.id if guild else None
+            if gid in self._cached_whitelist:
+                ret = self._cached_whitelist[gid].copy()
             else:
-                ret = set(await self._config.whitelist())
+                if gid is not None:
+                    ret = set(await self._config.guild_from_id(gid).whitelist())
+                else:
+                    ret = set(await self._config.whitelist())
 
-            self._cached_whitelist[gid] = ret.copy()
+                self._cached_whitelist[gid] = ret.copy()
 
-        return ret
+            return ret
 
     async def add_to_whitelist(self, guild: Optional[discord.Guild], role_or_user: Iterable[int]):
-        gid: Optional[int] = guild.id if guild else None
-        role_or_user = role_or_user or []
-        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("`role_or_user` must be an iterable of `int`s.")
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            role_or_user = role_or_user or []
+            if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
+                raise TypeError("`role_or_user` must be an iterable of `int`s.")
 
-        if gid is None:
-            if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = set(await self._config.whitelist())
-            self._cached_whitelist[gid].update(role_or_user)
-            await self._config.whitelist.set(list(self._cached_whitelist[gid]))
+            if gid is None:
+                if gid not in self._cached_whitelist:
+                    self._cached_whitelist[gid] = set(await self._config.whitelist())
+                self._cached_whitelist[gid].update(role_or_user)
+                await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
-        else:
-            if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = set(
-                    await self._config.guild_from_id(gid).whitelist()
+            else:
+                if gid not in self._cached_whitelist:
+                    self._cached_whitelist[gid] = set(
+                        await self._config.guild_from_id(gid).whitelist()
+                    )
+                self._cached_whitelist[gid].update(role_or_user)
+                await self._config.guild_from_id(gid).whitelist.set(
+                    list(self._cached_whitelist[gid])
                 )
-            self._cached_whitelist[gid].update(role_or_user)
-            await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
 
     async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
-        gid: Optional[int] = guild.id if guild else None
-        self._cached_whitelist[gid] = set()
-        if gid is None:
-            await self._config.whitelist.clear()
-        else:
-            await self._config.guild_from_id(gid).whitelist.clear()
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            self._cached_whitelist[gid] = set()
+            if gid is None:
+                await self._config.whitelist.clear()
+            else:
+                await self._config.guild_from_id(gid).whitelist.clear()
 
     async def remove_from_whitelist(
         self, guild: Optional[discord.Guild], role_or_user: Iterable[int]
     ):
-        gid: Optional[int] = guild.id if guild else None
-        role_or_user = role_or_user or []
-        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("`role_or_user` must be an iterable of `int`s.")
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            role_or_user = role_or_user or []
+            if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
+                raise TypeError("`role_or_user` must be an iterable of `int`s.")
 
-        if gid is None:
-            if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = set(await self._config.whitelist())
-            self._cached_whitelist[gid].difference_update(role_or_user)
-            await self._config.whitelist.set(list(self._cached_whitelist[gid]))
+            if gid is None:
+                if gid not in self._cached_whitelist:
+                    self._cached_whitelist[gid] = set(await self._config.whitelist())
+                self._cached_whitelist[gid].difference_update(role_or_user)
+                await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
-        else:
-            if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = set(
-                    await self._config.guild_from_id(gid).whitelist()
+            else:
+                if gid not in self._cached_whitelist:
+                    self._cached_whitelist[gid] = set(
+                        await self._config.guild_from_id(gid).whitelist()
+                    )
+                self._cached_whitelist[gid].difference_update(role_or_user)
+                await self._config.guild_from_id(gid).whitelist.set(
+                    list(self._cached_whitelist[gid])
                 )
-            self._cached_whitelist[gid].difference_update(role_or_user)
-            await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
 
     async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
-        ret: Set[int]
-
-        gid: Optional[int] = guild.id if guild else None
-
-        if gid in self._cached_blacklist:
-            ret = self._cached_blacklist[gid].copy()
-        else:
-            if gid is not None:
-                ret = set(await self._config.guild_from_id(gid).blacklist())
+        async with self._access_lock:
+            ret: Set[int]
+            gid: Optional[int] = guild.id if guild else None
+            if gid in self._cached_blacklist:
+                ret = self._cached_blacklist[gid].copy()
             else:
-                ret = set(await self._config.blacklist())
+                if gid is not None:
+                    ret = set(await self._config.guild_from_id(gid).blacklist())
+                else:
+                    ret = set(await self._config.blacklist())
 
-            self._cached_blacklist[gid] = ret.copy()
+                self._cached_blacklist[gid] = ret.copy()
 
-        return ret
+            return ret
 
     async def add_to_blacklist(self, guild: Optional[discord.Guild], role_or_user: Iterable[int]):
-        gid: Optional[int] = guild.id if guild else None
-        role_or_user = role_or_user or []
-        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("`role_or_user` must be an iterable of `int`s.")
-        if gid is None:
-            if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = set(await self._config.blacklist())
-            self._cached_blacklist[gid].update(role_or_user)
-            await self._config.blacklist.set(list(self._cached_blacklist[gid]))
-        else:
-            if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = set(
-                    await self._config.guild_from_id(gid).blacklist()
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            role_or_user = role_or_user or []
+            if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
+                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+            if gid is None:
+                if gid not in self._cached_blacklist:
+                    self._cached_blacklist[gid] = set(await self._config.blacklist())
+                self._cached_blacklist[gid].update(role_or_user)
+                await self._config.blacklist.set(list(self._cached_blacklist[gid]))
+            else:
+                if gid not in self._cached_blacklist:
+                    self._cached_blacklist[gid] = set(
+                        await self._config.guild_from_id(gid).blacklist()
+                    )
+                self._cached_blacklist[gid].update(role_or_user)
+                await self._config.guild_from_id(gid).blacklist.set(
+                    list(self._cached_blacklist[gid])
                 )
-            self._cached_blacklist[gid].update(role_or_user)
-            await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
 
     async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
-        gid: Optional[int] = guild.id if guild else None
-        self._cached_blacklist[gid] = set()
-        if gid is None:
-            await self._config.blacklist.clear()
-        else:
-            await self._config.guild_from_id(gid).blacklist.clear()
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            self._cached_blacklist[gid] = set()
+            if gid is None:
+                await self._config.blacklist.clear()
+            else:
+                await self._config.guild_from_id(gid).blacklist.clear()
 
     async def remove_from_blacklist(
         self, guild: Optional[discord.Guild], role_or_user: Iterable[int]
     ):
-        gid: Optional[int] = guild.id if guild else None
-        role_or_user = role_or_user or []
-        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("`role_or_user` must be an iterable of `int`s.")
-        if gid is None:
-            if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = set(await self._config.blacklist())
-            self._cached_blacklist[gid].difference_update(role_or_user)
-            await self._config.blacklist.set(list(self._cached_blacklist[gid]))
-        else:
-            if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = set(
-                    await self._config.guild_from_id(gid).blacklist()
+        async with self._access_lock:
+            gid: Optional[int] = guild.id if guild else None
+            role_or_user = role_or_user or []
+            if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
+                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+            if gid is None:
+                if gid not in self._cached_blacklist:
+                    self._cached_blacklist[gid] = set(await self._config.blacklist())
+                self._cached_blacklist[gid].difference_update(role_or_user)
+                await self._config.blacklist.set(list(self._cached_blacklist[gid]))
+            else:
+                if gid not in self._cached_blacklist:
+                    self._cached_blacklist[gid] = set(
+                        await self._config.guild_from_id(gid).blacklist()
+                    )
+                self._cached_blacklist[gid].difference_update(role_or_user)
+                await self._config.guild_from_id(gid).blacklist.set(
+                    list(self._cached_blacklist[gid])
                 )
-            self._cached_blacklist[gid].difference_update(role_or_user)
-            await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
 
 
 class DisabledCogCache:

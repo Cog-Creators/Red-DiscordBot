@@ -1,7 +1,7 @@
 import contextlib
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 
 import discord
 
@@ -14,6 +14,7 @@ from redbot.cogs.warnings.helpers import (
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -44,6 +45,21 @@ class Warnings(commands.Cog):
         self.config.register_member(**self.default_member)
         self.bot = bot
         self.registration_task = self.bot.loop.create_task(self.register_warningtype())
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     # We're not utilising modlog yet - no need to register a casetype
     @staticmethod

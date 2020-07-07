@@ -311,6 +311,10 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete (Core Config is handled in a bot method ) """
+        return
+
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):

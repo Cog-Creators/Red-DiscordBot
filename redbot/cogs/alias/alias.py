@@ -1,7 +1,7 @@
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List
+from typing import Dict, List, Literal
 
 import discord
 from redbot.core import Config, commands, checks
@@ -50,6 +50,17 @@ class Alias(commands.Cog):
         self.config.register_global(**self.default_global_settings)
         self.config.register_guild(**self.default_guild_settings)
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self._aliases.anonymize_aliases(user_id)
 
     async def initialize(self):
         # This can be where we set the cache_enabled attribute later

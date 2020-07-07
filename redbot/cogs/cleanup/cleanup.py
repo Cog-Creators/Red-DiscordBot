@@ -25,6 +25,10 @@ class Cleanup(commands.Cog):
         super().__init__()
         self.bot = bot
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     @staticmethod
     async def check_100_plus(ctx: commands.Context, number: int) -> bool:
         """

@@ -75,6 +75,10 @@ class General(commands.Cog):
         super().__init__()
         self.stopwatches = {}
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     @commands.command()
     async def choose(self, ctx, *choices):
         """Choose between multiple options.

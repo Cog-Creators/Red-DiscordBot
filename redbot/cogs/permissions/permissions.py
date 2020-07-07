@@ -2,7 +2,7 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, Literal, cast
 
 import discord
 import yaml
@@ -10,6 +10,7 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -113,6 +114,52 @@ class Permissions(commands.Cog):
         self.config.register_custom(COG)
         self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        count = 0
+
+        _uid = str(user_id)
+
+        # The dict as returned here as string keys. Above is for comparison,
+        # there's a below recast to int where needed for guild ids
+
+        for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+
+            obj_type_rules = await self.config.custom(typename).all()
+
+            count += 1
+            if not count % 100:
+                await asyncio.sleep(0)
+
+            for obj_name, rules_dict in obj_type_rules.items():
+
+                count += 1
+                if not count % 100:
+                    await asyncio.sleep(0)
+
+                obj = getter(obj_name)
+
+                for guild_id, guild_rules in rules_dict.items():
+
+                    count += 1
+                    if not count % 100:
+                        await asyncio.sleep(0)
+
+                    if _uid in guild_rules:
+                        if obj:
+                            await self._remove_rule(
+                                CogOrCommand(typename, obj.qualified_name, obj),
+                                user_id,
+                                int(guild_id),
+                            )
 
     async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
         """
