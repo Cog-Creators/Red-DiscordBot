@@ -142,24 +142,24 @@ class WhitelistBlacklistManager:
 
         return ret
 
-    async def add_to_whitelist(self, guild: Optional[discord.Guild], role_or_user: Iterator[int]):
+    async def add_to_whitelist(self, guild: Optional[discord.Guild], role_or_user: Iterable[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, (set, list)) or not all(
-            isinstance(r_or_u, int) for r_or_u in role_or_user
-        ):
+        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
             raise TypeError("Whitelisted objects must be a list or set of ints")
 
         if gid is None:
             if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = await self._config.whitelist()
+                self._cached_whitelist[gid] = set(await self._config.whitelist())
             for obj_id in role_or_user:
                 self._cached_whitelist[gid].add(obj_id)
             await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
         else:
             if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
+                self._cached_whitelist[gid] = set(
+                    await self._config.guild_from_id(gid).whitelist()
+                )
             for obj_id in role_or_user:
                 self._cached_whitelist[gid].add(obj_id)
             await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
@@ -173,13 +173,11 @@ class WhitelistBlacklistManager:
             await self._config.guild_from_id(gid).whitelist.clear()
 
     async def remove_from_whitelist(
-        self, guild: Optional[discord.Guild], role_or_user: Iterator[int]
+        self, guild: Optional[discord.Guild], role_or_user: Iterable[int]
     ):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, (set, list)) or not all(
-            isinstance(r_or_u, int) for r_or_u in role_or_user
-        ):
+        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
             raise TypeError("Whitelisted objects must be a list or set of ints")
 
         if gid is None:
@@ -191,7 +189,9 @@ class WhitelistBlacklistManager:
 
         else:
             if gid not in self._cached_whitelist:
-                self._cached_whitelist[gid] = await self._config.guild_from_id(gid).whitelist()
+                self._cached_whitelist[gid] = set(
+                    await self._config.guild_from_id(gid).whitelist()
+                )
             for obj_id in role_or_user:
                 self._cached_whitelist[gid].discard(obj_id)
             await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
@@ -213,12 +213,10 @@ class WhitelistBlacklistManager:
 
         return ret
 
-    async def add_to_blacklist(self, guild: Optional[discord.Guild], role_or_user: Iterator[int]):
+    async def add_to_blacklist(self, guild: Optional[discord.Guild], role_or_user: Iterable[int]):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, (set, list)) or not all(
-            isinstance(r_or_u, int) for r_or_u in role_or_user
-        ):
+        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
             raise TypeError("Blacklisted objects must be a list or set of ints")
         if gid is None:
             if gid not in self._cached_blacklist:
@@ -228,7 +226,9 @@ class WhitelistBlacklistManager:
             await self._config.blacklist.set(list(self._cached_blacklist[gid]))
         else:
             if gid not in self._cached_blacklist:
-                self._cached_blacklist[gid] = await self._config.guild_from_id(gid).blacklist()
+                self._cached_blacklist[gid] = set(
+                    await self._config.guild_from_id(gid).blacklist()
+                )
             for obj_id in role_or_user:
                 self._cached_blacklist[gid].add(obj_id)
             await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
@@ -242,13 +242,11 @@ class WhitelistBlacklistManager:
             await self._config.guild_from_id(gid).blacklist.clear()
 
     async def remove_from_blacklist(
-        self, guild: Optional[discord.Guild], role_or_user: Iterator[int]
+        self, guild: Optional[discord.Guild], role_or_user: Iterable[int]
     ):
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
-        if not isinstance(role_or_user, (set, list)) or not all(
-            isinstance(r_or_u, int) for r_or_u in role_or_user
-        ):
+        if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
             raise TypeError("Blacklisted objects must be a list or set of ints")
         if gid is None:
             if gid not in self._cached_blacklist:
