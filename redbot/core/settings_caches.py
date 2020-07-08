@@ -146,7 +146,7 @@ class WhitelistBlacklistManager:
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
         if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("Whitelisted objects must be a list or set of ints")
+            raise TypeError("`role_or_user` must be an iterable of `int`s.")
 
         if gid is None:
             if gid not in self._cached_whitelist:
@@ -176,7 +176,7 @@ class WhitelistBlacklistManager:
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
         if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("Whitelisted objects must be a list or set of ints")
+            raise TypeError("`role_or_user` must be an iterable of `int`s.")
 
         if gid is None:
             if gid not in self._cached_whitelist:
@@ -213,7 +213,7 @@ class WhitelistBlacklistManager:
         gid: Optional[int] = guild.id if guild else None
         role_or_user = role_or_user or []
         if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-            raise TypeError("Blacklisted objects must be a list or set of ints")
+            raise TypeError("`role_or_user` must be an iterable of `int`s.")
         if gid is None:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(await self._config.blacklist())
