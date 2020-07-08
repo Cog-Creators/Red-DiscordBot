@@ -1052,28 +1052,44 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(self, ctx: commands.Context, command: str = None) -> None:
+    async def embedset_showsettings(self, ctx: commands.Context, command_name: str = None) -> None:
         """Show the current embed settings."""
+        if command_name is not None:
+            command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+            if command_obj is None:
+                await ctx.send(
+                    _("I couldn't find that command. Please note that it is case sensitive.")
+                )
+                return
+            # qualified name might be different if alias was passed to this command
+            command_name = command_obj.qualified_name
+
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
         text += _("Global default: {value}\n").format(value=global_default)
-        if command is not None:
-            global_command_setting = await self.bot._config.custom("COMMAND", command, 0).embeds()
+
+        if command_name is not None:
+            scope = self.bot._config.custom("COMMAND", command_name, 0)
+            global_command_setting = await scope.embeds()
             text += _("Global command setting for {command} command: {value}\n").format(
-                command=inline(command), value=global_command_setting
+                command=inline(command_name), value=global_command_setting
             )
+
         if ctx.guild:
             guild_setting = await self.bot._config.guild(ctx.guild).embeds()
             text += _("Guild setting: {value}\n").format(value=guild_setting)
-            if command is not None:
-                scope = self.bot._config.custom("COMMAND", command, ctx.guild.id)
+
+            if command_name is not None:
+                scope = self.bot._config.custom("COMMAND", command_name, ctx.guild.id)
                 command_setting = await scope.embeds()
                 text += _("Guild command setting for {command} command: {}\n").format(
-                    command=inline(command), value=command_setting
+                    command=inline(command_name), value=command_setting
                 )
+
         if ctx.channel:
             channel_setting = await self.bot._config.channel(ctx.channel).embeds()
             text += _("Channel setting: {value}\n").format(value=channel_setting)
+
         user_setting = await self.bot._config.user(ctx.author).embeds()
         text += _("User setting: {value}").format(value=user_setting)
         await ctx.send(box(text))
@@ -1149,6 +1165,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default
         to determine whether or not to use embeds.
         """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
         await self.bot._config.custom("COMMAND", command_name, 0).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the global setting."))
@@ -1179,6 +1204,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the guild default
         to determine whether or not to use embeds.
         """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
         await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
         if enabled is None:
             await ctx.send(_("Embeds will now fall back to the guild setting."))
@@ -3354,7 +3388,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="global")
     async def command_disable_global(self, ctx: commands.Context, *, command: str):
         """Disable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3388,7 +3422,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """Disable a command in this server only."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3438,7 +3472,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """Enable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3460,7 +3494,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="server", aliases=["guild"])
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
         """Enable a command in this server."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
