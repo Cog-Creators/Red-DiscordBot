@@ -555,13 +555,14 @@ section "Creating a Bot Account".
     If your Discord application(bot) is tied to a "Team" in the Discord 
     Developer Console, by default no owner will be set to Red.  To set 
     bot owner follow the steps below:
-        To set owner manually, launch Red using 
+    
+    To set owner manually, launch Red using 
           ``redbot --edit instance_name``
 
-        To make all team members bot owners, when launching Red pass
+    To make all team members bot owners, when launching Red pass
          ``--team-members-are-owners``
 
-        You may specify individual team members to be bot owner by passing
+    You may specify individual team members to be bot owner by passing
          ``--owner`` and ``--co-owner`` when launching Red.
 
           
