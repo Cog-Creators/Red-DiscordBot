@@ -210,7 +210,7 @@ class RedHelpFormatter:
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
         signature = _(
-            "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+            "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         ).format(ctx=ctx, command=command)
         subcommands = None
 
