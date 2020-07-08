@@ -81,15 +81,24 @@ parameters.
 
     [p]help command
 
-The parameters are shown as enclosed in ``< >`` if they're required, or
-``[ ]`` if optional.
-As an example, the ban command will show this in the help message, assuming
-your prefix is ``!``:
-``Syntax: !ban <user> [days] [reason]``
+.. note::
+    Arguments enclosed in ``< >`` means that the argument is **required**
+    for the command to work.
 
-This means that it is necessary to provide ``user``. However, the
-``days`` value (number of messages to delete) is optional, as well as
-the ``reason`` value, used for the modlog.
+    Arguments enclosed in ``[ ]`` means that the argument is **optional**
+    for the command; you can decide whether to use it or not.
+    
+    If your argument includes spaces like ``Hello world!``, most of the time
+    you will need to place it in double quotes like this: ``"Hello world!"``.
+    Sometimes (especially for the last argument) these double quotes are not
+    required.
+
+    Arguments followed by ``=something`` means that, if not specified,
+    the argument will be equal to ``something``.
+
+    For example, the command ``[p]cleanup messages`` in the cleanup cog has
+    the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
+    ``delete_pinned`` default will be false, unless you specify it as true.
 
 You can use help to show the **categories** too, generally called cogs.
 Just do something like this (notice the capitalization):
@@ -309,57 +318,3 @@ If you want to do it, follow these steps.
   For that, just follow :ref:`this guide <systemd-service-guide>`.
 
 .. _getting-started-userdocs:
-
-------------------
-User documentation
-------------------
-
-You will soon start using the Red core cogs. A detailed documentation is
-available for every core cog, under the :ref:`How to use <main>` section.
-
-The cog guides are formatted the same. They're divided into 3 sections:
-
-* **Guide**
-
-  This will introduce you to the cog and explain you how it works.
-
-* **Commands**
-
-  A list of the available commands, with details and arguments.
-  Each command guide will be formatted like this:
-
-  * **Syntax**
-
-    A line that will show how the command must be invoked, with the arguments.
-
-    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
-        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
-        called an alias.
-
-  * **Description**
-
-    A detailed description of what the command does, with details about how
-    it must be used.
-
-  * **Arguments**
-
-    A list of all arguments needed (or not) for the command, with more details.
-
-    .. tip::
-        Arguments enclosed in ``< >`` means that the argument is **required**
-        for the command to work.
-
-        Arguments enclosed in ``[ ]`` means that the argument is **optional**
-        for the command; you can decide to use it or not.
-        
-        If your argument includes spaces like ``Hello world!``, most of the time
-        you will need to place it in double quotes like this: ``"Hello world!"``.
-        Sometimes (especially for the last argument) these double quotes are not
-        required.
-
-        Arguments followed by ``=something`` means that, if not specified,
-        the argument will be equal to ``something``.
-
-        For example, ``[days=1]`` in the ``ban`` command means that the number
-        of days of messages to be deleted will be equal to ``1`` if not
-        specified.
