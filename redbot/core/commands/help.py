@@ -479,7 +479,7 @@ class RedHelpFormatter:
                 if cog_name:
                     title = f"**__{cog_name}:__**"
                 else:
-                    title = _("**__('No Category'):__**")
+                    title = _("**__No Category:__**")
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
