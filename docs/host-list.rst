@@ -82,7 +82,7 @@ Free hosting
 `Google Cloud Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
 `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_ and
 `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
-Note AWS EC2 is not *always* free—it's a 12 month free trial.
+Note: AWS EC2's free tier does not last forever - it's a 12 month trial.
 Additionally, new Google Cloud customers get a $300 credit which is valid
 for 12 months.
 
