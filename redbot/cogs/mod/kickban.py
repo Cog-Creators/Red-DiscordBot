@@ -7,7 +7,7 @@ from typing import Optional, Union
 import discord
 from redbot.core import commands, i18n, checks, modlog
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, humanize_number, bold
+from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -292,6 +292,7 @@ class KickBanMixin(MixinMeta):
         using this command"""
         banned = []
         errors = {}
+        upgrades = []
 
         async def show_results():
             text = _("Banned {num} users from the server.").format(
@@ -300,6 +301,11 @@ class KickBanMixin(MixinMeta):
             if errors:
                 text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
+            if upgrades:
+                text += _(
+                    "\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\n"
+                )
+                text += humanize_list(upgrades)
 
             for p in pagify(text):
                 await ctx.send(p)
@@ -326,13 +332,19 @@ class KickBanMixin(MixinMeta):
         if not guild.me.guild_permissions.ban_members:
             return await ctx.send(_("I lack the permissions to do this."))
 
+        tempbans = await self.config.guild(guild).current_tempbans()
+
         ban_list = await guild.bans()
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    errors[user_id] = _("User {user_id} is already banned.").format(
-                        user_id=user_id
-                    )
+                    if user_id in tempbans:
+                        # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                        continue
+                    else:
+                        errors[user_id] = _("User {user_id} is already banned.").format(
+                            user_id=user_id
+                        )
 
         user_ids = remove_processed(user_ids)
 
@@ -343,21 +355,25 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = guild.get_member(user_id)
             if user is not None:
-                # Instead of replicating all that handling... gets attr from decorator
-                try:
-                    result = await self.ban_user(
-                        user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
-                    )
-                    if result is True:
-                        banned.append(user_id)
-                    else:
-                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                            user_id=user_id, reason=result
+                if user_id in tempbans:
+                    # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                    continue
+                else:
+                    # Instead of replicating all that handling... gets attr from decorator
+                    try:
+                        result = await self.ban_user(
+                            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                         )
-                except Exception as e:
-                    errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                        user_id=user_id, reason=e
-                    )
+                        if result is True:
+                            banned.append(user_id)
+                        else:
+                            errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                                user_id=user_id, reason=result
+                            )
+                    except Exception as e:
+                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                            user_id=user_id, reason=e
+                        )
 
         user_ids = remove_processed(user_ids)
 
@@ -369,19 +385,32 @@ class KickBanMixin(MixinMeta):
             user = discord.Object(id=user_id)
             audit_reason = get_audit_reason(author, reason)
             queue_entry = (guild.id, user_id)
-            try:
-                await guild.ban(user, reason=audit_reason, delete_message_days=days)
-                log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
-            except discord.NotFound:
-                errors[user_id] = _("User {user_id} does not exist.").format(user_id=user_id)
-                continue
-            except discord.Forbidden:
-                errors[user_id] = _("Could not ban {user_id}: missing permissions.").format(
-                    user_id=user_id
-                )
-                continue
-            else:
-                banned.append(user_id)
+            async with self.config.guild(guild).current_tempbans() as tempbans:
+                if user_id in tempbans:
+                    tempbans.remove(user_id)
+                    upgrades.append(str(user_id))
+                    log.info(
+                        "{}({}) upgraded the tempban for {} to a permaban.".format(
+                            author.name, author.id, user_id
+                        )
+                    )
+                    banned.append(user_id)
+                else:
+                    try:
+                        await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                        log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+                    except discord.NotFound:
+                        errors[user_id] = _("User {user_id} does not exist.").format(
+                            user_id=user_id
+                        )
+                        continue
+                    except discord.Forbidden:
+                        errors[user_id] = _(
+                            "Could not ban {user_id}: missing permissions."
+                        ).format(user_id=user_id)
+                        continue
+                    else:
+                        banned.append(user_id)
 
             try:
                 await modlog.create_case(
