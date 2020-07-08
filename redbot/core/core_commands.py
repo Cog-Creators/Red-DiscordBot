@@ -1052,19 +1052,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(self, ctx: commands.Context):
+    async def embedset_showsettings(self, ctx: commands.Context, command: str = None) -> None:
         """Show the current embed settings."""
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
-        text += _("Global default: {}\n").format(global_default)
+        text += _("Global default: {value}\n").format(value=global_default)
+        if command is not None:
+            global_command_setting = await self.bot._config.custom("COMMAND", command, 0).embeds()
+            text += _("Global command setting for {command} command: {value}\n").format(
+                command=inline(command), value=global_command_setting
+            )
         if ctx.guild:
             guild_setting = await self.bot._config.guild(ctx.guild).embeds()
-            text += _("Guild setting: {}\n").format(guild_setting)
+            text += _("Guild setting: {value}\n").format(value=guild_setting)
+            if command is not None:
+                scope = self.bot._config.custom("COMMAND", command, ctx.guild.id)
+                command_setting = await scope.embeds()
+                text += _("Guild command setting for {command} command: {}\n").format(
+                    command=inline(command), value=command_setting
+                )
         if ctx.channel:
             channel_setting = await self.bot._config.channel(ctx.channel).embeds()
-            text += _("Channel setting: {}\n").format(channel_setting)
+            text += _("Channel setting: {value}\n").format(value=channel_setting)
         user_setting = await self.bot._config.user(ctx.author).embeds()
-        text += _("User setting: {}").format(user_setting)
+        text += _("User setting: {value}").format(value=user_setting)
         await ctx.send(box(text))
 
     @embedset.command(name="global")
