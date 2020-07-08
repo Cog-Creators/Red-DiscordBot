@@ -553,7 +553,7 @@ section "Creating a Bot Account".
 .. note::
 
     If your Discord application(bot) is tied to a "Team" in the Discord 
-    Developer Console, by default no owner will be set to Red.  To set 
+    Developer Console, by default Red will have no set Owner.  To set 
     bot owner follow the steps below:
     
     To set owner manually, launch Red using 
