@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-04-23 12:07+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: ko\n"
+"X-Crowdin-File-ID: 42\n"
 "Language: ko_KR\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -83,7 +85,7 @@ msgstr ""
 #: redbot/cogs/admin/admin.py:217
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "역할 설정을 변경했어요."
 
 #: redbot/cogs/admin/admin.py:224
 #, docstring
@@ -111,7 +113,7 @@ msgstr ""
 #: redbot/cogs/admin/admin.py:305
 #, docstring
 msgid "Cancel a running announce."
-msgstr ""
+msgstr "실행 중인 공지사항을 취소했어요."
 
 #: redbot/cogs/admin/admin.py:307
 msgid "There is no currently running announcement."
@@ -226,11 +228,11 @@ msgstr ""
 
 #: redbot/cogs/admin/announcer.py:77
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "다음과 같은 서버에 알릴 수 없어요. : "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "관리자 cog가 로드되지 않았어요."
 
 #: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."

@@ -238,17 +238,23 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def giphycreds(self, ctx):
-        """Explain how to set Giphy API tokens."""
+        """Explains how to set GIPHY API tokens."""
 
         message = _(
-            "To get a Giphy API Key:\n"
-            "1. Login to a Giphy account.\n"
-            "2. Visit this page https://developers.giphy.com/dashboard.\n"
+            "To get a GIPHY API Key:\n"
+            "1. Login to (or create) a GIPHY account.\n"
+            "2. Visit this page: https://developers.giphy.com/dashboard.\n"
             "3. Press *Create an App*.\n"
-            "4. Write an app name, example: *Red Bot*.\n"
-            "5. Write an app description, example: *Used for Red Bot*.\n"
-            "6. Copy the API key shown.\n"
-            "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
-        ).format(prefix=ctx.clean_prefix)
+            "4. Click *Select API*, then *Next Step*.\n"
+            "5. Add an app name, for example *Red*.\n"
+            "6. Add an app description, for example *Used for Red's image cog*.\n"
+            "7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\n"
+            "8. Copy the API Key.\n"
+            "9. In Discord, run the command {command}.\n"
+        ).format(
+            command="`{prefix}set api GIPHY api_key {placeholder}`".format(
+                prefix=ctx.clean_prefix, placeholder=_("<your_api_key_here>")
+            )
+        )
 
         await ctx.maybe_send_embed(message)

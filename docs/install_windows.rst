@@ -4,18 +4,29 @@
 Installing Red on Windows
 =========================
 
----------------
-Needed Software
----------------
+-------------------------------
+Installing the pre-requirements
+-------------------------------
 
-The following software dependencies can all be installed quickly and easily through PowerShell,
-using a trusted package manager for Windows called `Chocolatey <https://chocolatey.org>`_
+Please install the pre-requirements by following instructions from one of the following subsections.
 
-We also provide instructions for manually installing all of the dependencies.
+The pre-requirements are:
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
+ - Git 2.11+
+ - Java Runtime Environment 11 (for audio support)
 
-******************************************
-Installing using powershell and chocolatey
-******************************************
+We also recommend installing some basic compiler tools, in case our dependencies don't provide
+pre-built "wheels" for your architecture.
+
+.. contents:: Choose a method of installing pre-requirements:
+    :local:
+
+----
+
+*********************************************
+Using PowerShell and Chocolatey (recommended)
+*********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
 right-click on it and then click "Run as administrator"
@@ -39,6 +50,8 @@ For Audio support, you should also run the following command before exiting:
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
 
+----
+
 ********************************
 Manually installing dependencies
 ********************************
@@ -61,6 +74,9 @@ Manually installing dependencies
 
 * `Java 11 <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
+From here, continue onto `creating-venv-windows`.
+
+----
 
 .. _creating-venv-windows:
 

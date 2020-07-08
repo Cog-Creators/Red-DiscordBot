@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: de\n"
+"X-Crowdin-File-ID: 38\n"
 "Language: de_DE\n"
 
 #: redbot/cogs/modlog/modlog.py:17
@@ -26,7 +28,7 @@ msgstr "Verwalte modlog Einstellungen."
 #: redbot/cogs/modlog/modlog.py:32
 #, docstring
 msgid "Command to fix misbehaving casetypes."
-msgstr ""
+msgstr "Command um fehlerhafte Fälle zu reparieren."
 
 #: redbot/cogs/modlog/modlog.py:39
 #, docstring
@@ -35,11 +37,15 @@ msgstr "Lege einen Kanal als modlog fest.\\n\\n        Lasse `<channel>` weg um 
 
 #: redbot/cogs/modlog/modlog.py:48
 msgid "Mod events will be sent to {channel}."
-msgstr ""
+msgstr "Moderationsevents werden nach {channel} gesendet."
 
 #: redbot/cogs/modlog/modlog.py:52
 msgid "I do not have permissions to send messages in {channel}!"
 msgstr "Ich habe nicht die Berechtigungen um Nachrichten in {channel} zu senden!"
+
+#: redbot/cogs/modlog/modlog.py:60
+msgid "Mod log is already disabled."
+msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:63
 msgid "Mod log deactivated."
@@ -64,7 +70,7 @@ msgstr "Aktuelle Einstellungen:\\n"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "That action is not registered."
-msgstr ""
+msgstr "Diese Aktion wurde nicht registriert."
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "Case creation for {action_name} actions is now {enabled}."
@@ -86,7 +92,7 @@ msgstr "Zeige die angegebenen Fälle."
 
 #: redbot/cogs/modlog/modlog.py:109
 msgid "That case does not exist for that server."
-msgstr ""
+msgstr "Dieser Fall existiert nicht auf diesem Server."
 
 #: redbot/cogs/modlog/modlog.py:120
 #, docstring
@@ -108,12 +114,12 @@ msgstr "Dieser Benutzer hat keine Fälle."
 #: redbot/cogs/modlog/modlog.py:149
 #, docstring
 msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
-msgstr "Lege einen Grund für einen modlog Fall an.\\n\\n        Bitte beachte, dass du nur Fälle bearbeiten kannst die\\n        du selbst erstellt hast, es sei denn du bist ein Moderator,\\n        Admin oder Besitzer des Servers.\\n\\n        Ist keine Fallnummer angegeben, dann wird der letzte Fall verwendet\n"
+msgstr "Füge eine Beschreibung zu einem Modlog-Fall hinzu.\\n\\n        Bitte beachte, dass du nur Fälle bearbeiten kannst die\\n        du selbst erstellt hast, es sei denn du bist ein Moderator,\\n        Admin oder Besitzer des Servers.\\n\\n        Ist keine Fallnummer angegeben, dann wird der letzte Fall verwendet\n"
 "        "
 
 #: redbot/cogs/modlog/modlog.py:162
 msgid "There are no modlog cases in this server."
-msgstr ""
+msgstr "In diesem server gibt es keine Modlog-Fälle."
 
 #: redbot/cogs/modlog/modlog.py:168
 msgid "That case does not exist!"
@@ -125,5 +131,5 @@ msgstr "Du bist nicht berechtigt diesen Fall zu ändern!"
 
 #: redbot/cogs/modlog/modlog.py:183
 msgid "Reason for case #{num} has been updated."
-msgstr ""
+msgstr "Beschreibung für Fall nummer #{num} wurde aktualisiert."
 

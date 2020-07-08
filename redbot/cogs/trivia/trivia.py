@@ -61,23 +61,26 @@ class Trivia(commands.Cog):
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage Trivia settings."""
-        if ctx.invoked_subcommand is None:
-            settings = self.config.guild(ctx.guild)
-            settings_dict = await settings.all()
-            msg = box(
-                _(
-                    "Current settings\n"
-                    "Bot gains points: {bot_plays}\n"
-                    "Answer time limit: {delay} seconds\n"
-                    "Lack of response timeout: {timeout} seconds\n"
-                    "Points to win: {max_score}\n"
-                    "Reveal answer on timeout: {reveal_answer}\n"
-                    "Payout multiplier: {payout_multiplier}\n"
-                    "Allow lists to override settings: {allow_override}"
-                ).format(**settings_dict),
-                lang="py",
-            )
-            await ctx.send(msg)
+
+    @triviaset.command(name="showsettings")
+    async def triviaset_showsettings(self, ctx: commands.Context):
+        """Show the current trivia settings."""
+        settings = self.config.guild(ctx.guild)
+        settings_dict = await settings.all()
+        msg = box(
+            _(
+                "Current settings\n"
+                "Bot gains points: {bot_plays}\n"
+                "Answer time limit: {delay} seconds\n"
+                "Lack of response timeout: {timeout} seconds\n"
+                "Points to win: {max_score}\n"
+                "Reveal answer on timeout: {reveal_answer}\n"
+                "Payout multiplier: {payout_multiplier}\n"
+                "Allow lists to override settings: {allow_override}"
+            ).format(**settings_dict),
+            lang="py",
+        )
+        await ctx.send(msg)
 
     @triviaset.command(name="maxscore")
     async def triviaset_max_score(self, ctx: commands.Context, score: int):
