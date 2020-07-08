@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterator
+from typing import Dict, List, Optional, Union, Set, Iterable
 from argparse import Namespace
 
 import discord
@@ -151,8 +151,7 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = set(await self._config.whitelist())
-            for obj_id in role_or_user:
-                self._cached_whitelist[gid].add(obj_id)
+            self._cached_whitelist[gid].update(role_or_user)
             await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
         else:
@@ -160,8 +159,7 @@ class WhitelistBlacklistManager:
                 self._cached_whitelist[gid] = set(
                     await self._config.guild_from_id(gid).whitelist()
                 )
-            for obj_id in role_or_user:
-                self._cached_whitelist[gid].add(obj_id)
+            self._cached_whitelist[gid].update(role_or_user)
             await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
 
     async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
@@ -183,8 +181,7 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = set(await self._config.whitelist())
-            for obj_id in role_or_user:
-                self._cached_whitelist[gid].discard(obj_id)
+            self._cached_whitelist[gid].difference_update(role_or_user)
             await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
         else:
@@ -192,8 +189,7 @@ class WhitelistBlacklistManager:
                 self._cached_whitelist[gid] = set(
                     await self._config.guild_from_id(gid).whitelist()
                 )
-            for obj_id in role_or_user:
-                self._cached_whitelist[gid].discard(obj_id)
+            self._cached_whitelist[gid].difference_update(role_or_user)
             await self._config.guild_from_id(gid).whitelist.set(list(self._cached_whitelist[gid]))
 
     async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
@@ -221,16 +217,14 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(await self._config.blacklist())
-            for obj_id in role_or_user:
-                self._cached_blacklist[gid].add(obj_id)
+            self._cached_blacklist[gid].update(role_or_user)
             await self._config.blacklist.set(list(self._cached_blacklist[gid]))
         else:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(
                     await self._config.guild_from_id(gid).blacklist()
                 )
-            for obj_id in role_or_user:
-                self._cached_blacklist[gid].add(obj_id)
+            self._cached_blacklist[gid].update(role_or_user)
             await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
 
     async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
@@ -251,14 +245,12 @@ class WhitelistBlacklistManager:
         if gid is None:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(await self._config.blacklist())
-            for obj_id in role_or_user:
-                self._cached_blacklist[gid].discard(obj_id)
+            self._cached_blacklist[gid].difference_update(role_or_user)
             await self._config.blacklist.set(list(self._cached_blacklist[gid]))
         else:
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(
                     await self._config.guild_from_id(gid).blacklist()
                 )
-            for obj_id in role_or_user:
-                self._cached_blacklist[gid].discard(obj_id)
+            self._cached_blacklist[gid].difference_update(role_or_user)
             await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
