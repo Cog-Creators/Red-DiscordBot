@@ -316,5 +316,3 @@ If you want to do it, follow these steps.
   and enjoy Red!
 
   For that, just follow :ref:`this guide <systemd-service-guide>`.
-
-.. _getting-started-userdocs:
