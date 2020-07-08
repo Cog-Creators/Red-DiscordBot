@@ -190,7 +190,7 @@ class RedHelpFormatter:
 
         send = help_settings.verify_exists
         if not send:
-            async for _ in self.help_filter_func(
+            async for __ in self.help_filter_func(
                 ctx, (obj,), bypass_hidden=True, help_settings=help_settings
             ):
                 # This is a really lazy option for not
