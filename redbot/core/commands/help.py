@@ -46,7 +46,7 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, humanize_list, pagify
+from ..utils.chat_formatting import box, humanize_list, humanize_number, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
 
@@ -211,11 +211,21 @@ class RedHelpFormatter:
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
         signature = (
-            f"`{T_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+            f"`{_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
         )
-        if help_settings.show_aliases and command.aliases:
-            alias_fmt = T_("Aliases") if len(command.aliases) > 1 else T_("Alias")
-            signature += f"\n`{alias_fmt}: {humanize_list(command.aliases)}`"
+
+        aliases = command.aliases
+        if help_settings.show_aliases and aliases:
+            alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
+            aliases_list = (
+                _("{} and {} more aliases.").format(
+                    ", ".join([ctx.clean_prefix + alias for alias in aliases[:10]]),
+                    humanize_number(len(aliases[:-10])),
+                )
+                if len(aliases) > 10
+                else humanize_list([ctx.clean_prefix + alias for alias in aliases])
+            )
+            signature += f"\n`{alias_fmt}: {aliases_list}`"
         subcommands = None
 
         if hasattr(command, "all_commands"):
