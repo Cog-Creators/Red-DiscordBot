@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-05-14 12:27+0000\n"
+"Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,12 +10,14 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: ru\n"
+"X-Crowdin-File-ID: 41\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/customcom/customcom.py:53
 msgid "Welcome to the interactive random {cc} maker!\\nEvery message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr ""
+msgstr "Добро пожаловать в интерактивный случайных {cc} созданий!\\nКаждое отправленное тобой сообщение будет добавлено в качестве одного из ответов по выбору после срабатывания {cc} . Чтобы выйти из интерактивного меню, введите `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:64
 msgid "Add a random response:"
@@ -51,28 +53,28 @@ msgstr "Управление пользовательскими командам
 #: redbot/cogs/customcom/customcom.py:211
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n        \\n        This is helpful for copy and pasting."
-msgstr ""
+msgstr "Получите сырый ответ на пользовательскую команду, чтобы получить соответствующую разметку.\\n        \\n        Это полезно для копирования и вставки."
 
 #: redbot/cogs/customcom/customcom.py:232
 msgid "Response #{num}/{total}"
-msgstr ""
+msgstr "Ответ #{num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:242
 msgid "Response #{num}/{total}:\\n{raw}"
-msgstr ""
+msgstr "Ответ #{num}/{total}:\\n{raw}"
 
 #: redbot/cogs/customcom/customcom.py:253
 #, docstring
 msgid "Searches through custom commands, according to the query."
-msgstr ""
+msgstr "Поиск по пользовательским командам, по запросу."
 
 #: redbot/cogs/customcom/customcom.py:265
 msgid "No close matches were found."
-msgstr ""
+msgstr "Ничего не найдено."
 
 #: redbot/cogs/customcom/customcom.py:270
 msgid "Search results"
-msgstr ""
+msgstr "Результаты поиска"
 
 #: redbot/cogs/customcom/customcom.py:275
 msgid "The following matches have been found:"
@@ -91,7 +93,7 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:297
 #: redbot/cogs/customcom/customcom.py:326
 msgid "Custom command names cannot have spaces in them."
-msgstr ""
+msgstr "Названия пользовательских комманд не могут срдержать пробелов."
 
 #: redbot/cogs/customcom/customcom.py:300
 #: redbot/cogs/customcom/customcom.py:329
@@ -100,7 +102,7 @@ msgstr "Уже существует команда бота с таким же �
 
 #: redbot/cogs/customcom/customcom.py:304
 msgid "Custom command process cancelled."
-msgstr ""
+msgstr "Процесс создание ползовательской комманды отменено."
 
 #: redbot/cogs/customcom/customcom.py:308
 #: redbot/cogs/customcom/customcom.py:333
@@ -185,36 +187,36 @@ msgstr "Страница {num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
-msgid "Shows a custom command's reponses and its settings."
+msgid "Shows a custom command's responses and its settings."
 msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:467
 msgid "I could not not find that custom command."
-msgstr ""
+msgstr "Я не смог найти эту пользовательскую команду."
 
 #: redbot/cogs/customcom/customcom.py:482
 msgid "Random"
-msgstr ""
+msgstr "Случайно"
 
 #: redbot/cogs/customcom/customcom.py:482
 msgid "Normal"
-msgstr ""
+msgstr "Обычный"
 
 #: redbot/cogs/customcom/customcom.py:484
 msgid "Command: {command_name}\\nAuthor: {author}\\nCreated: {created_at}\\nType: {type}\\n"
-msgstr ""
+msgstr "Команда: {command_name}\\nАвтор: {author}\\nСоздано: {created_at}\\nТип: {type}\\n"
 
 #: redbot/cogs/customcom/customcom.py:496
 msgid "Cooldowns:\\n"
-msgstr ""
+msgstr "Кулдаун:\\n"
 
 #: redbot/cogs/customcom/customcom.py:498
 msgid "{num} seconds per {period}\\n"
-msgstr ""
+msgstr "{num} секунд в {period}\\n"
 
 #: redbot/cogs/customcom/customcom.py:501
 msgid "Responses:\\n"
-msgstr ""
+msgstr "Ответы:\\n"
 
 #: redbot/cogs/customcom/customcom.py:596
 msgid "Too many arguments!"
@@ -226,5 +228,5 @@ msgstr "Аргументы должны быть последовательны�
 
 #: redbot/cogs/customcom/customcom.py:626
 msgid "Conflicting colon notation for argument {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
-msgstr ""
+msgstr "Конфликт среди аргументов {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
 

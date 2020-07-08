@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-07 12:11+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-05-14 12:27+0000\n"
+"Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: no\n"
+"X-Crowdin-File-ID: 41\n"
 "Language: no_NO\n"
 
 #: redbot/cogs/customcom/customcom.py:53
@@ -185,7 +187,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:462
 #, docstring
-msgid "Shows a custom command's reponses and its settings."
+msgid "Shows a custom command's responses and its settings."
 msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:467

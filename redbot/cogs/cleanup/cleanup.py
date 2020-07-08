@@ -465,12 +465,7 @@ class Cleanup(commands.Cog):
         """Clean up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
-        it is used for pattern matching: If it begins with r( and ends with ),
-        then it is interpreted as a regex, and messages that match it are
-        deleted. Otherwise, it is used in a simple substring test.
-
-        Some helpful regex flags to include in your pattern:
-        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        it is used for pattern matching - only messages containing the given text will be deleted.
         """
         channel = ctx.channel
         author = ctx.message.author
