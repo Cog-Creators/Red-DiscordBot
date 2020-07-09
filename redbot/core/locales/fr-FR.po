@@ -171,27 +171,27 @@ msgstr "Apporte de la joie depuis le 2 janvier 2016 (Depuis {} jours !)"
 
 #: redbot/core/core_commands.py:375
 msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\\n\\n(c) Cog Creators"
-msgstr ""
+msgstr "Ce bot est une instance de Red, un bot Discord open source (1) créé par Twentysix (2) et amélioré par beaucoup (3).\\n\\nRed est soutenu par une communauté passionnée qui contribue et crée du contenu que tout le monde puisse profiter. Rejoignez-nous aujourd'hui (4) et aidez-nous à l'améliorer !\\n\\n(c) Cog Creators"
 
 #: redbot/core/core_commands.py:385
 msgid "Instance owned by: [{owner}]\\nPython:            [{python_version}] (5)\\ndiscord.py:        [{dpy_version}] (6)\\nRed version:       [{red_version}] (7)\\n"
-msgstr ""
+msgstr "Instance appartenant à : [{owner}]\\nPython :            [{python_version}] (5)\\ndiscord.py :        [{dpy_version}] (6)\\nVersion de Red :       [{red_version}] (7)\\n"
 
 #: redbot/core/core_commands.py:404
 msgid "Outdated:          [{state}]\\n"
-msgstr ""
+msgstr "Obsolète :          [{state}]\\n"
 
 #: redbot/core/core_commands.py:407
 msgid "**About Red**\\n"
-msgstr ""
+msgstr "**À propos de Red**\\n"
 
 #: redbot/core/core_commands.py:418
 msgid "**About this instance**\\n"
-msgstr ""
+msgstr "**À propos de cette instance**\\n"
 
 #: redbot/core/core_commands.py:420
 msgid "**References**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. <{}>\\n7. <{}>\\n"
-msgstr ""
+msgstr "**Références**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. <{}>\\n7. <{}>\\n"
 
 #: redbot/core/core_commands.py:436
 #, docstring
@@ -282,11 +282,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:553
 msgid "Embeds are now enabled for you in DMs."
-msgstr ""
+msgstr "Les embeds sont maintenant activés pour vous en messages privés."
 
 #: redbot/core/core_commands.py:555
 msgid "Embeds are now disabled for you in DMs."
-msgstr ""
+msgstr "Les embeds sont maintenant désactivés pour vous en messages privés."
 
 #: redbot/core/core_commands.py:561
 #, docstring
@@ -505,7 +505,7 @@ msgstr "Identique à la langue du bot"
 
 #: redbot/core/core_commands.py:966
 msgid "{bot_name} Settings:\\n\\nPrefixes: {prefixes}\\n{guild_settings}Locale: {locale}\\nRegional format: {regional_format}"
-msgstr "{bot_name} Paramètres :\\n\\nPréfixes : {prefixes}\\n{guild_settings}Language : {locale}\\nFormat de région : {regional_format}"
+msgstr "Paramètres de {bot_name} :\\n\\nPréfixes : {prefixes}\\n{guild_settings}Language : {locale}\\nFormat de région : {regional_format}"
 
 #: redbot/core/core_commands.py:986
 #, docstring
@@ -644,7 +644,7 @@ msgstr "La couleur a été définie."
 #: redbot/core/core_commands.py:1163
 #, docstring
 msgid "Sets [botname]'s avatar\\n\\n        Supports either an attachment or an image URL."
-msgstr ""
+msgstr "Définit l'avatar de [botname]\\n\\n        Prend en charge soit une pièce jointe, soit l'URL d'une image."
 
 #: redbot/core/core_commands.py:1184
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG or PNG format."
@@ -666,7 +666,7 @@ msgstr "Avatar supprimé."
 #: redbot/core/core_commands.py:1207
 #, docstring
 msgid "Sets [botname]'s playing status"
-msgstr ""
+msgstr "Définit le statut de jeu de [botname]"
 
 #: redbot/core/core_commands.py:1219
 msgid "Status set to ``Playing {game.name}``."
@@ -994,7 +994,7 @@ msgstr "Message envoyé a {}"
 #: redbot/core/core_commands.py:1788
 #, docstring
 msgid "Prints the bot's data path."
-msgstr ""
+msgstr "Envoie le chemin des données du bot."
 
 #: redbot/core/core_commands.py:1792
 msgid "Data path: {path}"
@@ -1210,7 +1210,7 @@ msgstr "{} commandes sont désactivées globalement.\\n"
 
 #: redbot/core/core_commands.py:2175
 msgid "1 command is disabled globally.\\n"
-msgstr ""
+msgstr "1 commande est désactivée globalement.\\n"
 
 #: redbot/core/core_commands.py:2182
 #, docstring
@@ -1263,7 +1263,7 @@ msgstr "Désactiver une commande pour ce serveur uniquement."
 
 #: redbot/core/core_commands.py:2268
 msgid "You are not allowed to disable that command."
-msgstr ""
+msgstr "Vous n'êtes pas autorisé à désactiver cette commande."
 
 #: redbot/core/core_commands.py:2278
 msgid "That command is already disabled in this server."
