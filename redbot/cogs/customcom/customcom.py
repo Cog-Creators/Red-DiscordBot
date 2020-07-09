@@ -12,9 +12,10 @@ from fuzzywuzzy import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus, AsyncIter
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
+from .menus import Menu, CCRawSource, CCListSource
 
 _ = Translator("CustomCommands", __file__)
 
@@ -266,31 +267,9 @@ class CustomCommands(commands.Cog):
                 raw = f"{raw[:1997]}..."
             await ctx.send(raw)
         else:
-            msglist = []
-            if await ctx.embed_requested():
-                colour = await ctx.embed_colour()
-                for number, response in enumerate(command["response"], start=1):
-                    raw = discord.utils.escape_markdown(response)
-                    if len(raw) > 2048:
-                        raw = f"{raw[:2045]}..."
-                    embed = discord.Embed(
-                        title=_("Response #{num}/{total}").format(
-                            num=number, total=len(command["response"])
-                        ),
-                        description=raw,
-                        colour=colour,
-                    )
-                    msglist.append(embed)
-            else:
-                for number, response in enumerate(command["response"], start=1):
-                    raw = discord.utils.escape_markdown(response)
-                    msg = _("Response #{num}/{total}:\n{raw}").format(
-                        num=number, total=len(command["response"]), raw=raw
-                    )
-                    if len(msg) > 2000:
-                        msg = f"{msg[:1997]}..."
-                    msglist.append(msg)
-            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
+            await Menu(
+                source=CCRawSource(command["response"]), cog=self, delete_message_after=True
+            ).start(ctx=ctx, wait=False)
 
     @customcom.command(name="search")
     @commands.guild_only()
@@ -516,27 +495,11 @@ class CustomCommands(commands.Cog):
                 ).format(command=f"{ctx.clean_prefix}customcom create")
             )
             return
-
-        results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
-
-        if await ctx.embed_requested():
-            # We need a space before the newline incase the CC preview ends in link (GH-2295)
-            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
-            pages = list(pagify(content, page_length=1024))
-            embed_pages = []
-            for idx, page in enumerate(pages, start=1):
-                embed = discord.Embed(
-                    title=_("Custom Command List"),
-                    description=page,
-                    colour=await ctx.embed_colour(),
-                )
-                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
-                embed_pages.append(embed)
-            await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
-        else:
-            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
-            pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+        await Menu(
+            source=CCListSource(sorted(cc_dict.items(), key=lambda t: t[0])),
+            cog=self,
+            delete_message_after=True,
+        ).start(ctx=ctx, wait=False)
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
