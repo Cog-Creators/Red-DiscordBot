@@ -45,7 +45,7 @@ msgstr "Ich habe nicht die Berechtigungen um Nachrichten in {channel} zu senden!
 
 #: redbot/cogs/modlog/modlog.py:60
 msgid "Mod log is already disabled."
-msgstr ""
+msgstr "Der Mod-log ist bereits aktiviert."
 
 #: redbot/cogs/modlog/modlog.py:63
 msgid "Mod log deactivated."
