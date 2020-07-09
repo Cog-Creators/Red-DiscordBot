@@ -14,11 +14,11 @@ Start by installing Node.JS and NPM via your favorite package distributor.
 
 - Using Ubuntu run the following command:
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs`
+sudo apt install -y nodejs`
 
 - Using Debian, run the following command as root:
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | bash -
-apt-get install -y nodejs`
+apt install -y nodejs`
 
 From there run the following command:
 :code:`npm install pm2 -g`
