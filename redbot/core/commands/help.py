@@ -210,9 +210,9 @@ class RedHelpFormatter:
         description = command.description or ""
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
-        signature = (
-            f"`{_('Syntax')}: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-        )
+        signature = _(
+            "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
+        ).format(ctx=ctx, command=command)
 
         aliases = command.aliases
         if help_settings.show_aliases and aliases:
@@ -225,9 +225,9 @@ class RedHelpFormatter:
                 if len(aliases) > 10
                 else humanize_list([ctx.clean_prefix + alias for alias in aliases])
             )
-            signature += f"\n`{alias_fmt}: {aliases_list}`"
-        subcommands = None
+            signature += f"\n{alias_fmt}: {aliases_list}"
 
+        subcommands = None
         if hasattr(command, "all_commands"):
             grp = cast(commands.Group, command)
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
@@ -239,7 +239,7 @@ class RedHelpFormatter:
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
-            emb["embed"]["description"] = signature
+            emb["embed"]["description"] = box(signature)
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
@@ -299,7 +299,7 @@ class RedHelpFormatter:
                     None,
                     (
                         description,
-                        signature[1:-1],
+                        signature[:-1],
                         command.format_help_for_context(ctx),
                         subtext_header,
                         subtext,
