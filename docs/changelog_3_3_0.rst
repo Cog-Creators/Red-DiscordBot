@@ -13,6 +13,8 @@ Audio
 *****
 
 - Added information about internally managed jar to ``[p]audioset info`` (:issue:`3915`)
+- Updated to Lavaplayer 1.3.50
+- Twitch playback and YouTube searching should be functioning again.
 
 Core Bot
 ********
