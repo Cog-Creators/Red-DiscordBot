@@ -207,6 +207,14 @@ class MuteMixin(MixinMeta):
             await ctx.send(
                 _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
+            try:
+                await user.move_to(channel)
+            except discord.Forbidden:
+                await ctx.send(
+                    _(
+                        "Because I don't have the move members permission, this will take into effect when the user rejoins."
+                    )
+                )
         else:
             await ctx.send(_("Mute failed. Reason: {}").format(issue))
 
@@ -322,6 +330,14 @@ class MuteMixin(MixinMeta):
             await ctx.send(
                 _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
+            try:
+                await user.move_to(channel)
+            except discord.Forbidden:
+                await ctx.send(
+                    _(
+                        "Because I don't have the move members permission, this will take into effect when the user rejoins."
+                    )
+                )
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
