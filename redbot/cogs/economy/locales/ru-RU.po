@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"POT-Creation-Date: 2020-07-09 12:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -250,110 +250,115 @@ msgstr ""
 msgid "Manage Economy settings."
 msgstr "Управление настройками экономики."
 
-#: redbot/cogs/economy/economy.py:666
+#: redbot/cogs/economy/economy.py:661
+#, docstring
+msgid "\\n        Shows the current economy settings\\n        "
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:671
 msgid "----Economy Settings---\\nMinimum slot bid: {slot_min}\\nMaximum slot bid: {slot_max}\\nSlot cooldown: {slot_time}\\nPayday amount: {payday_amount}\\nPayday cooldown: {payday_time}\\nAmount given at account registration: {register_amount}\\nMaximum allowed balance: {maximum_bal}"
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:689
+#: redbot/cogs/economy/economy.py:694
 #, docstring
 msgid "Set the minimum slot machine bid."
 msgstr "Установите минимальную ставку слот-машины."
 
-#: redbot/cogs/economy/economy.py:691
+#: redbot/cogs/economy/economy.py:696
 msgid "Invalid min bid amount."
 msgstr "Неверная минимальная сумма ставки."
 
-#: redbot/cogs/economy/economy.py:700
+#: redbot/cogs/economy/economy.py:705
 msgid "Minimum bid is now {bid} {currency}."
 msgstr "Минимальная ставка сейчас {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:707
+#: redbot/cogs/economy/economy.py:712
 #, docstring
 msgid "Set the maximum slot machine bid."
 msgstr "Установите максимальную ставку слот-машины."
 
-#: redbot/cogs/economy/economy.py:711
+#: redbot/cogs/economy/economy.py:716
 msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
 msgstr "Неверная максимальная сумма ставки. Должна быть больше минимальной суммы."
 
-#: redbot/cogs/economy/economy.py:721
+#: redbot/cogs/economy/economy.py:726
 msgid "Maximum bid is now {bid} {currency}."
 msgstr "Максимальная ставка сейчас {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:728
+#: redbot/cogs/economy/economy.py:733
 #, docstring
 msgid "Set the cooldown for the slot machine."
 msgstr "Установите время восстановления слот-машины."
 
-#: redbot/cogs/economy/economy.py:734
+#: redbot/cogs/economy/economy.py:739
 msgid "Cooldown is now {num} seconds."
 msgstr "Перерыв между играми теперь {num} секунд."
 
-#: redbot/cogs/economy/economy.py:738
+#: redbot/cogs/economy/economy.py:743
 #, docstring
 msgid "Set the cooldown for payday."
 msgstr "Установите время восстановления для выплаты жалованья."
 
-#: redbot/cogs/economy/economy.py:745
+#: redbot/cogs/economy/economy.py:750
 msgid "Value modified. At least {num} seconds must pass between each payday."
 msgstr "Значение изменено. Теперь между выплатами должно пройти как минимум {num} секунд."
 
-#: redbot/cogs/economy/economy.py:752
+#: redbot/cogs/economy/economy.py:757
 #, docstring
 msgid "Set the amount earned each payday."
 msgstr "Установите сумму, заработанную каждый день выплаты жалованья."
 
-#: redbot/cogs/economy/economy.py:757 redbot/cogs/economy/economy.py:779
+#: redbot/cogs/economy/economy.py:762 redbot/cogs/economy/economy.py:784
 msgid "Amount must be greater than zero and less than {maxbal}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:767
+#: redbot/cogs/economy/economy.py:772
 msgid "Every payday will now give {num} {currency}."
 msgstr "Каждая выплата теперь дает {num}{currency}."
 
-#: redbot/cogs/economy/economy.py:774
+#: redbot/cogs/economy/economy.py:779
 #, docstring
 msgid "Set the amount earned each payday for a role."
 msgstr "Установить сумму, зарабатываемую за каждый день выплаты за роль."
 
-#: redbot/cogs/economy/economy.py:785
+#: redbot/cogs/economy/economy.py:790
 msgid "The bank must be per-server for per-role paydays to work."
 msgstr "Банк должен быть серверным, чтобы делать выплаты жалованья для ролей."
 
-#: redbot/cogs/economy/economy.py:789
+#: redbot/cogs/economy/economy.py:794
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
 msgstr "Теперь каждый день выплаты будет давать {num} {currency} людям с ролью {role_name}."
 
-#: redbot/cogs/economy/economy.py:797
+#: redbot/cogs/economy/economy.py:802
 #, docstring
 msgid "Set the initial balance for new bank accounts."
 msgstr "Установить начальный баланс для новых банковских счетов."
 
-#: redbot/cogs/economy/economy.py:805
+#: redbot/cogs/economy/economy.py:810
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:810
+#: redbot/cogs/economy/economy.py:815
 msgid "Registering an account will now give {num} {currency}."
 msgstr "Регистрация счета теперь даст {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:819
+#: redbot/cogs/economy/economy.py:824
 msgid "weeks"
 msgstr "нед."
 
-#: redbot/cogs/economy/economy.py:820
+#: redbot/cogs/economy/economy.py:825
 msgid "days"
 msgstr "дн."
 
-#: redbot/cogs/economy/economy.py:821
+#: redbot/cogs/economy/economy.py:826
 msgid "hours"
 msgstr "ч."
 
-#: redbot/cogs/economy/economy.py:822
+#: redbot/cogs/economy/economy.py:827
 msgid "minutes"
 msgstr "мин."
 
-#: redbot/cogs/economy/economy.py:823
+#: redbot/cogs/economy/economy.py:828
 msgid "seconds"
 msgstr "с."
 

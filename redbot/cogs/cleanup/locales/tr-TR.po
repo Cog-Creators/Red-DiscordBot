@@ -75,7 +75,7 @@ msgstr "Komut mesajlarını ve mesajları bottan temizleyin."
 #: redbot/cogs/cleanup/cleanup.py:465
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr "Botun sahip olduğu mesajları temizleyin.\\ n \\ n varsayılan olarak, tüm iletiler temizlenir.\\n        "
+msgstr "Botun sahip olduğu mesajları temizleyin.\\n\\n varsayılan olarak, tüm iletiler temizlenir.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:535
 #, docstring

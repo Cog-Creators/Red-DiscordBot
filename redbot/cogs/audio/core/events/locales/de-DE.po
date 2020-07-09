@@ -25,7 +25,7 @@ msgstr "Keine DJ-Rolle gefunden. DJ-Modus deaktiviert."
 
 #: redbot/cogs/audio/core/events/dpy.py:80
 msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+msgstr "`{user_input}` ist kein gültiger Wert für `{command}`"
 
 #: redbot/cogs/audio/core/events/dpy.py:86
 msgid "Unable To Parse Argument"
