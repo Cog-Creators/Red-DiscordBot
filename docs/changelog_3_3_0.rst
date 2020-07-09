@@ -4,7 +4,7 @@ Redbot 3.3.10 or 3.4.0 (Unreleased)
 ===================================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`Injabie3`
 
 End-user changelog
 ------------------
@@ -18,6 +18,9 @@ Core Bot
 ********
 
 - Fixed delayed help when ``[p]set deletedelay`` is enabled (:issue:`3884`, :issue:`3883`)
+- Bumped the Discord.py requirement from 1.3.3 to 1.3.4 (:issue:`4053`)
+- Added settings view commands for nearly all cogs. (:issue:`4041`)
+- Added more strings to be fully translatable by i18n. (:issue:`4044`)
 
 Downloader
 **********
@@ -41,8 +44,11 @@ Mod
 ***
 
 - Added option to delete messages within the passed amount of days with ``[p]tempban`` (:issue:`3958`)
+- Added the ability to permanently ban a temporary banned user with ``[p]hackban`` (:issue:`4025`)
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 - Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
+- Prevented an issue whereby the author may lock him self out of using the bot via whitelists (:issue:`3903`)
+- Reduced the number of API calls made to the storage APIs (:issue:`3910`)
 
 Permissions
 ***********
