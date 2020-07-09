@@ -110,10 +110,6 @@ class Menu(menus.MenuPages, inherit_buttons=False):
             delete_message_after=delete_message_after,
             **kwargs,
         )
-        if (
-            bad_stop := menus._cast_emoji("\N{BLACK SQUARE FOR STOP}\ufe0f")
-        ) and bad_stop in self._buttons:
-            del self._buttons[bad_stop]
         self.cog = cog
 
     async def show_checked_page(self, page_number: int) -> None:
