@@ -215,9 +215,7 @@ class General(commands.Cog):
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
-        search_terms = escape(
-            urllib.parse.quote_plus(search_terms), mass_mentions=True
-        )
+        search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
@@ -483,7 +481,7 @@ class General(commands.Cog):
 
         try:
             url = "https://api.urbandictionary.com/v0/define"
-            
+
             params = {"term": str(word).lower()}
 
             headers = {"content-type": "application/json"}
