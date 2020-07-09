@@ -83,7 +83,9 @@ class ModSettings(MixinMeta):
     @commands.guild_only()
     async def mentionspam(self, ctx: commands.Context):
         """
-        Manage the automoderation for mentionspam
+        Manage the automoderation settings for mentionspam,
+
+        Using this command with no subcommands will send current settings.
         """
         if ctx.invoked_subcommand is None:
             data = await self.config.guild(ctx.guild).all()
@@ -110,13 +112,13 @@ class ModSettings(MixinMeta):
 
             await ctx.send(box(msg))
 
-    @mentionspam.command()
+    @mentionspam.command(name="warn")
     @commands.guild_only()
-    async def warn(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_warn(self, ctx: commands.Context, max_mentions: int = 0):
         """
         Sets the autowarn conditions for mention spam.
 
-        Users will be warned if they send any messages with contain more than
+        Users will be warned if they send any messages which contain more than
         `<max_mentions>` mentions.
 
         `<max_mentions>` must be at least 2. Set to 0 to disable.
@@ -135,7 +137,7 @@ class ModSettings(MixinMeta):
 
         if mention_spam["kick"]:
             if max_mentions >= mention_spam["kick"]:
-                mismatch_message += _("\nAutowarn is equal or higher than autokick.")
+                mismatch_message += _("\nAutowarn is equal to or higher than autokick.")
 
         if mention_spam["ban"]:
             if max_mentions >= mention_spam["ban"]:
@@ -150,13 +152,13 @@ class ModSettings(MixinMeta):
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )
 
-    @mentionspam.command()
+    @mentionspam.command(name="kick")
     @commands.guild_only()
-    async def kick(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_kick(self, ctx: commands.Context, max_mentions: int = 0):
         """
         Sets the autokick conditions for mention spam.
 
-        Users will be kicked if they send any messages with contain more than
+        Users will be kicked if they send any messages which contain more than
         `<max_mentions>` mentions.
 
         `<max_mentions>` must be at least 3. Set to 0 to disable.
@@ -190,9 +192,9 @@ class ModSettings(MixinMeta):
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )
 
-    @mentionspam.command()
+    @mentionspam.command(name="ban")
     @commands.guild_only()
-    async def ban(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_ban(self, ctx: commands.Context, max_mentions: int = 0):
         """Set the autoban conditions for mention spam.
 
         Users will be banned if they send any message which contains more than

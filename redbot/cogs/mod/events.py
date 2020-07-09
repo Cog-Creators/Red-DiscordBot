@@ -52,7 +52,7 @@ class Events(MixinMeta):
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
                     log.info(
-                        "Failed to ban member for mention spam in server {}.".format(guild.id)
+                        "Failed to ban a member ({member}) for mention spam in server {guild}.".format(member=author.id, guild=guild.id)
                     )
                 else:
                     try:
@@ -78,7 +78,7 @@ class Events(MixinMeta):
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
                     log.info(
-                        "Failed to kick member for mention spam in server {}".format(guild.id)
+                        "Failed to kick a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
                     )
                 else:
                     try:
@@ -106,7 +106,7 @@ class Events(MixinMeta):
                     )
                 except (discord.HTTPException, discord.Forbidden):
                     log.info(
-                        "Failed to warn member for mention spam in server {}".format(guild.id)
+                        "Failed to warn a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
                     )
                 else:
                     try:
