@@ -208,7 +208,7 @@ class MuteMixin(MixinMeta):
                 _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
         else:
-            await ctx.send(issue)
+            await ctx.send(_("Mute failed. Reason: {}").format(issue))
 
     @mute.command(name="channel")
     @commands.guild_only()
