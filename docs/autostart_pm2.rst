@@ -12,11 +12,11 @@ Installing PM2
 
 Start by installing Node.JS and NPM via your favorite package distributor.
 
-- Using Ubuntu run the following command.
+Using Ubuntu run the following command.
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install -y nodejs`
 
-- Using Debian, run the following command as root.
+Using Debian, run the following command as root.
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | bash -
 apt install -y nodejs`
 
