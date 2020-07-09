@@ -12,15 +12,15 @@ Installing PM2
 
 Start by installing Node.JS and NPM via your favorite package distributor.
 
-- Using Ubuntu run the following command:
+- Using Ubuntu run the following command.
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install -y nodejs`
 
-- Using Debian, run the following command as root:
+- Using Debian, run the following command as root.
 :code:`curl -sL https://deb.nodesource.com/setup_14.x | bash -
 apt install -y nodejs`
 
-From there run the following command:
+From there run the following command.
 :code:`npm install pm2 -g`
 
 After PM2 is installed, run the following command to enable your Red instance to be managed by PM2. Replace the brackets with the required information.
