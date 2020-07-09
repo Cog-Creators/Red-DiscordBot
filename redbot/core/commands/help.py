@@ -219,11 +219,21 @@ class RedHelpFormatter:
             alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
             aliases_list = (
                 _("{} and {} more aliases.").format(
-                    ", ".join([ctx.clean_prefix + alias for alias in aliases[:10]]),
+                    ", ".join(
+                        [
+                            f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
+                            for alias in aliases[:10]
+                        ]
+                    ),
                     humanize_number(len(aliases[:-10])),
                 )
                 if len(aliases) > 10
-                else humanize_list([ctx.clean_prefix + alias for alias in aliases])
+                else humanize_list(
+                    [
+                        f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
+                        for alias in aliases
+                    ]
+                )
             )
             signature += f"\n{alias_fmt}: {aliases_list}"
 
@@ -299,7 +309,7 @@ class RedHelpFormatter:
                     None,
                     (
                         description,
-                        signature[:-1],
+                        signature,
                         command.format_help_for_context(ctx),
                         subtext_header,
                         subtext,
