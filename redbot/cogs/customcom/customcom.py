@@ -14,8 +14,9 @@ from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
+from redbot.core.utils.menus import SimpleHybridMenu
 from redbot.core.utils.predicates import MessagePredicate
-from .menus import Menu, CCRawSource, CCListSource
+from .menus import CCRawSource, CCListSource
 
 _ = Translator("CustomCommands", __file__)
 
@@ -267,7 +268,7 @@ class CustomCommands(commands.Cog):
                 raw = f"{raw[:1997]}..."
             await ctx.send(raw)
         else:
-            await Menu(
+            await SimpleHybridMenu(
                 source=CCRawSource(command["response"]), cog=self, delete_message_after=True
             ).start(ctx=ctx, wait=False)
 
@@ -495,7 +496,7 @@ class CustomCommands(commands.Cog):
                 ).format(command=f"{ctx.clean_prefix}customcom create")
             )
             return
-        await Menu(
+        await SimpleHybridMenu(
             source=CCListSource(sorted(cc_dict.items(), key=lambda t: t[0])),
             cog=self,
             delete_message_after=True,
