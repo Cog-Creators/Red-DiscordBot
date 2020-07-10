@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import List, Any, Union, Iterable, Tuple
+import asyncio
+from typing import List, Any, Union, Iterable, Tuple, Dict
 
 import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number, escape
+from redbot.core.utils.menus import HybridMenu
 from redbot.vendored.discord.ext import menus
 
 _ = Translator("CustomCommands", __file__)
@@ -95,97 +97,33 @@ class CCRawSource(menus.ListPageSource):
             return msg
 
 
-class Menu(menus.MenuPages, inherit_buttons=False):
+class Menu(HybridMenu, inherit_buttons=True):
     def __init__(
         self,
         source: Union[CCListSource, CCRawSource],
         cog: commands.Cog,
         clear_reactions_after: bool = True,
         delete_message_after: bool = True,
+        add_reactions: bool = True,
+        timeout: int = 180,
         **kwargs: Any,
-    ) -> None:
+    ):
+
+        keyword_to_reaction_mapping = {
+            "next": "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
+            "last": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
+            "first": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
+            "previous": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+            "prev": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+            "close": "\N{CROSS MARK}",
+        }
         super().__init__(
-            source,
+            source=source,
+            cog=cog,
+            add_reactions=add_reactions,
+            timeout=timeout,
             clear_reactions_after=clear_reactions_after,
             delete_message_after=delete_message_after,
+            keyword_to_reaction_mapping=keyword_to_reaction_mapping,
             **kwargs,
         )
-        self.cog = cog
-
-    async def show_checked_page(self, page_number: int) -> None:
-        max_pages = self._source.get_max_pages()
-        try:
-            if max_pages is None:
-                # If it doesn't give maximum pages, it cannot be checked
-                await self.show_page(page_number)
-            elif page_number >= max_pages:
-                await self.show_page(0)
-            elif page_number < 0:
-                await self.show_page(max_pages - 1)
-            elif max_pages > page_number >= 0:
-                await self.show_page(page_number)
-        except IndexError:
-            # An error happened that can be handled, so ignore it.
-            pass
-
-    def _skip_single_arrows(self):
-        max_pages = self._source.get_max_pages()
-        if max_pages is None:
-            return True
-        return max_pages == 1
-
-    def _skip_double_triangle_buttons(self):
-        max_pages = self._source.get_max_pages()
-        if max_pages is None:
-            return True
-        return max_pages <= 2
-
-    def reaction_check(self, payload):
-        """Just extends the default reaction_check to use owner_ids"""
-        if payload.message_id != self.message.id:
-            return False
-        if payload.user_id not in (*self.bot.owner_ids, self._author_id):
-            return False
-        return payload.emoji in self.buttons
-
-    @menus.button(
-        "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-        position=menus.First(1),
-        skip_if=_skip_single_arrows,
-    )
-    async def go_to_previous_page(self, payload):
-        """go to the previous page"""
-        await self.show_checked_page(self.current_page - 1)
-
-    @menus.button(
-        "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-        position=menus.Last(0),
-        skip_if=_skip_single_arrows,
-    )
-    async def go_to_next_page(self, payload):
-        """go to the next page"""
-        await self.show_checked_page(self.current_page + 1)
-
-    @menus.button(
-        "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=menus.First(0),
-        skip_if=_skip_double_triangle_buttons,
-    )
-    async def go_to_first_page(self, payload):
-        """go to the first page"""
-        await self.show_page(0)
-
-    @menus.button(
-        "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=menus.Last(1),
-        skip_if=_skip_double_triangle_buttons,
-    )
-    async def go_to_last_page(self, payload):
-        """go to the last page"""
-        # The call here is safe because it's guarded by skip_if
-        await self.show_page(self._source.get_max_pages() - 1)
-
-    @menus.button("\N{CROSS MARK}")
-    async def stop_pages(self, payload: discord.RawReactionActionEvent) -> None:
-        """stops the pagination session."""
-        self.stop()
