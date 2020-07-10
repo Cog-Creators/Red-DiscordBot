@@ -95,35 +95,3 @@ class CCRawSource(menus.ListPageSource):
             if len(msg) > 2000:
                 msg = f"{msg[:1997]}..."
             return msg
-
-
-class Menu(HybridMenu, inherit_buttons=True):
-    def __init__(
-        self,
-        source: Union[CCListSource, CCRawSource],
-        cog: commands.Cog,
-        clear_reactions_after: bool = True,
-        delete_message_after: bool = True,
-        add_reactions: bool = True,
-        timeout: int = 180,
-        **kwargs: Any,
-    ):
-
-        keyword_to_reaction_mapping = {
-            "last": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            "first": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            "next": "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-            "previous": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            "prev": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            "close": "\N{CROSS MARK}",
-        }
-        super().__init__(
-            source=source,
-            cog=cog,
-            add_reactions=add_reactions,
-            timeout=timeout,
-            clear_reactions_after=clear_reactions_after,
-            delete_message_after=delete_message_after,
-            keyword_to_reaction_mapping=keyword_to_reaction_mapping,
-            **kwargs,
-        )
