@@ -1387,7 +1387,11 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
+                made_by = (
+                    humanize_list(cog_installable.author)
+                    if cog_installable.author
+                    else _("Missing from info.json")
+                )
                 repo_url = (
                     _("Missing from installed repos")
                     if cog_installable.repo is None
