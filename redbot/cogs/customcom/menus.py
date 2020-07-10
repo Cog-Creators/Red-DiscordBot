@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import asyncio
-from typing import List, Any, Union, Iterable, Tuple, Dict
+from typing import List, Union, Iterable, Tuple
 
 import discord
 
-from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number, escape
-from redbot.core.utils.menus import HybridMenu
+from redbot.core.utils.menus import SimpleHybridMenu
 from redbot.vendored.discord.ext import menus
 
 _ = Translator("CustomCommands", __file__)
@@ -19,7 +17,7 @@ class CCListSource(menus.ListPageSource):
         super().__init__(custom_commands, per_page=5)
 
     async def format_page(
-        self, menu: Menu, entries: Iterable[Tuple[str, dict]]
+        self, menu: SimpleHybridMenu, entries: Iterable[Tuple[str, dict]]
     ) -> Union[discord.Embed, str]:
         current_entry = menu.current_page + 1
         total_entries = self._max_pages
@@ -66,7 +64,7 @@ class CCRawSource(menus.ListPageSource):
     def __init__(self, custom_commands: List[str]):
         super().__init__(custom_commands, per_page=1)
 
-    async def format_page(self, menu: Menu, entry: str) -> Union[discord.Embed, str]:
+    async def format_page(self, menu: SimpleHybridMenu, entry: str) -> Union[discord.Embed, str]:
         raw = discord.utils.escape_markdown(entry)
         current_entry = menu.current_page + 1
         total_entries = self._max_pages
