@@ -437,7 +437,7 @@ class KickBanMixin(MixinMeta):
         ctx: commands.Context,
         user: discord.Member,
         duration: Optional[commands.TimedeltaConverter] = timedelta(days=1),
-        days: Optional[int] = 0,
+        days: Optional[int] = None,
         *,
         reason: str = None,
     ):
@@ -463,7 +463,11 @@ class KickBanMixin(MixinMeta):
         elif guild.me.top_role <= user.top_role or user == guild.owner:
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
-        elif not (0 <= days <= 7):
+
+        if days is None:
+            days = await self.config.guild(guild).default_days()
+
+        if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
         invite = await self.get_invite_for_reinvite(ctx, int(duration.total_seconds() + 86400))
