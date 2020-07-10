@@ -410,7 +410,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
                 pass
 
     async def update(self, payload):
-        """|coro|
+        """
 
         Updates the menu after an event has been received.
 
