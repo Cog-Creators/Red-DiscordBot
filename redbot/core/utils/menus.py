@@ -254,13 +254,12 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
         self._actions = {}
         self.__tasks = self._Menu__tasks
 
-
     def _register_keyword(self):
         if isinstance(self.__keyword_to_reaction_mapping, dict):
             for k, v in self.__keyword_to_reaction_mapping.items():
                 emoji = dpy_menus._cast_emoji(v)
                 if emoji not in self.buttons:
-                    raise RuntimeError(f"emoji `{emoji}` was not specified as button in this menu.")
+                    continue
                 self._actions[k] = emoji
 
     def should_add_reactions(self):
@@ -458,8 +457,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
                 traceback.print_exc()
 
     async def start(self, ctx, *, channel=None, wait=False):
-        """|coro|
-
+        """
         Starts the interactive menu session.
 
         Parameters
@@ -511,6 +509,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
             self.__tasks.append(bot.loop.create_task(self._internal_loop()))
 
             if self.should_add_reactions():
+
                 async def add_reactions_task():
                     for emoji in self.buttons:
                         await msg.add_reaction(emoji)

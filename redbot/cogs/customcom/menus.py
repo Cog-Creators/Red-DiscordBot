@@ -110,9 +110,9 @@ class Menu(HybridMenu, inherit_buttons=True):
     ):
 
         keyword_to_reaction_mapping = {
-            "next": "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
             "last": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
             "first": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
+            "next": "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
             "previous": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
             "prev": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
             "close": "\N{CROSS MARK}",
