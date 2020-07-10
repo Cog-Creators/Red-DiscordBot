@@ -599,8 +599,8 @@ class Permissions(commands.Cog):
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
         guild_id, model_id = str(guild_id), str(model_id)
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
-            if guild_id in rules and rules[guild_id]:
-                del rules[guild_id][model_id]
+            if (guild_rules := rules.get(guild_id)) is not None:
+                guild_rules.pop(model_id, None)
 
     async def _set_default_rule(
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int
