@@ -138,6 +138,19 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Add an alias for a command."""
+        # this check needs to be done before call to `self.is_command()` (GH-4069)
+        is_valid_name = self.is_valid_alias_name(alias_name)
+        if not is_valid_name:
+            await ctx.send(
+                _(
+                    "You attempted to create a new alias"
+                    " with the name {name} but that"
+                    " name is an invalid alias name. Alias"
+                    " names may not contain spaces."
+                ).format(name=alias_name)
+            )
+            return
+
         # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
@@ -157,18 +170,6 @@ class Alias(commands.Cog):
                     "You attempted to create a new alias"
                     " with the name {name} but that"
                     " alias already exists."
-                ).format(name=alias_name)
-            )
-            return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(
-                _(
-                    "You attempted to create a new alias"
-                    " with the name {name} but that"
-                    " name is an invalid alias name. Alias"
-                    " names may not contain spaces."
                 ).format(name=alias_name)
             )
             return
@@ -197,6 +198,19 @@ class Alias(commands.Cog):
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Add a global alias for a command."""
+        # this check needs to be done before call to `self.is_command()` (GH-4069)
+        is_valid_name = self.is_valid_alias_name(alias_name)
+        if not is_valid_name:
+            await ctx.send(
+                _(
+                    "You attempted to create a new global alias"
+                    " with the name {name} but that"
+                    " name is an invalid alias name. Alias"
+                    " names may not contain spaces."
+                ).format(name=alias_name)
+            )
+            return
+
         # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
@@ -216,18 +230,6 @@ class Alias(commands.Cog):
                     "You attempted to create a new global alias"
                     " with the name {name} but that"
                     " alias already exists."
-                ).format(name=alias_name)
-            )
-            return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(
-                _(
-                    "You attempted to create a new global alias"
-                    " with the name {name} but that"
-                    " name is an invalid alias name. Alias"
-                    " names may not contain spaces."
                 ).format(name=alias_name)
             )
             return
