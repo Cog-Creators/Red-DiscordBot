@@ -16,7 +16,7 @@ class SelfRole(commands.Converter):
         role_converter = commands.RoleConverter()
 
         pool = set()
-        for role_id in AsyncIter(selfroles):
+        async for role_id in AsyncIter(selfroles, steps=100):
             role = ctx.guild.get_role(role_id)
             if role is None:
                 continue
