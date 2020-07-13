@@ -8,9 +8,11 @@ import discord
 from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.menus import SimpleHybridMenu
 from redbot.core.utils.predicates import MessagePredicate
+
+from .menus import CasesForSource
 
 _ = Translator("ModLog", __file__)
 
@@ -164,21 +166,9 @@ class ModLog(commands.Cog):
             if not cases:
                 return await ctx.send(_("That user does not have any cases."))
 
-            embed_requested = await ctx.embed_requested()
-            if embed_requested:
-                rendered_cases = [await case.message_content(embed=True) for case in cases]
-            elif not embed_requested:
-                rendered_cases = []
-                for case in cases:
-                    message = _("{case}\n**Timestamp:** {timestamp}").format(
-                        case=await case.message_content(embed=False),
-                        timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
-                            "%Y-%m-%d %H:%M:%S UTC"
-                        ),
-                    )
-                    rendered_cases.append(message)
-
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await SimpleHybridMenu(
+            source=CasesForSource(cases), cog=self, delete_message_after=True,
+        ).start(ctx=ctx, wait=False)
 
     @commands.command()
     @commands.guild_only()

@@ -1,5 +1,6 @@
 import datetime
 import time
+import urllib.parse
 from enum import Enum
 from random import randint, choice
 from typing import Final
