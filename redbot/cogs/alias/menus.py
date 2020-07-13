@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Union, Dict, List, Any, Tuple, Iterable
+from typing import Iterable
 
-import discord
 
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box

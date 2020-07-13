@@ -227,7 +227,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
     def __init__(
         self,
         source: dpy_menus.PageSource,
-        cog: commands.Cog,
+        cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
         delete_message_after: bool = True,
         add_reactions: bool = True,
@@ -570,7 +570,7 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
     def __init__(
         self,
         source: dpy_menus.PageSource,
-        cog: commands.Cog,
+        cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
         delete_message_after: bool = True,
         add_reactions: bool = True,
