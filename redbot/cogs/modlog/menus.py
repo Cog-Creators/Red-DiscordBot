@@ -28,3 +28,4 @@ class CasesForSource(menus.ListPageSource):
                 total_pages=humanize_number(max(1, total_entries)),
             )
             message.set_footer(text=text)
+        return message
