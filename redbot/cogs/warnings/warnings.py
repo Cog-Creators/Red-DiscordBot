@@ -18,9 +18,9 @@ from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
+from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.menus import SimpleHybridMenu
+from .menus import ReasonListSource, ActionListSource
 
 _ = Translator("Warnings", __file__)
 
@@ -304,28 +304,14 @@ class Warnings(commands.Cog):
     async def reasonlist(self, ctx: commands.Context):
         """List all configured reasons for Warnings."""
         guild = ctx.guild
-        guild_settings = self.config.guild(guild)
-        msg_list = []
-        async with guild_settings.reasons() as registered_reasons:
-            for r, v in registered_reasons.items():
-                if await ctx.embed_requested():
-                    em = discord.Embed(
-                        title=_("Reason: {name}").format(name=r),
-                        description=v["description"],
-                        color=await ctx.embed_colour(),
-                    )
-                    em.add_field(name=_("Points"), value=str(v["points"]))
-                    msg_list.append(em)
-                else:
-                    msg_list.append(
-                        _(
-                            "Name: {reason_name}\nPoints: {points}\nDescription: {description}"
-                        ).format(reason_name=r, **v)
-                    )
-        if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
-        else:
-            await ctx.send(_("There are no reasons configured!"))
+        data = await self.config.guild(guild).reasons.all()
+
+        if not data:
+            return await ctx.send(_("There are no reasons configured!"))
+
+        await SimpleHybridMenu(
+            source=ReasonListSource(data.items()), cog=self, delete_message_after=True,
+        ).start(ctx=ctx, wait=False)
 
     @commands.command()
     @commands.guild_only()
@@ -333,34 +319,12 @@ class Warnings(commands.Cog):
     async def actionlist(self, ctx: commands.Context):
         """List all configured automated actions for Warnings."""
         guild = ctx.guild
-        guild_settings = self.config.guild(guild)
-        msg_list = []
-        async with guild_settings.actions() as registered_actions:
-            for r in registered_actions:
-                if await ctx.embed_requested():
-                    em = discord.Embed(
-                        title=_("Action: {name}").format(name=r["action_name"]),
-                        color=await ctx.embed_colour(),
-                    )
-                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
-                    em.add_field(
-                        name=_("Exceed command"),
-                        value=r["exceed_command"],
-                        inline=False,
-                    )
-                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
-                    msg_list.append(em)
-                else:
-                    msg_list.append(
-                        _(
-                            "Name: {action_name}\nPoints: {points}\n"
-                            "Exceed command: {exceed_command}\nDrop command: {drop_command}"
-                        ).format(**r)
-                    )
-        if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
-        else:
-            await ctx.send(_("There are no actions configured!"))
+        data = await self.config.guild(guild).actions.all()
+        if not data:
+            return await ctx.send(_("There are no actions configured!"))
+        await SimpleHybridMenu(
+            source=ActionListSource(data), cog=self, delete_message_after=True,
+        ).start(ctx=ctx, wait=False)
 
     @commands.command()
     @commands.guild_only()
