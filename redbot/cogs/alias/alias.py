@@ -6,13 +6,14 @@ from string import Formatter
 from typing import Dict, List, Literal
 
 import discord
+
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
+from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
+from redbot.core.utils.menus import SimpleHybridMenu
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
+from .menus import AliasSource
 
 _ = Translator("Alias", __file__)
 
@@ -191,24 +192,18 @@ class Alias(commands.Cog):
     async def paginate_alias_list(
         self, ctx: commands.Context, alias_list: List[AliasEntry]
     ) -> None:
-        names = sorted(["+ " + a.name for a in alias_list])
-        message = "\n".join(names)
-        temp = list(pagify(message, delims=["\n"], page_length=1850))
-        alias_list = []
-        count = 0
-        for page in temp:
-            count += 1
-            page = page.lstrip("\n")
-            page = (
-                _("Aliases:\n")
-                + page
-                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
-            )
-            alias_list.append(box("".join(page), "diff"))
-        if len(alias_list) == 1:
-            await ctx.send(alias_list[0])
-            return
-        await menu(ctx, alias_list, DEFAULT_CONTROLS)
+        names = sorted(["+ " + a.name for a in alias_list], key=lambda item: (len(item), item))
+        chunks = [names[i : i + 10] for i in range(0, len(names), 10)]
+        temp = []
+        for c in chunks:
+            message = "\n".join(c)
+            if len(message) < 1850:
+                temp.append(message)
+            else:
+                temp.extend(pagify(message, delims=["\n"], page_length=1850))
+        await SimpleHybridMenu(
+            source=AliasSource(temp), cog=self, delete_message_after=True,
+        ).start(ctx=ctx, wait=False)
 
     @commands.group()
     async def alias(self, ctx: commands.Context):
