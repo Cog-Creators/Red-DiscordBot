@@ -8,12 +8,16 @@ import functools
 import warnings
 from typing import Iterable, List, Optional, Union, Any, Dict
 import discord
+
 from redbot.vendored.discord.ext import menus as dpy_menus
 
 from .. import commands
 from .predicates import ReactionPredicate
+from ..i18n import Translator
 
 _ReactableEmoji = Union[str, discord.Emoji]
+
+_ = Translator("Menus", __file__)
 
 
 async def menu(
@@ -346,7 +350,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
                 if self._actions:
                     tasks.append(
                         asyncio.ensure_future(
-                            self.bot.wait_for("message", check=self.message_check)
+                            self.bot.wait_for("message_without_command", check=self.message_check)
                         )
                     )
 
@@ -576,12 +580,12 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
     ):
 
         keyword_to_reaction_mapping = {
-            "last": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            "first": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            "next": "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-            "previous": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            "prev": "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            "close": "\N{CROSS MARK}",
+            _("last"): "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
+            _("first"): "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
+            _("next"): "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
+            _("previous"): "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+            _("prev"): "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+            _("close"): "\N{CROSS MARK}",
         }
         super().__init__(
             source=source,
