@@ -147,8 +147,7 @@ class RedisDriver(BaseDriver):
         try:
             string = "."
             string += ".".join([str_path(p) for p in full_identifiers_test])
-            result = await self._pool_pre_flight.jsonset(cog_name, path=string, obj={}, nx=True
-            )
+            result = await self._pool_pre_flight.jsonset(cog_name, path=string, obj={}, nx=True)
         except aioredis.errors.ReplyError:
             async with self._lock:
                 _cur_path = "."
