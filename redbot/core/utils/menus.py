@@ -475,7 +475,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
 
                 traceback.print_exc()
         elif isinstance(payload, discord.Message):
-            emojis = self._actions.get(payload.content)
+            emojis = self._actions.get(payload.content, [])
             for emoji in emojis:
                 if not emoji or emoji not in self.buttons:
                     continue
