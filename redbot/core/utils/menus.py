@@ -264,7 +264,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         add_reactions: bool = True,
         using_custom_emoji: bool = False,
         using_embeds: bool = False,
-        keyword_to_reaction_mapping: Dict[str, Iterable[str]] = None,
+        keyword_to_reaction_mapping: Optional[Dict[str, Iterable[str]]] = None,
         timeout: int = 180,
         message: discord.Message = None,
         **kwargs: Any,
@@ -624,17 +624,20 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
         delete_message_after: bool = True,
         add_reactions: bool = True,
         timeout: int = 180,
+        accept_keywords: bool = False,
         **kwargs: Any,
     ):
-
-        keyword_to_reaction_mapping = {
-            _("last"): ["\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
-            _("first"): ["\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
-            _("next"): ["\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",],
-            _("previous"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
-            _("prev"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
-            _("close"): ["\N{CROSS MARK}"],
-        }
+        if accept_keywords:
+            keyword_to_reaction_mapping = {
+                _("last"): ["\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
+                _("first"): ["\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
+                _("next"): ["\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",],
+                _("previous"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
+                _("prev"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
+                _("close"): ["\N{CROSS MARK}"],
+            }
+        else:
+            keyword_to_reaction_mapping = None
         super().__init__(
             source=source,
             cog=cog,
