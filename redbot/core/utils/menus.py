@@ -557,7 +557,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
     async def send_initial_message(
         self, ctx: Context, channel: discord.abc.Messageable, page: int = 0
     ):
-        """|coro|
+        """
 
         The default implementation of :meth:`Menu.send_initial_message`
         for the interactive pagination session.
