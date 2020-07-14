@@ -5,18 +5,22 @@
 import asyncio
 import contextlib
 import functools
-from typing import Iterable, List, Union, Any, Dict
+import logging
+from typing import Iterable, List, Optional, Union, Any, Dict
 import discord
 
-from redbot.vendored.discord.ext import menus as dpy_menus
+from redbot.vendored.discord.ext import menus as _dpy_menus
 
 from .. import commands
 from .predicates import ReactionPredicate
+from ..commands import Context
 from ..i18n import Translator
 
 _ReactableEmoji = Union[str, discord.Emoji]
 
 _ = Translator("Menus", __file__)
+
+log = logging.getLogger("red.menus")
 
 
 async def menu(
@@ -218,15 +222,42 @@ DEFAULT_CONTROLS = {
 }
 
 
-class CannotReadMessage(dpy_menus.MenuError):
+async def dpymenu(
+    ctx: commands.Context,
+    pages: Iterable[Union[str, discord.Embed]],
+    controls: Optional[Dict] = None,
+    message: discord.Message = None,
+    page: int = 0,
+    timeout: int = 180,
+    wait: bool = False,
+    delete_message_after: bool = True,
+    clear_reactions_after: bool = True,
+):
+    if controls is not None:
+        log.warning(
+            "dpymenu function does not accept controls, this is being ignored. "
+            f"Called by {ctx.cog}"
+        )
+
+    await SimpleHybridMenu(
+        source=SimpleSource(pages=pages),
+        cog=ctx.cog,
+        message=message,
+        delete_message_after=delete_message_after,
+        clear_reactions_after=clear_reactions_after,
+        timeout=timeout,
+    ).start(ctx=ctx, wait=wait, page=page)
+
+
+class CannotReadMessage(_dpy_menus.MenuError):
     def __init__(self):
         super().__init__("Bot does not have Read Message permissions in this channel.")
 
 
-class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
+class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
     def __init__(
         self,
-        source: dpy_menus.PageSource,
+        source: _dpy_menus.PageSource,
         cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
         delete_message_after: bool = True,
@@ -250,7 +281,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
             **kwargs,
         )
         if (
-            bad_stop := dpy_menus._cast_emoji("\N{BLACK SQUARE FOR STOP}\ufe0f")
+            bad_stop := _dpy_menus._cast_emoji("\N{BLACK SQUARE FOR STOP}\ufe0f")
         ) and bad_stop in self._buttons:
             del self._buttons[bad_stop]
         self.cog = cog
@@ -261,7 +292,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
     def _register_keyword(self):
         if isinstance(self.__keyword_to_reaction_mapping, dict):
             for k, v in self.__keyword_to_reaction_mapping.items():
-                emoji = dpy_menus._cast_emoji(v)
+                emoji = _dpy_menus._cast_emoji(v)
                 if emoji not in self.buttons:
                     continue
                 self._actions[k] = emoji
@@ -272,21 +303,21 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
 
     def _verify_permissions(self, ctx, channel, permissions):
         if not permissions.send_messages:
-            raise dpy_menus.CannotSendMessages()
+            raise _dpy_menus.CannotSendMessages()
 
         if self.check_embeds and not permissions.embed_links:
-            raise dpy_menus.CannotEmbedLinks()
+            raise _dpy_menus.CannotEmbedLinks()
 
         self._can_remove_reactions = permissions.manage_messages
 
         if self.should_add_reactions():
             if not permissions.add_reactions:
-                raise dpy_menus.CannotAddReactions()
+                raise _dpy_menus.CannotAddReactions()
             if self._using_custom_emoji and not permissions.external_emojis:
-                raise dpy_menus.CannotAddReactions()
+                raise _dpy_menus.CannotAddReactions()
 
         if not permissions.read_message_history:
-            raise dpy_menus.CannotReadMessageHistory()
+            raise _dpy_menus.CannotReadMessageHistory()
 
         if self._actions and not permissions.read_messages:
             raise CannotReadMessage()
@@ -460,7 +491,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
 
                 traceback.print_exc()
 
-    async def start(self, ctx, *, channel=None, wait=False):
+    async def start(self, ctx, *, channel=None, wait=False, page: int = 0):
         """
         Starts the interactive menu session.
 
@@ -501,7 +532,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
         self._event.clear()
         msg = self.message
         if msg is None:
-            self.message = msg = await self.send_initial_message(ctx, channel)
+            self.message = msg = await self.send_initial_message(ctx, channel, page=0)
         self._register_keyword()
         if self.should_add_reactions() or self._actions:
             # Start the task first so we can listen to reactions before doing anything
@@ -523,36 +554,50 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
             if wait:
                 await self._event.wait()
 
-    @dpy_menus.button(
+    async def send_initial_message(
+        self, ctx: Context, channel: discord.abc.Messageable, page: int = 0
+    ):
+        """|coro|
+
+        The default implementation of :meth:`Menu.send_initial_message`
+        for the interactive pagination session.
+
+        This implementation shows the first page of the source.
+        """
+        page = await self._source.get_page(page)
+        kwargs = await self._get_kwargs_from_page(page)
+        return await channel.send(**kwargs)
+
+    @_dpy_menus.button(
         "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-        position=dpy_menus.First(1),
+        position=_dpy_menus.First(1),
         skip_if=_skip_single_arrows,
     )
     async def go_to_previous_page(self, payload):
         """go to the previous page"""
         await self.show_checked_page(self.current_page - 1)
 
-    @dpy_menus.button(
+    @_dpy_menus.button(
         "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-        position=dpy_menus.Last(0),
+        position=_dpy_menus.Last(0),
         skip_if=_skip_single_arrows,
     )
     async def go_to_next_page(self, payload):
         """go to the next page"""
         await self.show_checked_page(self.current_page + 1)
 
-    @dpy_menus.button(
+    @_dpy_menus.button(
         "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=dpy_menus.First(0),
+        position=_dpy_menus.First(0),
         skip_if=_skip_double_triangle_buttons,
     )
     async def go_to_first_page(self, payload):
         """go to the first page"""
         await self.show_page(0)
 
-    @dpy_menus.button(
+    @_dpy_menus.button(
         "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=dpy_menus.Last(1),
+        position=_dpy_menus.Last(1),
         skip_if=_skip_double_triangle_buttons,
     )
     async def go_to_last_page(self, payload):
@@ -560,7 +605,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
         # The call here is safe because it's guarded by skip_if
         await self.show_page(self._source.get_max_pages() - 1)
 
-    @dpy_menus.button("\N{CROSS MARK}")
+    @_dpy_menus.button("\N{CROSS MARK}")
     async def stop_pages(self, payload: discord.RawReactionActionEvent) -> None:
         """stops the pagination session."""
         self.stop()
@@ -569,7 +614,7 @@ class HybridMenu(dpy_menus.MenuPages, inherit_buttons=False):
 class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
     def __init__(
         self,
-        source: dpy_menus.PageSource,
+        source: _dpy_menus.PageSource,
         cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
         delete_message_after: bool = True,
@@ -596,3 +641,13 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
             keyword_to_reaction_mapping=keyword_to_reaction_mapping,
             **kwargs,
         )
+
+
+class SimpleSource(_dpy_menus.ListPageSource):
+    def __init__(self, pages: Iterable[Union[List[str], List[discord.Embed]]]):
+        super().__init__(pages, per_page=1)
+
+    async def format_page(
+        self, menu: SimpleHybridMenu, page: Union[List[str], List[discord.Embed]]
+    ) -> Union[discord.Embed, str]:
+        return page
