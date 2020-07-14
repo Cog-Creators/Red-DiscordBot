@@ -222,32 +222,26 @@ class RedHelpFormatter:
             valid_alias_list = [
                 af
                 for a in aliases
-                if (af := f"`{a}`")
-                   and len(af) < 500
-                   and ((a_counter + len(af)) < 500)
-                   and (a_counter := a_counter + len(af))
+                if (af := f"{a}")
+                and len(af) < 500
+                and ((a_counter + len(af)) < 500)
+                and (a_counter := a_counter + len(af))
             ]
             a_diff = len(aliases) - len(valid_alias_list)
+            aliases_list = [
+                f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
+                for alias in valid_alias_list
+            ]
             if len(valid_alias_list) < 10:
-                aliases_content = humanize_list(
-                    [
-                        f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
-                        for alias in valid_alias_list
-                    ]
-                )
+                aliases_content = humanize_list(aliases_list)
             else:
-                aliases_list = ", ".join(
-                    [
-                        f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
-                        for alias in valid_alias_list
-                    ]
-                )
+                aliases_formatted_list = ", ".join(aliases_list)
                 if a_diff > 1:
                     aliases_content = _("{aliases} and {number} more aliases.").format(
-                        aliases=aliases_list, number=humanize_number(a_diff),
+                        aliases=aliases_formatted_list, number=humanize_number(a_diff),
                     )
                 else:
-                    aliases_content = _("{} and one more alias.").format(aliases_list)
+                    aliases_content = _("{} and one more alias.").format(aliases_formatted_list)
             signature += f"\n{alias_fmt}: {aliases_content}"
 
         subcommands = None
