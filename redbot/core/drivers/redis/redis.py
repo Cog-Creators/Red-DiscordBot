@@ -307,6 +307,7 @@ class RedisDriver(BaseDriver):
         yield "Core", "0"
         cogs = await cls._pool.keys("*", encoding="utf-8")
         for cog in cogs:
+            cog = cls._unescape_key(cog)
             cog_ids = await cls._pool.jsonobjkeys(cog, ".")
             for cog_id in cog_ids:
                 cog_id = cls._unescape_key(cog_id)
