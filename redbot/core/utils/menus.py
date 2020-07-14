@@ -264,7 +264,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         add_reactions: bool = True,
         using_custom_emoji: bool = False,
         using_embeds: bool = False,
-        keyword_to_reaction_mapping: Dict[str, str] = None,
+        keyword_to_reaction_mapping: Dict[str, Iterable[str]] = None,
         timeout: int = 180,
         message: discord.Message = None,
         **kwargs: Any,
@@ -292,10 +292,13 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
     def _register_keyword(self):
         if isinstance(self.__keyword_to_reaction_mapping, dict):
             for k, v in self.__keyword_to_reaction_mapping.items():
-                emoji = _dpy_menus._cast_emoji(v)
-                if emoji not in self.buttons:
-                    continue
-                self._actions[k] = emoji
+                if k not in self._actions:
+                    self._actions[k] = []
+                for e in v:
+                    emoji = _dpy_menus._cast_emoji(e)
+                    if emoji not in self.buttons:
+                        continue
+                    self._actions[k].append(emoji)
 
     def should_add_reactions(self):
         if self._add_reactions:
@@ -472,24 +475,25 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
 
                 traceback.print_exc()
         elif isinstance(payload, discord.Message):
-            emoji = self._actions.get(payload.content)
-            if not emoji or emoji not in self.buttons:
-                return
-            button = self.buttons[emoji]
-            if not self._running:
-                return
-            try:
-                if button.lock:
-                    async with self._lock:
-                        if self._running:
-                            await button(self, payload)
-                else:
-                    await button(self, payload)
-            except Exception:
-                # TODO: logging?
-                import traceback
+            emojis = self._actions.get(payload.content)
+            for emoji in emojis:
+                if not emoji or emoji not in self.buttons:
+                    continue
+                button = self.buttons[emoji]
+                if not self._running:
+                    continue
+                try:
+                    if button.lock:
+                        async with self._lock:
+                            if self._running:
+                                await button(self, payload)
+                    else:
+                        await button(self, payload)
+                except Exception:
+                    # TODO: logging?
+                    import traceback
 
-                traceback.print_exc()
+                    traceback.print_exc()
 
     async def start(self, ctx, *, channel=None, wait=False, page: int = 0):
         """
@@ -624,12 +628,12 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
     ):
 
         keyword_to_reaction_mapping = {
-            _("last"): "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            _("first"): "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-            _("next"): "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-            _("previous"): "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            _("prev"): "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-            _("close"): "\N{CROSS MARK}",
+            _("last"): ["\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
+            _("first"): ["\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
+            _("next"): ["\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",],
+            _("previous"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
+            _("prev"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
+            _("close"): ["\N{CROSS MARK}"],
         }
         super().__init__(
             source=source,
