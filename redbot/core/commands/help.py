@@ -217,23 +217,34 @@ class RedHelpFormatter:
         aliases = command.aliases
         if help_settings.show_aliases and aliases:
             alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
-            if len(aliases) < 10:
+            aliases = sorted(aliases, key=len)
+            a_counter = 0
+            valid_alias_list = [
+                af
+                for a in aliases
+                if (af := f"`{a}`")
+                   and len(af) < 500
+                   and ((a_counter + len(af)) < 500)
+                   and (a_counter := a_counter + len(af))
+            ]
+            a_diff = len(aliases) - len(valid_alias_list)
+            if len(valid_alias_list) < 10:
                 aliases_content = humanize_list(
                     [
                         f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
-                        for alias in aliases
+                        for alias in valid_alias_list
                     ]
                 )
             else:
                 aliases_list = ", ".join(
                     [
                         f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
-                        for alias in aliases[:10]
+                        for alias in valid_alias_list
                     ]
                 )
-                if len(aliases[:-10]) > 1:
+                if a_diff > 1:
                     aliases_content = _("{aliases} and {number} more aliases.").format(
-                        aliases=aliases_list, number=humanize_number(len(aliases[:-10])),
+                        aliases=aliases_list, number=humanize_number(a_diff),
                     )
                 else:
                     aliases_content = _("{} and one more alias.").format(aliases_list)
