@@ -2177,10 +2177,32 @@ class Core(commands.Cog, CoreLogic):
         """Manage the bot's commands."""
         pass
 
+    @checks.is_owner()
+    @command_manager.command(name="defaultdisablecog")
+    async def command_default_disable_cog(self, ctx: commands.Context, *cogname: str):
+        """ Set the defaulft state for a cog as disabled. """
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("No such cog"))
+        if cog == self:
+            return await ctx.send(_("You can't disable this cog by default."))
+        await self.bot._disabled_cog_cache.default_disable(cogname)
+        await ctx.send(_("{cogname} has been set as disabled by default.").format(cogname=cogname))
+
+    @checks.is_owner()
+    @command_manager.command(name="defaultenablecog")
+    async def command_default_enable_cog(self, ctx: commands.Context, *cogname: str):
+        """ Set the defaulft state for a cog as enabled. """
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("No such cog"))
+        await self.bot._disabled_cog_cache.default_enable(cogname)
+        await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
+
     @commands.guild_only()
     @command_manager.command(name="disablecog")
     async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Disable a cog in this guild."""
+        """ Disable a cog in this guild. """
         cog = self.bot.get_cog(cogname)
         if not cog:
             return await ctx.send(_("No such cog"))
@@ -2196,7 +2218,7 @@ class Core(commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_manager.command(name="enablecog")
     async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Enable a cog in this guild."""
+        """ Enable a cog in this guild. """
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
@@ -2212,8 +2234,14 @@ class Core(commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_manager.command(name="listdisabledcogs")
     async def command_list_disabled_cogs(self, ctx: commands.Context):
-        """List the cogs which are disabled in this guild."""
-        disabled = await self.bot._disabled_cog_cache.list_disabled_for_guild(ctx.guild.id)
+        """ List the cogs which are disabled in this guild. """
+        disabled = [
+            cog.qualified_name
+            for cog in bot.cogs
+            if await self.bot._disabled_cog_cache.cog_disabled_in_guild(
+                cog.qualified_name, ctx.guild.id
+            )
+        ]
         if disabled:
             output = _("The following cogs are disabled in this guild:\n")
             output += humanize_list(disabled)

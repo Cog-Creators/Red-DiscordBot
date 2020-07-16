@@ -132,11 +132,13 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
-            disabled_cogs=[],
         )
 
         self._config.register_channel(embeds=None, ignored=False)
         self._config.register_user(embeds=None)
+
+        self._config.init_custom("COG_DISABLE_SETTINGS", 2)
+        self._config.register_custom("COG_DISABLE_SETTINGS", disabled=None)
 
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
