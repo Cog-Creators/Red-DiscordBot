@@ -664,6 +664,7 @@ class RedBase(
                         )
                         await self.remove_loaded_package(package)
                         to_remove.append(package)
+                        continue
                     await asyncio.wait_for(self.load_extension(spec), 30)
                 except asyncio.TimeoutError:
                     log.exception("Failed to load package %s (timeout)", package)
