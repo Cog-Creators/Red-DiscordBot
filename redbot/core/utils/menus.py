@@ -61,13 +61,13 @@ async def menu(
        timeout: float
            The time (in seconds) to wait for a reaction
        wait: bool
-           Note: Only applicable when ``controls`` is `None` or `menu.DEFAULT_CONTROLS`
+           Note: Only applicable when ``controls`` is `None` or ``menus.DEFAULT_CONTROLS``
            Whether the menu should be block code execution or should be run as a task (this uses d.py menus).
        delete_message_after: bool
-           Note: Only applicable when ``controls`` is `None` or `menu.DEFAULT_CONTROLS`
+           Note: Only applicable when ``controls`` is `None` or ``menus.DEFAULT_CONTROLS``
            Whether to delete the message once the menu exits (this uses d.py menus).
        clear_reactions_after: bool
-           Note: Only applicable when ``controls`` is `None` or `menu.DEFAULT_CONTROLS`
+           Note: Only applicable when ``controls`` is `None` or ``menus.DEFAULT_CONTROLS``
            Whether to remove reactions once the menu exits - Requires manage message permissions (this uses d.py menus).
 
        Raises
@@ -76,7 +76,7 @@ async def menu(
            If either of the notes above are violated
        MenuError
            Note: Only can be raised when using d.py menus.
-           Tried to use ``react`` when the menu had not been started.
+           An error happened when verifying permissions.
        redbot.vendored.discord.ext.menus.CannotSendMessages
            Note: Only can be raised when using d.py menus.
            Tried to start the menu but bot can't send message in the context.
