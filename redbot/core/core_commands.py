@@ -2237,7 +2237,7 @@ class Core(commands.Cog, CoreLogic):
         """ List the cogs which are disabled in this guild. """
         disabled = [
             cog.qualified_name
-            for cog in bot.cogs
+            for cog in self.bot.cogs.values()
             if await self.bot._disabled_cog_cache.cog_disabled_in_guild(
                 cog.qualified_name, ctx.guild.id
             )
