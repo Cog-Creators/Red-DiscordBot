@@ -406,7 +406,7 @@ class RedBase(
 
         return True
 
-    async def message_is_eligible_as_command(self, message: discord.Message) -> bool:
+    async def is_message_eligible_as_command(self, message: discord.Message) -> bool:
         """
         Runs through the things which apply globally about commands
         to determine if a message may be responded to as a command.
@@ -432,6 +432,9 @@ class RedBase(
 
         channel = message.channel
         guild = message.guild
+
+        if message.author.bot or message.webhook_id:
+            return False
 
         if guild:
             assert isinstance(channel, discord.abc.GuildChannel)  # nosec
