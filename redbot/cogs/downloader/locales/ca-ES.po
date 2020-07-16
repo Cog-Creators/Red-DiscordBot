@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-16 12:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -109,7 +109,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:569
 #: redbot/cogs/downloader/downloader.py:1110
-#: redbot/cogs/downloader/downloader.py:1390
+#: redbot/cogs/downloader/downloader.py:1393
 msgid "Missing from info.json"
 msgstr ""
 
@@ -463,59 +463,59 @@ msgstr ""
 msgid "That command doesn't seem to exist."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1392
+#: redbot/cogs/downloader/downloader.py:1396
 msgid "Missing from installed repos"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1402
+#: redbot/cogs/downloader/downloader.py:1406
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1403
+#: redbot/cogs/downloader/downloader.py:1407
 msgid "None - this cog wasn't installed via downloader"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1406
+#: redbot/cogs/downloader/downloader.py:1410
 msgid "This command is not provided by a cog."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1412
+#: redbot/cogs/downloader/downloader.py:1416
 msgid "Command:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1413
+#: redbot/cogs/downloader/downloader.py:1417
 msgid "Cog Name:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1414
+#: redbot/cogs/downloader/downloader.py:1418
 msgid "Made by:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1415
+#: redbot/cogs/downloader/downloader.py:1419
 msgid "Repo URL:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1418
+#: redbot/cogs/downloader/downloader.py:1422
 msgid "Repo branch:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1423
+#: redbot/cogs/downloader/downloader.py:1427
 msgid "Command: {command}\\nCog name: {cog}\\nMade by: {author}\\nRepo URL: {repo_url}\\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1427
+#: redbot/cogs/downloader/downloader.py:1431
 msgid "Repo branch: {branch_name}\\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1448
+#: redbot/cogs/downloader/downloader.py:1452
 msgid "Failed to update the following repositories:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1450
+#: redbot/cogs/downloader/downloader.py:1454
 msgid "Failed to update the following repository:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1453
+#: redbot/cogs/downloader/downloader.py:1457
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
 msgstr ""
 

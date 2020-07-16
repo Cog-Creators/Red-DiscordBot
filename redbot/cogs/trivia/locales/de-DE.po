@@ -104,7 +104,7 @@ msgstr "Verwalte Trivia Einstellungen."
 #: redbot/cogs/trivia/trivia.py:67
 #, docstring
 msgid "Show the current trivia settings."
-msgstr ""
+msgstr "Zeige die aktuellen Trivia-Einstellungen."
 
 #: redbot/cogs/trivia/trivia.py:71
 msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
