@@ -40,7 +40,7 @@ from . import commands
 from .context import Context
 from ..i18n import Translator
 from ..utils.help import HelpSource
-from ..utils.menus import SimpleHybridMenu
+from ..utils._dpy_menus_utils import SimpleHybridMenu
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, humanize_list, humanize_number, humanize_timedelta, pagify

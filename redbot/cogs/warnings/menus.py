@@ -6,7 +6,7 @@ import discord
 
 from redbot.core.i18n import Translator
 
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 from redbot.vendored.discord.ext import menus
 
 _ = Translator("Warnings", __file__)

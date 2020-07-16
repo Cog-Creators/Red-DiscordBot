@@ -6,7 +6,7 @@ from typing import Iterable
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 from redbot.vendored.discord.ext import menus
 
 _ = Translator("Alias", __file__)

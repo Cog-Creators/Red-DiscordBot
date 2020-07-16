@@ -11,7 +11,7 @@ from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
 from .menus import AliasSource
 

@@ -17,7 +17,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.bot import Red
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 
 from .converters import positive_int
 from .menus import LeaderboardSource
