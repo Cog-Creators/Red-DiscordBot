@@ -19,7 +19,7 @@ from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 from .menus import ReasonListSource, ActionListSource
 
 _ = Translator("Warnings", __file__)

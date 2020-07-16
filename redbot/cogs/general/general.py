@@ -17,7 +17,7 @@ from redbot.core.utils.chat_formatting import (
     humanize_number,
     humanize_timedelta,
 )
-from redbot.core.utils.menus import SimpleHybridMenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
 from .menus import UrbanSource
 
 _ = T_ = Translator("General", __file__)
