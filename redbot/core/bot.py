@@ -406,7 +406,7 @@ class RedBase(
 
         return True
 
-    async def is_message_eligible_as_command(self, message: discord.Message) -> bool:
+    async def message_eligible_as_command(self, message: discord.Message) -> bool:
         """
         Runs through the things which apply globally about commands
         to determine if a message may be responded to as a command.
