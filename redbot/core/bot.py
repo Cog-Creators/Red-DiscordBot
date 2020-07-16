@@ -427,7 +427,7 @@ class RedBase(
         Returns
         -------
         bool
-            Whether or not the message is eligible to be trated as a command.
+            Whether or not the message is eligible to be treated as a command.
         """
 
         channel = message.channel
