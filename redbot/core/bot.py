@@ -433,7 +433,7 @@ class RedBase(
         channel = message.channel
         guild = message.guild
 
-        if message.author.bot or message.webhook_id:
+        if message.author.bot:
             return False
 
         if guild:
