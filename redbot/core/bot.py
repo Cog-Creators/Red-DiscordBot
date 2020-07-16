@@ -657,12 +657,19 @@ class RedBase(
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
+                    if spec is None:
+                        log.error(
+                            "Failed to load package %s (package was not found in any cog path)",
+                            package,
+                        )
+                        await self.remove_loaded_package(package)
+                        to_remove.append(package)
                     await asyncio.wait_for(self.load_extension(spec), 30)
                 except asyncio.TimeoutError:
                     log.exception("Failed to load package %s (timeout)", package)
                     to_remove.append(package)
                 except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
+                    log.exception("Failed to load package %s", package, exc_info=e)
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
