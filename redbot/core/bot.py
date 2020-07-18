@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import platform
-import re
 import shutil
 import sys
 import contextlib
@@ -19,7 +18,6 @@ from typing import (
     Dict,
     NoReturn,
     Set,
-    Coroutine,
     TypeVar,
     Callable,
     Awaitable,
@@ -30,7 +28,6 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
-from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -406,14 +403,60 @@ class RedBase(
 
         return True
 
-    async def ignored_channel_or_guild(self, ctx: commands.Context) -> bool:
+    async def message_eligible_as_command(self, message: discord.Message) -> bool:
+        """
+        Runs through the things which apply globally about commands
+        to determine if a message may be responded to as a command.
+
+        This can't interact with permissions as permissions is hyper-local
+        with respect to command objects, create command objects for this
+        if that's needed.
+
+        This also does not check for prefix or command conflicts,
+        as it is primarily designed for non-prefix based response handling
+        via on_message_without_command
+
+        Parameters
+        ----------
+        message
+            The message object to check
+
+        Returns
+        -------
+        bool
+            Whether or not the message is eligible to be treated as a command.
+        """
+
+        channel = message.channel
+        guild = message.guild
+
+        if message.author.bot:
+            return False
+
+        if guild:
+            assert isinstance(channel, discord.abc.GuildChannel)  # nosec
+            if not channel.permissions_for(guild.me).send_messages:
+                return False
+            if not (await self.ignored_channel_or_guild(message)):
+                return False
+
+        if not (await self.allowed_by_whitelist_blacklist(message.author)):
+            return False
+
+        return True
+
+    async def ignored_channel_or_guild(
+        self, ctx: Union[commands.Context, discord.Message]
+    ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
         as considered by Red's whitelist and blacklist.
 
         Parameters
         ----------
-        ctx : Context of where the command is being run.
+        ctx :
+            Context object of the command which needs to be checked prior to invoking
+            or a Message object which might be intended for use as a command.
 
         Returns
         -------
@@ -424,8 +467,8 @@ class RedBase(
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
             or perms.manage_guild
-            or await ctx.bot.is_owner(ctx.author)
-            or await ctx.bot.is_admin(ctx.author)
+            or await self.is_owner(ctx.author)
+            or await self.is_admin(ctx.author)
         )
         if surpass_ignore:
             return True
