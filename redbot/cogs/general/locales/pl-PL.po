@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2020-04-02 12:07+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: pl\n"
+"X-Crowdin-File-ID: 17\n"
 "Language: pl_PL\n"
 
 #: redbot/cogs/general/general.py:46
@@ -101,7 +103,7 @@ msgstr "Bardzo wątpliwe"
 #: redbot/cogs/general/general.py:80
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
-msgstr ""
+msgstr "Wybierz spośród wielu opcji.\\n\\n        Aby określić opcje, które zawierają spację, powinieneś użyć\\n        cudzysłowów.\\n        "
 
 #: redbot/cogs/general/general.py:87
 msgid "Not enough options to pick from."
@@ -110,24 +112,24 @@ msgstr "Za mało opcji do wyboru."
 #: redbot/cogs/general/general.py:93
 #, docstring
 msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
-msgstr ""
+msgstr "Rzuć losową liczbę.\\n\\n        Wynik będzie między 1 a `<number>`.\\n\\n        `<number>` <number> ` domyślnie 100.\\n        "
 
 #: redbot/cogs/general/general.py:108
 msgid "{author.mention} Maybe higher than 1? ;P"
-msgstr ""
+msgstr "{author.mention} Może wybierzesz powyżej 1? ;P"
 
 #: redbot/cogs/general/general.py:111
 msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgstr "{author.mention} Maksymalna liczba to {maxamount}."
 
 #: redbot/cogs/general/general.py:118
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
-msgstr ""
+msgstr "Odwróć monetę... lub użytkownika.\\n\\n        Domyślnie moneta.\\n        "
 
 #: redbot/cogs/general/general.py:126
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
-msgstr ""
+msgstr "Niezła próba. Myślisz, że jesteś śmieszny?\\n Patrz na to:\\n\\n"
 
 #: redbot/cogs/general/general.py:137
 msgid "*flips a coin and... "
@@ -148,7 +150,7 @@ msgstr "Zagraj w Papier Nożyce Kamień."
 
 #: redbot/cogs/general/general.py:146
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
-msgstr ""
+msgstr "Podana opcja nie jest prawidłowa. Spróbuj {r}, {p} lub {s}."
 
 #: redbot/cogs/general/general.py:167
 msgid "{choice} You win {author.mention}!"
@@ -165,7 +167,7 @@ msgstr "{choice} Remis {author.mention}!"
 #: redbot/cogs/general/general.py:186
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
-msgstr ""
+msgstr "Zadaj pytanie 8-ball.\\n\\n        Pytanie musi kończyć się znakiem zapytania.\\n        "
 
 #: redbot/cogs/general/general.py:193
 msgid "That doesn't look like a question."
@@ -192,16 +194,16 @@ msgstr "Utwórz link do lmgtfy."
 #: redbot/cogs/general/general.py:221
 #, docstring
 msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
-msgstr ""
+msgstr "Ponieważ wszyscy lubią przytulasy!\\n\\n        Do 10 poziomów.\\n        "
 
 #: redbot/cogs/general/general.py:245
 #, docstring
 msgid "\\n        Show server information.\\n    \\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
-msgstr ""
+msgstr "\\n        Pokaż informacje o serwerze.\\n    \\n        `details`: Pokazuje więcej informacji po ustawieniu na `True`.\\n        Domyślnie na False.\\n        "
 
 #: redbot/cogs/general/general.py:253
 msgid "Created on {date}. That's over {num} days ago!"
-msgstr ""
+msgstr "Stworzony dnia {date}. To jest ponad {num} dni temu!"
 
 #: redbot/cogs/general/general.py:264
 msgid "Region"
@@ -209,7 +211,7 @@ msgstr "Region"
 
 #: redbot/cogs/general/general.py:265
 msgid "Users online"
-msgstr ""
+msgstr "Użytkowników online"
 
 #: redbot/cogs/general/general.py:266
 msgid "Text Channels"
@@ -233,131 +235,131 @@ msgstr "ID serwera: "
 
 #: redbot/cogs/general/general.py:293
 msgid "\\nShard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\\nID sharda: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:302
 msgid "Humans: "
-msgstr ""
+msgstr "Użytkowników: "
 
 #: redbot/cogs/general/general.py:303
 msgid " • Bots: "
-msgstr ""
+msgstr " • Boty: "
 
 #: redbot/cogs/general/general.py:313
 msgid "Users online: **{online}/{total_users}**\\n"
-msgstr ""
+msgstr "Użytkowników online: **{online}/{total_users}**\\n"
 
 #: redbot/cogs/general/general.py:330
 msgid "__VIP__ US East "
-msgstr ""
+msgstr "__VIP__ Wschodnie USA "
 
 #: redbot/cogs/general/general.py:331
 msgid "__VIP__ US West "
-msgstr ""
+msgstr "__VIP__ Zachód USA "
 
 #: redbot/cogs/general/general.py:332
 msgid "__VIP__ Amsterdam "
-msgstr ""
+msgstr "__VIP__ Amsterdam "
 
 #: redbot/cogs/general/general.py:333
 msgid "EU West "
-msgstr ""
+msgstr "Europa Zachodnia "
 
 #: redbot/cogs/general/general.py:334
 msgid "EU Central "
-msgstr ""
+msgstr "Europa Centralna "
 
 #: redbot/cogs/general/general.py:335
 msgid "Europe "
-msgstr ""
+msgstr "Europa "
 
 #: redbot/cogs/general/general.py:336
 msgid "London "
-msgstr ""
+msgstr "Londyn "
 
 #: redbot/cogs/general/general.py:337
 msgid "Frankfurt "
-msgstr ""
+msgstr "Frankfurt "
 
 #: redbot/cogs/general/general.py:338
 msgid "Amsterdam "
-msgstr ""
+msgstr "Amsterdam "
 
 #: redbot/cogs/general/general.py:339
 msgid "US West "
-msgstr ""
+msgstr "Zachód USA "
 
 #: redbot/cogs/general/general.py:340
 msgid "US East "
-msgstr ""
+msgstr "Wschodnie USA "
 
 #: redbot/cogs/general/general.py:341
 msgid "US South "
-msgstr ""
+msgstr "Południowe USA "
 
 #: redbot/cogs/general/general.py:342
 msgid "US Central "
-msgstr ""
+msgstr "Centrum USA "
 
 #: redbot/cogs/general/general.py:343
 msgid "Singapore "
-msgstr ""
+msgstr "Singapur "
 
 #: redbot/cogs/general/general.py:344
 msgid "Sydney "
-msgstr ""
+msgstr "Sydnej "
 
 #: redbot/cogs/general/general.py:345
 msgid "Brazil "
-msgstr ""
+msgstr "Brazylia "
 
 #: redbot/cogs/general/general.py:346
 msgid "Hong Kong "
-msgstr ""
+msgstr "Hong Kong "
 
 #: redbot/cogs/general/general.py:347
 msgid "Russia "
-msgstr ""
+msgstr "Rosja "
 
 #: redbot/cogs/general/general.py:348
 msgid "Japan "
-msgstr ""
+msgstr "Japonia "
 
 #: redbot/cogs/general/general.py:349
 msgid "South Africa "
-msgstr ""
+msgstr "Południowa Afryka "
 
 #: redbot/cogs/general/general.py:350
 msgid "India "
-msgstr ""
+msgstr "Indie "
 
 #: redbot/cogs/general/general.py:351
 msgid "Dubai "
-msgstr ""
+msgstr "Dubaj "
 
 #: redbot/cogs/general/general.py:352
 msgid "South Korea "
-msgstr ""
+msgstr "Korea Południowa "
 
 #: redbot/cogs/general/general.py:355
 msgid "0 - None"
-msgstr ""
+msgstr "0 - Brak"
 
 #: redbot/cogs/general/general.py:356
 msgid "1 - Low"
-msgstr ""
+msgstr "1 - Niski"
 
 #: redbot/cogs/general/general.py:357
 msgid "2 - Medium"
-msgstr ""
+msgstr "2 - Średni"
 
 #: redbot/cogs/general/general.py:358
 msgid "3 - High"
-msgstr ""
+msgstr "3 - Wysoki"
 
 #: redbot/cogs/general/general.py:359
 msgid "4 - Extreme"
-msgstr ""
+msgstr "4 - Ekstermalny"
 
 #: redbot/cogs/general/general.py:363
 msgid "Partnered"
@@ -365,7 +367,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:364
 msgid "Verified"
-msgstr ""
+msgstr "Zweryfikowany"
 
 #: redbot/cogs/general/general.py:365
 msgid "Server Discovery"
@@ -377,7 +379,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:367
 msgid "Public"
-msgstr ""
+msgstr "Publiczne"
 
 #: redbot/cogs/general/general.py:368
 msgid "Public disabled"

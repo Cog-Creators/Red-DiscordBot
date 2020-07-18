@@ -40,7 +40,7 @@ __all__ = [
     "reset_cases",
 ]
 
-_conf: Optional[Config] = None
+_config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
 
 _CASETYPES = "CASETYPES"
@@ -52,17 +52,17 @@ _ = Translator("ModLog", __file__)
 
 
 async def _init(bot: Red):
-    global _conf
+    global _config
     global _bot_ref
     _bot_ref = bot
-    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
-    _conf.register_global(schema_version=1)
-    _conf.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
-    _conf.init_custom(_CASETYPES, 1)
-    _conf.init_custom(_CASES, 2)
-    _conf.register_custom(_CASETYPES)
-    _conf.register_custom(_CASES)
-    await _migrate_config(from_version=await _conf.schema_version(), to_version=_SCHEMA_VERSION)
+    _config = Config.get_conf(None, 1354799444, cog_name="ModLog")
+    _config.register_global(schema_version=1)
+    _config.register_guild(mod_log=None, casetypes={}, latest_case_number=0)
+    _config.init_custom(_CASETYPES, 1)
+    _config.init_custom(_CASES, 2)
+    _config.register_custom(_CASETYPES)
+    _config.register_custom(_CASES)
+    await _migrate_config(from_version=await _config.schema_version(), to_version=_SCHEMA_VERSION)
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
@@ -149,9 +149,9 @@ async def handle_auditype_key():
             for inner_key, inner_value in casetype_data.items()
             if inner_key != "audit_type"
         }
-        for casetype_name, casetype_data in (await _conf.custom(_CASETYPES).all()).items()
+        for casetype_name, casetype_data in (await _config.custom(_CASETYPES).all()).items()
     }
-    await _conf.custom(_CASETYPES).set(all_casetypes)
+    await _config.custom(_CASETYPES).set(all_casetypes)
 
 
 async def _migrate_config(from_version: int, to_version: int):
@@ -160,40 +160,42 @@ async def _migrate_config(from_version: int, to_version: int):
 
     if from_version < 2 <= to_version:
         # casetypes go from GLOBAL -> casetypes to CASETYPES
-        all_casetypes = await _conf.get_raw("casetypes", default={})
+        all_casetypes = await _config.get_raw("casetypes", default={})
         if all_casetypes:
-            await _conf.custom(_CASETYPES).set(all_casetypes)
+            await _config.custom(_CASETYPES).set(all_casetypes)
 
         # cases go from GUILD -> guild_id -> cases to CASES -> guild_id -> cases
-        all_guild_data = await _conf.all_guilds()
+        all_guild_data = await _config.all_guilds()
         all_cases = {}
         for guild_id, guild_data in all_guild_data.items():
             guild_cases = guild_data.pop("cases", None)
             if guild_cases:
                 all_cases[str(guild_id)] = guild_cases
-        await _conf.custom(_CASES).set(all_cases)
+        await _config.custom(_CASES).set(all_cases)
 
         # new schema is now in place
-        await _conf.schema_version.set(2)
+        await _config.schema_version.set(2)
 
         # migration done, now let's delete all the old stuff
-        await _conf.clear_raw("casetypes")
+        await _config.clear_raw("casetypes")
         for guild_id in all_guild_data:
-            await _conf.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw("cases")
+            await _config.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw(
+                "cases"
+            )
 
     if from_version < 3 <= to_version:
         await handle_auditype_key()
-        await _conf.schema_version.set(3)
+        await _config.schema_version.set(3)
 
     if from_version < 4 <= to_version:
         # set latest_case_number
-        for guild_id, cases in (await _conf.custom(_CASES).all()).items():
+        for guild_id, cases in (await _config.custom(_CASES).all()).items():
             if cases:
-                await _conf.guild(
+                await _config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
                 ).latest_case_number.set(max(map(int, cases.keys())))
 
-        await _conf.schema_version.set(4)
+        await _config.schema_version.set(4)
 
 
 class Case:
@@ -206,12 +208,12 @@ class Case:
         created_at: int,
         action_type: str,
         user: Union[discord.User, int],
-        moderator: discord.User,
+        moderator: Optional[Union[discord.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[discord.User] = None,
+        amended_by: Optional[Union[discord.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -253,7 +255,7 @@ class Case:
         if not isinstance(self.user, int):
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
-        await _conf.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
+        await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
         if not self.message:
             return
@@ -264,6 +266,18 @@ class Case:
                 await self.message.edit(embed=case_content)
             else:
                 await self.message.edit(content=case_content)
+        except discord.Forbidden:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID due to missing permissions."
+            )
+        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+            log.exception(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s due to unexpected error.",
+                self.case_number,
+                self.guild.id,
+            )
         finally:
             return None
 
@@ -292,10 +306,14 @@ class Case:
         else:
             reason = _("**Reason:** Use the `reason` command to add it")
 
-        if self.moderator is not None:
-            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
-        else:
+        if self.moderator is None:
             moderator = _("Unknown")
+        elif isinstance(self.moderator, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            moderator = f"[{translated}] ({self.moderator})"
+        else:
+            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         until = None
         duration = None
         if self.until:
@@ -307,13 +325,14 @@ class Case:
             until = end_fmt
             duration = dur_fmt
 
-        amended_by = None
-        if self.amended_by:
-            amended_by = escape_spoilers(
-                "{}#{} ({})".format(
-                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
-                )
-            )
+        if self.amended_by is None:
+            amended_by = None
+        elif isinstance(self.amended_by, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            translated = _("Unknown or Deleted User")
+            amended_by = f"[{translated}] ({self.amended_by})"
+        else:
+            amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
 
         last_modified = None
         if self.modified_at:
@@ -323,7 +342,9 @@ class Case:
 
         if isinstance(self.user, int):
             if self.last_known_username is None:
-                user = f"[Unknown or Deleted User] ({self.user})"
+                # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+                translated = _("Unknown or Deleted User")
+                user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
             avatar_url = None
@@ -381,10 +402,14 @@ class Case:
             The case in the form of a dict
 
         """
-        if self.moderator is not None:
-            mod = self.moderator.id
+        if self.moderator is None or isinstance(self.moderator, int):
+            mod = self.moderator
         else:
-            mod = None
+            mod = self.moderator.id
+        if self.amended_by is None or isinstance(self.amended_by, int):
+            amended_by = self.amended_by
+        else:
+            amended_by = self.amended_by.id
         if isinstance(self.user, int):
             user_id = self.user
         else:
@@ -400,7 +425,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
-            "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
+            "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
         }
@@ -538,7 +563,7 @@ class CaseType:
             "image": self.image,
             "case_str": self.case_str,
         }
-        await _conf.custom(_CASETYPES, self.name).set(data)
+        await _config.custom(_CASETYPES, self.name).set(data)
 
     async def is_enabled(self) -> bool:
         """
@@ -555,7 +580,7 @@ class CaseType:
         """
         if not self.guild:
             return False
-        return await _conf.guild(self.guild).casetypes.get_raw(
+        return await _config.guild(self.guild).casetypes.get_raw(
             self.name, default=self.default_setting
         )
 
@@ -569,7 +594,7 @@ class CaseType:
             True if the case should be enabled, otherwise False"""
         if not self.guild:
             return
-        await _conf.guild(self.guild).casetypes.set_raw(self.name, value=enabled)
+        await _config.guild(self.guild).casetypes.set_raw(self.name, value=enabled)
 
     @classmethod
     def from_json(cls, name: str, data: dict, **kwargs):
@@ -619,7 +644,7 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
 
     """
 
-    case = await _conf.custom(_CASES, str(guild.id), str(case_number)).all()
+    case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
     mod_channel = await get_modlog_channel(guild)
@@ -642,7 +667,7 @@ async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
         The latest case object. `None` if it the guild has no cases.
 
     """
-    case_number = await _conf.guild(guild).latest_case_number()
+    case_number = await _config.guild(guild).latest_case_number()
     if case_number:
         return await get_case(case_number, guild, bot)
 
@@ -664,7 +689,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
         A list of all cases for the guild
 
     """
-    cases = await _conf.custom(_CASES, str(guild.id)).all()
+    cases = await _config.custom(_CASES, str(guild.id)).all()
     mod_channel = await get_modlog_channel(guild)
     return [
         await Case.from_json(mod_channel, bot, case_number, case_data)
@@ -704,7 +729,7 @@ async def get_cases_for_member(
         Fetching the user failed.
     """
 
-    cases = await _conf.custom(_CASES, str(guild.id)).all()
+    cases = await _config.custom(_CASES, str(guild.id)).all()
 
     if not (member_id or member):
         raise ValueError("Expected a member or a member id to be provided.") from None
@@ -776,10 +801,10 @@ async def create_case(
     if user == bot.user:
         return
 
-    async with _conf.guild(guild).latest_case_number.get_lock():
+    async with _config.guild(guild).latest_case_number.get_lock():
         # We're getting the case number from config, incrementing it, awaiting something, then
         # setting it again. This warrants acquiring the lock.
-        next_case_number = await _conf.guild(guild).latest_case_number() + 1
+        next_case_number = await _config.guild(guild).latest_case_number() + 1
 
         case = Case(
             bot,
@@ -796,8 +821,8 @@ async def create_case(
             modified_at=None,
             message=None,
         )
-        await _conf.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
-        await _conf.guild(guild).latest_case_number.set(next_case_number)
+        await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
+        await _config.guild(guild).latest_case_number.set(next_case_number)
 
     bot.dispatch("modlog_case_create", case)
     try:
@@ -809,8 +834,20 @@ async def create_case(
         else:
             msg = await mod_channel.send(case_content)
         await case.edit({"message": msg})
-    except (RuntimeError, discord.HTTPException):
+    except RuntimeError:  # modlog channel isn't set
         pass
+    except discord.Forbidden:
+        log.info(
+            "Modlog failed to edit the Discord message for"
+            " the case #%s from guild with ID due to missing permissions."
+        )
+    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        log.exception(
+            "Modlog failed to send the Discord message for"
+            " the case #%s from guild with ID %s due to unexpected error.",
+            case.case_number,
+            case.guild.id,
+        )
     finally:
         return case
 
@@ -831,7 +868,7 @@ async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Opti
     Optional[CaseType]
         Case type with provided name. If such case type doesn't exist this will be `None`.
     """
-    data = await _conf.custom(_CASETYPES, name).all()
+    data = await _config.custom(_CASETYPES, name).all()
     if not data:
         return
     casetype = CaseType.from_json(name, data)
@@ -851,7 +888,7 @@ async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
     """
     return [
         CaseType.from_json(name, data, guild=guild)
-        for name, data in (await _conf.custom(_CASETYPES).all()).items()
+        for name, data in (await _config.custom(_CASETYPES).all()).items()
     ]
 
 
@@ -985,10 +1022,10 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
 
     """
     if hasattr(guild, "get_channel"):
-        channel = guild.get_channel(await _conf.guild(guild).mod_log())
+        channel = guild.get_channel(await _config.guild(guild).mod_log())
     else:
         # For unit tests only
-        channel = await _conf.guild(guild).mod_log()
+        channel = await _config.guild(guild).mod_log()
     if channel is None:
         raise RuntimeError("Failed to get the mod log channel!")
     return channel
@@ -1013,7 +1050,7 @@ async def set_modlog_channel(
         `True` if successful
 
     """
-    await _conf.guild(guild).mod_log.set(channel.id if hasattr(channel, "id") else None)
+    await _config.guild(guild).mod_log.set(channel.id if hasattr(channel, "id") else None)
     return True
 
 
@@ -1027,8 +1064,8 @@ async def reset_cases(guild: discord.Guild) -> None:
         The guild to reset cases for
 
     """
-    await _conf.custom(_CASES, str(guild.id)).clear()
-    await _conf.guild(guild).latest_case_number.clear()
+    await _config.custom(_CASES, str(guild.id)).clear()
+    await _config.guild(guild).latest_case_number.clear()
 
 
 def _strfdelta(delta):

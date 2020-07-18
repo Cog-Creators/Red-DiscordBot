@@ -29,20 +29,31 @@ _ = Translator("Downloader", __file__)
 
 DEPRECATION_NOTICE = _(
     "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in Red 3.4: {repo_list}.\n"
+    " which are marked for removal in the future: {repo_list}.\n"
     " You should inform maintainers of these repos about this message."
 )
 
 
 @cog_i18n(_)
 class Downloader(commands.Cog):
+    """Install community cogs made by Cog Creators.
+
+    Community cogs, also called third party cogs, are not included
+    in the default Red install.
+    
+    Community cogs come in repositories. Repos are a group of cogs
+    you can install. You always need to add the creator's repository
+    using the `[p]repo` command before you can install one or more
+    cogs from the creator.
+    """
+
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
 
-        self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)
+        self.config = Config.get_conf(self, identifier=998240343, force_registration=True)
 
-        self.conf.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+        self.config.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
 
         self.already_agreed = False
 
@@ -66,8 +77,9 @@ class Downloader(commands.Cog):
                 pass
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        async with ctx.typing():
-            await self._ready.wait()
+        if not self._ready.is_set():
+            async with ctx.typing():
+                await self._ready.wait()
         if self._ready_raised:
             await ctx.send(
                 "There was an error during Downloader's initialization."
@@ -99,22 +111,22 @@ class Downloader(commands.Cog):
         self._ready.set()
 
     async def _maybe_update_config(self) -> None:
-        schema_version = await self.conf.schema_version()
+        schema_version = await self.config.schema_version()
 
         if schema_version == 0:
             await self._schema_0_to_1()
             schema_version += 1
-            await self.conf.schema_version.set(schema_version)
+            await self.config.schema_version.set(schema_version)
 
     async def _schema_0_to_1(self):
         """
         This contains migration to allow saving state
         of both installed cogs and shared libraries.
         """
-        old_conf = await self.conf.get_raw("installed", default=[])
+        old_conf = await self.config.get_raw("installed", default=[])
         if not old_conf:
             return
-        async with self.conf.installed_cogs() as new_cog_conf:
+        async with self.config.installed_cogs() as new_cog_conf:
             for cog_json in old_conf:
                 repo_name = cog_json["repo_name"]
                 module_name = cog_json["cog_name"]
@@ -126,7 +138,7 @@ class Downloader(commands.Cog):
                     "commit": "",
                     "pinned": False,
                 }
-        await self.conf.clear_raw("installed")
+        await self.config.clear_raw("installed")
         # no reliable way to get installed libraries (i.a. missing repo name)
         # but it only helps `[p]cog update` run faster so it's not an issue
 
@@ -150,7 +162,7 @@ class Downloader(commands.Cog):
             All installed cogs.
 
         """
-        installed = await self.conf.installed_cogs()
+        installed = await self.config.installed_cogs()
         # noinspection PyTypeChecker
         return tuple(
             InstalledModule.from_json(cog_json, self._repo_manager)
@@ -167,7 +179,7 @@ class Downloader(commands.Cog):
             All installed shared libraries.
 
         """
-        installed = await self.conf.installed_libraries()
+        installed = await self.config.installed_libraries()
         # noinspection PyTypeChecker
         return tuple(
             InstalledModule.from_json(lib_json, self._repo_manager)
@@ -195,21 +207,19 @@ class Downloader(commands.Cog):
             The modules to check off.
 
         """
-        installed_cogs = await self.conf.installed_cogs()
-        installed_libraries = await self.conf.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            module_json = module.to_json()
-            repo_json = installed.setdefault(module.repo_name, {})
-            repo_json[module.name] = module_json
-
-        await self.conf.installed_cogs.set(installed_cogs)
-        await self.conf.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                module_json = module.to_json()
+                repo_json = installed.setdefault(module.repo_name, {})
+                repo_json[module.name] = module_json
 
     async def _remove_from_installed(self, modules: Iterable[InstalledModule]) -> None:
         """Remove modules from the saved list
@@ -221,23 +231,20 @@ class Downloader(commands.Cog):
             The modules to remove.
 
         """
-        installed_cogs = await self.conf.installed_cogs()
-        installed_libraries = await self.conf.installed_libraries()
-        for module in modules:
-            if module.type == InstallableType.COG:
-                installed = installed_cogs
-            elif module.type == InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
-            else:
-                continue
-            with contextlib.suppress(KeyError):
-                installed[module._json_repo_name].pop(module.name)
-
-        await self.conf.installed_cogs.set(installed_cogs)
-        await self.conf.installed_libraries.set(installed_libraries)
+        async with self.config.all() as global_data:
+            installed_cogs = global_data["installed_cogs"]
+            installed_libraries = global_data["installed_libraries"]
+            for module in modules:
+                if module.type == InstallableType.COG:
+                    installed = installed_cogs
+                elif module.type == InstallableType.SHARED_LIBRARY:
+                    installed = installed_libraries
+                else:
+                    continue
+                with contextlib.suppress(KeyError):
+                    installed[module._json_repo_name].pop(module.name)
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
-        # remove in Red 3.4
         is_installed, cog = await self.is_installed(cog_name)
         # it's not gonna be None when `is_installed` is True
         # if we'll use typing_extensions in future, `Literal` can solve this
@@ -854,6 +861,31 @@ class Downloader(commands.Cog):
             message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
         await self.send_pagified(ctx, message)
 
+    @cog.command(name="listpinned")
+    async def _cog_listpinned(self, ctx: commands.Context):
+        """List currently pinned cogs."""
+        installed = await self.installed_cogs()
+        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        if pinned_list:
+            message = humanize_list(pinned_list)
+        else:
+            message = _("None.")
+        if await ctx.embed_requested():
+            embed = discord.Embed(color=(await ctx.embed_colour()))
+            for page in pagify(message, delims=[", "], page_length=900):
+                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
+                if page.startswith(", "):
+                    page = page[2:]
+                embed.add_field(name=name, value=page, inline=False)
+            await ctx.send(embed=embed)
+        else:
+            for page in pagify(message, delims=[", "], page_length=1900):
+                if page.startswith(", "):
+                    page = page[2:]
+                else:
+                    page = _("Pinned Cogs: \n") + page
+                await ctx.send(box(page))
+
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
         """
@@ -1318,49 +1350,6 @@ class Downloader(commands.Cog):
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
-    def format_findcog_info(
-        self, command_name: str, cog_installable: Union[Installable, object] = None
-    ) -> str:
-        """Format a cog's info for output to discord.
-
-        Parameters
-        ----------
-        command_name : str
-            Name of the command which belongs to the cog.
-        cog_installable : `Installable` or `object`
-            Can be an `Installable` instance or a Cog instance.
-
-        Returns
-        -------
-        str
-            A formatted message for the user.
-
-        """
-        if isinstance(cog_installable, Installable):
-            is_installable = True
-            made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
-            repo_url = (
-                _("Missing from installed repos")
-                if cog_installable.repo is None
-                else cog_installable.repo.clean_url
-            )
-            cog_name = cog_installable.name
-        else:
-            is_installable = False
-            made_by = "26 & co."
-            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-            cog_name = cog_installable.__class__.__name__
-
-        msg = _(
-            "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo: {repo_url}\n"
-        ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
-        if is_installable and cog_installable.repo is not None and cog_installable.repo.branch:
-            msg += _("Repo branch: {branch_name}\n").format(
-                branch_name=cog_installable.repo.branch
-            )
-
-        return msg
-
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
 
@@ -1398,14 +1387,51 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                msg = self.format_findcog_info(command_name, cog_installable)
-            else:
-                # Assume it's in a base cog
-                msg = self.format_findcog_info(command_name, cog)
+                made_by = (
+                    humanize_list(cog_installable.author)
+                    if cog_installable.author
+                    else _("Missing from info.json")
+                )
+                repo_url = (
+                    _("Missing from installed repos")
+                    if cog_installable.repo is None
+                    else cog_installable.repo.clean_url
+                )
+                cog_name = cog_installable.name
+            elif cog.__module__.startswith("redbot."):  # core commands or core cog
+                made_by = "Cog Creators"
+                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
+                cog_name = cog.__class__.__name__
+            else:  # assume not installed via downloader
+                made_by = _("Unknown")
+                repo_url = _("None - this cog wasn't installed via downloader")
+                cog_name = cog.__class__.__name__
         else:
             msg = _("This command is not provided by a cog.")
+            await ctx.send(msg)
+            return
 
-        await ctx.send(box(msg))
+        if await ctx.embed_requested():
+            embed = discord.Embed(color=(await ctx.embed_colour()))
+            embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Made by:"), value=made_by, inline=False)
+            embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
+            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
+                embed.add_field(
+                    name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
+                )
+            await ctx.send(embed=embed)
+
+        else:
+            msg = _(
+                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
+            ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
+            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
+                msg += _("Repo branch: {branch_name}\n").format(
+                    branch_name=cog_installable.repo.branch
+                )
+            await ctx.send(box(msg))
 
     @staticmethod
     def format_failed_repos(failed: Collection[str]) -> str:

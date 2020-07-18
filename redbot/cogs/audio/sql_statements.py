@@ -1,3 +1,5 @@
+from typing import Final
+
 # TODO: https://github.com/Cog-Creators/Red-DiscordBot/pull/3195#issuecomment-567821701
 # Thanks a lot Sinbad!
 
@@ -26,15 +28,19 @@ __all__ = [
     "YOUTUBE_UPSERT",
     "YOUTUBE_UPDATE",
     "YOUTUBE_QUERY",
+    "YOUTUBE_QUERY_ALL",
     "YOUTUBE_DELETE_OLD_ENTRIES",
+    "YOUTUBE_QUERY_LAST_FETCHED_RANDOM",
     # Spotify table statements
     "SPOTIFY_DROP_TABLE",
     "SPOTIFY_CREATE_INDEX",
     "SPOTIFY_CREATE_TABLE",
     "SPOTIFY_UPSERT",
     "SPOTIFY_QUERY",
+    "SPOTIFY_QUERY_ALL",
     "SPOTIFY_UPDATE",
     "SPOTIFY_DELETE_OLD_ENTRIES",
+    "SPOTIFY_QUERY_LAST_FETCHED_RANDOM",
     # Lavalink table statements
     "LAVALINK_DROP_TABLE",
     "LAVALINK_CREATE_TABLE",
@@ -42,30 +48,44 @@ __all__ = [
     "LAVALINK_UPSERT",
     "LAVALINK_UPDATE",
     "LAVALINK_QUERY",
+    "LAVALINK_QUERY_ALL",
     "LAVALINK_QUERY_LAST_FETCHED_RANDOM",
     "LAVALINK_DELETE_OLD_ENTRIES",
     "LAVALINK_FETCH_ALL_ENTRIES_GLOBAL",
 ]
 
 # PRAGMA Statements
-PRAGMA_SET_temp_store = """
+
+PRAGMA_SET_temp_store: Final[
+    str
+] = """
 PRAGMA temp_store = 2;
 """
-PRAGMA_SET_journal_mode = """
+PRAGMA_SET_journal_mode: Final[
+    str
+] = """
 PRAGMA journal_mode = wal;
 """
-PRAGMA_SET_read_uncommitted = """
+PRAGMA_SET_read_uncommitted: Final[
+    str
+] = """
 PRAGMA read_uncommitted = 1;
 """
-PRAGMA_FETCH_user_version = """
+PRAGMA_FETCH_user_version: Final[
+    str
+] = """
 pragma user_version;
 """
-PRAGMA_SET_user_version = """
+PRAGMA_SET_user_version: Final[
+    str
+] = """
 pragma user_version=3;
 """
 
 # Playlist table statements
-PLAYLIST_CREATE_TABLE = """
+PLAYLIST_CREATE_TABLE: Final[
+    str
+] = """
 CREATE TABLE IF NOT EXISTS playlists (
     scope_type INTEGER NOT NULL,
     playlist_id INTEGER NOT NULL,
@@ -78,7 +98,9 @@ CREATE TABLE IF NOT EXISTS playlists (
     PRIMARY KEY (playlist_id, scope_id, scope_type)
 );
 """
-PLAYLIST_DELETE = """
+PLAYLIST_DELETE: Final[
+    str
+] = """
 UPDATE playlists
     SET
         deleted = true
@@ -90,21 +112,27 @@ WHERE
     )
 ;
 """
-PLAYLIST_DELETE_SCOPE = """
+PLAYLIST_DELETE_SCOPE: Final[
+    str
+] = """
 DELETE
 FROM
     playlists
 WHERE
     scope_type = :scope_type ;
 """
-PLAYLIST_DELETE_SCHEDULED = """
+PLAYLIST_DELETE_SCHEDULED: Final[
+    str
+] = """
 DELETE
 FROM
     playlists
 WHERE
     deleted = true;
 """
-PLAYLIST_FETCH_ALL = """
+PLAYLIST_FETCH_ALL: Final[
+    str
+] = """
 SELECT
     playlist_id,
     playlist_name,
@@ -120,7 +148,9 @@ WHERE
     AND deleted = false
     ;
 """
-PLAYLIST_FETCH_ALL_WITH_FILTER = """
+PLAYLIST_FETCH_ALL_WITH_FILTER: Final[
+    str
+] = """
 SELECT
     playlist_id,
     playlist_name,
@@ -139,7 +169,9 @@ WHERE
     )
 ;
 """
-PLAYLIST_FETCH_ALL_CONVERTER = """
+PLAYLIST_FETCH_ALL_CONVERTER: Final[
+    str
+] = """
 SELECT
     playlist_id,
     playlist_name,
@@ -162,7 +194,9 @@ WHERE
     )
 ;
 """
-PLAYLIST_FETCH = """
+PLAYLIST_FETCH: Final[
+    str
+] = """
 SELECT
     playlist_id,
     playlist_name,
@@ -181,7 +215,9 @@ WHERE
     )
 LIMIT 1;
 """
-PLAYLIST_UPSERT = """
+PLAYLIST_UPSERT: Final[
+    str
+] = """
 INSERT INTO
     playlists ( scope_type, playlist_id, playlist_name, scope_id, author_id, playlist_url, tracks )
 VALUES
@@ -195,15 +231,23 @@ VALUES
         playlist_url = excluded.playlist_url,
         tracks = excluded.tracks;
 """
-PLAYLIST_CREATE_INDEX = """
-CREATE INDEX IF NOT EXISTS name_index ON playlists (scope_type, playlist_id, playlist_name, scope_id);
+PLAYLIST_CREATE_INDEX: Final[
+    str
+] = """
+CREATE INDEX IF NOT EXISTS name_index ON playlists (
+scope_type, playlist_id, playlist_name, scope_id
+);
 """
 
 # YouTube table statements
-YOUTUBE_DROP_TABLE = """
+YOUTUBE_DROP_TABLE: Final[
+    str
+] = """
 DROP TABLE IF EXISTS youtube;
 """
-YOUTUBE_CREATE_TABLE = """
+YOUTUBE_CREATE_TABLE: Final[
+    str
+] = """
 CREATE TABLE IF NOT EXISTS youtube(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     track_info TEXT,
@@ -212,11 +256,15 @@ CREATE TABLE IF NOT EXISTS youtube(
     last_fetched INTEGER
 );
 """
-YOUTUBE_CREATE_INDEX = """
+YOUTUBE_CREATE_INDEX: Final[
+    str
+] = """
 CREATE UNIQUE INDEX IF NOT EXISTS idx_youtube_url
 ON youtube (track_info, youtube_url);
 """
-YOUTUBE_UPSERT = """INSERT INTO
+YOUTUBE_UPSERT: Final[
+    str
+] = """INSERT INTO
 youtube
   (
     track_info,
@@ -241,12 +289,16 @@ DO UPDATE
     track_info = excluded.track_info,
     last_updated = excluded.last_updated
 """
-YOUTUBE_UPDATE = """
+YOUTUBE_UPDATE: Final[
+    str
+] = """
 UPDATE youtube
 SET last_fetched=:last_fetched
 WHERE track_info=:track;
 """
-YOUTUBE_QUERY = """
+YOUTUBE_QUERY: Final[
+    str
+] = """
 SELECT youtube_url, last_updated
 FROM youtube
 WHERE
@@ -254,17 +306,41 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
-YOUTUBE_DELETE_OLD_ENTRIES = """
+YOUTUBE_QUERY_ALL: Final[
+    str
+] = """
+SELECT youtube_url, last_updated
+FROM youtube
+"""
+YOUTUBE_DELETE_OLD_ENTRIES: Final[
+    str
+] = """
 DELETE FROM youtube
 WHERE
-    last_updated < :maxage;
+    last_updated < :maxage
+    ;
+"""
+YOUTUBE_QUERY_LAST_FETCHED_RANDOM: Final[
+    str
+] = """
+SELECT youtube_url, last_updated
+FROM youtube
+WHERE
+    last_fetched > :day
+    AND last_updated > :maxage
+LIMIT 100
+;
 """
 
 # Spotify table statements
-SPOTIFY_DROP_TABLE = """
+SPOTIFY_DROP_TABLE: Final[
+    str
+] = """
 DROP TABLE IF EXISTS spotify;
 """
-SPOTIFY_CREATE_TABLE = """
+SPOTIFY_CREATE_TABLE: Final[
+    str
+] = """
 CREATE TABLE IF NOT EXISTS spotify(
     id TEXT,
     type TEXT,
@@ -277,11 +353,15 @@ CREATE TABLE IF NOT EXISTS spotify(
     last_fetched INTEGER
 );
 """
-SPOTIFY_CREATE_INDEX = """
+SPOTIFY_CREATE_INDEX: Final[
+    str
+] = """
 CREATE UNIQUE INDEX IF NOT EXISTS idx_spotify_uri
 ON spotify (id, type, uri);
 """
-SPOTIFY_UPSERT = """INSERT INTO
+SPOTIFY_UPSERT: Final[
+    str
+] = """INSERT INTO
 spotify
   (
     id, type, uri, track_name, artist_name,
@@ -306,12 +386,16 @@ DO UPDATE
     track_info = excluded.track_info,
     last_updated = excluded.last_updated;
 """
-SPOTIFY_UPDATE = """
+SPOTIFY_UPDATE: Final[
+    str
+] = """
 UPDATE spotify
 SET last_fetched=:last_fetched
 WHERE uri=:uri;
 """
-SPOTIFY_QUERY = """
+SPOTIFY_QUERY: Final[
+    str
+] = """
 SELECT track_info, last_updated
 FROM spotify
 WHERE
@@ -319,17 +403,41 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
-SPOTIFY_DELETE_OLD_ENTRIES = """
+SPOTIFY_QUERY_ALL: Final[
+    str
+] = """
+SELECT track_info, last_updated
+FROM spotify
+"""
+SPOTIFY_DELETE_OLD_ENTRIES: Final[
+    str
+] = """
 DELETE FROM spotify
 WHERE
-    last_updated < :maxage;
+    last_updated < :maxage
+    ;
+"""
+SPOTIFY_QUERY_LAST_FETCHED_RANDOM: Final[
+    str
+] = """
+SELECT track_info, last_updated
+FROM spotify
+WHERE
+    last_fetched > :day
+    AND last_updated > :maxage
+LIMIT 100
+;
 """
 
 # Lavalink table statements
-LAVALINK_DROP_TABLE = """
+LAVALINK_DROP_TABLE: Final[
+    str
+] = """
 DROP TABLE IF EXISTS lavalink ;
 """
-LAVALINK_CREATE_TABLE = """
+LAVALINK_CREATE_TABLE: Final[
+    str
+] = """
 CREATE TABLE IF NOT EXISTS lavalink(
     query TEXT,
     data JSON,
@@ -338,11 +446,15 @@ CREATE TABLE IF NOT EXISTS lavalink(
 
 );
 """
-LAVALINK_CREATE_INDEX = """
+LAVALINK_CREATE_INDEX: Final[
+    str
+] = """
 CREATE UNIQUE INDEX IF NOT EXISTS idx_lavalink_query
 ON lavalink (query);
 """
-LAVALINK_UPSERT = """INSERT INTO
+LAVALINK_UPSERT: Final[
+    str
+] = """INSERT INTO
 lavalink
   (
     query,
@@ -366,12 +478,16 @@ DO UPDATE
     data = excluded.data,
     last_updated = excluded.last_updated;
 """
-LAVALINK_UPDATE = """
+LAVALINK_UPDATE: Final[
+    str
+] = """
 UPDATE lavalink
 SET last_fetched=:last_fetched
 WHERE query=:query;
 """
-LAVALINK_QUERY = """
+LAVALINK_QUERY: Final[
+    str
+] = """
 SELECT data, last_updated
 FROM lavalink
 WHERE
@@ -379,22 +495,34 @@ WHERE
     AND last_updated > :maxage
 LIMIT 1;
 """
-LAVALINK_QUERY_LAST_FETCHED_RANDOM = """
-SELECT data
+LAVALINK_QUERY_ALL: Final[
+    str
+] = """
+SELECT data, last_updated
+FROM lavalink
+"""
+LAVALINK_QUERY_LAST_FETCHED_RANDOM: Final[
+    str
+] = """
+SELECT data, last_updated
 FROM lavalink
 WHERE
     last_fetched > :day
     AND last_updated > :maxage
-ORDER BY RANDOM()
-LIMIT 10
+LIMIT 100
 ;
 """
-LAVALINK_DELETE_OLD_ENTRIES = """
+LAVALINK_DELETE_OLD_ENTRIES: Final[
+    str
+] = """
 DELETE FROM lavalink
 WHERE
-    last_updated < :maxage;
+    last_updated < :maxage
+    ;
 """
-LAVALINK_FETCH_ALL_ENTRIES_GLOBAL = """
+LAVALINK_FETCH_ALL_ENTRIES_GLOBAL: Final[
+    str
+] = """
 SELECT query, data 
 FROM lavalink
 """

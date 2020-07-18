@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import collections.abc
 import json
 import logging
 import os
@@ -9,10 +10,23 @@ import shutil
 import tarfile
 from datetime import datetime
 from pathlib import Path
-from typing import Awaitable, Callable, List, Optional, Set, Union, TYPE_CHECKING
+from typing import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Iterator,
+    List,
+    Optional,
+    Union,
+    TYPE_CHECKING,
+    Tuple,
+)
 
+import aiohttp
 import discord
+import pkg_resources
 from fuzzywuzzy import fuzz, process
+from redbot import VersionInfo
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -23,7 +37,16 @@ if TYPE_CHECKING:
 
 main_log = logging.getLogger("red")
 
-__all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+__all__ = (
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "create_backup",
+    "send_to_owners_with_preprocessor",
+    "send_to_owners_with_prefix_replaced",
+    "expected_version",
+    "fetch_latest_red_version_info",
+)
 
 
 def safe_delete(pth: Path):
@@ -51,7 +74,7 @@ async def fuzzy_command_search(
     ctx: Context,
     term: Optional[str] = None,
     *,
-    commands: Optional[Set[Command]] = None,
+    commands: Optional[Union[AsyncIterator[Command], Iterator[Command]]] = None,
     min_score: int = 80,
 ) -> Optional[List[Command]]:
     """Search for commands which are similar in name to the one invoked.
@@ -66,7 +89,7 @@ async def fuzzy_command_search(
     term : Optional[str]
         The name of the invoked command. If ``None``,
         `Context.invoked_with` will be used instead.
-    commands : Optional[Set[commands.Command]]
+    commands : Optional[Union[AsyncIterator[commands.Command], Iterator[commands.Command]]]
         The commands available to choose from when doing a fuzzy match.
         When omitted, `Bot.walk_commands` will be used instead.
     min_score : int
@@ -93,9 +116,9 @@ async def fuzzy_command_search(
     # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
+        alias = await alias_cog._aliases.get_alias(ctx.guild, term)
 
-        if is_alias:
+        if alias:
             return None
     customcom_cog = ctx.bot.get_cog("CustomCommands")
     if customcom_cog is not None:
@@ -108,10 +131,15 @@ async def fuzzy_command_search(
         else:
             return None
 
+    if commands is None:
+        choices = set(ctx.bot.walk_commands())
+    elif isinstance(commands, collections.abc.AsyncIterator):
+        choices = {c async for c in commands}
+    else:
+        choices = set(commands)
+
     # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(
-        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
-    )
+    extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
     if not extracted:
         return None
 
@@ -263,7 +291,28 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
     async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
-        prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}", prefixes[0])
+        prefix = re.sub(
+            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
+        )
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+
+
+def expected_version(current: str, expected: str) -> bool:
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    return current in pkg_resources.Requirement.parse(f"x{expected}")
+
+
+async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+                data = await r.json()
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None, None
+    else:
+        release = VersionInfo.from_str(data["info"]["version"])
+        required_python = data["info"]["requires_python"]
+
+        return release, required_python

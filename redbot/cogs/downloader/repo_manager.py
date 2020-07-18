@@ -990,8 +990,8 @@ class RepoManager:
 
     def __init__(self) -> None:
         self._repos: Dict[str, Repo] = {}
-        self.conf = Config.get_conf(self, identifier=170708480, force_registration=True)
-        self.conf.register_global(repos={})
+        self.config = Config.get_conf(self, identifier=170708480, force_registration=True)
+        self.config.register_global(repos={})
 
     async def initialize(self) -> None:
         await self._load_repos(set_repos=True)
@@ -1040,7 +1040,7 @@ class RepoManager:
             url=url, name=name, branch=branch, commit="", folder_path=self.repos_folder / name
         )
         await r.clone()
-        await self.conf.repos.set_raw(name, value=r.branch)
+        await self.config.repos.set_raw(name, value=r.branch)
 
         self._repos[name] = r
 
@@ -1110,7 +1110,7 @@ class RepoManager:
 
         safe_delete(repo.folder_path)
 
-        await self.conf.repos.clear_raw(repo.name)
+        await self.config.repos.clear_raw(repo.name)
         try:
             del self._repos[name]
         except KeyError:
@@ -1189,20 +1189,19 @@ class RepoManager:
             if not folder.is_dir():
                 continue
             try:
-                branch = await self.conf.repos.get_raw(folder.stem, default="")
+                branch = await self.config.repos.get_raw(folder.stem, default="")
                 ret[folder.stem] = await Repo.from_folder(folder, branch)
                 if branch == "":
-                    await self.conf.repos.set_raw(folder.stem, value=ret[folder.stem].branch)
+                    await self.config.repos.set_raw(folder.stem, value=ret[folder.stem].branch)
             except errors.NoRemoteURL:
                 log.warning("A remote URL does not exist for repo %s", folder.stem)
             except errors.DownloaderException as err:
-                log.error("Discarding repo %s due to error.", folder.stem, exc_info=err)
-                shutil.rmtree(
-                    str(folder),
-                    onerror=lambda func, path, exc: log.error(
-                        "Failed to remove folder %s", path, exc_info=exc
-                    ),
-                )
+                log.error("Ignoring repo %s due to error.", folder.stem, exc_info=err)
+                # Downloader should NOT remove the repo on generic errors like this one.
+                # We were removing whole repo folder here in the past,
+                # but it's quite destructive for such a generic error.
+                # We can't **expect** that this error will always mean git repository is broken.
+                # GH-3867
 
         if set_repos:
             self._repos = ret

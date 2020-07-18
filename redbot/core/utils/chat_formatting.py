@@ -60,15 +60,17 @@ def question(text: str) -> str:
     return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
 
 
-def bold(text: str) -> str:
+def bold(text: str, escape_formatting: bool = True) -> str:
     """Get the given text in bold.
 
-    Note: This escapes text prior to bolding.
+    Note: By default, this function will escape ``text`` prior to emboldening.
 
     Parameters
     ----------
     text : str
         The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -76,7 +78,7 @@ def bold(text: str) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=True)
+    text = escape(text, formatting=escape_formatting)
     return "**{}**".format(text)
 
 
@@ -120,15 +122,17 @@ def inline(text: str) -> str:
         return "`{}`".format(text)
 
 
-def italics(text: str) -> str:
+def italics(text: str, escape_formatting: bool = True) -> str:
     """Get the given text in italics.
 
-    Note: This escapes text prior to italicising
+    Note: By default, this function will escape ``text`` prior to italicising.
 
     Parameters
     ----------
     text : str
         The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -136,7 +140,7 @@ def italics(text: str) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=True)
+    text = escape(text, formatting=escape_formatting)
     return "*{}*".format(text)
 
 
@@ -278,15 +282,17 @@ def pagify(
             yield in_text
 
 
-def strikethrough(text: str) -> str:
+def strikethrough(text: str, escape_formatting: bool = True) -> str:
     """Get the given text with a strikethrough.
 
-    Note: This escapes text prior to applying a strikethrough
+    Note: By default, this function will escape ``text`` prior to applying a strikethrough.
 
     Parameters
     ----------
     text : str
         The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -294,19 +300,21 @@ def strikethrough(text: str) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=True)
+    text = escape(text, formatting=escape_formatting)
     return "~~{}~~".format(text)
 
 
-def underline(text: str) -> str:
+def underline(text: str, escape_formatting: bool = True) -> str:
     """Get the given text with an underline.
 
-    Note: This escapes text prior to underlining
+    Note: By default, this function will escape ``text`` prior to underlining.
 
     Parameters
     ----------
     text : str
         The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
 
     Returns
     -------
@@ -314,7 +322,7 @@ def underline(text: str) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=True)
+    text = escape(text, formatting=escape_formatting)
     return "__{}__".format(text)
 
 
@@ -328,7 +336,7 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     mass_mentions : `bool`, optional
         Set to :code:`True` to escape mass mentions in the text.
     formatting : `bool`, optional
-        Set to :code:`True` to escpae any markdown formatting in the text.
+        Set to :code:`True` to escape any markdown formatting in the text.
 
     Returns
     -------

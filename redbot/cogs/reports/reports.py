@@ -7,6 +7,7 @@ import contextlib
 import discord
 
 from redbot.core import Config, checks, commands
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
@@ -22,6 +23,12 @@ log = logging.getLogger("red.reports")
 
 @cog_i18n(_)
 class Reports(commands.Cog):
+    """Create user reports that server staff can respond to.
+
+    Users can open reports using `[p]report`. These are then sent
+    to a channel in the server for staff, and the report creator
+    gets a DM. Both can be used to communicate. 
+    """
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
@@ -115,7 +122,7 @@ class Reports(commands.Cog):
         else:
             perms = discord.Permissions(**permissions)
 
-        for guild in self.bot.guilds:
+        async for guild in AsyncIter(self.bot.guilds, steps=100):
             x = guild.get_member(author.id)
             if x is not None:
                 if await self.internal_filter(x, mod, perms):

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
+"Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File-ID: 42\n"
 "Language: pt_PT\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -19,11 +21,11 @@ msgstr "Tentei fazer uma coisa que o Discord negou permissão para fazer. O coma
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Eu não posso dar {role.name} a {member.display_name} porque esse cargo é igual ou maior a meu cargo na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:28
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Não posso remover {role.name} de {member.display_name} porque esse cargo é igual ou maior a meu cargo na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:34
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
@@ -232,7 +234,7 @@ msgstr ""
 msgid "The Admin cog is not loaded."
 msgstr "O cog 'Admin' não está carregado."
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr "O cargo indicado não é um cargo definível válido."
 

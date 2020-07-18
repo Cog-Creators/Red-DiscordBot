@@ -20,8 +20,8 @@ class ModInfo(MixinMeta):
     """
 
     async def get_names_and_nicks(self, user):
-        names = await self.settings.user(user).past_names()
-        nicks = await self.settings.member(user).past_nicks()
+        names = await self.config.user(user).past_names()
+        nicks = await self.config.member(user).past_nicks()
         if names:
             names = [escape_spoilers_and_mass_mentions(name) for name in names if name]
         if nicks:
@@ -266,14 +266,9 @@ class ModInfo(MixinMeta):
         name = " ~ ".join((name, user.nick)) if user.nick else name
         name = filter_invites(name)
 
-        if user.avatar:
-            avatar = user.avatar_url_as(static_format="png")
-            data.set_author(
-                name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name), url=avatar
-            )
-            data.set_thumbnail(url=avatar)
-        else:
-            data.set_author(name="{statusemoji} {name}".format(statusemoji=statusemoji, name=name))
+        avatar = user.avatar_url_as(static_format="png")
+        data.set_author(name=f"{statusemoji} {name}", url=avatar)
+        data.set_thumbnail(url=avatar)
 
         await ctx.send(embed=data)
 

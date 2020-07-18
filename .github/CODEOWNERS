@@ -1,6 +1,3 @@
-# Default
-*                                   @Twentysix26
-
 # Core
 redbot/core/bank.py                      @palmtree5
 redbot/core/checks.py                    @tekulvw
@@ -30,7 +27,7 @@ redbot/core/utils/dbtools.py             @mikeshardmind
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/*                 @aikaterna @Drapersniper
+redbot/cogs/audio/**                @aikaterna @Drapersniper
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
@@ -63,3 +60,6 @@ redbot/setup.py                     @tekulvw
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
 .github/workflows/*                 @Kowlin
+
+# Excludes
+**/locales/*                        @ghost

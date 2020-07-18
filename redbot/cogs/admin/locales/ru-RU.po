@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-02-08 18:08+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2020-04-23 12:07+0000\n"
+"Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,9 @@ msgstr ""
 "Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: ru\n"
+"X-Crowdin-File-ID: 42\n"
 "Language: ru_RU\n"
 
 #: redbot/cogs/admin/admin.py:17
@@ -19,7 +21,7 @@ msgstr "Я попыталась сделать что-то, в чем Discord о
 
 #: redbot/cogs/admin/admin.py:22
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Я не могу дать {role.name} для {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
+msgstr "Невозможно выдать роль {role.name} для {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:28
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
@@ -170,7 +172,7 @@ msgstr "\\n        Список всех доступных Собственны
 
 #: redbot/cogs/admin/admin.py:407
 msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Доступные Собственные роли:\\n{selfroles}"
+msgstr "Доступные собственные роли:\\n{selfroles}"
 
 #: redbot/cogs/admin/admin.py:413
 #, docstring
@@ -184,7 +186,7 @@ msgstr "\\n        Добавить роль в список доступных 
 
 #: redbot/cogs/admin/admin.py:425
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу позволить вам добавить {role.name} в качестве собственной роли, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Нельзя добавить {role.name} в качестве собственной роли, потому что эта роль выше или равна вашей самой высшей роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:433
 msgid "Added."
@@ -192,7 +194,7 @@ msgstr "Добавлено."
 
 #: redbot/cogs/admin/admin.py:436
 msgid "That role is already a selfrole."
-msgstr "Эта роль уже является собственной ролью."
+msgstr "У вас уже имеется эта роль."
 
 #: redbot/cogs/admin/admin.py:440
 #, docstring
@@ -201,7 +203,7 @@ msgstr "\\n        Удалить роль из списка доступных 
 
 #: redbot/cogs/admin/admin.py:447
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу позволить вам сделать {role.name} не собственной ролью, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Вы не можете забрать у себя роль {role.name}, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:455
 msgid "Removed."
@@ -232,7 +234,7 @@ msgstr "Я не могу сделать объявление на следующ
 msgid "The Admin cog is not loaded."
 msgstr "Модуль Admin не загружен."
 
-#: redbot/cogs/admin/converters.py:21
+#: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
 msgstr "Предоставленная роль не является допустимой ролью."
 

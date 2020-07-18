@@ -40,12 +40,13 @@ YAML_SCHEMA = Schema(
         {
             UseOptional(COMMAND): Or(
                 {
-                    str: And(
+                    Or(str, int): Or(
                         {
                             Or(int, "default"): And(
                                 bool, error=_("Rules must be either `true` or `false`.")
                             )
                         },
+                        {},
                         error=_("Keys under command names must be IDs (numbers) or `default`."),
                     )
                 },
@@ -54,7 +55,7 @@ YAML_SCHEMA = Schema(
             ),
             UseOptional(COG): Or(
                 {
-                    str: Or(
+                    Or(str, int): Or(
                         {
                             Or(int, "default"): And(
                                 bool, error=_("Rules must be either `true` or `false`.")
@@ -80,6 +81,11 @@ __version__ = "1.0.0"
 @cog_i18n(_)
 class Permissions(commands.Cog):
     """Customise permissions for commands and cogs."""
+
+    # The command groups in this cog should never directly take any configuration actions
+    # These should be delegated to specific commands so that it remains trivial
+    # to prevent the guild owner from ever locking themselves out
+    # see ``Permissions.__permissions_hook`` for more details
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -107,6 +113,44 @@ class Permissions(commands.Cog):
         self.config.register_custom(COG)
         self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
+
+    async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
+        """
+        Purpose of this hook is to prevent guild owner lockouts of permissions specifically
+        without modifying rule behavior in any other case.
+
+        Guild owner is not special cased outside of these configuration commands
+        to allow guild owner to restrict the use of potentially damaging commands
+        such as, but not limited to, cleanup to specific channels.
+
+        Leaving the configuration commands special cased allows guild owners to fix
+        any misconfigurations.
+        """
+
+        if ctx.guild:
+            if ctx.author == ctx.guild.owner:
+                # the below should contain all commands from this cog
+                # which configure or are useful to the
+                # configuration of guild permissions and should never
+                # have a potential impact on global configuration
+                # as well as the parent groups
+                if ctx.command in (
+                    self.permissions,  # main top level group
+                    self.permissions_acl,  # acl group
+                    self.permissions_acl_getguild,
+                    self.permissions_acl_setguild,
+                    self.permissions_acl_updateguild,
+                    self.permissions_addguildrule,
+                    self.permissions_clearguildrules,
+                    self.permissions_removeguildrule,
+                    self.permissions_setdefaultguildrule,
+                    self.permissions_canrun,
+                    self.permissions_explain,
+                ):
+                    return True  # permission rules will be ignored at this case
+
+        # this delegates to permissions rules, do not change to False which would deny
+        return None
 
     @commands.group()
     async def permissions(self, ctx: commands.Context):
@@ -180,13 +224,15 @@ class Permissions(commands.Cog):
     @permissions.group(name="acl", aliases=["yaml"])
     async def permissions_acl(self, ctx: commands.Context):
         """Manage permissions with YAML files."""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.permissions_acl:
-            # Send a little guide on YAML formatting
-            await ctx.send(
-                _("Example YAML for setting rules:\n")
-                + box(
-                    textwrap.dedent(
-                        """\
+
+    @permissions_acl.command(name="yamlexample")
+    async def permissions_acl_yaml_example(self, ctx: commands.Context):
+        """Sends an example of the yaml layout for permissions"""
+        await ctx.send(
+            _("Example YAML for setting rules:\n")
+            + box(
+                textwrap.dedent(
+                    """\
                         COMMAND:
                             ping:
                                 12345678901234567: true
@@ -197,10 +243,10 @@ class Permissions(commands.Cog):
                                 12345678901234567: false
                                 default: false
                         """
-                    ),
-                    lang="yaml",
-                )
+                ),
+                lang="yaml",
             )
+        )
 
     @checks.is_owner()
     @permissions_acl.command(name="setglobal")
@@ -553,8 +599,8 @@ class Permissions(commands.Cog):
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
         guild_id, model_id = str(guild_id), str(model_id)
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
-            if guild_id in rules and rules[guild_id]:
-                del rules[guild_id][model_id]
+            if (guild_rules := rules.get(guild_id)) is not None:
+                guild_rules.pop(model_id, None)
 
     async def _set_default_rule(
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int
@@ -621,7 +667,7 @@ class Permissions(commands.Cog):
             for cmd_name, cmd_rules in rules_dict.items():
                 cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
                 await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
-                cmd_obj = getter(cmd_name)
+                cmd_obj = getter(str(cmd_name))
                 if cmd_obj is not None:
                     self._load_rules_for(cmd_obj, {guild_id: cmd_rules})
 
