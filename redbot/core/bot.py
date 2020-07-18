@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import platform
-import re
 import shutil
 import sys
 import contextlib
@@ -19,7 +18,6 @@ from typing import (
     Dict,
     NoReturn,
     Set,
-    Coroutine,
     TypeVar,
     Callable,
     Awaitable,
@@ -30,7 +28,6 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
-from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -470,8 +467,8 @@ class RedBase(
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
             or perms.manage_guild
-            or await ctx.bot.is_owner(ctx.author)
-            or await ctx.bot.is_admin(ctx.author)
+            or await self.is_owner(ctx.author)
+            or await self.is_admin(ctx.author)
         )
         if surpass_ignore:
             return True
