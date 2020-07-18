@@ -254,7 +254,7 @@ class Command(CogCommandMixin, DPYCommand):
 
         If you subclass this command, attributes and methods
         must remain compatible.
-        Additionally, the prefix `red_` for names is reserved for future use.
+        Additionally, the prefix ``red_`` for names is reserved for future use.
 
     Attributes
     ----------
