@@ -864,6 +864,14 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     Red's Cog base class
 
     This includes a metaclass from discord.py
+
+    .. warning::
+
+        None of your methods should start with ``red_`` unless
+        to override behavior in a method designed to be overriden,
+        as this prefix is reserved for future methods in order to be
+        able to add features non-breakingly.
+
     """
 
     __cog_commands__: Tuple[Command]
