@@ -1,5 +1,108 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.10 (2020-07-09)
+===================================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`Injabie3`, :ghuser:`mikeshardmind`
+
+End-user changelog
+------------------
+
+Audio
+*****
+
+- Added information about internally managed jar to ``[p]audioset info`` (:issue:`3915`)
+- Updated to Lavaplayer 1.3.50
+- Twitch playback and YouTube searching should be functioning again.
+
+Core Bot
+********
+
+- Fixed delayed help when ``[p]set deletedelay`` is enabled (:issue:`3884`, :issue:`3883`)
+- Bumped the Discord.py requirement from 1.3.3 to 1.3.4 (:issue:`4053`)
+- Added settings view commands for nearly all cogs. (:issue:`4041`)
+- Added more strings to be fully translatable by i18n. (:issue:`4044`)
+
+Downloader
+**********
+
+- Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
+- Fixed unnecessary typing when running downloader commands (:issue:`3964`, :issue:`3948`)
+- Added embed version of ``[p]findcog`` (:issue:`3965`, :issue:`3944`)
+- Fixed ``[p]findcog`` not differentiating between core cogs and local cogs(:issue:`3969`, :issue:`3966`)
+
+Filter
+******
+
+- Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
+
+Image
+*****
+
+- Updated instructions for obtaining and setting the GIPHY API key (:issue:`3994`)
+
+Mod
+***
+
+- Added option to delete messages within the passed amount of days with ``[p]tempban`` (:issue:`3958`)
+- Added the ability to permanently ban a temporary banned user with ``[p]hackban`` (:issue:`4025`)
+- Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
+- Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
+- Prevented an issue whereby the author may lock him self out of using the bot via whitelists (:issue:`3903`)
+- Reduced the number of API calls made to the storage APIs (:issue:`3910`)
+
+Permissions
+***********
+
+- Uploaded YAML files now accept integer commands without quotes (:issue:`3987`, :issue:`3185`)
+- Uploaded YAML files now accept command rules with empty dictionaries (:issue:`3987`, :issue:`3961`)
+
+Streams
+*******
+
+- Fixed streams cog sending multiple owner notifications about twitch secret not set (:issue:`3901`, :issue:`3587`)
+- Fixed old bearer tokens not being invalidated when the API key is updated (:issue:`3990`, :issue:`3917`)
+
+Trivia Lists
+************
+
+- Fixed URLs in ``whosthatpokemon`` (:issue:`3975`, :issue:`3023`)
+- Fixed trivia files ``leagueults`` and ``sports`` (:issue:`4026`)
+- Updated ``greekmyth`` to include more answer variations (:issue:`3970`)
+- Added new ``lotr`` trivia list (:issue:`3980`)
+- Added new ``r6seige`` trivia list (:issue:`4026`)
+
+
+Developer changelog
+-------------------
+
+- Added the utility functions ``map``, ``find``, and ``next`` to ``AsyncIter`` (:issue:`3921`, :issue:`3887`)
+- Updated deprecation times for ``APIToken``, and loops being passed to various functions to the first minor release (represented by ``X`` in ``3.X.0``) after 2020-08-05 (:issue:`3608`)
+- Updated deprecation warnings for shared libs to reflect that they have been moved for an undefined time (:issue:`3608`)
+- Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
+- Fixed incorrect role mention regex in ``MessagePredicate`` (:issue:`4030`)
+- Vendor the ``discord.ext.menus`` module (:issue:`4039`)
+
+
+Documentation changes
+---------------------
+
+
+
+Miscellaneous
+-------------
+
+- Improved error responses for when Modlog and Autoban on mention spam were already disabled (:issue:`3951`, :issue:`3949`)
+- Clarified that ``[p]embedset user`` only affects commands executed in DMs (:issue:`3972`, :issue:`3953`)
+- Added link to Getting Started guide if the bot was not in any guilds (:issue:`3906`)
+- Fixed exceptions being ignored or not sent to log files in special cases (:issue:`3895`)
+- Added the option of using dots in the instance name when creating your instances (:issue:`3920`)
+- Added a confirmation when using hyphens in instance names to discourage the use of them (:issue:`3920`)
+- Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
+- Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
+- Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
+
 Redbot 3.3.9 (2020-06-12)
 =========================
 

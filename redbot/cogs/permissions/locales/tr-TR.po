@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-09 12:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -110,141 +110,146 @@ msgid "Manage permissions with YAML files."
 msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:230
+#, docstring
+msgid "Sends an example of the yaml layout for permissions"
+msgstr ""
+
+#: redbot/cogs/permissions/permissions.py:232
 msgid "Example YAML for setting rules:\\n"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:252
+#: redbot/cogs/permissions/permissions.py:254
 #, docstring
 msgid "Set global rules with a YAML file.\\n\\n        **WARNING**: This will override reset *all* global rules\\n        to the rules specified in the uploaded file.\\n\\n        This does not validate the names of commands and cogs before\\n        setting the new rules.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:266
+#: redbot/cogs/permissions/permissions.py:268
 #, docstring
 msgid "Set rules for this server with a YAML file.\\n\\n        **WARNING**: This will override reset *all* rules in this\\n        server to the rules specified in the uploaded file.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:276
+#: redbot/cogs/permissions/permissions.py:278
 #, docstring
 msgid "Get a YAML file detailing all global rules."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:281
-#: redbot/cogs/permissions/permissions.py:296
+#: redbot/cogs/permissions/permissions.py:283
+#: redbot/cogs/permissions/permissions.py:298
 msgid "I'm not allowed to DM you."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:283
-#: redbot/cogs/permissions/permissions.py:298
+#: redbot/cogs/permissions/permissions.py:285
+#: redbot/cogs/permissions/permissions.py:300
 msgid "I've just sent the file to you via DM."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:291
+#: redbot/cogs/permissions/permissions.py:293
 #, docstring
 msgid "Get a YAML file detailing all rules in this server."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:305
+#: redbot/cogs/permissions/permissions.py:307
 #, docstring
 msgid "Update global rules with a YAML file.\\n\\n        This won't touch any rules not specified in the YAML\\n        file.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:316
+#: redbot/cogs/permissions/permissions.py:318
 #, docstring
 msgid "Update rules for this server with a YAML file.\\n\\n        This won't touch any rules not specified in the YAML\\n        file.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:334
+#: redbot/cogs/permissions/permissions.py:336
 #, docstring
 msgid "Add a global rule to a command.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:348
-#: redbot/cogs/permissions/permissions.py:391
-#: redbot/cogs/permissions/permissions.py:476
-#: redbot/cogs/permissions/permissions.py:507
+#: redbot/cogs/permissions/permissions.py:350
+#: redbot/cogs/permissions/permissions.py:393
+#: redbot/cogs/permissions/permissions.py:478
+#: redbot/cogs/permissions/permissions.py:509
 msgid "This command is designated as being always available and cannot be modified by permission rules."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:361
-#: redbot/cogs/permissions/permissions.py:404
+#: redbot/cogs/permissions/permissions.py:363
+#: redbot/cogs/permissions/permissions.py:406
 msgid "Rule added."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:377
+#: redbot/cogs/permissions/permissions.py:379
 #, docstring
 msgid "Add a rule to a command in this server.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:414
+#: redbot/cogs/permissions/permissions.py:416
 #, docstring
 msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n       `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:426
-#: redbot/cogs/permissions/permissions.py:455
+#: redbot/cogs/permissions/permissions.py:428
+#: redbot/cogs/permissions/permissions.py:457
 msgid "Rule removed."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:441
+#: redbot/cogs/permissions/permissions.py:443
 #, docstring
 msgid "Remove a server rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:463
+#: redbot/cogs/permissions/permissions.py:465
 #, docstring
 msgid "Set the default rule for a command in this server.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:487
-#: redbot/cogs/permissions/permissions.py:516
+#: redbot/cogs/permissions/permissions.py:489
+#: redbot/cogs/permissions/permissions.py:518
 msgid "Default set."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:494
+#: redbot/cogs/permissions/permissions.py:496
 #, docstring
 msgid "Set the default global rule for a command.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:521
+#: redbot/cogs/permissions/permissions.py:523
 #, docstring
 msgid "Reset all global rules."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:531
+#: redbot/cogs/permissions/permissions.py:533
 #, docstring
 msgid "Reset all rules in this server."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:634
+#: redbot/cogs/permissions/permissions.py:636
 msgid "You must upload a file."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:640
+#: redbot/cogs/permissions/permissions.py:642
 msgid "Invalid syntax: "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:643
+#: redbot/cogs/permissions/permissions.py:645
 msgid "Your YAML file did not match the schema: "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:646
+#: redbot/cogs/permissions/permissions.py:648
 msgid "Rules set."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:690
+#: redbot/cogs/permissions/permissions.py:692
 msgid "Are you sure?"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:697
-#: redbot/cogs/permissions/permissions.py:710
+#: redbot/cogs/permissions/permissions.py:699
+#: redbot/cogs/permissions/permissions.py:712
 msgid "Response timed out."
 msgstr "Yanıt yok, zaman aşımı oluştu."
 
-#: redbot/cogs/permissions/permissions.py:705
+#: redbot/cogs/permissions/permissions.py:707
 msgid "Are you sure? (y/n)"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:716
+#: redbot/cogs/permissions/permissions.py:718
 msgid "Action cancelled."
 msgstr ""
 

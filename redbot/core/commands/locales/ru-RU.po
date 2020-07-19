@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-09 12:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,72 @@ msgstr "Неожиданный ключ {key}"
 msgid "Expected one of: {}"
 msgstr "Ожидался один из: {}"
 
-#: redbot/core/commands/help.py:718
+#: redbot/core/commands/help.py:182
+msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
+msgstr ""
+
+#: redbot/core/commands/help.py:212
+msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+msgstr ""
+
+#: redbot/core/commands/help.py:253
+msgid "**__Subcommands:__**"
+msgstr ""
+
+#: redbot/core/commands/help.py:255
+msgid "**__Subcommands:__** (continued)"
+msgstr ""
+
+#: redbot/core/commands/help.py:266
+msgid "Subcommands:"
+msgstr ""
+
+#: redbot/core/commands/help.py:330 redbot/core/commands/help.py:582
+#: redbot/core/commands/help.py:595 redbot/core/commands/help.py:614
+msgid "{ctx.me.display_name} Help Menu"
+msgstr ""
+
+#: redbot/core/commands/help.py:377
+msgid "*Page {page_num} of {page_count}*\\n{content_description}"
+msgstr ""
+
+#: redbot/core/commands/help.py:428
+msgid "**__Commands:__**"
+msgstr ""
+
+#: redbot/core/commands/help.py:430
+msgid "**__Commands:__** (continued)"
+msgstr ""
+
+#: redbot/core/commands/help.py:440
+msgid "Commands:"
+msgstr ""
+
+#: redbot/core/commands/help.py:482
+msgid "**__No Category:__**"
+msgstr ""
+
+#: redbot/core/commands/help.py:495
+msgid "{title} (continued)"
+msgstr ""
+
+#: redbot/core/commands/help.py:511 redbot/core/commands/help.py:525
+msgid "No Category:"
+msgstr ""
+
+#: redbot/core/commands/help.py:591
+msgid "Help topic for *{command_name}* not found."
+msgstr ""
+
+#: redbot/core/commands/help.py:608
+msgid "Command *{command_name}* has no subcommand named *{not_found}*."
+msgstr ""
+
+#: redbot/core/commands/help.py:683
+msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
+msgstr ""
+
+#: redbot/core/commands/help.py:721
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "

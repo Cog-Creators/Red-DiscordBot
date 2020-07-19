@@ -224,13 +224,15 @@ class Permissions(commands.Cog):
     @permissions.group(name="acl", aliases=["yaml"])
     async def permissions_acl(self, ctx: commands.Context):
         """Manage permissions with YAML files."""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.permissions_acl:
-            # Send a little guide on YAML formatting
-            await ctx.send(
-                _("Example YAML for setting rules:\n")
-                + box(
-                    textwrap.dedent(
-                        """\
+
+    @permissions_acl.command(name="yamlexample")
+    async def permissions_acl_yaml_example(self, ctx: commands.Context):
+        """Sends an example of the yaml layout for permissions"""
+        await ctx.send(
+            _("Example YAML for setting rules:\n")
+            + box(
+                textwrap.dedent(
+                    """\
                         COMMAND:
                             ping:
                                 12345678901234567: true
@@ -241,10 +243,10 @@ class Permissions(commands.Cog):
                                 12345678901234567: false
                                 default: false
                         """
-                    ),
-                    lang="yaml",
-                )
+                ),
+                lang="yaml",
             )
+        )
 
     @checks.is_owner()
     @permissions_acl.command(name="setglobal")
@@ -597,8 +599,8 @@ class Permissions(commands.Cog):
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
         guild_id, model_id = str(guild_id), str(model_id)
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
-            if guild_id in rules and rules[guild_id]:
-                del rules[guild_id][model_id]
+            if (guild_rules := rules.get(guild_id)) is not None:
+                guild_rules.pop(model_id, None)
 
     async def _set_default_rule(
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int

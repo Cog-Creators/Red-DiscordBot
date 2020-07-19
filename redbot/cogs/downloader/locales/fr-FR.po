@@ -34,12 +34,12 @@ msgstr "Le cog `{cog_name}` n'est pas installé."
 
 #: redbot/cogs/downloader/downloader.py:30
 msgid "\\n**WARNING:** The following repos are using shared libraries which are marked for removal in the future: {repo_list}.\\n You should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "\\n**AVERTISSEMENT :** Les dépôts suivants utilisent des bibliothèques partagées qui sont marquées pour être supprimées dans le futur : {repo_list}.\\n Vous devriez informer les responsables de ces dépôts à propos de ce message."
 
 #: redbot/cogs/downloader/downloader.py:39
 #, docstring
 msgid "Install community cogs made by Cog Creators.\\n\\n    Community cogs, also called third party cogs, are not included\\n    in the default Red install.\\n    \\n    Community cogs come in repositories. Repos are a group of cogs\\n    you can install. You always need to add the creator's repository\\n    using the `[p]repo` command before you can install one or more\\n    cogs from the creator.\\n    "
-msgstr ""
+msgstr "Installe les cogs de la communauté créé par Cog Creators.\\n\\n    Les cogs communautaire, aussi appelés cogs tiers, ne sont pas\\ninclus par défaut avec l'installation de Red.\\n    \\n    Les cogs communautaire viennent des dépôts. Les dépôts sont un groupe de cogs\\n    que vous pouvez installer. Vous devez toujours ajouter le dépôt du créateur\\n    en utilisant la commande `[p]repo` avant d'installer un ou plusieurs\\n    cogs depuis le créateur.\\n    "
 
 #: redbot/cogs/downloader/downloader.py:468
 #, docstring
@@ -270,23 +270,23 @@ msgstr "\\nCes cogs n'ont pas été épinglés : "
 #: redbot/cogs/downloader/downloader.py:866
 #, docstring
 msgid "List currently pinned cogs."
-msgstr ""
+msgstr "Liste les cogs actuellement épinglés."
 
 #: redbot/cogs/downloader/downloader.py:872
 msgid "None."
-msgstr ""
+msgstr "Aucun."
 
 #: redbot/cogs/downloader/downloader.py:876
 msgid "(continued)"
-msgstr ""
+msgstr "(suite)"
 
 #: redbot/cogs/downloader/downloader.py:876
 msgid "Pinned Cogs:"
-msgstr ""
+msgstr "Cogs épinglés :"
 
 #: redbot/cogs/downloader/downloader.py:886
 msgid "Pinned Cogs: \\n"
-msgstr ""
+msgstr "Cogs épinglés : \\n"
 
 #: redbot/cogs/downloader/downloader.py:891
 #, docstring
@@ -473,7 +473,7 @@ msgstr "Inconnu"
 
 #: redbot/cogs/downloader/downloader.py:1403
 msgid "None - this cog wasn't installed via downloader"
-msgstr ""
+msgstr "Aucun - ce cog n'a pas été installé à partir du downloader"
 
 #: redbot/cogs/downloader/downloader.py:1406
 msgid "This command is not provided by a cog."
@@ -481,27 +481,27 @@ msgstr "Cette commande ne vient pas d'un cog."
 
 #: redbot/cogs/downloader/downloader.py:1412
 msgid "Command:"
-msgstr ""
+msgstr "Commande :"
 
 #: redbot/cogs/downloader/downloader.py:1413
 msgid "Cog Name:"
-msgstr ""
+msgstr "Nom du Cog :"
 
 #: redbot/cogs/downloader/downloader.py:1414
 msgid "Made by:"
-msgstr ""
+msgstr "Fait par :"
 
 #: redbot/cogs/downloader/downloader.py:1415
 msgid "Repo URL:"
-msgstr ""
+msgstr "URL du dépôt :"
 
 #: redbot/cogs/downloader/downloader.py:1418
 msgid "Repo branch:"
-msgstr ""
+msgstr "Branche du dépôt :"
 
 #: redbot/cogs/downloader/downloader.py:1423
 msgid "Command: {command}\\nCog name: {cog}\\nMade by: {author}\\nRepo URL: {repo_url}\\n"
-msgstr ""
+msgstr "Commande : {command}\\nNom du Cog : {cog}\\nFait par : {author}\\nURL du dépôt : {repo_url}\\n"
 
 #: redbot/cogs/downloader/downloader.py:1427
 msgid "Repo branch: {branch_name}\\n"

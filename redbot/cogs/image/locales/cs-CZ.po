@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-03-26 12:08+0000\n"
+"POT-Creation-Date: 2020-07-09 12:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -97,10 +97,14 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:241
 #, docstring
-msgid "Explain how to set Giphy API tokens."
+msgid "Explains how to set GIPHY API tokens."
 msgstr ""
 
 #: redbot/cogs/image/image.py:243
-msgid "To get a Giphy API Key:\\n1. Login to a Giphy account.\\n2. Visit this page https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Write an app name, example: *Red Bot*.\\n5. Write an app description, example: *Used for Red Bot*.\\n6. Copy the API key shown.\\n7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\\n"
+msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:256
+msgid "<your_api_key_here>"
 msgstr ""
 
