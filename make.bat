@@ -35,6 +35,8 @@ echo.
 echo Commands:
 echo   reformat                   Reformat all .py files being tracked by git.
 echo   stylecheck                 Check which tracked .py files need reformatting.
+echo   stylediff                  Show the post-reformat diff of the tracked .py files
+echo                              without modifying them.
 echo   newenv                     Create or replace this project's virtual environment.
 echo   syncenv                    Sync this project's virtual environment to Red's latest
 echo                              dependencies.
