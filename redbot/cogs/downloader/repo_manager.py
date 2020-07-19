@@ -223,7 +223,7 @@ class Repo(RepoJSONMixin):
             return not bool(p.returncode)
 
         # this is a plumbing command so we're safe here
-        stderr = p.stderr.decode(**DECODE_PARAMS)
+        stderr = p.stderr.decode(**DECODE_PARAMS).strip()
         if stderr.startswith(("fatal: Not a valid object name", "fatal: Not a valid commit name")):
             rev, *__ = stderr[31:].split(maxsplit=1)
             raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
