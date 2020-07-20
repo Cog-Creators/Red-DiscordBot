@@ -107,8 +107,9 @@ class Admin(commands.Cog):
 
         for guild_id, guild_data in all_guilds.items():
             if guild_data.get("announce_ignore", False):
-                await self.config.guild_from_id(guild_id).announce_channel.clear()
-                await self.config.guild_from_id(guild_id).clear_raw("announce_ignore")
+                async with self.config.guild_from_id(guild_id).all(acquire_lock=False) as guild_config:
+                    guild_config.pop("announce_channel", None)
+                    guild_config.pop("announce_ignore", None)
 
     def cog_unload(self):
         try:
