@@ -17,30 +17,30 @@ msgstr ""
 
 #: redbot/core/bank.py:902
 msgid "Can't pay for this command in DM without a global bank."
-msgstr ""
+msgstr "Kan inte betala för detta kommando i DM utan en global bank."
 
 #: redbot/core/bank.py:909
 msgid "You need at least {cost} {currency} to use this command."
-msgstr ""
+msgstr "Du behöver minst {cost} {currency} för att använda detta kommando."
 
 #: redbot/core/cog_manager.py:312
 #, docstring
 msgid "Commands to interface with Red's cog manager."
-msgstr ""
+msgstr "Kommandon för att få kontakt med Reds kugghanterare."
 
 #: redbot/core/cog_manager.py:317
 #, docstring
 msgid "\\n        Lists current cog paths in order of priority.\\n        "
-msgstr ""
+msgstr "\\n        Listar aktuella kugghjulsbanor i prioritetsordning.\\n        "
 
 #: redbot/core/cog_manager.py:325
 msgid "Install Path: {install_path}\\nCore Path: {core_path}\\n\\n"
-msgstr ""
+msgstr "Installationsväg: {install_path}\\nHuvudväg: {core_path}\\n\\n"
 
 #: redbot/core/cog_manager.py:339
 #, docstring
 msgid "\\n        Add a path to the list of available cog paths.\\n        "
-msgstr ""
+msgstr "\\n        Lägg till en sökväg till listan över tillgängliga kugghjulsvägar.\\n        "
 
 #: redbot/core/cog_manager.py:343
 msgid "That path does not exist or does not point to a valid directory."
@@ -53,11 +53,11 @@ msgstr "Sökvägen har lagts till."
 #: redbot/core/cog_manager.py:356
 #, docstring
 msgid "\\n        Removes a path from the available cog paths given the `path_number` from `[p]paths`.\\n        "
-msgstr ""
+msgstr "\\n        Tar bort en sökväg från tillgängliga kugghjulsvägar med tanke på `path_number` från `[p]paths`.\\n        "
 
 #: redbot/core/cog_manager.py:361 redbot/core/cog_manager.py:384
 msgid "Path numbers must be positive."
-msgstr ""
+msgstr "Sökvägsnummerna måste vara positiva."
 
 #: redbot/core/cog_manager.py:368
 msgid "That is an invalid path number."
@@ -70,7 +70,7 @@ msgstr "Sökvägen är borttagen."
 #: redbot/core/cog_manager.py:377
 #, docstring
 msgid "\\n        Reorders paths internally to allow discovery of different cogs.\\n        "
-msgstr ""
+msgstr "\\n        Omsorterar vägar internt för att möjliggöra upptäckten av olika koggar.\\n        "
 
 #: redbot/core/cog_manager.py:391
 msgid "Invalid 'from' index."
@@ -87,7 +87,7 @@ msgstr "Sökvägarna omordnade."
 #: redbot/core/cog_manager.py:406
 #, docstring
 msgid "\\n        Returns the current install path or sets it if one is provided.\\n            The provided path must be absolute or relative to the bot's\\n            directory and it must already exist.\\n\\n        No installed cogs will be transferred in the process.\\n        "
-msgstr ""
+msgstr "\\n        Returnerar den aktuella installationssökvägen eller sätter den om en är angiven.\\n            Den angivna sökvägen måste vara absolut eller relativ till botens\\n            katalog och den måste redan finnas.\\n\\n        Inga installerade kuggar kommer att överföras i processen.\\n        "
 
 #: redbot/core/cog_manager.py:419
 msgid "That path does not exist."
@@ -100,111 +100,111 @@ msgstr "Boten kommer att installera nya cogar i `{}` mappen."
 #: redbot/core/cog_manager.py:430
 #, docstring
 msgid "\\n        Lists all loaded and available cogs.\\n        "
-msgstr ""
+msgstr "\\n        Listar alla inlästa och tillgängliga koggar.\\n        "
 
 #: redbot/core/cog_manager.py:443
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} laddad:**\\n"
 
 #: redbot/core/cog_manager.py:444
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} urladdad:**\\n"
 
 #: redbot/core/cog_manager.py:454
 msgid "**{} loaded:**\\n"
-msgstr ""
+msgstr "**{} laddad:**\\n"
 
 #: redbot/core/cog_manager.py:456
 msgid "**{} unloaded:**\\n"
-msgstr ""
+msgstr "**{} urladdad:**\\n"
 
 #: redbot/core/core_commands.py:304
 #, docstring
 msgid "Commands related to core functions."
-msgstr ""
+msgstr "Kommandon relaterade till kärnfunktioner."
 
 #: redbot/core/core_commands.py:308
 #, docstring
 msgid "Pong."
-msgstr ""
+msgstr "Pong."
 
 #: redbot/core/core_commands.py:313
 #, docstring
 msgid "Shows info about Red."
-msgstr ""
+msgstr "Visar information om Red."
 
 #: redbot/core/core_commands.py:340
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n(c) Cog Creators"
-msgstr ""
+msgstr "Denna bot är en instans av [Red, en open source Discord bot]({}) skapad av [Twentysix]({}) och [förbättrad av många]({}).\\n\\nRed backas upp av en passionerad gemenskap som bidrar och skapar innehåll för alla att njuta av. [Följ med oss idag]({}) och hjälp oss att förbättra!\\n\\n(c) Cog Creators"
 
 #: redbot/core/core_commands.py:350
 msgid "Instance owned by"
-msgstr ""
+msgstr "Instansen ägs av"
 
 #: redbot/core/core_commands.py:353
 msgid "Red version"
-msgstr ""
+msgstr "Red version"
 
 #: redbot/core/core_commands.py:356 redbot/core/core_commands.py:399
 msgid "Yes, {version} is available."
-msgstr ""
+msgstr "Ja, {version} är tillgänglig."
 
 #: redbot/core/core_commands.py:360 redbot/core/core_commands.py:403
 msgid "Checking for updates failed."
-msgstr ""
+msgstr "Sökning efter uppdateringar misslyckades."
 
 #: redbot/core/core_commands.py:361
 msgid "Outdated"
-msgstr ""
+msgstr "Föråldrad"
 
 #: redbot/core/core_commands.py:363
 msgid "About this instance"
-msgstr ""
+msgstr "Om denna instans"
 
 #: redbot/core/core_commands.py:364
 msgid "About Red"
-msgstr ""
+msgstr "Om Red"
 
 #: redbot/core/core_commands.py:367 redbot/core/core_commands.py:412
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
-msgstr ""
+msgstr "Skapar glädje sedan 02 jan 2016 (över {} dagar sedan!)"
 
 #: redbot/core/core_commands.py:375
 msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\\n\\n(c) Cog Creators"
-msgstr ""
+msgstr "Denna bot är en instans av Red, en open source Discord bot (1) skapad av Twentysix (2) och förbättrad av många (3).\\n\\nRed backas upp av en passionerad gemenskap som bidrar och skapar innehåll för alla att njuta av. Följ med oss idag (4) och hjälp oss att förbättra!\\n\\n(c) Cog Creators"
 
 #: redbot/core/core_commands.py:385
 msgid "Instance owned by: [{owner}]\\nPython:            [{python_version}] (5)\\ndiscord.py:        [{dpy_version}] (6)\\nRed version:       [{red_version}] (7)\\n"
-msgstr ""
+msgstr "Instansen ägs av: [{owner}]\\nPython:            [{python_version}] (5)\\ndiscord.py:        [{dpy_version}] (6)\\nRed version:       [{red_version}] (7)\\n"
 
 #: redbot/core/core_commands.py:404
 msgid "Outdated:          [{state}]\\n"
-msgstr ""
+msgstr "Föråldrad:          [{state}]\\n"
 
 #: redbot/core/core_commands.py:407
 msgid "**About Red**\\n"
-msgstr ""
+msgstr "**Om Red**\\n"
 
 #: redbot/core/core_commands.py:418
 msgid "**About this instance**\\n"
-msgstr ""
+msgstr "**Om denna instans**\\n"
 
 #: redbot/core/core_commands.py:420
 msgid "**References**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. <{}>\\n7. <{}>\\n"
-msgstr ""
+msgstr "**Referenser**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. <{}>\\n7. <{}>\\n"
 
 #: redbot/core/core_commands.py:436
 #, docstring
 msgid "Shows [botname]'s uptime."
-msgstr ""
+msgstr "Visar [botname]:s drifttid."
 
 #: redbot/core/core_commands.py:439
 msgid "Less than one second"
-msgstr ""
+msgstr "Mindre än en sekund"
 
 #: redbot/core/core_commands.py:441
 msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
-msgstr ""
+msgstr "Uppe i: **{time_quantity}** (sedan {timestamp} UTC)"
 
 #: redbot/core/core_commands.py:448
 #, docstring
@@ -234,7 +234,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:470
 msgid "User setting: {}"
-msgstr ""
+msgstr "Användarinställning: {}"
 
 #: redbot/core/core_commands.py:476
 #, docstring
