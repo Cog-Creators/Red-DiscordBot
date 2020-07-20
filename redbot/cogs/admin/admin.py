@@ -107,7 +107,9 @@ class Admin(commands.Cog):
 
         for guild_id, guild_data in all_guilds.items():
             if guild_data.get("announce_ignore", False):
-                async with self.config.guild_from_id(guild_id).all(acquire_lock=False) as guild_config:
+                async with self.config.guild_from_id(guild_id).all(
+                    acquire_lock=False
+                ) as guild_config:
                     guild_config.pop("announce_channel", None)
                     guild_config.pop("announce_ignore", None)
 
