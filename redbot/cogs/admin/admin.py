@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Tuple
 
@@ -72,13 +73,41 @@ class Admin(commands.Cog):
     def __init__(self):
         self.config = Config.get_conf(self, 8237492837454039, force_registration=True)
 
-        self.config.register_global(serverlocked=False)
+        self.config.register_global(serverlocked=False, schema_version=0)
 
         self.config.register_guild(
             announce_channel=None, selfroles=[],  # Integer ID  # List of integer ID's
         )
 
         self.__current_announcer = None
+        self._ready = asyncio.Event()
+        asyncio.create_task(self.handle_migrations())
+        # As this is a data migration, don't store this for cancelation.
+
+    async def cog_before_invoke(self):
+        await self._ready.wait()
+
+    async def handle_migrations(self):
+
+        lock = self.config.get_guilds_lock()
+        async with lock:
+            # This prevents the edge case of someone loading admin,
+            # unloading it, loading it again during a migration
+            current_schema = await self.config.schema_version()
+
+            if current_schema == 0:
+                await self.migrate_config_from_0_to_1()
+                await self.config.schema_version.set(1)
+
+        await self._ready.set()
+
+    async def migrate_config_from_0_to_1(self):
+
+        all_guilds = await self.config.all_guilds()
+
+        for guild_id, guild_data in all_guilds.items():
+            if guild_data.get("announce_ignore", False):
+                await self.config.guild_from_id(guild_id).announce_channel.clear()
 
     def cog_unload(self):
         try:
