@@ -50,9 +50,6 @@ class Announcer:
             if not self.active:
                 return
 
-            if await self.config.guild(g).announce_ignore():
-                continue
-
             channel = await self._get_announce_channel(g)
 
             if channel:

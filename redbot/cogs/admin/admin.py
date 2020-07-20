@@ -75,9 +75,7 @@ class Admin(commands.Cog):
         self.config.register_global(serverlocked=False)
 
         self.config.register_guild(
-            announce_ignore=False,
-            announce_channel=None,  # Integer ID
-            selfroles=[],  # List of integer ID's
+            announce_channel=None, selfroles=[],  # Integer ID  # List of integer ID's
         )
 
         self.__current_announcer = None
@@ -320,7 +318,7 @@ class Admin(commands.Cog):
     async def announceset_channel(self, ctx, *, channel: discord.TextChannel = None):
         """
         Change the channel where the bot will send announcements.
-        
+
         If channel is left blank it defaults to the current channel.
         """
         if channel is None:
@@ -330,21 +328,11 @@ class Admin(commands.Cog):
             _("The announcement channel has been set to {channel.mention}").format(channel=channel)
         )
 
-    @announceset.command(name="ignore")
-    async def announceset_ignore(self, ctx):
-        """Toggle announcements being enabled this server."""
-        ignored = await self.config.guild(ctx.guild).announce_ignore()
-        await self.config.guild(ctx.guild).announce_ignore.set(not ignored)
-        if ignored:
-            await ctx.send(
-                _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
-            )
-        else:
-            await ctx.send(
-                _("The server {guild.name} will not receive announcements.").format(
-                    guild=ctx.guild
-                )
-            )
+    @announceset.command(name="clearchannel")
+    async def announceset_clear_channel(self, ctx):
+        """Unsets the channel for announcements."""
+        await self.config.guild(ctx.guild).announce_channel.clear()
+        await ctx.tick()
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """
