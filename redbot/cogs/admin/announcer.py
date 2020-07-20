@@ -40,6 +40,8 @@ class Announcer:
         self.active = False
 
     async def _get_announce_channel(self, guild: discord.Guild) -> Optional[discord.TextChannel]:
+        if await self.ctx.bot.cog_disabled_in_guild_raw("Admin", guild.id):
+            return
         channel_id = await self.config.guild(guild).announce_channel()
         return guild.get_channel(channel_id)
 
