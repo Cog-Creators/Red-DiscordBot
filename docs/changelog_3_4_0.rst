@@ -19,6 +19,7 @@ Mod
 ***
 
 - ``[p]tempban`` now respects default days setting (``[p]modset defaultdays``) (:issue:`3993`)
+- ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
 
 
 Developer changelog
