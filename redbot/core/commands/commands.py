@@ -255,8 +255,8 @@ class Command(CogCommandMixin, DPYCommand):
         If you subclass this command, attributes and methods
         must remain compatible.
 
-        None of your methods should start with ``red_`` or 
-        be dunder methods which start with red (eg. ``__red_test_thing__``)
+        None of your methods should start with ``red_`` or
+        be dunder names which start with red (eg. ``__red_test_thing__``)
         unless to override behavior in a method designed to be overriden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
@@ -879,7 +879,7 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     .. warning::
 
         None of your methods should start with ``red_`` or 
-        be dunder methods which start with red (eg. ``__red_test_thing__``)
+        be dunder names which start with red (eg. ``__red_test_thing__``)
         unless to override behavior in a method designed to be overriden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
