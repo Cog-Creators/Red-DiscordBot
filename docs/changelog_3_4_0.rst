@@ -12,6 +12,10 @@ Redbot 3.4.0 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 
 .. _important-340-1:
 
