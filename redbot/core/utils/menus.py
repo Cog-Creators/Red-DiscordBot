@@ -88,7 +88,7 @@ async def menu(
            Tried to start the menu but bot can't read message history.
        """
     if controls is None or controls == DEFAULT_CONTROLS:
-        await _dpymenu(
+        return await _dpymenu(
             ctx=ctx,
             pages=pages,
             controls=None,
@@ -100,7 +100,7 @@ async def menu(
             clear_reactions_after=clear_reactions_after,
         )
     else:
-        await _menu(
+        return await _menu(
             ctx=ctx, pages=pages, controls=controls, message=message, page=page, timeout=timeout
         )
 

@@ -851,7 +851,7 @@ class RedHelpFormatter(HelpFormatterABC):
         else:
 
             await SimpleHybridMenu(
-                source=HelpSource(pages), delete_message_after=True, cog=None
+                source=HelpSource(pages), delete_message_after=False, cog=None
             ).start(ctx=ctx, wait=False)
 
 
