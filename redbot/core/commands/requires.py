@@ -325,13 +325,13 @@ class Requires:
 
     def __init__(
         self,
-        privilege_level: Optional[PrivilegeLevel],
+        privilege_level: PrivilegeLevel,
         user_perms: Union[Dict[str, bool], discord.Permissions, None],
         bot_perms: Union[Dict[str, bool], discord.Permissions],
         checks: List[CheckPredicate],
     ):
         self.checks: List[CheckPredicate] = checks
-        self.privilege_level: Optional[PrivilegeLevel] = privilege_level
+        self.privilege_level: PrivilegeLevel = privilege_level
         self.ready_event = asyncio.Event()
 
         if isinstance(user_perms, dict):
@@ -352,7 +352,7 @@ class Requires:
 
     @staticmethod
     def get_decorator(
-        privilege_level: Optional[PrivilegeLevel], user_perms: Optional[Dict[str, bool]]
+        privilege_level: PrivilegeLevel, user_perms: Optional[Dict[str, bool]]
     ) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
         if not user_perms:
             user_perms = None
@@ -708,7 +708,7 @@ def has_permissions(**perms: bool):
     """
     if perms is None:
         raise TypeError("Must provide at least one keyword argument to has_permissions")
-    return Requires.get_decorator(None, perms)
+    return Requires.get_decorator(PrivilegeLevel.NONE, perms)
 
 
 def is_owner():
