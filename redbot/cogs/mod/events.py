@@ -56,21 +56,17 @@ class Events(MixinMeta):
                         "Failed to ban member for mention spam in server {}.".format(guild.id)
                     )
                 else:
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            message.created_at,
-                            "ban",
-                            author,
-                            guild.me,
-                            _("Mention spam (Autoban)"),
-                            until=None,
-                            channel=None,
-                        )
-                    except RuntimeError as e:
-                        print(e)
-                        return False
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        message.created_at,
+                        "ban",
+                        author,
+                        guild.me,
+                        _("Mention spam (Autoban)"),
+                        until=None,
+                        channel=None,
+                    )
                     return True
         return False
 
