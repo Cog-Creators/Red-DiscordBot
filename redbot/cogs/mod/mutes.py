@@ -378,14 +378,7 @@ class MuteMixin(MixinMeta):
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
         await modlog.create_case(
-            self.bot,
-            guild,
-            ctx.message.created_at,
-            "sunmute",
-            user,
-            author,
-            reason,
-            until=None,
+            self.bot, guild, ctx.message.created_at, "sunmute", user, author, reason, until=None,
         )
         await ctx.send(_("User has been unmuted in this server."))
 
