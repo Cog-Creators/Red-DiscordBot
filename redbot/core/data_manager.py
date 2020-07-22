@@ -44,13 +44,6 @@ if sys.platform == "linux":
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
 config_file = config_dir / "config.json"
-if not config_file.exists() and sys.platform == "darwin":
-    # backwards compatibility with the location given by appdirs<1.4.4
-    # which was the same as user_data_dir
-    # https://github.com/ActiveState/appdirs/issues/63
-    _old_config_location = Path(appdir.user_data_dir) / "config.json"
-    if _old_config_location.exists():
-        _old_config_location.rename(config_file)
 
 
 def create_temp_config():
