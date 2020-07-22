@@ -553,9 +553,10 @@ class Requires:
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 
-        privilege_level = await PrivilegeLevel.from_ctx(ctx)
-        if privilege_level >= self.privilege_level:
-            return True
+        if self.privilege_level is not PrivilegeLevel.NONE:
+            privilege_level = await PrivilegeLevel.from_ctx(ctx)
+            if privilege_level >= self.privilege_level:
+                return True
 
         return False
 
