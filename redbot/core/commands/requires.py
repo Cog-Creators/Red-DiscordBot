@@ -294,10 +294,10 @@ class Requires:
         `Command.checks` if you would like them to never be overridden.
     privilege_level : PrivilegeLevel
         The required privilege level (bot owner, admin, etc.) for users
-        to execute the command. Can be ``None``, in which case the
-        `user_perms` will be used exclusively, otherwise, for levels
-        other than bot owner, the user can still run the command if
-        they have the required `user_perms`.
+        to execute the command. Can be ``PrivilegeLevel.NONE``, in which
+        case the `user_perms` will be used exclusively, otherwise, for
+        levels other than bot owner, the user can still run the command
+        if they have the required `user_perms`.
     ready_event : asyncio.Event
         Event for when this Requires object has had its rules loaded.
         If permissions is loaded, this should be set when permissions
@@ -553,10 +553,9 @@ class Requires:
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 
-        if self.privilege_level is not None:
-            privilege_level = await PrivilegeLevel.from_ctx(ctx)
-            if privilege_level >= self.privilege_level:
-                return True
+        privilege_level = await PrivilegeLevel.from_ctx(ctx)
+        if privilege_level >= self.privilege_level:
+            return True
 
         return False
 
