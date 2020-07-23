@@ -139,8 +139,10 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
         """
         try:
+            if not self.channel.permissions_for(self.me).add_reactions:
+                raise RuntimeError
             await self.message.add_reaction(reaction)
-        except discord.HTTPException:
+        except (RuntimeError, discord.HTTPException):
             if message is not None:
                 await self.send(message)
             return False
