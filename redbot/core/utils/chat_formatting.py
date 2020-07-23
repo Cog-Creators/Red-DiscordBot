@@ -165,10 +165,10 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
 
     """
     borders = {
-        "TL": "-" if ascii_border else "┌",  # Top-left
-        "TR": "-" if ascii_border else "┐",  # Top-right
-        "BL": "-" if ascii_border else "└",  # Bottom-left
-        "BR": "-" if ascii_border else "┘",  # Bottom-right
+        "TL": "+" if ascii_border else "┌",  # Top-left
+        "TR": "+" if ascii_border else "┐",  # Top-right
+        "BL": "+" if ascii_border else "└",  # Bottom-left
+        "BR": "+" if ascii_border else "┘",  # Bottom-right
         "HZ": "-" if ascii_border else "─",  # Horizontal
         "VT": "|" if ascii_border else "│",  # Vertical
     }
