@@ -99,7 +99,7 @@ class Admin(commands.Cog):
                 await self.migrate_config_from_0_to_1()
                 await self.config.schema_version.set(1)
 
-        await self._ready.set()
+        self._ready.set()
 
     async def migrate_config_from_0_to_1(self):
 
