@@ -464,7 +464,7 @@ class CustomCommands(commands.Cog):
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
         except NotFound:
-            ctx.send(_("I could not not find that custom command."))
+            await ctx.send(_("I could not not find that custom command."))
             return
 
         responses = cmd["response"]
