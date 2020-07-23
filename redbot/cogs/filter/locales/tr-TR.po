@@ -54,16 +54,16 @@ msgstr ""
 #: redbot/cogs/filter/filter.py:100
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Sunucu filtresinden sözcük ekleme veya kaldırma.\\n\\n        Cümleleri eklemek veya kaldırmak için çift tırnak işaretleri kullanın.\\n        "
 
 #: redbot/cogs/filter/filter.py:108
 #, docstring
 msgid "Send a list of this servers filtered words."
-msgstr ""
+msgstr "Bu sunucuların filtrelenmiş kelimelerinin bir listesini gösterin."
 
 #: redbot/cogs/filter/filter.py:113
 msgid "There is no current words setup to be filtered in this server."
-msgstr ""
+msgstr "Bu sunucuda filtrelenecek geçerli bir sözcük yok."
 
 #: redbot/cogs/filter/filter.py:116
 msgid "Filtered in this server:"

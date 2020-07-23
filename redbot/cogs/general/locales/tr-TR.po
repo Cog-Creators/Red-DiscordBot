@@ -203,7 +203,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:253
 msgid "Created on {date}. That's over {num} days ago!"
-msgstr ""
+msgstr "Bu sunucunun kurulma tarihi {date}. Yaklaşık {num} gün önce!"
 
 #: redbot/cogs/general/general.py:264
 msgid "Region"
@@ -211,7 +211,7 @@ msgstr "Bölge"
 
 #: redbot/cogs/general/general.py:265
 msgid "Users online"
-msgstr ""
+msgstr "Çevrimiçi kişiler"
 
 #: redbot/cogs/general/general.py:266
 msgid "Text Channels"
@@ -243,11 +243,11 @@ msgstr "İnsanlar: "
 
 #: redbot/cogs/general/general.py:303
 msgid " • Bots: "
-msgstr ""
+msgstr " • Botlar: "
 
 #: redbot/cogs/general/general.py:313
 msgid "Users online: **{online}/{total_users}**\\n"
-msgstr ""
+msgstr "Çevrimiçi üyeler: **{online}/{total_users}**\\n"
 
 #: redbot/cogs/general/general.py:330
 msgid "__VIP__ US East "
@@ -375,7 +375,7 @@ msgstr "Sunucu Keşfi"
 
 #: redbot/cogs/general/general.py:366
 msgid "Featurable"
-msgstr ""
+msgstr "Özelleştirilebilir"
 
 #: redbot/cogs/general/general.py:367
 msgid "Public"
@@ -391,11 +391,11 @@ msgstr "Sunucu Davet Ekranı"
 
 #: redbot/cogs/general/general.py:370
 msgid "VIP Voice Servers"
-msgstr ""
+msgstr "VIP Ses Sunucuları"
 
 #: redbot/cogs/general/general.py:371
 msgid "Vanity URL"
-msgstr ""
+msgstr "Özel URL"
 
 #: redbot/cogs/general/general.py:372
 msgid "More Emojis"
@@ -407,35 +407,35 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:374
 msgid "News Channels"
-msgstr ""
+msgstr "Duyuru Kanalları"
 
 #: redbot/cogs/general/general.py:375
 msgid "Animated Icon"
-msgstr ""
+msgstr "Hareketli Simge"
 
 #: redbot/cogs/general/general.py:376
 msgid "Banner Image"
-msgstr ""
+msgstr "Sunucu Afişi"
 
 #: redbot/cogs/general/general.py:377
 msgid "Member list disabled"
-msgstr ""
+msgstr "Üye listesi kapalı"
 
 #: redbot/cogs/general/general.py:383
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
-msgstr ""
+msgstr "{bot_name} bu sunucuya şu zamanda katıldı {bot_join}. Bu yaklaşık {since_join} gün önce!"
 
 #: redbot/cogs/general/general.py:405
 msgid "Members:"
-msgstr ""
+msgstr "Üyeler:"
 
 #: redbot/cogs/general/general.py:407
 msgid "Channels:"
-msgstr ""
+msgstr "Kanallar:"
 
 #: redbot/cogs/general/general.py:408
 msgid "💬 Text: {text}\\n🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Yazı: {text}\\n🔊 Sesli: {voice}"
 
 #: redbot/cogs/general/general.py:414
 msgid "Utility:"

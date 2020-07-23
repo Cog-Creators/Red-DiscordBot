@@ -18,12 +18,12 @@ msgstr ""
 #: redbot/cogs/modlog/modlog.py:17
 #, docstring
 msgid "Manage log channels for moderation actions."
-msgstr ""
+msgstr "Zarządzaj kanałami z logami dla działań administracji."
 
 #: redbot/cogs/modlog/modlog.py:26
 #, docstring
 msgid "Manage modlog settings."
-msgstr ""
+msgstr "Zarządzanie ustawieniami modlog'a."
 
 #: redbot/cogs/modlog/modlog.py:32
 #, docstring

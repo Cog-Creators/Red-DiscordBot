@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"POT-Creation-Date: 2020-07-23 12:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -57,6 +57,7 @@ msgid "The bot is not connected to a voice channel."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:132
+#: redbot/cogs/audio/core/events/lavalink.py:77
 msgid "Unable to Get Track"
 msgstr ""
 
@@ -68,35 +69,39 @@ msgstr ""
 msgid "Couldn't get a valid track."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:87
+#: redbot/cogs/audio/core/events/lavalink.py:78
+msgid "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+msgstr ""
+
+#: redbot/cogs/audio/core/events/lavalink.py:100
 msgid "Auto Play started."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:102
+#: redbot/cogs/audio/core/events/lavalink.py:115
 msgid "Now Playing"
 msgstr "Nyní se přehrává"
 
-#: redbot/cogs/audio/core/events/lavalink.py:104
+#: redbot/cogs/audio/core/events/lavalink.py:117
 msgid "Track length: {length} | Requested by: {user}"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:125
+#: redbot/cogs/audio/core/events/lavalink.py:138
 msgid "Queue ended."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:167
+#: redbot/cogs/audio/core/events/lavalink.py:180
 msgid "Multiple Errors Detected"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:168
+#: redbot/cogs/audio/core/events/lavalink.py:181
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:182
+#: redbot/cogs/audio/core/events/lavalink.py:195
 msgid "Track Stuck"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:187
+#: redbot/cogs/audio/core/events/lavalink.py:200
 msgid "Track Error"
 msgstr "Chyba stopy"
 

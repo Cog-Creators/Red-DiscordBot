@@ -121,7 +121,7 @@ msgstr "**{} nicht geladen.**\\n"
 #: redbot/core/core_commands.py:304
 #, docstring
 msgid "Commands related to core functions."
-msgstr ""
+msgstr "Befehle die Grundfunktionen betreffen."
 
 #: redbot/core/core_commands.py:308
 #, docstring
@@ -131,7 +131,7 @@ msgstr "Pong."
 #: redbot/core/core_commands.py:313
 #, docstring
 msgid "Shows info about Red."
-msgstr ""
+msgstr "Zeigt Informationen über Red."
 
 #: redbot/core/core_commands.py:340
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n(c) Cog Creators"
@@ -196,7 +196,7 @@ msgstr "**Referenzen**\\n1. <{}>\\n2. <{}>\\n\\n 3. <{}>\\n4. <{}>\\n5. <{}>\\n6
 #: redbot/core/core_commands.py:436
 #, docstring
 msgid "Shows [botname]'s uptime."
-msgstr ""
+msgstr "Zeigt die Laufzeit von [botname] an."
 
 #: redbot/core/core_commands.py:439
 msgid "Less than one second"
@@ -305,7 +305,7 @@ msgstr "Keine Ausnahme ist bis jetzt aufgetreten"
 #: redbot/core/core_commands.py:581
 #, docstring
 msgid "Show's [botname]'s invite url."
-msgstr ""
+msgstr "Zeigt die Einladungs-URL von [botname] an."
 
 #: redbot/core/core_commands.py:593
 #, docstring
@@ -325,7 +325,7 @@ msgstr "\\n        Lasse den Bot seine eigene Rolle mit den notwendigen Berechti
 #: redbot/core/core_commands.py:647
 #, docstring
 msgid "Leaves the current server."
-msgstr ""
+msgstr "Verlässt den aktuellen Server."
 
 #: redbot/core/core_commands.py:648
 msgid "Are you sure you want me to leave this server? (y/n)"
@@ -377,7 +377,7 @@ msgstr "Oke, na dann."
 #: redbot/core/core_commands.py:712
 #, docstring
 msgid "Loads packages."
-msgstr ""
+msgstr "Lädt Pakete."
 
 #: redbot/core/core_commands.py:730
 msgid "Loaded {packs}."
@@ -480,7 +480,7 @@ msgstr "**ACHTUNG**: Die folgenden repos verwenden \\\"shared libraries\\\", wel
 #: redbot/core/core_commands.py:921
 #, docstring
 msgid "Shuts down the bot."
-msgstr ""
+msgstr "Beendet den Bot."
 
 #: redbot/core/core_commands.py:926
 msgid "Shutting down... "
@@ -498,7 +498,7 @@ msgstr "Neustart..."
 #: redbot/core/core_commands.py:944
 #, docstring
 msgid "Changes [botname]'s settings."
-msgstr ""
+msgstr "Ändert die Einstellungen von [botname]."
 
 #: redbot/core/core_commands.py:948
 #, docstring
@@ -667,7 +667,7 @@ msgstr "Nur JPG oder PNG Format."
 #: redbot/core/core_commands.py:1204
 #, docstring
 msgid "Removes [botname]'s avatar."
-msgstr ""
+msgstr "Entfernt den Avatar von [botname]."
 
 #: redbot/core/core_commands.py:1207
 msgid "Avatar removed."
@@ -729,7 +729,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1320
 #, docstring
 msgid "Sets [botname]'s username."
-msgstr ""
+msgstr "Setzt den Benutzernamen [botname]."
 
 #: redbot/core/core_commands.py:1325
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
@@ -738,7 +738,7 @@ msgstr "Fehler beim Ändern des Namens. Denke daran, dass du dies nur einmal pro
 #: redbot/core/core_commands.py:1339
 #, docstring
 msgid "Sets [botname]'s nickname."
-msgstr ""
+msgstr "Setzt den Nicknamen von [botname]."
 
 #: redbot/core/core_commands.py:1343
 msgid "I lack the permissions to change my own nickname."
@@ -1013,7 +1013,7 @@ msgstr "Datenpfad: {path}"
 #: redbot/core/core_commands.py:1805
 #, docstring
 msgid "Shows debug information useful for debugging."
-msgstr ""
+msgstr "Zeigt nützliche Informationen zum Debuggen an."
 
 #: redbot/core/core_commands.py:1866
 #, docstring

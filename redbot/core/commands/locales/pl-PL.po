@@ -57,11 +57,11 @@ msgstr ""
 
 #: redbot/core/commands/help.py:253
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Subkomendy:__**"
 
 #: redbot/core/commands/help.py:255
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Podkomendy:__** (ciąg dalszy)"
 
 #: redbot/core/commands/help.py:266
 msgid "Subcommands:"
@@ -86,19 +86,19 @@ msgstr ""
 
 #: redbot/core/commands/help.py:440
 msgid "Commands:"
-msgstr ""
+msgstr "Komendy:"
 
 #: redbot/core/commands/help.py:482
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Brak kategorii:__**"
 
 #: redbot/core/commands/help.py:495
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (kontynuowany)"
 
 #: redbot/core/commands/help.py:511 redbot/core/commands/help.py:525
 msgid "No Category:"
-msgstr ""
+msgstr "Bez kategorii:"
 
 #: redbot/core/commands/help.py:591
 msgid "Help topic for *{command_name}* not found."
