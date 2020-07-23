@@ -346,6 +346,12 @@ class Warnings(commands.Cog):
         if user.bot:
             await ctx.send(_("You cannot warn other bots."))
             return
+        if user == ctx.guild.owner:
+            await ctx.send(_("You cannot warn the server owner."))
+            return
+        if user.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
+            await ctx.send(_("The person you're trying to warn is equal or higher to you on the discord hierarchy, you cannot warn them."))
+            return
         guild_settings = await self.config.guild(ctx.guild).all()
         custom_allowed = guild_settings["allow_custom_reasons"]
 
