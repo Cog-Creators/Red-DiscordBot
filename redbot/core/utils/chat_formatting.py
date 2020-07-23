@@ -33,7 +33,7 @@ def warning(text: str) -> str:
         The new message.
 
     """
-    return "\N{WARNING SIGN} {}".format(text)
+    return "\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def info(text: str) -> str:
@@ -45,7 +45,7 @@ def info(text: str) -> str:
         The new message.
 
     """
-    return "\N{INFORMATION SOURCE} {}".format(text)
+    return "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def question(text: str) -> str:
@@ -57,7 +57,7 @@ def question(text: str) -> str:
         The new message.
 
     """
-    return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
+    return "\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def bold(text: str, escape_formatting: bool = True) -> str:
