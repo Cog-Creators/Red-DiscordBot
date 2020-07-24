@@ -280,7 +280,7 @@ class Streams(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod()
+    @checks.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
         pass
@@ -431,9 +431,9 @@ class Streams(commands.Cog):
         await self.add_or_remove(ctx, stream)
 
     @commands.group()
-    @checks.mod()
+    @checks.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
-        """Set tokens for accessing streams."""
+        """Manage stream alert settings."""
         pass
 
     @streamset.command(name="timer")
