@@ -2674,7 +2674,11 @@ class Core(commands.Cog, CoreLogic):
         )
         return msg
 
-
+# DEP-WARN: CooldownMapping should have a method `from_cooldown`
+# which accepts (number, number, bucket)
+# the bucket should only be used for the method `_bucket_key`
+# and `_bucket_key` should be used to determine the grouping
+# of ratelimit consumption.
 class LicenseInfoCooldown(commands.CooldownMapping):
     """
     This is so that a single user can't spam a channel with this
