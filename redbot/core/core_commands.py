@@ -2679,7 +2679,7 @@ class Core(commands.Cog, CoreLogic):
 # the bucket should only be used for the method `_bucket_key`
 # and `_bucket_key` should be used to determine the grouping
 # of ratelimit consumption.
-class LicenseInfoCooldown(commands.CooldownMapping):
+class LicenseCooldownMapping(commands.CooldownMapping):
     """
     This is so that a single user can't spam a channel with this
     it's used below as 1 per 3 minutes per user-channel combination.
@@ -2711,6 +2711,7 @@ async def license_info_command(ctx):
     # We need a link which contains a thank you to other projects which we use at some point.
 
 
+# DEP-WARN: command objects should store a single cooldown mapping as `._buckets`
 license_info_command._buckets = LicenseCooldownMapping.from_cooldown(
     1, 180, commands.BucketType.member  # pick a random bucket,it wont get used.
 )
