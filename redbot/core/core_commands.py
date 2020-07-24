@@ -2675,6 +2675,15 @@ class Core(commands.Cog, CoreLogic):
         return msg
 
 
+class LicenseInfoCooldown(commands.CooldownMapping):
+    """
+    This is so that a single user can't spam a channel with this
+    it's used below as 1 per 3 minutes per user-channel combination.
+    """
+    def _bucket_key(self, msg):
+        return (msg.channel.id, msg.author.id)
+
+
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
 # Otherwise interfering with the ability for this command to be accessible is also a violation.
 @commands.command(
@@ -2696,3 +2705,8 @@ async def license_info_command(ctx):
     )
     await ctx.send(message)
     # We need a link which contains a thank you to other projects which we use at some point.
+
+
+license_info_command._buckets = LicenseCooldownMapping.from_cooldown(
+    1, 180, commands.BucketType.member  # pick a random bucket,it wont get used.
+)
