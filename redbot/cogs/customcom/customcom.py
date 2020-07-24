@@ -490,7 +490,7 @@ class CustomCommands(commands.Cog):
             command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
-        cooldowns = cmd["cooldowns"]
+        cooldowns = cmd.get("cooldowns", {})
 
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
