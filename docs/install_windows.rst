@@ -90,7 +90,7 @@ Creating a Virtual Environment
 
 .. tip::
 
-    If you want to learn more about virtual environments, see page: `about-venvs`
+    If you want to learn more about virtual environments, see page: `about-venvs`.
 
 We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward.
