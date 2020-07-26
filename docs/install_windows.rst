@@ -31,6 +31,9 @@ Using PowerShell and Chocolatey (recommended)
 To install via PowerShell, search "powershell" in the Windows start menu,
 right-click on it and then click "Run as administrator"
 
+.. note:: This is the only time you should use administrator during the 
+          installation and usage of Red.
+
 Then run each of the following commands:
 
 .. code-block:: none
@@ -144,11 +147,6 @@ Run **one** of the following set of commands, depending on what extras you want 
 
         python -m pip install -U pip setuptools wheel
         python -m pip install -U Red-DiscordBot[postgres]
-
-
-.. note::
-
-    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red
