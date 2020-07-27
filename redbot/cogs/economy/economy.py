@@ -532,7 +532,10 @@ class Economy(commands.Cog):
     @guild_only_check()
     async def payouts(self, ctx: commands.Context):
         """Show the payouts for the slot machine."""
-        await ctx.author.send(SLOT_PAYOUTS_MSG)
+        try:
+            await ctx.author.send(SLOT_PAYOUTS_MSG)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @commands.command()
     @guild_only_check()
