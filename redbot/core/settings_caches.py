@@ -260,7 +260,7 @@ class WhitelistBlacklistManager:
 class DisabledCogCache:
     def __init__(self, config: Config):
         self._config = config
-        self._disable_map: Dict[str, Dict[int, bool]] = defaultdict(default_factory=dict)
+        self._disable_map: Dict[str, Dict[int, bool]] = defaultdict(dict)
 
     async def cog_disabled_in_guild(self, cog_name: str, guild_id: int) -> bool:
         """
