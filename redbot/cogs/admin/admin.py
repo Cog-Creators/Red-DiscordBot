@@ -84,7 +84,7 @@ class Admin(commands.Cog):
         asyncio.create_task(self.handle_migrations())
         # As this is a data migration, don't store this for cancelation.
 
-    async def cog_before_invoke(self, ctx):
+    async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
 
     async def handle_migrations(self):
