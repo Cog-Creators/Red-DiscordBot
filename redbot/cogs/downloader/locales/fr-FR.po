@@ -517,7 +517,7 @@ msgstr "Impossible de mettre à jour le repo suivant :"
 
 #: redbot/cogs/downloader/downloader.py:1457
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
-msgstr "La branche de ce repo à peut-être été supprimée ou le repo n'est plus accessible à l'Url définie. Voir les logs pour plus d'informations."
+msgstr "La branche de ce repo à peut-être été supprimée ou le repo n'est plus accessible à l'URL définie. Voir les logs pour plus d'informations."
 
 #: redbot/cogs/downloader/repo_manager.py:182
 msgid "Repo by the name \\\"{repo_name}\\\" does not exist."

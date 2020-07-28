@@ -121,7 +121,7 @@ msgstr "**{} déchargé :**\\n"
 #: redbot/core/core_commands.py:304
 #, docstring
 msgid "Commands related to core functions."
-msgstr ""
+msgstr "Commandes liées aux fonctions de base."
 
 #: redbot/core/core_commands.py:308
 #, docstring
@@ -131,7 +131,7 @@ msgstr "Pong."
 #: redbot/core/core_commands.py:313
 #, docstring
 msgid "Shows info about Red."
-msgstr ""
+msgstr "Afficher les infos à propos de Red."
 
 #: redbot/core/core_commands.py:340
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n(c) Cog Creators"
@@ -196,7 +196,7 @@ msgstr "**Références**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. 
 #: redbot/core/core_commands.py:436
 #, docstring
 msgid "Shows [botname]'s uptime."
-msgstr ""
+msgstr "Affiche le temps de disponibilité de [botname]."
 
 #: redbot/core/core_commands.py:439
 msgid "Less than one second"
@@ -214,7 +214,7 @@ msgstr "\\n        Commandes pour activer ou désactiver les embeds.\\n\\n      
 #: redbot/core/core_commands.py:459
 #, docstring
 msgid "Show the current embed settings."
-msgstr ""
+msgstr "Affiche les paramètres actuels des embeds."
 
 #: redbot/core/core_commands.py:460
 msgid "Embed settings:\\n\\n"
@@ -283,7 +283,9 @@ msgstr "Les embeds sont maintenant {} pour ce salon."
 #: redbot/core/core_commands.py:541
 #, docstring
 msgid "\\n        Toggle the user's embed setting for DMs.\\n\\n        If enabled is None, the setting will be unset and\\n        the global default will be used instead.\\n\\n        If set, this is used instead of the global default\\n        to determine whether or not to use embeds. This is\\n        used for all commands executed in a DM with the bot.\\n        "
-msgstr ""
+msgstr "Basculez le paramètre des embeds pour ce serveur.\\n\\n        Si l'option activée est Aucune, le réglage sera désactivé et\\n        la valeur globale par défaut sera utilisée à la place.\\n\\n        Si elle est définie, elle est utilisée à la place de la valeur globalepar défaut \\n        pour déterminer s'il convient ou non d'utiliser des embeds. C'est\\n        utilisé pour toutes les commandes effectuées dans un salon de serveur, à l'exception des\n"
+"        commandes d'aide\n"
+"        "
 
 #: redbot/core/core_commands.py:556
 msgid "Embeds are now enabled for you in DMs."
@@ -296,7 +298,7 @@ msgstr "Les embeds sont maintenant désactivés pour vous en messages privés."
 #: redbot/core/core_commands.py:564
 #, docstring
 msgid "Sends to the owner the last command exception that has occurred.\\n\\n        If public (yes is specified), it will be sent to the chat instead."
-msgstr ""
+msgstr "Envoie au propre la dernière erreur de la dernière commande\\n\\n        Si public (oui est specifie), elle sera envoyé dans le chat a la place."
 
 #: redbot/core/core_commands.py:576
 msgid "No exception has occurred yet"
@@ -305,17 +307,17 @@ msgstr "Aucune exception n'a eu lieu pour le moment"
 #: redbot/core/core_commands.py:581
 #, docstring
 msgid "Show's [botname]'s invite url."
-msgstr ""
+msgstr "Affiche le lien d'invitation de [botname]."
 
 #: redbot/core/core_commands.py:593
 #, docstring
 msgid "Setup the bot's invite."
-msgstr ""
+msgstr "Configurer l'invitation du bot."
 
 #: redbot/core/core_commands.py:598
 #, docstring
 msgid "\\n        Define if the command should be accessible for the average user.\\n        "
-msgstr ""
+msgstr "\\n        Défini si la commande devrait être accessible pour l'utilisateur basique.\\n        "
 
 #: redbot/core/core_commands.py:627
 #, docstring

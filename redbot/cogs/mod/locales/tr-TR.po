@@ -478,7 +478,7 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:204
 msgid "Chilling in {} status"
-msgstr ""
+msgstr "{} durumda rahatına bakıyor"
 
 #: redbot/cogs/mod/names.py:218
 msgid "and {numeric_number} more roles not displayed due to embed limits."
