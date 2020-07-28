@@ -26,7 +26,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not (track and guild):
             return
 
-        if not await self.bot.cog_disabled_in_guild(self, guild):
+        if await self.bot.cog_disabled_in_guild(self, guild):
             return
 
         track_identifier = track.track_identifier
