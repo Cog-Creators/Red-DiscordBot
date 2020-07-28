@@ -20,6 +20,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_channel = player.channel
         guild = self.rgetattr(current_channel, "guild", None)
         if await self.bot.cog_disabled_in_guild(self, guild):
+            await player.stop()
+            await player.disconnect()
             return
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
