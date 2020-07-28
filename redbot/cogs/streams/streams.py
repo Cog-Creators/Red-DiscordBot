@@ -702,6 +702,8 @@ class Streams(commands.Cog):
                         continue
                     for message in stream._messages_cache:
                         with contextlib.suppress(Exception):
+                            if await self.bot.cog_disabled_in_guild(self, message.guild):
+                                continue
                             autodelete = await self.config.guild(message.guild).autodelete()
                             if autodelete:
                                 await message.delete()
@@ -713,6 +715,8 @@ class Streams(commands.Cog):
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
                         if not channel:
+                            continue
+                        if await self.bot.cog_disabled_in_guild(self, channel.guild):
                             continue
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:

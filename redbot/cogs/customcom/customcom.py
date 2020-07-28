@@ -516,6 +516,9 @@ class CustomCommands(commands.Cog):
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
             return
 
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         ctx = await self.bot.get_context(message)
 
         if ctx.prefix is None:

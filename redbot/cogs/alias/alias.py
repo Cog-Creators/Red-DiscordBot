@@ -326,6 +326,11 @@ class Alias(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
+
+        if message.guild is not None:
+            if await self.bot.cog_disabled_in_guild(self, message.guild):
+                return
+
         try:
             prefix = await self.get_prefix(message)
         except ValueError:

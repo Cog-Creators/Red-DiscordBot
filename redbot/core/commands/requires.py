@@ -511,6 +511,10 @@ class Requires:
             bot_user = ctx.bot.user
         else:
             bot_user = ctx.guild.me
+            cog = ctx.cog
+            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+                raise discord.ext.commands.DisabledCommand()
+
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
