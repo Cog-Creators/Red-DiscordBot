@@ -336,7 +336,7 @@ class Reports(commands.Cog):
         for key in to_remove:
             if tun := self.tunnel_store.pop(key, None):
                 guild, ticket = key
-                await tun.close_because_disabled(
+                await tun["tun"].close_because_disabled(
                     _(
                         "Correspondence about ticket# {ticket_number} in "
                         "{guild.name} has been ended due "
