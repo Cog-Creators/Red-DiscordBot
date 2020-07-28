@@ -52,7 +52,9 @@ class Events(MixinMeta):
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
                     log.warning(
-                        "Failed to ban a member ({member}) for mention spam in server {guild}.".format(member=author.id, guild=guild.id)
+                        "Failed to ban a member ({member}) for mention spam in server {guild}.".format(
+                            member=author.id, guild=guild.id
+                        )
                     )
                 else:
                     try:
@@ -78,7 +80,9 @@ class Events(MixinMeta):
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
                     log.warning(
-                        "Failed to kick a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
+                        "Failed to kick a member ({member}) for mention spam in server {guild}".format(
+                            member=author.id, guild=guild.id
+                        )
                     )
                 else:
                     try:
@@ -101,15 +105,19 @@ class Events(MixinMeta):
         if mention_spam["warn"]:
             if len(mentions) >= mention_spam["warn"]:
                 try:
-                    await author.send(
-                        _("Please do not mass mention people!")
-                    )
+                    await author.send(_("Please do not mass mention people!"))
                 except (discord.HTTPException, discord.Forbidden):
                     try:
-                        await message.channel.send(_("{member}, Please do not mass mention people!").format(member=author.mention))
+                        await message.channel.send(
+                            _("{member}, Please do not mass mention people!").format(
+                                member=author.mention
+                            )
+                        )
                     except (discord.HTTPException, discord.Forbidden):
                         log.warning(
-                            "Failed to warn a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
+                            "Failed to warn a member ({member}) for mention spam in server {guild}".format(
+                                member=author.id, guild=guild.id
+                            )
                         )
                 else:
                     try:
