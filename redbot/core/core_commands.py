@@ -1333,7 +1333,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Done."))
 
     @_set.command(name="nickname")
-    @checks.admin()
+    @checks.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
@@ -1355,7 +1355,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
-    @checks.admin()
+    @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s server prefix(es)."""
