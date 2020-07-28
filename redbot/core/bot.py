@@ -236,7 +236,7 @@ class RedBase(
         ----------
         cog: commands.Cog
         guild: Optional[discord.Guild]
-        
+
         Returns
         -------
         bool
