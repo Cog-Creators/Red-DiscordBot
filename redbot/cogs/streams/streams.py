@@ -7,7 +7,6 @@ from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
     HitboxStream,
-    MixerStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -40,7 +39,7 @@ log = logging.getLogger("red.core.cogs.Streams")
 class Streams(commands.Cog):
     """Various commands relating to streaming platforms.
 
-    You can check if a Twitch, YouTube, Picarto or Mixer stream is
+    You can check if a Twitch, YouTube or Picarto stream is
     currently live.
     """
 
@@ -229,12 +228,6 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def mixer(self, ctx: commands.Context, channel_name: str):
-        """Check if a Mixer channel is live."""
-        stream = MixerStream(name=channel_name)
-        await self.check_online(ctx, stream)
-
-    @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
         stream = PicartoStream(name=channel_name)
@@ -243,7 +236,7 @@ class Streams(commands.Cog):
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, MixerStream, HitboxStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, HitboxStream, YoutubeStream, TwitchStream],
     ):
         try:
             info = await stream.is_online()
@@ -312,11 +305,6 @@ class Streams(commands.Cog):
     async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Hitbox stream."""
         await self.stream_alert(ctx, HitboxStream, channel_name)
-
-    @streamalert.command(name="mixer")
-    async def mixer_alert(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Mixer stream."""
-        await self.stream_alert(ctx, MixerStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
