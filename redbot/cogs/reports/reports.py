@@ -334,7 +334,15 @@ class Reports(commands.Cog):
                 self.tunnel_store[k]["msgs"] = msgs
 
         for key in to_remove:
-            self.tunnel_store.pop(key, None)
+            if tun := self.tunnel_store.pop(key, None):
+                guild, ticket = key
+                await tun.close_because_disabled(
+                    _(
+                        "Correspondence about ticket# {ticket_number} in "
+                        "{guild.name} has been ended due "
+                        "to reports being disabled in that server."
+                    ).format(ticket_number=ticket, guild=guild)
+                )
 
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
