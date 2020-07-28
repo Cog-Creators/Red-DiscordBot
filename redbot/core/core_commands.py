@@ -2674,6 +2674,7 @@ class Core(commands.Cog, CoreLogic):
         )
         return msg
 
+
 # DEP-WARN: CooldownMapping should have a method `from_cooldown`
 # which accepts (number, number, bucket)
 # the bucket should only be used for the method `_bucket_key`
@@ -2684,6 +2685,7 @@ class LicenseCooldownMapping(commands.CooldownMapping):
     This is so that a single user can't spam a channel with this
     it's used below as 1 per 3 minutes per user-channel combination.
     """
+
     def _bucket_key(self, msg):
         return (msg.channel.id, msg.author.id)
 
