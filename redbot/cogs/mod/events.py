@@ -51,7 +51,7 @@ class Events(MixinMeta):
                 try:
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
-                    log.info(
+                    log.warning(
                         "Failed to ban a member ({member}) for mention spam in server {guild}.".format(member=author.id, guild=guild.id)
                     )
                 else:
@@ -68,7 +68,7 @@ class Events(MixinMeta):
                             channel=None,
                         )
                     except RuntimeError as e:
-                        print(e)
+                        log.warning(e)
                         return False
                     return True
 
@@ -77,7 +77,7 @@ class Events(MixinMeta):
                 try:
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
-                    log.info(
+                    log.warning(
                         "Failed to kick a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
                     )
                 else:
@@ -94,7 +94,7 @@ class Events(MixinMeta):
                             channel=None,
                         )
                     except RuntimeError as e:
-                        print(e)
+                        log.warning(e)
                         return False
                     return True
 
@@ -102,12 +102,15 @@ class Events(MixinMeta):
             if len(mentions) >= mention_spam["warn"]:
                 try:
                     await author.send(
-                        _("Please do not mention {} or more people!".format(mention_spam["warn"]))
+                        _("Please do not mass mention people!")
                     )
                 except (discord.HTTPException, discord.Forbidden):
-                    log.info(
-                        "Failed to warn a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
-                    )
+                    try:
+                        await message.channel.send(_("{member}, Please do not mass mention people!").format(member=author.mention))
+                    except (discord.HTTPException, discord.Forbidden):
+                        log.warning(
+                            "Failed to warn a member ({member}) for mention spam in server {guild}".format(member=author.id, guild=guild.id)
+                        )
                 else:
                     try:
                         await modlog.create_case(
@@ -122,7 +125,7 @@ class Events(MixinMeta):
                             channel=None,
                         )
                     except RuntimeError as e:
-                        print(e)
+                        log.warning(e)
                         return False
                     return True
         return False
