@@ -226,19 +226,23 @@ class RedBase(
                 return_exceptions=return_exceptions,
             )
 
-    async def cog_disabled_in_guild(self, cog: commands.Cog, guild: discord.Guild) -> bool:
+    async def cog_disabled_in_guild(
+        self, cog: commands.Cog, guild: Optional[discord.Guild]
+    ) -> bool:
         """
         Check if a cog is disabled in a guild
 
         Parameters
         ----------
         cog: commands.Cog
-        guild: discord.Guild
+        guild: Optional[discord.Guild]
         
         Returns
         -------
         bool
         """
+        if guild is None:
+            return False
         return await self._disabled_cog_cache.cog_disabled_in_guild(cog.qualified_name, guild.id)
 
     async def cog_disabled_in_guild_raw(self, cog_name: str, guild_id: int) -> bool:
