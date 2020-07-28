@@ -27,6 +27,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if await self.bot.cog_disabled_in_guild(self, guild):
+            player = lavalink.get_player(guild.id)
+            await player.stop()
+            await player.disconnect()
             return
 
         track_identifier = track.track_identifier
