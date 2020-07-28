@@ -297,10 +297,6 @@ class Reports(commands.Cog):
         """
         oh dear....
         """
-        guild_id = payload.guild_id
-        if guild_id:
-            if await self.bot.cog_disabled_in_guild_raw(self.qualified_name, guild_id):
-                return
 
         if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
             return
@@ -320,16 +316,15 @@ class Reports(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
 
-        source_guild = message.guild
-        if source_guild:
-            if await self.bot.cog_disabled_in_guild(self, source_guild):
-                return
+        to_remove = []
 
         for k, v in self.tunnel_store.items():
 
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
+                to_remove.append(k)
                 continue
+
             topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
@@ -337,6 +332,9 @@ class Reports(commands.Cog):
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
+
+        for key in to_remove:
+            self.tunnel_store.pop(key, None)
 
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
