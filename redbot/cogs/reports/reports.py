@@ -330,7 +330,7 @@ class Reports(commands.Cog):
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
                 continue
-            topic = _("Re: ticket# {ticket_numer} in {guild.name}").format(
+            topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
             # Tunnels won't forward unintended messages, this is safe

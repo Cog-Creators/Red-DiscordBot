@@ -234,7 +234,7 @@ Not all of these are strict requirements (some are) but are all generally advisa
 
   - Not all events need to be checked, only those that interact with a guild.
   - Some discretion may apply, for example,
-    a cog which logs command invocation errors could chose to ignore this
+    a cog which logs command invocation errors could choose to ignore this
     but a cog which takes actions based on messages should not.
 
 15. Respect settings when treating non command messages as commands.
