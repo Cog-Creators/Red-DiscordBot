@@ -2179,7 +2179,7 @@ class Core(commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
-    async def command_default_disable_cog(self, ctx: commands.Context, *cogname: str):
+    async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: str):
         """ Set the defaulft state for a cog as disabled. """
         cog = self.bot.get_cog(cogname)
         if not cog:
@@ -2191,7 +2191,7 @@ class Core(commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultenablecog")
-    async def command_default_enable_cog(self, ctx: commands.Context, *cogname: str):
+    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: str):
         """ Set the defaulft state for a cog as enabled. """
         cog = self.bot.get_cog(cogname)
         if not cog:
