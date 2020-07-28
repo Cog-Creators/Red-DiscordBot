@@ -2183,7 +2183,7 @@ class Core(commands.Cog, CoreLogic):
         """Set the default state for a cog as disabled."""
         cog = self.bot.get_cog(cogname)
         if not cog:
-            return await ctx.send(_("No such cog"))
+            return await ctx.send(_("Cog with the given name doesn't exist."))
         if cog == self:
             return await ctx.send(_("You can't disable this cog by default."))
         await self.bot._disabled_cog_cache.default_disable(cogname)
@@ -2195,7 +2195,7 @@ class Core(commands.Cog, CoreLogic):
         """Set the default state for a cog as enabled."""
         cog = self.bot.get_cog(cogname)
         if not cog:
-            return await ctx.send(_("No such cog"))
+            return await ctx.send(_("Cog with the given name doesn't exist."))
         await self.bot._disabled_cog_cache.default_enable(cogname)
         await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
 
