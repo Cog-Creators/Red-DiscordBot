@@ -17,6 +17,12 @@ End-user changelog
 Core Bot
 ********
 
+- Added per-guild cog disabling (:issue:`4043`, :issue:`3945`)
+
+    - Bot owners can set the default state for a cog using ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands
+    - Guild owners can enable/disable cogs for their guild using ``[p]command disablecog`` and ``[p]command enablecog`` commands
+    - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
+
 - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 
 .. _important-340-2:
@@ -37,6 +43,14 @@ Mod
 
 Developer changelog
 -------------------
+
+| **Important:**
+| Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the changelog entry below.
+
+- Added cog disabling API (:issue:`4043`, :issue:`3945`)
+
+    - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
+    - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
 
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
