@@ -270,10 +270,8 @@ class General(commands.Cog):
             data.set_footer(
                 text=_("Server ID: ")
                 + str(guild.id)
-                + _(
-                    ' | Use "{prefix}serverinfo 1" for more info on the server.'.format(
-                        prefix=ctx.clean_prefix
-                    )
+                + _(' | Use "{command}" for more info on the server.').format(
+                    command=f"{ctx.clean_prefix}serverinfo 1"
                 )
             )
             if guild.icon_url:
