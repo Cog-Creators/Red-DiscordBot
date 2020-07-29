@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+| :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
@@ -52,4 +52,5 @@ Documentation changes
 Miscellaneous
 -------------
 
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
 - `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
