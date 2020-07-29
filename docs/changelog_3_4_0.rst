@@ -24,6 +24,7 @@ Core Bot
     - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
 
 - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
+- ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 
 .. _important-340-2:
 
