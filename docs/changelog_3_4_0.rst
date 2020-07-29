@@ -52,3 +52,4 @@ Documentation changes
 Miscellaneous
 -------------
 
+- `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
