@@ -528,7 +528,7 @@ class General(commands.Cog):
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud,)
+                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
                     max_desc_len = 2000 - len(message)
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)
