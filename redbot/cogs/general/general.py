@@ -270,7 +270,7 @@ class General(commands.Cog):
             data.set_footer(
                 text=_("Server ID: ")
                 + str(guild.id)
-                + _('  •  Use {command} for more info on the server.').format(
+                + _("  •  Use {command} for more info on the server.").format(
                     command=f"{ctx.clean_prefix}serverinfo 1"
                 )
             )
