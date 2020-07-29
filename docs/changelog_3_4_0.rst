@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
@@ -39,6 +39,11 @@ Mod
 
 - ``[p]tempban`` now respects default days setting (``[p]modset defaultdays``) (:issue:`3993`)
 - ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
+
+Streams
+*******
+
+- Mixer service has been closed and for that reason we've removed support for it from the cog (:issue:`4072`)
 
 
 Developer changelog
