@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
@@ -45,6 +45,11 @@ Streams
 *******
 
 - Mixer service has been closed and for that reason we've removed support for it from the cog (:issue:`4072`)
+
+Trivia Lists
+************
+
+- Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
 
 
 Developer changelog
