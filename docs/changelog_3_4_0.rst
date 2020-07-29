@@ -7,8 +7,9 @@ Redbot 3.4.0 (Unreleased)
 | :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
-| 1. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
-| 2. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
+| 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
+| 2. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
+| 3. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
 
 End-user changelog
 ------------------
@@ -45,6 +46,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Removed install instructions for Debian Stretch (:issue:`4099`)
 
 
 Miscellaneous
