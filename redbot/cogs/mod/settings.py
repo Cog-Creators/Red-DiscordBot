@@ -103,7 +103,7 @@ class ModSettings(MixinMeta):
     @commands.guild_only()
     async def mentionspam(self, ctx: commands.Context):
         """
-        Manage the automoderation settings for mentionspam
+        Manage the automoderation settings for mentionspam.
         """
 
     @mentionspam.command(name="warn")
