@@ -140,7 +140,7 @@ class Mod(
             await self.config.version.set("1.2.0")
         if await self.config.version() < "1.3.0":
             guild_dict = await self.config.all_guilds()
-            async for guild_id, info in AsyncIter(guild_dict.keys(), steps=25):
+            async for guild_id in AsyncIter(guild_dict.keys(), steps=25):
                 async with self.config.guild_from_id(guild_id).all() as guild_data:
                     current_state = guild_data.pop("ban_mention_spam", False)
                     if current_state is not False:
