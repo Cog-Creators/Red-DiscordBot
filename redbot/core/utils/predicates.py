@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
 
@@ -8,7 +10,7 @@ from redbot.core import commands
 _ID_RE = re.compile(r"([0-9]{15,21})$")
 _USER_MENTION_RE = re.compile(r"<@!?([0-9]{15,21})>$")
 _CHAN_MENTION_RE = re.compile(r"<#([0-9]{15,21})>$")
-_ROLE_MENTION_RE = re.compile(r"<&([0-9]{15,21})>$")
+_ROLE_MENTION_RE = re.compile(r"<@&([0-9]{15,21})>$")
 
 
 class MessagePredicate(Callable[[discord.Message], bool]):

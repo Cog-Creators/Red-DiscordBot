@@ -1,5 +1,5 @@
 import asyncio
-import collections
+import collections.abc
 import logging
 import pickle
 import weakref
@@ -28,6 +28,33 @@ _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
 _retrieved = weakref.WeakSet()
+
+
+class ConfigMeta(type):
+    """
+    We want to prevent re-initializing existing config instances while having a singleton
+    """
+
+    def __call__(
+        cls,
+        cog_name: str,
+        unique_identifier: str,
+        driver: BaseDriver,
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
+        if cog_name is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        key = (cog_name, unique_identifier)
+        if key in _config_cache:
+            return _config_cache[key]
+
+        instance = super(ConfigMeta, cls).__call__(
+            cog_name, unique_identifier, driver, force_registration, defaults
+        )
+        _config_cache[key] = instance
+        return instance
 
 
 def get_latest_confs() -> Tuple["Config"]:
@@ -170,11 +197,11 @@ class Value:
         -------
         ::
 
-            foo = await conf.guild(some_guild).foo()
+            foo = await config.guild(some_guild).foo()
 
             # Is equivalent to this
 
-            group_obj = conf.guild(some_guild)
+            group_obj = config.guild(some_guild)
             value_obj = group_obj.foo
             foo = await value_obj()
 
@@ -214,10 +241,10 @@ class Value:
         ::
 
             # Sets global value "foo" to False
-            await conf.foo.set(False)
+            await config.foo.set(False)
 
             # Sets guild specific value of "bar" to True
-            await conf.guild(some_guild).bar.set(True)
+            await config.guild(some_guild).bar.set(True)
 
         Parameters
         ----------
@@ -307,7 +334,7 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifier_data.add_identifier(item)
+        new_identifiers = self.identifier_data.get_child(item)
         if is_group:
             return Group(
                 identifier_data=new_identifiers,
@@ -340,7 +367,7 @@ class Group(Value):
 
         For example::
 
-            await conf.clear_raw("foo", "bar")
+            await config.clear_raw("foo", "bar")
 
             # is equivalent to
 
@@ -354,7 +381,7 @@ class Group(Value):
             dict access. These are casted to `str` for you.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
@@ -403,7 +430,7 @@ class Group(Value):
                 user = ctx.author
 
                 # Where the value of item is the name of the data field in Config
-                await ctx.send(await self.conf.user(user).get_attr(item).foo())
+                await ctx.send(await self.config.user(user).get_attr(item).foo())
 
         Parameters
         ----------
@@ -428,7 +455,7 @@ class Group(Value):
 
         For example::
 
-            d = await conf.get_raw("foo", "bar")
+            d = await config.get_raw("foo", "bar")
 
             # is equivalent to
 
@@ -472,7 +499,7 @@ class Group(Value):
             else:
                 default = poss_default
 
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         try:
             raw = await self.driver.get(identifier_data)
         except KeyError:
@@ -510,7 +537,7 @@ class Group(Value):
         return self(acquire_lock=acquire_lock)
 
     def nested_update(
-        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+        self, current: collections.abc.Mapping, defaults: Dict[str, Any] = ...
     ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
@@ -521,7 +548,7 @@ class Group(Value):
             defaults = self.defaults
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
@@ -540,7 +567,7 @@ class Group(Value):
 
         For example::
 
-            await conf.set_raw("foo", "bar", value="baz")
+            await config.set_raw("foo", "bar", value="baz")
 
             # is equivalent to
 
@@ -556,13 +583,13 @@ class Group(Value):
             The value to store.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
         await self.driver.set(identifier_data, value=value)
 
 
-class Config:
+class Config(metaclass=ConfigMeta):
     """Configuration manager for cogs and Red.
 
     You should always use `get_conf` to instantiate a Config object. Use
@@ -575,7 +602,7 @@ class Config:
         :python:`global` method because global data is accessed by
         normal attribute access::
 
-            await conf.foo()
+            await config.foo()
 
     Attributes
     ----------
@@ -605,19 +632,6 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
-    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
-        key = (cog_name, unique_identifier)
-
-        if key[0] is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
-
-        if key in _config_cache:
-            conf = _config_cache[key]
-        else:
-            conf = object.__new__(cls)
-            _config_cache[key] = conf
-        return conf
-
     def __init__(
         self,
         cog_name: str,
@@ -643,7 +657,14 @@ class Config:
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls,
+        cog_instance,
+        identifier: int,
+        force_registration=False,
+        cog_name=None,
+        allow_old: bool = False,
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -676,11 +697,16 @@ class Config:
             A new Config object.
 
         """
+        if allow_old:
+            log.warning(
+                "DANGER! This is getting an outdated driver. "
+                "Hopefully this is only being done from convert"
+            )
         uuid = str(identifier)
         if cog_name is None:
             cog_name = type(cog_instance).__name__
 
-        driver = get_driver(cog_name, uuid)
+        driver = get_driver(cog_name, uuid, allow_old=allow_old)
         if hasattr(driver, "migrate_identifier"):
             driver.migrate_identifier(identifier)
 
@@ -693,7 +719,7 @@ class Config:
         return conf
 
     @classmethod
-    def get_core_conf(cls, force_registration: bool = False):
+    def get_core_conf(cls, force_registration: bool = False, allow_old: bool = False):
         """Get a Config instance for the core bot.
 
         All core modules that require a config instance should use this
@@ -706,7 +732,11 @@ class Config:
 
         """
         return cls.get_conf(
-            None, cog_name="Core", identifier=0, force_registration=force_registration
+            None,
+            cog_name="Core",
+            identifier=0,
+            force_registration=force_registration,
+            allow_old=allow_old,
         )
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
@@ -791,11 +821,11 @@ class Config:
         --------
         You can register a single value or multiple values::
 
-            conf.register_global(
+            config.register_global(
                 foo=True
             )
 
-            conf.register_global(
+            config.register_global(
                 bar=False,
                 baz=None
             )
@@ -810,7 +840,7 @@ class Config:
             }
 
             # Will register `foo.bar` == True and `foo.baz` == False
-            conf.register_global(
+            config.register_global(
                 **_defaults
             )
 
@@ -818,7 +848,7 @@ class Config:
         using double underscore as a variable name separator::
 
             # This is equivalent to the previous example
-            conf.register_global(
+            config.register_global(
                 foo__bar=True,
                 foo__baz=False
             )
@@ -877,10 +907,10 @@ class Config:
         """
         Initializes a custom group for usage. This method must be called first!
         """
-        if group_identifier in self.custom_groups:
-            raise ValueError(f"Group identifier already registered: {group_identifier}")
-
-        self.custom_groups[group_identifier] = identifier_count
+        if identifier_count != self.custom_groups.setdefault(group_identifier, identifier_count):
+            raise ValueError(
+                f"Cannot change identifier count of already registered group: {group_identifier}"
+            )
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
         """
@@ -963,7 +993,7 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: discord.abc.GuildChannel) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
@@ -1457,7 +1487,7 @@ class Config:
 async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
     """Migrate from one driver type to another."""
     # Get custom group data
-    core_conf = Config.get_core_conf()
+    core_conf = Config.get_core_conf(allow_old=True)
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
 

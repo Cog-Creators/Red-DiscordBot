@@ -1,1 +1,0 @@
-fixes a missing await from #2976
