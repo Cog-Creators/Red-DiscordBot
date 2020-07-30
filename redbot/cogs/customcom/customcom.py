@@ -464,7 +464,7 @@ class CustomCommands(commands.Cog):
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
         except NotFound:
-            ctx.send(_("I could not not find that custom command."))
+            await ctx.send(_("I could not not find that custom command."))
             return
 
         responses = cmd["response"]
@@ -490,7 +490,7 @@ class CustomCommands(commands.Cog):
             command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
-        cooldowns = cmd["cooldowns"]
+        cooldowns = cmd.get("cooldowns", {})
 
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
@@ -514,6 +514,9 @@ class CustomCommands(commands.Cog):
         user_allowed = True
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+            return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
 
         ctx = await self.bot.get_context(message)

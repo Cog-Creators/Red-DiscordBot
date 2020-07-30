@@ -142,6 +142,9 @@ class KickBanMixin(MixinMeta):
                 if not guild.me.guild_permissions.ban_members:
                     continue
 
+                if await self.bot.cog_disabled_in_guild(self, guild):
+                    continue
+
                 async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
                         unban_time = datetime.utcfromtimestamp(

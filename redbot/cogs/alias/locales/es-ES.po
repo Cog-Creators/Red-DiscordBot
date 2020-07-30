@@ -26,11 +26,11 @@ msgstr "Prefijo no encontrado."
 
 #: redbot/cogs/alias/alias.py:116
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "Alias:\\n"
 
 #: redbot/cogs/alias/alias.py:118
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nPagina {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:128
 #, docstring
@@ -134,7 +134,7 @@ msgstr "Elimina un alias global existente."
 
 #: redbot/cogs/alias/alias.py:298
 msgid "There are no global aliases on this bot."
-msgstr ""
+msgstr "Este bot no tiene alias globales."
 
 #: redbot/cogs/alias/alias.py:312
 #, docstring
@@ -148,7 +148,7 @@ msgstr "Lista de los alias globales disponibles en este bot."
 
 #: redbot/cogs/alias/alias.py:324
 msgid "There are no global aliases."
-msgstr ""
+msgstr "No hay alias globales."
 
 #: redbot/cogs/alias/alias_entry.py:174
 msgid "Arguments must be specified with a number."

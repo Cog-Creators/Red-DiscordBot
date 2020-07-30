@@ -5,7 +5,7 @@ import logging
 import discord
 import lavalink
 
-from ...errors import DatabaseError
+from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -19,7 +19,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_track = player.current
         current_channel = player.channel
         guild = self.rgetattr(current_channel, "guild", None)
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            await player.stop()
+            await player.disconnect()
+            return
         guild_id = self.rgetattr(guild, "id", None)
+        if not guild:
+            return
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)
         current_length = self.rgetattr(current_track, "length", None)
@@ -62,10 +68,23 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
+                    notify_channel = self.bot.get_channel(notify_channel)
                     if notify_channel:
-                        notify_channel = self.bot.get_channel(notify_channel)
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
+                        )
+                    return
+                except TrackEnqueueError:
+                    notify_channel = player.fetch("channel")
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    if notify_channel:
+                        await self.send_embed_msg(
+                            notify_channel,
+                            title=_("Unable to Get Track"),
+                            description=_(
+                                "I'm unable get a track from Lavalink at the moment, try again in a few "
+                                "minutes."
+                            ),
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:

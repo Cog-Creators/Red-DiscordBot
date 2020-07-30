@@ -178,6 +178,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ) -> None:
+        if await self.bot.cog_disabled_in_guild(self, member.guild):
+            return
         await self.cog_ready_event.wait()
         if after.channel != before.channel:
             try:

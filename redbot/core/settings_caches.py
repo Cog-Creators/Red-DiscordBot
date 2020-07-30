@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterable
+from typing import Dict, List, Optional, Union, Set, Iterable, Tuple
 from argparse import Namespace
+from collections import defaultdict
 
 import discord
 
@@ -254,3 +255,108 @@ class WhitelistBlacklistManager:
                 )
             self._cached_blacklist[gid].difference_update(role_or_user)
             await self._config.guild_from_id(gid).blacklist.set(list(self._cached_blacklist[gid]))
+
+
+class DisabledCogCache:
+    def __init__(self, config: Config):
+        self._config = config
+        self._disable_map: Dict[str, Dict[int, bool]] = defaultdict(dict)
+
+    async def cog_disabled_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Check if a cog is disabled in a guild
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+        """
+
+        if guild_id in self._disable_map[cog_name]:
+            return self._disable_map[cog_name][guild_id]
+
+        gset = await self._config.custom("COG_DISABLE_SETTINGS", cog_name, guild_id).disabled()
+        if gset is None:
+            gset = await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled()
+            if gset is None:
+                gset = False
+
+        self._disable_map[cog_name][guild_id] = gset
+        return gset
+
+    async def default_disable(self, cog_name: str):
+        """
+        Sets the default for a cog as disabled.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        """
+        await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.set(True)
+        del self._disable_map[cog_name]
+
+    async def default_enable(self, cog_name: str):
+        """
+        Sets the default for a cog as enabled.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        """
+        await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.clear()
+        del self._disable_map[cog_name]
+
+    async def disable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Disable a cog in a guild.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+            Whether or not any change was made.
+            This may be useful for settings commands.
+        """
+
+        if await self.cog_disabled_in_guild(cog_name, guild_id):
+            return False
+
+        self._disable_map[cog_name][guild_id] = True
+        await self._config.custom("COG_DISABLE_SETTINGS", cog_name, guild_id).disabled.set(True)
+        return True
+
+    async def enable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Enable a cog in a guild.
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+            Whether or not any change was made.
+            This may be useful for settings commands.
+        """
+
+        if not await self.cog_disabled_in_guild(cog_name, guild_id):
+            return False
+
+        self._disable_map[cog_name][guild_id] = False
+        await self._config.custom("COG_DISABLE_SETTINGS", cog_name, guild_id).disabled.set(False)
+        return True
