@@ -5,6 +5,7 @@ from .. import data_manager
 from .base import IdentifierData, BaseDriver, ConfigCategory
 from .json import JsonDriver
 from .postgres import PostgresDriver
+from .msgpack import MsgpackDriver
 
 __all__ = [
     "get_driver",
@@ -12,6 +13,7 @@ __all__ = [
     "IdentifierData",
     "BaseDriver",
     "JsonDriver",
+    "MsgpackDriver",
     "PostgresDriver",
     "BackendType",
 ]
@@ -22,6 +24,8 @@ class BackendType(enum.Enum):
 
     #: JSON storage backend.
     JSON = "JSON"
+    #: Msgpack storage backend
+    MSGPACK = "MSGPACK"
     #: Postgres storage backend.
     POSTGRES = "Postgres"
     # Dead drivers below retained for error handling.
@@ -29,7 +33,11 @@ class BackendType(enum.Enum):
     MONGO = "MongoDBV2"
 
 
-_DRIVER_CLASSES = {BackendType.JSON: JsonDriver, BackendType.POSTGRES: PostgresDriver}
+_DRIVER_CLASSES = {
+    BackendType.JSON: JsonDriver,
+    BackendType.POSTGRES: PostgresDriver,
+    BackendType.MSGPACK: MsgpackDriver,
+}
 
 
 def _get_driver_class_include_old(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
