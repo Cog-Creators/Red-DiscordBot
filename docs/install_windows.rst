@@ -4,18 +4,29 @@
 Installing Red on Windows
 =========================
 
----------------
-Needed Software
----------------
+-------------------------------
+Installing the pre-requirements
+-------------------------------
 
-The following software dependencies can all be installed quickly and easily through PowerShell,
-using a trusted package manager for Windows called `Chocolatey <https://chocolatey.org>`_
+Please install the pre-requirements by following instructions from one of the following subsections.
 
-We also provide instructions for manually installing all of the dependencies.
+The pre-requirements are:
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
+ - Git 2.11+
+ - Java Runtime Environment 11 (for audio support)
 
-******************************************
-Installing using powershell and chocolatey
-******************************************
+We also recommend installing some basic compiler tools, in case our dependencies don't provide
+pre-built "wheels" for your architecture.
+
+.. contents:: Choose a method of installing pre-requirements:
+    :local:
+
+----
+
+*********************************************
+Using PowerShell and Chocolatey (recommended)
+*********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
 right-click on it and then click "Run as administrator"
@@ -25,28 +36,89 @@ Then run each of the following commands:
 .. code-block:: none
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    choco install git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco install jre8 python -y; exit
+    choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
+    choco upgrade visualstudio2019-workload-vctools -y
+    choco upgrade python3 -y
 
-From here, continue onto `installing Red <installing-red-windows>`.
+For Audio support, you should also run the following command before exiting:
+
+.. code-block:: none
+
+    choco upgrade adoptopenjdk11jre -y
+
+
+From here, exit the prompt then continue onto `creating-venv-windows`.
+
+----
 
 ********************************
 Manually installing dependencies
 ********************************
 
-* `Python <https://www.python.org/downloads/>`_ - Red needs Python 3.7.0 or greater
+.. attention:: There are additional configuration steps required which are
+               not documented for installing dependencies manually.
+               These dependencies are only listed seperately here for
+               reference purposes.
+
+* `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
+
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
 
-* `Git <https://git-scm.com/download/win>`_
+* `Git 2.11+ <https://git-scm.com/download/win>`_
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
+* `Java 11 <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
-.. attention:: Please choose the "Windows Online" installer.
+From here, continue onto `creating-venv-windows`.
+
+----
+
+.. _creating-venv-windows:
+
+------------------------------
+Creating a Virtual Environment
+------------------------------
+
+.. tip::
+
+    If you want to learn more about virtual environments, see page: `about-venvs`
+
+We require installing Red into a virtual environment. Don't be scared, it's very
+straightforward.
+
+First, choose a directory where you would like to create your virtual environment. It's a good idea
+to keep it in a location which is easy to type out the path to. From now, we'll call it
+``redenv`` and it will be located in your home directory.
+
+Start with opening a command prompt (open Start, search for "command prompt", then click it)
+
+.. warning::
+
+    These commands will not work in PowerShell - you have to use command prompt as said above.
+
+Then create your virtual environment with the following command
+
+.. code-block:: none
+
+    py -3.8 -m venv "%userprofile%\redenv"
+
+And activate it with the following command
+
+.. code-block:: none
+
+    "%userprofile%\redenv\Scripts\activate.bat"
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    Command Prompt to run, install or update Red.
+
 
 .. _installing-red-windows:
 
@@ -57,45 +129,26 @@ Installing Red
 .. attention:: You may need to restart your computer after installing dependencies
                for the PATH changes to take effect.
 
-1. Open a command prompt (open Start, search for "command prompt", then click it)
-2. Create and activate a virtual environment (strongly recommended), see the section `using-venv`
-3. Run **one** of the following commands, depending on what extras you want installed
-
-  .. note::
-
-      If you're not inside an activated virtual environment, use ``py -3.7`` in place of
-      ``python``, and include the ``--user`` flag with all ``pip install`` commands, like this:
-
-      .. code-block:: none
-
-          py -3.7 -m pip install --user -U Red-DiscordBot
+Run **one** of the following set of commands, depending on what extras you want installed
 
   * Normal installation:
 
     .. code-block:: none
 
+        python -m pip install -U pip setuptools wheel
         python -m pip install -U Red-DiscordBot
-
-  * With MongoDB support:
-
-    .. code-block:: none
-
-        python -m pip install -U Red-DiscordBot[mongo]
 
   * With PostgreSQL support:
 
     .. code-block:: none
 
-        python3.7 -m pip install -U Red-DiscordBot[postgres]
+        python -m pip install -U pip setuptools wheel
+        python -m pip install -U Red-DiscordBot[postgres]
 
-  .. note::
 
-      To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-      following link:
+.. note::
 
-      .. code-block:: none
-
-          git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

@@ -3,9 +3,9 @@
 .. role:: python(code)
     :language: python
 
-====================
-Creating cogs for V3
-====================
+========================
+Creating cogs for Red V3
+========================
 
 This guide serves as a tutorial on creating cogs for Red V3.
 It will cover the basics of setting up a package for your
@@ -17,20 +17,33 @@ you in the process.
 Getting started
 ---------------
 
-To start off, be sure that you have installed Python 3.7.
+To start off, be sure that you have installed Python 3.8.
 Next, you need to decide if you want to develop against the Stable or Develop version of Red.
 Depending on what your goal is should help determine which version you need.
 
-.. attention:: 
+.. attention::
     The Develop version may have changes on it which break compatibility with the Stable version and other cogs.
     If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
 
 Open a terminal or command prompt and type one of the following
-    Stable Version: :code:`python3.7 -m pip install -U Red-DiscordBot`
-    
-    Develop Version: :code:`python3.7 -m pip install -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot`
+    Stable Version: :code:`python3.8 -m pip install -U Red-DiscordBot`
 
-(Windows users may need to use :code:`py -3.7` or :code:`python` instead of :code:`python3.7`)
+.. note::
+
+  To install the development version, replace ``Red-DiscordBot`` in the above commands with the
+  link below. **The development version of the bot contains experimental changes. It is not
+  intended for normal users.** We will not support anyone using the development version in any
+  support channels. Using the development version may break third party cogs and not all core
+  commands may work. Downgrading to stable after installing the development version may cause
+  data loss, crashes or worse. Please keep this in mind when using the development version
+  while working on cog creation.
+
+  .. code-block:: none
+
+      git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot
+
+
+(Windows users may need to use :code:`py -3.8` or :code:`python` instead of :code:`python3.8`)
 
 --------------------
 Setting up a package
@@ -136,6 +149,12 @@ have successfully created a cog!
     
     You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
 
+-------------------
+Publishing your cog
+-------------------
+
+Go to :doc:`/guide_publish_cogs`
+
 --------------------
 Additional resources
 --------------------
@@ -143,3 +162,79 @@ Additional resources
 Be sure to check out the :doc:`/guide_migration` for some resources
 on developing cogs for V3. This will also cover differences between V2 and V3 for
 those who developed cogs for V2.
+
+
+---------------------------
+Guidelines for Cog Creators
+---------------------------
+
+The following are a list of guidelines Cog Creators should strive to follow.
+Not all of these are strict requirements (some are) but are all generally advisable.
+
+1. Cogs should follow a few naming conventions for consistency.
+
+  - Cog classes should be TitleCased, using alphabetic characters only.
+  - Commands should be lower case, using alphanumeric characters only.
+  - Cog modules should be lower case, using alphabetic characters only.
+
+2. Cogs and commands should have docstrings suitable for use in help output.
+
+  - This one is slightly flexible if using other methods of setting help.
+
+3. Don't prevent normal operation of the bot without the user opting into this.
+
+  - This includes as a side effect by blocking the event loop.
+
+4. If your cog uses logging:
+
+  - The namespace for logging should be: ``red.your_repo_name.cog_name``.
+  - Print statements are not a substitute for proper logging.
+
+5. If you use asyncio.create_task, your tasks need to:
+
+  - Be cancelled on cog unload.
+  - Handle errors.
+
+6. Event listeners should exit early if it is an event you don't need.
+   This makes your events less expensive in terms of CPU time. Examples below:
+
+  - Checking that you are in a guild before interacting with config for an antispam command.
+  - Checking that you aren't reacting to a bot message (``not message.author.bot``) early on.
+
+7. Use .gitignore (or something else) to keep unwanted files out of your cog repo.
+8. Put a license on your cog repo.
+
+  - By default, in most jurisdictions, without a license that at least offers the code for use,
+    users cannot legally use your code.
+
+9. Use botwide features when they apply. Some examples of this:
+
+  - ``ctx.embed_color``
+  - ``bot.is_automod_immune``
+
+10. Use checks to limit command use when the bot needs special permissions.
+11. Check against user input before doing things. Common things to check:
+
+  - Resulting output is safe.
+  - Values provided make sense. (eg. no negative numbers for payday)
+  - Don't unsafely use user input for things like database input.
+
+12. Don't abuse bot internals.
+
+  - If you need access to something, ask us or open an issue.
+  - If you're sure the current usage is safe, document why,
+    but we'd prefer you work with us on ensuring you have access to what you need.
+
+13. Update your cogs for breakage.
+
+  - We announce this in advance.
+  - If you need help, ask.
+
+14. Check events against ``bot.cog_disabled_in_guild``
+
+  - Not all events need to be checked, only those that interact with a guild.
+  - Some discretion may apply, for example,
+    a cog which logs command invocation errors could choose to ignore this
+    but a cog which takes actions based on messages should not.
+
+15. Respect settings when treating non command messages as commands.

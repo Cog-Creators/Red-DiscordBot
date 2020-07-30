@@ -1,71 +1,96 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:13\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2020-07-09 12:16+0000\n"
+"Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: no\n"
-"X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
+"X-Crowdin-File-ID: 14\n"
 "Language: no_NO\n"
 
-#: redbot/cogs/bank/bank.py:62
+#: redbot/cogs/bank/bank.py:36
 #, docstring
 msgid "Bank"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:74
+#: redbot/cogs/bank/bank.py:48
 #, docstring
 msgid "Base command for bank settings."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:87
-msgid "Bank settings:\\n\\nBank name: {bank_name}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}"
+#: redbot/cogs/bank/bank.py:52
+#, docstring
+msgid "Show the current bank settings."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:98
+#: redbot/cogs/bank/bank.py:62
+msgid "Global"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:62
+msgid "Server"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:67
+msgid "Bank settings:\\n\\nBank name: {bank_name}\\nBank scope: {bank_scope}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}\\n"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:83
 #, docstring
 msgid "Toggle whether the bank is global or not.\\n\\n        If the bank is global, it will become per-server.\\n        If the bank is per-server, it will become global.\\n        "
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:105
+#: redbot/cogs/bank/bank.py:90
 msgid "per-server"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:105
+#: redbot/cogs/bank/bank.py:90
 msgid "global"
 msgstr "global"
 
-#: redbot/cogs/bank/bank.py:108
+#: redbot/cogs/bank/bank.py:93
 msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:115
+#: redbot/cogs/bank/bank.py:100
 msgid "The bank is now {banktype}."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:120
+#: redbot/cogs/bank/bank.py:106
 #, docstring
 msgid "Set the bank's name."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:122
+#: redbot/cogs/bank/bank.py:108
 msgid "Bank name has been set to: {name}"
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:127
+#: redbot/cogs/bank/bank.py:114
 #, docstring
 msgid "Set the name for the bank's currency."
 msgstr ""
 
-#: redbot/cogs/bank/bank.py:129
+#: redbot/cogs/bank/bank.py:116
 msgid "Currency name has been set to: {name}"
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:122
+#, docstring
+msgid "Set the maximum balance a user can get."
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:128
+msgid "Amount must be greater than zero and less than {max}."
+msgstr ""
+
+#: redbot/cogs/bank/bank.py:133
+msgid "Maximum balance has been set to: {amount}"
 msgstr ""
 

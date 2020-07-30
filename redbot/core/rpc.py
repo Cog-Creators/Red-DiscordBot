@@ -75,7 +75,7 @@ class RPC:
         accepting queries.
         """
         await self._runner.setup()
-        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port)
+        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0)
         await self._site.start()
         log.debug("Created RPC server listener on port %s", port)
 
@@ -83,6 +83,7 @@ class RPC:
         """
         Closes the RPC server.
         """
+        await self.app.shutdown()
         await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
@@ -127,6 +128,9 @@ class RPCMixin:
             All parameters to RPC handler methods must be JSON serializable objects.
             The return value of handler methods must also be JSON serializable.
 
+        .. important::
+            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
+
         Parameters
         ----------
         method : coroutine
@@ -147,6 +151,9 @@ class RPCMixin:
 
         This will be called automatically for you on cog unload and will pass silently if the
         method is not previously registered.
+
+        .. important::
+            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------

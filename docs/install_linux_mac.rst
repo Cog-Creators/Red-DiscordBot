@@ -17,13 +17,23 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.7.0 or greater
- - Pip 9.0 or greater
- - Git
- - Java Runtime Environment 8 or later (for audio support)
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
+ - Git 2.11+
+ - Java Runtime Environment 11 (for audio support)
 
 We also recommend installing some basic compiler tools, in case our dependencies don't provide
 pre-built "wheels" for your architecture.
+
+
+*****************
+Operating systems
+*****************
+
+.. contents::
+    :local:
+
+----
 
 .. _install-arch:
 
@@ -33,10 +43,14 @@ Arch Linux
 
 .. code-block:: none
 
-    sudo pacman -Syu python python-pip git jre-openjdk-headless base-devel
+    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel
 
-.. _install-centos:
-.. _install-rhel:
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-centos7:
+.. _install-rhel7:
 
 ~~~~~~~~~~~~~~~~~
 CentOS and RHEL 7
@@ -44,46 +58,65 @@ CentOS and RHEL 7
 
 .. code-block:: none
 
-    yum -y groupinstall development
-    yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    sudo yum install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-1.8.0-openjdk
+    sudo yum -y groupinstall development
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install centos-release-scl
+    sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
+    echo "source scl_source enable devtoolset-8" >> ~/.bashrc
+    source ~/.bashrc
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+In order to install Git 2.11 or greater, we recommend adding the IUS repository:
+
+.. code-block:: none
+
+    sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
+    sudo yum -y swap git git224
+
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
+
+.. _install-centos:
+.. _install-rhel:
+
+~~~~~~~~~~~~~~~~~
+CentOS and RHEL 8
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: none
+
+    sudo yum -y install epel-release
+    sudo yum -y update
+    sudo yum -y groupinstall development
+    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian
-~~~~~~~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 Debian and Raspbian Buster
-**************************
-
-Debian and Raspbian Buster have all required packages available in official repositories. Install
-them with apt:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt install python3 python3-dev python3-venv python3-pip git default-jre-headless \
-      build-essential
-
-Debian and Raspbian Stretch
-***************************
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
-Debian/Raspbian Stretch. This guide will tell you how. First, run the following commands:
+Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-      liblzma-dev python3-openssl git default-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+      libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    CXX=/usr/bin/g++
 
-Complete the rest of the installation by `installing Python 3.7 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-fedora:
 
@@ -91,12 +124,16 @@ Complete the rest of the installation by `installing Python 3.7 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 29 and above has all required packages available in official repositories. Install
+Fedora Linux 31 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
 
-    sudo dnf install python3 python3-devel git java-latest-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools
+
+Continue by `creating-venv-linux`.
+
+----
 
 .. _install-mac:
 
@@ -109,20 +146,22 @@ following, then press Enter:
 
 .. code-block:: none
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
 
 .. code-block:: none
 
-    brew install python --with-brewed-openssl
+    brew install python@3.8
+    echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
+    source ~/.profile
     brew install git
-    brew tap caskroom/versions
-    brew cask install homebrew/cask-versions/adoptopenjdk8
+    brew cask install adoptopenjdk/openjdk/adoptopenjdk11
 
-It's possible you will have network issues. If so, go in your Applications folder, inside it, go in
-the Python 3.7 folder then double click ``Install certificates.command``.
+Continue by `creating-venv-linux`.
+
+----
 
 .. _install-opensuse:
 
@@ -130,10 +169,10 @@ the Python 3.7 folder then double click ``Install certificates.command``.
 openSUSE
 ~~~~~~~~
 
-openSUSE Leap
-*************
+openSUSE Leap 15.1+
+*******************
 
-We recommend installing a community package to get Python 3.7 on openSUSE Leap. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.1+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -141,14 +180,17 @@ First, add the Opt-Python community repository:
 .. code-block:: none
 
     source /etc/os-release
-    sudo zypper ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
+    sudo zypper -n ar -f \
+      https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ \
+      Opt-Python
+    sudo zypper -n --gpg-auto-import-keys ref
 
 Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper install opt-python37 opt-python37-setuptools git-core java-11-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
@@ -162,7 +204,9 @@ Now, install pip with easy_install:
 
 .. code-block:: none
 
-    sudo /opt/python/bin/easy_install-3.7 pip
+    sudo /opt/python/bin/easy_install-3.8 pip
+
+Continue by `creating-venv-linux`.
 
 openSUSE Tumbleweed
 *******************
@@ -172,60 +216,161 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper install python3-base python3-pip git-core java-12-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
-.. _install-ubuntu:
+Continue by `creating-venv-linux`.
 
-~~~~~~
-Ubuntu
-~~~~~~
+----
 
-.. note:: **Ubuntu 16.04 Users**
+.. _install-ubuntu-1604:
 
-    You must add a 3rd-party repository to install Python 3.7 on Ubuntu 16.04 with apt. We
-    recommend the ``deadsnakes`` repository:
+~~~~~~~~~~~~~~~~
+Ubuntu 16.04 LTS
+~~~~~~~~~~~~~~~~
 
-    .. code-block:: none
-
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
-
-Install the pre-requirements with apt:
+We recommend adding the ``openjdk-r`` ppa to install Java 11:
 
 .. code-block:: none
 
     sudo apt update
-    sudo apt install python3.7 python3.7-dev python3.7-venv python3-pip git default-jre-headless \
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:openjdk-r/ppa
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -yu ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -yu ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
       build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu-1804:
+
+~~~~~~~~~~~~~~~~
+Ubuntu 18.04 LTS
+~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
+      build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu:
+
+~~~~~~~~~~~~~~~~
+Ubuntu 20.04 LTS
+~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:git-core/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
+      build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu-non-lts:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Ubuntu non-LTS versions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:git-core/ppa
+
+Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
+installing pyenv. To do this, first run the following commands:
+
+.. code-block:: none
+
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    CXX=/usr/bin/g++
+
+And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+
+----
 
 .. _install-python-pyenv:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+****************************
 Installing Python with pyenv
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+****************************
 
 .. note::
 
     If you followed one of the sections above, and weren't linked here afterwards, you should skip
     this section.
 
-On distributions where Python 3.7 needs to be compiled from source, we recommend the use of pyenv.
+On distributions where Python 3.8 needs to be compiled from source, we recommend the use of pyenv.
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
 .. code-block:: none
 
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+    command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
-After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
-instructions given to fix that, then close and reopen your shell.
+**After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
+instructions given to fix that, then close and reopen your shell.**
 
 Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.7.4 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -237,16 +382,94 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.7.4
+    pyenv global 3.8.5
 
-Pyenv is now installed and your system should be configured to run Python 3.7.
+Pyenv is now installed and your system should be configured to run Python 3.8.
+
+Continue by `creating-venv-linux`.
+
+.. _creating-venv-linux:
 
 ------------------------------
 Creating a Virtual Environment
 ------------------------------
 
-We **strongly** recommend installing Red into a virtual environment. Don't be scared, it's very
-straightforward. See the section `installing-in-virtual-environment`.
+.. tip::
+
+    If you want to learn more about virtual environments, see page: `about-venvs`
+
+We require installing Red into a virtual environment. Don't be scared, it's very
+straightforward.
+
+You have 2 options:
+
+* :ref:`using-venv` (quick and easy, involves just two commands)
+* :ref:`using-pyenv-virtualenv` (only available and recommended when you installed Python with pyenv)
+
+----
+
+.. _using-venv:
+
+**************
+Using ``venv``
+**************
+This is the quickest way to get your virtual environment up and running, as `venv` is shipped with
+python.
+
+First, choose a directory where you would like to create your virtual environment. It's a good idea
+to keep it in a location which is easy to type out the path to. From now, we'll call it
+``redenv`` and it will be located in your home directory.
+
+Create your virtual environment with the following command::
+
+    python3.8 -m venv ~/redenv
+
+And activate it with the following command::
+
+    source ~/redenv/bin/activate
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red.
+
+Continue by `installing-red-linux-mac`.
+
+----
+
+.. _using-pyenv-virtualenv:
+
+**************************
+Using ``pyenv virtualenv``
+**************************
+
+Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
+environments. This option is only available if you installed Python with pyenv.
+
+First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command::
+
+    pyenv version
+
+Now, create a virtual environment with the following command::
+
+    pyenv virtualenv <name>
+
+Replace ``<name>`` with whatever you like. If you ever forget what you named it,
+you can always use the command ``pyenv versions`` to list all virtual environments.
+
+Now activate your virtualenv with the following command::
+
+    pyenv shell <name>
+
+.. important::
+
+    You must activate the virtual environment with the above command every time you open a new
+    shell to run, install or update Red. You can check out other commands like ``pyenv local`` and
+    ``pyenv global`` if you wish to keep the virtualenv activated all the time.
+
+Continue by `installing-red-linux-mac`.
+
+.. _pyenv-installer: https://github.com/pyenv/pyenv-installer/blob/master/README.rst
 
 .. _installing-red-linux-mac:
 
@@ -256,41 +479,24 @@ Installing Red
 
 Choose one of the following commands to install Red.
 
-.. note::
-
-    If you're not inside an activated virtual environment, include the ``--user`` flag with all
-    ``python3.7 -m pip install`` commands, like this:
-
-    .. code-block:: none
-
-        python3.7 -m pip install --user -U Red-DiscordBot
-
-To install without MongoDB support:
+To install without additional config backend support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot
-
-Or, to install with MongoDB support:
-
-.. code-block:: none
-
-    python3.7 -m pip install -U Red-DiscordBot[mongo]
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
 .. code-block:: none
 
-    python3.7 -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U pip setuptools wheel
+    python -m pip install -U Red-DiscordBot[postgres]
+
 
 .. note::
 
-  To install the development version, replace ``Red-DiscordBot`` in the above commands with the
-  following link:
-
-  .. code-block:: none
-
-      git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot
+    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

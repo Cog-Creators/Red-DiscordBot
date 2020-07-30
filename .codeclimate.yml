@@ -1,0 +1,52 @@
+version: "2"  # required to adjust maintainability checks
+checks:
+  argument-count:
+    config:
+      threshold: 8  # work on this later
+  complex-logic:
+    enabled: false  # Disabled in favor of using Radon for this
+    config:
+      threshold: 4
+  file-lines:
+    enabled: false  # enable after audio stuff...
+    config:
+      threshold: 2000  # I would set this lower if not for cogs as command containers.
+  method-complexity:
+    enabled: false  # Disabled in favor of using Radon for this
+    config:
+      threshold: 5
+  method-count:
+    enabled: false  # I would set this lower if not for cogs as command containers.
+    config:
+      threshold: 20
+  method-lines:
+    enabled: false
+    config:
+      threshold: 25  # I'm fine with long methods, cautious about the complexity of a single method.
+  nested-control-flow:
+    config:
+      threshold: 6
+  return-statements:
+    config:
+      threshold: 6
+  similar-code:
+    enabled: false
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+  identical-code:
+    enabled: false
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+plugins:
+  bandit:
+    enabled: false
+  radon: 
+    enabled: false
+    config: 
+      threshold: "D"
+  duplication:
+    enabled: false
+    config:
+      languages:
+        python:
+          python_version: 3

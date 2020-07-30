@@ -58,7 +58,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018, Cog Creators"
+copyright = "2018-2020, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -107,9 +107,6 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-
-# This will be needed until sphinx_rtd_theme supports the html5 writer
-html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -207,6 +204,7 @@ texinfo_documents = [
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+linkcheck_retries = 3
 
 
 # -- Options for extensions -----------------------------------------------
@@ -216,12 +214,17 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
+    "babel": ("http://babel.pocoo.org/en/stable/", None),
 }
 
 # Extlinks
 # This allows to create links to d.py docs with
 # :dpy_docs:`link text <site_name.html>`
-extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None)}
+extlinks = {
+    "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
+    "ghuser": ("https://github.com/%s", "@"),
+}
 
 # Doctest
 # If this string is non-empty, all blocks with ``>>>`` in them will be
@@ -229,5 +232,5 @@ extlinks = {"dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s
 doctest_test_doctest_blocks = ""
 
 # Autodoc options
-autodoc_default_flags = ["show-inheritance"]
+autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
