@@ -75,7 +75,7 @@ class RPC:
         accepting queries.
         """
         await self._runner.setup()
-        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port)
+        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0)
         await self._site.start()
         log.debug("Created RPC server listener on port %s", port)
 
@@ -83,6 +83,7 @@ class RPC:
         """
         Closes the RPC server.
         """
+        await self.app.shutdown()
         await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
