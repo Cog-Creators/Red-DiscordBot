@@ -261,7 +261,7 @@ class Context(DPYContext):
     def clean_prefix(self) -> str:
         """
         str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
-        This can be used in a context where discord user mentions might not redner properly.
+        This can be used in a context where discord user mentions might not render properly.
         """
         me = self.me
         pattern = re.compile(rf"<@!?{me.id}>")
