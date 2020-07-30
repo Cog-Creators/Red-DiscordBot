@@ -87,7 +87,6 @@ class RPC:
         """
         await self.app.shutdown()
         await self._runner.cleanup()
-        await self._site.stop()
 
     def add_method(self, method, prefix: str = None):
         if prefix is None:
