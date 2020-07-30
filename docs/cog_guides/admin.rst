@@ -46,12 +46,30 @@ selfrole
 
 .. code-block:: none
 
-    [p]selfrole <selfrole>
+    [p]selfrole
+
+**Description**
+
+Add or remove roles to yourself. Those roles must have been configured as user
+settable by admins using the :ref:`selfroleset command
+<admin-command-selfroleset>`.
+
+.. _admin-command-selfrole-add:
+
+""""""""""""
+selfrole add
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]selfrole add <role>
 
 **Description**
 
 Add a role to yourself. It must have been configured as user settable
-by admins using the :ref:`selfrole add command <admin-command-selfrole-add>`.
+by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
 
 **Arguments**
 
@@ -78,6 +96,7 @@ by admins.
 
 * ``<selfrole>``: The role you want to remove from yourself. |role-input|
 
+
 .. _admin-command-selfrole-list:
 
 """""""""""""
@@ -94,11 +113,11 @@ selfrole list
 
 List all of the available roles you can assign to yourself.
 
-.. _admin-command-selfrole-add:
+.. _admin-command-selfroleset:
 
-""""""""""""
-selfrole add
-""""""""""""
+^^^^^^^^^^^
+selfroleset
+^^^^^^^^^^^
 
 .. note:: This command is locked to members with the ``Manage roles``
     permission.
@@ -107,7 +126,24 @@ selfrole add
 
 .. code-block:: none
 
-    [p]selfrole add <role>
+    [p]selfroleset
+
+**Description**
+
+Define the list of user settable roles. Those roles will be available to any
+member using the :ref:`selfrole command <admin-command-selfrole>`.
+
+.. _admin-command-selfroleset-add:
+
+"""""""""""""""
+selfroleset add
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]selfroleset add <role>
 
 **Description**
 
@@ -121,20 +157,17 @@ Add a role to the list of selfroles.
 
 * ``<role>``: The role to add to the list. |role-input|
 
-.. _admin-command-selfrole-delete:
+.. _admin-command-selfroleset-remove:
 
-"""""""""""""""
-selfrole delete
-"""""""""""""""
-
-.. note:: This command is locked to members with the ``Manage roles``
-    permission.
+""""""""""""""""""
+selfroleset remove
+""""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]selfrole add <role>
+    [p]selfroleset remove <role>
 
 **Description**
 
@@ -291,55 +324,6 @@ the bot will use the highest channel in the list.
 
 * ``<message>``: The message to send.
 
-.. _admin-command-announce-channel:
-
-""""""""""""""""
-announce channel
-""""""""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]announce channel [channel]
-
-**Description**
-
-Sets the channel where the bot owner announcements will be sent.
-
-**Arguments**
-
-* ``[channel=ctx]``: The channel that will be used for bot announcements.
-  |channel-input| Defaults to where you typed the command.
-
-.. _admin-command-announce-ignore:
-
-"""""""""""""""
-announce ignore
-"""""""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]announce ignore [guild]
-
-**Description**
-
-Enables or disables announcements on the selected guild.
-
-**Arguments**
-
-* ``[guild=ctx]``: The server where the announcements will be enabled/disabled.
-    Defaults to the current server.
-
-.. warning:: You need the appropriate permissions if you're trying to edit a
-    different server's setting than where you are invoking the command.
-
 .. _admin-command-announce-cancel:
 
 """""""""""""""
@@ -357,6 +341,69 @@ announce cancel
 **Description**
 
 Cancels an active announcement.
+
+.. _admin-command-announceset:
+
+^^^^^^^^^^^
+announceset
+^^^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]announceset
+
+**Description**
+
+Manage the settings of announcements sent by the bot owners on servers.
+
+.. _admin-command-announceset-channel:
+
+"""""""""""""""""""
+announceset channel
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]announceset channel [channel]
+
+**Description**
+
+Sets the channel where the bot owner announcements will be sent.
+
+**Arguments**
+
+* ``[channel=ctx]``: The channel that will be used for bot announcements.
+  |channel-input| Defaults to where you typed the command.
+
+.. _admin-command-announceset-ignore:
+
+""""""""""""""""""
+announceset ignore
+""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]announceset ignore [guild]
+
+**Description**
+
+Enables or disables announcements on the selected guild.
+
+**Arguments**
+
+* ``[guild=ctx]``: The server where the announcements will be enabled/disabled.
+    Defaults to the current server.
+
+.. warning:: You need the appropriate permissions if you're trying to edit a
+    different server's setting than where you are invoking the command.
 
 .. _admin-command-serverlock:
 
