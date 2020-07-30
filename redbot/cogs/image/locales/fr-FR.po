@@ -98,13 +98,13 @@ msgstr "Erreur lors du contact avec l'API."
 #: redbot/cogs/image/image.py:241
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
-msgstr ""
+msgstr "Explique comment définir le token d'API GIPHY."
 
 #: redbot/cogs/image/image.py:243
 msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
-msgstr ""
+msgstr "Pour obtenir une clé d'API GIPHY:\\n1. Connectez-vous (ou créez) un compte GIPHY.\\n2. Visitez cette page: https://developers.giphy.com/dashboard.\\n3. Appuyez sur *Create an App*.\\n4. Cliquez sur *Select API*, puis *Next Step*.\\n5. Ajoutez un nom d'application, par exemple *Red*.\\n6. Ajoutez une description d'application, par exemple *Utilisé pour le cod image de Red*.\\n7. Cliquez sur *Create App*. Vous devrez accepter les conditions de l'API GIPHY.\\n8. Copiez la clé API.\\n9. Sur Discord, exécutez la command {command}.\\n"
 
 #: redbot/cogs/image/image.py:256
 msgid "<your_api_key_here>"
-msgstr ""
+msgstr "<votre_clé_d'api_ici>"
 

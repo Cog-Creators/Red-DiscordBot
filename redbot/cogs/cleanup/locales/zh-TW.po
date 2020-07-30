@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -62,27 +62,35 @@ msgstr "刪除指定訊息前的X則訊息。\\n\\n        要取得訊息ID的�
 msgid "Delete the messages between Messsage One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 msgstr "提供訊息ID來刪除兩則訊息之間的訊息。\\n\\n        第一個訊息ID應該是較早的訊息，第二個訊息ID應該是較新的訊息。\\n\\n        範例:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:355
+#: redbot/cogs/cleanup/cleanup.py:357
 #, docstring
 msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
 msgstr "刪除最後的X訊息。\\n\\n        範例:\\n            `[p]cleanup messages 26`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:385
+#: redbot/cogs/cleanup/cleanup.py:389
 #, docstring
 msgid "Clean up command messages and messages from the bot."
 msgstr "清理命令訊息和來自機器人的訊息。"
 
-#: redbot/cogs/cleanup/cleanup.py:465
+#: redbot/cogs/cleanup/cleanup.py:469
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:535
+#: redbot/cogs/cleanup/cleanup.py:539
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "從最新的X則訊息中刪除的重複訊息，僅保留一則訊息。\\n\\n        預設是50。\\n        "
 
-#: redbot/cogs/cleanup/converters.py:12
+#: redbot/cogs/cleanup/converters.py:15
 msgid "{} doesn't look like a valid message ID."
 msgstr "{}看起來不是有效的訊息ID。"
+
+#: redbot/cogs/cleanup/converters.py:27
+msgid "{arg} is not an integer."
+msgstr ""
+
+#: redbot/cogs/cleanup/converters.py:29
+msgid "{arg} is not a positive integer."
+msgstr ""
 

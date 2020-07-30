@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -64,27 +64,35 @@ msgstr "Supprime X messages avant un message spécifié.\\n\\n        Pour obten
 msgid "Delete the messages between Messsage One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 msgstr "Supprimez les messages entre deux messages, en fournissant l'ID des messages.\\n\\n        Le premier ID de message doit être l'ancien message et le second le plus récent.\\n\\n        Exemple :\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:355
+#: redbot/cogs/cleanup/cleanup.py:357
 #, docstring
 msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
 msgstr "Supprime les X derniers messages.\\n\\n        Exemple :\\n            `[p]cleanup messages 26`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:385
+#: redbot/cogs/cleanup/cleanup.py:389
 #, docstring
 msgid "Clean up command messages and messages from the bot."
 msgstr "Supprime les messages de commandes et les messages venant du bot."
 
-#: redbot/cogs/cleanup/cleanup.py:465
+#: redbot/cogs/cleanup/cleanup.py:469
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
 msgstr "Nettoyer les messages envoyé par le bot.\\n\\n        Par défaut, tous les messages sont nettoyés. Si un troisième argument est spécifié,\\n        il est utilisé pour le pattern matching - seuls les messages contenant le texte donné seront supprimés.\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:535
+#: redbot/cogs/cleanup/cleanup.py:539
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "Supprime les messages dupliqués dans le salon des X derniers messages et ne conserve qu'une seule copie.\\n\\n        Par défaut à 50.\\n        "
 
-#: redbot/cogs/cleanup/converters.py:12
+#: redbot/cogs/cleanup/converters.py:15
 msgid "{} doesn't look like a valid message ID."
 msgstr "{} ne ressemble pas à un ID de message valide."
+
+#: redbot/cogs/cleanup/converters.py:27
+msgid "{arg} is not an integer."
+msgstr ""
+
+#: redbot/cogs/cleanup/converters.py:29
+msgid "{arg} is not a positive integer."
+msgstr ""
 
