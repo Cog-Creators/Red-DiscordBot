@@ -19,14 +19,14 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-This cog will provide tools for server admins and bot owner.
+This cog will provide tools for server admins and bot owners.
 
-It can add or remove a role to a member, edit one, make some available
+It can add or remove a role to a member, edit one or make some available
 for members so they can self-assign them as they wish.
 
 It also provides tools for the bot owner such as server locking (once enabled,
 the bot will instantly leave new servers she joins) and announcements, which
-will tell something in all the servers of the bot.
+will send something in all the servers of the bot.
 
 .. _admin-commands:
 
@@ -100,7 +100,7 @@ List all of the available roles you can assign to yourself.
 selfrole add
 """"""""""""
 
-.. note:: This command is locked to the members with the ``Manage roles``
+.. note:: This command is locked to members with the ``Manage roles``
     permission.
 
 **Syntax**
@@ -127,7 +127,7 @@ Add a role to the list of selfroles.
 selfrole delete
 """""""""""""""
 
-.. note:: This command is locked to the member with the ``Manage roles``
+.. note:: This command is locked to members with the ``Manage roles``
     permission.
 
 **Syntax**
@@ -212,7 +212,7 @@ editrole
 
 **Description**
 
-Edits settings of a role.
+Edits the settings of a role.
 
 .. _admin-command-editrole-name:
 
@@ -285,7 +285,7 @@ Announce your message to all of the servers the bot is in.
 The bot will announce the message in the guild's announcements channel
 if set, else she will try the system channel (where the new members are
 welcomed with the Discord announcer). If none of these channels are found,
-the bot will use the first one.
+the bot will use the highest channel in the list.
 
 **Arguments**
 
@@ -338,7 +338,7 @@ Enables or disables announcements on the selected guild.
     Defaults to the current server.
 
 .. warning:: You need the appropriate permissions if you're trying to edit a
-    server setting from a different one.
+    different server's setting than where you are invoking the command.
 
 .. _admin-command-announce-cancel:
 
