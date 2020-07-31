@@ -404,6 +404,9 @@ if not TYPE_CHECKING:
     #: treats `typing.Optional`, but the type should not be equivalent to
     #: ``typing.Union[DesiredType, None]`` for type checking.
     #:
+    #: Note: In type checking context, this type hint can be passed
+    #: multiple types, but such usage is not supported and will fail at runtime
+    #:
     #: .. warning::
     #:    This converter class is still provisional.
     UserInputOptional = Optional
