@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from typing import Optional
 
 from aiohttp import web
@@ -88,7 +89,7 @@ class RPC:
             )
         except Exception as exc:
             log.exception("RPC setup failure", exc_info=exc)
-            raise
+            sys.exit(1)
         else:
             await self._site.start()
             log.debug("Created RPC server listener on port %s", port)
