@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-12-06 11:27+1100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp1252\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../cog_manager.py:21
+#, docstring
+msgid ""
+"Directory manager for Red's cogs.\n"
+"\n"
+"    This module allows you to load cogs from multiple directories and even from\n"
+"    outside the bot directory. You may also set a directory for downloader to\n"
+"    install new cogs to, the default being the :code:`cogs/` folder in the root\n"
+"    bot directory.\n"
+"    "
+msgstr ""
+
+#: ../cog_manager.py:40
+#, docstring
+msgid ""
+"Get all currently valid path directories.\n"
+"\n"
+"        Returns\n"
+"        -------\n"
+"        `tuple` of `pathlib.Path`\n"
+"            All valid cog paths.\n"
+"\n"
+"        "
+msgstr ""
+
+#: ../cog_manager.py:64
+#, docstring
+msgid ""
+"Get the install path for 3rd party cogs.\n"
+"\n"
+"        Returns\n"
+"        -------\n"
+"        pathlib.Path\n"
+"            The path to the directory where 3rd party cogs are stored.\n"
+"\n"
+"        "
+msgstr ""
+
+#: ../cog_manager.py:273
+#, docstring
+msgid ""
+"Finds the names of all available modules to load.\n"
+"        "
+msgstr ""
+
+#: ../cog_manager.py:285
+#, docstring
+msgid ""
+"Re-evaluate modules in the py cache.\n"
+"\n"
+"        This is an alias for an importlib internal and should be called\n"
+"        any time that a new module has been installed to a cog directory.\n"
+"        "
+msgstr ""
+
+#: ../cog_manager.py:298
+#, docstring
+msgid ""
+"Commands to interface with Red's cog manager."
+msgstr ""
+"(TRANSLATED) Commands to interface with Red's cog manager."
+
+#: ../cog_manager.py:302
+#, docstring
+msgid ""
+"\n"
+"        Lists current cog paths in order of priority."
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Lists current cog paths in order of priority."
+"        "
+
+#: ../cog_manager.py:321
+#, docstring
+msgid ""
+"\n"
+"        Add a path to the list of available cog paths."
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Add a path to the list of available cog paths."
+"        "
+
+#: ../cog_manager.py:340
+#, docstring
+msgid ""
+"\n"
+"        Removes a path from the available cog paths given the path_number"
+"            from !paths"
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Removes a path from the available cog paths given the path_number"
+"            from !paths"
+"        "
+
+#: ../cog_manager.py:357
+#, docstring
+msgid ""
+"\n"
+"        Reorders paths internally to allow discovery of different cogs."
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Reorders paths internally to allow discovery of different cogs."
+"        "
+
+#: ../cog_manager.py:383
+#, docstring
+msgid ""
+"\n"
+"        Returns the current install path or sets it if one is provided."
+"            The provided path must be absolute or relative to the bot's"
+"            directory and it must already exist."
+"\n"
+"        No installed cogs will be transferred in the process."
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Returns the current install path or sets it if one is provided."
+"            The provided path must be absolute or relative to the bot's"
+"            directory and it must already exist."
+"\n"
+"        No installed cogs will be transferred in the process."
+"        "
+
+#: ../cog_manager.py:406
+#, docstring
+msgid ""
+"\n"
+"        Lists all loaded and available cogs."
+"        "
+msgstr ""
+"\n"
+"        (TRANSLATED) Lists all loaded and available cogs."
+"        "
+
+#: ../cog_manager.py:309
+msgid ""
+"Install Path: {}\n"
+"\n"
+msgstr ""
+
+#: ../cog_manager.py:325
+msgid "That path is does not exist or does not point to a valid directory."
+msgstr ""
+
+#: ../cog_manager.py:334
+msgid "Path successfully added."
+msgstr ""
+
+#: ../cog_manager.py:347
+msgid "That is an invalid path number."
+msgstr ""
+
+#: ../cog_manager.py:351
+msgid "Path successfully removed."
+msgstr ""
+
+#: ../cog_manager.py:367
+msgid "Invalid 'from' index."
+msgstr ""
+
+#: ../cog_manager.py:373
+msgid "Invalid 'to' index."
+msgstr ""
+
+#: ../cog_manager.py:377
+msgid "Paths reordered."
+msgstr ""
+
+#: ../cog_manager.py:395
+msgid "That path does not exist."
+msgstr ""
+
+#: ../cog_manager.py:399
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr ""
+

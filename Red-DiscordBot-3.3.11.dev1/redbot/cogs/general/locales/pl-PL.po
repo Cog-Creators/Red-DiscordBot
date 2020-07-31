@@ -1,0 +1,504 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2020-04-02 12:07+0000\n"
+"Last-Translator: \n"
+"Language-Team: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.1\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File-ID: 17\n"
+"Language: pl_PL\n"
+
+#: redbot/cogs/general/general.py:46
+#, docstring
+msgid "General commands."
+msgstr "Generalne komendy."
+
+#: redbot/cogs/general/general.py:51
+msgid "As I see it, yes"
+msgstr "Moim zdaniem tak"
+
+#: redbot/cogs/general/general.py:52
+msgid "It is certain"
+msgstr "To pewne"
+
+#: redbot/cogs/general/general.py:53
+msgid "It is decidedly so"
+msgstr "Zdecydowanie tak jest"
+
+#: redbot/cogs/general/general.py:54
+msgid "Most likely"
+msgstr "Prawdopodobnie"
+
+#: redbot/cogs/general/general.py:55
+msgid "Outlook good"
+msgstr "Wygląda dobrze"
+
+#: redbot/cogs/general/general.py:56
+msgid "Signs point to yes"
+msgstr "Wszystko wskazuje, że tak"
+
+#: redbot/cogs/general/general.py:57
+msgid "Without a doubt"
+msgstr "Bez wątpienia"
+
+#: redbot/cogs/general/general.py:58
+msgid "Yes"
+msgstr "Tak"
+
+#: redbot/cogs/general/general.py:59
+msgid "Yes – definitely"
+msgstr "Tak - definitywnie"
+
+#: redbot/cogs/general/general.py:60
+msgid "You may rely on it"
+msgstr "Możesz na to liczyć"
+
+#: redbot/cogs/general/general.py:61
+msgid "Reply hazy, try again"
+msgstr "Odpowiedź niejasna, spróbuj ponownie"
+
+#: redbot/cogs/general/general.py:62
+msgid "Ask again later"
+msgstr "Spytaj ponownie później"
+
+#: redbot/cogs/general/general.py:63
+msgid "Better not tell you now"
+msgstr "Lepiej teraz nie mówić"
+
+#: redbot/cogs/general/general.py:64
+msgid "Cannot predict now"
+msgstr "Nie można teraz przewidzieć"
+
+#: redbot/cogs/general/general.py:65
+msgid "Concentrate and ask again"
+msgstr "Skoncentruj się i spytaj ponownie"
+
+#: redbot/cogs/general/general.py:66
+msgid "Don't count on it"
+msgstr "Nie licz na to"
+
+#: redbot/cogs/general/general.py:67
+msgid "My reply is no"
+msgstr "Moja odpowiedź brzmi nie"
+
+#: redbot/cogs/general/general.py:68
+msgid "My sources say no"
+msgstr "Moje źródła mówią, że nie"
+
+#: redbot/cogs/general/general.py:69
+msgid "Outlook not so good"
+msgstr "Nie wygląda to za dobrze"
+
+#: redbot/cogs/general/general.py:70
+msgid "Very doubtful"
+msgstr "Bardzo wątpliwe"
+
+#: redbot/cogs/general/general.py:80
+#, docstring
+msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
+msgstr "Wybierz spośród wielu opcji.\\n\\n        Aby określić opcje, które zawierają spację, powinieneś użyć\\n        cudzysłowów.\\n        "
+
+#: redbot/cogs/general/general.py:87
+msgid "Not enough options to pick from."
+msgstr "Za mało opcji do wyboru."
+
+#: redbot/cogs/general/general.py:93
+#, docstring
+msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
+msgstr "Rzuć losową liczbę.\\n\\n        Wynik będzie między 1 a `<number>`.\\n\\n        `<number>` <number> ` domyślnie 100.\\n        "
+
+#: redbot/cogs/general/general.py:108
+msgid "{author.mention} Maybe higher than 1? ;P"
+msgstr "{author.mention} Może wybierzesz powyżej 1? ;P"
+
+#: redbot/cogs/general/general.py:111
+msgid "{author.mention} Max allowed number is {maxamount}."
+msgstr "{author.mention} Maksymalna liczba to {maxamount}."
+
+#: redbot/cogs/general/general.py:118
+#, docstring
+msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
+msgstr "Odwróć monetę... lub użytkownika.\\n\\n        Domyślnie moneta.\\n        "
+
+#: redbot/cogs/general/general.py:126
+msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
+msgstr "Niezła próba. Myślisz, że jesteś śmieszny?\\n Patrz na to:\\n\\n"
+
+#: redbot/cogs/general/general.py:137
+msgid "*flips a coin and... "
+msgstr "*rzuca monetą i... "
+
+#: redbot/cogs/general/general.py:137
+msgid "HEADS!*"
+msgstr "ORZEŁ!*"
+
+#: redbot/cogs/general/general.py:137
+msgid "TAILS!*"
+msgstr "RESZKA!*"
+
+#: redbot/cogs/general/general.py:141
+#, docstring
+msgid "Play Rock Paper Scissors."
+msgstr "Zagraj w Papier Nożyce Kamień."
+
+#: redbot/cogs/general/general.py:146
+msgid "This isn't a valid option. Try {r}, {p}, or {s}."
+msgstr "Podana opcja nie jest prawidłowa. Spróbuj {r}, {p} lub {s}."
+
+#: redbot/cogs/general/general.py:167
+msgid "{choice} You win {author.mention}!"
+msgstr "{choice} Wygrywasz {author.mention}!"
+
+#: redbot/cogs/general/general.py:173
+msgid "{choice} You lose {author.mention}!"
+msgstr "{choice} Przegrywasz {author.mention}!"
+
+#: redbot/cogs/general/general.py:179
+msgid "{choice} We're square {author.mention}!"
+msgstr "{choice} Remis {author.mention}!"
+
+#: redbot/cogs/general/general.py:186
+#, docstring
+msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
+msgstr "Zadaj pytanie 8-ball.\\n\\n        Pytanie musi kończyć się znakiem zapytania.\\n        "
+
+#: redbot/cogs/general/general.py:193
+msgid "That doesn't look like a question."
+msgstr "To nie wygląda na pytanie."
+
+#: redbot/cogs/general/general.py:197
+#, docstring
+msgid "Start or stop the stopwatch."
+msgstr "Uruchom lub zatrzymaj stoper."
+
+#: redbot/cogs/general/general.py:201
+msgid " Stopwatch started!"
+msgstr " Uruchomiono stoper!"
+
+#: redbot/cogs/general/general.py:206
+msgid " Stopwatch stopped! Time: **{seconds}**"
+msgstr " Stoper zatrzymany! Czas: **{seconds}**"
+
+#: redbot/cogs/general/general.py:212
+#, docstring
+msgid "Create a lmgtfy link."
+msgstr "Utwórz link do lmgtfy."
+
+#: redbot/cogs/general/general.py:221
+#, docstring
+msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
+msgstr "Ponieważ wszyscy lubią przytulasy!\\n\\n        Do 10 poziomów.\\n        "
+
+#: redbot/cogs/general/general.py:245
+#, docstring
+msgid "\\n        Show server information.\\n    \\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
+msgstr "\\n        Pokaż informacje o serwerze.\\n    \\n        `details`: Pokazuje więcej informacji po ustawieniu na `True`.\\n        Domyślnie na False.\\n        "
+
+#: redbot/cogs/general/general.py:253
+msgid "Created on {date}. That's over {num} days ago!"
+msgstr "Stworzony dnia {date}. To jest ponad {num} dni temu!"
+
+#: redbot/cogs/general/general.py:264
+msgid "Region"
+msgstr "Region"
+
+#: redbot/cogs/general/general.py:265
+msgid "Users online"
+msgstr "Użytkowników online"
+
+#: redbot/cogs/general/general.py:266
+msgid "Text Channels"
+msgstr "Kanały Tekstowe"
+
+#: redbot/cogs/general/general.py:267
+msgid "Voice Channels"
+msgstr "Kanały Głosowe"
+
+#: redbot/cogs/general/general.py:268
+msgid "Roles"
+msgstr "Role"
+
+#: redbot/cogs/general/general.py:269
+msgid "Owner"
+msgstr "Właściciel"
+
+#: redbot/cogs/general/general.py:270
+msgid "Server ID: "
+msgstr "ID serwera: "
+
+#: redbot/cogs/general/general.py:293
+msgid "\\nShard ID: **{shard_id}/{shard_count}**"
+msgstr "\\nID sharda: **{shard_id}/{shard_count}**"
+
+#: redbot/cogs/general/general.py:302
+msgid "Humans: "
+msgstr "Użytkowników: "
+
+#: redbot/cogs/general/general.py:303
+msgid " • Bots: "
+msgstr " • Boty: "
+
+#: redbot/cogs/general/general.py:313
+msgid "Users online: **{online}/{total_users}**\\n"
+msgstr "Użytkowników online: **{online}/{total_users}**\\n"
+
+#: redbot/cogs/general/general.py:330
+msgid "__VIP__ US East "
+msgstr "__VIP__ Wschodnie USA "
+
+#: redbot/cogs/general/general.py:331
+msgid "__VIP__ US West "
+msgstr "__VIP__ Zachód USA "
+
+#: redbot/cogs/general/general.py:332
+msgid "__VIP__ Amsterdam "
+msgstr "__VIP__ Amsterdam "
+
+#: redbot/cogs/general/general.py:333
+msgid "EU West "
+msgstr "Europa Zachodnia "
+
+#: redbot/cogs/general/general.py:334
+msgid "EU Central "
+msgstr "Europa Centralna "
+
+#: redbot/cogs/general/general.py:335
+msgid "Europe "
+msgstr "Europa "
+
+#: redbot/cogs/general/general.py:336
+msgid "London "
+msgstr "Londyn "
+
+#: redbot/cogs/general/general.py:337
+msgid "Frankfurt "
+msgstr "Frankfurt "
+
+#: redbot/cogs/general/general.py:338
+msgid "Amsterdam "
+msgstr "Amsterdam "
+
+#: redbot/cogs/general/general.py:339
+msgid "US West "
+msgstr "Zachód USA "
+
+#: redbot/cogs/general/general.py:340
+msgid "US East "
+msgstr "Wschodnie USA "
+
+#: redbot/cogs/general/general.py:341
+msgid "US South "
+msgstr "Południowe USA "
+
+#: redbot/cogs/general/general.py:342
+msgid "US Central "
+msgstr "Centrum USA "
+
+#: redbot/cogs/general/general.py:343
+msgid "Singapore "
+msgstr "Singapur "
+
+#: redbot/cogs/general/general.py:344
+msgid "Sydney "
+msgstr "Sydnej "
+
+#: redbot/cogs/general/general.py:345
+msgid "Brazil "
+msgstr "Brazylia "
+
+#: redbot/cogs/general/general.py:346
+msgid "Hong Kong "
+msgstr "Hong Kong "
+
+#: redbot/cogs/general/general.py:347
+msgid "Russia "
+msgstr "Rosja "
+
+#: redbot/cogs/general/general.py:348
+msgid "Japan "
+msgstr "Japonia "
+
+#: redbot/cogs/general/general.py:349
+msgid "South Africa "
+msgstr "Południowa Afryka "
+
+#: redbot/cogs/general/general.py:350
+msgid "India "
+msgstr "Indie "
+
+#: redbot/cogs/general/general.py:351
+msgid "Dubai "
+msgstr "Dubaj "
+
+#: redbot/cogs/general/general.py:352
+msgid "South Korea "
+msgstr "Korea Południowa "
+
+#: redbot/cogs/general/general.py:355
+msgid "0 - None"
+msgstr "0 - Brak"
+
+#: redbot/cogs/general/general.py:356
+msgid "1 - Low"
+msgstr "1 - Niski"
+
+#: redbot/cogs/general/general.py:357
+msgid "2 - Medium"
+msgstr "2 - Średni"
+
+#: redbot/cogs/general/general.py:358
+msgid "3 - High"
+msgstr "3 - Wysoki"
+
+#: redbot/cogs/general/general.py:359
+msgid "4 - Extreme"
+msgstr "4 - Ekstermalny"
+
+#: redbot/cogs/general/general.py:363
+msgid "Partnered"
+msgstr ""
+
+#: redbot/cogs/general/general.py:364
+msgid "Verified"
+msgstr "Zweryfikowany"
+
+#: redbot/cogs/general/general.py:365
+msgid "Server Discovery"
+msgstr ""
+
+#: redbot/cogs/general/general.py:366
+msgid "Featurable"
+msgstr ""
+
+#: redbot/cogs/general/general.py:367
+msgid "Public"
+msgstr "Publiczne"
+
+#: redbot/cogs/general/general.py:368
+msgid "Public disabled"
+msgstr ""
+
+#: redbot/cogs/general/general.py:369
+msgid "Splash Invite"
+msgstr ""
+
+#: redbot/cogs/general/general.py:370
+msgid "VIP Voice Servers"
+msgstr ""
+
+#: redbot/cogs/general/general.py:371
+msgid "Vanity URL"
+msgstr ""
+
+#: redbot/cogs/general/general.py:372
+msgid "More Emojis"
+msgstr ""
+
+#: redbot/cogs/general/general.py:373
+msgid "Commerce"
+msgstr ""
+
+#: redbot/cogs/general/general.py:374
+msgid "News Channels"
+msgstr ""
+
+#: redbot/cogs/general/general.py:375
+msgid "Animated Icon"
+msgstr ""
+
+#: redbot/cogs/general/general.py:376
+msgid "Banner Image"
+msgstr ""
+
+#: redbot/cogs/general/general.py:377
+msgid "Member list disabled"
+msgstr ""
+
+#: redbot/cogs/general/general.py:383
+msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
+msgstr ""
+
+#: redbot/cogs/general/general.py:405
+msgid "Members:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:407
+msgid "Channels:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:408
+msgid "💬 Text: {text}\\n🔊 Voice: {voice}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:414
+msgid "Utility:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:415
+msgid "Owner: {owner}\\nVoice region: {region}\\nVerif. level: {verif}\\nServer ID: {id}{shard_info}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:427
+msgid "Misc:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:428
+msgid "AFK channel: {afk_chan}\\nAFK timeout: {afk_timeout}\\nCustom emojis: {emoji_count}\\nRoles: {role_count}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:433
+msgid "Not set"
+msgstr ""
+
+#: redbot/cogs/general/general.py:441
+msgid "Server features:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:443
+msgid "Tier {boostlevel} with {nitroboosters} boosters\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:455
+msgid "Nitro Boost:"
+msgstr ""
+
+#: redbot/cogs/general/general.py:464
+#, docstring
+msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
+msgstr ""
+
+#: redbot/cogs/general/general.py:480 redbot/cogs/general/general.py:546
+msgid "No Urban Dictionary entries were found, or there was an error in the process."
+msgstr ""
+
+#: redbot/cogs/general/general.py:486
+msgid "No Urban Dictionary entries were found."
+msgstr ""
+
+#: redbot/cogs/general/general.py:492
+msgid "{word} by {author}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:497
+msgid "{definition}\\n\\n**Example:** {example}"
+msgstr ""
+
+#: redbot/cogs/general/general.py:503
+msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
+msgstr ""
+
+#: redbot/cogs/general/general.py:522
+msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
+msgstr ""
+
+#: redbot/cogs/general/general.py:528
+msgid "{definition}\\n\\n**Example:** {example}"
+msgstr ""
+
