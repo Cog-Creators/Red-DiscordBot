@@ -387,9 +387,6 @@ if not TYPE_CHECKING:
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
 
-        .. warning::
-            This converter class is still provisional.
-
         .. seealso::
             The `ignore_optional_for_conversion` option of commands.
         """
