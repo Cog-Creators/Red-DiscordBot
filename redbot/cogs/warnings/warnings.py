@@ -14,6 +14,7 @@ from redbot.cogs.warnings.helpers import (
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
+from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
@@ -364,7 +365,7 @@ class Warnings(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        points: Optional[int] = 1,
+        points: UserInputOptional[int] = 1,
         *,
         reason: str,
     ):

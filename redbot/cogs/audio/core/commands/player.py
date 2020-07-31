@@ -10,6 +10,7 @@ from discord.embeds import EmptyEmbed
 from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.commands import UserInputOptional
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
@@ -122,7 +123,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_bumpplay(
-        self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
+        self, ctx: commands.Context, play_now: UserInputOptional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
         query = Query.process_input(query, self.local_folder_current_path)

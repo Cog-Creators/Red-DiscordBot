@@ -12,6 +12,7 @@ import lavalink
 from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.commands import UserInputOptional
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
@@ -636,7 +637,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        v2: Optional[bool] = False,
+        v2: UserInputOptional[bool] = False,
         *,
         scope_data: ScopeParser = None,
     ):
