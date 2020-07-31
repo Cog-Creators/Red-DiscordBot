@@ -21,29 +21,35 @@ Usage
 
 This cog is used to create shortcuts for commands.
 
-You can do things like this:
+Here's an example:
 
-.. code-block:: none
+.. code-block:: python
 
-    [p]cleanup messages 42
-    equals to
-    [p]clean 42
+    [p]play
+    # with an alias, you can call the command above with a shortcut like this:
+    [p]p
+    # "p" is now a shortcut for "play"
 
-or even this:
+In this example, we made an alias named ``p`` that will
+invoke the ``play`` command. If you use ``[p]play`` or ``[p]p``, the result will
+be the same.
 
-.. code-block:: none
+---
 
-    [p]search sc Au temps en emporte le Z event
-    equals to
-    [p]soundcloud Au temps en emporte le Z event
+Here's another example
 
-In the first example, we made an alias named ``clean`` that will
-invoke the ``cleanup messages`` command.
+.. code-block:: python
 
-In the second example, we made an alias called ``soundcloud`` that will
-invoke the ``search sc`` command (search a song to play on SoundCloud). As you
-can see, you can also add arguments to your alias. Then you can add the
-arguments you want after your alias.
+    [p]cleanup messages
+    # now we're creating another alias that will group both the command and the subcommand into this:
+    [p]clear
+    # "clear" is now a shortcut for "cleanup messages"
+
+In this second example, we made an alias called ``clear`` that will
+invoke the ``cleanup messages`` subcommand. Now if you use ``[p]cleanup
+message`` or ``[p]clear``, the result will be the same.
+
+---
 
 This is the basic usage, where you can define an alias for the first part of
 the command and give the second part when invoking the command. A more advanced
@@ -57,9 +63,10 @@ be replaced by the first argument of your alias:
 
 .. code-block:: none
 
-    [p]ban Slime#3160 7 Spam bot.
-    equals to
+    # we created the following alias named "spamban"
     [p]spamban Slime#3160
+    # this alias will execute the following command:
+    [p]ban Slime#3160 7 Spam bot.
 
 For a more detailed explaination, read :ref:`this <alias-command-alias-add>`.
 
@@ -111,7 +118,7 @@ parameters members have to give for the command (orange).
 
 .. image:: ../.resources/alias/example-1.png
 
-One more thing you can do with aliases is using parameters, a bit like
+One more thing you can do with aliases is using arguments, a bit like
 CustomCommands. Let's suppose you want an alias that bans x member and deletes
 7 days of messages. Without aliases, the command would look like this:
 
@@ -122,7 +129,7 @@ and you can only shorten the left part before the required argument.
 
 An alias with arguments can fix that, you can define the alias on the whole
 command and replace the required argument by ``{0}``, which will be replaced
-by the first argument given when invoking the alias.
+by the first parameter given when invoking the alias.
 
 Back to our example, let's make an alias named ``bigban`` which will be
 assigned to this expression: ``ban {0} 7``
