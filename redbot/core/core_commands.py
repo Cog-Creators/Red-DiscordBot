@@ -773,7 +773,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "This will remove the user from various anti-abuse measures. "
                 "If you are processing a manual request from a user, you may want "
                 "`{prefix}{command_name}` instead"
-                "\n\nIf you are sure this is what you intend to do"
+                "\n\nIf you are sure this is what you intend to do "
                 "please respond with the following:"
             ).format(prefix=ctx.clean_prefix, command_name="mydata ownermanagement deleteforuser"),
         ):
@@ -842,7 +842,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "This is a mostly safe operation, but you should not use it "
                 "unless processing a request from this "
                 "user as it may impact their usage of the bot. "
-                "\n\nIf you are sure this is what you intend to do"
+                "\n\nIf you are sure this is what you intend to do "
                 "please respond with the following:"
             ),
         ):
@@ -917,7 +917,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "a lot of data about the specified user. "
                 "This may include more than just end user data, including "
                 "anti abuse records."
-                "\n\nIf you are sure this is what you intend to do"
+                "\n\nIf you are sure this is what you intend to do "
                 "please respond with the following:"
             ),
         ):
