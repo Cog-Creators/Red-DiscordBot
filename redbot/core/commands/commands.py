@@ -886,11 +886,12 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
             .. note::
-                 you should safely handle
+                you should safely handle
                 any string value (log a warning if needed)
                 as additional requester types may be added
                 in the future without prior warning.
                 (see what this method can raise for details)
+
 
             - ``"discord_deleted_user"``:
                 The request should be processed as if
