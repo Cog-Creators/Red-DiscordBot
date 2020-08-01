@@ -1370,7 +1370,8 @@ class RedBase(
         await super().logout()
         await drivers.get_driver_class().teardown()
         try:
-            await self.rpc.close()
+            if self.rpc_enabled:
+                await self.rpc.close()
         except AttributeError:
             pass
 
