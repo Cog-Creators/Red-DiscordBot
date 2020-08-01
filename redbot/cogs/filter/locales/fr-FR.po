@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -156,11 +156,11 @@ msgstr "Les noms et les pseudos seront maintenant filtrés."
 msgid "Autoban (too many filtered messages.)"
 msgstr "Autoban (trop de messages filtrés.)"
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:420
 msgid "Filtered nickname"
 msgstr "Pseudo filtré"
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:420
 msgid "Filtered name"
 msgstr "Nom filtré"
 

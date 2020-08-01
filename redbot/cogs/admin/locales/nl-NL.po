@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-07-23 12:17+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -214,11 +214,11 @@ msgstr "De bot is niet langer vergrendeld."
 msgid "The bot is now serverlocked."
 msgstr "De bot is vergrendeld."
 
-#: redbot/cogs/admin/announcer.py:66
+#: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
 msgstr "Ik kan de volgende server niet aankondigen: "
 
-#: redbot/cogs/admin/announcer.py:68
+#: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
 msgstr "Ik kon de volgende servers niet aankondigen: "
 

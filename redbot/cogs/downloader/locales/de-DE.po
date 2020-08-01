@@ -167,7 +167,7 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:644
 #: redbot/cogs/downloader/downloader.py:1285
 msgid "Failed to install requirements: "
-msgstr ""
+msgstr "Fehler beim Installieren der Anforderungen: "
 
 #: redbot/cogs/downloader/downloader.py:649
 msgid "\\nFailed to install shared libraries: "
