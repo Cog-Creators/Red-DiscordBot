@@ -36,7 +36,7 @@ Discord account was the target of a moderation action.
 
 3rd party extensions to Red are able to delete data when this command
 is used as well, but this is something each extension must implement.
-If a loaded extension does not implmenent this, the user will be informed.
+If a loaded extension does not implemenent this, the user will be informed.
 
 Additional Notes for Bot Owners and Hosts
 *****************************************
