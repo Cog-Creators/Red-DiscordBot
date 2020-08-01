@@ -122,14 +122,14 @@ class Alias(commands.Cog):
         await self.config.handled_string_creator.set(True)
 
     def sync_init(self):
-        t = asyncio.create_task(self._initialize)
+        t = asyncio.create_task(self._initialize())
 
         def done_callback(fut: asyncio.Future):
             try:
                 t.result()
             except Exception as exc:
                 log.exception("Failed to load alias cog", exc_info=exc)
-                self.bot.remove_cog(self)
+                # Maybe schedule extension unloading with message to owner in future
 
         t.add_done_callback(done_callback)
 

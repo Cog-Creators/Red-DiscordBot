@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 from collections import namedtuple
 from copy import copy
@@ -57,9 +58,30 @@ class Warnings(commands.Cog):
 
         all_members = await self.config.all_members()
 
-        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
-            if user_id in guild_data:
+        c = 0
+
+        for guild_id, guild_data in all_members.items():
+            c += 1
+            if not c % 100:
+                await asyncio.sleep(0)
+
+            if str(user_id) in guild_data:
                 await self.config.member_from_ids(guild_id, user_id).clear()
+
+            for remaining_user, user_warns in guild_data.items():
+                c += 1
+                if not c % 100:
+                    await asyncio.sleep(0)
+
+                for warn_id, warning in user_warns.get("warnings", {}):
+                    c += 1
+                    if not c % 100:
+                        await asyncio.sleep(0)
+
+                        if warning.get("mod", 0) == user_id:
+                            await self.config.member_from_ids(guild_id, remaining_user).set_raw(
+                                "warnings", warn_id, "mod", value=0xDE1
+                            )
 
     # We're not utilising modlog yet - no need to register a casetype
     @staticmethod

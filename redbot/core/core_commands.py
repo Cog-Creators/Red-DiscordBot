@@ -565,11 +565,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         fp = io.BytesIO(html.encode())
 
-        await ctx.send(file=discord.File(fp, filename="3rd-party.html"))
+        await ctx.send(
+            _("Here's a generated page with the statements provided by 3rd-party extensions"),
+            file=discord.File(fp, filename="3rd-party.html"),
+        )
 
     async def get_serious_confirmation(self, ctx: commands.Context, prompt: str) -> bool:
 
-        confirm_token = "".join(random.choices((*ascii_letters, *digits), k=8,))
+        confirm_token = "".join(random.choices((*ascii_letters, *digits), k=8))
 
         await ctx.send(f"{prompt}\n\n{confirm_token}")
         try:
@@ -588,7 +591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         return False
 
-    # 1 per day, not stored to config to avid this being more stored data.
+    # 1 per day, not stored to config to avoid this being more stored data.
     # large bots shouldn't be restarting so often that this is an issue,
     # and small bots that do restart often don't have enough
     # users for this to be an issue.
@@ -680,7 +683,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n {cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -824,7 +827,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n {cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -838,7 +841,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "This will cause the bot to get rid of or disassociate "
                 "a lot of non-operational data from the "
                 "specified user. Users have access to "
-                "different command for this unless they can't interact with the bot at all."
+                "different command for this unless they can't interact with the bot at all. "
                 "This is a mostly safe operation, but you should not use it "
                 "unless processing a request from this "
                 "user as it may impact their usage of the bot. "
@@ -902,7 +905,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n {cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -968,7 +971,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n {cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
