@@ -14,7 +14,7 @@ Red and the cogs included with it collect some amount of data
 about users for the bot's normal operations. 
 
 In particular the bot will keep track of a short history of usernames/nicknames
-which actions refer to your discord account (such as creating a playlist)
+which actions refer to your Discord account (such as creating a playlist)
 as well as the content of specific messages used directly as commands for the bot
 (such as reports sent to servers).
 
@@ -32,10 +32,11 @@ How can I delete data Red has about me?
 The command ``[p]mydata forgetme`` provides a way for users to remove
 large portions of their own data from the bot. This command will not
 remove operational data, such as a record that your
-discord account was the target of a moderation action.
+Discord account was the target of a moderation action.
 
 3rd party extensions to Red are able to delete data when this command
 is used as well, but this is something each extension must implement.
+If a loaded extension does not implmenent this, the user will be informed.
 
 Additional Notes for Bot Owners and Hosts
 *****************************************
