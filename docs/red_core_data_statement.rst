@@ -11,7 +11,7 @@ What data Red collects
 ----------------------
 
 Red and the cogs included with it collect some amount of data
-about users for it's normal operations. 
+about users for the bot's normal operations. 
 
 In particular the bot will keep track of a short history of usernames/nicknames
 which actions refer to your discord account (such as creating a playlist)
