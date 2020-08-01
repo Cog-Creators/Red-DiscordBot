@@ -493,12 +493,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_whatdata(self, ctx: commands.Context):
         """ Find out what type of data [botname] stores and why """
 
-        ver = "latest" if VersionInfo.from_str(__version__).dev_release else "stable"
+        ver = "latest" if red_version_info.dev_release else "stable"
         link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
         await ctx.send(
             _(
                 "This bot stores some data about users as necessary to function. "
-                "This is mostly the ID your user is assigned by discord, linked to "
+                "This is mostly the ID your user is assigned by Discord, linked to "
                 "a handful of things depending on what you interact with in the bot. "
                 "There are a few commands which store it to keep track of who created "
                 "something. (such as playlists) "
@@ -520,7 +520,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # Can't check this as a command check, and want to prompt DMs as an option.
         if not ctx.channel.permissions_for(ctx.me).attach_files:
             ctx.command.reset_cooldown(ctx)
-            return await ctx.send("I need to be able to attach files (try in DMs?)")
+            return await ctx.send(_("I need to be able to attach files (try in DMs?)"))
 
         statements = {
             ext_name: getattr(ext, "__red_end_user_data_statement__", None)
@@ -530,7 +530,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if not statements:
             return await ctx.send(
-                "This instance does not appear to have any 3rd party extensions loaded."
+                _("This instance does not appear to have any 3rd-party extensions loaded.")
             )
 
         parts = []
@@ -549,13 +549,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if formatted_statements:
             parts.append(
-                "## 3rd party End User Data statements"
-                "\n\nThe following are statements provided by 3rd-party extensions."
+                "## "
+                + _("3rd party End User Data statements")
+                + "\n\n"
+                + _("The following are statements provided by 3rd-party extensions.")
             )
             parts.extend(formatted_statements)
 
         if no_statements:
-            parts.append("## 3rd-party extensions without statements\n")
+            parts.append("## " + _("3rd-party extensions without statements\n"))
             for ext in no_statements:
                 parts.append(f"\n - {entity_transformer(ext)}")
 

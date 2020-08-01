@@ -1049,7 +1049,7 @@ class RedBase(
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
-        if cog is None or isinstance(cog, Core):
+        if cog is None or isinstance(cog, commands.commands._RuleDropper):
             return
 
         for cls in inspect.getmro(cog.__class__):

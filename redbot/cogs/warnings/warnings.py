@@ -65,7 +65,7 @@ class Warnings(commands.Cog):
             if not c % 100:
                 await asyncio.sleep(0)
 
-            if str(user_id) in guild_data:
+            if user_id in guild_data:
                 await self.config.member_from_ids(guild_id, user_id).clear()
 
             for remaining_user, user_warns in guild_data.items():

@@ -136,33 +136,34 @@ class WhitelistBlacklistManager:
     async def discord_deleted_user(self, user_id: int):
 
         async with self._access_lock:
-            wl_guilds, bl_guilds = [], []
 
             async for guild_id_or_none, ids in AsyncIter(
                 self._cached_whitelist.items(), steps=100
             ):
-                if user_id in ids:
-                    wl_guilds.append(user_id)
                 ids.discard(user_id)
 
             async for guild_id_or_none, ids in AsyncIter(
                 self._cached_blacklist.items(), steps=100
             ):
-                if user_id in ids:
-                    bl_guilds.append(user_id)
                 ids.discard(user_id)
 
-            for gid in wl_guilds:
-                grp = self._config.guild_from_id(gid) if gid else self._config
-                s = set(await grp.whitelist())
-                s.discard(user_id)
-                await grp.whitelist.set(list(s))
+            for grp in (self._config.whitelist, self._config.blacklist):
+                async with grp() as ul:
+                    try:
+                        ul.remove(user_id)
+                    except ValueError:
+                        pass
 
-            for gid in bl_guilds:
-                grp = self._config.guild_from_id(gid) if gid else self._config
-                s = set(await grp.blacklist())
-                s.discard(user_id)
-                await grp.blacklist.set(list(s))
+            # don't use this in extensions, it's optimized and controlled for here,
+            # but can't be safe in 3rd party use
+
+            async with self._config._get_base_group("GUILD").all() as abuse:
+                for guild_str, guild_data in abuse.items():
+                    for l_name in ("whitelist", "blacklist"):
+                        try:
+                            guild_data[l_name].remove(user_id)
+                        except (ValueError, KeyError):
+                            pass  # this is raw access not filled with defaults
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
         async with self._access_lock:

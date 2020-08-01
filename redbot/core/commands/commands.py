@@ -59,6 +59,7 @@ __all__ = [
     "command",
     "group",
     "RESERVED_COMMAND_NAMES",
+    "RedUnhandledAPI",
 ]
 
 #: The following names are reserved for various reasons
@@ -71,6 +72,8 @@ DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable
 
 
 class RedUnhandledAPI(Exception):
+    """ An exception which can be raised to signal a lack of handling specific APIs """
+
     pass
 
 
@@ -839,8 +842,9 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         The data should be easily understood for what it represents to
         most users of age to use Discord.
-        You may include multiple files by providing an archive,
-        including a readme file which explains anything additional needed.
+
+        You may want to include a readme file
+        which explains specifics about the data.
 
         This method may also be implemented for an extension.
 
@@ -855,6 +859,12 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
             suitable to send as a files or as part of an archive to a user.
 
             This may be empty if you don't have data for users.
+
+        Raises
+        ------
+        RedUnhandledAPI
+            If the method was not overriden,
+            or an overriden implementation is not handling this
 
         """
         raise RedUnhandledAPI()
@@ -875,19 +885,21 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         ----------
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
-            Note: you should safely handle
-            any string value (log a warning if needed)
-            as additional requester types may be added
-            in the future without prior warning.
+            .. note::
+                 you should safely handle
+                any string value (log a warning if needed)
+                as additional requester types may be added
+                in the future without prior warning.
+                (see what this method can raise for details)
 
-            discord_deleted_user:
+            - ``"discord_deleted_user"``:
                 The request should be processed as if
                 Discord has asked for the data removal
                 This then additionally must treat the
                 user ID itself as something to be deleted.
                 The user ID is no longer operational data
                 as the ID no longer refers to a valid user.
-            owner:
+            - ``"owner"``:
                 The request was made by the bot owner.
                 If removing the data requested by the owner
                 would be an operational hazard
@@ -896,7 +908,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 to remove that ID to ensure the process can not be abused
                 by users to bypass anti-abuse measures,
                 but there must remain a way for them to process this request.
-            user_strict:
+            - ``"user_strict"``:
                 The request was made by a user,
                 the bot settings allow a user to request their own data
                 be deleted, and the bot is configured to respect this
@@ -905,7 +917,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 such as IDs and timestamps of interactions,
                 but should not keep EUD such
                 as user nicknames if receiving a request of this nature.
-            user:
+            - ``"user"``:
                 The request was made by a user,
                 the bot settings allow a user to request their own data
                 be deleted, and the bot is configured to let cogs keep
@@ -916,6 +928,12 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 minimal EUD needed for cog functionality.
 
         user_id: int
+
+        Raises
+        ------
+        RedUnhandledAPI
+            If the method was not overriden,
+            or an overriden implementation is not handling this
         """
         raise RedUnhandledAPI()
 
