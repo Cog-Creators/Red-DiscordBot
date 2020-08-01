@@ -113,7 +113,7 @@ class Alias(commands.Cog):
 
             if modified:
                 await self.config.guild_from_id(guild_id).entries.set(to_set)
-            
+
             await asyncio.sleep(0)
             # control yielded per loop since this is most likely to happen
             # at bot startup, where this is most likely to have a performance

@@ -107,7 +107,7 @@ class AliasCache:
             else:
                 continue
             # basically, don't build a context manager wihout a need.
-            async with self.config.guild_from_id(guild_id).entries as entry_list:
+            async with self.config.guild_from_id(guild_id).entries() as entry_list:
                 for a in entry_list:
                     if a.get("creator", 0) == user_id:
                         a["creator"] = 0xDE1
