@@ -90,7 +90,7 @@ selfrole remove
 **Description**
 
 Remove a role from yourself. It must have been configured as user settable
-by admins.
+by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
 
 **Arguments**
 
@@ -119,8 +119,8 @@ List all of the available roles you can assign to yourself.
 selfroleset
 ^^^^^^^^^^^
 
-.. note:: This command is locked to members with the ``Manage roles``
-    permission.
+.. note:: |admin-lock| This is also usable by the members with the
+    ``Manage roles`` permission.
 
 **Syntax**
 
@@ -183,7 +183,8 @@ Removes a role from the list of selfroles.
 addrole
 ^^^^^^^
 
-.. note:: |admin-lock|
+.. note:: |admin-lock| This is also usable by the members with the ``Manage
+    roles`` permission.
 
 **Syntax**
 
@@ -198,7 +199,7 @@ as yourself, the command author.
 
 **Arguments**
 
-* ``<role>``: The role to add to the member. |role-input|
+* ``<role>``: The role to add to the member. |role-input-quotes|
 
 * ``[user=ctx]``: The member you want to add the role to. Defaults to the
   command author. |member-input|
@@ -209,13 +210,14 @@ as yourself, the command author.
 removerole
 ^^^^^^^^^^
 
-.. note:: |admin-lock|
+.. note:: |admin-lock| This is also usable by the members with the
+    ``Manage roles`` permission.
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]removerole
+    [p]removerole <rolename> [user]
 
 **Description**
 
@@ -224,10 +226,10 @@ as yourself, the command author.
 
 **Arguments**
 
-* ``<role>``: The role to remove. |role-input|
+* ``<role>``: The role to remove. |role-input-quotes|
 
-* ``[user=ctx]``: The member to remove the role from. |member-input| Defaults to
-  the command author.
+* ``[user=ctx]``: The member to remove the role from. |member-input| Defaults
+    to the command author.
 
 .. _admin-command-editrole:
 
@@ -265,7 +267,7 @@ Edits the name of a role.
 
 **Arguments**
 
-* ``<role>``: The role name to edit. |role-input|
+* ``<role>``: The role name to edit. |role-input-quotes|
 
 * ``<name>``: The new role name.
 
@@ -287,7 +289,7 @@ Edits the color of a role.
 
 **Arguments**
 
-* ``<role>``: The role name to edit. |role-input|
+* ``<role>``: The role name to edit. |role-input-quotes|
 
 * ``<color>``: The new color to assign. |color-input|
 
@@ -315,10 +317,8 @@ announce
 
 Announce your message to all of the servers the bot is in.
 
-The bot will announce the message in the guild's announcements channel
-if set, else she will try the system channel (where the new members are
-welcomed with the Discord announcer). If none of these channels are found,
-the bot will use the highest channel in the list.
+The bot will announce the message in the guild's announcements channel.
+If this channel is not set, the message won't be announced.
 
 **Arguments**
 
@@ -358,7 +358,7 @@ announceset
 
 **Description**
 
-Manage the settings of announcements sent by the bot owners on servers.
+Change how announcements are recieved in this guild.
 
 .. _admin-command-announceset-channel:
 
@@ -381,29 +381,23 @@ Sets the channel where the bot owner announcements will be sent.
 * ``[channel=ctx]``: The channel that will be used for bot announcements.
   |channel-input| Defaults to where you typed the command.
 
-.. _admin-command-announceset-ignore:
+.. _admin-command-announceset-clearchannel:
 
-""""""""""""""""""
-announceset ignore
-""""""""""""""""""
+""""""""""""""""""""""""
+announceset clearchannel
+""""""""""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]announceset ignore [guild]
+    [p]announceset clearchannel
 
 **Description**
 
-Enables or disables announcements on the selected guild.
-
-**Arguments**
-
-* ``[guild=ctx]``: The server where the announcements will be enabled/disabled.
-    Defaults to the current server.
-
-.. warning:: You need the appropriate permissions if you're trying to edit a
-    different server's setting than where you are invoking the command.
+Disables announcements on your server. To enable them again, you will have to
+re-enter your announcements channel with the :ref:`announceset channel
+<admin-command-announceset-channel>` command.
 
 .. _admin-command-serverlock:
 
@@ -411,7 +405,8 @@ Enables or disables announcements on the selected guild.
 serverlock
 ^^^^^^^^^^
 
-.. note:: |owner-lock|
+.. note:: |owner-lock| This is also usable by the members with the
+    ``Administrator`` permission.
 
 **Syntax**
 
@@ -423,5 +418,18 @@ serverlock
 
 Lock a bot to its current servers only.
 
-This means that, once you enable this, the bot will instantly leave all servers
-she will be invited in.
+This means that, once you enable this, if someone invites the bot to a new
+server, the bot will automatically leave the server.
+
+.. tip:: Another way to prevent your bot from being invited on more servers is
+    making it private directly from the developer portal.
+
+    Once a bot is private, it can only be invited by its owner (or team
+    owners). Other users will get an error on Discord's webpage explaining that
+    the bot is private.
+
+    To do this, go to the `Discord developer portal
+    <https://discord.com/developers>`_, select your application, click "Bot" in
+    the sidebar, then untick "Public bot".
+
+    .. image:: ../.resources/admin/public_bot.png
