@@ -73,7 +73,7 @@ class Warnings(commands.Cog):
                 if not c % 100:
                     await asyncio.sleep(0)
 
-                for warn_id, warning in user_warns.get("warnings", {}):
+                for warn_id, warning in user_warns.get("warnings", {}).items():
                     c += 1
                     if not c % 100:
                         await asyncio.sleep(0)
