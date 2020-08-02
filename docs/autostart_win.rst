@@ -24,7 +24,7 @@ Then run the following command:
 Manually installing NSSM
 ------------------------
 
-Go to `<https://nssm.cc/download>`_ and download the latest release. Once the download
+Go to `<https://nssm.cc/download>`_ and download the latest prerelease. Once the download
 is finished, open File Explorer, navigate to the drive Windows is installed on, and 
 create a folder called :code:`nssm`. Then navigate to your Downloads folder, and move 
 :code:`nssm.exe` to :code:`C:\nssm`.
