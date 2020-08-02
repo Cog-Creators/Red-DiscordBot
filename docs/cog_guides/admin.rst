@@ -64,7 +64,7 @@ selfrole add
 
 .. code-block:: none
 
-    [p]selfrole add <role>
+    [p]selfrole add <selfrole>
 
 **Description**
 
@@ -85,7 +85,7 @@ selfrole remove
 
 .. code-block:: none
 
-    [p]selfrole remove <role>
+    [p]selfrole remove <selfrole>
 
 **Description**
 
