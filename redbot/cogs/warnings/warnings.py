@@ -78,10 +78,10 @@ class Warnings(commands.Cog):
                     if not c % 100:
                         await asyncio.sleep(0)
 
-                        if warning.get("mod", 0) == user_id:
-                            await self.config.member_from_ids(guild_id, remaining_user).set_raw(
-                                "warnings", warn_id, "mod", value=0xDE1
-                            )
+                    if warning.get("mod", 0) == user_id:
+                        await self.config.member_from_ids(guild_id, remaining_user).set_raw(
+                            "warnings", warn_id, "mod", value=0xDE1
+                        )
 
     # We're not utilising modlog yet - no need to register a casetype
     @staticmethod
