@@ -881,11 +881,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         If your cog does not store data, overriding and doing nothing should still
         be done to indicate that this has been considered.
 
-        Parameters
-        ----------
-        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
-
-            .. note::
+        .. note::
                 This may receive other strings in the future without warning
                 you should safely handle
                 any string value (log a warning if needed)
@@ -939,7 +935,13 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 only happen if the bot owner has opted into keeping
                 minimal EUD needed for cog functionality.
 
+
+        Parameters
+        ----------
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
+            See above notes for details about this parameter
         user_id: int
+            The user ID which needs deletion handling
 
         Raises
         ------
