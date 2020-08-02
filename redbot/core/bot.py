@@ -1452,6 +1452,9 @@ class RedBase(
         Returns
         -------
         DataDeletionResults
+            A named tuple ``(failed_modules, failed_cogs, unhandled)``
+                containing lists with names of failed modules, failed cogs,
+                and cogs that didn't handle data deletion request.
         """
         await self.wait_until_red_ready()
         lock = self._deletion_requests.setdefault(user_id, asyncio.Lock())

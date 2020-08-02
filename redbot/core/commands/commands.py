@@ -886,6 +886,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
 
             .. note::
+                This may receive other strings in the future without warning
                 you should safely handle
                 any string value (log a warning if needed)
                 as additional requester types may be added
@@ -894,13 +895,16 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
 
             - ``"discord_deleted_user"``:
+
                 The request should be processed as if
                 Discord has asked for the data removal
                 This then additionally must treat the
                 user ID itself as something to be deleted.
                 The user ID is no longer operational data
                 as the ID no longer refers to a valid user.
+
             - ``"owner"``:
+
                 The request was made by the bot owner.
                 If removing the data requested by the owner
                 would be an operational hazard
@@ -909,7 +913,9 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 to remove that ID to ensure the process can not be abused
                 by users to bypass anti-abuse measures,
                 but there must remain a way for them to process this request.
+
             - ``"user_strict"``:
+
                 The request was made by a user,
                 the bot settings allow a user to request their own data
                 be deleted, and the bot is configured to respect this
@@ -918,7 +924,9 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 such as IDs and timestamps of interactions,
                 but should not keep EUD such
                 as user nicknames if receiving a request of this nature.
+
             - ``"user"``:
+
                 The request was made by a user,
                 the bot settings allow a user to request their own data
                 be deleted, and the bot is configured to let cogs keep

@@ -525,7 +525,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         statements = {
             ext_name: getattr(ext, "__red_end_user_data_statement__", None)
             for ext_name, ext in ctx.bot.extensions.items()
-            if not ext.__package__.startswith("redbot.")
+            if not (ext.__package__ and ext.__package__.startswith("redbot."))
         }
 
         if not statements:
