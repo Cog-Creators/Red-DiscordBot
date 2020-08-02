@@ -8,6 +8,7 @@ import shlex
 import shutil
 import re
 import yarl
+import aiohttp
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE, CompletedProcess
@@ -629,6 +630,16 @@ class Repo(RepoJSONMixin):
             git_command = ProcessFormatter().format(
                 self.GIT_CLONE_NO_BRANCH, url=self.url, folder=self.folder_path
             )
+
+        async with aiohttp.ClientSession() as session:
+            async with session.head(self.url, allow_redirects=True) as response:
+                if response.status == 404:
+                    raise errors.MissingRemoteGitRepo("The repository was not found.")
+                elif 400 <= response.status < 500 or 500 <= response.status < 600:
+                    raise errors.MissingRemoteGitRepo(
+                        f"The reposity returned an error code: {response.status}."
+                    )
+
         p = await self._run(git_command)
 
         if p.returncode:

@@ -1,5 +1,3 @@
-import asyncio
-import pathlib
 from collections import namedtuple
 from typing import Any, NamedTuple
 from pathlib import Path
@@ -16,6 +14,7 @@ from redbot.cogs.downloader.errors import (
     ExistingGitRepo,
     GitException,
     UnknownRevision,
+    MissingRemoteGitRepo,
 )
 
 
@@ -288,6 +287,34 @@ async def test_clone_without_branch(mocker, repo):
     m.assert_called_once_with(
         ProcessFormatter().format(repo.GIT_CLONE_NO_BRANCH, url=repo.url, folder=repo.folder_path)
     )
+
+
+@pytest.mark.asyncio
+async def test_clone_with_branch_repo_not_found(mocker, repo):
+    branch = repo.branch = "dont_add_commits"
+    commit = "a0ccc2390883c85a361f5a90c72e1b07958939fa"
+    repo.commit = ""
+    repo.url = "https://www.github.com/random-user-repo32156874848/9a8sd49a8dwdad651"
+    m = _mock_run(mocker, repo, 0)
+    _mock_setup_repo(mocker, repo, commit)
+
+    with pytest.raises(MissingRemoteGitRepo):
+        await repo.clone()
+
+
+@pytest.mark.asyncio
+async def test_clone_without_branch_repo_not_found(mocker, repo):
+    branch = "dont_add_commits"
+    commit = "a0ccc2390883c85a361f5a90c72e1b07958939fa"
+    repo.branch = None
+    repo.commit = ""
+    repo.url = "https://www.github.com/random-user-repo32156874848/9a8sd49a8dwdad651"
+    m = _mock_run(mocker, repo, 0)
+    _mock_setup_repo(mocker, repo, commit)
+    mocker.patch.object(repo, "current_branch", autospec=True, return_value=branch)
+
+    with pytest.raises(MissingRemoteGitRepo):
+        await repo.clone()
 
 
 @pytest.mark.asyncio

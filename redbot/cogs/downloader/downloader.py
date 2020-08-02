@@ -514,6 +514,8 @@ class Downloader(commands.Cog):
             await ctx.send(
                 _("The repo name you provided is already in use. Please choose another name.")
             )
+        except errors.MissingRemoteGitRepo as err:
+            await ctx.send(_(err.message))
         except errors.CloningError as err:
             await ctx.send(
                 _(

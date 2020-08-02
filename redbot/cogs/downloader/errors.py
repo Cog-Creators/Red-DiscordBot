@@ -13,6 +13,7 @@ __all__ = [
     "CopyingError",
     "ExistingGitRepo",
     "MissingGitRepo",
+    "MissingRemoteGitRepo",
     "CloningError",
     "CurrentHashError",
     "HardResetError",
@@ -77,6 +78,16 @@ class MissingGitRepo(DownloaderException):
     """
 
     pass
+
+
+class MissingRemoteGitRepo(DownloaderException):
+    """
+    Thrown when a remote git repo is not found or
+    returns an error code
+    """
+
+    def __init__(self, message: str):
+        self.message = message
 
 
 class CloningError(GitException):
