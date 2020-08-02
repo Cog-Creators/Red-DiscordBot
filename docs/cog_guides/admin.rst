@@ -201,7 +201,7 @@ as yourself, the command author.
 
 * ``<role>``: The role to add to the member. |role-input-quotes|
 
-* ``[user=ctx]``: The member you want to add the role to. Defaults to the
+* ``[user]``: The member you want to add the role to. Defaults to the
   command author. |member-input|
 
 .. _admin-command-removerole:
@@ -228,7 +228,7 @@ as yourself, the command author.
 
 * ``<role>``: The role to remove. |role-input-quotes|
 
-* ``[user=ctx]``: The member to remove the role from. |member-input| Defaults
+* ``[user]``: The member to remove the role from. |member-input| Defaults
     to the command author.
 
 .. _admin-command-editrole:
@@ -378,7 +378,7 @@ Sets the channel where the bot owner announcements will be sent.
 
 **Arguments**
 
-* ``[channel=ctx]``: The channel that will be used for bot announcements.
+* ``[channel]``: The channel that will be used for bot announcements.
   |channel-input| Defaults to where you typed the command.
 
 .. _admin-command-announceset-clearchannel:
