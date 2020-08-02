@@ -267,7 +267,13 @@ class General(commands.Cog):
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
             data.add_field(name=_("Owner"), value=str(guild.owner))
-            data.set_footer(text=_("Server ID: ") + str(guild.id))
+            data.set_footer(
+                text=_("Server ID: ")
+                + str(guild.id)
+                + _("  •  Use {command} for more info on the server.").format(
+                    command=f"{ctx.clean_prefix}serverinfo 1"
+                )
+            )
             if guild.icon_url:
                 data.set_author(name=guild.name, url=guild.icon_url)
                 data.set_thumbnail(url=guild.icon_url)
@@ -364,7 +370,7 @@ class General(commands.Cog):
                 "VERIFIED": _("Verified"),
                 "DISCOVERABLE": _("Server Discovery"),
                 "FEATURABLE": _("Featurable"),
-                "PUBLIC": _("Public"),
+                "COMMUNITY": _("Community"),
                 "PUBLIC_DISABLED": _("Public disabled"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "VIP_REGIONS": _("VIP Voice Servers"),

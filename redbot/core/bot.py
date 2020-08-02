@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import platform
-import re
 import shutil
 import sys
 import contextlib
@@ -19,7 +18,6 @@ from typing import (
     Dict,
     NoReturn,
     Set,
-    Coroutine,
     TypeVar,
     Callable,
     Awaitable,
@@ -30,7 +28,6 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
-from discord.ext.commands.bot import BotBase
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -40,7 +37,12 @@ from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
 
-from .settings_caches import PrefixManager, IgnoreManager, WhitelistBlacklistManager
+from .settings_caches import (
+    PrefixManager,
+    IgnoreManager,
+    WhitelistBlacklistManager,
+    DisabledCogCache,
+)
 
 from .rpc import RPCMixin
 from .utils import common_filters
@@ -135,12 +137,16 @@ class RedBase(
         self._config.register_channel(embeds=None, ignored=False)
         self._config.register_user(embeds=None)
 
+        self._config.init_custom("COG_DISABLE_SETTINGS", 2)
+        self._config.register_custom("COG_DISABLE_SETTINGS", disabled=None)
+
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
 
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
+        self._disabled_cog_cache = DisabledCogCache(self._config)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
 
@@ -219,6 +225,41 @@ class RedBase(
                 *(coro(ctx) for coro in self._red_before_invoke_objs),
                 return_exceptions=return_exceptions,
             )
+
+    async def cog_disabled_in_guild(
+        self, cog: commands.Cog, guild: Optional[discord.Guild]
+    ) -> bool:
+        """
+        Check if a cog is disabled in a guild
+
+        Parameters
+        ----------
+        cog: commands.Cog
+        guild: Optional[discord.Guild]
+
+        Returns
+        -------
+        bool
+        """
+        if guild is None:
+            return False
+        return await self._disabled_cog_cache.cog_disabled_in_guild(cog.qualified_name, guild.id)
+
+    async def cog_disabled_in_guild_raw(self, cog_name: str, guild_id: int) -> bool:
+        """
+        Check if a cog is disabled in a guild without the cog or guild object
+
+        Parameters
+        ----------
+        cog_name: str
+            This should be the cog's qualified name, not neccessarily the classname
+        guild_id: int
+
+        Returns
+        -------
+        bool
+        """
+        return await self._disabled_cog_cache.cog_disabled_in_guild(cog_name, guild_id)
 
     def remove_before_invoke_hook(self, coro: PreInvokeCoroutine) -> None:
         """
@@ -406,14 +447,60 @@ class RedBase(
 
         return True
 
-    async def ignored_channel_or_guild(self, ctx: commands.Context) -> bool:
+    async def message_eligible_as_command(self, message: discord.Message) -> bool:
+        """
+        Runs through the things which apply globally about commands
+        to determine if a message may be responded to as a command.
+
+        This can't interact with permissions as permissions is hyper-local
+        with respect to command objects, create command objects for this
+        if that's needed.
+
+        This also does not check for prefix or command conflicts,
+        as it is primarily designed for non-prefix based response handling
+        via on_message_without_command
+
+        Parameters
+        ----------
+        message
+            The message object to check
+
+        Returns
+        -------
+        bool
+            Whether or not the message is eligible to be treated as a command.
+        """
+
+        channel = message.channel
+        guild = message.guild
+
+        if message.author.bot:
+            return False
+
+        if guild:
+            assert isinstance(channel, discord.abc.GuildChannel)  # nosec
+            if not channel.permissions_for(guild.me).send_messages:
+                return False
+            if not (await self.ignored_channel_or_guild(message)):
+                return False
+
+        if not (await self.allowed_by_whitelist_blacklist(message.author)):
+            return False
+
+        return True
+
+    async def ignored_channel_or_guild(
+        self, ctx: Union[commands.Context, discord.Message]
+    ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
         as considered by Red's whitelist and blacklist.
 
         Parameters
         ----------
-        ctx : Context of where the command is being run.
+        ctx :
+            Context object of the command which needs to be checked prior to invoking
+            or a Message object which might be intended for use as a command.
 
         Returns
         -------
@@ -424,8 +511,8 @@ class RedBase(
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
             or perms.manage_guild
-            or await ctx.bot.is_owner(ctx.author)
-            or await ctx.bot.is_admin(ctx.author)
+            or await self.is_owner(ctx.author)
+            or await self.is_admin(ctx.author)
         )
         if surpass_ignore:
             return True
@@ -657,12 +744,20 @@ class RedBase(
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
+                    if spec is None:
+                        log.error(
+                            "Failed to load package %s (package was not found in any cog path)",
+                            package,
+                        )
+                        await self.remove_loaded_package(package)
+                        to_remove.append(package)
+                        continue
                     await asyncio.wait_for(self.load_extension(spec), 30)
                 except asyncio.TimeoutError:
                     log.exception("Failed to load package %s (timeout)", package)
                     to_remove.append(package)
                 except Exception as e:
-                    log.exception("Failed to load package {}".format(package), exc_info=e)
+                    log.exception("Failed to load package %s", package, exc_info=e)
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
@@ -1275,7 +1370,8 @@ class RedBase(
         await super().logout()
         await drivers.get_driver_class().teardown()
         try:
-            await self.rpc.close()
+            if self.rpc_enabled:
+                await self.rpc.close()
         except AttributeError:
             pass
 

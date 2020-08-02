@@ -49,68 +49,68 @@ msgstr "Eins von {} erwartet"
 
 #: redbot/core/commands/help.py:182
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr ""
+msgstr "Geben Sie {ctx.clean_prefix}help <command> für weitere Informationen zu einem Befehl ein. Sie können auch {ctx.clean_prefix}help <category> für weitere Informationen zu einer Kategorie eingeben."
 
 #: redbot/core/commands/help.py:212
 msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr ""
+msgstr "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
 
 #: redbot/core/commands/help.py:253
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Unterbefehle:__**"
 
 #: redbot/core/commands/help.py:255
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Unterbefehle:__** (Fortsetzung)"
 
 #: redbot/core/commands/help.py:266
 msgid "Subcommands:"
-msgstr ""
+msgstr "Unterbefehle:"
 
 #: redbot/core/commands/help.py:330 redbot/core/commands/help.py:582
 #: redbot/core/commands/help.py:595 redbot/core/commands/help.py:614
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Hilfe-Menü"
 
 #: redbot/core/commands/help.py:377
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+msgstr "*Seite {page_num} von {page_count}*\\n{content_description}"
 
 #: redbot/core/commands/help.py:428
 msgid "**__Commands:__**"
-msgstr ""
+msgstr "**__Befehle:__**"
 
 #: redbot/core/commands/help.py:430
 msgid "**__Commands:__** (continued)"
-msgstr ""
+msgstr "**__Befehle:__** (Fortsetzung)"
 
 #: redbot/core/commands/help.py:440
 msgid "Commands:"
-msgstr ""
+msgstr "Befehle:"
 
 #: redbot/core/commands/help.py:482
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Ohne Kategorie:__**"
 
 #: redbot/core/commands/help.py:495
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (Fortsetzung)"
 
 #: redbot/core/commands/help.py:511 redbot/core/commands/help.py:525
 msgid "No Category:"
-msgstr ""
+msgstr "Ohne Kategorie:"
 
 #: redbot/core/commands/help.py:591
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Es konnte keine Hilfe für *{command_name}* gefunden werden."
 
 #: redbot/core/commands/help.py:608
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Befehl *{command_name}* besitzt keinen Unterbefehl mit dem Namen *{not_found}*."
 
 #: redbot/core/commands/help.py:683
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "Es konnte keine Hilfe-Nachricht als Direktnachricht zugestellt werden. Entweder ist der Bot blockiert oder Direktnachrichten sind auf diesem Server deaktiviert."
 
 #: redbot/core/commands/help.py:721
 #, docstring

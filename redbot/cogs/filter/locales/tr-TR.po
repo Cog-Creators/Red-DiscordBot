@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -54,16 +54,16 @@ msgstr ""
 #: redbot/cogs/filter/filter.py:100
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Sunucu filtresinden sözcük ekleme veya kaldırma.\\n\\n        Cümleleri eklemek veya kaldırmak için çift tırnak işaretleri kullanın.\\n        "
 
 #: redbot/cogs/filter/filter.py:108
 #, docstring
 msgid "Send a list of this servers filtered words."
-msgstr ""
+msgstr "Bu sunucuların filtrelenmiş kelimelerinin bir listesini gösterin."
 
 #: redbot/cogs/filter/filter.py:113
 msgid "There is no current words setup to be filtered in this server."
-msgstr ""
+msgstr "Bu sunucuda filtrelenecek geçerli bir sözcük yok."
 
 #: redbot/cogs/filter/filter.py:116
 msgid "Filtered in this server:"
@@ -156,11 +156,11 @@ msgstr ""
 msgid "Autoban (too many filtered messages.)"
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:420
 msgid "Filtered nickname"
 msgstr "Filtre adı"
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:420
 msgid "Filtered name"
 msgstr "Filtre adı"
 

@@ -293,10 +293,11 @@ class Reports(commands.Cog):
                     pass
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """
         oh dear....
         """
+
         if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
             return
 
@@ -314,12 +315,34 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+
+        to_remove = []
+
         for k, v in self.tunnel_store.items():
-            topic = _("Re: ticket# {1} in {0.name}").format(*k)
+
+            guild, ticket_number = k
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                to_remove.append(k)
+                continue
+
+            topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
+                ticket_number=ticket_number, guild=guild
+            )
             # Tunnels won't forward unintended messages, this is safe
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
+
+        for key in to_remove:
+            if tun := self.tunnel_store.pop(key, None):
+                guild, ticket = key
+                await tun["tun"].close_because_disabled(
+                    _(
+                        "Correspondence about ticket# {ticket_number} in "
+                        "{guild.name} has been ended due "
+                        "to reports being disabled in that server."
+                    ).format(ticket_number=ticket, guild=guild)
+                )
 
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)

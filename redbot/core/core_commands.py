@@ -1333,7 +1333,7 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(_("Done."))
 
     @_set.command(name="nickname")
-    @checks.admin()
+    @checks.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
@@ -1355,7 +1355,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
-    @checks.admin()
+    @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s server prefix(es)."""
@@ -2174,8 +2174,82 @@ class Core(commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
-        """Manage the bot's commands."""
+        """Manage the bot's commands and cogs."""
         pass
+
+    @checks.is_owner()
+    @command_manager.command(name="defaultdisablecog")
+    async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Set the default state for a cog as disabled."""
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
+        if cog == self:
+            return await ctx.send(_("You can't disable this cog by default."))
+        await self.bot._disabled_cog_cache.default_disable(cogname)
+        await ctx.send(_("{cogname} has been set as disabled by default.").format(cogname=cogname))
+
+    @checks.is_owner()
+    @command_manager.command(name="defaultenablecog")
+    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Set the default state for a cog as enabled."""
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
+        await self.bot._disabled_cog_cache.default_enable(cogname)
+        await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
+
+    @commands.guild_only()
+    @command_manager.command(name="disablecog")
+    async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Disable a cog in this guild."""
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
+        if cog == self:
+            return await ctx.send(_("You can't disable this cog as you would lock yourself out."))
+        if await self.bot._disabled_cog_cache.disable_cog_in_guild(cogname, ctx.guild.id):
+            await ctx.send(_("{cogname} has been disabled in this guild.").format(cogname=cogname))
+        else:
+            await ctx.send(
+                _("{cogname} was already disabled (nothing to do).").format(cogname=cogname)
+            )
+
+    @commands.guild_only()
+    @command_manager.command(name="enablecog")
+    async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
+        """Enable a cog in this guild."""
+        if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
+            await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
+        else:
+            # putting this here allows enabling a cog that isn't loaded but was disabled.
+            cog = self.bot.get_cog(cogname)
+            if not cog:
+                return await ctx.send(_("Cog with the given name doesn't exist."))
+
+            await ctx.send(
+                _("{cogname} was not disabled (nothing to do).").format(cogname=cogname)
+            )
+
+    @commands.guild_only()
+    @command_manager.command(name="listdisabledcogs")
+    async def command_list_disabled_cogs(self, ctx: commands.Context):
+        """List the cogs which are disabled in this guild."""
+        disabled = [
+            cog.qualified_name
+            for cog in self.bot.cogs.values()
+            if await self.bot._disabled_cog_cache.cog_disabled_in_guild(
+                cog.qualified_name, ctx.guild.id
+            )
+        ]
+        if disabled:
+            output = _("The following cogs are disabled in this guild:\n")
+            output += humanize_list(disabled)
+
+            for page in pagify(output):
+                await ctx.send(page)
+        else:
+            await ctx.send(_("There are no disabled cogs in this guild."))
 
     @command_manager.group(name="listdisabled", invoke_without_command=True)
     async def list_disabled(self, ctx: commands.Context):
@@ -2675,6 +2749,21 @@ class Core(commands.Cog, CoreLogic):
         return msg
 
 
+# DEP-WARN: CooldownMapping should have a method `from_cooldown`
+# which accepts (number, number, bucket)
+# the bucket should only be used for the method `_bucket_key`
+# and `_bucket_key` should be used to determine the grouping
+# of ratelimit consumption.
+class LicenseCooldownMapping(commands.CooldownMapping):
+    """
+    This is so that a single user can't spam a channel with this
+    it's used below as 1 per 3 minutes per user-channel combination.
+    """
+
+    def _bucket_key(self, msg):
+        return (msg.channel.id, msg.author.id)
+
+
 # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
 # Otherwise interfering with the ability for this command to be accessible is also a violation.
 @commands.command(
@@ -2696,3 +2785,9 @@ async def license_info_command(ctx):
     )
     await ctx.send(message)
     # We need a link which contains a thank you to other projects which we use at some point.
+
+
+# DEP-WARN: command objects should store a single cooldown mapping as `._buckets`
+license_info_command._buckets = LicenseCooldownMapping.from_cooldown(
+    1, 180, commands.BucketType.member  # pick a random bucket,it wont get used.
+)

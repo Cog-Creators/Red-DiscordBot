@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-07-16 12:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/checks.py:12
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\\n\\nBy typing '**I agree**' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\\n\\nYou have **30** seconds to reply to this message."
-msgstr "3. parti uygulama eklemek üzeresiniz. Red'in yapımcıları ve komunitesi, bu uygulamaların yol açabileceği herhangi bir hasarın sorumluluğunu kabul etmez. **I agree* yazarak sorumluluğun sizde olduğunu kabul edersiniz. Bot tekrar başlatılana kadar bu mesajı bir daha görmezsiniz. Bu mesajı cevaplamak için **30* saniyeniz var."
+msgstr "3. parti uygulama eklemek üzeresiniz. Red'in yapımcıları ve topluluk ekibi, bu uygulamaların yol açabileceği herhangi bir hasarın sorumluluğunu kabul etmez. **I agree** yazarak sorumluluğun sizde olduğunu kabul edersiniz. Bot tekrar başlatılana kadar bu mesajı bir daha görmezsiniz. Bu mesajı cevaplamak için **30** saniyeniz var."
 
 #: redbot/cogs/downloader/checks.py:36
 msgid "Your response has timed out, please try again."
@@ -109,7 +109,7 @@ msgstr "Bir repo ilgili bilgileri gösterir."
 
 #: redbot/cogs/downloader/downloader.py:569
 #: redbot/cogs/downloader/downloader.py:1110
-#: redbot/cogs/downloader/downloader.py:1390
+#: redbot/cogs/downloader/downloader.py:1393
 msgid "Missing from info.json"
 msgstr "Burada eksik bilgiler var info.json"
 
@@ -214,7 +214,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:752
 msgid "Successfully installed cogs: "
-msgstr ""
+msgstr "Coglar başarıyla yüklendi: "
 
 #: redbot/cogs/downloader/downloader.py:755
 msgid "\\nThese cogs are now pinned and won't get updated automatically. To change this, use `{prefix}cog unpin <cog>`"
@@ -354,7 +354,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1042
 msgid "All installed cogs are already up to date."
-msgstr "Tüm yüklü çarkları vardır zaten güncel."
+msgstr "Yüklü olan tüm coglar zaten güncel."
 
 #: redbot/cogs/downloader/downloader.py:1047
 msgid "\\nThese cogs are pinned and therefore weren't checked: "
@@ -363,15 +363,15 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:1070
 #, docstring
 msgid "List all available cogs from a single repo."
-msgstr "Tüm kullanılabilir Smm üzerinden tek bir repo listelenmektedir."
+msgstr "Tek bir repodaki mevcut tüm cogları listeleyin."
 
 #: redbot/cogs/downloader/downloader.py:1074
 msgid "Installed Cogs:\\n"
-msgstr ""
+msgstr "Yüklenen Coglar:\\n"
 
 #: redbot/cogs/downloader/downloader.py:1081
 msgid "Available Cogs:\\n"
-msgstr ""
+msgstr "Kullanılabilir Coglar:\\n"
 
 #: redbot/cogs/downloader/downloader.py:1094
 #, docstring
@@ -463,63 +463,63 @@ msgstr ""
 msgid "That command doesn't seem to exist."
 msgstr "Bu komut var gibi görünmüyor."
 
-#: redbot/cogs/downloader/downloader.py:1392
+#: redbot/cogs/downloader/downloader.py:1396
 msgid "Missing from installed repos"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1402
+#: redbot/cogs/downloader/downloader.py:1406
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmiyor"
 
-#: redbot/cogs/downloader/downloader.py:1403
+#: redbot/cogs/downloader/downloader.py:1407
 msgid "None - this cog wasn't installed via downloader"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1406
+#: redbot/cogs/downloader/downloader.py:1410
 msgid "This command is not provided by a cog."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1412
+#: redbot/cogs/downloader/downloader.py:1416
 msgid "Command:"
-msgstr ""
+msgstr "Komut:"
 
-#: redbot/cogs/downloader/downloader.py:1413
+#: redbot/cogs/downloader/downloader.py:1417
 msgid "Cog Name:"
-msgstr ""
+msgstr "Cog İsmi:"
 
-#: redbot/cogs/downloader/downloader.py:1414
+#: redbot/cogs/downloader/downloader.py:1418
 msgid "Made by:"
-msgstr ""
+msgstr "Yapımcı:"
 
-#: redbot/cogs/downloader/downloader.py:1415
+#: redbot/cogs/downloader/downloader.py:1419
 msgid "Repo URL:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1418
+#: redbot/cogs/downloader/downloader.py:1422
 msgid "Repo branch:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1423
+#: redbot/cogs/downloader/downloader.py:1427
 msgid "Command: {command}\\nCog name: {cog}\\nMade by: {author}\\nRepo URL: {repo_url}\\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1427
+#: redbot/cogs/downloader/downloader.py:1431
 msgid "Repo branch: {branch_name}\\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1448
+#: redbot/cogs/downloader/downloader.py:1452
 msgid "Failed to update the following repositories:"
-msgstr ""
+msgstr "Bu repoları güncellerken bir sorun yaşadım:"
 
-#: redbot/cogs/downloader/downloader.py:1450
+#: redbot/cogs/downloader/downloader.py:1454
 msgid "Failed to update the following repository:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1453
+#: redbot/cogs/downloader/downloader.py:1457
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
-msgstr ""
+msgstr "Bu repolar silinmiş olabilir ya da Url'lere erişim kapalı. Daha fazla bilgi için logları kontrol edin."
 
 #: redbot/cogs/downloader/repo_manager.py:182
 msgid "Repo by the name \\\"{repo_name}\\\" does not exist."
-msgstr ""
+msgstr "\"{repo_name}\\\" bu isimde bir Repo bulunamadı."
 
