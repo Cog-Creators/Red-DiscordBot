@@ -894,7 +894,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
                 (see what this method can raise for details)
 
 
-        This method can currently passed one of these strings:
+        This method can currently be passed one of these strings:
 
 
             - ``"discord_deleted_user"``:
