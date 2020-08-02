@@ -352,22 +352,23 @@ class Streams(commands.Cog):
     @streamalert.command(name="list")
     async def streamalert_list(self, ctx: commands.Context):
         """List all active stream alerts in this server."""
-        streams_list = defaultdict(list)
+        streams_list = defaultdict(dict)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         msg = _("Active alerts:\n\n")
 
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].append(stream.name.lower())
+                    streams_list[channel_id].setdefault(stream.token_name, []).append(stream.name.lower())
 
         if not streams_list:
             await ctx.send(_("There are no active alerts in this server."))
             return
 
-        for channel_id, streams in streams_list.items():
-            channel = ctx.guild.get_channel(channel_id)
-            msg += "** - #{}**\n{}\n".format(channel, ", ".join(streams))
+        for channel_id, stream_platform in streams_list.items():
+            msg += f"** - #{ctx.guild.get_channel(channel_id)}**\n"
+            for platform, streams in stream_platform.items():
+                msg += f"\t** - {platform.capitalize()}**\n\t\t{', '.join(streams)}\n"
 
         for page in pagify(msg):
             await ctx.send(page)
