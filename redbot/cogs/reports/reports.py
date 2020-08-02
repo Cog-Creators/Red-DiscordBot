@@ -86,7 +86,7 @@ class Reports(commands.Cog):
 
         async with self.config.custom("REPORT").all() as all_reports:
             async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
-                r = all_reports[guild_id_str][ticket_number]
+                r = all_reports[guild_id_str][ticket_number]["report"]
                 r["user_id"] = 0xDE1
                 # this might include EUD, and a report of a deleted user
                 # that's been unhandled for long enough for the
