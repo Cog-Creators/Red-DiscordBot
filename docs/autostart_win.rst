@@ -46,11 +46,10 @@ Setting up the service
 
 To create the service, run the following command:
 
-.. note:: If Red was installed in a venv, please activate it before running this command
-
 .. code-block:: none
 
-    nssm install redbot $(Get-Command redbot).Definition <instance name> --no-prompt
+    . $env:USERPROFILE\redenv\Scripts\activate.ps1
+    nssm install redbot $(Get-Command python).Definition -O -m redbot <instance name> --no-prompt
 
 replacing <instance name> with the name of the instance.
 
