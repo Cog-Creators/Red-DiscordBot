@@ -95,8 +95,10 @@ bankset creditsname
 
 Change the credits name of the bank. It is ``credits`` by default.
 
-For example, if you switch it to ``dollars``, the :ref:`payday
-<economy-command-payday>` command will show this:
+For example, if you switch it to ``dollars``, the payday
+command will show this:
+
+.. TODO reference the payday command
 
 .. code-block:: none
 
