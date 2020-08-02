@@ -115,7 +115,7 @@ class ModSettings(MixinMeta):
         Users will be warned if they send any messages which contain more than
         `<max_mentions>` mentions.
 
-        `<max_mentions>` must be at least 1. Set to 0 to disable. If no argument is given, defaults to 0.
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
         """
         mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
         if not max_mentions:
@@ -155,7 +155,7 @@ class ModSettings(MixinMeta):
         Users will be kicked if they send any messages which contain more than
         `<max_mentions>` mentions.
 
-        `<max_mentions>` must be at least 1. Set to 0 to disable. If no argument is given, defaults to 0.
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
         """
         mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
         if not max_mentions:
@@ -194,7 +194,7 @@ class ModSettings(MixinMeta):
         Users will be banned if they send any message which contains more than
         `<max_mentions>` mentions.
 
-        `<max_mentions>` must be at least 1. Set to 0 to disable. If no argument is given, defaults to 0.
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
         """
         mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
         if not max_mentions:
