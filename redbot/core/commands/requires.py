@@ -8,6 +8,8 @@ checks like bot permissions checks.
 """
 import asyncio
 import enum
+import inspect
+from collections import ChainMap
 from typing import (
     Union,
     Optional,
@@ -20,6 +22,7 @@ from typing import (
     TypeVar,
     Tuple,
     ClassVar,
+    Mapping,
 )
 
 import discord
@@ -45,6 +48,7 @@ __all__ = [
     "permissions_check",
     "bot_has_permissions",
     "has_permissions",
+    "has_guild_permissions",
     "is_owner",
     "guildowner",
     "guildowner_or_permissions",
@@ -52,6 +56,9 @@ __all__ = [
     "admin_or_permissions",
     "mod",
     "mod_or_permissions",
+    "transition_permstate_to",
+    "PermStateTransitions",
+    "PermStateAllowedStates",
 ]
 
 _T = TypeVar("_T")
@@ -95,8 +102,8 @@ class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
     # Maintainer Note: do NOT re-order these.
-    # Each privelege level also implies access to the ones before it.
-    # Inserting new privelege levels at a later point is fine if that is considered.
+    # Each privilege level also implies access to the ones before it.
+    # Inserting new privilege levels at a later point is fine if that is considered.
 
     NONE = enum.auto()
     """No special privilege level."""
@@ -125,7 +132,7 @@ class PrivilegeLevel(enum.IntEnum):
 
         # The following is simply an optimised way to check if the user has the
         # admin or mod role.
-        guild_settings = ctx.bot.db.guild(ctx.guild)
+        guild_settings = ctx.bot._config.guild(ctx.guild)
 
         member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
@@ -176,16 +183,15 @@ class PermState(enum.Enum):
 
     ALLOWED_BY_HOOK = enum.auto()
     """This command has been actively allowed by a permission hook.
-    check validation doesn't need this, but is useful to developers"""
+    check validation swaps this out, but the information may be useful
+    to developers. It is treated as `ACTIVE_ALLOW` for the current command
+    and `PASSIVE_ALLOW` for subcommands."""
 
     DENIED_BY_HOOK = enum.auto()
     """This command has been actively denied by a permission hook
-    check validation doesn't need this, but is useful to developers"""
-
-    def transition_to(
-        self, next_state: "PermState"
-    ) -> Tuple[Optional[bool], Union["PermState", Dict[bool, "PermState"]]]:
-        return self.TRANSITIONS[self][next_state]
+    check validation swaps this out, but the information may be useful
+    to developers. It is treated as `ACTIVE_DENY` for the current command
+    and any subcommands."""
 
     @classmethod
     def from_bool(cls, value: Optional[bool]) -> "PermState":
@@ -211,7 +217,11 @@ class PermState(enum.Enum):
 # result of the default permission checks - the transition from NORMAL
 # to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
 # permission check results to the actual next state.
-PermState.TRANSITIONS = {
+
+TransitionResult = Tuple[Optional[bool], Union[PermState, Dict[bool, PermState]]]
+TransitionDict = Dict[PermState, Dict[PermState, TransitionResult]]
+
+PermStateTransitions: TransitionDict = {
     PermState.ACTIVE_ALLOW: {
         PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
         PermState.NORMAL: (True, PermState.ACTIVE_ALLOW),
@@ -248,11 +258,27 @@ PermState.TRANSITIONS = {
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
 }
-PermState.ALLOWED_STATES = (
+
+PermStateAllowedStates = (
     PermState.ACTIVE_ALLOW,
     PermState.PASSIVE_ALLOW,
     PermState.CAUTIOUS_ALLOW,
 )
+
+
+def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
+
+    # Transforms here are used so that the
+    # informational ALLOWED_BY_HOOK/DENIED_BY_HOOK
+    # remain, while retaining the behavior desired.
+    if prev is PermState.ALLOWED_BY_HOOK:
+        # As hook allows are extremely granular,
+        # we don't want this to allow every subcommand
+        prev = PermState.PASSIVE_ALLOW
+    elif prev is PermState.DENIED_BY_HOOK:
+        # However, denying should deny every subcommand
+        prev = PermState.ACTIVE_DENY
+    return PermStateTransitions[prev][next_state]
 
 
 class Requires:
@@ -326,13 +352,13 @@ class Requires:
 
     @staticmethod
     def get_decorator(
-        privilege_level: Optional[PrivilegeLevel], user_perms: Dict[str, bool]
+        privilege_level: Optional[PrivilegeLevel], user_perms: Optional[Dict[str, bool]]
     ) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
         if not user_perms:
             user_perms = None
 
         def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
-            if asyncio.iscoroutinefunction(func):
+            if inspect.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
                 func.__requires_user_perms__ = user_perms
             else:
@@ -341,6 +367,7 @@ class Requires:
                     func.requires.user_perms = None
                 else:
                     _validate_perms_dict(user_perms)
+                    assert func.requires.user_perms is not None
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -357,6 +384,8 @@ class Requires:
         guild_id : int
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
+            If a global rule is set for a model,
+            it will be prefered over the guild rule.
 
         Returns
         -------
@@ -367,8 +396,9 @@ class Requires:
         """
         if not isinstance(model, (str, int)):
             model = model.id
+        rules: Mapping[Union[int, str], PermState]
         if guild_id:
-            rules = self._guild_rules.get(guild_id, _RulesDict())
+            rules = ChainMap(self._global_rules, self._guild_rules.get(guild_id, _RulesDict()))
         else:
             rules = self._global_rules
         return rules.get(model, PermState.NORMAL)
@@ -398,10 +428,8 @@ class Requires:
         else:
             rules[model_id] = rule
 
-    def clear_all_rules(self, guild_id: int) -> None:
+    def clear_all_rules(self, guild_id: int, *, preserve_default_rule: bool = True) -> None:
         """Clear all rules of a particular scope.
-
-        This will preserve the default rule, if set.
 
         Parameters
         ----------
@@ -410,6 +438,12 @@ class Requires:
             `Requires.GLOBAL`, this will clear all global rules and
             leave all guild rules untouched.
 
+        Other Parameters
+        ----------------
+        preserve_default_rule : bool
+            Whether to preserve the default rule or not.
+            This defaults to being preserved
+
         """
         if guild_id:
             rules = self._guild_rules.setdefault(guild_id, _RulesDict())
@@ -417,7 +451,7 @@ class Requires:
             rules = self._global_rules
         default = rules.get(self.DEFAULT, None)
         rules.clear()
-        if default is not None:
+        if default is not None and preserve_default_rule:
             rules[self.DEFAULT] = default
 
     def reset(self) -> None:
@@ -477,6 +511,10 @@ class Requires:
             bot_user = ctx.bot.user
         else:
             bot_user = ctx.guild.me
+            cog = ctx.cog
+            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+                raise discord.ext.commands.DisabledCommand()
+
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
@@ -484,7 +522,7 @@ class Requires:
     async def _transition_state(self, ctx: "Context") -> bool:
         prev_state = ctx.permission_state
         cur_state = self._get_rule_from_ctx(ctx)
-        should_invoke, next_state = prev_state.transition_to(cur_state)
+        should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
         if should_invoke is None:
             # NORMAL invokation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
@@ -505,6 +543,7 @@ class Requires:
                 would_invoke = await self._verify_user(ctx)
             next_state = next_state[would_invoke]
 
+        assert isinstance(next_state, PermState)
         ctx.permission_state = next_state
         return should_invoke
 
@@ -631,6 +670,20 @@ def permissions_check(predicate: CheckPredicate):
     return decorator
 
 
+def has_guild_permissions(**perms):
+    """Restrict the command to users with these guild permissions.
+
+    This check can be overridden by rules.
+    """
+
+    _validate_perms_dict(perms)
+
+    def predicate(ctx):
+        return ctx.guild and ctx.author.guild_permissions >= discord.Permissions(**perms)
+
+    return permissions_check(predicate)
+
+
 def bot_has_permissions(**perms: bool):
     """Complain if the bot is missing permissions.
 
@@ -719,7 +772,7 @@ def mod():
 
 
 class _IntKeyDict(Dict[int, _T]):
-    """Dict subclass which throws KeyError when a non-int key is used."""
+    """Dict subclass which throws TypeError when a non-int key is used."""
 
     get: Callable
     setdefault: Callable
@@ -736,7 +789,7 @@ class _IntKeyDict(Dict[int, _T]):
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
-    """Dict subclass which throws a KeyError when an invalid key is used."""
+    """Dict subclass which throws a TypeError when an invalid key is used."""
 
     get: Callable
     setdefault: Callable
@@ -753,16 +806,10 @@ class _RulesDict(Dict[Union[int, str], PermState]):
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:
+    invalid_keys = set(perms.keys()) - set(discord.Permissions.VALID_FLAGS)
+    if invalid_keys:
+        raise TypeError(f"Invalid perm name(s): {', '.join(invalid_keys)}")
     for perm, value in perms.items():
-        try:
-            attr = getattr(discord.Permissions, perm)
-        except AttributeError:
-            attr = None
-
-        if attr is None or not isinstance(attr, property):
-            # We reject invalid permissions
-            raise TypeError(f"Unknown permission name '{perm}'")
-
         if value is not True:
             # We reject any permission not specified as 'True', since this is the only value which
             # makes practical sense.

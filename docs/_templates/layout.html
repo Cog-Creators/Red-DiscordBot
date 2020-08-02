@@ -1,0 +1,18 @@
+{% extends '!layout.html' %}
+{% block document %}
+{% if version_slug == 'latest' %}
+<div class="admonition warning">
+    <p class="first admonition-title">Warning</p>
+    <p class="last">
+        This document is for Red's development version, which can be significantly different from previous releases.
+        If you're a regular user, you should read the <a href="{{ dict(versions)['stable'] }}">Red documentation for the current stable release</a>.
+    </p>
+</div>
+{% endif %}
+{{ super() }}
+<a href="https://github.com/Cog-Creators/Red-DiscordBot">
+    <img style="position: absolute; top: 0; right: 0; border: 0;"
+    src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149"
+    class="attachment-full size-full" alt="Fork me on GitHub">
+</a>
+{% endblock %}

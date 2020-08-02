@@ -20,8 +20,8 @@ class ModInfo(MixinMeta):
     """
 
     async def get_names_and_nicks(self, user):
-        names = await self.settings.user(user).past_names()
-        nicks = await self.settings.member(user).past_nicks()
+        names = await self.config.user(user).past_names()
+        nicks = await self.config.member(user).past_nicks()
         if names:
             names = [escape_spoilers_and_mass_mentions(name) for name in names if name]
         if nicks:
@@ -69,6 +69,85 @@ class ModInfo(MixinMeta):
             else:
                 await ctx.send(_("Done."))
 
+    def handle_custom(self, user):
+        a = [c for c in user.activities if c.type == discord.ActivityType.custom]
+        if not a:
+            return None, discord.ActivityType.custom
+        a = a[0]
+        c_status = None
+        if not a.name and not a.emoji:
+            return None, discord.ActivityType.custom
+        elif a.name and a.emoji:
+            c_status = _("Custom: {emoji} {name}").format(emoji=a.emoji, name=a.name)
+        elif a.emoji:
+            c_status = _("Custom: {emoji}").format(emoji=a.emoji)
+        elif a.name:
+            c_status = _("Custom: {name}").format(name=a.name)
+        return c_status, discord.ActivityType.custom
+
+    def handle_playing(self, user):
+        p_acts = [c for c in user.activities if c.type == discord.ActivityType.playing]
+        if not p_acts:
+            return None, discord.ActivityType.playing
+        p_act = p_acts[0]
+        act = _("Playing: {name}").format(name=p_act.name)
+        return act, discord.ActivityType.playing
+
+    def handle_streaming(self, user):
+        s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
+        if not s_acts:
+            return None, discord.ActivityType.streaming
+        s_act = s_acts[0]
+        if isinstance(s_act, discord.Streaming):
+            act = _("Streaming: [{name}{sep}{game}]({url})").format(
+                name=discord.utils.escape_markdown(s_act.name),
+                sep=" | " if s_act.game else "",
+                game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
+                url=s_act.url,
+            )
+        else:
+            act = _("Streaming: {name}").format(name=s_act.name)
+        return act, discord.ActivityType.streaming
+
+    def handle_listening(self, user):
+        l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
+        if not l_acts:
+            return None, discord.ActivityType.listening
+        l_act = l_acts[0]
+        if isinstance(l_act, discord.Spotify):
+            act = _("Listening: [{title}{sep}{artist}]({url})").format(
+                title=discord.utils.escape_markdown(l_act.title),
+                sep=" | " if l_act.artist else "",
+                artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
+                url=f"https://open.spotify.com/track/{l_act.track_id}",
+            )
+        else:
+            act = _("Listening: {title}").format(title=l_act.name)
+        return act, discord.ActivityType.listening
+
+    def handle_watching(self, user):
+        w_acts = [c for c in user.activities if c.type == discord.ActivityType.watching]
+        if not w_acts:
+            return None, discord.ActivityType.watching
+        w_act = w_acts[0]
+        act = _("Watching: {name}").format(name=w_act.name)
+        return act, discord.ActivityType.watching
+
+    def get_status_string(self, user):
+        string = ""
+        for a in [
+            self.handle_custom(user),
+            self.handle_playing(user),
+            self.handle_listening(user),
+            self.handle_streaming(user),
+            self.handle_watching(user),
+        ]:
+            status_string, status_type = a
+            if status_string is None:
+                continue
+            string += f"{status_string}\n"
+        return string
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
@@ -112,28 +191,61 @@ class ModInfo(MixinMeta):
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
+        if any(a.type is discord.ActivityType.streaming for a in user.activities):
+            statusemoji = "\N{LARGE PURPLE CIRCLE}"
+        elif user.status.name == "online":
+            statusemoji = "\N{LARGE GREEN CIRCLE}"
+        elif user.status.name == "offline":
+            statusemoji = "\N{MEDIUM WHITE CIRCLE}"
+        elif user.status.name == "dnd":
+            statusemoji = "\N{LARGE RED CIRCLE}"
+        elif user.status.name == "idle":
+            statusemoji = "\N{LARGE ORANGE CIRCLE}"
         activity = _("Chilling in {} status").format(user.status)
-        if user.activity is None:  # Default status
-            pass
-        elif user.activity.type == discord.ActivityType.playing:
-            activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == discord.ActivityType.listening:
-            activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.watching:
-            activity = _("Watching {}").format(user.activity.name)
+        status_string = self.get_status_string(user)
 
         if roles:
-            roles = ", ".join([x.mention for x in roles])
-        else:
-            roles = None
 
-        data = discord.Embed(description=activity, colour=user.colour)
+            role_str = ", ".join([x.mention for x in roles])
+            # 400 BAD REQUEST (error code: 50035): Invalid Form Body
+            # In embed.fields.2.value: Must be 1024 or fewer in length.
+            if len(role_str) > 1024:
+                # Alternative string building time.
+                # This is not the most optimal, but if you're hitting this, you are losing more time
+                # to every single check running on users than the occasional user info invoke
+                # We don't start by building this way, since the number of times we hit this should be
+                # infintesimally small compared to when we don't across all uses of Red.
+                continuation_string = _(
+                    "and {numeric_number} more roles not displayed due to embed limits."
+                )
+                available_length = 1024 - len(continuation_string)  # do not attempt to tweak, i18n
+
+                role_chunks = []
+                remaining_roles = 0
+
+                for r in roles:
+                    chunk = f"{r.mention}, "
+                    chunk_size = len(chunk)
+
+                    if chunk_size < available_length:
+                        available_length -= chunk_size
+                        role_chunks.append(chunk)
+                    else:
+                        remaining_roles += 1
+
+                role_chunks.append(continuation_string.format(numeric_number=remaining_roles))
+
+                role_str = "".join(role_chunks)
+
+        else:
+            role_str = None
+
+        data = discord.Embed(description=status_string or activity, colour=user.colour)
+
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
-        if roles is not None:
-            data.add_field(name=_("Roles"), value=roles, inline=False)
+        if role_str is not None:
+            data.add_field(name=_("Roles"), value=role_str, inline=False)
         if names:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
@@ -154,12 +266,9 @@ class ModInfo(MixinMeta):
         name = " ~ ".join((name, user.nick)) if user.nick else name
         name = filter_invites(name)
 
-        if user.avatar:
-            avatar = user.avatar_url_as(static_format="png")
-            data.set_author(name=name, url=avatar)
-            data.set_thumbnail(url=avatar)
-        else:
-            data.set_author(name=name)
+        avatar = user.avatar_url_as(static_format="png")
+        data.set_author(name=f"{statusemoji} {name}", url=avatar)
+        data.set_thumbnail(url=avatar)
 
         await ctx.send(embed=data)
 

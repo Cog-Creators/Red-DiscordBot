@@ -1,11 +1,9 @@
+from __future__ import annotations
 import asyncio
-import logging
-import os
-import shutil
+import warnings
 from asyncio import AbstractEventLoop, as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
-from pathlib import Path
 from typing import (
     Any,
     AsyncIterator,
@@ -19,28 +17,17 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
-    Set,
-    TYPE_CHECKING,
+    Generator,
+    Coroutine,
 )
 
-import discord
-from fuzzywuzzy import fuzz, process
+from discord.utils import maybe_coroutine
 
-from .chat_formatting import box
+__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
 
-if TYPE_CHECKING:
-    from ..commands import Command, Context
-
-__all__ = [
-    "bounded_gather",
-    "safe_delete",
-    "fuzzy_command_search",
-    "format_fuzzy_results",
-    "deduplicate_iterables",
-]
 
 _T = TypeVar("_T")
-
+_S = TypeVar("_S")
 
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
@@ -50,27 +37,6 @@ def deduplicate_iterables(*iterables):
     """
     # dict insertion order is guaranteed to be preserved in 3.6+
     return list(dict.fromkeys(chain.from_iterable(iterables)))
-
-
-def _fuzzy_log_filter(record):
-    return record.funcName != "extractWithoutOrder"
-
-
-logging.getLogger().addFilter(_fuzzy_log_filter)
-
-
-def safe_delete(pth: Path):
-    if pth.exists():
-        for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o700)
-
-            for d in dirs:
-                os.chmod(os.path.join(root, d), 0o700)
-
-            for f in files:
-                os.chmod(os.path.join(root, f), 0o700)
-
-        shutil.rmtree(str(pth), ignore_errors=True)
 
 
 # https://github.com/PyCQA/pylint/issues/2717
@@ -183,124 +149,6 @@ async def async_enumerate(
         start += 1
 
 
-async def fuzzy_command_search(
-    ctx: "Context",
-    term: Optional[str] = None,
-    *,
-    commands: Optional[Set["Command"]] = None,
-    min_score: int = 80,
-) -> Optional[List["Command"]]:
-    """Search for commands which are similar in name to the one invoked.
-
-    Returns a maximum of 5 commands which must all be at least matched
-    greater than ``min_score``.
-
-    Parameters
-    ----------
-    ctx : `commands.Context <redbot.core.commands.Context>`
-        The command invocation context.
-    term : Optional[str]
-        The name of the invoked command. If ``None``,
-        `Context.invoked_with` will be used instead.
-    commands : Optional[Set[commands.Command]]
-        The commands available to choose from when doing a fuzzy match.
-        When omitted, `Bot.walk_commands` will be used instead.
-    min_score : int
-        The minimum score for matched commands to reach. Defaults to 80.
-
-    Returns
-    -------
-    Optional[List[`commands.Command <redbot.core.commands.Command>`]]
-        A list of commands which were fuzzily matched with the invoked
-        command.
-
-    """
-    if ctx.guild is not None:
-        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
-    else:
-        enabled = await ctx.bot.db.fuzzy()
-
-    if not enabled:
-        return
-
-    if term is None:
-        term = ctx.invoked_with
-
-    # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
-    alias_cog = ctx.bot.get_cog("Alias")
-    if alias_cog is not None:
-        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
-
-        if is_alias:
-            return
-    customcom_cog = ctx.bot.get_cog("CustomCommands")
-    if customcom_cog is not None:
-        cmd_obj = customcom_cog.commandobj
-
-        try:
-            await cmd_obj.get(ctx.message, term)
-        except:
-            pass
-        else:
-            return
-
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(
-        term, (commands or set(ctx.bot.walk_commands())), limit=5, scorer=fuzz.QRatio
-    )
-    if not extracted:
-        return
-
-    # Filter through the fuzzy-matched commands.
-    matched_commands = []
-    for command, score in extracted:
-        if score < min_score:
-            # Since the list is in decreasing order of score, we can exit early.
-            break
-        if await command.can_see(ctx):
-            matched_commands.append(command)
-
-    return matched_commands
-
-
-async def format_fuzzy_results(
-    ctx: "Context", matched_commands: List["Command"], *, embed: Optional[bool] = None
-) -> Union[str, discord.Embed]:
-    """Format the result of a fuzzy command search.
-
-    Parameters
-    ----------
-    ctx : `commands.Context <redbot.core.commands.Context>`
-        The context in which this result is being displayed.
-    matched_commands : List[`commands.Command <redbot.core.commands.Command>`]
-        A list of commands which have been matched by the fuzzy search, sorted
-        in order of decreasing similarity.
-    embed : bool
-        Whether or not the result should be an embed. If set to ``None``, this
-        will default to the result of `ctx.embed_requested`.
-
-    Returns
-    -------
-    Union[str, discord.Embed]
-        The formatted results.
-
-    """
-    if embed is not False and (embed is True or await ctx.embed_requested()):
-        lines = []
-        for cmd in matched_commands:
-            lines.append(f"**{ctx.clean_prefix}{cmd.qualified_name}** {cmd.short_doc}")
-        return discord.Embed(
-            title="Perhaps you wanted one of these?",
-            colour=await ctx.embed_colour(),
-            description="\n".join(lines),
-        )
-    else:
-        lines = []
-        for cmd in matched_commands:
-            lines.append(f"{ctx.clean_prefix}{cmd.qualified_name} -- {cmd.short_doc}")
-        return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
-
-
 async def _sem_wrapper(sem, task):
     async with sem:
         return await task
@@ -334,14 +182,21 @@ def bounded_gather_iter(
     TypeError
         When invalid parameters are passed
     """
-    if loop is None:
-        loop = asyncio.get_event_loop()
+    if loop is not None:
+        warnings.warn(
+            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
+            " and will be removed in the first minor release after 2020-08-05.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+    loop = asyncio.get_running_loop()
 
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
-        semaphore = Semaphore(limit, loop=loop)
+        semaphore = Semaphore(limit)
 
     pending = []
 
@@ -352,7 +207,7 @@ def bounded_gather_iter(
         cof = _sem_wrapper(semaphore, cof)
         pending.append(cof)
 
-    return as_completed(pending, loop=loop)
+    return as_completed(pending)
 
 
 def bounded_gather(
@@ -385,15 +240,286 @@ def bounded_gather(
     TypeError
         When invalid parameters are passed
     """
-    if loop is None:
-        loop = asyncio.get_event_loop()
+    if loop is not None:
+        warnings.warn(
+            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
+            " and will be removed in the first minor release after 2020-08-05.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+    loop = asyncio.get_running_loop()
 
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
-        semaphore = Semaphore(limit, loop=loop)
+        semaphore = Semaphore(limit)
 
     tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
-    return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)
+    return asyncio.gather(*tasks, return_exceptions=return_exceptions)
+
+
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+    """Asynchronous iterator yielding items from ``iterable``
+    that sleeps for ``delay`` seconds every ``steps`` items.
+
+    Parameters
+    ----------
+    iterable: Iterable
+        The iterable to make async.
+    delay: Union[float, int]
+        The amount of time in seconds to sleep.
+    steps: int
+        The number of iterations between sleeps.
+
+    Raises
+    ------
+    ValueError
+        When ``steps`` is lower than 1.
+
+    Examples
+    --------
+    >>> from redbot.core.utils import AsyncIter
+    >>> async for value in AsyncIter(range(3)):
+    ...     print(value)
+    0
+    1
+    2
+
+    """
+
+    def __init__(
+        self, iterable: Iterable[_T], delay: Union[float, int] = 0, steps: int = 1
+    ) -> None:
+        if steps < 1:
+            raise ValueError("Steps must be higher than or equals to 1")
+        self._delay = delay
+        self._iterator = iter(iterable)
+        self._i = 0
+        self._steps = steps
+        self._map = None
+
+    def __aiter__(self) -> AsyncIter[_T]:
+        return self
+
+    async def __anext__(self) -> _T:
+        try:
+            item = next(self._iterator)
+        except StopIteration:
+            raise StopAsyncIteration
+        if self._i == self._steps:
+            self._i = 0
+            await asyncio.sleep(self._delay)
+        self._i += 1
+        return await maybe_coroutine(self._map, item) if self._map is not None else item
+
+    def __await__(self) -> Generator[Any, None, List[_T]]:
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator
+        [0, 1, 2, 3, 4]
+
+        """
+        return self.flatten().__await__()
+
+    async def next(self, default: Any = ...) -> _T:
+        """Returns a next entry of the iterable.
+
+        Parameters
+        ----------
+        default: Optional[Any]
+            The value to return if the iterator is exhausted.
+
+        Raises
+        ------
+        StopAsyncIteration
+            When ``default`` is not specified and the iterator has been exhausted.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator.next()
+        0
+        >>> await iterator.next()
+        1
+
+        """
+        try:
+            value = await self.__anext__()
+        except StopAsyncIteration:
+            if default is ...:
+                raise
+            value = default
+        return value
+
+    async def flatten(self) -> List[_T]:
+        """Returns a list of the iterable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(range(5))
+        >>> await iterator.flatten()
+        [0, 1, 2, 3, 4]
+
+        """
+        return [item async for item in self]
+
+    def filter(self, function: Callable[[_T], Union[bool, Awaitable[bool]]]) -> AsyncFilter[_T]:
+        """Filter the iterable with an (optionally async) predicate.
+
+        Parameters
+        ----------
+        function: Callable[[T], Union[bool, Awaitable[bool]]]
+            A function or coroutine function which takes one item of ``iterable``
+            as an argument, and returns ``True`` or ``False``.
+
+        Returns
+        -------
+        AsyncFilter[T]
+            An object which can either be awaited to yield a list of the filtered
+            items, or can also act as an async iterator to yield items one by one.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> def predicate(value):
+        ...     return value <= 5
+        >>> iterator = AsyncIter([1, 10, 5, 100])
+        >>> async for i in iterator.filter(predicate):
+        ...     print(i)
+        1
+        5
+
+        >>> from redbot.core.utils import AsyncIter
+        >>> def predicate(value):
+        ...     return value <= 5
+        >>> iterator = AsyncIter([1, 10, 5, 100])
+        >>> await iterator.filter(predicate)
+        [1, 5]
+
+        """
+        return async_filter(function, self)
+
+    def enumerate(self, start: int = 0) -> AsyncIterator[Tuple[int, _T]]:
+        """Async iterable version of `enumerate`.
+
+        Parameters
+        ----------
+        start: int
+            The index to start from. Defaults to 0.
+
+        Returns
+        -------
+        AsyncIterator[Tuple[int, T]]
+            An async iterator of tuples in the form of ``(index, item)``.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter(['one', 'two', 'three'])
+        >>> async for i in iterator.enumerate(start=10):
+        ...     print(i)
+        (10, 'one')
+        (11, 'two')
+        (12, 'three')
+
+        """
+        return async_enumerate(self, start)
+
+    async def without_duplicates(self) -> AsyncIterator[_T]:
+        """
+        Iterates while omitting duplicated entries.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> iterator = AsyncIter([1,2,3,3,4,4,5])
+        >>> async for i in iterator.without_duplicates():
+        ...     print(i)
+        1
+        2
+        3
+        4
+        5
+
+        """
+        _temp = set()
+        async for item in self:
+            if item not in _temp:
+                yield item
+                _temp.add(item)
+        del _temp
+
+    async def find(
+        self,
+        predicate: Callable[[_T], Union[bool, Awaitable[bool]]],
+        default: Optional[Any] = None,
+    ) -> AsyncIterator[_T]:
+        """Calls ``predicate`` over items in iterable and return first value to match.
+
+        Parameters
+        ----------
+        predicate: Union[Callable, Coroutine]
+            A function that returns a boolean-like result. The predicate provided can be a coroutine.
+        default: Optional[Any]
+            The value to return if there are no matches.
+
+        Raises
+        ------
+        TypeError
+            When ``predicate`` is not a callable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> await AsyncIter(range(3)).find(lambda x: x == 1)
+        1
+        """
+        while True:
+            try:
+                elem = await self.__anext__()
+            except StopAsyncIteration:
+                return default
+            ret = await maybe_coroutine(predicate, elem)
+            if ret:
+                return elem
+
+    def map(self, func: Callable[[_T], Union[_S, Awaitable[_S]]]) -> AsyncIter[_S]:
+        """Set the mapping callable for this instance of `AsyncIter`.
+
+        .. important::
+            This should be called after AsyncIter initialization and before any other of its methods.
+
+        Parameters
+        ----------
+        func: Union[Callable, Coroutine]
+            The function to map values to. The function provided can be a coroutine.
+
+        Raises
+        ------
+        TypeError
+            When ``func`` is not a callable.
+
+        Examples
+        --------
+        >>> from redbot.core.utils import AsyncIter
+        >>> async for value in AsyncIter(range(3)).map(bool):
+        ...     print(value)
+        False
+        True
+        True
+
+        """
+
+        if not callable(func):
+            raise TypeError("Mapping must be a callable.")
+        self._map = func
+        return self

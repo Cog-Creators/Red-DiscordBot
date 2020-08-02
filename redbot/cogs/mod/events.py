@@ -23,7 +23,7 @@ class Events(MixinMeta):
 
         guild_cache = self.cache.get(guild.id, None)
         if guild_cache is None:
-            repeats = await self.settings.guild(guild).delete_repeats()
+            repeats = await self.config.guild(guild).delete_repeats()
             if repeats == -1:
                 return False
             guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
@@ -45,7 +45,7 @@ class Events(MixinMeta):
         guild = message.guild
         author = message.author
 
-        max_mentions = await self.settings.guild(guild).ban_mention_spam()
+        max_mentions = await self.config.guild(guild).ban_mention_spam()
         if max_mentions:
             mentions = set(message.mentions)
             if len(mentions) >= max_mentions:
@@ -79,6 +79,10 @@ class Events(MixinMeta):
         author = message.author
         if message.guild is None or self.bot.user == author:
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
@@ -95,20 +99,25 @@ class Events(MixinMeta):
             await self.check_mention_spam(message)
 
     @commands.Cog.listener()
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_user_update(self, before: discord.User, after: discord.User):
         if before.name != after.name:
-            async with self.settings.user(before).past_names() as name_list:
+            async with self.config.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
                 if after.name in name_list:
-                    # Ensure order is maintained without duplicates occuring
+                    # Ensure order is maintained without duplicates occurring
                     name_list.remove(after.name)
                 name_list.append(after.name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.nick != after.nick and after.nick is not None:
-            async with self.settings.member(before).past_nicks() as nick_list:
+            guild = after.guild
+            if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+                return
+            async with self.config.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
                     nick_list.remove(None)
                 if after.nick in nick_list:

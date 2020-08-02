@@ -3,14 +3,16 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping, Tuple, Dict, Set
+from typing import Iterable, List, Mapping, Tuple, Dict, Set
+from urllib.parse import quote_plus
 
 import discord
+from fuzzywuzzy import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
-from redbot.core.utils.chat_formatting import box, pagify, escape
+from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -204,15 +206,84 @@ class CustomCommands(commands.Cog):
         """Custom commands management."""
         pass
 
-    @customcom.group(name="create", aliases=["add"])
+    @customcom.command(name="raw")
+    async def cc_raw(self, ctx: commands.Context, command: str.lower):
+        """Get the raw response of a custom command, to get the proper markdown.
+        
+        This is helpful for copy and pasting."""
+        commands = await self.config.guild(ctx.guild).commands()
+        if command not in commands:
+            return await ctx.send("That command doesn't exist.")
+        command = commands[command]
+        if isinstance(command["response"], str):
+            raw = discord.utils.escape_markdown(command["response"])
+            if len(raw) > 2000:
+                raw = f"{raw[:1997]}..."
+            await ctx.send(raw)
+        else:
+            msglist = []
+            if await ctx.embed_requested():
+                colour = await ctx.embed_colour()
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    if len(raw) > 2048:
+                        raw = f"{raw[:2045]}..."
+                    embed = discord.Embed(
+                        title=_("Response #{num}/{total}").format(
+                            num=number, total=len(command["response"])
+                        ),
+                        description=raw,
+                        colour=colour,
+                    )
+                    msglist.append(embed)
+            else:
+                for number, response in enumerate(command["response"], start=1):
+                    raw = discord.utils.escape_markdown(response)
+                    msg = _("Response #{num}/{total}:\n{raw}").format(
+                        num=number, total=len(command["response"]), raw=raw
+                    )
+                    if len(msg) > 2000:
+                        msg = f"{msg[:1997]}..."
+                    msglist.append(msg)
+            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
+
+    @customcom.command(name="search")
+    @commands.guild_only()
+    async def cc_search(self, ctx: commands.Context, *, query):
+        """Searches through custom commands, according to the query."""
+        cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
+        extracted = process.extract(query, list(cc_commands.keys()))
+        accepted = []
+        for entry in extracted:
+            if entry[1] > 60:
+                # Match was decently strong
+                accepted.append((entry[0], cc_commands[entry[0]]))
+            else:
+                # Match wasn't strong enough
+                pass
+        if len(accepted) == 0:
+            return await ctx.send(_("No close matches were found."))
+        results = self.prepare_command_list(ctx, accepted)
+        if await ctx.embed_requested():
+            content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
+            embed = discord.Embed(
+                title=_("Search results"), description=content, colour=await ctx.embed_colour()
+            )
+            await ctx.send(embed=embed)
+        else:
+            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
+            await ctx.send(_("The following matches have been found:") + box(content))
+
+    @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
-    async def cc_create(self, ctx: commands.Context):
+    async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
+        If a type is not specified, a simple CC will be created.
         CCs can be enhanced with arguments, see the guide
-        [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
+        [here](https://docs.discord.red/en/stable/cog_customcom.html).
         """
-        pass
+        await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
     @checks.mod_or_permissions(administrator=True)
@@ -221,14 +292,24 @@ class CustomCommands(commands.Cog):
 
         Note: This command is interactive.
         """
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
+            await ctx.send(_("There already exists a bot command with the same name."))
+            return
         responses = await self.commandobj.get_responses(ctx=ctx)
+        if not responses:
+            await ctx.send(_("Custom command process cancelled."))
+            return
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
                 _("This command already exists. Use `{command}` to edit it.").format(
-                    command="{}customcom edit".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
 
@@ -240,7 +321,11 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom create simple yourcommand Text you want`
         """
-        if command in self.bot.all_commands:
+        if any(char.isspace() for char in command):
+            # Haha, nice try
+            await ctx.send(_("Custom command names cannot have spaces in them."))
+            return
+        if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
             await ctx.send(_("There already exists a bot command with the same name."))
             return
         try:
@@ -249,7 +334,7 @@ class CustomCommands(commands.Cog):
         except AlreadyExists:
             await ctx.send(
                 _("This command already exists. Use `{command}` to edit it.").format(
-                    command="{}customcom edit".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
         except ArgParseError as e:
@@ -294,7 +379,7 @@ class CustomCommands(commands.Cog):
         except NotFound:
             await ctx.send(
                 _("That command doesn't exist. Use `{command}` to add it.").format(
-                    command="{}customcom create".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom create"
                 )
             )
 
@@ -326,7 +411,7 @@ class CustomCommands(commands.Cog):
         except NotFound:
             await ctx.send(
                 _("That command doesn't exist. Use `{command}` to add it.").format(
-                    command="{}customcom create".format(ctx.prefix)
+                    command=f"{ctx.clean_prefix}customcom create"
                 )
             )
         except ArgParseError as e:
@@ -347,27 +432,11 @@ class CustomCommands(commands.Cog):
                 _(
                     "There are no custom commands in this server."
                     " Use `{command}` to start adding some."
-                ).format(command="{}customcom create".format(ctx.prefix))
+                ).format(command=f"{ctx.clean_prefix}customcom create")
             )
             return
 
-        results = []
-        for command, body in sorted(cc_dict.items(), key=lambda t: t[0]):
-            responses = body["response"]
-            if isinstance(responses, list):
-                result = ", ".join(responses)
-            elif isinstance(responses, str):
-                result = responses
-            else:
-                continue
-            # Cut preview to 52 characters max
-            if len(result) > 52:
-                result = result[:49] + "..."
-            # Replace newlines with spaces
-            result = result.replace("\n", " ")
-            # Escape markdown and mass mentions
-            result = escape(result, formatting=True, mass_mentions=True)
-            results.append((f"{ctx.clean_prefix}{command}", result))
+        results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
@@ -390,12 +459,12 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's reponses and its settings."""
+        """Shows a custom command's responses and its settings."""
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
         except NotFound:
-            ctx.send(_("I could not not find that custom command."))
+            await ctx.send(_("I could not not find that custom command."))
             return
 
         responses = cmd["response"]
@@ -421,7 +490,7 @@ class CustomCommands(commands.Cog):
             command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
-        cooldowns = cmd["cooldowns"]
+        cooldowns = cmd.get("cooldowns", {})
 
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
@@ -437,7 +506,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(box(p, lang="yaml"))
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
@@ -447,9 +516,12 @@ class CustomCommands(commands.Cog):
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
             return
 
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         ctx = await self.bot.get_context(message)
 
-        if ctx.prefix is None or ctx.valid:
+        if ctx.prefix is None:
             return
 
         try:
@@ -517,6 +589,7 @@ class CustomCommands(commands.Cog):
             "set": set,
             "str": str,
             "tuple": tuple,
+            "query": quote_plus,
         }
         indices = [int(a[0]) for a in args]
         low = min(indices)
@@ -598,16 +671,25 @@ class CustomCommands(commands.Cog):
         # only update cooldowns if the command isn't on cooldown
         self.cooldowns.update(new_cooldowns)
 
-    @staticmethod
-    def transform_arg(result, attr, obj) -> str:
+    @classmethod
+    def transform_arg(cls, result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
-            return str(obj)
+            return cls.maybe_humanize_list(obj)
         raw_result = "{" + result + "}"
         # forbid private members and nested attr lookups
         if attr.startswith("_") or "." in attr:
             return raw_result
-        return str(getattr(obj, attr, raw_result))
+        return cls.maybe_humanize_list(getattr(obj, attr, raw_result))
+
+    @staticmethod
+    def maybe_humanize_list(thing) -> str:
+        if isinstance(thing, str):
+            return thing
+        try:
+            return humanize_list(list(map(str, thing)))
+        except TypeError:
+            return str(thing)
 
     @staticmethod
     def transform_parameter(result, message) -> str:
@@ -645,3 +727,26 @@ class CustomCommands(commands.Cog):
 
         """
         return set(await CommandObj.get_commands(self.config.guild(guild)))
+
+    @staticmethod
+    def prepare_command_list(
+        ctx: commands.Context, command_list: Iterable[Tuple[str, dict]]
+    ) -> List[Tuple[str, str]]:
+        results = []
+        for command, body in command_list:
+            responses = body["response"]
+            if isinstance(responses, list):
+                result = ", ".join(responses)
+            elif isinstance(responses, str):
+                result = responses
+            else:
+                continue
+            # Cut preview to 52 characters max
+            if len(result) > 52:
+                result = result[:49] + "..."
+            # Replace newlines with spaces
+            result = result.replace("\n", " ")
+            # Escape markdown and mass mentions
+            result = escape(result, formatting=True, mass_mentions=True)
+            results.append((f"{ctx.clean_prefix}{command}", result))
+        return results

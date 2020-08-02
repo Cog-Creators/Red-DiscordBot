@@ -16,7 +16,7 @@ __all__ = [
 # regexes
 URL_RE = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
 
-INVITE_URL_RE = re.compile(r"(discord.gg|discordapp.com/invite|discord.me)(\S+)", re.I)
+INVITE_URL_RE = re.compile(r"(discord\.(?:gg|io|me|li)|discord(?:app)?\.com\/invite)\/(\S+)", re.I)
 
 MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
 
@@ -64,7 +64,7 @@ def filter_urls(to_filter: str) -> str:
 def filter_invites(to_filter: str) -> str:
     """Get a string with discord invites sanitized.
 
-    Will match any discord.gg, discordapp.com/invite, or discord.me
+    Will match any discord.gg, discordapp.com/invite, discord.com/invite, discord.me, or discord.io/discord.li
     invite URL.
 
     Parameters

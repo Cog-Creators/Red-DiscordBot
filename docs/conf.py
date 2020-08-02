@@ -36,6 +36,7 @@ os.environ["BUILDING_DOCS"] = "1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
@@ -57,7 +58,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018, Cog Creators"
+copyright = "2018-2020, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -65,6 +66,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
+from discord import __version__ as dpy_version
 
 # The short X.Y version.
 version = __version__
@@ -96,15 +98,15 @@ default_role = "any"
 with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
 
+# Adds d.py version to available substitutions in all files
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-
-# This will be needed until sphinx_rtd_theme supports the html5 writer
-html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -202,6 +204,7 @@ texinfo_documents = [
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+linkcheck_retries = 3
 
 
 # -- Options for extensions -----------------------------------------------
@@ -209,8 +212,18 @@ linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
+    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
+    "babel": ("http://babel.pocoo.org/en/stable/", None),
+}
+
+# Extlinks
+# This allows to create links to d.py docs with
+# :dpy_docs:`link text <site_name.html>`
+extlinks = {
+    "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
+    "ghuser": ("https://github.com/%s", "@"),
 }
 
 # Doctest
@@ -219,5 +232,5 @@ intersphinx_mapping = {
 doctest_test_doctest_blocks = ""
 
 # Autodoc options
-autodoc_default_flags = ["show-inheritance"]
+autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"

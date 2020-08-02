@@ -1,16 +1,16 @@
 import logging
-import re
 from datetime import datetime, timedelta
-from typing import Union, List, Callable, Set
+from typing import Callable, List, Optional, Set, Union
 
 import discord
 
 from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
-from .converters import RawMessageIds
+from .converters import PositiveInt, RawMessageIds, positive_int
 
 _ = Translator("Cleanup", __file__)
 
@@ -39,7 +39,9 @@ class Cleanup(commands.Cog):
             return True
 
         prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
+            _("Are you sure you want to delete {number} messages? (y/n)").format(
+                number=humanize_number(number)
+            )
         )
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
@@ -58,8 +60,9 @@ class Cleanup(commands.Cog):
     async def get_messages_for_deletion(
         *,
         channel: discord.TextChannel,
-        number: int = None,
+        number: Optional[PositiveInt] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
+        limit: Optional[PositiveInt] = None,
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
@@ -96,13 +99,13 @@ class Cleanup(commands.Cog):
 
         collected = []
         async for message in channel.history(
-            limit=None, before=before, after=after, oldest_first=False
+            limit=limit, before=before, after=after, oldest_first=False
         ):
             if message.created_at < two_weeks_ago:
                 break
             if message_filter(message):
                 collected.append(message)
-                if number and number <= len(collected):
+                if number is not None and number <= len(collected):
                     break
 
         return collected
@@ -117,7 +120,7 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def text(
-        self, ctx: commands.Context, text: str, number: int, delete_pinned: bool = False
+        self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages matching the specified text.
 
@@ -152,7 +155,11 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
-            author.name, author.id, len(to_delete), text, channel.id
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_us"),
+            text,
+            channel.id,
         )
         log.info(reason)
 
@@ -162,7 +169,7 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def user(
-        self, ctx: commands.Context, user: str, number: int, delete_pinned: bool = False
+        self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages from a specified user.
 
@@ -208,7 +215,14 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} messages "
             " made by {}({}) in channel {}."
-            "".format(author.name, author.id, len(to_delete), member or "???", _id, channel.name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                member or "???",
+                _id,
+                channel.name,
+            )
         )
         log.info(reason)
 
@@ -240,7 +254,10 @@ class Cleanup(commands.Cog):
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -253,7 +270,7 @@ class Cleanup(commands.Cog):
         self,
         ctx: commands.Context,
         message_id: RawMessageIds,
-        number: int,
+        number: positive_int,
         delete_pinned: bool = False,
     ):
         """Deletes X messages before specified message.
@@ -277,7 +294,10 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -319,7 +339,10 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
         )
         log.info(reason)
 
@@ -328,7 +351,9 @@ class Cleanup(commands.Cog):
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
+    async def messages(
+        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
+    ):
         """Delete the last X messages.
 
         Example:
@@ -358,7 +383,9 @@ class Cleanup(commands.Cog):
     @cleanup.command(name="bot")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
+    async def cleanup_bot(
+        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
+    ):
         """Clean up command messages and messages from the bot."""
 
         channel = ctx.channel
@@ -386,8 +413,8 @@ class Cleanup(commands.Cog):
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
             alias_names: Set[str] = (
-                set((a.name for a in await alias_cog.unloaded_global_aliases()))
-                | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
+                set((a.name for a in await alias_cog._aliases.get_global_aliases()))
+                | set(a.name for a in await alias_cog._aliases.get_guild_aliases(ctx.guild))
             )
             is_alias = lambda name: name in alias_names
         else:
@@ -420,7 +447,12 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} "
             " command messages in channel {}."
-            "".format(author.name, author.id, len(to_delete), channel.name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel.name,
+            )
         )
         log.info(reason)
 
@@ -430,19 +462,14 @@ class Cleanup(commands.Cog):
     async def cleanup_self(
         self,
         ctx: commands.Context,
-        number: int,
+        number: positive_int,
         match_pattern: str = None,
         delete_pinned: bool = False,
     ):
         """Clean up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
-        it is used for pattern matching: If it begins with r( and ends with ),
-        then it is interpreted as a regex, and messages that match it are
-        deleted. Otherwise, it is used in a simple substring test.
-
-        Some helpful regex flags to include in your pattern:
-        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        it is used for pattern matching - only messages containing the given text will be deleted.
         """
         channel = ctx.channel
         author = ctx.message.author
@@ -458,16 +485,7 @@ class Cleanup(commands.Cog):
             me = ctx.guild.me
             can_mass_purge = channel.permissions_for(me).manage_messages
 
-        use_re = match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")")
-
-        if use_re:
-            match_pattern = match_pattern[1:]  # strip 'r'
-            match_re = re.compile(match_pattern)
-
-            def content_match(c):
-                return bool(match_re.match(c))
-
-        elif match_pattern:
+        if match_pattern:
 
             def content_match(c):
                 return match_pattern in c
@@ -500,7 +518,12 @@ class Cleanup(commands.Cog):
         reason = (
             "{}({}) deleted {} messages "
             "sent by the bot in {}."
-            "".format(author.name, author.id, len(to_delete), channel_name)
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel_name,
+            )
         )
         log.info(reason)
 
@@ -508,3 +531,46 @@ class Cleanup(commands.Cog):
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
+
+    @cleanup.command(name="spam")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def cleanup_spam(self, ctx: commands.Context, number: positive_int = PositiveInt(50)):
+        """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
+
+        Defaults to 50.
+        """
+        msgs = []
+        spam = []
+
+        def check(m):
+            if m.attachments:
+                return False
+            c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
+            if c in msgs:
+                spam.append(m)
+                return True
+            else:
+                msgs.append(c)
+                return False
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=ctx.channel, limit=number, check=check, before=ctx.message,
+        )
+
+        if len(to_delete) > 100:
+            cont = await self.check_100_plus(ctx, len(to_delete))
+            if not cont:
+                return
+
+        log.info(
+            "%s (%s) deleted %s spam messages in channel %s (%s).",
+            ctx.author,
+            ctx.author.id,
+            len(to_delete),
+            ctx.channel,
+            ctx.channel.id,
+        )
+
+        to_delete.append(ctx.message)
+        await mass_purge(to_delete, ctx.channel)

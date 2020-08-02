@@ -6,6 +6,7 @@ import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 _ = Translator("PermissionsConverters", __file__)
 
@@ -37,25 +38,25 @@ class GlobalUniqueObjectFinder(commands.Converter):
             if user is not None:
                 return user
 
-            for guild in bot.guilds:
+            async for guild in AsyncIter(bot.guilds, steps=100):
                 role: discord.Role = guild.get_role(_id)
                 if role is not None:
                     return role
 
-        objects = itertools.chain(
-            bot.get_all_channels(),
-            bot.users,
-            bot.guilds,
-            *(filter(lambda r: not r.is_default(), guild.roles) for guild in bot.guilds),
-        )
+        all_roles = [
+            filter(lambda r: not r.is_default(), guild.roles)
+            async for guild in AsyncIter(bot.guilds, steps=100)
+        ]
+
+        objects = itertools.chain(bot.get_all_channels(), bot.users, bot.guilds, *all_roles,)
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncIter(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
 
         if ctx.guild is not None:
-            for member in ctx.guild.members:
+            async for member in AsyncIter(ctx.guild.members, steps=100):
                 if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
                     maybe_matches.append(member)
 
@@ -102,7 +103,7 @@ class GuildUniqueObjectFinder(commands.Converter):
         )
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncIter(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
             try:

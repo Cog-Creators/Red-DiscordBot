@@ -6,6 +6,7 @@
 !/tests/cogs/dataconverter/data/**/*.json
 Pipfile
 Pipfile.lock
+.directory
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
@@ -57,6 +58,7 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -136,3 +138,6 @@ ENV/
 
 # pytest
 .pytest_cache/
+
+# Pre-commit hooks
+/.pre-commit-config.yaml

@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
   </a>
   <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/Made%20With-Python%203.7-blue.svg?style=for-the-badge" alt="Made with Python 3.7">
+    <img src="https://img.shields.io/badge/Made%20With-Python%203.8-blue.svg?style=for-the-badge" alt="Made with Python 3.8">
   </a>
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
@@ -26,8 +26,8 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://travis-ci.com/Cog-Creators/Red-DiscordBot">
-    <img src="https://api.travis-ci.com/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop" alt="Travis CI">
+  <a href="https://github.com/Cog-Creators/Red-DiscordBot/actions">
+    <img src="https://github.com/Cog-Creators/Red-DiscordBot/workflows/Tests/badge.svg" alt="GitHub Actions">
   </a>
   <a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">
@@ -69,7 +69,7 @@ from installation and updating, every part of the bot can be controlled from wit
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Mixer, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Hitbox, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search
@@ -85,12 +85,7 @@ community of cog repositories.**
 
 - [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
 - [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Ubuntu](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Debian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [CentOS 7](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Arch Linux](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-
+- [Most major linux distributions](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
@@ -131,3 +126,6 @@ Red is named after the main character of "Transistor", a video game by
 
 Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art for the Red Discord
 Bot Project.
+
+This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) which is distributed under MIT License.
+Copy of this license can be found in [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.
