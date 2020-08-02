@@ -155,11 +155,14 @@ class Permissions(commands.Cog):
 
                     if _uid in guild_rules:
                         if obj:
+                            # delegate to remove rule here
                             await self._remove_rule(
                                 CogOrCommand(typename, obj.qualified_name, obj),
                                 user_id,
                                 int(guild_id),
                             )
+                        else:
+                            await self.config.custom(typename,).clear_raw(guild_id, user_id)
 
     async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
         """
