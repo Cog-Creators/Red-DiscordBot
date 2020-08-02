@@ -162,7 +162,8 @@ class Permissions(commands.Cog):
                                 int(guild_id),
                             )
                         else:
-                            await self.config.custom(typename,).clear_raw(guild_id, user_id)
+                            grp = self.config.custom(typename, obj_name)
+                            await grp.clear_raw(guild_id, user_id)
 
     async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
         """
