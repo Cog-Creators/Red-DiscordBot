@@ -527,7 +527,10 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    if mod_id == 0xde1:
+                        mod = _("Deleted Moderator")
+                    else:
+                        mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -557,7 +560,10 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    if mod_id == 0xde1:
+                        mod = _("Deleted Moderator")
+                    else:
+                        mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
