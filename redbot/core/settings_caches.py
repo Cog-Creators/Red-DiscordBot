@@ -156,6 +156,11 @@ class WhitelistBlacklistManager:
             await self._config.whitelist.set(list(self._cached_whitelist[gid]))
 
         else:
+            blacklist = await self.get_blacklist(guild)
+            if blacklist:
+                raise RuntimeError(
+                    "Users cannot be in the local whitelist when the local blacklist is not empty"
+                )
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = set(
                     await self._config.guild_from_id(gid).whitelist()
@@ -221,6 +226,11 @@ class WhitelistBlacklistManager:
             self._cached_blacklist[gid].update(role_or_user)
             await self._config.blacklist.set(list(self._cached_blacklist[gid]))
         else:
+            whitelist = await self.get_whitelist(guild)
+            if whitelist:
+                raise RuntimeError(
+                    "Users cannot be in the local blacklist when the local whitelist is not empty"
+                )
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(
                     await self._config.guild_from_id(gid).blacklist()
