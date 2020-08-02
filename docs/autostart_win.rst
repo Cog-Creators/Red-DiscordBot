@@ -60,8 +60,8 @@ Then run the following set of commands one at a time:
     nssm set redbot AppExit 0 Exit
     nssm set redbot AppStopMethodConsole 10000
     nssm set redbot AppRestartDelay 15000
-    nssm set redbot AppStdout $Env:USERPROFILE\red-stdout.log
-    nssm set redbot AppStderr $Env:USERPROFILE\red-stderr.log
+    nssm set redbot AppStdout $Env:USERPROFILE\redbot.log
+    nssm set redbot AppStderr $Env:USERPROFILE\redbot.log
     nssm set redbot AppNoConsole 1
 
 The above commands change a number of settings for the service including:
