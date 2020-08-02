@@ -130,3 +130,55 @@ Set bank's name.
 **Arguments**
 
 * ``<name>``: The new bank's name.
+
+.. _bank-command-bankset-maxbal:
+
+""""""""""""""
+bankset maxbal
+""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset maxbal <amount>
+
+**Description**
+
+Defines the maximum amount of money a user can have with the bot.
+
+If an user reaches this limit, he will be unable to gain more money.
+
+**Arguments**
+
+*   ``<amount>``: The maximum amount of money for users.
+
+.. _bank-command-bankset-showsettings:
+
+""""""""""""""""""""
+bankset showsettings
+""""""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset showsettings
+
+**Description**
+
+Shows the current settings of your bank.
+
+This will display the following informations:
+
+*   Name of the bank
+*   Scope of the bank (global or per server)
+*   Currency name
+*   Default balance
+*   Maximum allowed balance
