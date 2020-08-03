@@ -1,7 +1,9 @@
+import asyncio
+import logging
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List
+from typing import Dict, List, Literal
 
 import discord
 from redbot.core import Config, commands, checks
@@ -13,6 +15,8 @@ from redbot.core.bot import Red
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)
+
+log = logging.getLogger("red.cogs.alias")
 
 
 class _TrackingFormatter(Formatter):
@@ -38,23 +42,106 @@ class Alias(commands.Cog):
     and append them to the stored alias.
     """
 
-    default_global_settings: Dict[str, list] = {"entries": []}
-
-    default_guild_settings: Dict[str, list] = {"entries": []}  # Going to be a list of dicts
-
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 8927348724)
 
-        self.config.register_global(**self.default_global_settings)
-        self.config.register_guild(**self.default_guild_settings)
+        self.config.register_global(entries=[], handled_string_creator=False)
+        self.config.register_guild(entries=[])
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
+        self._ready_event = asyncio.Event()
 
-    async def initialize(self):
-        # This can be where we set the cache_enabled attribute later
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self._ready_event.wait()
+        await self._aliases.anonymize_aliases(user_id)
+
+    async def cog_before_invoke(self, ctx):
+        await self._ready_event.wait()
+
+    async def _maybe_handle_string_keys(self):
+        # This isn't a normal schema migration because it's being added
+        # after the fact for GH-3788
+        if await self.config.handled_string_creator():
+            return
+
+        async with self.config.entries() as alias_list:
+            bad_aliases = []
+            for a in alias_list:
+                for keyname in ("creator", "guild"):
+                    if isinstance((val := a.get(keyname)), str):
+                        try:
+                            a[keyname] = int(val)
+                        except ValueError:
+                            # Because migrations weren't created as changes were made,
+                            # and the prior form was a string of an ID,
+                            # if this fails, there's nothing to go back to
+                            bad_aliases.append(a)
+                            break
+
+            for a in bad_aliases:
+                alias_list.remove(a)
+
+        # if this was using a custom group of (guild_id, aliasname) it would be better but...
+        all_guild_aliases = await self.config.all_guilds()
+
+        for guild_id, guild_data in all_guild_aliases.items():
+
+            to_set = []
+            modified = False
+
+            for a in guild_data.get("entries", []):
+
+                for keyname in ("creator", "guild"):
+                    if isinstance((val := a.get(keyname)), str):
+                        try:
+                            a[keyname] = int(val)
+                        except ValueError:
+                            break
+                        finally:
+                            modified = True
+                else:
+                    to_set.append(a)
+
+            if modified:
+                await self.config.guild_from_id(guild_id).entries.set(to_set)
+
+            await asyncio.sleep(0)
+            # control yielded per loop since this is most likely to happen
+            # at bot startup, where this is most likely to have a performance
+            # hit.
+
+        await self.config.handled_string_creator.set(True)
+
+    def sync_init(self):
+        t = asyncio.create_task(self._initialize())
+
+        def done_callback(fut: asyncio.Future):
+            try:
+                t.result()
+            except Exception as exc:
+                log.exception("Failed to load alias cog", exc_info=exc)
+                # Maybe schedule extension unloading with message to owner in future
+
+        t.add_done_callback(done_callback)
+
+    async def _initialize(self):
+        """ Should only ever be a task """
+
+        await self._maybe_handle_string_keys()
+
         if not self._aliases._loaded:
             await self._aliases.load_aliases()
+
+        self._ready_event.set()
 
     def is_command(self, alias_name: str) -> bool:
         """
@@ -326,6 +413,8 @@ class Alias(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
+
+        await self._ready_event.wait()
 
         if message.guild is not None:
             if await self.bot.cog_disabled_in_guild(self, message.guild):

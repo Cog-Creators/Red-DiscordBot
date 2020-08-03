@@ -91,6 +91,10 @@ class Downloader(commands.Cog):
         if self._init_task is not None:
             self._init_task.cancel()
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     def create_init_task(self):
         def _done_callback(task: asyncio.Task) -> None:
             exc = task.exception()
