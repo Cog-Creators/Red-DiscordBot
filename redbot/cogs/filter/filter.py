@@ -1,11 +1,12 @@
 import discord
 import re
-from typing import Union, Set
+from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
 
@@ -32,6 +33,21 @@ class Filter(commands.Cog):
         self.config.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     def cog_unload(self):
         self.register_task.cancel()
@@ -100,44 +116,50 @@ class Filter(commands.Cog):
         """Add or remove words from server filter.
 
         Use double quotes to add or remove sentences.
-
-        Using this command with no subcommands will send the list of
-        the server's filtered words.
         """
-        if ctx.invoked_subcommand is None:
-            server = ctx.guild
-            author = ctx.author
-            word_list = await self.config.guild(server).filter()
-            if word_list:
-                words = ", ".join(word_list)
-                words = _("Filtered in this server:") + "\n\n" + words
-                try:
-                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
-                        await author.send(page)
-                except discord.Forbidden:
-                    await ctx.send(_("I can't send direct messages to you."))
+        pass
+
+    @_filter.command(name="list")
+    async def _global_list(self, ctx: commands.Context):
+        """Send a list of this servers filtered words."""
+        server = ctx.guild
+        author = ctx.author
+        word_list = await self.config.guild(server).filter()
+        if not word_list:
+            await ctx.send(_("There is no current words setup to be filtered in this server."))
+            return
+        words = humanize_list(word_list)
+        words = _("Filtered in this server:") + "\n\n" + words
+        try:
+            for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                await author.send(page)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
         """Add or remove words from channel filter.
 
         Use double quotes to add or remove sentences.
-
-        Using this command with no subcommands will send the list of
-        the channel's filtered words.
         """
-        if ctx.invoked_subcommand is None:
-            channel = ctx.channel
-            author = ctx.author
-            word_list = await self.config.channel(channel).filter()
-            if word_list:
-                words = ", ".join(word_list)
-                words = _("Filtered in this channel:") + "\n\n" + words
-                try:
-                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
-                        await author.send(page)
-                except discord.Forbidden:
-                    await ctx.send(_("I can't send direct messages to you."))
+        pass
+
+    @_filter_channel.command(name="list")
+    async def _channel_list(self, ctx: commands.Context):
+        """Send the list of the channel's filtered words."""
+        channel = ctx.channel
+        author = ctx.author
+        word_list = await self.config.channel(channel).filter()
+        if not word_list:
+            await ctx.send(_("There is no current words setup to be filtered in this channel."))
+            return
+        words = humanize_list(word_list)
+        words = _("Filtered in this channel:") + "\n\n" + words
+        try:
+            for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                await author.send(page)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command("add")
     async def filter_channel_add(self, ctx: commands.Context, *words: str):
@@ -363,6 +385,10 @@ class Filter(commands.Cog):
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
@@ -389,6 +415,11 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
+
+        guild = member.guild
+        if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+            return
+
         if not member.guild.me.guild_permissions.manage_nicknames:
             return  # No permissions to manage nicknames, so can't do anything
         if member.top_role >= member.guild.me.top_role:

@@ -79,6 +79,10 @@ class Events(MixinMeta):
         author = message.author
         if message.guild is None or self.bot.user == author:
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
@@ -110,6 +114,9 @@ class Events(MixinMeta):
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.nick != after.nick and after.nick is not None:
+            guild = after.guild
+            if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+                return
             async with self.config.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
                     nick_list.remove(None)

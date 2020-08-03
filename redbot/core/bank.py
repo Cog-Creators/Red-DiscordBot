@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import asyncio
 import datetime
-from typing import Union, List, Optional, TYPE_CHECKING
+import logging
+from typing import Union, List, Optional, TYPE_CHECKING, Literal
 from functools import wraps
 
 import discord
 
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
 
 from .errors import BankPruneError
-from .utils import AsyncIter
 
 if TYPE_CHECKING:
     from .bot import Red
@@ -67,6 +68,10 @@ _DEFAULT_USER = _DEFAULT_MEMBER
 
 _config: Config = None
 
+log = logging.getLogger("red.core.bank")
+
+_data_deletion_lock = asyncio.Lock()
+
 
 def _init():
     global _config
@@ -75,6 +80,28 @@ def _init():
     _config.register_guild(**_DEFAULT_GUILD)
     _config.register_member(**_DEFAULT_MEMBER)
     _config.register_user(**_DEFAULT_USER)
+
+
+async def _process_data_deletion(
+    *, requester: Literal["discord_deleted_user", "owner", "user", "user_strict"], user_id: int
+):
+    """
+    Bank has no reason to keep any of this data
+    if the user doesn't want it kept,
+    we won't special case any request type
+    """
+    if requester not in ("discord_deleted_user", "owner", "user", "user_strict"):
+        log.warning(
+            "Got unknown data request type `{req_type}` for user, deleting anyway",
+            req_type=requester,
+        )
+
+    async with _data_deletion_lock:
+        await _config.user_from_id(user_id).clear()
+        all_members = await _config.all_members()
+        async for guild_id, member_dict in AsyncIter(all_members.items(), steps=100):
+            if user_id in member_dict:
+                await _config.member_from_ids(guild_id, user_id).clear()
 
 
 class Account:

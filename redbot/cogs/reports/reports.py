@@ -1,6 +1,6 @@
 import logging
 import asyncio
-from typing import Union, List
+from typing import Union, List, Literal
 from datetime import timedelta
 from copy import copy
 import contextlib
@@ -59,6 +59,39 @@ class Reports(commands.Cog):
         self.tunnel_store = {}
         # (guild, ticket#):
         #   {'tun': Tunnel, 'msgs': List[int]}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_reports = await self.config.custom("REPORT").all()
+
+        steps = 0
+        paths = []
+
+        # this doesn't use async iter intentionally due to the nested iterations
+        for guild_id_str, tickets in all_reports.items():
+            for ticket_number, ticket in tickets.items():
+                steps += 1
+                if not steps % 100:
+                    await asyncio.sleep(0)  # yield context
+
+            if ticket.get("report", {}).get("user_id", 0) == user_id:
+                paths.append((guild_id_str, ticket_number))
+
+        async with self.config.custom("REPORT").all() as all_reports:
+            async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
+                r = all_reports[guild_id_str][ticket_number]["report"]
+                r["user_id"] = 0xDE1
+                # this might include EUD, and a report of a deleted user
+                # that's been unhandled for long enough for the
+                # user to be deleted and the bot recieve a request like this...
+                r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
     def tunnels(self):
@@ -293,10 +326,11 @@ class Reports(commands.Cog):
                     pass
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """
         oh dear....
         """
+
         if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
             return
 
@@ -314,12 +348,34 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+
+        to_remove = []
+
         for k, v in self.tunnel_store.items():
-            topic = _("Re: ticket# {1} in {0.name}").format(*k)
+
+            guild, ticket_number = k
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                to_remove.append(k)
+                continue
+
+            topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
+                ticket_number=ticket_number, guild=guild
+            )
             # Tunnels won't forward unintended messages, this is safe
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
+
+        for key in to_remove:
+            if tun := self.tunnel_store.pop(key, None):
+                guild, ticket = key
+                await tun["tun"].close_because_disabled(
+                    _(
+                        "Correspondence about ticket# {ticket_number} in "
+                        "{guild.name} has been ended due "
+                        "to reports being disabled in that server."
+                    ).format(ticket_number=ticket, guild=guild)
+                )
 
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)

@@ -15,11 +15,11 @@ from .commands import (
     GroupMixin as GroupMixin,
     command as command,
     group as group,
+    RedUnhandledAPI as RedUnhandledAPI,
     RESERVED_COMMAND_NAMES as RESERVED_COMMAND_NAMES,
 )
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
 from .converter import (
-    APIToken as APIToken,
     DictConverter as DictConverter,
     GuildConverter as GuildConverter,
     TimedeltaConverter as TimedeltaConverter,
@@ -29,6 +29,7 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
+    __getattr__ as _converter__getattr__,  # this contains deprecation of APIToken
 )
 from .errors import (
     ConversionFailure as ConversionFailure,
@@ -143,3 +144,14 @@ from discord.ext.commands import (
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
 )
+
+
+def __getattr__(name):
+    try:
+        return _converter__getattr__(name, stacklevel=3)
+    except AttributeError:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
+
+
+def __dir__():
+    return [*globals().keys(), "APIToken"]

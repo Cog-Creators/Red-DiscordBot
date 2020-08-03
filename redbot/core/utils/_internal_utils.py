@@ -45,6 +45,7 @@ __all__ = (
     "send_to_owners_with_preprocessor",
     "send_to_owners_with_prefix_replaced",
     "expected_version",
+    "fetch_latest_red_version_info",
 )
 
 

@@ -18,49 +18,51 @@ class ModSettings(MixinMeta):
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manage server administration settings."""
-        if ctx.invoked_subcommand is None:
-            guild = ctx.guild
-            # Display current settings
-            data = await self.config.guild(guild).all()
-            delete_repeats = data["delete_repeats"]
-            ban_mention_spam = data["ban_mention_spam"]
-            respect_hierarchy = data["respect_hierarchy"]
-            delete_delay = data["delete_delay"]
-            reinvite_on_unban = data["reinvite_on_unban"]
-            dm_on_kickban = data["dm_on_kickban"]
-            default_days = data["default_days"]
-            msg = ""
-            msg += _("Delete repeats: {num_repeats}\n").format(
-                num_repeats=_("after {num} repeats").format(num=delete_repeats)
-                if delete_repeats != -1
-                else _("No")
+
+    @modset.command(name="showsettings")
+    async def modset_showsettings(self, ctx: commands.Context):
+        """Show the current server administration settings."""
+        guild = ctx.guild
+        data = await self.config.guild(guild).all()
+        delete_repeats = data["delete_repeats"]
+        ban_mention_spam = data["ban_mention_spam"]
+        respect_hierarchy = data["respect_hierarchy"]
+        delete_delay = data["delete_delay"]
+        reinvite_on_unban = data["reinvite_on_unban"]
+        dm_on_kickban = data["dm_on_kickban"]
+        default_days = data["default_days"]
+        msg = ""
+        msg += _("Delete repeats: {num_repeats}\n").format(
+            num_repeats=_("after {num} repeats").format(num=delete_repeats)
+            if delete_repeats != -1
+            else _("No")
+        )
+        msg += _("Ban mention spam: {num_mentions}\n").format(
+            num_mentions=_("{num} mentions").format(num=ban_mention_spam)
+            if ban_mention_spam
+            else _("No")
+        )
+        msg += _("Respects hierarchy: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if respect_hierarchy else _("No")
+        )
+        msg += _("Delete delay: {num_seconds}\n").format(
+            num_seconds=_("{num} seconds").format(num=delete_delay)
+            if delete_delay != -1
+            else _("None")
+        )
+        msg += _("Reinvite on unban: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if reinvite_on_unban else _("No")
+        )
+        msg += _("Send message to users on kick/ban: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if dm_on_kickban else _("No")
+        )
+        if default_days:
+            msg += _("Default message history delete on ban: Previous {num_days} days\n").format(
+                num_days=default_days
             )
-            msg += _("Ban mention spam: {num_mentions}\n").format(
-                num_mentions=_("{num} mentions").format(num=ban_mention_spam)
-                if ban_mention_spam
-                else _("No")
-            )
-            msg += _("Respects hierarchy: {yes_or_no}\n").format(
-                yes_or_no=_("Yes") if respect_hierarchy else _("No")
-            )
-            msg += _("Delete delay: {num_seconds}\n").format(
-                num_seconds=_("{num} seconds").format(num=delete_delay)
-                if delete_delay != -1
-                else _("None")
-            )
-            msg += _("Reinvite on unban: {yes_or_no}\n").format(
-                yes_or_no=_("Yes") if reinvite_on_unban else _("No")
-            )
-            msg += _("Send message to users on kick/ban: {yes_or_no}\n").format(
-                yes_or_no=_("Yes") if dm_on_kickban else _("No")
-            )
-            if default_days:
-                msg += _(
-                    "Default message history delete on ban: Previous {num_days} days\n"
-                ).format(num_days=default_days)
-            else:
-                msg += _("Default message history delete on ban: Don't delete any\n")
-            await ctx.send(box(msg))
+        else:
+            msg += _("Default message history delete on ban: Don't delete any\n")
+        await ctx.send(box(msg))
 
     @modset.command()
     @commands.guild_only()

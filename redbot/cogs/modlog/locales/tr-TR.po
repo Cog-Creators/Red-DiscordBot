@@ -41,15 +41,15 @@ msgstr "Mod hareketleri bu kanala gönderilecek. {channel}."
 
 #: redbot/cogs/modlog/modlog.py:52
 msgid "I do not have permissions to send messages in {channel}!"
-msgstr ""
+msgstr "Bu kanala mesaj atma yetkim yok {channel}!"
 
 #: redbot/cogs/modlog/modlog.py:60
 msgid "Mod log is already disabled."
-msgstr ""
+msgstr "Mod logları zaten kapalı."
 
 #: redbot/cogs/modlog/modlog.py:63
 msgid "Mod log deactivated."
-msgstr ""
+msgstr "Modlog devre dışı."
 
 #: redbot/cogs/modlog/modlog.py:68
 #, docstring

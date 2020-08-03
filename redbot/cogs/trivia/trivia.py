@@ -3,7 +3,7 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import List
+from typing import List, Literal
 
 import io
 import yaml
@@ -13,6 +13,7 @@ from redbot.core import Config, commands, checks
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -56,28 +57,46 @@ class Trivia(commands.Cog):
 
         self.config.register_member(wins=0, games=0, total_score=0)
 
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
+
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage Trivia settings."""
-        if ctx.invoked_subcommand is None:
-            settings = self.config.guild(ctx.guild)
-            settings_dict = await settings.all()
-            msg = box(
-                _(
-                    "Current settings\n"
-                    "Bot gains points: {bot_plays}\n"
-                    "Answer time limit: {delay} seconds\n"
-                    "Lack of response timeout: {timeout} seconds\n"
-                    "Points to win: {max_score}\n"
-                    "Reveal answer on timeout: {reveal_answer}\n"
-                    "Payout multiplier: {payout_multiplier}\n"
-                    "Allow lists to override settings: {allow_override}"
-                ).format(**settings_dict),
-                lang="py",
-            )
-            await ctx.send(msg)
+
+    @triviaset.command(name="showsettings")
+    async def triviaset_showsettings(self, ctx: commands.Context):
+        """Show the current trivia settings."""
+        settings = self.config.guild(ctx.guild)
+        settings_dict = await settings.all()
+        msg = box(
+            _(
+                "Current settings\n"
+                "Bot gains points: {bot_plays}\n"
+                "Answer time limit: {delay} seconds\n"
+                "Lack of response timeout: {timeout} seconds\n"
+                "Points to win: {max_score}\n"
+                "Reveal answer on timeout: {reveal_answer}\n"
+                "Payout multiplier: {payout_multiplier}\n"
+                "Allow lists to override settings: {allow_override}"
+            ).format(**settings_dict),
+            lang="py",
+        )
+        await ctx.send(msg)
 
     @triviaset.command(name="maxscore")
     async def triviaset_max_score(self, ctx: commands.Context, score: int):

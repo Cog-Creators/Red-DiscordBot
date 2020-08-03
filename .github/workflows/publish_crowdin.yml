@@ -2,6 +2,7 @@ name: Publish to Crowdin
 on:
   schedule:
     - cron: '0 12 * * THU'
+  workflow_dispatch:
   repository_dispatch:
     types: crowdin
 

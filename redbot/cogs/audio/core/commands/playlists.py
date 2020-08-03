@@ -22,7 +22,7 @@ from ...apis.playlist_interface import create_playlist, delete_playlist, get_all
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...converters import ComplexScopeParser, ScopeParser
-from ...errors import MissingGuild, TooManyMatches
+from ...errors import MissingGuild, TooManyMatches, TrackEnqueueError
 from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter, _
@@ -1817,43 +1817,54 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         uploaded_playlist_name = uploaded_playlist.get(
             "name", (file_url.split("/")[6]).split(".")[0]
         )
-        if self.api_interface is not None and (
-            not uploaded_playlist_url
-            or not self.match_yt_playlist(uploaded_playlist_url)
-            or not (
-                await self.api_interface.fetch_track(
+        try:
+            if self.api_interface is not None and (
+                not uploaded_playlist_url
+                or not self.match_yt_playlist(uploaded_playlist_url)
+                or not (
+                    await self.api_interface.fetch_track(
+                        ctx,
+                        player,
+                        Query.process_input(uploaded_playlist_url, self.local_folder_current_path),
+                    )
+                )[0].tracks
+            ):
+                if version == "v3":
+                    return await self._load_v3_playlist(
+                        ctx,
+                        scope,
+                        uploaded_playlist_name,
+                        uploaded_playlist_url,
+                        track_list,
+                        author,
+                        guild,
+                    )
+                return await self._load_v2_playlist(
                     ctx,
-                    player,
-                    Query.process_input(uploaded_playlist_url, self.local_folder_current_path),
-                )
-            )[0].tracks
-        ):
-            if version == "v3":
-                return await self._load_v3_playlist(
-                    ctx,
-                    scope,
-                    uploaded_playlist_name,
-                    uploaded_playlist_url,
                     track_list,
+                    player,
+                    uploaded_playlist_url,
+                    uploaded_playlist_name,
+                    scope,
                     author,
                     guild,
                 )
-            return await self._load_v2_playlist(
-                ctx,
-                track_list,
-                player,
-                uploaded_playlist_url,
-                uploaded_playlist_name,
-                scope,
-                author,
-                guild,
+            return await ctx.invoke(
+                self.command_playlist_save,
+                playlist_name=uploaded_playlist_name,
+                playlist_url=uploaded_playlist_url,
+                scope_data=(scope, author, guild, specified_user),
             )
-        return await ctx.invoke(
-            self.command_playlist_save,
-            playlist_name=uploaded_playlist_name,
-            playlist_url=uploaded_playlist_url,
-            scope_data=(scope, author, guild, specified_user),
-        )
+        except TrackEnqueueError:
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable get a track from Lavalink at the moment, try again in a few "
+                    "minutes."
+                ),
+            )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
     @command_playlist.command(
