@@ -279,7 +279,9 @@ class Streams(commands.Cog):
         pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
-    async def _twitch(self, ctx: commands.Context, channel_name: str = None, discord_channel: str = None):
+    async def _twitch(
+        self, ctx: commands.Context, channel_name: str = None, discord_channel: str = None
+    ):
         """Manage Twitch stream notifications."""
         if channel_name is not None:
             await ctx.invoke(self.twitch_alert_channel, channel_name, discord_channel)
@@ -287,7 +289,9 @@ class Streams(commands.Cog):
             await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str, discord_channel: str):
+    async def twitch_alert_channel(
+        self, ctx: commands.Context, channel_name: str, discord_channel: str
+    ):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send(
@@ -297,7 +301,9 @@ class Streams(commands.Cog):
         await self.stream_alert(ctx, TwitchStream, channel_name.lower(), discord_channel)
 
     @streamalert.command(name="youtube")
-    async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str, discord_channel: str = None):
+    async def youtube_alert(
+        self, ctx: commands.Context, channel_name_or_id: str, discord_channel: str = None
+    ):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
 
@@ -359,7 +365,9 @@ class Streams(commands.Cog):
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].setdefault(stream.token_name, []).append(stream.name.lower())
+                    streams_list[channel_id].setdefault(stream.token_name, []).append(
+                        stream.name.lower()
+                    )
 
         if not streams_list:
             await ctx.send(_("There are no active alerts in this server."))
@@ -621,15 +629,13 @@ class Streams(commands.Cog):
             discord_channel = ctx.channel
         else:
             try:
-                int_channel = int(''.join(re.findall(r'\d+', discord_channel)))
+                int_channel = int("".join(re.findall(r"\d+", discord_channel)))
                 discord_channel = ctx.guild.get_channel(int_channel)
                 if discord_channel is None:
                     raise ValueError
             except ValueError:
                 await ctx.send(
-                    _(
-                        "Invalid channel! Use #channel to specify the channel correctly."
-                    )
+                    _("Invalid channel! Use #channel to specify the channel correctly.")
                 )
                 return
 
@@ -647,9 +653,7 @@ class Streams(commands.Cog):
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
-                _(
-                    "I won't send notifications about {stream.name} anymore."
-                ).format(stream=stream)
+                _("I won't send notifications about {stream.name} anymore.").format(stream=stream)
             )
 
         await self.save_streams()
