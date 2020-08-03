@@ -280,7 +280,7 @@ class Streams(commands.Cog):
 
     @streamalert.group(name="twitch", invoke_without_command=True)
     async def _twitch(
-        self, ctx: commands.Context, channel_name: str = None, discord_channel: str = None
+        self, ctx: commands.Context, channel_name: str = None, discord_channel: discord.TextChannel = None
     ):
         """Manage Twitch stream notifications."""
         if channel_name is not None:
@@ -290,7 +290,7 @@ class Streams(commands.Cog):
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(
-        self, ctx: commands.Context, channel_name: str, discord_channel: str
+        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel
     ):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
@@ -302,7 +302,7 @@ class Streams(commands.Cog):
 
     @streamalert.command(name="youtube")
     async def youtube_alert(
-        self, ctx: commands.Context, channel_name_or_id: str, discord_channel: str = None
+        self, ctx: commands.Context, channel_name_or_id: str, discord_channel: discord.TextChannel = None
     ):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
@@ -627,17 +627,6 @@ class Streams(commands.Cog):
     async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
         if discord_channel is None:
             discord_channel = ctx.channel
-        else:
-            try:
-                int_channel = int("".join(re.findall(r"\d+", discord_channel)))
-                discord_channel = ctx.guild.get_channel(int_channel)
-                if discord_channel is None:
-                    raise ValueError
-            except ValueError:
-                await ctx.send(
-                    _("Invalid channel! Use #channel to specify the channel correctly.")
-                )
-                return
 
         if discord_channel.id not in stream.channels:
             stream.channels.append(discord_channel.id)
