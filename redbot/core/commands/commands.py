@@ -261,6 +261,17 @@ class Command(CogCommandMixin, DPYCommand):
     attributes listed below are simply additions to the ones listed
     with that class.
 
+    .. warning::
+
+        If you subclass this command, attributes and methods
+        must remain compatible.
+
+        None of your methods should start with ``red_`` or
+        be dunder names which start with red (eg. ``__red_test_thing__``)
+        unless to override behavior in a method designed to be overriden,
+        as this prefix is reserved for future methods in order to be
+        able to add features non-breakingly.
+
     Attributes
     ----------
     checks : List[`coroutine function`]
@@ -668,7 +679,7 @@ class Command(CogCommandMixin, DPYCommand):
 
         See ``format_text_for_context`` for the actual implementation details
 
-        Cog creators may override this in their own command classes
+        Cog creators may override this in their own command and cog classes
         as long as the method signature stays the same.
 
         Parameters
@@ -1009,6 +1020,18 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     Red's Cog base class
 
     This includes a metaclass from discord.py
+
+    .. warning::
+
+        None of your methods should start with ``red_`` or 
+        be dunder names which start with red (eg. ``__red_test_thing__``)
+        unless to override behavior in a method designed to be overriden,
+        as this prefix is reserved for future methods in order to be
+        able to add features non-breakingly.
+
+        Attributes and methods must remain compatible
+        with discord.py and with any of red's methods and attributes.
+
     """
 
     __cog_commands__: Tuple[Command]
