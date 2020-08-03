@@ -50,6 +50,7 @@ def get_video_ids_from_feed(feed):
 class Stream:
 
     token_name: ClassVar[Optional[str]] = None
+    platform_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
@@ -81,6 +82,7 @@ class Stream:
 class YoutubeStream(Stream):
 
     token_name = "youtube"
+    platform_name = "Youtube"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -199,6 +201,7 @@ class YoutubeStream(Stream):
 class TwitchStream(Stream):
 
     token_name = "twitch"
+    platform_name = "Twitch"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -323,6 +326,7 @@ class TwitchStream(Stream):
 class HitboxStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+    platform_name = "Hitbox"
 
     async def is_online(self):
         url = "https://api.hitbox.tv/media/live/" + self.name
@@ -362,6 +366,7 @@ class HitboxStream(Stream):
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+    platform_name = "Picarto"
 
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name

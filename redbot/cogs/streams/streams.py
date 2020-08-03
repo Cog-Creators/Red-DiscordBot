@@ -376,7 +376,7 @@ class Streams(commands.Cog):
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].setdefault(stream.token_name, []).append(
+                    streams_list[channel_id].setdefault(stream.platform_name, []).append(
                         stream.name.lower()
                     )
 
@@ -387,7 +387,7 @@ class Streams(commands.Cog):
         for channel_id, stream_platform in streams_list.items():
             msg += f"** - #{ctx.guild.get_channel(channel_id)}**\n"
             for platform, streams in stream_platform.items():
-                msg += f"\t** - {platform.capitalize()}**\n"
+                msg += f"\t** - {platform}**\n"
                 msg += f"\t\t{humanize_list(streams)}\n"
 
         for page in pagify(msg):
