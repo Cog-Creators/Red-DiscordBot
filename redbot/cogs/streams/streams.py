@@ -279,27 +279,27 @@ class Streams(commands.Cog):
         pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
-    async def _twitch(self, ctx: commands.Context, channel_name: str = None):
+    async def _twitch(self, ctx: commands.Context, channel_name: str = None, discord_channel: str = None):
         """Manage Twitch stream notifications."""
         if channel_name is not None:
-            await ctx.invoke(self.twitch_alert_channel, channel_name)
+            await ctx.invoke(self.twitch_alert_channel, channel_name, discord_channel)
         else:
             await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
+    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str, discord_channel: str):
         """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send(
                 _("Please supply the name of a *Twitch* channel, not a Discord channel.")
             )
             return
-        await self.stream_alert(ctx, TwitchStream, channel_name.lower())
+        await self.stream_alert(ctx, TwitchStream, channel_name.lower(), discord_channel)
 
     @streamalert.command(name="youtube")
-    async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
+    async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str, discord_channel: str = None):
         """Toggle alerts in this channel for a YouTube stream."""
-        await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
+        await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
 
     @streamalert.command(name="hitbox")
     async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
@@ -373,7 +373,7 @@ class Streams(commands.Cog):
         for page in pagify(msg):
             await ctx.send(page)
 
-    async def stream_alert(self, ctx: commands.Context, _class, channel_name):
+    async def stream_alert(self, ctx: commands.Context, _class, channel_name, discord_channel):
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.bot.get_shared_api_tokens(_class.token_name)
@@ -417,7 +417,7 @@ class Streams(commands.Cog):
                     await ctx.send(_("That channel doesn't seem to exist."))
                     return
 
-        await self.add_or_remove(ctx, stream)
+        await self.add_or_remove(ctx, stream, discord_channel)
 
     @commands.group()
     @checks.mod_or_permissions(manage_channels=True)
@@ -616,23 +616,39 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_reruns.set(True)
             await ctx.send(_("Streams of type 'rerun' will no longer send an alert."))
 
-    async def add_or_remove(self, ctx: commands.Context, stream):
-        if ctx.channel.id not in stream.channels:
-            stream.channels.append(ctx.channel.id)
+    async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
+        if discord_channel is None:
+            discord_channel = ctx.channel
+        else:
+            try:
+                int_channel = int(''.join(re.findall(r'\d+', discord_channel)))
+                discord_channel = ctx.guild.get_channel(int_channel)
+                if discord_channel is None:
+                    raise ValueError
+            except ValueError:
+                await ctx.send(
+                    _(
+                        "Invalid channel! Use #channel to specify the channel correctly."
+                    )
+                )
+                return
+
+        if discord_channel.id not in stream.channels:
+            stream.channels.append(discord_channel.id)
             if stream not in self.streams:
                 self.streams.append(stream)
             await ctx.send(
                 _(
-                    "I'll now send a notification in this channel when {stream.name} is live."
-                ).format(stream=stream)
+                    "I'll now send a notification in the channel {channel} when {stream.name} is live."
+                ).format(stream=stream, channel=discord_channel)
             )
         else:
-            stream.channels.remove(ctx.channel.id)
+            stream.channels.remove(discord_channel.id)
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
                 _(
-                    "I won't send notifications about {stream.name} in this channel anymore."
+                    "I won't send notifications about {stream.name} anymore."
                 ).format(stream=stream)
             )
 
