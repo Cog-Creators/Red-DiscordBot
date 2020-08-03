@@ -269,7 +269,7 @@ Edits the name of a role.
 
 * ``<role>``: The role name to edit. |role-input-quotes|
 
-* ``<name>``: The new role name.
+* ``<name>``: The new role name. If it has spaces, you must use quotes.
 
 .. _admin-command-editrole-color:
 
