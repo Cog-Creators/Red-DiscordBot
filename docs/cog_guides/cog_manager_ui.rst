@@ -29,8 +29,10 @@ will list you all of the currently set paths.
 
 You can add a path by using the :ref:`addpath <cogmanagerui-command-addpath>`
 command. All cogs in that path will be available for the bot and listed in
-the :ref:`cogs <cogmanagerui-command-cogs>`. You can then :ref:`load
-<core-command-load>` or :ref:`unload <core-command-unload>` them.
+the :ref:`cogs <cogmanagerui-command-cogs>`. You can then load
+or unload them.
+
+.. TODO add ref to load and unload commands
 
 .. _cogmanagerui-usage-installation:
 
@@ -42,7 +44,7 @@ Let's suppose you made a cog request on the `cog board <https://cogboard.red>`_
 and now you want to add your own cog to Red. You should have a folder that
 looks like this:
 
-.. image:: ../.ressources/custom-cog-example.png
+.. image:: ../.resources/cog_manager_ui/custom-cog-example.png
 
 You will first need to add a cog path to your instance. For that, use the
 :ref:`addpath <cogmanagerui-command-addpath>` command with a new directory.
@@ -63,7 +65,7 @@ You can now use the command we talked about before: type ``[p]addpath
 In that ``MyCogs`` folder, you can drop your package. You should now have
 something like this:
 
-.. image:: ../.ressources/cog-path.png
+.. image:: ../.resources/cog_manager_ui/cog-path.png
 
 Now if you type ``[p]cogs``, your new cog should be listed, and you will be
 able to load it!
@@ -114,8 +116,10 @@ paths
 
 **Description**
 
-Lists the registered cog paths, with the install path for the :ref:`downloader
-cog <downloader>` and the core path for the core cogs.
+Lists the registered cog paths, with the install path for the downloader and
+the core path for the core cogs.
+
+.. TODO add ref to downloader
 
 You can use the :ref:`reorderpath <cogmanagerui-command-reorderpath>` command
 to reorder the listed paths.
