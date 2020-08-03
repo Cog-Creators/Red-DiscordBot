@@ -26,6 +26,13 @@ class ModLog(commands.Cog):
         """Manage modlog settings."""
         pass
 
+    @checks.is_owner()
+    @modlogset.command(hidden=True, name="fixcasetypes")
+    async def reapply_audittype_migration(self, ctx: commands.Context):
+        """Command to fix misbehaving casetypes."""
+        await modlog.handle_auditype_key()
+        await ctx.tick()
+
     @modlogset.command()
     @commands.guild_only()
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
@@ -50,7 +57,7 @@ class ModLog(commands.Cog):
             try:
                 await modlog.get_modlog_channel(guild)
             except RuntimeError:
-                await ctx.send_help()
+                await ctx.send(_("Mod log is already disabled."))
             else:
                 await modlog.set_modlog_channel(guild, None)
                 await ctx.send(_("Mod log deactivated."))

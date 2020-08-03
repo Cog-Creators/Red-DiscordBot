@@ -22,6 +22,8 @@ mute_unmute_issues = {
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
+    "left_guild": _("The user has left the server while applying an overwrite."),
+    "unknown_channel": _("The channel I tried to mute the user in isn't found."),
 }
 _ = T_
 
@@ -205,6 +207,17 @@ class MuteMixin(MixinMeta):
             await ctx.send(
                 _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
+            try:
+                if channel.permissions_for(ctx.me).move_members:
+                    await user.move_to(channel)
+                else:
+                    raise RuntimeError
+            except (discord.Forbidden, RuntimeError):
+                await ctx.send(
+                    _(
+                        "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
+                    )
+                )
         else:
             await ctx.send(issue)
 
@@ -247,7 +260,7 @@ class MuteMixin(MixinMeta):
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(administrator=True)
     async def guild_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Mutes user in the server"""
+        """Mutes user in the server."""
         author = ctx.message.author
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
@@ -320,6 +333,17 @@ class MuteMixin(MixinMeta):
             await ctx.send(
                 _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
+            try:
+                if channel.permissions_for(ctx.me).move_members:
+                    await user.move_to(channel)
+                else:
+                    raise RuntimeError
+            except (discord.Forbidden, RuntimeError):
+                await ctx.send(
+                    _(
+                        "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
+                    )
+                )
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
@@ -413,7 +437,7 @@ class MuteMixin(MixinMeta):
         if all(getattr(permissions, p) is False for p in new_overs.keys()):
             return False, _(mute_unmute_issues["already_muted"])
 
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             return False, _(mute_unmute_issues["hierarchy_problem"])
 
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
@@ -422,10 +446,13 @@ class MuteMixin(MixinMeta):
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return False, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
-            await self.settings.member(user).set_raw(
-                "perms_cache", str(channel.id), value=old_overs
-            )
+            await self.config.member(user).set_raw("perms_cache", str(channel.id), value=old_overs)
             return True, None
 
     async def unmute_user(
@@ -437,7 +464,7 @@ class MuteMixin(MixinMeta):
         reason: str,
     ) -> (bool, str):
         overwrites = channel.overwrites_for(user)
-        perms_cache = await self.settings.member(user).perms_cache()
+        perms_cache = await self.config.member(user).perms_cache()
 
         if channel.id in perms_cache:
             old_values = perms_cache[channel.id]
@@ -447,7 +474,7 @@ class MuteMixin(MixinMeta):
         if all(getattr(overwrites, k) == v for k, v in old_values.items()):
             return False, _(mute_unmute_issues["already_unmuted"])
 
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
             return False, _(mute_unmute_issues["hierarchy_problem"])
 
         overwrites.update(**old_values)
@@ -460,6 +487,11 @@ class MuteMixin(MixinMeta):
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
             return False, _(mute_unmute_issues["permissions_issue"])
+        except discord.NotFound as e:
+            if e.code == 10003:
+                return False, _(mute_unmute_issues["unknown_channel"])
+            elif e.code == 10009:
+                return False, _(mute_unmute_issues["left_guild"])
         else:
-            await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
+            await self.config.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None

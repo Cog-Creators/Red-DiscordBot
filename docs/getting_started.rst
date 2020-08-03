@@ -49,9 +49,10 @@ Interact with Red
 -----------------
 
 As a chatbot, you interact with Red via the Discord text channels
-(not from the command prompt). For that, you will use the prefix you
-set before. For example, if your prefix is ``!``, you will execute your
-command like this: ``!ping``.
+(not from the command prompt). To send commands to the bot, you will have to
+use the prefix you set before, followed by the command you want to use. For
+example, if your prefix is ``!``, you will execute your command like this:
+``!ping``.
 
 .. note:: Since the prefix can be anything, it'll be referenced as ``[p]``
     in documentations.
@@ -80,17 +81,18 @@ parameters.
 
     [p]help command
 
-The parameters are shown as enclosed in ``< >`` if they're needed, or
+The parameters are shown as enclosed in ``< >`` if they're required, or
 ``[ ]`` if optional.
-As an example, the ban command will show this in the help message:
+As an example, the ban command will show this in the help message, assuming
+your prefix is ``!``:
 ``Syntax: !ban <user> [days] [reason]``
 
 This means that it is necessary to provide ``user``. However, the
-``days`` value (number of messages to delete) is optional, like
+``days`` value (number of messages to delete) is optional, as well as
 the ``reason`` value, used for the modlog.
 
-You can use help to show the **categories** too (named cogs).
-Just do so (notice the capitalization):
+You can use help to show the **categories** too, generally called cogs.
+Just do something like this (notice the capitalization):
 
 .. code-block:: none
 
@@ -113,8 +115,8 @@ to use one, do it like this: ``[p]cleanup messages 10``
 Cogs
 ----
 
-Red is built with cogs, fancy term for plugins. They are
-modules that enhance the Red functionalities. They contain
+Red is built with cogs, a fancy term for plugins. They are
+modules that add functionality to Red. They contain
 commands to use.
 
 Red comes with 19 cogs containing the basic features, such
@@ -160,10 +162,10 @@ there are hundreds of cogs available!
 
 .. 26-cogs not available, let's use my repo :3
 
-Cogs comes with repositories. A repository is a container of cogs
+Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
 cog from the repository ``Laggrons-Dumb-Cogs``. You'll first need
-to install the repository.
+to add the repository.
 
 .. code-block:: none
 
@@ -171,7 +173,7 @@ to install the repository.
 
 .. note:: You may need to specify a branch. If so, add its name after the link.
 
-Then you can add the cog
+Then you can install the cog
 
 .. code-block:: none
 
@@ -193,11 +195,11 @@ the level of permission needed for a command.
 Bot owner
 ~~~~~~~~~
 
-The bot owner can access all commands on every guild. He can also use
+The bot owner can access all commands on every guild. They can also use
 exclusive commands that can interact with the global settings
 or system files.
 
-*You* are the owner by default. If the owner isn't set, use ``[p]set owner``.
+*You* are the owner by default.
 
 ~~~~~~~~~~~~
 Server owner
@@ -212,7 +214,7 @@ Administrator
 ~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set multiple admin roles
-with the ``[p]addadminrole`` and ``[p]removeadminrole`` commands.
+with the ``[p]set addadminrole`` and ``[p]set removeadminrole`` commands.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -222,7 +224,7 @@ Moderator
 ~~~~~~~~~
 
 A moderator is a step above the average users. You can set multiple moderator
-roles with the ``[p]addmodrole`` and ``[p]removemodrole`` commands.
+roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
 
 For example, in the mod cog (again), a mod will be able to mute, kick and ban;
 but he won't be able to modify the cog settings with the ``[p]modset`` command.
@@ -242,7 +244,7 @@ If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
 She needs an environment to work and respond.
 
-You can try to host Red somewhere he will always be online, like on a virtual
+You can try to host Red somewhere she will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
@@ -268,7 +270,7 @@ If you want to do it, follow these steps.
 2. **Install Linux**
 
   Most of the VPS providers have tools for installing Linux automatically. If
-  you're a beginner, we recommend **Ubuntu 18**.
+  you're a beginner, we recommend **Ubuntu 20.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
@@ -344,11 +346,16 @@ The cog guides are formatted the same. They're divided into 3 sections:
     A list of all arguments needed (or not) for the command, with more details.
 
     .. tip::
-        Arguments enclosed in ``< >`` means that the argument is **necessary**
+        Arguments enclosed in ``< >`` means that the argument is **required**
         for the command to work.
 
-        Arguments enclosed in ``[ ]`` means that the command is **optional**
+        Arguments enclosed in ``[ ]`` means that the argument is **optional**
         for the command; you can decide to use it or not.
+        
+        If your argument includes spaces like ``Hello world!``, most of the time
+        you will need to place it in double quotes like this: ``"Hello world!"``.
+        Sometimes (especially for the last argument) these double quotes are not
+        required.
 
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.

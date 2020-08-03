@@ -38,12 +38,13 @@ async def mass_purge(messages: List[discord.Message], channel: discord.TextChann
 
     """
     while messages:
-        if len(messages) > 1:
+        # discord.NotFound can be raised when `len(messages) == 1` and the message does not exist.
+        # As a result of this obscure behavior, this error needs to be caught just in case.
+        try:
             await channel.delete_messages(messages[:100])
-            messages = messages[100:]
-        else:
-            await messages[0].delete()
-            messages = []
+        except discord.errors.HTTPException:
+            pass
+        messages = messages[100:]
         await asyncio.sleep(1.5)
 
 
@@ -128,9 +129,10 @@ async def is_mod_or_superior(
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        if obj.id in await bot.db.guild(obj.guild).mod_role():
+        gid = obj.guild.id
+        if obj in await bot.get_admin_role_ids(gid):
             return True
-        if obj.id in await bot.db.guild(obj.guild).admin_role():
+        if obj in await bot.get_mod_role_ids(gid):
             return True
         return False
     else:
@@ -209,7 +211,7 @@ async def is_admin_or_superior(
     elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
-        return obj.id in await bot.db.guild(obj.guild).admin_role()
+        return obj.id in await bot.get_admin_role_ids(obj.guild.id)
     else:
         raise TypeError("Only messages, members or roles may be passed")
 

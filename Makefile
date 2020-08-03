@@ -1,31 +1,31 @@
+PYTHON ?= python3.8
+
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 # Python Code Style
 reformat:
-	black -l 99 `git ls-files "*.py"`
+	$(PYTHON) -m black $(ROOT_DIR)
 stylecheck:
-	black --check -l 99 `git ls-files "*.py"`
+	$(PYTHON) -m black --check $(ROOT_DIR)
+stylediff:
+	$(PYTHON) -m black --check --diff $(ROOT_DIR)
 
 # Translations
 gettext:
-	redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
+	$(PYTHON) -m redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
 upload_translations:
-	$(MAKE) gettext
 	crowdin upload sources
 download_translations:
 	crowdin download
 
 # Dependencies
 bumpdeps:
-	python tools/bumpdeps.py
+	$(PYTHON) tools/bumpdeps.py
 
 # Development environment
 newenv:
-	python3.7 -m venv --clear .venv
+	$(PYTHON) -m venv --clear .venv
 	.venv/bin/pip install -U pip setuptools
 	$(MAKE) syncenv
 syncenv:
 	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
-
-# Changelog check
-checkchangelog:
-	bash tools/check_changelog_entries.sh
-	python -m towncrier --draft
