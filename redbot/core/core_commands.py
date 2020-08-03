@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import importlib
 import itertools
+import keyword
 import logging
 import io
 import random
@@ -109,21 +110,34 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(
-        self, cog_names: Iterable[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
+        self, pkg_names: Iterable[str]
+    ) -> Tuple[
+        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
+    ]:
         """
-        Loads cogs by name.
+        Loads packages by name.
+
         Parameters
         ----------
-        cog_names : list of str
+        pkg_names : `list` of `str`
+            List of names of packages to load.
 
         Returns
         -------
         tuple
-            4-tuple of loaded, failed, not found and already loaded cogs.
+            7-tuple of:
+              1. List of names of packages that loaded successfully
+              2. List of names of packages that failed to load without specified reason
+              3. List of names of packages that don't have a valid package name
+              4. List of names of packages that weren't found in any cog path
+              5. List of names of packages that are already loaded
+              6. List of 2-tuples (pkg_name, reason) for packages
+              that failed to load with a specified reason
+              7. Set of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
+        invalid_pkg_names = []
         notfound_packages = []
         alreadyloaded_packages = []
         failed_with_reason_packages = []
@@ -131,24 +145,27 @@ class CoreLogic:
 
         bot = self.bot
 
-        cogspecs = []
+        pkg_specs = []
 
-        for name in cog_names:
+        for name in pkg_names:
+            if not name.isidentifier() or keyword.iskeyword(name):
+                invalid_pkg_names.append(name)
+                continue
             try:
                 spec = await bot._cog_mgr.find_cog(name)
                 if spec:
-                    cogspecs.append((spec, name))
+                    pkg_specs.append((spec, name))
                 else:
                     notfound_packages.append(name)
             except Exception as e:
                 log.exception("Package import failed", exc_info=e)
 
-                exception_log = "Exception during import of cog\n"
+                exception_log = "Exception during import of package\n"
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
 
-        async for spec, name in AsyncIter(cogspecs, steps=10):
+        async for spec, name in AsyncIter(pkg_specs, steps=10):
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
@@ -159,7 +176,7 @@ class CoreLogic:
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
 
-                exception_log = "Exception during loading of cog\n"
+                exception_log = "Exception during loading of package\n"
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
@@ -184,6 +201,7 @@ class CoreLogic:
         return (
             loaded_packages,
             failed_packages,
+            invalid_pkg_names,
             notfound_packages,
             alreadyloaded_packages,
             failed_with_reason_packages,
@@ -212,13 +230,14 @@ class CoreLogic:
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
-    async def _unload(self, cog_names: Iterable[str]) -> Tuple[List[str], List[str]]:
+    async def _unload(self, pkg_names: Iterable[str]) -> Tuple[List[str], List[str]]:
         """
-        Unloads cogs with the given names.
+        Unloads packages with the given names.
 
         Parameters
         ----------
-        cog_names : list of str
+        pkg_names : `list` of `str`
+            List of names of packages to unload.
 
         Returns
         -------
@@ -230,7 +249,7 @@ class CoreLogic:
 
         bot = self.bot
 
-        for name in cog_names:
+        for name in pkg_names:
             if name in bot.extensions:
                 bot.unload_extension(name)
                 await bot.remove_loaded_package(name)
@@ -241,22 +260,39 @@ class CoreLogic:
         return unloaded_packages, failed_packages
 
     async def _reload(
-        self, cog_names: Sequence[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]]:
-        await self._unload(cog_names)
+        self, pkg_names: Sequence[str]
+    ) -> Tuple[
+        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
+    ]:
+        """
+        Reloads packages with the given names.
+
+        Parameters
+        ----------
+        pkg_names : `list` of `str`
+            List of names of packages to reload.
+
+        Returns
+        -------
+        tuple
+            Tuple as returned by `CoreLogic._load()`
+        """
+        await self._unload(pkg_names)
 
         (
             loaded,
             load_failed,
+            invalid_pkg_names,
             not_found,
             already_loaded,
             load_failed_with_reason,
             repos_with_shared_libs,
-        ) = await self._load(cog_names)
+        ) = await self._load(pkg_names)
 
         return (
             loaded,
             load_failed,
+            invalid_pkg_names,
             not_found,
             already_loaded,
             load_failed_with_reason,
@@ -1252,6 +1288,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             (
                 loaded,
                 failed,
+                invalid_pkg_names,
                 not_found,
                 already_loaded,
                 failed_with_reason,
@@ -1287,6 +1324,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Failed to load the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
+
+        if invalid_pkg_names:
+            if len(invalid_pkg_names) == 1:
+                formed = _(
+                    "The following name is not a valid package name: {pack}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(pack=inline(invalid_pkg_names[0]))
+            else:
+                formed = _(
+                    "The following names are not valid package names: {packs}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
         if not_found:
@@ -1381,6 +1433,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             (
                 loaded,
                 failed,
+                invalid_pkg_names,
                 not_found,
                 already_loaded,
                 failed_with_reason,
@@ -1405,6 +1458,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Failed to reload the following packages: {packs}"
                     "\nCheck your console or logs for details."
                 ).format(packs=humanize_list([inline(package) for package in failed]))
+            output.append(formed)
+
+        if invalid_pkg_names:
+            if len(invalid_pkg_names) == 1:
+                formed = _(
+                    "The following name is not a valid package name: {pack}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(pack=inline(invalid_pkg_names[0]))
+            else:
+                formed = _(
+                    "The following names are not valid package names: {packs}\n"
+                    "Package names cannot start with a number"
+                    " and can only contain ascii numbers, letters, and underscores."
+                ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
         if not_found:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import keyword
 import os
 import pkgutil
 import shlex
@@ -495,6 +496,9 @@ class Repo(RepoJSONMixin):
                     )
         """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
+            if not name.isidentifier() or keyword.iskeyword(name):
+                # reject package names that can't be valid python identifiers
+                continue
             if is_pkg:
                 curr_modules.append(
                     Installable(location=self.folder_path / name, repo=self, commit=self.commit)

@@ -1,4 +1,5 @@
 import contextlib
+import keyword
 import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
@@ -214,6 +215,13 @@ class CogManager:
             When no cog with the requested name was found.
 
         """
+        if not name.isidentifier() or keyword.iskeyword(name):
+            # reject package names that can't be valid python identifiers
+            raise NoSuchCog(
+                f"No 3rd party module by the name of '{name}' was found in any available path.",
+                name=name,
+            )
+
         real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
@@ -223,9 +231,7 @@ class CogManager:
                     return spec
 
         raise NoSuchCog(
-            "No 3rd party module by the name of '{}' was found in any available path.".format(
-                name
-            ),
+            f"No 3rd party module by the name of '{name}' was found in any available path.",
             name=name,
         )
 
@@ -291,7 +297,9 @@ class CogManager:
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
-            ret.append(module_name)
+            # reject package names that can't be valid python identifiers
+            if module_name.isidentifier() and not keyword.iskeyword(module_name):
+                ret.append(module_name)
         return ret
 
     @staticmethod
