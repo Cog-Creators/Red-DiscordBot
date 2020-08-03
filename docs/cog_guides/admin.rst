@@ -358,7 +358,7 @@ announceset
 
 **Description**
 
-Change how announcements are recieved in this guild.
+Change how announcements are received in this guild.
 
 .. _admin-command-announceset-channel:
 
