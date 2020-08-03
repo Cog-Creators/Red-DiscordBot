@@ -281,7 +281,10 @@ class Streams(commands.Cog):
 
     @streamalert.group(name="twitch", invoke_without_command=True)
     async def _twitch(
-        self, ctx: commands.Context, channel_name: str = None, discord_channel: discord.TextChannel = None
+        self,
+        ctx: commands.Context,
+        channel_name: str = None,
+        discord_channel: discord.TextChannel = None,
     ):
         """Manage Twitch stream notifications."""
         if channel_name is not None:
@@ -303,20 +306,27 @@ class Streams(commands.Cog):
 
     @streamalert.command(name="youtube")
     async def youtube_alert(
-        self, ctx: commands.Context, channel_name_or_id: str, discord_channel: discord.TextChannel = None
+        self,
+        ctx: commands.Context,
+        channel_name_or_id: str,
+        discord_channel: discord.TextChannel = None,
     ):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
 
     @streamalert.command(name="hitbox")
-    async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
+    async def hitbox_alert(
+        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+    ):
         """Toggle alerts in this channel for a Hitbox stream."""
-        await self.stream_alert(ctx, HitboxStream, channel_name)
+        await self.stream_alert(ctx, HitboxStream, channel_name, discord_channel)
 
     @streamalert.command(name="picarto")
-    async def picarto_alert(self, ctx: commands.Context, channel_name: str):
+    async def picarto_alert(
+        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+    ):
         """Toggle alerts in this channel for a Picarto stream."""
-        await self.stream_alert(ctx, PicartoStream, channel_name)
+        await self.stream_alert(ctx, PicartoStream, channel_name, discord_channel)
 
     @streamalert.command(name="stop", usage="[disable_all=No]")
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
