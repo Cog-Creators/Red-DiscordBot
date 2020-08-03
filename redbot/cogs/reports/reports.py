@@ -1,6 +1,6 @@
 import logging
 import asyncio
-from typing import Union, List
+from typing import Union, List, Literal
 from datetime import timedelta
 from copy import copy
 import contextlib
@@ -59,6 +59,39 @@ class Reports(commands.Cog):
         self.tunnel_store = {}
         # (guild, ticket#):
         #   {'tun': Tunnel, 'msgs': List[int]}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_reports = await self.config.custom("REPORT").all()
+
+        steps = 0
+        paths = []
+
+        # this doesn't use async iter intentionally due to the nested iterations
+        for guild_id_str, tickets in all_reports.items():
+            for ticket_number, ticket in tickets.items():
+                steps += 1
+                if not steps % 100:
+                    await asyncio.sleep(0)  # yield context
+
+            if ticket.get("report", {}).get("user_id", 0) == user_id:
+                paths.append((guild_id_str, ticket_number))
+
+        async with self.config.custom("REPORT").all() as all_reports:
+            async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
+                r = all_reports[guild_id_str][ticket_number]["report"]
+                r["user_id"] = 0xDE1
+                # this might include EUD, and a report of a deleted user
+                # that's been unhandled for long enough for the
+                # user to be deleted and the bot recieve a request like this...
+                r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
     def tunnels(self):

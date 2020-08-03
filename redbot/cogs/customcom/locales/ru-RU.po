@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-14 12:27+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -218,15 +218,15 @@ msgstr "{num} секунд в {period}\\n"
 msgid "Responses:\\n"
 msgstr "Ответы:\\n"
 
-#: redbot/cogs/customcom/customcom.py:596
+#: redbot/cogs/customcom/customcom.py:599
 msgid "Too many arguments!"
 msgstr "Слишком много аргументов!"
 
-#: redbot/cogs/customcom/customcom.py:600
+#: redbot/cogs/customcom/customcom.py:603
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Аргументы должны быть последовательными. Отсутствующие аргументы: "
 
-#: redbot/cogs/customcom/customcom.py:626
+#: redbot/cogs/customcom/customcom.py:629
 msgid "Conflicting colon notation for argument {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
 msgstr "Конфликт среди аргументов {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
 

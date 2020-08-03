@@ -10,7 +10,6 @@ from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormat
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [
-    "patch_relative_to",
     "repo_manager",
     "repo",
     "bot_repo",
@@ -36,14 +35,6 @@ async def fake_run_noprint(*args, **kwargs):
 
 async def fake_current_commit(*args, **kwargs):
     return "fake_result"
-
-
-@pytest.fixture(scope="module", autouse=True)
-def patch_relative_to(monkeysession):
-    def fake_relative_to(self, some_path: Path):
-        return self
-
-    monkeysession.setattr("pathlib.Path.relative_to", fake_relative_to)
 
 
 @pytest.fixture
