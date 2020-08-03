@@ -1,4 +1,5 @@
 import discord
+from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator
@@ -376,7 +377,8 @@ class Streams(commands.Cog):
         for channel_id, stream_platform in streams_list.items():
             msg += f"** - #{ctx.guild.get_channel(channel_id)}**\n"
             for platform, streams in stream_platform.items():
-                msg += f"\t** - {platform.capitalize()}**\n\t\t{', '.join(streams)}\n"
+                msg += f"\t** - {platform.capitalize()}**\n"
+                msg += f"\t\t{humanize_list(streams)}\n"
 
         for page in pagify(msg):
             await ctx.send(page)
