@@ -654,7 +654,9 @@ class Streams(commands.Cog):
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
-                _("I won't send notifications about {stream.name} anymore.").format(stream=stream)
+                _(
+                    "I won't send notifications about {stream.name} in the channel {discord_channel} anymore"
+                ).format(stream=stream, discord_channel=discord_channel)
             )
 
         await self.save_streams()
