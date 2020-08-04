@@ -374,7 +374,7 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, number, channel.name
+            author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
 
