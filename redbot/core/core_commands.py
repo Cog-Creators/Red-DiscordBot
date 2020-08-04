@@ -3359,7 +3359,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         aliases=["licenceinfo"],
         i18n=_,
     )
-    async def license_info_command(ctx):
+    async def license_info_command(self, ctx):
         """
         Get info about Red's licenses.
         """
