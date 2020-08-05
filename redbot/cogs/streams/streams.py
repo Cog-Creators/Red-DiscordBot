@@ -817,3 +817,4 @@ class Streams(commands.Cog):
             self.task.cancel()
 
     __del__ = cog_unload
+    
