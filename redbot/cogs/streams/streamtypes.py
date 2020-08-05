@@ -190,6 +190,12 @@ class YoutubeStream(Stream):
             raise StreamNotFound()
         elif "items" in data:
             return data["items"][0][resource]
+        elif (
+            "pageInfo" in data
+            and "totalResults" in data["pageInfo"]
+            and data["pageInfo"]["totalResults"] < 1
+        ):
+            raise StreamNotFound()
         raise APIError()
 
     def __repr__(self):
