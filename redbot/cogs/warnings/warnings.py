@@ -480,30 +480,27 @@ class Warnings(commands.Cog):
         else:
             if not dm_failed:
                 await ctx.tick()
-        try:
-            reason_msg = _(
-                "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
-            ).format(
-                reason=_("{description}\nPoints: {points}").format(
-                    description=reason_type["description"], points=reason_type["points"]
-                ),
-                prefix=ctx.clean_prefix,
-                user=user.id,
-                message=ctx.message.id,
-            )
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "warning",
-                user,
-                ctx.message.author,
-                reason_msg,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        reason_msg = _(
+            "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
+        ).format(
+            reason=_("{description}\nPoints: {points}").format(
+                description=reason_type["description"], points=reason_type["points"]
+            ),
+            prefix=ctx.clean_prefix,
+            user=user.id,
+            message=ctx.message.id,
+        )
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at,
+            "warning",
+            user,
+            ctx.message.author,
+            reason_msg,
+            until=None,
+            channel=None,
+        )
 
     @commands.command()
     @commands.guild_only()
@@ -615,19 +612,16 @@ class Warnings(commands.Cog):
                 current_point_count -= user_warnings[warn_id]["points"]
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
-        try:
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "unwarned",
-                member,
-                ctx.message.author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at,
+            "unwarned",
+            member,
+            ctx.message.author,
+            reason,
+            until=None,
+            channel=None,
+        )
 
         await ctx.tick()
