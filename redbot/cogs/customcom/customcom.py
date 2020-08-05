@@ -220,6 +220,7 @@ class CustomCommands(commands.Cog):
         self.config.register_guild(commands={})
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
         self.cooldowns = {}
+        self.command_cache: Dict[Tuple[int, str], commands.Command] = {}
 
     async def red_delete_data_for_user(
         self,
@@ -425,6 +426,7 @@ class CustomCommands(commands.Cog):
         """
         try:
             await self.commandobj.delete(ctx=ctx, command=command)
+            self.command_cache.pop((ctx.guild.id, command), None)
             await ctx.send(_("Custom command successfully deleted."))
         except NotFound:
             await ctx.send(_("That command doesn't exist."))
@@ -439,6 +441,7 @@ class CustomCommands(commands.Cog):
         """
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
+            self.command_cache.pop((ctx.guild.id, command), None)
             await ctx.send(_("Custom command successfully edited."))
         except NotFound:
             await ctx.send(
@@ -559,29 +562,33 @@ class CustomCommands(commands.Cog):
             return
 
         try:
-            raw_response, cooldowns = await self.commandobj.get(
-                message=message, command=ctx.invoked_with
-            )
-            if isinstance(raw_response, list):
-                raw_response = random.choice(raw_response)
-            elif isinstance(raw_response, str):
-                pass
-            else:
-                raise NotFound()
-            if cooldowns:
-                self.test_cooldowns(ctx, ctx.invoked_with, cooldowns)
-        except CCError:
-            return
-
-        # wrap the command here so it won't register with the bot
-        fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
-        fake_cc.params = self.prepare_args(raw_response)
-        fake_cc.requires.ready_event.set()
-        ctx.command = fake_cc
+            fake_cc = self.command_cache[(ctx.guild.id, ctx.invoked_with)]
+            ctx.command = fake_cc
+            _cached = None
+        except KeyError:
+            try:
+                raw_response, cooldowns = await self.commandobj.get(
+                    message=message, command=ctx.invoked_with
+                )
+                if isinstance(raw_response, list):
+                    raw_response = random.choice(raw_response)
+                elif isinstance(raw_response, str):
+                    pass
+                else:
+                    return
+                _cached = raw_response, cooldowns
+            except NotFound:
+                return
+            # wrap the command here so it won't register with the bot
+            fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
+            fake_cc.params = self.prepare_args(raw_response)
+            fake_cc.requires.ready_event.set()
+            ctx.command = fake_cc
+            self.command_cache[(ctx.guild.id, ctx.invoked_with)] = fake_cc
 
         await self.bot.invoke(ctx)
         if not ctx.command_failed:
-            await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
+            await self.cc_command(*ctx.args, **ctx.kwargs, _cached_cobj=_cached)
 
     async def cc_callback(self, *args, **kwargs) -> None:
         """
@@ -592,7 +599,28 @@ class CustomCommands(commands.Cog):
         # fake command to take advantage of discord.py's parsing and events
         pass
 
-    async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
+    async def cc_command(self, ctx, *cc_args, _cached_cobj=None, **cc_kwargs) -> None:
+        if _cached_cobj:
+            raw_response, cooldowns = _cached_cobj
+        else:
+            try:
+                raw_response, cooldowns = await self.commandobj.get(
+                    message=ctx.message, command=ctx.invoked_with
+                )
+                if cooldowns:
+                    self.test_cooldowns(ctx, ctx.invoked_with, cooldowns)
+            except NotFound:
+                self.command_cache.pop((ctx.guild.id, ctx.invoked_with), None)
+                return
+            except CCError:
+                return
+            if isinstance(raw_response, list):
+                raw_response = random.choice(raw_response)
+            elif isinstance(raw_response, str):
+                pass
+            else:
+                self.command_cache.pop((ctx.guild.id, ctx.invoked_with), None)
+                return
         cc_args = (*cc_args, *cc_kwargs.values())
         results = re.findall(r"{([^}]+)\}", raw_response)
         for result in results:
@@ -685,7 +713,7 @@ class CustomCommands(commands.Cog):
         return OrderedDict(fin)
 
     def test_cooldowns(self, ctx, command, cooldowns):
-        now = datetime.utcnow()
+        now = ctx.message.created_at
         new_cooldowns = {}
         for per, rate in cooldowns.items():
             if per == "guild":
