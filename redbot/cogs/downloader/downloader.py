@@ -307,10 +307,22 @@ class Downloader(commands.Cog):
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
             module.repo = cast(Repo, module.repo)
-            if module.repo.commit != module.commit and await module.repo.is_ancestor(
-                module.commit, module.repo.commit
-            ):
-                hashes[(module.repo, module.commit)].add(module)
+            if module.repo.commit != module.commit:
+                try:
+                    should_add = await module.repo.is_ancestor(module.commit, module.repo.commit)
+                except errors.UnknownRevision:
+                    # marking module for update if the saved commit data is invalid
+                    last_module_occurrence = await module.repo.get_last_module_occurrence(
+                        module.name
+                    )
+                    if last_module_occurrence is not None and not last_module_occurrence.disabled:
+                        if last_module_occurrence.type == InstallableType.COG:
+                            cogs_to_update.add(last_module_occurrence)
+                        elif last_module_occurrence.type == InstallableType.SHARED_LIBRARY:
+                            libraries_to_update.add(last_module_occurrence)
+                else:
+                    if should_add:
+                        hashes[(module.repo, module.commit)].add(module)
 
         update_commits = []
         for (repo, old_hash), modules_to_check in hashes.items():
