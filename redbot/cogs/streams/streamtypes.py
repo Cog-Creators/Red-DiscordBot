@@ -412,4 +412,3 @@ class PicartoStream(Stream):
 
         embed.set_footer(text=_("{adult}Category: {category} | Tags: {tags}").format(**data))
         return embed
-        
