@@ -212,6 +212,10 @@ class RedBase(
         """
         Set's Red's help formatter.
 
+        .. warning::
+            This method is provisional.
+
+
         The formatter must implement all methods in
         ``commands.help.HelpFormatterABC``
 
@@ -249,8 +253,13 @@ class RedBase(
         """
         Resets Red's help formatter.
 
+        .. warning::
+            This method is provisional.
+
+
         This exists for use in ``cog_unload`` for cogs which replace the formatter
         as well as for a rescue command in core_commands.
+
         """
         self._help_formatter = commands.help.RedHelpFormatter()
 
