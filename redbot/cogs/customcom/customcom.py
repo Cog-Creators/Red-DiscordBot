@@ -543,11 +543,10 @@ class CustomCommands(commands.Cog):
     async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
-        # user_allowed check, will be replaced with self.bot.user_allowed or
-        # something similar once it's added
-        user_allowed = True
+        if len(message.content) < 2 or is_private or message.author.bot:
+            return
 
-        if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+        if not await self.bot.message_eligible_as_command(message):
             return
 
         if await self.bot.cog_disabled_in_guild(self, message.guild):
