@@ -45,9 +45,9 @@ extend functionalities used throughout the bot, as outlined below.
 
     .. autoclass:: APIToken
 
-==================
+******************
 Help Functionality
-==================
+******************
 
 .. warning::
 

@@ -249,7 +249,7 @@ class RedBase(
         """
         Resets Red's help formatter.
 
-        This exits for use in cog_unload for cogs which replace the formatter
+        This exists for use in ``cog_unload`` for cogs which replace the formatter
         as well as for a rescue command in core_commands.
         """
         self._help_formatter = commands.help.RedHelpFormatter()

@@ -9,7 +9,7 @@
 # with our needs for per-context help settings
 # see https://github.com/Rapptz/discord.py/issues/2123
 #
-# While the issue above discusses this as theoretical,merely interacting with config within
+# While the issue above discusses this as theoretical, merely interacting with config within
 # the help command preparation was enough to cause
 # demonstrable breakage in 150 help invokes in a 2 minute window.
 # This is not an unreasonable volume on some already existing Red instances,
@@ -123,7 +123,7 @@ class HelpFormatterABC(abc.ABC):
 
         This class is documented but provisional with expected changes.
 
-        In the future, this class will recieve changes to support
+        In the future, this class will receive changes to support
         invoking the help command without context.
     """
 
@@ -152,7 +152,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
     .. warning::
 
-        This class is documented but may recieve changes between
+        This class is documented but may receive changes between
         versions without warning as needed.
         The supported way to modify help is to write a separate formatter.
 
