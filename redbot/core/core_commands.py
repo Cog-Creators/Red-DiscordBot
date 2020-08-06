@@ -3350,7 +3350,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ctx: commands.Context,
         channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
     ):
-        """Remove a channel or category from ignore the list.
+        """Remove a channel or category from the ignore list.
 
         Defaults to the current channel.
         """
