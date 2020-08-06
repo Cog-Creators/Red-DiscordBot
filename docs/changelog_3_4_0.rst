@@ -67,6 +67,7 @@ Developer changelog
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
+- RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
 
 
 Documentation changes
