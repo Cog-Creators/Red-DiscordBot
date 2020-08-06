@@ -103,20 +103,17 @@ class MuteMixin(MixinMeta):
 
         guild = ctx.guild
         author = ctx.author
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "voiceunban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot,
+            guild,
+            ctx.message.created_at,
+            "voiceunban",
+            user,
+            author,
+            reason,
+            until=None,
+            channel=None,
+        )
         await ctx.send(_("User is now allowed to speak and listen in voice channels"))
 
     @commands.command()
@@ -147,20 +144,17 @@ class MuteMixin(MixinMeta):
             await ctx.send(_("That user is already muted and deafened server-wide!"))
             return
 
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "voiceban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot,
+            guild,
+            ctx.message.created_at,
+            "voiceban",
+            user,
+            author,
+            reason,
+            until=None,
+            channel=None,
+        )
         await ctx.send(_("User has been banned from speaking or listening in voice channels"))
 
     @commands.group()
@@ -190,20 +184,17 @@ class MuteMixin(MixinMeta):
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "vmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "vmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=channel,
+            )
             await ctx.send(
                 _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
@@ -237,20 +228,17 @@ class MuteMixin(MixinMeta):
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "cmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "cmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=channel,
+            )
             await channel.send(_("User has been muted in this channel."))
         else:
             await channel.send(issue)
@@ -270,20 +258,17 @@ class MuteMixin(MixinMeta):
             success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
             mute_success.append((success, issue))
             await asyncio.sleep(0.1)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "smute",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot,
+            guild,
+            ctx.message.created_at,
+            "smute",
+            user,
+            author,
+            reason,
+            until=None,
+            channel=None,
+        )
         await ctx.send(_("User has been muted in this server."))
 
     @commands.group()
@@ -316,20 +301,17 @@ class MuteMixin(MixinMeta):
         success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "vunmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "vunmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=channel,
+            )
             await ctx.send(
                 _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
             )
@@ -363,20 +345,17 @@ class MuteMixin(MixinMeta):
         success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "cunmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "cunmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=channel,
+            )
             await ctx.send(_("User unmuted in this channel."))
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
@@ -398,19 +377,9 @@ class MuteMixin(MixinMeta):
             success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "sunmute",
-                user,
-                author,
-                reason,
-                until=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot, guild, ctx.message.created_at, "sunmute", user, author, reason, until=None,
+        )
         await ctx.send(_("User has been unmuted in this server."))
 
     async def mute_user(

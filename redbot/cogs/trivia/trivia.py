@@ -3,7 +3,7 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import List
+from typing import List, Literal
 
 import io
 import yaml
@@ -13,6 +13,7 @@ from redbot.core import Config, commands, checks
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -55,6 +56,21 @@ class Trivia(commands.Cog):
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     @commands.group()
     @commands.guild_only()

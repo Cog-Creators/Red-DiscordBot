@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-07-09 12:16+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: fr_FR\n"
 
-#: redbot/core/commands/commands.py:503
+#: redbot/core/commands/commands.py:525
 msgid "\\\"{argument}\\\" is not a number."
 msgstr "\\\"{argument}\\\" n'est pas un nombre."
 
@@ -47,72 +47,92 @@ msgstr "Clé inattendue {key}"
 msgid "Expected one of: {}"
 msgstr "Un des : {} était attendu"
 
-#: redbot/core/commands/help.py:182
+#: redbot/core/commands/help.py:103
+msgid "No"
+msgstr "Non"
+
+#: redbot/core/commands/help.py:105
+msgid "Yes"
+msgstr "Oui"
+
+#: redbot/core/commands/help.py:111
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: redbot/core/commands/help.py:116
+msgid "\\nCustom Tagline: {tag}"
+msgstr ""
+
+#: redbot/core/commands/help.py:122
+msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}{tagline_info}"
+msgstr ""
+
+#: redbot/core/commands/help.py:270
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
 msgstr ""
 
-#: redbot/core/commands/help.py:212
+#: redbot/core/commands/help.py:300
 msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
 msgstr ""
 
-#: redbot/core/commands/help.py:253
+#: redbot/core/commands/help.py:341
 msgid "**__Subcommands:__**"
 msgstr ""
 
-#: redbot/core/commands/help.py:255
+#: redbot/core/commands/help.py:343
 msgid "**__Subcommands:__** (continued)"
 msgstr ""
 
-#: redbot/core/commands/help.py:266
+#: redbot/core/commands/help.py:354
 msgid "Subcommands:"
 msgstr ""
 
-#: redbot/core/commands/help.py:330 redbot/core/commands/help.py:582
-#: redbot/core/commands/help.py:595 redbot/core/commands/help.py:614
+#: redbot/core/commands/help.py:418 redbot/core/commands/help.py:670
+#: redbot/core/commands/help.py:683 redbot/core/commands/help.py:702
 msgid "{ctx.me.display_name} Help Menu"
 msgstr ""
 
-#: redbot/core/commands/help.py:377
+#: redbot/core/commands/help.py:465
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
 msgstr ""
 
-#: redbot/core/commands/help.py:428
+#: redbot/core/commands/help.py:516
 msgid "**__Commands:__**"
 msgstr ""
 
-#: redbot/core/commands/help.py:430
+#: redbot/core/commands/help.py:518
 msgid "**__Commands:__** (continued)"
 msgstr ""
 
-#: redbot/core/commands/help.py:440
+#: redbot/core/commands/help.py:528
 msgid "Commands:"
 msgstr ""
 
-#: redbot/core/commands/help.py:482
+#: redbot/core/commands/help.py:570
 msgid "**__No Category:__**"
 msgstr ""
 
-#: redbot/core/commands/help.py:495
+#: redbot/core/commands/help.py:583
 msgid "{title} (continued)"
 msgstr ""
 
-#: redbot/core/commands/help.py:511 redbot/core/commands/help.py:525
+#: redbot/core/commands/help.py:599 redbot/core/commands/help.py:613
 msgid "No Category:"
 msgstr ""
 
-#: redbot/core/commands/help.py:591
+#: redbot/core/commands/help.py:679
 msgid "Help topic for *{command_name}* not found."
 msgstr ""
 
-#: redbot/core/commands/help.py:608
+#: redbot/core/commands/help.py:696
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
 msgstr ""
 
-#: redbot/core/commands/help.py:683
+#: redbot/core/commands/help.py:771
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr ""
 
-#: redbot/core/commands/help.py:721
+#: redbot/core/commands/help.py:809
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
