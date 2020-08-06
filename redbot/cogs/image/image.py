@@ -26,6 +26,10 @@ class Image(commands.Cog):
     def cog_unload(self):
         self.session.detach()
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     async def initialize(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
         imgur_token = await self.config.imgur_client_id()

@@ -69,7 +69,7 @@ from installation and updating, every part of the bot can be controlled from wit
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Mixer, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Hitbox, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search

@@ -2,7 +2,7 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, Literal, cast
 
 import discord
 import yaml
@@ -10,6 +10,7 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -113,6 +114,56 @@ class Permissions(commands.Cog):
         self.config.register_custom(COG)
         self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        count = 0
+
+        _uid = str(user_id)
+
+        # The dict as returned here as string keys. Above is for comparison,
+        # there's a below recast to int where needed for guild ids
+
+        for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+
+            obj_type_rules = await self.config.custom(typename).all()
+
+            count += 1
+            if not count % 100:
+                await asyncio.sleep(0)
+
+            for obj_name, rules_dict in obj_type_rules.items():
+
+                count += 1
+                if not count % 100:
+                    await asyncio.sleep(0)
+
+                obj = getter(obj_name)
+
+                for guild_id, guild_rules in rules_dict.items():
+
+                    count += 1
+                    if not count % 100:
+                        await asyncio.sleep(0)
+
+                    if _uid in guild_rules:
+                        if obj:
+                            # delegate to remove rule here
+                            await self._remove_rule(
+                                CogOrCommand(typename, obj.qualified_name, obj),
+                                user_id,
+                                int(guild_id),
+                            )
+                        else:
+                            grp = self.config.custom(typename, obj_name)
+                            await grp.clear_raw(guild_id, user_id)
 
     async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
         """
@@ -345,14 +396,6 @@ class Permissions(commands.Cog):
         if not who_or_what:
             await ctx.send_help()
             return
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -387,14 +430,6 @@ class Permissions(commands.Cog):
         """
         if not who_or_what:
             await ctx.send_help()
-            return
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
             return
         for w in who_or_what:
             await self._add_rule(
@@ -473,14 +508,6 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny),
             cog_or_cmd=cog_or_command,
@@ -504,14 +531,6 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )
@@ -599,8 +618,8 @@ class Permissions(commands.Cog):
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
         guild_id, model_id = str(guild_id), str(model_id)
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
-            if guild_id in rules and rules[guild_id]:
-                del rules[guild_id][model_id]
+            if (guild_rules := rules.get(guild_id)) is not None:
+                guild_rules.pop(model_id, None)
 
     async def _set_default_rule(
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"POT-Creation-Date: 2020-07-30 12:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -57,6 +57,7 @@ msgid "The bot is not connected to a voice channel."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:132
+#: redbot/cogs/audio/core/events/lavalink.py:83
 msgid "Unable to Get Track"
 msgstr ""
 
@@ -64,39 +65,43 @@ msgstr ""
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:68
+#: redbot/cogs/audio/core/events/lavalink.py:74
 msgid "Couldn't get a valid track."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:87
+#: redbot/cogs/audio/core/events/lavalink.py:84
+msgid "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
+msgstr ""
+
+#: redbot/cogs/audio/core/events/lavalink.py:106
 msgid "Auto Play started."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:102
+#: redbot/cogs/audio/core/events/lavalink.py:121
 msgid "Now Playing"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:104
+#: redbot/cogs/audio/core/events/lavalink.py:123
 msgid "Track length: {length} | Requested by: {user}"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:125
+#: redbot/cogs/audio/core/events/lavalink.py:144
 msgid "Queue ended."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:167
+#: redbot/cogs/audio/core/events/lavalink.py:186
 msgid "Multiple Errors Detected"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:168
+#: redbot/cogs/audio/core/events/lavalink.py:187
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:182
+#: redbot/cogs/audio/core/events/lavalink.py:201
 msgid "Track Stuck"
 msgstr ""
 
-#: redbot/cogs/audio/core/events/lavalink.py:187
+#: redbot/cogs/audio/core/events/lavalink.py:206
 msgid "Track Error"
 msgstr ""
 

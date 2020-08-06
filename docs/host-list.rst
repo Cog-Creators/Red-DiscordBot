@@ -79,12 +79,13 @@ server. Any modern hardware should work 100% fine.
 Free hosting
 ------------
 
-`Google Cloud Compute Free Tier <https://cloud.google.com/free/docs/gcp-free-tier>`_,
-`Oracle Cloud Compute Always Free <https://oracle.com/cloud/free/#always-free>`_ and
-`AWS EC2 Free Tier <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
-AWS EC2 is not *always* free—it's a 12 month free trial.
-Additionally, new Google Cloud customers get a $300 credit which is valid
-for 12 months.
+| `Google Cloud Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
+  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_ and
+  `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
+
+| **Note:** AWS EC2's free tier does not last forever - it's a 12 month trial.
+| Additionally, new Google Cloud customers get a $300 credit which is valid
+  for 12 months.
 
 Other than that... no. There is no good free VPS hoster, outside of
 persuading somebody to host for you, which is incredibly unlikely.
