@@ -60,3 +60,6 @@ redbot/setup.py                     @tekulvw
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
 .github/workflows/*                 @Kowlin
+
+# Excludes
+**/locales/*                        @ghost

@@ -33,6 +33,13 @@ START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """
+        Because despite my best efforts to advise otherwise,
+        people use ``--dev`` in production
+        """
+        return
+
     def __init__(self):
         super().__init__()
         self._last_result = None

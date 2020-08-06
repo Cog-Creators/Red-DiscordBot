@@ -1,10 +1,11 @@
 import discord
 import re
-from typing import Union, Set
+from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
@@ -32,6 +33,21 @@ class Filter(commands.Cog):
         self.config.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     def cog_unload(self):
         self.register_task.cancel()
@@ -369,6 +385,10 @@ class Filter(commands.Cog):
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
@@ -395,6 +415,11 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
+
+        guild = member.guild
+        if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+            return
+
         if not member.guild.me.guild_permissions.manage_nicknames:
             return  # No permissions to manage nicknames, so can't do anything
         if member.top_role >= member.guild.me.top_role:

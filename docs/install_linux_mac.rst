@@ -96,33 +96,6 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 
 ----
 
-.. _install-debian-stretch:
-
-~~~~~~~~~~~~~~
-Debian Stretch
-~~~~~~~~~~~~~~
-
-.. note::
-
-    This guide is only for Debian Stretch users, these instructions won't work with
-    Raspbian Stretch. Raspbian Buster is the only version of Raspbian supported by Red.
-
-We recommend installing pyenv as a method of installing non-native versions of python on
-Debian Stretch. This guide will tell you how. First, run the following commands:
-
-.. code-block:: none
-
-    sudo echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/red-sources.list
-    sudo apt update
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
-      libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
-    CXX=/usr/bin/g++
-
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
-
-----
-
 .. _install-debian:
 .. _install-raspbian:
 
@@ -151,7 +124,7 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 30 and above has all required packages available in official repositories. Install
+Fedora Linux 31 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
@@ -196,10 +169,10 @@ Continue by `creating-venv-linux`.
 openSUSE
 ~~~~~~~~
 
-openSUSE Leap
-*************
+openSUSE Leap 15.1+
+*******************
 
-We recommend installing a community package to get Python 3.8 on openSUSE Leap. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.1+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -397,7 +370,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.3 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -409,7 +382,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.3
+    pyenv global 3.8.5
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 

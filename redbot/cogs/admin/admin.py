@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Tuple
 
@@ -72,15 +73,49 @@ class Admin(commands.Cog):
     def __init__(self):
         self.config = Config.get_conf(self, 8237492837454039, force_registration=True)
 
-        self.config.register_global(serverlocked=False)
+        self.config.register_global(serverlocked=False, schema_version=0)
 
         self.config.register_guild(
-            announce_ignore=False,
-            announce_channel=None,  # Integer ID
-            selfroles=[],  # List of integer ID's
+            announce_channel=None, selfroles=[],  # Integer ID  # List of integer ID's
         )
 
         self.__current_announcer = None
+        self._ready = asyncio.Event()
+        asyncio.create_task(self.handle_migrations())
+        # As this is a data migration, don't store this for cancelation.
+
+    async def cog_before_invoke(self, ctx: commands.Context):
+        await self._ready.wait()
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
+    async def handle_migrations(self):
+
+        lock = self.config.get_guilds_lock()
+        async with lock:
+            # This prevents the edge case of someone loading admin,
+            # unloading it, loading it again during a migration
+            current_schema = await self.config.schema_version()
+
+            if current_schema == 0:
+                await self.migrate_config_from_0_to_1()
+                await self.config.schema_version.set(1)
+
+        self._ready.set()
+
+    async def migrate_config_from_0_to_1(self):
+
+        all_guilds = await self.config.all_guilds()
+
+        for guild_id, guild_data in all_guilds.items():
+            if guild_data.get("announce_ignore", False):
+                async with self.config.guild_from_id(guild_id).all(
+                    acquire_lock=False
+                ) as guild_config:
+                    guild_config.pop("announce_channel", None)
+                    guild_config.pop("announce_ignore", None)
 
     def cog_unload(self):
         try:
@@ -320,7 +355,7 @@ class Admin(commands.Cog):
     async def announceset_channel(self, ctx, *, channel: discord.TextChannel = None):
         """
         Change the channel where the bot will send announcements.
-        
+
         If channel is left blank it defaults to the current channel.
         """
         if channel is None:
@@ -330,21 +365,11 @@ class Admin(commands.Cog):
             _("The announcement channel has been set to {channel.mention}").format(channel=channel)
         )
 
-    @announceset.command(name="ignore")
-    async def announceset_ignore(self, ctx):
-        """Toggle announcements being enabled this server."""
-        ignored = await self.config.guild(ctx.guild).announce_ignore()
-        await self.config.guild(ctx.guild).announce_ignore.set(not ignored)
-        if ignored:
-            await ctx.send(
-                _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
-            )
-        else:
-            await ctx.send(
-                _("The server {guild.name} will not receive announcements.").format(
-                    guild=ctx.guild
-                )
-            )
+    @announceset.command(name="clearchannel")
+    async def announceset_clear_channel(self, ctx):
+        """Unsets the channel for announcements."""
+        await self.config.guild(ctx.guild).announce_channel.clear()
+        await ctx.tick()
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """

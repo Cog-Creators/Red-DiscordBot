@@ -4,13 +4,11 @@ from pathlib import Path
 import weakref
 
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core import config as config_module, drivers
 
 __all__ = [
-    "monkeysession",
     "override_data_path",
     "coroutine",
     "driver",
@@ -28,13 +26,6 @@ __all__ = [
     "user_factory",
     "ctx",
 ]
-
-
-@pytest.fixture(scope="session")
-def monkeysession(request):
-    mpatch = MonkeyPatch()
-    yield mpatch
-    mpatch.undo()
 
 
 @pytest.fixture(autouse=True)
