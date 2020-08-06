@@ -43,8 +43,6 @@ extend functionalities used throughout the bot, as outlined below.
     :exclude-members: UserInputOptional, convert
     :no-undoc-members:
 
-    .. autoclass:: APIToken
-
     .. autodata:: UserInputOptional
         :annotation:
 
