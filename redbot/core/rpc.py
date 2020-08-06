@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from typing import Optional
 
 from aiohttp import web
@@ -68,22 +69,38 @@ class RPC:
 
         self._runner = web.AppRunner(self.app)
         self._site: Optional[web.TCPSite] = None
+        self._started = False
 
     async def initialize(self, port: int):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
-        await self._runner.setup()
-        self._site = web.TCPSite(self._runner, host="127.0.0.1", port=port)
-        await self._site.start()
-        log.debug("Created RPC server listener on port %s", port)
+        try:
+            # This ensures self._started can't be assigned
+            # except with both other functions
+            # and isn't subject to a really really stupid but complex
+            # issue on windows with catching specific
+            # exceptions related to shutdown conditions in asyncio applications.
+            self._started, _discard, self._site = (
+                True,
+                await self._runner.setup(),
+                web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0),
+            )
+        except Exception as exc:
+            log.exception("RPC setup failure", exc_info=exc)
+            sys.exit(1)
+        else:
+            await self._site.start()
+            log.debug("Created RPC server listener on port %s", port)
 
     async def close(self):
         """
         Closes the RPC server.
         """
-        await self._runner.cleanup()
+        if self._started:
+            await self.app.shutdown()
+            await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
         if prefix is None:

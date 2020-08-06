@@ -3,7 +3,7 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
-from typing import cast, Iterable, Union
+from typing import cast, Iterable, Union, Literal
 
 import discord
 
@@ -11,6 +11,7 @@ from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -136,7 +137,6 @@ class Economy(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_global(**self.default_global_settings)
@@ -144,6 +144,23 @@ class Economy(commands.Cog):
         self.config.register_user(**self.default_user_settings)
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self.config.user_from_id(user_id).clear()
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     @guild_only_check()
     @commands.group(name="bank")
@@ -532,7 +549,10 @@ class Economy(commands.Cog):
     @guild_only_check()
     async def payouts(self, ctx: commands.Context):
         """Show the payouts for the slot machine."""
-        await ctx.author.send(SLOT_PAYOUTS_MSG)
+        try:
+            await ctx.author.send(SLOT_PAYOUTS_MSG)
+        except discord.Forbidden:
+            await ctx.send(_("I can't send direct messages to you."))
 
     @commands.command()
     @guild_only_check()
@@ -655,34 +675,39 @@ class Economy(commands.Cog):
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Manage Economy settings."""
+
+    @economyset.command(name="showsettings")
+    async def economyset_showsettings(self, ctx: commands.Context):
+        """
+        Shows the current economy settings
+        """
         guild = ctx.guild
-        if ctx.invoked_subcommand is None:
-            if await bank.is_global():
-                conf = self.config
-            else:
-                conf = self.config.guild(ctx.guild)
-            await ctx.send(
-                box(
-                    _(
-                        "----Economy Settings---\n"
-                        "Minimum slot bid: {slot_min}\n"
-                        "Maximum slot bid: {slot_max}\n"
-                        "Slot cooldown: {slot_time}\n"
-                        "Payday amount: {payday_amount}\n"
-                        "Payday cooldown: {payday_time}\n"
-                        "Amount given at account registration: {register_amount}\n"
-                        "Maximum allowed balance: {maximum_bal}"
-                    ).format(
-                        slot_min=humanize_number(await conf.SLOT_MIN()),
-                        slot_max=humanize_number(await conf.SLOT_MAX()),
-                        slot_time=humanize_number(await conf.SLOT_TIME()),
-                        payday_time=humanize_number(await conf.PAYDAY_TIME()),
-                        payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
-                        register_amount=humanize_number(await bank.get_default_balance(guild)),
-                        maximum_bal=humanize_number(await bank.get_max_balance(guild)),
-                    )
+        if await bank.is_global():
+            conf = self.config
+        else:
+            conf = self.config.guild(guild)
+        await ctx.send(
+            box(
+                _(
+                    "----Economy Settings---\n"
+                    "Minimum slot bid: {slot_min}\n"
+                    "Maximum slot bid: {slot_max}\n"
+                    "Slot cooldown: {slot_time}\n"
+                    "Payday amount: {payday_amount}\n"
+                    "Payday cooldown: {payday_time}\n"
+                    "Amount given at account registration: {register_amount}\n"
+                    "Maximum allowed balance: {maximum_bal}"
+                ).format(
+                    slot_min=humanize_number(await conf.SLOT_MIN()),
+                    slot_max=humanize_number(await conf.SLOT_MAX()),
+                    slot_time=humanize_number(await conf.SLOT_TIME()),
+                    payday_time=humanize_number(await conf.PAYDAY_TIME()),
+                    payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
+                    register_amount=humanize_number(await bank.get_default_balance(guild)),
+                    maximum_bal=humanize_number(await bank.get_max_balance(guild)),
                 )
             )
+        )
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: int):
