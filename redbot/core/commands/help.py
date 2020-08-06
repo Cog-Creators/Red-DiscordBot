@@ -42,7 +42,7 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify
+from ..utils.chat_formatting import box, pagify, humanize_timedelta
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
@@ -109,6 +109,8 @@ class HelpSettings:
 
         if not self.delete_delay:
             data["delete_delay"] = _("Disabled")
+        else:
+            data["delete_delay"] = humanize_timedelta(seconds=self.delete_delay)
 
         if tag := data.pop("tagline", ""):
             tagline_info = _("\nCustom Tagline: {tag}").format(tag=tag)
