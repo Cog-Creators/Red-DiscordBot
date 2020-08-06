@@ -101,7 +101,7 @@ Start with opening a command prompt (open Start, search for "command prompt", th
 .. note:: 
 
     You shouldn't run command prompt as administrator when creating your virtual environment, or
-    even running Red.
+    running Red.
 
 .. warning::
 
