@@ -111,7 +111,7 @@ class HelpSettings:
             data["delete_delay"] = _("Disabled")
 
         if tag := data.pop("tagline", ""):
-            tagline_info = _("\nCustom Tagline: {tag}").format(tag)
+            tagline_info = _("\nCustom Tagline: {tag}").format(tag=tag)
         else:
             tagline_info = ""
 
