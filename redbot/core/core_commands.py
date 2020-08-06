@@ -519,14 +519,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(cls=commands.commands._AlwaysAvailableGroup)
     async def mydata(self, ctx: commands.Context):
-        """ Commands which interact with the data [botname] has about you """
+        """ Commands which interact with the data [botname] has about you. """
 
     # 1/10 minutes. It's a static response, but the inability to lock
     # will annoy people if it's spammable
     @commands.cooldown(1, 600, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="whatdata")
     async def mydata_whatdata(self, ctx: commands.Context):
-        """ Find out what type of data [botname] stores and why """
+        """ Find out what type of data [botname] stores and why. """
 
         ver = "latest" if red_version_info.dev_release else "stable"
         link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
@@ -555,7 +555,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # Can't check this as a command check, and want to prompt DMs as an option.
         if not ctx.channel.permissions_for(ctx.me).attach_files:
             ctx.command.reset_cooldown(ctx)
-            return await ctx.send(_("I need to be able to attach files (try in DMs?)"))
+            return await ctx.send(_("I need to be able to attach files (try in DMs?)."))
 
         statements = {
             ext_name: getattr(ext, "__red_end_user_data_statement__", None)
@@ -603,7 +603,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         fp = io.BytesIO(html.encode())
 
         await ctx.send(
-            _("Here's a generated page with the statements provided by 3rd-party extensions"),
+            _("Here's a generated page with the statements provided by 3rd-party extensions."),
             file=discord.File(fp, filename="3rd-party.html"),
         )
 
@@ -647,7 +647,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             # lol, no, we're not letting users schedule deletions every day to thrash the bot.
             ctx.command.reset_cooldown(ctx)  # We will however not let that lock them out either.
             return await ctx.send(
-                _("This command ({command}) does not support non-interactive usage").format(
+                _("This command ({command}) does not support non-interactive usage.").format(
                     command=ctx.command.qualified_name
                 )
             )
@@ -681,7 +681,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "I tried to delete all non-operational data about you "
                     "(that I know how to delete) "
                     "{mention}, however the following modules errored: {modules}. "
-                    "Additionally, the following cogs errored: {cogs}\n"
+                    "Additionally, the following cogs errored: {cogs}.\n"
                     "Please contact the owner of this bot to address this.\n"
                     "Note: Outside of these failures, data should have been deleted."
                 ).format(
@@ -720,7 +720,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -801,7 +801,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @mydata_owner_management.command(name="processdiscordrequest")
     async def mydata_discord_deletion_request(self, ctx, user_id: int):
         """
-        Handle a deletion request from discord.
+        Handle a deletion request from Discord.
         """
 
         if not await self.get_serious_confirmation(
@@ -864,7 +864,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -942,7 +942,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -1002,13 +1002,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(modules=humanize_list(results.failed_modules))
             )
         else:
-            await ctx.send(
-                _("I've deleted all data about that user " "that I know how to delete.")
-            )
+            await ctx.send(_("I've deleted all data about that user that I know how to delete."))
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
