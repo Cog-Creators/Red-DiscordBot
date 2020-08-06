@@ -145,6 +145,7 @@ from discord.ext.commands import (
     MaxConcurrency as MaxConcurrency,
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
+    CommandRegistrationError as CommandRegistrationError,
 )
 
 
