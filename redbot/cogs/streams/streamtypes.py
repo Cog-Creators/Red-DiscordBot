@@ -326,7 +326,7 @@ class TwitchStream(Stream):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
-class SmashcastStream(Stream):
+class HitboxStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
 

@@ -6,7 +6,7 @@ from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replace
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
-    SmashcastStream,
+    HitboxStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -38,6 +38,7 @@ log = logging.getLogger("red.core.cogs.Streams")
 @cog_i18n(_)
 class Streams(commands.Cog):
     """Various commands relating to streaming platforms.
+
     You can check if a Twitch, YouTube or Picarto stream is
     currently live.
     """
@@ -226,8 +227,8 @@ class Streams(commands.Cog):
 
     @commands.command()
     async def smashcast(self, ctx: commands.Context, channel_name: str):
-        """Check if a Smashcast channel is live."""
-        stream = SmashcastStream(name=channel_name)
+        """Check if a smashcast channel is live."""
+        stream = HitboxStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -239,7 +240,7 @@ class Streams(commands.Cog):
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, SmashcastStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, HitboxStream, YoutubeStream, TwitchStream],
     ):
         try:
             info = await stream.is_online()
@@ -307,7 +308,7 @@ class Streams(commands.Cog):
     @streamalert.command(name="smashcast")
     async def smashcast_alert(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Smashcast stream."""
-        await self.stream_alert(ctx, SmashcastStream, channel_name)
+        await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
@@ -317,8 +318,10 @@ class Streams(commands.Cog):
     @streamalert.command(name="stop", usage="[disable_all=No]")
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
         """Disable all stream alerts in this channel or server.
+
         `[p]streamalert stop` will disable this channel's stream
         alerts.
+
         Do `[p]streamalert stop yes` to disable all stream alerts in
         this server.
         """
@@ -496,8 +499,11 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def with_mention(self, ctx: commands.Context, message: str = None):
         """Set stream alert message when mentions are enabled.
+
         Use `{mention}` in the message to insert the selected mentions.
+
         Use `{stream.name}` in the message to insert the channel or user name.
+
         For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
         """
         if message is not None:
@@ -511,7 +517,9 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def without_mention(self, ctx: commands.Context, message: str = None):
         """Set stream alert message when mentions are disabled.
+
         Use `{stream.name}` in the message to insert the channel or user name.
+
         For example: `[p]streamset message nomention "{stream.name} is live!"`
         """
         if message is not None:
