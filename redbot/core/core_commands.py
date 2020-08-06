@@ -2079,6 +2079,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Manage settings for the help command."""
         pass
 
+    @helpset.command(name="showsettings")
+    async def helpset_showsettings(self, ctx: commands.Context):
+        """ Show the current help settings """
+
+        help_settings = await commands.help.HelpSettings.from_context(ctx)
+
+        if type(ctx.bot._help_formatter) is commands.help.RedHelpFormatter:
+            message = help_settings.pretty
+        else:
+            message = _(
+                "Warning: The default formatter is not in use, these settings may not apply"
+            )
+            message += f"\n\n{help_settings.pretty}"
+
+        for page in pagify(message):
+            await ctx.send(page)
+
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
         """ This resets [botname]'s help formatter to the default formatter """
