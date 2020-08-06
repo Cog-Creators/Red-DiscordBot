@@ -331,7 +331,7 @@ class HitboxStream(Stream):
     token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
-        url = "https://api.hitbox.tv/media/live/" + self.name
+        url = "https://api.smashcast.tv/media/live/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
