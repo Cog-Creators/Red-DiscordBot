@@ -4810,7 +4810,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             self.bot.owner_ids.add(ctx.author.id)
             await ctx.send(_("Your bot owner privileges have been enabled."))
             await asyncio.sleep(delay=await self.bot._config.sudotime())
-            self.bot.owner_ids.remove(ctx.author.id)
+            self.bot.owner_ids.discard(ctx.author.id)
             return
         await ctx.send(_("Your bot owner privileges are already enabled."))
 
@@ -4841,7 +4841,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def unsudo(self, ctx: commands.Context):
         """Disable your bot owner privileges."""
         if ctx.author.id in self.bot.owner_ids:
-            self.bot.owner_ids.remove(ctx.author.id)
+            self.bot.owner_ids.discard(ctx.author.id)
             await ctx.send(_("Your bot owner privileges have been disabled."))
             return
         await ctx.send(_("Your bot owner privileges are not currently enabled."))
