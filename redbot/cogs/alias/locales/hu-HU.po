@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -15,146 +15,146 @@ msgstr ""
 "X-Crowdin-File-ID: 8\n"
 "Language: hu_HU\n"
 
-#: redbot/cogs/alias/alias.py:31
+#: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:86
+#: redbot/cogs/alias/alias.py:173
 msgid "No prefix found."
 msgstr "Nem találtható prefix."
 
-#: redbot/cogs/alias/alias.py:116
+#: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\\n"
 msgstr "Aliasok:\\n"
 
-#: redbot/cogs/alias/alias.py:118
+#: redbot/cogs/alias/alias.py:205
 msgid "\\n\\nPage {page}/{total}"
 msgstr "\\n\\nOldal {page}/{total}"
 
-#: redbot/cogs/alias/alias.py:128
+#: redbot/cogs/alias/alias.py:215
 #, docstring
 msgid "Manage command aliases."
 msgstr "Parancs aliasok kezelése."
 
-#: redbot/cogs/alias/alias.py:133
+#: redbot/cogs/alias/alias.py:220
 #, docstring
 msgid "Manage global aliases."
 msgstr "Globális aliasok kezelése."
 
-#: redbot/cogs/alias/alias.py:140
+#: redbot/cogs/alias/alias.py:227
 #, docstring
 msgid "Add an alias for a command."
 msgstr "Alias hozzáadása egy parancshoz."
 
-#: redbot/cogs/alias/alias.py:145
+#: redbot/cogs/alias/alias.py:232
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:156
+#: redbot/cogs/alias/alias.py:243
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:167
+#: redbot/cogs/alias/alias.py:254
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:179 redbot/cogs/alias/alias.py:238
+#: redbot/cogs/alias/alias.py:266 redbot/cogs/alias/alias.py:325
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:193
+#: redbot/cogs/alias/alias.py:280
 msgid "A new alias with the trigger `{name}` has been created."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:199
+#: redbot/cogs/alias/alias.py:286
 #, docstring
 msgid "Add a global alias for a command."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:204
+#: redbot/cogs/alias/alias.py:291
 msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:215
+#: redbot/cogs/alias/alias.py:302
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:226
+#: redbot/cogs/alias/alias.py:313
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:249
+#: redbot/cogs/alias/alias.py:336
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:256
+#: redbot/cogs/alias/alias.py:343
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:261
+#: redbot/cogs/alias/alias.py:348
 msgid "No such alias exists."
 msgstr "Nem létezik ilyen alias."
 
-#: redbot/cogs/alias/alias.py:265
+#: redbot/cogs/alias/alias.py:352
 #, docstring
 msgid "Show what command the alias executes."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:270
+#: redbot/cogs/alias/alias.py:357
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:275
+#: redbot/cogs/alias/alias.py:362
 msgid "There is no alias with the name `{name}`"
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:281
+#: redbot/cogs/alias/alias.py:368
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:283 redbot/cogs/alias/alias.py:315
+#: redbot/cogs/alias/alias.py:370 redbot/cogs/alias/alias.py:402
 msgid "There are no aliases on this server."
 msgstr "Nincsenek aliasok ezen a szerveren."
 
-#: redbot/cogs/alias/alias.py:288 redbot/cogs/alias/alias.py:303
+#: redbot/cogs/alias/alias.py:375 redbot/cogs/alias/alias.py:390
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:291 redbot/cogs/alias/alias.py:306
+#: redbot/cogs/alias/alias.py:378 redbot/cogs/alias/alias.py:393
 msgid "Alias with name `{name}` was not found."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:296
+#: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Létező globális alias törlése."
 
-#: redbot/cogs/alias/alias.py:298
+#: redbot/cogs/alias/alias.py:385
 msgid "There are no global aliases on this bot."
 msgstr "Nincsenek globális aliasok ezen a boton."
 
-#: redbot/cogs/alias/alias.py:312
+#: redbot/cogs/alias/alias.py:399
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "A szerveren elérhető aliasok listázása."
 
-#: redbot/cogs/alias/alias.py:321
+#: redbot/cogs/alias/alias.py:408
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "A boton elérhető globális aliasok listázása."
 
-#: redbot/cogs/alias/alias.py:324
+#: redbot/cogs/alias/alias.py:411
 msgid "There are no global aliases."
 msgstr "Nincsenek globális aliasok."
 
-#: redbot/cogs/alias/alias_entry.py:174
+#: redbot/cogs/alias/alias_entry.py:198
 msgid "Arguments must be specified with a number."
 msgstr ""
 
-#: redbot/cogs/alias/alias_entry.py:181
+#: redbot/cogs/alias/alias_entry.py:205
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr ""
 
