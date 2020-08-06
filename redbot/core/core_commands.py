@@ -664,7 +664,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ):
             ctx.command.reset_cooldown(ctx)
             return
-        await ctx.send(_("This may take some time"))
+        await ctx.send(_("This may take some time."))
 
         if await ctx.bot._config.datarequests.user_requests_are_strict():
             requester = "user_strict"
