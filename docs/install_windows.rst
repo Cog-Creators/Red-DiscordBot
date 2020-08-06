@@ -29,10 +29,7 @@ Using PowerShell and Chocolatey (recommended)
 *********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
-right-click on it and then click "Run as administrator"
-
-.. note:: This is the only time you should use administrator during the 
-          installation and usage of Red.
+right-click on it and then click "Run as administrator".
 
 Then run each of the following commands:
 
@@ -99,7 +96,12 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``redenv`` and it will be located in your home directory.
 
-Start with opening a command prompt (open Start, search for "command prompt", then click it)
+Start with opening a command prompt (open Start, search for "command prompt", then click it).
+
+.. note:: 
+
+    You shouldn't run command prompt as administrator when creating your virtual environment, or
+    even running Red.
 
 .. warning::
 
