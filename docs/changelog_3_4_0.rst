@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
@@ -79,5 +79,6 @@ Miscellaneous
 -------------
 
 - Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
+- Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 - ``[p]set nickname``, ``[p]set serverprefix``, ``[p]streamalert``, and ``[p]streamset`` commands now can be run by users with permissions related to the actions they're making (:issue:`4109`)
 - `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
