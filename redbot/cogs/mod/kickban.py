@@ -141,8 +141,9 @@ class KickBanMixin(MixinMeta):
 
                 async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
-                        unban_time = datetime.utcfromtimestamp(
-                            await self.config.member_from_ids(guild.id, uid).banned_until()
+                        unban_time = datetime.fromtimestamp(
+                            await self.config.member_from_ids(guild.id, uid).banned_until(),
+                            timezone.utc,
                         )
                         if datetime.now(timezone.utc) > unban_time:  # Time to unban the user
                             queue_entry = (guild.id, uid)
