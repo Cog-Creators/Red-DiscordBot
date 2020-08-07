@@ -84,6 +84,11 @@ Core Bot
 - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
 - RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
 
+Vendored packages
+*****************
+
+- Updated ``discord.ext.menus`` vendor (:issue:`4167`)
+
 Utility Functions
 *****************
 
