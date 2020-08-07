@@ -190,6 +190,12 @@ class YoutubeStream(Stream):
             raise StreamNotFound()
         elif "items" in data:
             return data["items"][0][resource]
+        elif (
+            "pageInfo" in data
+            and "totalResults" in data["pageInfo"]
+            and data["pageInfo"]["totalResults"] < 1
+        ):
+            raise StreamNotFound()
         raise APIError()
 
     def __repr__(self):
@@ -325,7 +331,7 @@ class HitboxStream(Stream):
     token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
-        url = "https://api.hitbox.tv/media/live/" + self.name
+        url = "https://api.smashcast.tv/media/live/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
@@ -356,49 +362,6 @@ class HitboxStream(Stream):
             embed.set_image(url=rnd(base_url + livestream["media_thumbnail"]))
         embed.set_footer(text=_("Playing: ") + livestream["category_name"])
 
-        return embed
-
-
-class MixerStream(Stream):
-
-    token_name = None  # This streaming services don't currently require an API key
-
-    async def is_online(self):
-        url = "https://mixer.com/api/v1/channels/" + self.name
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                data = await r.text(encoding="utf-8")
-        if r.status == 200:
-            data = json.loads(data, strict=False)
-            if data["online"] is True:
-                # self.already_online = True
-                return self.make_embed(data)
-            else:
-                # self.already_online = False
-                raise OfflineStream()
-        elif r.status == 404:
-            raise StreamNotFound()
-        else:
-            raise APIError()
-
-    def make_embed(self, data):
-        default_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"
-        user = data["user"]
-        url = "https://mixer.com/" + data["token"]
-        embed = discord.Embed(title=data["name"], url=url)
-        embed.set_author(name=user["username"])
-        embed.add_field(name=_("Followers"), value=humanize_number(data["numFollowers"]))
-        embed.add_field(name=_("Total views"), value=humanize_number(data["viewersTotal"]))
-        if user["avatarUrl"]:
-            embed.set_thumbnail(url=user["avatarUrl"])
-        else:
-            embed.set_thumbnail(url=default_avatar)
-        if data["thumbnail"]:
-            embed.set_image(url=rnd(data["thumbnail"]["url"]))
-        embed.color = 0x4C90F3  # pylint: disable=assigning-non-slot
-        if data["type"] is not None:
-            embed.set_footer(text=_("Playing: ") + data["type"]["name"])
         return embed
 
 

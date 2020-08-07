@@ -91,6 +91,10 @@ class Downloader(commands.Cog):
         if self._init_task is not None:
             self._init_task.cancel()
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     def create_init_task(self):
         def _done_callback(task: asyncio.Task) -> None:
             exc = task.exception()
@@ -303,10 +307,22 @@ class Downloader(commands.Cog):
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
             module.repo = cast(Repo, module.repo)
-            if module.repo.commit != module.commit and await module.repo.is_ancestor(
-                module.commit, module.repo.commit
-            ):
-                hashes[(module.repo, module.commit)].add(module)
+            if module.repo.commit != module.commit:
+                try:
+                    should_add = await module.repo.is_ancestor(module.commit, module.repo.commit)
+                except errors.UnknownRevision:
+                    # marking module for update if the saved commit data is invalid
+                    last_module_occurrence = await module.repo.get_last_module_occurrence(
+                        module.name
+                    )
+                    if last_module_occurrence is not None and not last_module_occurrence.disabled:
+                        if last_module_occurrence.type == InstallableType.COG:
+                            cogs_to_update.add(last_module_occurrence)
+                        elif last_module_occurrence.type == InstallableType.SHARED_LIBRARY:
+                            libraries_to_update.add(last_module_occurrence)
+                else:
+                    if should_add:
+                        hashes[(module.repo, module.commit)].add(module)
 
         update_commits = []
         for (repo, old_hash), modules_to_check in hashes.items():
@@ -1387,7 +1403,11 @@ class Downloader(commands.Cog):
             cog_name = self.cog_name_from_instance(cog)
             installed, cog_installable = await self.is_installed(cog_name)
             if installed:
-                made_by = humanize_list(cog_installable.author) or _("Missing from info.json")
+                made_by = (
+                    humanize_list(cog_installable.author)
+                    if cog_installable.author
+                    else _("Missing from info.json")
+                )
                 repo_url = (
                     _("Missing from installed repos")
                     if cog_installable.repo is None

@@ -98,6 +98,7 @@ Open :code:`__init__.py`. In that file, place the following:
 
     from .mycog import Mycog
 
+
     def setup(bot):
         bot.add_cog(Mycog())
 
@@ -229,3 +230,29 @@ Not all of these are strict requirements (some are) but are all generally advisa
 
   - We announce this in advance.
   - If you need help, ask.
+
+14. Check events against ``bot.cog_disabled_in_guild``
+
+  - Not all events need to be checked, only those that interact with a guild.
+  - Some discretion may apply, for example,
+    a cog which logs command invocation errors could choose to ignore this
+    but a cog which takes actions based on messages should not.
+
+15. Respect settings when treating non command messages as commands.
+
+16. Handle user data responsibly
+
+  - Don't do unexpected things with user data.
+  - Don't expose user data to additional audiences without permission.
+  - Don't collect data your cogs don't need.
+  - Don't store data in unexpected locations.
+    Utilize the cog data path, Config, or if you need something more
+    prompt the owner to provide it.
+
+17. Utilize the data deletion and statement APIs
+
+  - See `redbot.core.commands.Cog.red_delete_data_for_user`
+  - Make a statement about what data your cogs use with the module level
+    variable ``__red_end_user_data_statement__``.
+    This should be a string containing a user friendly explanation of what data
+    your cog stores and why.

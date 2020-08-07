@@ -259,14 +259,18 @@ class Context(DPYContext):
 
     @property
     def clean_prefix(self) -> str:
-        """str: The command prefix, but a mention prefix is displayed nicer."""
+        """
+        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
+        This can be used in a context where discord user mentions might not render properly.
+        """
         me = self.me
         pattern = re.compile(rf"<@!?{me.id}>")
         return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
-        """discord.abc.User: The bot member or user object.
+        """
+        discord.abc.User: The bot member or user object.
 
         If the context is DM, this will be a `discord.User` object.
         """
