@@ -1138,7 +1138,8 @@ class Downloader(commands.Cog):
             author=", ".join(cog.author) or _("Missing from info.json"),
             requirements=", ".join(cog.requirements) or "None",
         )
-        await ctx.send(box(msg))
+        for page in pagify(msg):
+            await ctx.send(box(page))
 
     async def is_installed(
         self, cog_name: str
