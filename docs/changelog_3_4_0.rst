@@ -64,6 +64,7 @@ Developer changelog
 Breaking changes
 ****************
 
+- Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`_ (:issue:`3605`, :issue:`3679`)
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 
