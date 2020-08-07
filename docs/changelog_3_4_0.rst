@@ -47,6 +47,7 @@ Streams
 
 - Mixer service has been closed and for that reason we've removed support for it from the cog (:issue:`4072`)
 - Hitbox commands have been renamed to smashcast (:issue:`4161`)
+- Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
 
 Trivia Lists
 ************
