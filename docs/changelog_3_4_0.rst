@@ -10,6 +10,7 @@ Redbot 3.4.0 (Unreleased)
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
 | 2. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
 | 3. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
+| 4. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
 
 End-user changelog
 ------------------
@@ -52,12 +53,21 @@ Trivia Lists
 
 - Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
 
+.. _important-340-3:
 
 Developer changelog
 -------------------
 
 | **Important:**
 | Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the changelog entry below.
+
+Breaking changes
+****************
+
+- Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
+
+Core Bot
+********
 
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
