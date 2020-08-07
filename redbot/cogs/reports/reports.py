@@ -304,9 +304,16 @@ class Reports(commands.Cog):
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
-                await author.send(
-                    _("There was an error sending your report, please contact a server admin.")
-                )
+                if await self.config.guild(ctx.guild).output_channel() is None:
+                    await author.send(
+                        _(
+                            "This server has no reports channel set up. Please contact a server admin."
+                        )
+                    )
+                else:
+                    await author.send(
+                        _("There was an error sending your report, please contact a server admin.")
+                    )
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
                 self.antispam[guild.id][author.id].stamp()

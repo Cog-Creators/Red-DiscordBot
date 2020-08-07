@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-07-09 12:16+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -20,91 +20,91 @@ msgstr ""
 msgid "Image related commands."
 msgstr ""
 
-#: redbot/cogs/image/image.py:39
+#: redbot/cogs/image/image.py:43
 #, docstring
 msgid "Retrieve pictures from Imgur.\\n\\n        Make sure to set the Client ID using `[p]imgurcreds`.\\n        "
 msgstr ""
 
-#: redbot/cogs/image/image.py:47
+#: redbot/cogs/image/image.py:51
 #, docstring
 msgid "Search Imgur for the specified term.\\n\\n        Use `count` to choose how many images should be returned.\\n        Command can return up to 5 images.\\n        "
 msgstr ""
 
-#: redbot/cogs/image/image.py:53 redbot/cogs/image/image.py:102
+#: redbot/cogs/image/image.py:57 redbot/cogs/image/image.py:106
 msgid "Image count has to be between 1 and 5."
 msgstr ""
 
-#: redbot/cogs/image/image.py:60 redbot/cogs/image/image.py:122
+#: redbot/cogs/image/image.py:64 redbot/cogs/image/image.py:126
 msgid "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
 msgstr ""
 
-#: redbot/cogs/image/image.py:72
+#: redbot/cogs/image/image.py:76
 msgid "Your search returned no results."
 msgstr ""
 
-#: redbot/cogs/image/image.py:75
+#: redbot/cogs/image/image.py:79
 msgid "Search results...\\n"
 msgstr ""
 
-#: redbot/cogs/image/image.py:82 redbot/cogs/image/image.py:148
+#: redbot/cogs/image/image.py:86 redbot/cogs/image/image.py:152
 msgid "Something went wrong. Error code is {code}."
 msgstr ""
 
-#: redbot/cogs/image/image.py:94
+#: redbot/cogs/image/image.py:98
 #, docstring
 msgid "Get images from a subreddit.\\n\\n        You can customize the search with the following options:\\n        - `<count>`: number of images to return (up to 5)\\n        - `<sort_type>`: new, top\\n        - `<window>`: day, week, month, year, all\\n        "
 msgstr ""
 
-#: redbot/cogs/image/image.py:112
+#: redbot/cogs/image/image.py:116
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr ""
 
-#: redbot/cogs/image/image.py:145 redbot/cogs/image/image.py:201
-#: redbot/cogs/image/image.py:234
+#: redbot/cogs/image/image.py:149 redbot/cogs/image/image.py:205
+#: redbot/cogs/image/image.py:238
 msgid "No results found."
 msgstr ""
 
-#: redbot/cogs/image/image.py:154
+#: redbot/cogs/image/image.py:158
 #, docstring
 msgid "Explain how to set imgur API tokens."
 msgstr ""
 
-#: redbot/cogs/image/image.py:156
+#: redbot/cogs/image/image.py:160
 msgid "To get an Imgur Client ID:\\n1. Login to an Imgur account.\\n2. Visit this page https://api.imgur.com/oauth2/addclient.\\n3. Enter a name for your application.\\n4. Select *Anonymous usage without user authorization* for the auth type.\\n5. Set the authorization callback URL to `https://localhost`.\\n6. Leave the app website blank.\\n7. Enter a valid email address and a description.\\n8. Check the captcha box and click next.\\n9. Your Client ID will be on the next page.\\n10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\\n"
 msgstr ""
 
-#: redbot/cogs/image/image.py:175
+#: redbot/cogs/image/image.py:179
 #, docstring
 msgid "Retrieve the first search result from Giphy."
 msgstr ""
 
-#: redbot/cogs/image/image.py:185 redbot/cogs/image/image.py:218
+#: redbot/cogs/image/image.py:189 redbot/cogs/image/image.py:222
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
 msgstr ""
 
-#: redbot/cogs/image/image.py:203
+#: redbot/cogs/image/image.py:207
 msgid "Error contacting the Giphy API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:208
+#: redbot/cogs/image/image.py:212
 #, docstring
 msgid "Retrieve a random GIF from a Giphy search."
 msgstr ""
 
-#: redbot/cogs/image/image.py:236
+#: redbot/cogs/image/image.py:240
 msgid "Error contacting the API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:241
+#: redbot/cogs/image/image.py:245
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
 msgstr ""
 
-#: redbot/cogs/image/image.py:243
+#: redbot/cogs/image/image.py:247
 msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
 msgstr ""
 
-#: redbot/cogs/image/image.py:256
+#: redbot/cogs/image/image.py:260
 msgid "<your_api_key_here>"
 msgstr ""
 
