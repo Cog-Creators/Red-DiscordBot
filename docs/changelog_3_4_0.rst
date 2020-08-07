@@ -54,6 +54,7 @@ Trivia Lists
 ************
 
 - Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
+- Added ``whosthatpokemon3`` trivia containing Pokémons from 3rd generation (:issue:`4141`)
 
 .. _important-340-3:
 
