@@ -1922,11 +1922,11 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
 
-    @commands.group(aliases=["blacklist", "denylist"])
+    @commands.group(aliases=["blacklist", "list"])
     @checks.is_owner()
     async def blocklist(self, ctx: commands.Context):
         """
-        Denylist management commands.
+        Blocklist management commands.
         """
         pass
 
@@ -1961,7 +1961,7 @@ class Core(commands.Cog, CoreLogic):
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
-            await ctx.send("Denylist is empty.")
+            await ctx.send("list is empty.")
             return
 
         msg = _("Users on blocklist:")
@@ -1991,7 +1991,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the blocklist.
         """
         await self.bot._whiteblacklist_cache.clear_blacklist()
-        await ctx.send(_("Denylist has been cleared."))
+        await ctx.send(_("BlocBlock has been cleared."))
 
     @commands.group(aliases=["localwhitelist"])
     @commands.guild_only()
