@@ -13,7 +13,7 @@ Audio
 *****
 
 - Audio should now work again on all voice regions (:issue:`4162`, :issue:`4168`)
-- Removed an edge case where unfriendly error message was sent in Audio cog (:issue:`3879`)
+- Removed an edge case where an unfriendly error message was sent in Audio cog (:issue:`3879`)
 
 Cleanup
 *******
