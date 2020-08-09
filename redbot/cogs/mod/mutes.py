@@ -3,6 +3,7 @@ from typing import cast, Optional
 
 import discord
 from redbot.core import commands, checks, i18n, modlog
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
@@ -255,7 +256,7 @@ class MuteMixin(MixinMeta):
 
         mute_success = []
         async with ctx.channel.typing():
-            for channel in guild.channels:
+            async for channel in AsyncIter(guild.channels):
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
                 await asyncio.sleep(0.1)
@@ -375,7 +376,7 @@ class MuteMixin(MixinMeta):
 
         unmute_success = []
         async with ctx.channel.typing():
-            for channel in guild.channels:
+            async for channel in AsyncIter(guild.channels):
                 success, message = await self.unmute_user(
                     guild, channel, author, user, audit_reason
                 )
