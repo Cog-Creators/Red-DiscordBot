@@ -256,7 +256,7 @@ class MuteMixin(MixinMeta):
 
         mute_success = []
         async with ctx.channel.typing():
-            async for channel in AsyncIter(guild.channels):
+            for channel in guild.channels:
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
             await modlog.create_case(
@@ -375,7 +375,7 @@ class MuteMixin(MixinMeta):
 
         unmute_success = []
         async with ctx.channel.typing():
-            async for channel in AsyncIter(guild.channels):
+            for channel in guild.channels:
                 success, message = await self.unmute_user(
                     guild, channel, author, user, audit_reason
                 )
