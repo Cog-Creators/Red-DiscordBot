@@ -48,7 +48,7 @@ bankset
 
 **Description**
 
-Group command used for setting up the bank.
+Base command for configuring bank settings.
 
 .. _bank-command-bankset-toggleglobal:
 
@@ -177,7 +177,7 @@ bankset showsettings
 
 Shows the current settings of your bank.
 
-This will display the following informations:
+This will display the following information:
 
 *   Name of the bank
 *   Scope of the bank (global or per server)
