@@ -1998,16 +1998,16 @@ class Core(commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localallowlist(self, ctx: commands.Context):
         """
-        Local allowlist management commands.
+        Server specific allowlist management commands.
         """
         pass
 
-    @localallowlist.command(name="add", usage="<user_or_role>...")
-    async def localallowlist_add(
+    @allowlist.command(name="add", usage="<user_or_role>...")
+    async def allowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Adds a user or role to the allowlist.
+        Adds a user or role to the server allowlist.
         """
         if not users_or_roles:
             await ctx.send_help()
@@ -2034,12 +2034,12 @@ class Core(commands.Cog, CoreLogic):
     @localallowlist.command(name="list")
     async def localallowlist_list(self, ctx: commands.Context):
         """
-        Lists users and roles on the allowlist.
+        Lists users and roles on the  server allowlist.
         """
         curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
-            await ctx.send("Local allowlist is empty.")
+            await ctx.send("Server allowlist is empty.")
             return
 
         msg = _("Whitelisted Users and roles:")
@@ -2076,7 +2076,7 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} removed from the local allowlist.").format(names=humanize_list(names))
+            _("{names} removed from the server allowlist.").format(names=humanize_list(names))
         )
 
     @localallowlist.command(name="clear")
@@ -2085,14 +2085,14 @@ class Core(commands.Cog, CoreLogic):
         Clears the allowlist.
         """
         await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
-        await ctx.send(_("Local allowlist has been cleared."))
+        await ctx.send(_("Server allowlist has been cleared."))
 
     @commands.group(aliases=["localblacklist"])
     @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
     async def localblocklist(self, ctx: commands.Context):
         """
-        Local blocklist management commands.
+        Server specific blocklist management commands.
         """
         pass
 
@@ -2123,7 +2123,7 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} added to the local blocklist.").format(names=humanize_list(names))
+            _("{names} added to the server blocklist.").format(names=humanize_list(names))
         )
 
     @localblocklist.command(name="list")
@@ -2134,7 +2134,7 @@ class Core(commands.Cog, CoreLogic):
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
         if not curr_list:
-            await ctx.send("Local blocklist is empty.")
+            await ctx.send("Server blocklist is empty.")
             return
 
         msg = _("Blacklisted Users and Roles:")
@@ -2160,16 +2160,16 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} removed from the local blocklist.").format(names=humanize_list(names))
+            _("{names} removed from the server blocklist.").format(names=humanize_list(names))
         )
 
     @localblocklist.command(name="clear")
     async def localblocklist_clear(self, ctx: commands.Context):
         """
-        Clears the blocklist.
+        Clears the server blocklist.
         """
         await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
-        await ctx.send(_("Local blocklist has been cleared."))
+        await ctx.send(_("Server blocklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
