@@ -329,8 +329,40 @@ class Streams(commands.Cog):
                 self.streams.remove(stream)
                 chan_list.append(ctx.channel.id)
                 stream.games = chan_list
-                self.streams.add(stream)
+                self.streams.append(stream)
                 await self.save_streams()
+    
+    @_twitch.command(name="removegame")
+    async def twitch_removegame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
+        """Remove a game to send alerts for the specified channel.
+
+        Game name must be exactly the name that appears on the game's Twitch page"""
+        stream = self.get_stream(TwitchStream, channel_name)
+        if not stream:
+            return await ctx.send(
+                _("That channel has not been set up for stream alerts in this channel!")
+            )
+        game_data = await stream.get_game_info_by_name(game_name)
+        if not game_data:
+            return await ctx.send(
+                _(
+                    "Could not find the game requested. Make sure the game name matches how it appears on Twitch."
+                )
+            )
+        else:
+            game = game_data[0]
+            if game["id"] in stream.games:
+                chan_list = stream.games[game["id"]]
+            else:
+                chan_list = []
+            if ctx.channel.id not in chan_list:
+                return await ctx.send(_("That game isn't in the list of games to alert for this stream in this channel"))
+            else:
+                self.streams.remove(stream)
+                chan_list.remove(ctx.channel.id)
+                stream.games = chan_list
+                self.streams.append(stream)
+                await self.save_streams() 
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
