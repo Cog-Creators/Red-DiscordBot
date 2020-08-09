@@ -3,7 +3,7 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Literal
 
 import discord
 from redbot.core.utils import AsyncIter
@@ -82,6 +82,34 @@ class Mod(
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
+
+        await self.config.user_from_id(user_id).clear()
+
+        guild_data = await self.config.all_guilds()
+
+        async for guild_id, guild_data in AsyncIter(guild_data.items(), steps=100):
+            if user_id in guild_data["current_tempbans"]:
+                async with self.config.guild_from_id(guild_id).current_tempbans() as tbs:
+                    try:
+                        tbs.remove(user_id)
+                    except ValueError:
+                        pass
+                    # possible with a context switch between here and getting all guilds
 
     async def initialize(self):
         await self._maybe_update_config()

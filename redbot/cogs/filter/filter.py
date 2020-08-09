@@ -1,10 +1,11 @@
 import discord
 import re
-from typing import Union, Set
+from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
@@ -32,6 +33,21 @@ class Filter(commands.Cog):
         self.config.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     def cog_unload(self):
         self.register_task.cancel()
