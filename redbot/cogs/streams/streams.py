@@ -330,7 +330,7 @@ class Streams(commands.Cog):
             else:
                 self.streams.remove(stream)
                 chan_list.append(ctx.channel.id)
-                stream.games = chan_list
+                stream.games[game["id"]] = chan_list
                 self.streams.append(stream)
                 await self.save_streams()
 
@@ -366,7 +366,7 @@ class Streams(commands.Cog):
             else:
                 self.streams.remove(stream)
                 chan_list.remove(ctx.channel.id)
-                stream.games = chan_list
+                stream.games[game["id"]] = chan_list
                 self.streams.append(stream)
                 await self.save_streams()
 
