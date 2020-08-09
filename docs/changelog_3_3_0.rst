@@ -23,7 +23,7 @@ Cleanup
 CustomCommands
 **************
 
-- ``[p]cc show`` now sends error message when command with provided name couldn't be found (:issue:`4108`)
+- ``[p]cc show`` now sends an error message when command with the provided name couldn't be found (:issue:`4108`)
 
 Downloader
 **********
