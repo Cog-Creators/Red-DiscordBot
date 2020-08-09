@@ -259,7 +259,6 @@ class MuteMixin(MixinMeta):
             async for channel in AsyncIter(guild.channels):
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
-                await asyncio.sleep(0.1)
             await modlog.create_case(
                 self.bot,
                 guild,
@@ -381,7 +380,6 @@ class MuteMixin(MixinMeta):
                     guild, channel, author, user, audit_reason
                 )
                 unmute_success.append((success, message))
-                await asyncio.sleep(0.1)
             await modlog.create_case(
                 self.bot,
                 guild,
