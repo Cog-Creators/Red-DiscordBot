@@ -324,14 +324,16 @@ class Streams(commands.Cog):
             else:
                 chan_list = []
             if ctx.channel.id in chan_list:
-                return await ctx.send(_("Already notifying in this channel when the stream is live with this game!"))
+                return await ctx.send(
+                    _("Already notifying in this channel when the stream is live with this game!")
+                )
             else:
                 self.streams.remove(stream)
                 chan_list.append(ctx.channel.id)
                 stream.games = chan_list
                 self.streams.append(stream)
                 await self.save_streams()
-    
+
     @_twitch.command(name="removegame")
     async def twitch_removegame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
         """Remove a game to send alerts for the specified channel.
@@ -356,13 +358,17 @@ class Streams(commands.Cog):
             else:
                 chan_list = []
             if ctx.channel.id not in chan_list:
-                return await ctx.send(_("That game isn't in the list of games to alert for this stream in this channel"))
+                return await ctx.send(
+                    _(
+                        "That game isn't in the list of games to alert for this stream in this channel"
+                    )
+                )
             else:
                 self.streams.remove(stream)
                 chan_list.remove(ctx.channel.id)
                 stream.games = chan_list
                 self.streams.append(stream)
-                await self.save_streams() 
+                await self.save_streams()
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
