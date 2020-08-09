@@ -371,13 +371,15 @@ class Streams(commands.Cog):
                 self.streams.append(stream)
                 await self.save_streams()
                 await ctx.tick()
-        
+
     @_twitch.command(name="cleargames")
     async def twitch_cleargames(self, ctx: commands.Context, channel_name: str):
         """Clear the game list for the stream filter"""
         stream = self.get_stream(TwitchStream, channel_name)
         if not stream:
-            return await ctx.send(_("That channel has not been set up for stream alerts in this channel!"))
+            return await ctx.send(
+                _("That channel has not been set up for stream alerts in this channel!")
+            )
         self.streams.remove(stream)
         newdict = {}
         for k, v in stream.games.items():
@@ -388,7 +390,6 @@ class Streams(commands.Cog):
         self.streams.append(stream)
         await self.save_streams()
         await ctx.tick()
-            
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
