@@ -300,6 +300,38 @@ class Streams(commands.Cog):
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
+    @_twitch.command(name="addgame")
+    async def twitch_addgame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
+        """Add a game to send alerts for the specified channel.
+        
+        Game name must be exactly the name that appears on the game's Twitch page"""
+        stream = self.get_stream(TwitchStream, channel_name)
+        if not stream:
+            return await ctx.send(
+                _("That channel has not been set up for stream alerts in this channel!")
+            )
+        game_data = await stream.get_game_info_by_name(game_name)
+        if not game_data:
+            return await ctx.send(
+                _(
+                    "Could not find the game requested. Make sure the game name matches how it appears on Twitch."
+                )
+            )
+        else:
+            game = game_data[0]
+            if game["id"] in stream.games:
+                chan_list = stream.games[game["id"]]
+            else:
+                chan_list = []
+            if ctx.channel.id in chan_list:
+                return await ctx.send(_("Already notifying in this channel when the stream is live with this game!"))
+            else:
+                self.streams.remove(stream)
+                chan_list.append(ctx.channel.id)
+                stream.games = chan_list
+                self.streams.add(stream)
+                await self.save_streams()
+
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
         """Toggle alerts in this channel for a YouTube stream."""
@@ -685,9 +717,10 @@ class Streams(commands.Cog):
                 try:
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
-                        embed, is_rerun = await stream.is_online()
+                        embed, data, is_rerun = await stream.is_online()
                     else:
                         embed = await stream.is_online()
+                        data = {}
                         is_rerun = False
                 except OfflineStream:
                     if not stream._messages_cache:
@@ -712,6 +745,12 @@ class Streams(commands.Cog):
                             continue
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
+                            continue
+                        if (
+                            isinstance(stream, TwitchStream)
+                            and stream.games
+                            and channel_id not in stream.games[data["game_id"]]
+                        ):
                             continue
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
