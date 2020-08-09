@@ -2002,8 +2002,8 @@ class Core(commands.Cog, CoreLogic):
         """
         pass
 
-    @allowlist.command(name="add", usage="<user_or_role>...")
-    async def allowlist_add(
+    @localallowlist.command(name="add", usage="<user_or_role>...")
+    async def localallowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
