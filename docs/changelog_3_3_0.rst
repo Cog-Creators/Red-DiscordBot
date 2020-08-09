@@ -39,7 +39,7 @@ Permissions
 Warnings
 ********
 
-- ``[p]warn`` now sends an error message (instead of no feedback) when unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
+- ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
 
 
 Redbot 3.3.10 (2020-07-09)
