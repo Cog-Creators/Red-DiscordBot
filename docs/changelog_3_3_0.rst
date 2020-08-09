@@ -18,7 +18,7 @@ Audio
 Cleanup
 *******
 
-- Fixed a bug causing ``[p]cleanup`` commands to clear all messages within last 2 weeks when ``0`` is passed as amount of messages to delete (:issue:`4114`, :issue:`4115`)
+- Fixed a bug causing ``[p]cleanup`` commands to clear all messages within last 2 weeks when ``0`` is passed as the amount of messages to delete (:issue:`4114`, :issue:`4115`)
 
 CustomCommands
 **************
