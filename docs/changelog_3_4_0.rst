@@ -27,6 +27,7 @@ Core Bot
 - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
+- Updated Red's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
 
 .. _important-340-2:
 
