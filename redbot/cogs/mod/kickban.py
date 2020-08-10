@@ -6,6 +6,7 @@ from typing import Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
+from redbot.core.commands import UserInputOptional
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
@@ -427,7 +428,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: Optional[commands.TimedeltaConverter] = timedelta(days=1),
+        duration: UserInputOptional[commands.TimedeltaConverter] = timedelta(days=1),
         days: Optional[int] = None,
         *,
         reason: str = None,
