@@ -108,7 +108,7 @@ class ModSettings(MixinMeta):
 
     @mentionspam.command(name="warn")
     @commands.guild_only()
-    async def mentionspam_warn(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_warn(self, ctx: commands.Context, max_mentions: int):
         """
         Sets the autowarn conditions for mention spam.
 
@@ -148,7 +148,7 @@ class ModSettings(MixinMeta):
 
     @mentionspam.command(name="kick")
     @commands.guild_only()
-    async def mentionspam_kick(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_kick(self, ctx: commands.Context, max_mentions: int):
         """
         Sets the autokick conditions for mention spam.
 
@@ -188,7 +188,7 @@ class ModSettings(MixinMeta):
 
     @mentionspam.command(name="ban")
     @commands.guild_only()
-    async def mentionspam_ban(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam_ban(self, ctx: commands.Context, max_mentions: int):
         """Set the autoban conditions for mention spam.
 
         Users will be banned if they send any message which contains more than
