@@ -381,7 +381,7 @@ async def test_git_is_ancestor_false(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_is_ancestor_invalid_ref(git_repo):
+async def test_git_is_ancestor_invalid_object(git_repo):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_IS_ANCESTOR,
@@ -392,6 +392,22 @@ async def test_git_is_ancestor_invalid_ref(git_repo):
     )
     assert p.returncode == 128
     assert p.stderr.decode().strip() == "fatal: Not a valid object name invalid1"
+
+
+@pytest.mark.asyncio
+async def test_git_is_ancestor_invalid_commit(git_repo):
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_IS_ANCESTOR,
+            path=git_repo.folder_path,
+            maybe_ancestor_rev="0123456789abcde0123456789abcde0123456789",
+            descendant_rev="c950fc05a540dd76b944719c2a3302da2e2f3090",
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "fatal: Not a valid commit name 0123456789abcde0123456789abcde0123456789"
+    )
 
 
 @pytest.mark.asyncio

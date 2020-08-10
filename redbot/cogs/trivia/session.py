@@ -4,7 +4,7 @@ import time
 import random
 from collections import Counter
 import discord
-from redbot.core import bank
+from redbot.core import bank, errors
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
@@ -305,7 +305,7 @@ class TriviaSession:
                     LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
                     try:
                         await bank.deposit_credits(winner, int(multiplier * score))
-                    except bank.BalanceTooHigh as e:
+                    except errors.BalanceTooHigh as e:
                         await bank.set_balance(winner, e.max_balance)
                     await self.ctx.send(
                         _(

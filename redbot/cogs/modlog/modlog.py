@@ -20,6 +20,10 @@ class ModLog(commands.Cog):
         super().__init__()
         self.bot = bot
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):

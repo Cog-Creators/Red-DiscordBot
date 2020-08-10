@@ -138,12 +138,19 @@ class CogOrCommand(NamedTuple):
     # noinspection PyArgumentList
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
-        cog = ctx.bot.get_cog(arg)
-        if cog:
-            return cls(type="COG", name=cog.__class__.__name__, obj=cog)
-        cmd = ctx.bot.get_command(arg)
-        if cmd:
-            return cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)
+        ret = None
+        if cog := ctx.bot.get_cog(arg):
+            ret = cls(type="COG", name=cog.qualified_name, obj=cog)
+
+        elif cmd := ctx.bot.get_command(arg):
+            ret = cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)
+
+        if ret:
+            if isinstance(ret.obj, commands.commands._RuleDropper):
+                raise commands.BadArgument(
+                    "You cannot apply permission rules to this cog or command."
+                )
+            return ret
 
         raise commands.BadArgument(
             _(

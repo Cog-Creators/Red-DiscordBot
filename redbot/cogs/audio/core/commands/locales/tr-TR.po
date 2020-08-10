@@ -1804,7 +1804,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:307
 msgid "Track Enqueued"
-msgstr "Şarkı sıraya eklendi."
+msgstr "Şarkı sıraya eklendi"
 
 #: redbot/cogs/audio/core/commands/player.py:321
 #, docstring

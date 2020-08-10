@@ -79,6 +79,10 @@ class Streams(commands.Cog):
         self._ready_event: asyncio.Event = asyncio.Event()
         self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     def check_name_or_id(self, data: str) -> bool:
         matched = self.yt_cid_pattern.fullmatch(data)
         if matched is None:
@@ -222,8 +226,8 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def hitbox(self, ctx: commands.Context, channel_name: str):
-        """Check if a Hitbox channel is live."""
+    async def smashcast(self, ctx: commands.Context, channel_name: str):
+        """Check if a smashcast channel is live."""
         stream = HitboxStream(name=channel_name)
         await self.check_online(ctx, stream)
 
@@ -301,9 +305,9 @@ class Streams(commands.Cog):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
-    @streamalert.command(name="hitbox")
-    async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Hitbox stream."""
+    @streamalert.command(name="smashcast")
+    async def smashcast_alert(self, ctx: commands.Context, channel_name: str):
+        """Toggle alerts in this channel for a Smashcast stream."""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="picarto")

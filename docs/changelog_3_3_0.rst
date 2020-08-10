@@ -1,5 +1,47 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.11 (2020-08-10)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+
+End-user changelog
+------------------
+
+Audio
+*****
+
+- Audio should now work again on all voice regions (:issue:`4162`, :issue:`4168`)
+- Removed an edge case where an unfriendly error message was sent in Audio cog (:issue:`3879`)
+
+Cleanup
+*******
+
+- Fixed a bug causing ``[p]cleanup`` commands to clear all messages within last 2 weeks when ``0`` is passed as the amount of messages to delete (:issue:`4114`, :issue:`4115`)
+
+CustomCommands
+**************
+
+- ``[p]cc show`` now sends an error message when command with the provided name couldn't be found (:issue:`4108`)
+
+Downloader
+**********
+
+- ``[p]findcog`` no longer fails for 3rd-party cogs without any author (:issue:`4032`, :issue:`4042`)
+- Update commands no longer crash when a different repo is added under a repo name that was once used (:issue:`4086`)
+
+Permissions
+***********
+
+- ``[p]permissions removeserverrule`` and ``[p]permissions removeglobalrule`` no longer error when trying to remove a rule that doesn't exist (:issue:`4028`, :issue:`4036`)
+
+Warnings
+********
+
+- ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
+
+
 Redbot 3.3.10 (2020-07-09)
 ===================================
 
