@@ -1882,7 +1882,7 @@ class Core(commands.Cog, CoreLogic):
 
         await ctx.send(_("Users added to allowlist."))
 
-    @allowlist.command(name=)
+    @allowlist.command(name="list")
     async def allowlist_list(self, ctx: commands.Context):
         """
         Lists users on the allowlist.
