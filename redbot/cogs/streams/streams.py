@@ -396,8 +396,16 @@ class Streams(commands.Cog):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
-    @streamalert.command(name="smashcast")
-    async def smashcast_alert(self, ctx: commands.Context, channel_name: str):
+    @streamalert.group(name="smashcast", invoke_without_command=True)
+    async def _smashcast(self, ctx: commands.Context, channel_name: str):
+        """Manage Smashcast stream alerts."""
+        if channel_name is not None:
+            await ctx.invoke(self.smashcast_alert_channel, channel_name)
+        else:
+            await ctx.send_help()
+    
+    @_smashcast.command(name="channel")
+    async def smashcast_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Smashcast stream."""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
