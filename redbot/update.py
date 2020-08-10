@@ -210,7 +210,7 @@ def main():
     if INTERACTIVE_MODE:
         main_menu()
     else:
-        update_red(dev=args.dev, custom=args.custom, stable=args.stable)
+        update_red(dev=args.dev, custom=args.custom)
 
 
 if __name__ == "__main__":
