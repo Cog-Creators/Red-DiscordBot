@@ -1882,7 +1882,7 @@ class Core(commands.Cog, CoreLogic):
 
         await ctx.send(_("Users added to allowlist."))
 
-    @allowlist.command(name="list")
+    @allowlist.command(name=)
     async def allowlist_list(self, ctx: commands.Context):
         """
         Lists users on the allowlist.
@@ -1922,7 +1922,7 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
 
-    @commands.group(aliases=["blacklist", "list"])
+    @commands.group(aliases=["blacklist", "denylideny)
     @checks.is_owner()
     async def blocklist(self, ctx: commands.Context):
         """
@@ -1991,7 +1991,7 @@ class Core(commands.Cog, CoreLogic):
         Clears the blocklist.
         """
         await self.bot._whiteblacklist_cache.clear_blacklist()
-        await ctx.send(_("BlocBlock has been cleared."))
+        await ctx.send(_("Blocklist has been cleared."))
 
     @commands.group(aliases=["localwhitelist"])
     @commands.guild_only()
