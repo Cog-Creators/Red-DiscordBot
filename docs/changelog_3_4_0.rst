@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+| :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
@@ -65,6 +65,7 @@ Breaking changes
 ****************
 
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
+- `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 
 Core Bot
 ********
@@ -78,6 +79,13 @@ Core Bot
 - `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
 - RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
+
+Utility Functions
+*****************
+
+- `humanize_list()` now accepts ``locale`` and ``style`` keyword arguments. See its documentation for more information (:issue:`2982`)
+- `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
+- `humanize_list()` now accepts empty sequences (:issue:`2982`)
 
 
 Documentation changes
