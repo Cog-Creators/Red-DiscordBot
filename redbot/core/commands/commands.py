@@ -794,6 +794,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         # we skip prepare in some cases to avoid some things
         # We still always want this part of the behavior though
         ctx.command = self
+        ctx.subcommand_passed = None
         # Our re-ordered behavior below.
         view = ctx.view
         previous = view.index

@@ -31,6 +31,8 @@ if not TYPE_CHECKING:
         bot_has_role as bot_has_role,
         bot_has_any_role as bot_has_any_role,
         cooldown as cooldown,
+        before_invoke as before_invoke,
+        after_invoke as after_invoke,
     )
 
 from ..i18n import Translator
@@ -59,6 +61,8 @@ __all__ = [
     "when_mentioned_or",
     "cooldown",
     "when_mentioned",
+    "before_invoke",
+    "after_invoke",
 ]
 
 _CT = TypeVar("_CT", bound=Context)
@@ -66,6 +70,7 @@ _T = TypeVar("_T")
 _F = TypeVar("_F")
 CheckType = Union[Callable[[_CT], bool], Callable[[_CT], Coroutine[Any, Any, bool]]]
 CoroLike = Callable[..., Union[Awaitable[_T], Generator[Any, None, _T]]]
+InvokeHook = Callable[[_CT], Coroutine[Any, Any, bool]]
 
 
 class CheckDecorator(Protocol):
@@ -107,6 +112,12 @@ if TYPE_CHECKING:
         ...
 
     def cooldown(rate: int, per: float, type: dpy_commands.BucketType = ...) -> Callable[[_F], _F]:
+        ...
+
+    def before_invoke(coro: InvokeHook) -> Callable[[_F], _F]:
+        ...
+
+    def after_invoke(coro: InvokeHook) -> Callable[[_F], _F]:
         ...
 
 
