@@ -1922,7 +1922,7 @@ class Core(commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
 
-    @commands.group(aliases=["blacklist", "denylideny)
+    @commands.group(aliases=["blacklist", "denylist")
     @checks.is_owner()
     async def blocklist(self, ctx: commands.Context):
         """
