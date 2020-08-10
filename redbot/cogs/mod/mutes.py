@@ -255,7 +255,7 @@ class MuteMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
 
         mute_success = []
-        async with ctx.channel.typing():
+        async with ctx.typing():
             for channel in guild.channels:
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
@@ -374,7 +374,7 @@ class MuteMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
 
         unmute_success = []
-        async with ctx.channel.typing():
+        async with ctx.typing():
             for channel in guild.channels:
                 success, message = await self.unmute_user(
                     guild, channel, author, user, audit_reason
