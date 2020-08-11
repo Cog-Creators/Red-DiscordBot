@@ -40,10 +40,13 @@ extend functionalities used throughout the bot, as outlined below.
 
 .. automodule:: redbot.core.commands.converter
     :members:
-    :exclude-members: convert
+    :exclude-members: UserInputOptional, convert
     :no-undoc-members:
 
     .. autoclass:: APIToken
+
+    .. autodata:: UserInputOptional
+        :annotation:
 
 ******************
 Help Functionality
