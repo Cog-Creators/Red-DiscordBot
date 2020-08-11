@@ -111,19 +111,20 @@ class Events(MixinMeta):
                                 member=author.id, guild=guild.id
                             )
                         )
-                else:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        message.created_at,
-                        "warning",
-                        author,
-                        guild.me,
-                        _("Mention spam (Autowarn)"),
-                        until=None,
-                        channel=None,
-                    )
-                    return True
+                        return False
+
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    message.created_at,
+                    "warning",
+                    author,
+                    guild.me,
+                    _("Mention spam (Autowarn)"),
+                    until=None,
+                    channel=None,
+                )
+                return True
         return False
 
     @commands.Cog.listener()
