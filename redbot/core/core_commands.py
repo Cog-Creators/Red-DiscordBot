@@ -1961,7 +1961,7 @@ class Core(commands.Cog, CoreLogic):
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
-            await ctx.send("list is empty.")
+            await ctx.send("Blocklist is empty.")
             return
 
         msg = _("Users on blocklist:")
