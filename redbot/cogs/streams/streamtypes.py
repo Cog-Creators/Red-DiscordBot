@@ -375,7 +375,7 @@ class HitboxStream(Stream):
             raise OfflineStream()
         elif data["livestream"][0]["media_is_live"] == "1":
             # self.already_online = True
-            return self.make_embed(data)
+            return self.make_embed(data), data
 
         raise APIError()
 

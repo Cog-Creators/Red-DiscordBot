@@ -418,7 +418,9 @@ class Streams(commands.Cog):
                 _("That channel has not been set up for stream alerts in this channel!")
             )
         async with aiohttp.ClientSession as session:
-            async with session.get("https://api.smashcast.tv/search/games", params={"q": game_name}) as resp:
+            async with session.get(
+                "https://api.smashcast.tv/search/games", params={"q": game_name}
+            ) as resp:
                 if resp.status != 200:
                     return await ctx.send(_("An error occurred in the request."))
                 data = await resp.json()
@@ -440,7 +442,11 @@ class Streams(commands.Cog):
                 return min_i <= sel <= max_i and m.channel == ctx.channel
 
         if max_i > 1:
-            await ctx.send(_("Multiple possible options found. Please enter the number of the one you were trying to add."))
+            await ctx.send(
+                _(
+                    "Multiple possible options found. Please enter the number of the one you were trying to add."
+                )
+            )
             await ctx.send(pagify(cat_ask_str.strip()))
             try:
                 msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
@@ -468,7 +474,6 @@ class Streams(commands.Cog):
             await self.save_streams()
             await ctx.tick()
 
-
     @_smashcast.command(name="removegame")
     async def smashcast_removegame(
         self, ctx: commands.Context, channel_name: str, *, game_name: str
@@ -480,7 +485,9 @@ class Streams(commands.Cog):
                 _("That channel has not been set up for stream alerts in this channel!")
             )
         async with aiohttp.ClientSession as session:
-            async with session.get("https://api.smashcast.tv/search/games", params={"q": game_name}) as resp:
+            async with session.get(
+                "https://api.smashcast.tv/search/games", params={"q": game_name}
+            ) as resp:
                 if resp.status != 200:
                     return await ctx.send(_("An error occurred in the request."))
                 data = await resp.json()
@@ -502,7 +509,11 @@ class Streams(commands.Cog):
                 return min_i <= sel <= max_i and m.channel == ctx.channel
 
         if max_i > 1:
-            await ctx.send(_("Multiple possible options found. Please enter the number of the one you were trying to remove."))
+            await ctx.send(
+                _(
+                    "Multiple possible options found. Please enter the number of the one you were trying to remove."
+                )
+            )
             await ctx.send(pagify(cat_ask_str.strip()))
             try:
                 msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
@@ -925,6 +936,9 @@ class Streams(commands.Cog):
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, data, is_rerun = await stream.is_online()
+                    elif stream.__class__.__name__ == "HitboxStream":
+                        embed, data = await stream.is_online()
+                        is_rerun = False
                     else:
                         embed = await stream.is_online()
                         data = {}
@@ -957,6 +971,13 @@ class Streams(commands.Cog):
                             isinstance(stream, TwitchStream)
                             and stream.games
                             and channel_id not in stream.games[data["game_id"]]
+                        ):
+                            continue
+                        elif (
+                            isinstance(stream, HitboxStream)
+                            and stream.games
+                            and channel_id
+                            not in stream.games[data["livestream"][0]["category_id"]]
                         ):
                             continue
                         mention_str, edited_roles = await self._get_mention_str(channel.guild)
