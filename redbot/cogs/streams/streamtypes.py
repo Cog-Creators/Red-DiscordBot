@@ -14,7 +14,6 @@ from .errors import (
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     StreamNotFound,
-    PlayingGameNotSpecified,
 )
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -356,6 +355,10 @@ class TwitchStream(Stream):
 class HitboxStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+
+    def __init__(self, **kwargs):
+        self.games = kwargs.pop("games", {})
+        super().__init__(**kwargs)
 
     async def is_online(self):
         url = "https://api.smashcast.tv/media/live/" + self.name
