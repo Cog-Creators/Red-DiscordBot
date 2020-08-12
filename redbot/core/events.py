@@ -5,7 +5,7 @@ import sys
 import codecs
 import logging
 import traceback
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 import aiohttp
 import discord
@@ -54,7 +54,7 @@ def init_events(bot, cli_flags):
         if bot._uptime is not None:
             return
 
-        bot._uptime = datetime.now(timezone.utc)
+        bot._uptime = datetime.utcnow()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))

@@ -373,7 +373,7 @@ class Filter(commands.Cog):
                             await modlog.create_case(
                                 self.bot,
                                 guild,
-                                message.created_at,
+                                message.created_at.replace(tzinfo=timezone.utc),
                                 "filterban",
                                 author,
                                 guild.me,
