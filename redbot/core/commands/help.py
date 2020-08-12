@@ -39,7 +39,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils._dpy_menus_utils import SimpleHybridMenu, HelpSource
+from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import box, humanize_list, humanize_number, humanize_timedelta, pagify
@@ -848,10 +848,13 @@ class RedHelpFormatter(HelpFormatterABC):
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
-
-            await SimpleHybridMenu(
-                source=HelpSource(pages), delete_message_after=False, cog=None, timeout=60
-            ).start(ctx=ctx, wait=False)
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
+            # menu needs reactions added manually since we fed it a messsage
+            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=_)

@@ -8,7 +8,6 @@ import functools
 import logging
 from typing import Iterable, List, Optional, Union, Dict
 import discord
-from ._dpy_menus_utils import dpymenu as _dpymenu
 
 from .. import commands
 from .predicates import ReactionPredicate
@@ -23,95 +22,11 @@ log = logging.getLogger("red.menus")
 
 async def menu(
     ctx: commands.Context,
-    pages: Iterable[Union[str, discord.Embed]],
-    controls: Optional[Dict] = None,
-    message: discord.Message = None,
-    page: int = 0,
-    timeout: int = 60,
-    wait: bool = False,
-    delete_message_after: bool = False,
-    clear_reactions_after: bool = True,
-):
-    """
-       An emoji-based menu
-
-       .. note:: All pages should be of the same type
-
-       .. note:: All functions for handling what a particular emoji does
-                 should be coroutines (i.e. :code:`async def`). Additionally,
-                 they must take all of the parameters of this function, in
-                 addition to a string representing the emoji reacted with.
-                 This parameter should be the last one, and none of the
-                 parameters in the handling functions are optional
-
-       Parameters
-       ----------
-       ctx: commands.Context
-           The command context
-       pages: `list` of `str` or `discord.Embed`
-           The pages of the menu.
-       controls: dict
-           A mapping of emoji to the function which handles the action for the
-           emoji.
-       message: discord.Message
-           The message representing the menu. Usually :code:`None` when first opening
-           the menu
-       page: int
-           The current page number of the menu
-       timeout: float
-           The time (in seconds) to wait for a reaction
-       wait: bool
-           Note: Only applicable when ``controls`` is code:`None` or ``menus.DEFAULT_CONTROLS``
-           Whether the menu should be block code execution or should be run as a task (this uses d.py menus).
-       delete_message_after: bool
-           Note: Only applicable when ``controls`` is code:`None` or ``menus.DEFAULT_CONTROLS``
-           Whether to delete the message once the menu exits (this uses d.py menus).
-       clear_reactions_after: bool
-           Note: Only applicable when ``controls`` is code:`None` or ``menus.DEFAULT_CONTROLS``
-           Whether to remove reactions once the menu exits - Requires manage message permissions (this uses d.py menus).
-
-       Raises
-       ------
-       RuntimeError
-           If either of the notes above are violated
-       MenuError
-           Note: Only can be raised when using d.py menus.
-           An error happened when verifying permissions.
-       redbot.vendored.discord.ext.menus.CannotSendMessages
-           Note: Only can be raised when using d.py menus.
-           Tried to start the menu but bot can't send message in the context.
-       redbot.vendored.discord.ext.menus.CannotAddReactions
-           Note: Only can be raised when using d.py menus.
-           Tried to start the menu but bot can't add reactions
-       redbot.vendored.discord.ext.menus.CannotReadMessageHistory
-           Note: Only can be raised when using d.py menus.
-           Tried to start the menu but bot can't read message history.
-       """
-    if controls is None or controls == DEFAULT_CONTROLS:
-        return await _dpymenu(
-            ctx=ctx,
-            pages=pages,
-            controls=None,
-            message=message,
-            page=page,
-            timeout=timeout,
-            wait=wait,
-            delete_message_after=delete_message_after,
-            clear_reactions_after=clear_reactions_after,
-        )
-    else:
-        return await _menu(
-            ctx=ctx, pages=pages, controls=controls, message=message, page=page, timeout=timeout
-        )
-
-
-async def _menu(
-    ctx: commands.Context,
     pages: Union[List[str], List[discord.Embed]],
     controls: dict,
     message: discord.Message = None,
     page: int = 0,
-    timeout: float = 30.0,
+    timeout: float = 60.0,
 ):
     """
     An emoji-based menu
