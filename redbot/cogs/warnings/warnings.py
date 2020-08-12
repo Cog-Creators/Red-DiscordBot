@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+from datetime import timezone
 from collections import namedtuple
 from copy import copy
 from typing import Union, Optional, Literal
@@ -494,7 +495,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "warning",
             user,
             ctx.message.author,
@@ -616,7 +617,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "unwarned",
             member,
             ctx.message.author,

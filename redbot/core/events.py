@@ -3,10 +3,9 @@ import contextlib
 import platform
 import sys
 import codecs
-import datetime
 import logging
 import traceback
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import aiohttp
 import discord
@@ -55,7 +54,7 @@ def init_events(bot, cli_flags):
         if bot._uptime is not None:
             return
 
-        bot._uptime = datetime.datetime.utcnow()
+        bot._uptime = datetime.utcnow()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
@@ -313,7 +312,7 @@ def init_events(bot, cli_flags):
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
-            system_now = datetime.datetime.utcnow()
+            system_now = datetime.utcnow()
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warning(
