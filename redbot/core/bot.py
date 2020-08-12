@@ -181,6 +181,9 @@ class RedBase(
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
+        if "allowed_mentions" not in kwargs:
+            kwargs["allowed_mentions"] = discord.AllowedMentions(everyone=False, roles=False)
+
         message_cache_size = cli_flags.message_cache_size
         if cli_flags.no_message_cache:
             message_cache_size = None
@@ -1261,7 +1264,7 @@ class RedBase(
         if permissions_not_loaded:
             command.requires.ready_event.set()
         if isinstance(command, commands.Group):
-            for subcommand in set(command.walk_commands()):
+            for subcommand in command.walk_commands():
                 self.dispatch("command_add", subcommand)
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
@@ -1275,7 +1278,7 @@ class RedBase(
             return
         command.requires.reset()
         if isinstance(command, commands.Group):
-            for subcommand in set(command.walk_commands()):
+            for subcommand in command.walk_commands():
                 subcommand.requires.reset()
 
     def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
