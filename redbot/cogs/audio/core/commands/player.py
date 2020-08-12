@@ -15,7 +15,8 @@ from redbot.core import commands
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+from redbot.core.utils._dpy_menus_utils import dpymenu
+from redbot.core.utils.menus import close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
 from ...audio_logging import IS_DEBUG
@@ -934,6 +935,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_page_list.append(embed)
 
         if dj_enabled and not can_skip:
-            return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+            return await dpymenu(ctx, search_page_list)
 
         await menu(ctx, search_page_list, search_controls)
