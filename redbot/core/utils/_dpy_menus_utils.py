@@ -448,7 +448,7 @@ class SimpleSource(_dpy_menus.ListPageSource):
         super().__init__(pages, per_page=1)
 
     async def format_page(
-        self, menu: SimpleHybridMenu, page: Union[List[str], List[discord.Embed]]
+        self, menu: SimpleHybridMenu, page: Union[str, discord.Embed]
     ) -> Union[discord.Embed, str]:
         """Sends thee specified page to the menu."""
         return page
