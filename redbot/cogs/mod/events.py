@@ -84,7 +84,7 @@ class Events(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        message.created_at,
+                        message.created_at.replace(tzinfo=timezone.utc),
                         "kick",
                         author,
                         guild.me,
@@ -116,7 +116,7 @@ class Events(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    message.created_at,
+                    message.created_at.replace(tzinfo=timezone.utc),
                     "warning",
                     author,
                     guild.me,
