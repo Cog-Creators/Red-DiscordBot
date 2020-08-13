@@ -117,7 +117,7 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                message = _("{case}\n**Timestamp**: {timestamp}").format(
+                message = _("{case}\n**Timestamp:** {timestamp}").format(
                     case=await case.message_content(embed=False),
                     timestamp=datetime.fromtimestamp(case.created_at).strftime(
                         "%Y-%m-%d %H:%M:%S"
