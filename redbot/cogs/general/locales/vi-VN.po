@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-13 12:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -249,260 +249,260 @@ msgstr ""
 msgid " • Bots: "
 msgstr ""
 
-#: redbot/cogs/general/general.py:323
+#: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\\n"
 msgstr ""
 
-#: redbot/cogs/general/general.py:340
+#: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
 msgstr ""
 
-#: redbot/cogs/general/general.py:341
+#: redbot/cogs/general/general.py:343
 msgid "__VIP__ US West "
 msgstr ""
 
-#: redbot/cogs/general/general.py:342
+#: redbot/cogs/general/general.py:344
 msgid "__VIP__ Amsterdam "
 msgstr ""
 
-#: redbot/cogs/general/general.py:343
+#: redbot/cogs/general/general.py:345
 msgid "EU West "
 msgstr ""
 
-#: redbot/cogs/general/general.py:344
+#: redbot/cogs/general/general.py:346
 msgid "EU Central "
 msgstr ""
 
-#: redbot/cogs/general/general.py:345
+#: redbot/cogs/general/general.py:347
 msgid "Europe "
 msgstr ""
 
-#: redbot/cogs/general/general.py:346
+#: redbot/cogs/general/general.py:348
 msgid "London "
 msgstr ""
 
-#: redbot/cogs/general/general.py:347
+#: redbot/cogs/general/general.py:349
 msgid "Frankfurt "
 msgstr ""
 
-#: redbot/cogs/general/general.py:348
+#: redbot/cogs/general/general.py:350
 msgid "Amsterdam "
 msgstr ""
 
-#: redbot/cogs/general/general.py:349
+#: redbot/cogs/general/general.py:351
 msgid "US West "
 msgstr ""
 
-#: redbot/cogs/general/general.py:350
+#: redbot/cogs/general/general.py:352
 msgid "US East "
 msgstr ""
 
-#: redbot/cogs/general/general.py:351
+#: redbot/cogs/general/general.py:353
 msgid "US South "
 msgstr ""
 
-#: redbot/cogs/general/general.py:352
+#: redbot/cogs/general/general.py:354
 msgid "US Central "
 msgstr ""
 
-#: redbot/cogs/general/general.py:353
+#: redbot/cogs/general/general.py:355
 msgid "Singapore "
 msgstr ""
 
-#: redbot/cogs/general/general.py:354
+#: redbot/cogs/general/general.py:356
 msgid "Sydney "
 msgstr ""
 
-#: redbot/cogs/general/general.py:355
+#: redbot/cogs/general/general.py:357
 msgid "Brazil "
 msgstr ""
 
-#: redbot/cogs/general/general.py:356
+#: redbot/cogs/general/general.py:358
 msgid "Hong Kong "
 msgstr ""
 
-#: redbot/cogs/general/general.py:357
+#: redbot/cogs/general/general.py:359
 msgid "Russia "
 msgstr ""
 
-#: redbot/cogs/general/general.py:358
+#: redbot/cogs/general/general.py:360
 msgid "Japan "
 msgstr ""
 
-#: redbot/cogs/general/general.py:359
+#: redbot/cogs/general/general.py:361
 msgid "South Africa "
 msgstr ""
 
-#: redbot/cogs/general/general.py:360
+#: redbot/cogs/general/general.py:362
 msgid "India "
 msgstr ""
 
-#: redbot/cogs/general/general.py:361
+#: redbot/cogs/general/general.py:363
 msgid "Dubai "
 msgstr ""
 
-#: redbot/cogs/general/general.py:362
+#: redbot/cogs/general/general.py:364
 msgid "South Korea "
 msgstr ""
 
-#: redbot/cogs/general/general.py:365
+#: redbot/cogs/general/general.py:367
 msgid "0 - None"
 msgstr ""
 
-#: redbot/cogs/general/general.py:366
+#: redbot/cogs/general/general.py:368
 msgid "1 - Low"
 msgstr ""
 
-#: redbot/cogs/general/general.py:367
+#: redbot/cogs/general/general.py:369
 msgid "2 - Medium"
 msgstr ""
 
-#: redbot/cogs/general/general.py:368
+#: redbot/cogs/general/general.py:370
 msgid "3 - High"
 msgstr ""
 
-#: redbot/cogs/general/general.py:369
+#: redbot/cogs/general/general.py:371
 msgid "4 - Extreme"
 msgstr ""
 
-#: redbot/cogs/general/general.py:373
+#: redbot/cogs/general/general.py:375
 msgid "Partnered"
 msgstr ""
 
-#: redbot/cogs/general/general.py:374
+#: redbot/cogs/general/general.py:376
 msgid "Verified"
 msgstr ""
 
-#: redbot/cogs/general/general.py:375
+#: redbot/cogs/general/general.py:377
 msgid "Server Discovery"
 msgstr ""
 
-#: redbot/cogs/general/general.py:376
+#: redbot/cogs/general/general.py:378
 msgid "Featurable"
 msgstr ""
 
-#: redbot/cogs/general/general.py:377
+#: redbot/cogs/general/general.py:379
 msgid "Community"
 msgstr ""
 
-#: redbot/cogs/general/general.py:378
+#: redbot/cogs/general/general.py:380
 msgid "Public disabled"
 msgstr ""
 
-#: redbot/cogs/general/general.py:379
+#: redbot/cogs/general/general.py:381
 msgid "Splash Invite"
 msgstr ""
 
-#: redbot/cogs/general/general.py:380
+#: redbot/cogs/general/general.py:382
 msgid "VIP Voice Servers"
 msgstr ""
 
-#: redbot/cogs/general/general.py:381
+#: redbot/cogs/general/general.py:383
 msgid "Vanity URL"
 msgstr ""
 
-#: redbot/cogs/general/general.py:382
+#: redbot/cogs/general/general.py:384
 msgid "More Emojis"
 msgstr ""
 
-#: redbot/cogs/general/general.py:383
+#: redbot/cogs/general/general.py:385
 msgid "Commerce"
 msgstr ""
 
-#: redbot/cogs/general/general.py:384
+#: redbot/cogs/general/general.py:386
 msgid "News Channels"
 msgstr ""
 
-#: redbot/cogs/general/general.py:385
+#: redbot/cogs/general/general.py:387
 msgid "Animated Icon"
 msgstr ""
 
-#: redbot/cogs/general/general.py:386
+#: redbot/cogs/general/general.py:388
 msgid "Banner Image"
 msgstr ""
 
-#: redbot/cogs/general/general.py:387
+#: redbot/cogs/general/general.py:389
 msgid "Member list disabled"
 msgstr ""
 
-#: redbot/cogs/general/general.py:393
+#: redbot/cogs/general/general.py:397
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:415
+#: redbot/cogs/general/general.py:419
 msgid "Members:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:417
+#: redbot/cogs/general/general.py:421
 msgid "Channels:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:418
+#: redbot/cogs/general/general.py:422
 msgid "💬 Text: {text}\\n🔊 Voice: {voice}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:424
+#: redbot/cogs/general/general.py:428
 msgid "Utility:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:425
+#: redbot/cogs/general/general.py:429
 msgid "Owner: {owner}\\nVoice region: {region}\\nVerif. level: {verif}\\nServer ID: {id}{shard_info}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:437
+#: redbot/cogs/general/general.py:441
 msgid "Misc:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:438
+#: redbot/cogs/general/general.py:442
 msgid "AFK channel: {afk_chan}\\nAFK timeout: {afk_timeout}\\nCustom emojis: {emoji_count}\\nRoles: {role_count}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:443
+#: redbot/cogs/general/general.py:447
 msgid "Not set"
 msgstr ""
 
-#: redbot/cogs/general/general.py:451
+#: redbot/cogs/general/general.py:455
 msgid "Server features:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:453
+#: redbot/cogs/general/general.py:457
 msgid "Tier {boostlevel} with {nitroboosters} boosters\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:465
+#: redbot/cogs/general/general.py:469
 msgid "Nitro Boost:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:474
+#: redbot/cogs/general/general.py:478
 #, docstring
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:490 redbot/cogs/general/general.py:556
+#: redbot/cogs/general/general.py:494 redbot/cogs/general/general.py:560
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
-#: redbot/cogs/general/general.py:496
+#: redbot/cogs/general/general.py:500
 msgid "No Urban Dictionary entries were found."
 msgstr ""
 
-#: redbot/cogs/general/general.py:502
+#: redbot/cogs/general/general.py:506
 msgid "{word} by {author}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:507
+#: redbot/cogs/general/general.py:511
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:513
+#: redbot/cogs/general/general.py:517
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:532
+#: redbot/cogs/general/general.py:536
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:538
+#: redbot/cogs/general/general.py:542
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 
