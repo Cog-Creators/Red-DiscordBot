@@ -81,7 +81,7 @@ community of cog repositories.**
 
 # Installation
 
-**The following platforms are officially supported:** 
+**The following platforms are officially supported:**
 
 - [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
 - [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
@@ -119,13 +119,26 @@ Join us on our [Official Discord Server](https://discord.gg/red)!
 
 # License
 
-Released under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+Copyright (C) 2015-2017 Twentysix, 2017-2020 Cog-Creators
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the [GNU General Public License](COPYING) as published by the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <https://www.gnu.org/licenses/>.
 
 Red is named after the main character of "Transistor", a video game by
 [Super Giant Games](https://www.supergiantgames.com/games/transistor/).
 
-Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art for the Red Discord
-Bot Project.
+Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art
+for the Red Discord Bot Project.
 
-This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) which is distributed under MIT License.
-Copy of this license can be found in [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.
+This project vendors the [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) and distributed under the [MIT License](LICENSES/MIT.txt).
+
+This product bundles methods from https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py, available under the [MIT license](LICENSES/MIT.txt).
+
+See the [dep5 file](.reuse/dep5) for more information on licensing.

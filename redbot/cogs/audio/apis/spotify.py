@@ -1,3 +1,12 @@
+# SPDX-FileCopyrightText: 2017-2020 Cog-Creators
+# SPDX-FileCopyrightText: 2015-2017 Twentysix
+#
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# SPDX-FileCopyrightText: 2015-2018 Just-Some-Bots <https://github.com/Just-Some-Bots>
+#
+# SPDX-License-Identifier: MIT
+
 import base64
 import contextlib
 import logging

@@ -1,0 +1,29 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Red-DiscordBot
+Upstream-Contact: Cog-Creators
+Source: https://github.com/Cog-Creators/Red-DiscordBot
+License: GPL-3.0-only
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: *
+Copyright: 2015-2017 Twentysix
+           2017-2020 Cog-Creators
+License: GPL-3.0-only
+
+Files: redbot/vendored/discord/ext/menus/*
+Copyright: 2015-2019 Danny Y. (Rapptz)
+License: MIT
+
+Files: redbot/cogs/audio/apis/spotify.py
+Copyright: 2015-2018 Just-Some-Bots <https://github.com/Just-Some-Bots>
+License: MIT
+
+Files: redbot/cogs/audio/apis/spotify.py
+Copyright: 2015-2017 Twentysix
+           2017-2020 Cog-Creators
+License: GPL-3.0-only
