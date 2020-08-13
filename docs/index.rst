@@ -31,6 +31,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: User guides:
 
     getting_started
+    cog_guides/admin
     cog_guides/bank
     red_core_data_statement
 
