@@ -154,7 +154,7 @@ class ModLog(commands.Cog):
         elif not embed_requested:
             rendered_cases = []
             for case in cases:
-                message = _("{case}\n**Timestamp**: {timestamp}").format(
+                message = _("{case}\n**Timestamp:** {timestamp}").format(
                     case=await case.message_content(embed=False),
                     timestamp=datetime.fromtimestamp(case.created_at).strftime(
                         "%Y-%m-%d %H:%M:%S"
