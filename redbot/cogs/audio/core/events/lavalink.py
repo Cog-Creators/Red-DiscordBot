@@ -199,7 +199,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
-                            description="{}".format(description),
+                            description=_(
+                                "Playback of the song has stopped due to an unexcepted error.\n{error}"
+                            ).format(error=description),
                         )
                     else:
                         embed = discord.Embed(

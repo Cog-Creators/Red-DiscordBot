@@ -196,7 +196,7 @@ class ModInfo(MixinMeta):
         elif user.status.name == "online":
             statusemoji = "\N{LARGE GREEN CIRCLE}"
         elif user.status.name == "offline":
-            statusemoji = "\N{MEDIUM WHITE CIRCLE}"
+            statusemoji = "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}"
         elif user.status.name == "dnd":
             statusemoji = "\N{LARGE RED CIRCLE}"
         elif user.status.name == "idle":

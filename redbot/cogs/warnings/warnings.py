@@ -1,7 +1,9 @@
+import asyncio
 import contextlib
+from datetime import timezone
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 
 import discord
 
@@ -13,7 +15,9 @@ from redbot.cogs.warnings.helpers import (
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
+from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -45,6 +49,41 @@ class Warnings(commands.Cog):
         self.bot = bot
         self.registration_task = self.bot.loop.create_task(self.register_warningtype())
 
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        c = 0
+
+        for guild_id, guild_data in all_members.items():
+            c += 1
+            if not c % 100:
+                await asyncio.sleep(0)
+
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
+
+            for remaining_user, user_warns in guild_data.items():
+                c += 1
+                if not c % 100:
+                    await asyncio.sleep(0)
+
+                for warn_id, warning in user_warns.get("warnings", {}).items():
+                    c += 1
+                    if not c % 100:
+                        await asyncio.sleep(0)
+
+                    if warning.get("mod", 0) == user_id:
+                        grp = self.config.member_from_ids(guild_id, remaining_user)
+                        await grp.set_raw("warnings", warn_id, "mod", value=0xDE1)
+
     # We're not utilising modlog yet - no need to register a casetype
     @staticmethod
     async def register_warningtype():
@@ -52,13 +91,13 @@ class Warnings(commands.Cog):
             {
                 "name": "warning",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Warning",
             },
             {
                 "name": "unwarned",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Unwarned",
             },
         ]
@@ -327,7 +366,7 @@ class Warnings(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        points: Optional[int] = 1,
+        points: UserInputOptional[int] = 1,
         *,
         reason: str,
     ):
@@ -443,30 +482,27 @@ class Warnings(commands.Cog):
         else:
             if not dm_failed:
                 await ctx.tick()
-        try:
-            reason_msg = _(
-                "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
-            ).format(
-                reason=_("{description}\nPoints: {points}").format(
-                    description=reason_type["description"], points=reason_type["points"]
-                ),
-                prefix=ctx.clean_prefix,
-                user=user.id,
-                message=ctx.message.id,
-            )
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "warning",
-                user,
-                ctx.message.author,
-                reason_msg,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        reason_msg = _(
+            "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
+        ).format(
+            reason=_("{description}\nPoints: {points}").format(
+                description=reason_type["description"], points=reason_type["points"]
+            ),
+            prefix=ctx.clean_prefix,
+            user=user.id,
+            message=ctx.message.id,
+        )
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            "warning",
+            user,
+            ctx.message.author,
+            reason_msg,
+            until=None,
+            channel=None,
+        )
 
     @commands.command()
     @commands.guild_only()
@@ -489,7 +525,11 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    if mod_id == 0xDE1:
+                        mod = _("Deleted Moderator")
+                    else:
+                        bot = ctx.bot
+                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -519,7 +559,11 @@ class Warnings(commands.Cog):
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
-                    mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                    if mod_id == 0xDE1:
+                        mod = _("Deleted Moderator")
+                    else:
+                        bot = ctx.bot
+                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -570,19 +614,16 @@ class Warnings(commands.Cog):
                 current_point_count -= user_warnings[warn_id]["points"]
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
-        try:
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "unwarned",
-                member,
-                ctx.message.author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            "unwarned",
+            member,
+            ctx.message.author,
+            reason,
+            until=None,
+            channel=None,
+        )
 
         await ctx.tick()

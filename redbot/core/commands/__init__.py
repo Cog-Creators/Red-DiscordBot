@@ -15,6 +15,7 @@ from .commands import (
     GroupMixin as GroupMixin,
     command as command,
     group as group,
+    RedUnhandledAPI as RedUnhandledAPI,
     RESERVED_COMMAND_NAMES as RESERVED_COMMAND_NAMES,
 )
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
@@ -75,6 +76,8 @@ from ._dpy_reimplements import (
     when_mentioned_or as when_mentioned_or,
     when_mentioned as when_mentioned,
     bot_has_any_role as bot_has_any_role,
+    before_invoke as before_invoke,
+    after_invoke as after_invoke,
 )
 
 ### DEP-WARN: Check this *every* discord.py update
@@ -142,6 +145,7 @@ from discord.ext.commands import (
     MaxConcurrency as MaxConcurrency,
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
+    CommandRegistrationError as CommandRegistrationError,
 )
 
 
