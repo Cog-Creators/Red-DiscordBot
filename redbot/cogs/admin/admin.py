@@ -87,6 +87,10 @@ class Admin(commands.Cog):
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     async def handle_migrations(self):
 
         lock = self.config.get_guilds_lock()

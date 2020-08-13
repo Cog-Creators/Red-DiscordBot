@@ -81,14 +81,15 @@ async def test_is_ancestor(mocker, repo, maybe_ancestor_rev, descendant_rev, ret
             descendant_rev=descendant_rev,
         ),
         valid_exit_codes=(0, 1),
+        debug_only=True,
     )
     assert ret is expected
 
 
 @pytest.mark.asyncio
-async def test_is_ancestor_raise(mocker, repo):
-    m = _mock_run(mocker, repo, 128)
-    with pytest.raises(GitException):
+async def test_is_ancestor_object_raise(mocker, repo):
+    m = _mock_run(mocker, repo, 128, b"", b"fatal: Not a valid object name invalid1")
+    with pytest.raises(UnknownRevision):
         await repo.is_ancestor("invalid1", "invalid2")
 
     m.assert_called_once_with(
@@ -99,6 +100,33 @@ async def test_is_ancestor_raise(mocker, repo):
             descendant_rev="invalid2",
         ),
         valid_exit_codes=(0, 1),
+        debug_only=True,
+    )
+
+
+@pytest.mark.asyncio
+async def test_is_ancestor_commit_raise(mocker, repo):
+    m = _mock_run(
+        mocker,
+        repo,
+        128,
+        b"",
+        b"fatal: Not a valid commit name 0123456789abcde0123456789abcde0123456789",
+    )
+    with pytest.raises(UnknownRevision):
+        await repo.is_ancestor(
+            "0123456789abcde0123456789abcde0123456789", "c950fc05a540dd76b944719c2a3302da2e2f3090"
+        )
+
+    m.assert_called_once_with(
+        ProcessFormatter().format(
+            repo.GIT_IS_ANCESTOR,
+            path=repo.folder_path,
+            maybe_ancestor_rev="0123456789abcde0123456789abcde0123456789",
+            descendant_rev="c950fc05a540dd76b944719c2a3302da2e2f3090",
+        ),
+        valid_exit_codes=(0, 1),
+        debug_only=True,
     )
 
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-25 12:13+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -15,152 +15,152 @@ msgstr ""
 "X-Crowdin-File-ID: 35\n"
 "Language: cs_CZ\n"
 
-#: redbot/cogs/filter/filter.py:15
+#: redbot/cogs/filter/filter.py:16
 #, docstring
 msgid "Filter unwanted words and phrases from text channels."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:52
+#: redbot/cogs/filter/filter.py:68
 #, docstring
 msgid "Manage filter settings."
 msgstr "Správa nastavení filtru."
 
-#: redbot/cogs/filter/filter.py:57
+#: redbot/cogs/filter/filter.py:73
 #, docstring
 msgid "Set the nickname for users with a filtered name.\\n\\n        Note that this has no effect if filtering names is disabled\\n        (to toggle, run `[p]filter names`).\\n\\n        The default name used is *John Doe*.\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:66
+#: redbot/cogs/filter/filter.py:82
 msgid "The name to use on filtered names has been set."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:70
+#: redbot/cogs/filter/filter.py:86
 #, docstring
 msgid "Set the filter's autoban conditions.\\n\\n        Users will be banned if they send `<count>` filtered words in\\n        `<timeframe>` seconds.\\n\\n        Set both to zero to disable autoban.\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:79
+#: redbot/cogs/filter/filter.py:95
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:89
+#: redbot/cogs/filter/filter.py:105
 msgid "Autoban disabled."
 msgstr "Autoban vypnut."
 
-#: redbot/cogs/filter/filter.py:94
+#: redbot/cogs/filter/filter.py:110
 msgid "Count and time have been set."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:100
+#: redbot/cogs/filter/filter.py:116
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:108
+#: redbot/cogs/filter/filter.py:124
 #, docstring
 msgid "Send a list of this servers filtered words."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:113
+#: redbot/cogs/filter/filter.py:129
 msgid "There is no current words setup to be filtered in this server."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:116
+#: redbot/cogs/filter/filter.py:132
 msgid "Filtered in this server:"
 msgstr "Filtrováno na tomto serveru:"
 
-#: redbot/cogs/filter/filter.py:121 redbot/cogs/filter/filter.py:146
+#: redbot/cogs/filter/filter.py:137 redbot/cogs/filter/filter.py:162
 msgid "I can't send direct messages to you."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:125
+#: redbot/cogs/filter/filter.py:141
 #, docstring
 msgid "Add or remove words from channel filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:133
+#: redbot/cogs/filter/filter.py:149
 #, docstring
 msgid "Send the list of the channel's filtered words."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:138
+#: redbot/cogs/filter/filter.py:154
 msgid "There is no current words setup to be filtered in this channel."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:141
+#: redbot/cogs/filter/filter.py:157
 msgid "Filtered in this channel:"
 msgstr "Filtrováno v tomto kanále:"
 
-#: redbot/cogs/filter/filter.py:150
+#: redbot/cogs/filter/filter.py:166
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter channel add word1 word2 word3`\\n        - `[p]filter channel add \\\"This is a sentence\\\"`\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:162
+#: redbot/cogs/filter/filter.py:178
 msgid "Words added to filter."
 msgstr "Slova přidána do filtru."
 
-#: redbot/cogs/filter/filter.py:164
+#: redbot/cogs/filter/filter.py:180
 msgid "Words already in the filter."
 msgstr "Slova jsou již ve filtru."
 
-#: redbot/cogs/filter/filter.py:168
+#: redbot/cogs/filter/filter.py:184
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter channel remove word1 word2 word3`\\n        - `[p]filter channel remove \\\"This is a sentence\\\"`\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:179
+#: redbot/cogs/filter/filter.py:195
 msgid "Words removed from filter."
 msgstr "Slova odebrána z filtru."
 
-#: redbot/cogs/filter/filter.py:182 redbot/cogs/filter/filter.py:218
+#: redbot/cogs/filter/filter.py:198 redbot/cogs/filter/filter.py:234
 msgid "Those words weren't in the filter."
 msgstr "Tato slova nebyla ve filtru."
 
-#: redbot/cogs/filter/filter.py:186
+#: redbot/cogs/filter/filter.py:202
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter add word1 word2 word3`\\n        - `[p]filter add \\\"This is a sentence\\\"`\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:198
+#: redbot/cogs/filter/filter.py:214
 msgid "Words successfully added to filter."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:200
+#: redbot/cogs/filter/filter.py:216
 msgid "Those words were already in the filter."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:204
+#: redbot/cogs/filter/filter.py:220
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter remove word1 word2 word3`\\n        - `[p]filter remove \\\"This is a sentence\\\"`\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:216
+#: redbot/cogs/filter/filter.py:232
 msgid "Words successfully removed from filter."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:222
+#: redbot/cogs/filter/filter.py:238
 #, docstring
 msgid "Toggle name and nickname filtering.\\n\\n        This is disabled by default.\\n        "
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:232
+#: redbot/cogs/filter/filter.py:248
 msgid "Names and nicknames will no longer be filtered."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:234
+#: redbot/cogs/filter/filter.py:250
 msgid "Names and nicknames will now be filtered."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:352
+#: redbot/cogs/filter/filter.py:368
 msgid "Autoban (too many filtered messages.)"
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:436
 msgid "Filtered nickname"
 msgstr "Filtrovaná přezdívka"
 
-#: redbot/cogs/filter/filter.py:411
+#: redbot/cogs/filter/filter.py:436
 msgid "Filtered name"
 msgstr "Filtrovaný název"
 

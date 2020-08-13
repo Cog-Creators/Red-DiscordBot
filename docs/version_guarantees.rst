@@ -20,6 +20,11 @@ which is not private (even if not documented) should not break without notice.
 Anything in the ``redbot.cogs`` and ``redbot.vendored`` modules or any of their submodules is specifically
 excluded from being guaranteed.
 
+Method names and names of attributes of classes, functions, extensions, and modules
+provided by or provided to the bot should not begin with 
+``red_`` or be of the form ``__red_*__`` except as documented.
+This allows us to add certain optional features non-breakingly without a name conflict.
+
 Any RPC method exposed by Red may break without notice.
 
 If you would like something in here to be guaranteed,

@@ -5,6 +5,7 @@ import aiohttp
 
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core import checks, Config, commands
+from redbot.core.commands import UserInputOptional
 
 _ = Translator("Image", __file__)
 
@@ -26,6 +27,10 @@ class Image(commands.Cog):
     def cog_unload(self):
         self.session.detach()
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     async def initialize(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
         imgur_token = await self.config.imgur_client_id()
@@ -43,7 +48,7 @@ class Image(commands.Cog):
         pass
 
     @_imgur.command(name="search")
-    async def imgur_search(self, ctx, count: Optional[int] = 1, *, term: str):
+    async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
         Use `count` to choose how many images should be returned.
