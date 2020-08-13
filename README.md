@@ -118,10 +118,9 @@ building your own cogs!
 Join us on our [Official Discord Server](https://discord.gg/red)!
 
 # License
+Copyright (C) 2017-2020 Cog-Creators
 
 Copyright (C) 2015-2017 Twentysix
-
-Copyright (C) 2017-2020 Cog-Creators
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the [GNU General Public License](COPYING) as published by the Free Software Foundation, version 3.
@@ -141,6 +140,7 @@ for the Red Discord Bot Project.
 
 This project vendors the [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) and distributed under the [MIT License](LICENSES/MIT.txt).
 
-This product bundles methods from https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py, available under the [MIT license](LICENSES/MIT.txt).
+This product bundles methods from <https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py>, available under the [MIT license](LICENSES/MIT.txt).
 
-See the [dep5 file](.reuse/dep5) for more information on licensing.
+See the [dep5 file](.reuse/dep5) and/or individual files for more licensing
+information.
