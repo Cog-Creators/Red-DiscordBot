@@ -794,6 +794,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         # we skip prepare in some cases to avoid some things
         # We still always want this part of the behavior though
         ctx.command = self
+        ctx.subcommand_passed = None
         # Our re-ordered behavior below.
         view = ctx.view
         previous = view.index
@@ -809,7 +810,9 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
             if self.autohelp and not self.invoke_without_command:
                 if not await self.can_run(ctx, change_permission_state=True):
                     raise CheckFailure()
-                await ctx.send_help()
+                # This ordering prevents sending help before checking `before_invoke` hooks
+                await super().invoke(ctx)
+                return await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
             # will skip the the invokation of *this* command. However, because of

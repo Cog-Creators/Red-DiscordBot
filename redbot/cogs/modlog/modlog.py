@@ -1,3 +1,4 @@
+from datetime import timezone
 from typing import Optional, Union
 
 import discord
@@ -181,7 +182,7 @@ class ModLog(commands.Cog):
         to_modify = {"reason": reason}
         if case_obj.moderator != author:
             to_modify["amended_by"] = author
-        to_modify["modified_at"] = ctx.message.created_at.timestamp()
+        to_modify["modified_at"] = ctx.message.created_at.replace(tzinfo=timezone.utc).timestamp()
         await case_obj.edit(to_modify)
         await ctx.send(
             _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)

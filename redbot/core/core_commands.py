@@ -27,7 +27,6 @@ from redbot.core.data_manager import storage_type
 from . import (
     __version__,
     version_info as red_version_info,
-    VersionInfo,
     checks,
     commands,
     errors,
@@ -520,14 +519,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(cls=commands.commands._AlwaysAvailableGroup)
     async def mydata(self, ctx: commands.Context):
-        """ Commands which interact with the data [botname] has about you """
+        """ Commands which interact with the data [botname] has about you. """
 
     # 1/10 minutes. It's a static response, but the inability to lock
     # will annoy people if it's spammable
     @commands.cooldown(1, 600, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="whatdata")
     async def mydata_whatdata(self, ctx: commands.Context):
-        """ Find out what type of data [botname] stores and why """
+        """ Find out what type of data [botname] stores and why. """
 
         ver = "latest" if red_version_info.dev_release else "stable"
         link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
@@ -556,7 +555,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # Can't check this as a command check, and want to prompt DMs as an option.
         if not ctx.channel.permissions_for(ctx.me).attach_files:
             ctx.command.reset_cooldown(ctx)
-            return await ctx.send(_("I need to be able to attach files (try in DMs?)"))
+            return await ctx.send(_("I need to be able to attach files (try in DMs?)."))
 
         statements = {
             ext_name: getattr(ext, "__red_end_user_data_statement__", None)
@@ -604,7 +603,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         fp = io.BytesIO(html.encode())
 
         await ctx.send(
-            _("Here's a generated page with the statements provided by 3rd-party extensions"),
+            _("Here's a generated page with the statements provided by 3rd-party extensions."),
             file=discord.File(fp, filename="3rd-party.html"),
         )
 
@@ -648,7 +647,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             # lol, no, we're not letting users schedule deletions every day to thrash the bot.
             ctx.command.reset_cooldown(ctx)  # We will however not let that lock them out either.
             return await ctx.send(
-                _("This command ({command}) does not support non-interactive usage").format(
+                _("This command ({command}) does not support non-interactive usage.").format(
                     command=ctx.command.qualified_name
                 )
             )
@@ -665,7 +664,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ):
             ctx.command.reset_cooldown(ctx)
             return
-        await ctx.send(_("This may take some time"))
+        await ctx.send(_("This may take some time."))
 
         if await ctx.bot._config.datarequests.user_requests_are_strict():
             requester = "user_strict"
@@ -682,7 +681,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "I tried to delete all non-operational data about you "
                     "(that I know how to delete) "
                     "{mention}, however the following modules errored: {modules}. "
-                    "Additionally, the following cogs errored: {cogs}\n"
+                    "Additionally, the following cogs errored: {cogs}.\n"
                     "Please contact the owner of this bot to address this.\n"
                     "Note: Outside of these failures, data should have been deleted."
                 ).format(
@@ -721,7 +720,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -802,7 +801,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @mydata_owner_management.command(name="processdiscordrequest")
     async def mydata_discord_deletion_request(self, ctx, user_id: int):
         """
-        Handle a deletion request from discord.
+        Handle a deletion request from Discord.
         """
 
         if not await self.get_serious_confirmation(
@@ -865,7 +864,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -943,7 +942,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -1003,13 +1002,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(modules=humanize_list(results.failed_modules))
             )
         else:
-            await ctx.send(
-                _("I've deleted all data about that user " "that I know how to delete.")
-            )
+            await ctx.send(_("I've deleted all data about that user that I know how to delete."))
 
         if results.unhandled:
             await ctx.send(
-                _("{mention} The following cogs did not handle deletion:\n{cogs}").format(
+                _("{mention} The following cogs did not handle deletion:\n{cogs}.").format(
                     mention=ctx.author.mention, cogs=humanize_list(results.unhandled)
                 )
             )
@@ -2079,6 +2076,51 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
         pass
+
+    @helpset.command(name="showsettings")
+    async def helpset_showsettings(self, ctx: commands.Context):
+        """ Show the current help settings """
+
+        help_settings = await commands.help.HelpSettings.from_context(ctx)
+
+        if type(ctx.bot._help_formatter) is commands.help.RedHelpFormatter:
+            message = help_settings.pretty
+        else:
+            message = _(
+                "Warning: The default formatter is not in use, these settings may not apply"
+            )
+            message += f"\n\n{help_settings.pretty}"
+
+        for page in pagify(message):
+            await ctx.send(page)
+
+    @helpset.command(name="resetformatter")
+    async def helpset_resetformatter(self, ctx: commands.Context):
+        """ This resets [botname]'s help formatter to the default formatter """
+
+        ctx.bot.reset_help_formatter()
+        await ctx.send(
+            _(
+                "The help formatter has been reset. "
+                "This will not prevent cogs from modifying help, "
+                "you may need to remove a cog if this has been an issue."
+            )
+        )
+
+    @helpset.command(name="resetsettings")
+    async def helpset_resetsettings(self, ctx: commands.Context):
+        """
+        This resets [botname]'s help settings to their defaults.
+
+        This may not have an impact when using custom formatters from 3rd party cogs
+        """
+        await ctx.bot._config.help.clear()
+        await ctx.send(
+            _(
+                "The help settings have been reset to their defaults. "
+                "This may not have an impact when using 3rd party help formatters."
+            )
+        )
 
     @helpset.command(name="usemenus")
     async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
@@ -3306,7 +3348,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ctx: commands.Context,
         channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
     ):
-        """Remove a channel or category from ignore the list.
+        """Remove a channel or category from the ignore list.
 
         Defaults to the current channel.
         """
@@ -3359,7 +3401,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         aliases=["licenceinfo"],
         i18n=_,
     )
-    async def license_info_command(ctx):
+    async def license_info_command(self, ctx):
         """
         Get info about Red's licenses.
         """

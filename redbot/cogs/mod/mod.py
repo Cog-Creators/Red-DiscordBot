@@ -12,7 +12,6 @@ from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .mutes import MuteMixin
@@ -50,7 +49,7 @@ class Mod(
     default_global_settings = {"version": ""}
 
     default_guild_settings = {
-        "ban_mention_spam": False,
+        "mention_spam": {"ban": None, "kick": None, "warn": None},
         "delete_repeats": -1,
         "ignored": False,
         "respect_hierarchy": True,
@@ -131,7 +130,7 @@ class Mod(
                     val = 3
                 else:
                     val = -1
-                await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
+                await self.config.guild_from_id(guild_id).delete_repeats.set(val)
             await self.config.version.set("1.0.0")  # set version of last update
         if await self.config.version() < "1.1.0":
             message_sent = False
@@ -166,6 +165,16 @@ class Mod(
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
+        if await self.config.version() < "1.3.0":
+            guild_dict = await self.config.all_guilds()
+            async for guild_id in AsyncIter(guild_dict.keys(), steps=25):
+                async with self.config.guild_from_id(guild_id).all() as guild_data:
+                    current_state = guild_data.pop("ban_mention_spam", False)
+                    if current_state is not False:
+                        if "mention_spam" not in guild_data:
+                            guild_data["mention_spam"] = {}
+                        guild_data["mention_spam"]["ban"] = current_state
+            await self.config.version.set("1.3.0")
 
     @commands.command()
     @commands.is_owner()
