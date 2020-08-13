@@ -119,7 +119,9 @@ Join us on our [Official Discord Server](https://discord.gg/red)!
 
 # License
 
-Copyright (C) 2015-2017 Twentysix, 2017-2020 Cog-Creators
+Copyright (C) 2015-2017 Twentysix
+
+Copyright (C) 2017-2020 Cog-Creators
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the [GNU General Public License](COPYING) as published by the Free Software Foundation, version 3.
