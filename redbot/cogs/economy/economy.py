@@ -3,7 +3,7 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
-from typing import cast, Iterable, Union
+from typing import cast, Iterable, Union, Literal
 
 import discord
 
@@ -11,6 +11,7 @@ from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
@@ -21,6 +22,7 @@ T_ = Translator("Economy", __file__)
 logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+VARIATION_SELECTOR = "\N{VARIATION SELECTOR-16}"
 MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
@@ -33,8 +35,8 @@ class SMReel(Enum):
     sunflower = "\N{SUNFLOWER}"
     six = "\N{DIGIT SIX}" + NUM_ENC
     mushroom = "\N{MUSHROOM}"
-    heart = "\N{HEAVY BLACK HEART}"
-    snowflake = "\N{SNOWFLAKE}"
+    heart = "\N{HEAVY BLACK HEART}" + VARIATION_SELECTOR
+    snowflake = "\N{SNOWFLAKE}" + VARIATION_SELECTOR
 
 
 _ = lambda s: s
@@ -136,7 +138,6 @@ class Economy(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_global(**self.default_global_settings)
@@ -144,6 +145,23 @@ class Economy(commands.Cog):
         self.config.register_user(**self.default_user_settings)
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self.config.user_from_id(user_id).clear()
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     @guild_only_check()
     @commands.group(name="bank")

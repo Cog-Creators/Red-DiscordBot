@@ -75,8 +75,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Now playing."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭", "\N{CROSS MARK}")
-        emoji = {"prev": "⏮", "stop": "⏹", "pause": "⏯", "next": "⏭", "close": "\N{CROSS MARK}"}
+        emoji = {
+            "prev": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            "stop": "\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}",
+            "pause": "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            "next": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            "close": "\N{CROSS MARK}",
+        }
+        expected = tuple(emoji.values())
         player = lavalink.get_player(ctx.guild.id)
         if player.current:
             arrow = await self.draw_time(ctx)
@@ -138,7 +144,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not player.queue and not autoplay:
-            expected = ("⏹", "⏯", "\N{CROSS MARK}")
+            expected = (emoji["stop"], emoji["pause"], emoji["close"])
         task: Optional[asyncio.Task]
         if player.current:
             task = start_adding_reactions(message, expected[:5])

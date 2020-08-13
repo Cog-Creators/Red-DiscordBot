@@ -6,7 +6,6 @@ This module contains useful functions and classes for command argument conversio
 Some of the converters within are included provisionaly and are marked as such.
 """
 import functools
-import os
 import re
 import warnings
 from datetime import timedelta
@@ -22,6 +21,7 @@ from typing import (
     TypeVar,
     Literal as Literal,
     Any,
+    Union as UserInputOptional,
 )
 
 import discord
@@ -387,9 +387,6 @@ if not TYPE_CHECKING:
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
 
-        .. warning::
-            This converter class is still provisional.
-
         .. seealso::
             The `ignore_optional_for_conversion` option of commands.
         """
@@ -400,34 +397,18 @@ if not TYPE_CHECKING:
             return key
 
 
-_T_OPT = TypeVar("_T_OPT", bound=Type)
+_T = TypeVar("_T")
 
-if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
-
-    class UserInputOptional(Generic[_T_OPT]):
-        """
-        This can be used when user input should be converted as discord.py
-        treats `typing.Optional`, but the type should not be equivalent to
-        ``typing.Union[DesiredType, None]`` for type checking.
-
-
-        .. warning::
-            This converter class is still provisional.
-
-            This class may not play well with mypy yet
-            and may still require you guard this in a
-            type checking conditional import vs the desired types
-
-            We're aware and looking into improving this.
-        """
-
-        def __class_getitem__(cls, key: _T_OPT) -> _T_OPT:
-            if isinstance(key, tuple):
-                raise TypeError("Must only provide a single type to Optional")
-            return key
-
-
-else:
+if not TYPE_CHECKING:
+    #: This can be used when user input should be converted as discord.py
+    #: treats `typing.Optional`, but the type should not be equivalent to
+    #: ``typing.Union[DesiredType, None]`` for type checking.
+    #:
+    #: Note: In type checking context, this type hint can be passed
+    #: multiple types, but such usage is not supported and will fail at runtime
+    #:
+    #: .. warning::
+    #:    This converter class is still provisional.
     UserInputOptional = Optional
 
 

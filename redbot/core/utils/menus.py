@@ -223,4 +223,8 @@ def start_adding_reactions(
     return loop.create_task(task())
 
 
-DEFAULT_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page}
+DEFAULT_CONTROLS = {
+    "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
+    "\N{CROSS MARK}": close_menu,
+    "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
+}

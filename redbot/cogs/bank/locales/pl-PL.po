@@ -32,11 +32,11 @@ msgstr ""
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"
-msgstr ""
+msgstr "Globalny"
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Server"
-msgstr ""
+msgstr "Serwer"
 
 #: redbot/cogs/bank/bank.py:67
 msgid "Bank settings:\\n\\nBank name: {bank_name}\\nBank scope: {bank_scope}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}\\n"

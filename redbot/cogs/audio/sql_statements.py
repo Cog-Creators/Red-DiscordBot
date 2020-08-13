@@ -10,6 +10,8 @@ __all__ = [
     "PRAGMA_SET_read_uncommitted",
     "PRAGMA_FETCH_user_version",
     "PRAGMA_SET_user_version",
+    # Data Deletion statement
+    "HANDLE_DISCORD_DATA_DELETION_QUERY",
     # Playlist table statements
     "PLAYLIST_CREATE_TABLE",
     "PLAYLIST_DELETE",
@@ -80,6 +82,33 @@ PRAGMA_SET_user_version: Final[
     str
 ] = """
 pragma user_version=3;
+"""
+
+# Data Deletion
+# This is intentionally 2 seperate transactions due to concerns
+# Draper had. This should prevent it from being a large issue,
+# as this is no different than triggering a bulk deletion now.
+HANDLE_DISCORD_DATA_DELETION_QUERY: Final[
+    str
+] = """
+BEGIN TRANSACTION;
+
+UPDATE playlists
+SET deleted = true
+WHERE scope_id = :user_id ;
+
+UPDATE playlists
+SET author_id = 0xde1
+WHERE author_id = :user_id ;
+
+COMMIT TRANSACTION;
+
+BEGIN TRANSACTION;
+
+DELETE FROM PLAYLISTS
+WHERE deleted=true;
+
+COMMIT TRANSACTION;
 """
 
 # Playlist table statements

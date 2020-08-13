@@ -22,7 +22,7 @@ _ = T_ = Translator("General", __file__)
 class RPS(Enum):
     rock = "\N{MOYAI}"
     paper = "\N{PAGE FACING UP}"
-    scissors = "\N{BLACK SCISSORS}"
+    scissors = "\N{BLACK SCISSORS}\N{VARIATION SELECTOR-16}"
 
 
 class RPSParser:
@@ -74,6 +74,10 @@ class General(commands.Cog):
     def __init__(self):
         super().__init__()
         self.stopwatches = {}
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
 
     @commands.command()
     async def choose(self, ctx, *choices):
@@ -310,7 +314,9 @@ class General(commands.Cog):
                 "\N{LARGE GREEN CIRCLE}": lambda x: x.status is discord.Status.online,
                 "\N{LARGE ORANGE CIRCLE}": lambda x: x.status is discord.Status.idle,
                 "\N{LARGE RED CIRCLE}": lambda x: x.status is discord.Status.do_not_disturb,
-                "\N{MEDIUM WHITE CIRCLE}": lambda x: x.status is discord.Status.offline,
+                "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}": lambda x: (
+                    x.status is discord.Status.offline
+                ),
                 "\N{LARGE PURPLE CIRCLE}": lambda x: any(
                     a.type is discord.ActivityType.streaming for a in x.activities
                 ),
@@ -383,7 +389,9 @@ class General(commands.Cog):
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
             }
             guild_features_list = [
-                f"✅ {name}" for feature, name in features.items() if feature in guild.features
+                f"\N{WHITE HEAVY CHECK MARK} {name}"
+                for feature, name in features.items()
+                if feature in guild.features
             ]
 
             joined_on = _(
