@@ -741,7 +741,11 @@ class Streams(commands.Cog):
                                     )
                                 )
 
-                        m = await channel.send(content, embed=embed)
+                        m = await channel.send(
+                            content,
+                            embed=embed,
+                            allowed_mentions=discord.AllowedMentions(roles=True),
+                        )
                         stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:
