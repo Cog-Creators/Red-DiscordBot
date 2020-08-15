@@ -484,6 +484,7 @@ class Economy(commands.Cog):
         guild = ctx.guild
         author = ctx.author
         max_bal = await bank.get_max_balance(ctx.guild)
+        embed_requested = await ctx.embed_requested()
         if top < 1:
             top = 10
 
@@ -496,17 +497,25 @@ class Economy(commands.Cog):
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
 
-        highscores = []
-        embed = base_embed.copy()
-        embed.set_footer(
-            text=_("Page {page_num} of {page_len}. Use {left} and {right} to navigate.").format(
-                page_num=len(highscores) + 1,
-                page_len=ceil(len(bank_sorted) / 10),
-                left=list(DEFAULT_CONTROLS)[0],
-                right=list(DEFAULT_CONTROLS)[2],
-            )
+        try:
+            bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
+            bal_len_max = len(humanize_number(max_bal))
+            if bal_len > bal_len_max:
+                bal_len = bal_len_max
+            # first user is the largest we'll see
+        except IndexError:
+            return await ctx.send(_("There are no accounts in the bank."))
+        pound_len = len(str(len(bank_sorted)))
+        header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
+            pound="#",
+            name=_("Name"),
+            score=_("Score"),
+            bal_len=bal_len + 6,
+            pound_len=pound_len + 3,
         )
+        highscores = []
         pos = 1
+        temp_msg = header
         for acc in bank_sorted:
             try:
                 name = guild.get_member(acc[0]).display_name
@@ -522,32 +531,61 @@ class Economy(commands.Cog):
                 await bank.set_balance(MOCK_MEMBER(acc[0], guild), balance)
             balance = humanize_number(balance)
             if acc[0] != author.id:
-                embed.add_field(
-                    name=f"{humanize_number(pos)}. {name}", value=balance, inline=False
+                temp_msg += (
+                    f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
+                    f"{balance: <{bal_len + 5}} {name}\n"
                 )
+
             else:
-                embed.add_field(
-                    name=f"{humanize_number(pos)}. <<{author.display_name}>>",
-                    value=balance,
-                    inline=False,
+                temp_msg += (
+                    f"{f'{humanize_number(pos)}.': <{pound_len+2}} "
+                    f"{balance: <{bal_len + 5}} "
+                    f"<<{author.display_name}>>\n"
                 )
             if pos % 10 == 0:
-                highscores.append(embed)
+                if embed_requested:
+                    embed = base_embed.copy()
+                    embed.description = box(temp_msg, lang="md")
+                    embed.set_footer(
+                        text=_(
+                            "You are {author_pos}/{len_board}. Page {page_num}/{page_len}."
+                            " Use {left} and {right} to navigate."
+                        ).format(
+                            author_pos=bank.get_leaderboard_position(author),
+                            len_board=len(bank_sorted),
+                            page_num=len(highscores) + 1,
+                            page_len=ceil(len(bank_sorted) / 10),
+                            left=list(DEFAULT_CONTROLS)[0],
+                            right=list(DEFAULT_CONTROLS)[2],
+                        )
+                    )
+                    highscores.append(embed)
+                else:
+                    highscores.append(box(temp_msg, lang="md"))
+                temp_msg = header
+            pos += 1
+
+        if temp_msg != header:
+            if embed_requested:
                 embed = base_embed.copy()
+                embed.description = box(temp_msg, lang="md")
                 embed.set_footer(
                     text=_(
-                        "Page {page_num} of {page_len}. Use {left} and {right} to navigate."
+                        "You are {author_pos}/{len_board}."
+                        " Page {page_num}/{page_len}."
+                        " Use {left} and {right} to navigate."
                     ).format(
+                        author_pos=await bank.get_leaderboard_position(author),
+                        len_board=len(bank_sorted),
                         page_num=len(highscores) + 1,
                         page_len=ceil(len(bank_sorted) / 10),
                         left=list(DEFAULT_CONTROLS)[0],
                         right=list(DEFAULT_CONTROLS)[2],
                     )
                 )
-            pos += 1
-
-        if embed.to_dict() != base_embed.to_dict():
-            highscores.append(embed)
+                highscores.append(embed)
+            else:
+                highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
             await menu(
