@@ -747,6 +747,7 @@ class Streams(commands.Cog):
                             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
                         )
                         stream._messages_cache.append(m)
+                        guild = channel.guild
                         can_mention_everyone = guild.me.guild_permissions.mention_everyone
                         if can_mention_everyone:
                             await self.save_streams()
