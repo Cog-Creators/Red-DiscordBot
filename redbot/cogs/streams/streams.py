@@ -765,10 +765,6 @@ class Streams(commands.Cog):
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
         can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
-        if can_mention_everyone:
-            for role in guild.roles:
-                mentions.append(role.mention)
-                return
         for role in guild.roles:
             if await self.config.role(role).mention():
                 if not can_mention_everyone and can_manage_roles and not role.mentionable:
