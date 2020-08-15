@@ -713,8 +713,8 @@ class Streams(commands.Cog):
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, channel, edited_roles = await self._get_mention_str(
-                            channel.guild
+                        mention_str, edited_roles = await self._get_mention_str(
+                            channel.guild, channel
                         )
 
                         if mention_str:
