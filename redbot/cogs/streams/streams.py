@@ -773,7 +773,7 @@ class Streams(commands.Cog):
         if can_mention_everyone:
             for role in guild.roles:
                 mentions.append(role.mention)
-            return
+                return
         for role in guild.roles:
             if await self.config.role(role).mention():
                 if can_manage_roles and not role.mentionable:
