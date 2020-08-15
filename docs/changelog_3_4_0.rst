@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+| :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. Red 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
@@ -56,6 +56,7 @@ ModLog
 Streams
 *******
 
+- Stream alerts will no longer make roles temporarily mentionable if bot has "Mention @everyone, @here, and All Roles" permission in the channel (:issue:`4182`)
 - Mixer service has been closed and for that reason we've removed support for it from the cog (:issue:`4072`)
 - Hitbox commands have been renamed to smashcast (:issue:`4161`)
 - Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
