@@ -712,7 +712,9 @@ class Streams(commands.Cog):
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(
+                            channel.guild, channel
+                        )
 
                         if mention_str:
                             alert_msg = await self.config.guild(
@@ -749,14 +751,20 @@ class Streams(commands.Cog):
                                     )
                                 )
 
-                        m = await channel.send(content, embed=embed)
+                        m = await channel.send(
+                            content,
+                            embed=embed,
+                            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+                        )
                         stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+    async def _get_mention_str(
+        self, guild: discord.Guild, channel: discord.TextChannel
+    ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
@@ -768,9 +776,10 @@ class Streams(commands.Cog):
         if await settings.mention_here():
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
+        can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
         for role in guild.roles:
             if await self.config.role(role).mention():
-                if can_manage_roles and not role.mentionable:
+                if not can_mention_everyone and can_manage_roles and not role.mentionable:
                     try:
                         await role.edit(mentionable=True)
                     except discord.Forbidden:
