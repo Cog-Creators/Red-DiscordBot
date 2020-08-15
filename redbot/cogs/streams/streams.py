@@ -752,7 +752,9 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+    async def _get_mention_str(
+        self, guild: discord.Guild, channel: discord.TextChannel
+    ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
@@ -764,8 +766,7 @@ class Streams(commands.Cog):
         if await settings.mention_here():
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
-        for channel in guild.channels:
-            can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
+        can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
         for role in guild.roles:
             if await self.config.role(role).mention():
                 if not can_mention_everyone and can_manage_roles and not role.mentionable:
