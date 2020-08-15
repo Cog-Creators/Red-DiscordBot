@@ -3,6 +3,7 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
+from math import ceil
 from typing import cast, Iterable, Union, Literal
 
 import discord
@@ -485,16 +486,26 @@ class Economy(commands.Cog):
         max_bal = await bank.get_max_balance(ctx.guild)
         if top < 1:
             top = 10
+
+        base_embed = discord.Embed(title=_("Economy Leaderboard"))
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-
-        base_embed = discord.Embed(title="Bank Leaderboard")
+            base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
 
         highscores = []
         embed = base_embed.copy()
+        embed.set_footer(
+            text=_("Page {page_num} of {page_len}. Use {left} and {right} to navigate.").format(
+                page_num=len(highscores) + 1,
+                page_len=ceil(len(bank_sorted) / 10),
+                left=list(DEFAULT_CONTROLS)[0],
+                right=list(DEFAULT_CONTROLS)[2],
+            )
+        )
         pos = 1
         for acc in bank_sorted:
             try:
@@ -523,6 +534,16 @@ class Economy(commands.Cog):
             if pos % 10 == 0:
                 highscores.append(embed)
                 embed = base_embed.copy()
+                embed.set_footer(
+                    text=_(
+                        "Page {page_num} of {page_len}. Use {left} and {right} to navigate."
+                    ).format(
+                        page_num=len(highscores) + 1,
+                        page_len=ceil(len(bank_sorted) / 10),
+                        left=list(DEFAULT_CONTROLS)[0],
+                        right=list(DEFAULT_CONTROLS)[2],
+                    )
+                )
             pos += 1
 
         if embed.to_dict() != base_embed.to_dict():
