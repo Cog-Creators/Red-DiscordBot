@@ -116,6 +116,7 @@ Documentation changes
 ---------------------
 
 - Removed install instructions for Debian Stretch (:issue:`4099`)
+- Added admin user guide (:issue:`3081`)
 - Added bank user guide (:issue:`4149`)
 
 
