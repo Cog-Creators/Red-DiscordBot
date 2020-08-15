@@ -43,6 +43,7 @@ Mod
 
 - ``[p]tempban`` now respects default days setting (``[p]modset defaultdays``) (:issue:`3993`)
 - ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
+- Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
 
 Streams
 *******
