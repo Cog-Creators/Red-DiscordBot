@@ -503,7 +503,7 @@ class Streams(commands.Cog):
         Use `{mention}` in the message to insert the selected mentions.
         Use `{stream}` in the message to insert the channel or user name.
 
-        For example: `[p]streamset message mention "{mention}, {stream} is live!"`
+        For example: `[p]streamset message mention {mention}, {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
@@ -519,7 +519,7 @@ class Streams(commands.Cog):
 
         Use `{stream}` in the message to insert the channel or user name.
 
-        For example: `[p]streamset message nomention "{stream} is live!"`
+        For example: `[p]streamset message nomention {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
