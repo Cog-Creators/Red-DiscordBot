@@ -771,7 +771,7 @@ class Streams(commands.Cog):
                 return
         for role in guild.roles:
             if await self.config.role(role).mention():
-                if can_manage_roles and not role.mentionable:
+                if not can_mention_everyone and can_manage_roles and not role.mentionable:
                     try:
                         await role.edit(mentionable=True)
                     except discord.Forbidden:
