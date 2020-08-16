@@ -333,7 +333,8 @@ class Permissions(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to DM you."))
         else:
-            await ctx.send(_("I've just sent the file to you via DM."))
+            if not isinstance(ctx.channel, discord.channel.DMChannel):
+                await ctx.send(_("I've just sent the file to you via DM."))
         finally:
             file.close()
 
