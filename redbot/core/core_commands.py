@@ -2505,18 +2505,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             await ctx.send(box(info))
 
-    @commands.group()
+    @commands.group(aliases=["whitelist"])
     @checks.is_owner()
-    async def whitelist(self, ctx: commands.Context):
+    async def allowlist(self, ctx: commands.Context):
         """
-        Whitelist management commands.
+        Allowlist management commands.
         """
         pass
 
-    @whitelist.command(name="add", usage="<user>...")
-    async def whitelist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    @allowlist.command(name="add", usage="<user>...")
+    async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Adds a user to the whitelist.
+        Adds a user to the allowlist.
         """
         if not users:
             await ctx.send_help()
@@ -2525,30 +2525,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
-        await ctx.send(_("Users added to whitelist."))
+        await ctx.send(_("Users added to allowlist."))
 
-    @whitelist.command(name="list")
-    async def whitelist_list(self, ctx: commands.Context):
+    @allowlist.command(name="list")
+    async def allowlist_list(self, ctx: commands.Context):
         """
-        Lists whitelisted users.
+        Lists users on the allowlist.
         """
         curr_list = await ctx.bot._config.whitelist()
 
         if not curr_list:
-            await ctx.send("Whitelist is empty.")
+            await ctx.send("Allowlist is empty.")
             return
 
-        msg = _("Whitelisted Users:")
+        msg = _("Users on allowlist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @whitelist.command(name="remove", usage="<user>...")
-    async def whitelist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    @allowlist.command(name="remove", usage="<user>...")
+    async def allowlist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Removes user from whitelist.
+        Removes user from the allowlist.
         """
         if not users:
             await ctx.send_help()
@@ -2557,28 +2557,28 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
-        await ctx.send(_("Users have been removed from whitelist."))
+        await ctx.send(_("Users have been removed from the allowlist."))
 
-    @whitelist.command(name="clear")
-    async def whitelist_clear(self, ctx: commands.Context):
+    @allowlist.command(name="clear")
+    async def allowlist_clear(self, ctx: commands.Context):
         """
-        Clears the whitelist.
+        Clears the allowlist.
         """
         await self.bot._whiteblacklist_cache.clear_whitelist()
-        await ctx.send(_("Whitelist has been cleared."))
+        await ctx.send(_("Allowlist has been cleared."))
 
-    @commands.group()
+    @commands.group(aliases=["blacklist", "denylist"])
     @checks.is_owner()
-    async def blacklist(self, ctx: commands.Context):
+    async def blocklist(self, ctx: commands.Context):
         """
-        Blacklist management commands.
+        Blocklist management commands.
         """
         pass
 
-    @blacklist.command(name="add", usage="<user>...")
-    async def blacklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    @blocklist.command(name="add", usage="<user>...")
+    async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Adds a user to the blacklist.
+        Adds a user to the blocklist.
         """
         if not users:
             await ctx.send_help()
@@ -2590,36 +2590,36 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             else:
                 user_obj = user
             if await ctx.bot.is_owner(user_obj):
-                await ctx.send(_("You cannot blacklist an owner!"))
+                await ctx.send(_("You cannot add an owner to the blocklist!"))
                 return
 
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
 
-        await ctx.send(_("User added to blacklist."))
+        await ctx.send(_("User added to blocklist."))
 
-    @blacklist.command(name="list")
-    async def blacklist_list(self, ctx: commands.Context):
+    @blocklist.command(name="list")
+    async def blocklist_list(self, ctx: commands.Context):
         """
-        Lists blacklisted users.
+        Lists users on the blocklist.
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
-            await ctx.send("Blacklist is empty.")
+            await ctx.send("Blocklist is empty.")
             return
 
-        msg = _("Blacklisted Users:")
+        msg = _("Users on blocklist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blacklist.command(name="remove", usage="<user>...")
-    async def blacklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    @blocklist.command(name="remove", usage="<user>...")
+    async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Removes user from blacklist.
+        Removes user from the blocklist.
         """
         if not users:
             await ctx.send_help()
@@ -2628,31 +2628,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
-        await ctx.send(_("Users have been removed from blacklist."))
+        await ctx.send(_("Users have been removed from blocklist."))
 
-    @blacklist.command(name="clear")
-    async def blacklist_clear(self, ctx: commands.Context):
+    @blocklist.command(name="clear")
+    async def blocklist_clear(self, ctx: commands.Context):
         """
-        Clears the blacklist.
+        Clears the blocklist.
         """
         await self.bot._whiteblacklist_cache.clear_blacklist()
-        await ctx.send(_("Blacklist has been cleared."))
+        await ctx.send(_("Blocklist has been cleared."))
 
-    @commands.group()
+    @commands.group(aliases=["localwhitelist"])
     @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
-    async def localwhitelist(self, ctx: commands.Context):
+    async def localallowlist(self, ctx: commands.Context):
         """
-        Whitelist management commands.
+        Server specific allowlist management commands.
         """
         pass
 
-    @localwhitelist.command(name="add", usage="<user_or_role>...")
-    async def localwhitelist_add(
+    @localallowlist.command(name="add", usage="<user_or_role>...")
+    async def localallowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Adds a user or role to the whitelist.
+        Adds a user or role to the server allowlist.
         """
         if not users_or_roles:
             await ctx.send_help()
@@ -2669,22 +2669,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     _(
                         "I cannot allow you to do this, as it would "
                         "remove your ability to run commands, "
-                        "please ensure to add yourself to the whitelist first."
+                        "please ensure to add yourself to the allowlist first."
                     )
                 )
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
-        await ctx.send(_("{names} added to whitelist.").format(names=humanize_list(names)))
+        await ctx.send(_("{names} added to allowlist.").format(names=humanize_list(names)))
 
-    @localwhitelist.command(name="list")
-    async def localwhitelist_list(self, ctx: commands.Context):
+    @localallowlist.command(name="list")
+    async def localallowlist_list(self, ctx: commands.Context):
         """
-        Lists whitelisted users and roles.
+        Lists users and roles on the  server allowlist.
         """
         curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
-            await ctx.send("Local whitelist is empty.")
+            await ctx.send("Server allowlist is empty.")
             return
 
         msg = _("Whitelisted Users and roles:")
@@ -2694,12 +2694,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localwhitelist.command(name="remove", usage="<user_or_role>...")
-    async def localwhitelist_remove(
+    @localallowlist.command(name="remove", usage="<user_or_role>...")
+    async def localallowlist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Removes user or role from whitelist.
+        Removes user or role from the allowlist.
         """
         if not users_or_roles:
             await ctx.send_help()
@@ -2721,32 +2721,32 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} removed from the local whitelist.").format(names=humanize_list(names))
+            _("{names} removed from the server allowlist.").format(names=humanize_list(names))
         )
 
-    @localwhitelist.command(name="clear")
-    async def localwhitelist_clear(self, ctx: commands.Context):
+    @localallowlist.command(name="clear")
+    async def localallowlist_clear(self, ctx: commands.Context):
         """
-        Clears the whitelist.
+        Clears the allowlist.
         """
         await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
-        await ctx.send(_("Local whitelist has been cleared."))
+        await ctx.send(_("Server allowlist has been cleared."))
 
-    @commands.group()
+    @commands.group(aliases=["localblacklist"])
     @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
-    async def localblacklist(self, ctx: commands.Context):
+    async def localblocklist(self, ctx: commands.Context):
         """
-        Blacklist management commands.
+        Server specific blocklist management commands.
         """
         pass
 
-    @localblacklist.command(name="add", usage="<user_or_role>...")
-    async def localblacklist_add(
+    @localblocklist.command(name="add", usage="<user_or_role>...")
+    async def localblocklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Adds a user or role to the blacklist.
+        Adds a user or role to the blocklist.
         """
         if not users_or_roles:
             await ctx.send_help()
@@ -2755,31 +2755,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
-                await ctx.send(_("You cannot blacklist yourself!"))
+                await ctx.send(_("You cannot add yourself to the blocklist!"))
                 return
             if uid.id == ctx.guild.owner_id and not await ctx.bot.is_owner(ctx.author):
-                await ctx.send(_("You cannot blacklist the guild owner!"))
+                await ctx.send(_("You cannot add the guild owner to the blocklist!"))
                 return
             if await ctx.bot.is_owner(uid):
-                await ctx.send(_("You cannot blacklist a bot owner!"))
+                await ctx.send(_("You cannot add a bot owner to the blocklist!"))
                 return
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} added to the local blacklist.").format(names=humanize_list(names))
+            _("{names} added to the server blocklist.").format(names=humanize_list(names))
         )
 
-    @localblacklist.command(name="list")
-    async def localblacklist_list(self, ctx: commands.Context):
+    @localblocklist.command(name="list")
+    async def localblocklist_list(self, ctx: commands.Context):
         """
-        Lists blacklisted users and roles.
+        Lists users and roles on the blocklist.
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
         if not curr_list:
-            await ctx.send("Local blacklist is empty.")
+            await ctx.send("Server blocklist is empty.")
             return
 
         msg = _("Blacklisted Users and Roles:")
@@ -2789,12 +2789,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblacklist.command(name="remove", usage="<user_or_role>...")
-    async def localblacklist_remove(
+    @localblocklist.command(name="remove", usage="<user_or_role>...")
+    async def localblocklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Removes user or role from blacklist.
+        Removes user or role from blocklist.
         """
         if not users_or_roles:
             await ctx.send_help()
@@ -2805,16 +2805,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
         await ctx.send(
-            _("{names} removed from the local blacklist.").format(names=humanize_list(names))
+            _("{names} removed from the server blocklist.").format(names=humanize_list(names))
         )
 
-    @localblacklist.command(name="clear")
-    async def localblacklist_clear(self, ctx: commands.Context):
+    @localblocklist.command(name="clear")
+    async def localblocklist_clear(self, ctx: commands.Context):
         """
-        Clears the blacklist.
+        Clears the server blocklist.
         """
         await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
-        await ctx.send(_("Local blacklist has been cleared."))
+        await ctx.send(_("Server blocklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
