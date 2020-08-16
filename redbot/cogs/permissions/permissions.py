@@ -10,7 +10,6 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
