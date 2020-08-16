@@ -483,6 +483,7 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         author = ctx.author
+        author_pos = await bank.get_leaderboard_position(author)
         max_bal = await bank.get_max_balance(ctx.guild)
         embed_requested = await ctx.embed_requested()
         if top < 1:
@@ -551,7 +552,7 @@ class Economy(commands.Cog):
                             "You are {author_pos}/{len_board}. Page {page_num}/{page_len}."
                             " Use {left} and {right} to navigate."
                         ).format(
-                            author_pos=bank.get_leaderboard_position(author),
+                            author_pos=author_pos,
                             len_board=len(bank_sorted),
                             page_num=len(highscores) + 1,
                             page_len=ceil(len(bank_sorted) / 10),
@@ -575,7 +576,7 @@ class Economy(commands.Cog):
                         " Page {page_num}/{page_len}."
                         " Use {left} and {right} to navigate."
                     ).format(
-                        author_pos=await bank.get_leaderboard_position(author),
+                        author_pos=author_pos,
                         len_board=len(bank_sorted),
                         page_num=len(highscores) + 1,
                         page_len=ceil(len(bank_sorted) / 10),
