@@ -7,10 +7,11 @@ Redbot 3.4.0 (Unreleased)
 | :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`maxbooiii`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
-| 1. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
-| 2. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
-| 3. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
-| 4. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
+| 1. Red 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
+| 2. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
+| 3. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
+| 4. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
+| 5. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
 
 End-user changelog
 ------------------
@@ -24,6 +25,7 @@ Core Bot
     - Guild owners can enable/disable cogs for their guild using ``[p]command disablecog`` and ``[p]command enablecog`` commands
     - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
 
+- Added support for data deletion requests; see `red_core_data_statement` for more information (:issue:`4045`)
 - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
@@ -71,6 +73,7 @@ Developer changelog
 
 | **Important:**
 | Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the changelog entry below.
+| Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entry below for more information.
 
 Breaking changes
 ****************
@@ -95,6 +98,12 @@ Core Bot
 
     - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
+
+- Added data request API (:issue:`4045`)
+
+    - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special module level variable added: ``__red_end_user_data_statement__``
+    - These methods and variables should be added by all cogs according to their documentation; see `guidelines-for-cog-creators` for more information
 
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
