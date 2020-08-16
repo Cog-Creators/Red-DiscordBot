@@ -484,8 +484,9 @@ class Economy(commands.Cog):
         guild = ctx.guild
         author = ctx.author
         author_pos = await bank.get_leaderboard_position(author)
-        max_bal = await bank.get_max_balance(ctx.guild)
         embed_requested = await ctx.embed_requested()
+        max_bal = await bank.get_max_balance(ctx.guild)
+
         if top < 1:
             top = 10
 
