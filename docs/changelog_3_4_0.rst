@@ -38,6 +38,12 @@ Admin
 
 - ``[p]announce`` will now only send announcements to guilds that have explicitly configured text channel to send announcements to using ``[p]announceset channel`` command (:issue:`4088`, :issue:`4089`)
 
+Downloader
+**********
+
+- ``[p]cog info`` command now shows end user data statement made by the cog creator (:issue:`4169`)
+- ``[p]cog update`` command will now notify the user if cog's end user data statement has changed since last update (:issue:`4169`)
+
 .. _important-340-1:
 
 Mod
@@ -74,7 +80,7 @@ Developer changelog
 
 | **Important:**
 | Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the changelog entry below.
-| Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entry below for more information.
+| Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries below for more information.
 
 Breaking changes
 ****************
@@ -100,11 +106,12 @@ Core Bot
     - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
 
-- Added data request API (:issue:`4045`)
+- Added data request API (:issue:`4045`,  :issue:`4169`)
 
     - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `guidelines-for-cog-creators` for more information
+    - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
