@@ -497,14 +497,13 @@ class Streams(commands.Cog):
 
     @message.command(name="mention")
     @commands.guild_only()
-    async def with_mention(self, ctx: commands.Context, message: str = None):
+    async def with_mention(self, ctx: commands.Context, *, message: str = None):
         """Set stream alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
+        Use `{stream}` in the message to insert the channel or user name.
 
-        Use `{stream.name}` in the message to insert the channel or user name.
-
-        For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
+        For example: `[p]streamset message mention {mention}, {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
@@ -515,12 +514,12 @@ class Streams(commands.Cog):
 
     @message.command(name="nomention")
     @commands.guild_only()
-    async def without_mention(self, ctx: commands.Context, message: str = None):
+    async def without_mention(self, ctx: commands.Context, *, message: str = None):
         """Set stream alert message when mentions are disabled.
 
-        Use `{stream.name}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or user name.
 
-        For example: `[p]streamset message nomention "{stream.name} is live!"`
+        For example: `[p]streamset message nomention {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
@@ -713,14 +712,21 @@ class Streams(commands.Cog):
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(
+                            channel.guild, channel
+                        )
 
                         if mention_str:
                             alert_msg = await self.config.guild(
                                 channel.guild
                             ).live_message_mention()
                             if alert_msg:
-                                content = alert_msg.format(mention=mention_str, stream=stream)
+                                content = alert_msg  # Stop bad things from happening here...
+                                content = content.replace(
+                                    "{stream.name}", str(stream.name)
+                                )  # Backwards compatability
+                                content = content.replace("{stream}", str(stream.name))
+                                content = content.replace("{mention}", mention_str)
                             else:
                                 content = _("{mention}, {stream} is live!").format(
                                     mention=mention_str,
@@ -733,7 +739,11 @@ class Streams(commands.Cog):
                                 channel.guild
                             ).live_message_nomention()
                             if alert_msg:
-                                content = alert_msg.format(stream=stream)
+                                content = alert_msg  # Stop bad things from happening here...
+                                content = content.replace(
+                                    "{stream.name}", str(stream.name)
+                                )  # Backwards compatability
+                                content = content.replace("{stream}", str(stream.name))
                             else:
                                 content = _("{stream} is live!").format(
                                     stream=escape(
@@ -741,14 +751,20 @@ class Streams(commands.Cog):
                                     )
                                 )
 
-                        m = await channel.send(content, embed=embed)
+                        m = await channel.send(
+                            content,
+                            embed=embed,
+                            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+                        )
                         stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+    async def _get_mention_str(
+        self, guild: discord.Guild, channel: discord.TextChannel
+    ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
@@ -760,9 +776,10 @@ class Streams(commands.Cog):
         if await settings.mention_here():
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
+        can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
         for role in guild.roles:
             if await self.config.role(role).mention():
-                if can_manage_roles and not role.mentionable:
+                if not can_mention_everyone and can_manage_roles and not role.mentionable:
                     try:
                         await role.edit(mentionable=True)
                     except discord.Forbidden:

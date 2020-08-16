@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-13 12:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "Poskytnuté tokeny nejsou v platném formátu."
 msgid "Unexpected key {key}"
 msgstr "Neočekávaný klíč {key}"
 
-#: redbot/core/commands/converter.py:460
+#: redbot/core/commands/converter.py:441
 msgid "Expected one of: {}"
 msgstr "Očekáváno jedno z: {}"
 

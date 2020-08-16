@@ -92,6 +92,13 @@ voicekick = {
     "case_str": "Voice Kick",
 }
 
+warning = {
+    "name": "warning",
+    "default_setting": True,
+    "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
+    "case_str": "Warning",
+}
+
 all_generics = (
     ban,
     kick,
@@ -108,4 +115,5 @@ all_generics = (
     serverunmute,
     channelunmute,
     voicekick,
+    warning,
 )

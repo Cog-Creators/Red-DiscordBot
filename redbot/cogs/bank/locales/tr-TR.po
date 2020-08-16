@@ -28,7 +28,7 @@ msgstr "Banka ayarları için temel komut."
 #: redbot/cogs/bank/bank.py:52
 #, docstring
 msgid "Show the current bank settings."
-msgstr ""
+msgstr "Bankanın şu anki ayarlarını göster."
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"
@@ -40,7 +40,7 @@ msgstr "Sunucu"
 
 #: redbot/cogs/bank/bank.py:67
 msgid "Bank settings:\\n\\nBank name: {bank_name}\\nBank scope: {bank_scope}\\nCurrency: {currency_name}\\nDefault balance: {default_balance}\\nMaximum allowed balance: {maximum_bal}\\n"
-msgstr ""
+msgstr "Banka ayarları:\\n\\nBanka ismi: {bank_name}\\nBanka durumu: {bank_scope}\\nPara birimi: {currency_name}\\nVarsayılan olarak verilen para: {default_balance}\\nAlınabilcek en fazla para: {maximum_bal}\\n"
 
 #: redbot/cogs/bank/bank.py:83
 #, docstring
@@ -84,7 +84,7 @@ msgstr "Para birimi adı ayarla: {name}"
 #: redbot/cogs/bank/bank.py:122
 #, docstring
 msgid "Set the maximum balance a user can get."
-msgstr ""
+msgstr "Bir kullanıcının alabileceği maksimum bakiyeyi ayarlayın."
 
 #: redbot/cogs/bank/bank.py:128
 msgid "Amount must be greater than zero and less than {max}."
@@ -92,5 +92,5 @@ msgstr ""
 
 #: redbot/cogs/bank/bank.py:133
 msgid "Maximum balance has been set to: {amount}"
-msgstr ""
+msgstr "Maksimum bakiye şu şekilde ayarlandı: {amount}"
 

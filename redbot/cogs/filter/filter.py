@@ -1,5 +1,6 @@
 import discord
 import re
+from datetime import timezone
 from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
@@ -339,10 +340,11 @@ class Filter(commands.Cog):
         filter_time = guild_data["filterban_time"]
         user_count = member_data["filter_count"]
         next_reset_time = member_data["next_reset_time"]
+        created_at = message.created_at.replace(tzinfo=timezone.utc)
 
         if filter_count > 0 and filter_time > 0:
-            if message.created_at.timestamp() >= next_reset_time:
-                next_reset_time = message.created_at.timestamp() + filter_time
+            if created_at.timestamp() >= next_reset_time:
+                next_reset_time = created_at.timestamp() + filter_time
                 async with self.config.member(author).all() as member_data:
                     member_data["next_reset_time"] = next_reset_time
                     if user_count > 0:
@@ -361,10 +363,7 @@ class Filter(commands.Cog):
                 if filter_count > 0 and filter_time > 0:
                     user_count += 1
                     await self.config.member(author).filter_count.set(user_count)
-                    if (
-                        user_count >= filter_count
-                        and message.created_at.timestamp() < next_reset_time
-                    ):
+                    if user_count >= filter_count and created_at.timestamp() < next_reset_time:
                         reason = _("Autoban (too many filtered messages.)")
                         try:
                             await guild.ban(author, reason=reason)
@@ -374,7 +373,7 @@ class Filter(commands.Cog):
                             await modlog.create_case(
                                 self.bot,
                                 guild,
-                                message.created_at,
+                                message.created_at.replace(tzinfo=timezone.utc),
                                 "filterban",
                                 author,
                                 guild.me,

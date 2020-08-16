@@ -25,7 +25,9 @@ class ModSettings(MixinMeta):
         guild = ctx.guild
         data = await self.config.guild(guild).all()
         delete_repeats = data["delete_repeats"]
-        ban_mention_spam = data["ban_mention_spam"]
+        warn_mention_spam = data["mention_spam"]["warn"]
+        kick_mention_spam = data["mention_spam"]["kick"]
+        ban_mention_spam = data["mention_spam"]["ban"]
         respect_hierarchy = data["respect_hierarchy"]
         delete_delay = data["delete_delay"]
         reinvite_on_unban = data["reinvite_on_unban"]
@@ -35,6 +37,16 @@ class ModSettings(MixinMeta):
         msg += _("Delete repeats: {num_repeats}\n").format(
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
             if delete_repeats != -1
+            else _("No")
+        )
+        msg += _("Warn mention spam: {num_mentions}\n").format(
+            num_mentions=_("{num} mentions").format(num=warn_mention_spam)
+            if warn_mention_spam
+            else _("No")
+        )
+        msg += _("Kick mention spam: {num_mentions}\n").format(
+            num_mentions=_("{num} mentions").format(num=kick_mention_spam)
+            if kick_mention_spam
             else _("No")
         )
         msg += _("Ban mention spam: {num_mentions}\n").format(
@@ -87,35 +99,131 @@ class ModSettings(MixinMeta):
                 _("Role hierarchy will be ignored when moderation commands are issued.")
             )
 
-    @modset.command()
+    @modset.group()
     @commands.guild_only()
-    async def banmentionspam(self, ctx: commands.Context, max_mentions: int = 0):
+    async def mentionspam(self, ctx: commands.Context):
+        """
+        Manage the automoderation settings for mentionspam.
+        """
+
+    @mentionspam.command(name="warn")
+    @commands.guild_only()
+    async def mentionspam_warn(self, ctx: commands.Context, max_mentions: int):
+        """
+        Sets the autowarn conditions for mention spam.
+
+        Users will be warned if they send any messages which contain more than
+        `<max_mentions>` mentions.
+
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
+        """
+        mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
+        if not max_mentions:
+            if not mention_spam["warn"]:
+                return await ctx.send(_("Autowarn for mention spam is already disabled."))
+            await self.config.guild(ctx.guild).mention_spam.warn.set(False)
+            return await ctx.send(_("Autowarn for mention spam disabled."))
+
+        if max_mentions < 1:
+            return await ctx.send(_("`<max_mentions>` must be 1 or higher to autowarn."))
+
+        mismatch_message = ""
+
+        if mention_spam["kick"]:
+            if max_mentions >= mention_spam["kick"]:
+                mismatch_message += _("\nAutowarn is equal to or higher than autokick.")
+
+        if mention_spam["ban"]:
+            if max_mentions >= mention_spam["ban"]:
+                mismatch_message += _("\nAutowarn is equal to or higher than autoban.")
+
+        await self.config.guild(ctx.guild).mention_spam.warn.set(max_mentions)
+        await ctx.send(
+            _(
+                "Autowarn for mention spam enabled. "
+                "Anyone mentioning {max_mentions} or more different people "
+                "in a single message will be autowarned.\n{mismatch_message}"
+            ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
+        )
+
+    @mentionspam.command(name="kick")
+    @commands.guild_only()
+    async def mentionspam_kick(self, ctx: commands.Context, max_mentions: int):
+        """
+        Sets the autokick conditions for mention spam.
+
+        Users will be kicked if they send any messages which contain more than
+        `<max_mentions>` mentions.
+
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
+        """
+        mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
+        if not max_mentions:
+            if not mention_spam["kick"]:
+                return await ctx.send(_("Autokick for mention spam is already disabled."))
+            await self.config.guild(ctx.guild).mention_spam.kick.set(False)
+            return await ctx.send(_("Autokick for mention spam disabled."))
+
+        if max_mentions < 1:
+            return await ctx.send(_("`<max_mentions>` must be 1 or higher to autokick."))
+
+        mismatch_message = ""
+
+        if mention_spam["warn"]:
+            if max_mentions <= mention_spam["warn"]:
+                mismatch_message += _("\nAutokick is equal to or lower than autowarn.")
+
+        if mention_spam["ban"]:
+            if max_mentions >= mention_spam["ban"]:
+                mismatch_message += _("\nAutokick is equal to or higher than autoban.")
+
+        await self.config.guild(ctx.guild).mention_spam.kick.set(max_mentions)
+        await ctx.send(
+            _(
+                "Autokick for mention spam enabled. "
+                "Anyone mentioning {max_mentions} or more different people "
+                "in a single message will be autokicked.\n{mismatch_message}"
+            ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
+        )
+
+    @mentionspam.command(name="ban")
+    @commands.guild_only()
+    async def mentionspam_ban(self, ctx: commands.Context, max_mentions: int):
         """Set the autoban conditions for mention spam.
 
         Users will be banned if they send any message which contains more than
         `<max_mentions>` mentions.
 
-        `<max_mentions>` must be at least 5. Set to 0 to disable.
+        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
         """
-        guild = ctx.guild
-        if max_mentions:
-            if max_mentions < 5:
-                max_mentions = 5
-            await self.config.guild(guild).ban_mention_spam.set(max_mentions)
-            await ctx.send(
-                _(
-                    "Autoban for mention spam enabled. "
-                    "Anyone mentioning {max_mentions} or more different people "
-                    "in a single message will be autobanned."
-                ).format(max_mentions=max_mentions)
-            )
-        else:
-            cur_setting = await self.config.guild(guild).ban_mention_spam()
-            if not cur_setting:
-                await ctx.send(_("Autoban for mention spam is already disabled."))
-                return
-            await self.config.guild(guild).ban_mention_spam.set(False)
-            await ctx.send(_("Autoban for mention spam disabled."))
+        mention_spam = await self.config.guild(ctx.guild).mention_spam.all()
+        if not max_mentions:
+            if not mention_spam["ban"]:
+                return await ctx.send(_("Autoban for mention spam is already disabled."))
+            await self.config.guild(ctx.guild).mention_spam.ban.set(False)
+            return await ctx.send(_("Autoban for mention spam disabled."))
+
+        if max_mentions < 1:
+            return await ctx.send(_("`<max_mentions>` must be 1 or higher to autoban."))
+
+        mismatch_message = ""
+
+        if mention_spam["warn"]:
+            if max_mentions <= mention_spam["warn"]:
+                mismatch_message += _("\nAutoban is equal to or lower than autowarn.")
+
+        if mention_spam["kick"]:
+            if max_mentions <= mention_spam["kick"]:
+                mismatch_message += _("\nAutoban is equal to or lower than autokick.")
+
+        await self.config.guild(ctx.guild).mention_spam.ban.set(max_mentions)
+        await ctx.send(
+            _(
+                "Autoban for mention spam enabled. "
+                "Anyone mentioning {max_mentions} or more different people "
+                "in a single message will be autobanned.\n{mismatch_message}"
+            ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
+        )
 
     @modset.command()
     @commands.guild_only()

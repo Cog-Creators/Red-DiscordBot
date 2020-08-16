@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-13 12:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr ""
 msgid "Unexpected key {key}"
 msgstr ""
 
-#: redbot/core/commands/converter.py:460
+#: redbot/core/commands/converter.py:441
 msgid "Expected one of: {}"
 msgstr ""
 
@@ -77,15 +77,15 @@ msgstr ""
 
 #: redbot/core/commands/help.py:341
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Diğer komutlar:__**"
 
 #: redbot/core/commands/help.py:343
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Diğer komutlar:__** (devamı)"
 
 #: redbot/core/commands/help.py:354
 msgid "Subcommands:"
-msgstr ""
+msgstr "Diğer komutlar:"
 
 #: redbot/core/commands/help.py:418 redbot/core/commands/help.py:670
 #: redbot/core/commands/help.py:683 redbot/core/commands/help.py:702
