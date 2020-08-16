@@ -43,6 +43,8 @@ class Installable(RepoJSONMixin):
         Installable's commit. This is not the same as ``repo.commit``
     author : `tuple` of `str`
         Name(s) of the author(s).
+    end_user_data_statement : `str`
+        End user data statement of the module.
     min_bot_version : `VersionInfo`
         The minimum bot version required for this Installable.
     max_bot_version : `VersionInfo`
@@ -85,6 +87,7 @@ class Installable(RepoJSONMixin):
         self.repo_name = self._location.parent.stem
         self.commit = commit
 
+        self.end_user_data_statement: str
         self.min_bot_version: VersionInfo
         self.max_bot_version: VersionInfo
         self.min_python_version: Tuple[int, int, int]
