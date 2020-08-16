@@ -155,7 +155,7 @@ class KickBanMixin(MixinMeta):
                             except discord.NotFound:
                                 # user is not banned anymore
                                 guild_tempbans.remove(uid)
-                            except discord.HTTPException:
+                            except discord.HTTPException as e:
                                 # 50013: Missing permissions error code or 403: Forbidden status
                                 if e.code == 50013 or e.status == 403:
                                     log.info(
