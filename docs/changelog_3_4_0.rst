@@ -80,8 +80,8 @@ Developer changelog
 -------------------
 
 | **Important:**
-| Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the changelog entry below.
-| Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries below for more information.
+| 1. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Core Bot changelog below <important-dev-340-1>` for more information.
+| 2. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Core Bot changelog below <important-dev-340-1>` for more information.
 
 Breaking changes
 ****************
@@ -98,6 +98,8 @@ Breaking changes
 
     - ``redbot.core.commands.APIToken``
     - ``loop`` kwarg from `bounded_gather_iter()`, `bounded_gather()`, and `start_adding_reactions()`
+
+.. _important-dev-340-1:
 
 Core Bot
 ********
