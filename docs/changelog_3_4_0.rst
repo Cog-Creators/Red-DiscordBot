@@ -30,6 +30,7 @@ Core Bot
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
 - Updated Red's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
+- Whitelist and blacklist are now called allowlist and blocklist. Old names have been left as aliases (:issue:`4138`)
 
 .. _important-340-2:
 
