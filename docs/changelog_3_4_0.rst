@@ -139,6 +139,7 @@ Documentation changes
 
 - Removed install instructions for Debian Stretch (:issue:`4099`)
 - Added admin user guide (:issue:`3081`)
+- Added alias user guide (:issue:`3084`)
 - Added bank user guide (:issue:`4149`)
 
 
