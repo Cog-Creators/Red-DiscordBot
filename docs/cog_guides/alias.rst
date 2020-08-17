@@ -34,7 +34,7 @@ In this example, we made an alias named ``p`` that will
 invoke the ``play`` command. If you use ``[p]play`` or ``[p]p``, the result will
 be the same.
 
----
+----
 
 Here's another example
 
@@ -49,7 +49,7 @@ In this second example, we made an alias called ``clear`` that will
 invoke the ``cleanup messages`` subcommand. Now if you use ``[p]cleanup
 message`` or ``[p]clear``, the result will be the same.
 
----
+----
 
 This is the basic usage, where you can define an alias for the first part of
 the command and give the second part when invoking the command. A more advanced
