@@ -25,6 +25,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
+
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            player = lavalink.get_player(guild.id)
+            await player.stop()
+            await player.disconnect()
+            return
+
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
             daily_cache = self._daily_playlist_cache.setdefault(

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-04 12:12+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -20,69 +20,77 @@ msgstr ""
 msgid "Commands for cleaning up messages."
 msgstr "刪除訊息的命令。"
 
-#: redbot/cogs/cleanup/cleanup.py:42
+#: redbot/cogs/cleanup/cleanup.py:46
 msgid "Are you sure you want to delete {number} messages? (y/n)"
 msgstr "您確定要刪除{number}則訊息嗎? (y/n)"
 
-#: redbot/cogs/cleanup/cleanup.py:56
+#: redbot/cogs/cleanup/cleanup.py:60
 msgid "Cancelled."
 msgstr "已取消。"
 
-#: redbot/cogs/cleanup/cleanup.py:116
+#: redbot/cogs/cleanup/cleanup.py:120
 #, docstring
 msgid "Delete messages."
 msgstr "刪除訊息。"
 
-#: redbot/cogs/cleanup/cleanup.py:125
+#: redbot/cogs/cleanup/cleanup.py:129
 #, docstring
 msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n        "
 msgstr "刪除與指定文字相符的最後X條訊息。\\n\\n        範例:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        請記得使用雙引號。\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:174
+#: redbot/cogs/cleanup/cleanup.py:178
 #, docstring
 msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
 msgstr "刪除指定使用者的最後X條訊息。\\n\\n        範例:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:237
+#: redbot/cogs/cleanup/cleanup.py:241
 #, docstring
 msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
 msgstr "刪除指定訊息後的所有訊息。\\n\\n        要取得訊息ID的話，請在Discord的設定中點選“外觀”標籤，\\n        並在\"進階\"中啟用\"開發者模式\"。 然後右鍵點選一條訊息\\n        並點選複製ID。\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:250 redbot/cogs/cleanup/cleanup.py:289
+#: redbot/cogs/cleanup/cleanup.py:254 redbot/cogs/cleanup/cleanup.py:293
 msgid "Message not found."
 msgstr "未找到訊息。"
 
-#: redbot/cogs/cleanup/cleanup.py:276
+#: redbot/cogs/cleanup/cleanup.py:280
 #, docstring
 msgid "Deletes X messages before specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
 msgstr "刪除指定訊息前的X則訊息。\\n\\n        要取得訊息ID的話，請在Discord的設定中點選“外觀”標籤，\\n        並在\"進階\"中啟用\"開發者模式\"。 然後右鍵點選一條訊息\\n        並點選複製ID。\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:316
+#: redbot/cogs/cleanup/cleanup.py:320
 #, docstring
 msgid "Delete the messages between Messsage One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 msgstr "提供訊息ID來刪除兩則訊息之間的訊息。\\n\\n        第一個訊息ID應該是較早的訊息，第二個訊息ID應該是較新的訊息。\\n\\n        範例:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:355
+#: redbot/cogs/cleanup/cleanup.py:361
 #, docstring
 msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
 msgstr "刪除最後的X訊息。\\n\\n        範例:\\n            `[p]cleanup messages 26`\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:385
+#: redbot/cogs/cleanup/cleanup.py:393
 #, docstring
 msgid "Clean up command messages and messages from the bot."
 msgstr "清理命令訊息和來自機器人的訊息。"
 
-#: redbot/cogs/cleanup/cleanup.py:465
+#: redbot/cogs/cleanup/cleanup.py:473
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:535
+#: redbot/cogs/cleanup/cleanup.py:543
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "從最新的X則訊息中刪除的重複訊息，僅保留一則訊息。\\n\\n        預設是50。\\n        "
 
-#: redbot/cogs/cleanup/converters.py:12
+#: redbot/cogs/cleanup/converters.py:15
 msgid "{} doesn't look like a valid message ID."
 msgstr "{}看起來不是有效的訊息ID。"
+
+#: redbot/cogs/cleanup/converters.py:27
+msgid "{arg} is not an integer."
+msgstr ""
+
+#: redbot/cogs/cleanup/converters.py:29
+msgid "{arg} is not a positive integer."
+msgstr ""
 

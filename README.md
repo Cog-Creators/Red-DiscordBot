@@ -57,19 +57,19 @@
 # Overview
 
 Red is a fully modular bot – meaning all features and commands can be enabled/disabled to your
-liking, making it completely customizable. This is also a *self-hosted bot* – meaning you will need
+liking, making it completely customizable. This is a *self-hosted bot* – meaning you will need
 to host and maintain your own instance. You can turn Red into an admin bot, music bot, trivia bot,
 new best friend or all of these together!  
 
 [Installation](#installation) is easy, and you do **NOT** need to know anything about coding! Aside
-from installation and updating, every part of the bot can be controlled from within Discord.
+from installing and updating, every part of the bot can be controlled from within Discord.
 
 **The default set of modules includes and is not limited to:**
 
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Mixer, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Hitbox, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search
@@ -126,3 +126,6 @@ Red is named after the main character of "Transistor", a video game by
 
 Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art for the Red Discord
 Bot Project.
+
+This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) which is distributed under MIT License.
+Copy of this license can be found in [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.

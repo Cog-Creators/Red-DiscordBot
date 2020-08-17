@@ -1,13 +1,13 @@
-import itertools
 import datetime
-from typing import Sequence, Iterator, List, Optional, Union, SupportsInt
+import itertools
 from io import BytesIO
-
+from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 
 import discord
+from babel.lists import format_list as babel_list
 from babel.numbers import format_decimal
 
-from redbot.core.i18n import Translator, get_babel_regional_format
+from redbot.core.i18n import Translator, get_babel_locale, get_babel_regional_format
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -33,7 +33,7 @@ def warning(text: str) -> str:
         The new message.
 
     """
-    return "\N{WARNING SIGN} {}".format(text)
+    return "\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def info(text: str) -> str:
@@ -45,7 +45,7 @@ def info(text: str) -> str:
         The new message.
 
     """
-    return "\N{INFORMATION SOURCE} {}".format(text)
+    return "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def question(text: str) -> str:
@@ -57,7 +57,7 @@ def question(text: str) -> str:
         The new message.
 
     """
-    return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
+    return "\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {}".format(text)
 
 
 def bold(text: str, escape_formatting: bool = True) -> str:
@@ -165,10 +165,10 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
 
     """
     borders = {
-        "TL": "-" if ascii_border else "┌",  # Top-left
-        "TR": "-" if ascii_border else "┐",  # Top-right
-        "BL": "-" if ascii_border else "└",  # Bottom-left
-        "BR": "-" if ascii_border else "┘",  # Bottom-right
+        "TL": "+" if ascii_border else "┌",  # Top-left
+        "TR": "+" if ascii_border else "┐",  # Top-right
+        "BL": "+" if ascii_border else "└",  # Bottom-left
+        "BR": "+" if ascii_border else "┘",  # Bottom-right
         "HZ": "-" if ascii_border else "─",  # Horizontal
         "VT": "|" if ascii_border else "│",  # Vertical
     }
@@ -352,21 +352,50 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     return text
 
 
-def humanize_list(items: Sequence[str]) -> str:
-    """Get comma-separted list, with the last element joined with *and*.
-
-    This uses an Oxford comma, because without one, items containing
-    the word *and* would make the output difficult to interpret.
+def humanize_list(
+    items: Sequence[str], *, locale: Optional[str] = None, style: str = "standard"
+) -> str:
+    """Get comma-separated list, with the last element joined with *and*.
 
     Parameters
     ----------
     items : Sequence[str]
         The items of the list to join together.
+    locale : Optional[str]
+        The locale to convert, if not specified it defaults to the bot's locale.
+    style : str
+        The style to format the list with.
+
+        Note: Not all styles are necessarily available in all locales,
+        see documentation of `babel.lists.format_list` for more details.
+
+        standard
+            A typical 'and' list for arbitrary placeholders.
+            eg. "January, February, and March"
+        standard-short
+             A short version of a 'and' list, suitable for use with short or
+             abbreviated placeholder values.
+             eg. "Jan., Feb., and Mar."
+        or
+            A typical 'or' list for arbitrary placeholders.
+            eg. "January, February, or March"
+        or-short
+            A short version of an 'or' list.
+            eg. "Jan., Feb., or Mar."
+        unit
+            A list suitable for wide units.
+            eg. "3 feet, 7 inches"
+        unit-short
+            A list suitable for short units
+            eg. "3 ft, 7 in"
+        unit-narrow
+            A list suitable for narrow units, where space on the screen is very limited.
+            eg. "3′ 7″"
 
     Raises
     ------
-    IndexError
-        An empty sequence was passed
+    ValueError
+        The locale does not support the specified style.
 
     Examples
     --------
@@ -380,14 +409,12 @@ def humanize_list(items: Sequence[str]) -> str:
         'One, Two, and Three'
         >>> humanize_list(['One'])
         'One'
+        >>> humanize_list(['omena', 'peruna', 'aplari'], style='or', locale='fi')
+        'omena, peruna tai aplari'
 
     """
-    if len(items) == 1:
-        return items[0]
-    try:
-        return ", ".join(items[:-1]) + _(", and ") + items[-1]
-    except IndexError:
-        raise IndexError("Cannot humanize empty sequence") from None
+
+    return babel_list(items, style=style, locale=get_babel_locale(locale))
 
 
 def format_perms_list(perms: discord.Permissions) -> str:

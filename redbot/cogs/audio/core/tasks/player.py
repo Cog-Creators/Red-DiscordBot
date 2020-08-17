@@ -20,6 +20,8 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         while True:
             async for p in AsyncIter(lavalink.all_players()):
                 server = p.channel.guild
+                if await self.bot.cog_disabled_in_guild(self, server):
+                    continue
 
                 if [self.bot.user] == p.channel.members:
                     stop_times.setdefault(server.id, time.time())

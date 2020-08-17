@@ -21,7 +21,7 @@ msgstr "API ключ Spotify или секрет клиента были уст�
 
 #: redbot/cogs/audio/apis/interface.py:322
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr ""
+msgstr "Не является правильным Spotify плейлистом/альбомом URL или кодом."
 
 #: redbot/cogs/audio/apis/interface.py:443
 msgid "This doesn't seem to be a supported Spotify URL or code."
@@ -45,11 +45,11 @@ msgstr "Ничего не найдено.\\nКлюч YouTube API может бы
 
 #: redbot/cogs/audio/apis/interface.py:602
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} невозможно добавить в очередь."
 
 #: redbot/cogs/audio/apis/interface.py:610
 msgid "Playlist Enqueued"
-msgstr "Плейлист поставлен в очередь"
+msgstr "Плейлист добавлен в очередь"
 
 #: redbot/cogs/audio/apis/interface.py:611
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
