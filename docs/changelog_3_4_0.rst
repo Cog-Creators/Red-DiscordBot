@@ -1,6 +1,37 @@
 .. 3.4.x Changelogs
 
+<<<<<<< HEAD
 Redbot 3.4.0 (2020-08-18)
+=======
+Redbot 3.4.1 (Unreleased)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| 
+
+End-user changelog
+------------------
+
+
+
+Developer changelog
+-------------------
+
+
+
+Documentation changes
+---------------------
+
+
+
+Miscellaneous
+-------------
+
+
+
+
+Redbot 3.4.0 (2020-08-17)
+>>>>>>> e1ee7db1... Add 3.4.1 section
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
