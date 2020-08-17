@@ -1449,16 +1449,13 @@ class Downloader(commands.Cog):
                         + _("\nYou can use {command} to see the updated statements.\n").format(
                             command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
                         )
-                else:
-                    message += (
-                        _("End user data statements for {cog} have been changed.").format(
-                            cog=cogs_with_changed_eud_statement[0]
-                        )
-                        + _("\nYou can use {command} to see the updated statements.\n").format(
-                            command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
-                        )
                     )
-                )
+                else:
+                    message += _("End user data statements for {cog} have been changed.").format(
+                        cog=cogs_with_changed_eud_statement[0]
+                    ) + _("\nYou can use {command} to see the updated statements.\n").format(
+                        command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
+                    )
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
             if len(failed_cogs) > 1:
