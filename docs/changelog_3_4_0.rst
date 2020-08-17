@@ -4,7 +4,7 @@ Redbot 3.4.0 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Vexed01`
+| :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`Vexed01`
 |
 | **Read before updating**:
 | 1. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
@@ -25,6 +25,8 @@ Mod
 Developer changelog
 -------------------
 
+- Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 
 
 Documentation changes
