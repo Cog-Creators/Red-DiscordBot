@@ -272,7 +272,7 @@ class Filter(commands.Cog):
         elif isinstance(server_or_channel, discord.TextChannel):
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
-                    if w.lower not in cur_list and w:
+                    if w.lower() not in cur_list and w:
                         cur_list.append(w.lower())
                         added = True
 
