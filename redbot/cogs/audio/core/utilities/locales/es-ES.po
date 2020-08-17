@@ -48,7 +48,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:420
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Límite de cola alcanzado."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:111
 msgid "Unable To Play Tracks"
@@ -188,7 +188,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 #: redbot/cogs/audio/core/utilities/playlists.py:603
 msgid "Nothing found."
-msgstr ""
+msgstr "Nada encontrado."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:296
@@ -396,7 +396,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:643
 msgid "Global"
-msgstr ""
+msgstr "Global"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "the Server"
@@ -404,7 +404,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:645
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "the User"
@@ -412,7 +412,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:647
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: redbot/cogs/audio/core/utilities/queue.py:36
 msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
@@ -449,11 +449,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:98
 msgid "Shuffle"
-msgstr ""
+msgstr "Aleatorio"
 
 #: redbot/cogs/audio/core/utilities/queue.py:104
 msgid "Repeat"
-msgstr ""
+msgstr "Repetir"
 
 #: redbot/cogs/audio/core/utilities/queue.py:156
 msgid "Matching Tracks:"

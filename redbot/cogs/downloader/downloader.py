@@ -775,8 +775,12 @@ class Downloader(commands.Cog):
                         if rev is not None
                         else ""
                     )
-                    + _("\nYou can load them using `{prefix}load <cogs>`").format(
-                        prefix=ctx.clean_prefix
+                    + _(
+                        "\nYou can load them using {command_1}."
+                        " To see end user data statements, you can use {command_2}."
+                    ).format(
+                        command_1=inline(f"{ctx.clean_prefix}load <cogs>"),
+                        command_2=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>"),
                     )
                     + message
                 )
@@ -1037,7 +1041,7 @@ class Downloader(commands.Cog):
 
                 if updates_available:
                     updated_cognames, message = await self._update_cogs_and_libs(
-                        cogs_to_update, libs_to_update
+                        ctx, cogs_to_update, libs_to_update, current_cog_versions=cogs_to_check
                     )
                 else:
                     if repos:
@@ -1118,15 +1122,24 @@ class Downloader(commands.Cog):
             return
 
         msg = _(
-            "Information on {cog_name}:\n{description}\n\n"
-            "Made by: {author}\nRequirements: {requirements}"
+            "Information on {cog_name}:\n"
+            "{description}\n\n"
+            "End user data statement:\n"
+            "{end_user_data_statement}\n\n"
+            "Made by: {author}\n"
+            "Requirements: {requirements}"
         ).format(
             cog_name=cog.name,
             description=cog.description or "",
+            end_user_data_statement=(
+                cog.end_user_data_statement
+                or _("Author of the cog didn't provide end user data statement.")
+            ),
             author=", ".join(cog.author) or _("Missing from info.json"),
             requirements=", ".join(cog.requirements) or "None",
         )
-        await ctx.send(box(msg))
+        for page in pagify(msg):
+            await ctx.send(box(page))
 
     async def is_installed(
         self, cog_name: str
@@ -1292,8 +1305,13 @@ class Downloader(commands.Cog):
         return (cogs_to_check, failed)
 
     async def _update_cogs_and_libs(
-        self, cogs_to_update: Iterable[Installable], libs_to_update: Iterable[Installable]
+        self,
+        ctx: commands.Context,
+        cogs_to_update: Iterable[Installable],
+        libs_to_update: Iterable[Installable],
+        current_cog_versions: Iterable[InstalledModule],
     ) -> Tuple[Set[str], str]:
+        current_cog_versions_map = {cog.name: cog for cog in current_cog_versions}
         failed_reqs = await self._install_requirements(cogs_to_update)
         if failed_reqs:
             return (
@@ -1308,8 +1326,22 @@ class Downloader(commands.Cog):
 
         updated_cognames: Set[str] = set()
         if installed_cogs:
-            updated_cognames = {cog.name for cog in installed_cogs}
+            updated_cognames = set()
+            cogs_with_changed_eud_statement = set()
+            for cog in installed_cogs:
+                updated_cognames.add(cog.name)
+                current_eud_statement = current_cog_versions_map[cog.name].end_user_data_statement
+                if current_eud_statement != cog.end_user_data_statement:
+                    cogs_with_changed_eud_statement.add(cog.name)
             message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
+            if cogs_with_changed_eud_statement:
+                message += (
+                    _("\nEnd user data statements of these cogs have changed: ")
+                    + humanize_list(tuple(map(inline, cogs_with_changed_eud_statement)))
+                    + _("\nYou can use {command} to see the updated statements.\n").format(
+                        command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
+                    )
+                )
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
             message += _("\nFailed to update cogs: ") + humanize_list(tuple(map(inline, cognames)))
