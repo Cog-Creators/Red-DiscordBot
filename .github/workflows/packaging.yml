@@ -21,6 +21,7 @@ jobs:
         run: |
           echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" \
             | sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6494C6D6997C215E
           sudo apt-get update
           sudo apt-get install -t jessie-backports dh-virtualenv
       - name: Build Debian package
