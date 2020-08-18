@@ -1,0 +1,21 @@
+name: Build packages
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  debian:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create output directory
+        run: mkdir artifacts
+      - name: Build Debian package
+        uses: dawidd6/action-debian-package@v1.0.1
+        with:
+          artifacts_directory: artifacts
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Debian packaging output
+          path: artifacts/
