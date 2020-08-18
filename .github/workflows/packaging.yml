@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ env.ref }
+          ref: ${{ env.ref }}
       - name: Create output directory
         run: mkdir artifacts
       - name: Install dependencies
