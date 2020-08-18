@@ -20,7 +20,8 @@ jobs:
       - name: Install dh-virtualenv
         shell: bash -leo pipefail {0}
         run: |
-          docker build --tag dh-venv-builder https://github.com/spotify/dh-virtualenv#1.2.1 --build-arg distro=ubuntu:focal
+          docker build --tag dh-venv-builder https://github.com/spotify/dh-virtualenv.git#1.2.1 --build-arg distro=ubuntu:focal
+          mkdir -p dist && docker run --rm dh-venv-builder tar -C /dpkg -c . | tar -C dist -xv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
