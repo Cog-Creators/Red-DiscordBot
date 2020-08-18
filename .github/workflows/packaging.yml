@@ -19,12 +19,10 @@ jobs:
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
       - name: Install dh-virtualenv
         run: |
-          mkdir $HOME/temp && cd $HOME/temp
-          git clone https://github.com/spotify/dh-virtualenv.git
-          cd dh-virtualenv
-          sudo mk-build-deps -ri
-          dpkg-buildpackage -us -uc -b
-          sudo dpkg -i ../dh-virtualenv_*.deb
+          echo "deb http://ftp.debian.org/debian jessie-backports main" \
+          sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
+          sudo apt-get update
+          sudo apt-get install -t jessie-backports dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
