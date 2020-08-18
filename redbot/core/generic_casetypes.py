@@ -30,7 +30,7 @@ softban = {
 unban = {
     "name": "unban",
     "default_setting": True,
-    "image": "\N{DOVE OF PEACE}",
+    "image": "\N{DOVE OF PEACE}\N{VARIATION SELECTOR-16}",
     "case_str": "Unban",
 }
 voiceban = {
@@ -42,7 +42,7 @@ voiceban = {
 voiceunban = {
     "name": "voiceunban",
     "default_setting": True,
-    "image": "\N{SPEAKER}",
+    "image": "\N{SPEAKER}\N{VARIATION SELECTOR-16}",
     "case_str": "Voice Unban",
 }
 voicemute = {
@@ -69,19 +69,19 @@ servermute = {
 voiceunmute = {
     "name": "vunmute",
     "default_setting": False,
-    "image": "\N{SPEAKER}",
+    "image": "\N{SPEAKER}\N{VARIATION SELECTOR-16}",
     "case_str": "Voice Unmute",
 }
 channelunmute = {
     "name": "cunmute",
     "default_setting": False,
-    "image": "\N{SPEAKER}",
+    "image": "\N{SPEAKER}\N{VARIATION SELECTOR-16}",
     "case_str": "Channel Unmute",
 }
 serverunmute = {
     "name": "sunmute",
     "default_setting": True,
-    "image": "\N{SPEAKER}",
+    "image": "\N{SPEAKER}\N{VARIATION SELECTOR-16}",
     "case_str": "Server Unmute",
 }
 
@@ -90,6 +90,13 @@ voicekick = {
     "default_setting": False,
     "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
     "case_str": "Voice Kick",
+}
+
+warning = {
+    "name": "warning",
+    "default_setting": True,
+    "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
+    "case_str": "Warning",
 }
 
 all_generics = (
@@ -108,4 +115,5 @@ all_generics = (
     serverunmute,
     channelunmute,
     voicekick,
+    warning,
 )

@@ -1,12 +1,9 @@
 # Warning: The implementation below touches several private attributes.
-# While this implementation will be updated, and public interfaces maintained, derived classes
-# should not assume these private attributes are version safe, and use the provided HelpSettings
-# class for these settings.
+# While this implementation will be updated, and public interfaces maintained,
+# derived classes should not assume these private attributes are version safe,
+# and use the provided HelpSettings class for these settings.
 
 # This is a full replacement of discord.py's help command
-#
-# At a later date, there should be things added to support extra formatter
-# registration from 3rd party cogs.
 #
 # This exists due to deficiencies in discord.py which conflict
 # with our needs for per-context help settings
@@ -30,11 +27,10 @@
 # Additionally, this gives our users a bit more customization options including by
 # 3rd party cogs down the road.
 
-# Note: 3rd party help must not remove the copyright notice
-
+import abc
 import asyncio
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict as dc_asdict
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -46,9 +42,9 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify
+from ..utils.chat_formatting import box, pagify, humanize_timedelta
 
-__all__ = ["red_help", "RedHelpFormatter", "HelpSettings"]
+__all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
 _ = Translator("Help", __file__)
 
@@ -65,6 +61,11 @@ EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
 class HelpSettings:
     """
     A representation of help settings.
+
+    .. warning::
+
+        This class is provisional.
+
     """
 
     page_char_limit: int = 1000
@@ -78,8 +79,10 @@ class HelpSettings:
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
-    # Adding a non-context based method now would involve a breaking change later.
-    # At a later date, more methods should be exposed for non-context based creation.
+    # Adding a non-context based method now would involve a breaking
+    # change later.
+    # At a later date, more methods should be exposed for
+    # non-context based creation.
     #
     # This is also why we aren't just caching the
     # current state of these settings on the bot object.
@@ -90,6 +93,42 @@ class HelpSettings:
         """
         settings = await context.bot._config.help.all()
         return cls(**settings)
+
+    @property
+    def pretty(self):
+        """ Returns a discord safe representation of the settings """
+
+        def bool_transformer(val):
+            if val is False:
+                return _("No")
+            if val is True:
+                return _("Yes")
+            return val
+
+        data = {k: bool_transformer(v) for k, v in dc_asdict(self).items()}
+
+        if not self.delete_delay:
+            data["delete_delay"] = _("Disabled")
+        else:
+            data["delete_delay"] = humanize_timedelta(seconds=self.delete_delay)
+
+        if tag := data.pop("tagline", ""):
+            tagline_info = _("\nCustom Tagline: {tag}").format(tag=tag)
+        else:
+            tagline_info = ""
+
+        data["tagline_info"] = tagline_info
+
+        return _(
+            "Maximum characters per page: {page_char_limit}"
+            "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
+            "\nHelp is a menu: {use_menus}"
+            "\nHelp shows hidden commands: {show_hidden}"
+            "\nHelp only shows commands which can be used: {verify_checks}"
+            "\nHelp shows unusable commands when asked directly: {verify_exists}"
+            "\nDelete delay: {delete_delay}"
+            "{tagline_info}"
+        ).format_map(data)
 
 
 class NoCommand(Exception):
@@ -102,23 +141,72 @@ class NoSubCommand(Exception):
         self.not_found = not_found
 
 
-class RedHelpFormatter:
+class HelpFormatterABC(abc.ABC):
+    """
+    Describes the required interface of a help formatter.
+
+    Additional notes for 3rd party developers are included in this class.
+
+    .. note::
+        You may define __init__ however you want
+        (such as to include config),
+        Red will not initialize a formatter for you,
+        and must be passed an initialized formatter.
+
+        If you want to use Red's existing settings, use ``HelpSettings.from_context``
+
+    .. warning::
+
+        This class is documented but provisional with expected changes.
+
+        In the future, this class will receive changes to support
+        invoking the help command without context.
+    """
+
+    @abc.abstractmethod
+    async def send_help(
+        self, ctx: Context, help_for: HelpTarget = None, *, from_help_command: bool = False
+    ):
+        """
+        This is (currently) the only method you must implement.
+
+        This method should handle any and all errors which may arise.
+
+        The types subclasses must handle are defined as ``HelpTarget``
+        """
+        ...
+
+
+class RedHelpFormatter(HelpFormatterABC):
     """
     Red's help implementation
 
     This is intended to be overridable in parts to only change some behavior.
 
-    While currently, there is a global formatter, later plans include a context specific
-    formatter selector as well as an API for cogs to register/un-register a formatter with the bot.
+    While this exists as a class for easy partial overriding,
+    most implementations should not need or want a shared state.
 
-    When implementing your own formatter, at minimum you must provide an implementation of
-    `send_help` with identical signature.
+    .. warning::
 
-    While this exists as a class for easy partial overriding, most implementations
-    should not need or want a shared state.
+        This class is documented but may receive changes between
+        versions without warning as needed.
+        The supported way to modify help is to write a separate formatter.
+
+        The primary reason for this class being documented is to allow
+        the opaque use of the class as a fallback, as any method in base
+        class which is intended for use will be present and implemented here.
+
+    .. note::
+
+        This class may use various internal methods which are not safe to
+        use in third party code.
+        The internal methods used here may change,
+        with this class being updated at the same time.
     """
 
-    async def send_help(self, ctx: Context, help_for: HelpTarget = None):
+    async def send_help(
+        self, ctx: Context, help_for: HelpTarget = None, *, from_help_command: bool = False
+    ):
         """
         This delegates to other functions.
 
@@ -724,4 +812,4 @@ async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
     (Help) you know I need someone
     (Help!)
     """
-    await ctx.bot.send_help_for(ctx, thing_to_get_help_for)
+    await ctx.bot.send_help_for(ctx, thing_to_get_help_for, from_help_command=True)

@@ -29,7 +29,7 @@ Using PowerShell and Chocolatey (recommended)
 *********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
-right-click on it and then click "Run as administrator"
+right-click on it and then click "Run as administrator".
 
 Then run each of the following commands:
 
@@ -87,7 +87,7 @@ Creating a Virtual Environment
 
 .. tip::
 
-    If you want to learn more about virtual environments, see page: `about-venvs`
+    If you want to learn more about virtual environments, see page: `about-venvs`.
 
 We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward.
@@ -96,7 +96,12 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``redenv`` and it will be located in your home directory.
 
-Start with opening a command prompt (open Start, search for "command prompt", then click it)
+Start with opening a command prompt (open Start, search for "command prompt", then click it).
+
+.. note:: 
+
+    You shouldn't run command prompt as administrator when creating your virtual environment, or
+    running Red.
 
 .. warning::
 
@@ -144,11 +149,6 @@ Run **one** of the following set of commands, depending on what extras you want 
 
         python -m pip install -U pip setuptools wheel
         python -m pip install -U Red-DiscordBot[postgres]
-
-
-.. note::
-
-    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

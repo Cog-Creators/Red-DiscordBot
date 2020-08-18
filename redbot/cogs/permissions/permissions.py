@@ -10,7 +10,6 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -333,7 +332,8 @@ class Permissions(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to DM you."))
         else:
-            await ctx.send(_("I've just sent the file to you via DM."))
+            if not isinstance(ctx.channel, discord.DMChannel):
+                await ctx.send(_("I've just sent the file to you via DM."))
         finally:
             file.close()
 

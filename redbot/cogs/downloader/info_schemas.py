@@ -220,6 +220,7 @@ INSTALLABLE_SCHEMA: SchemaType = {
     "requirements": ensure_tuple_of_str,
     "tags": ensure_tuple_of_str,
     "type": ensure_installable_type,
+    "end_user_data_statement": ensure_str,
 }
 
 

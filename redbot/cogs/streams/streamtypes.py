@@ -190,6 +190,12 @@ class YoutubeStream(Stream):
             raise StreamNotFound()
         elif "items" in data:
             return data["items"][0][resource]
+        elif (
+            "pageInfo" in data
+            and "totalResults" in data["pageInfo"]
+            and data["pageInfo"]["totalResults"] < 1
+        ):
+            raise StreamNotFound()
         raise APIError()
 
     def __repr__(self):
@@ -325,7 +331,7 @@ class HitboxStream(Stream):
     token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
-        url = "https://api.hitbox.tv/media/live/" + self.name
+        url = "https://api.smashcast.tv/media/live/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:

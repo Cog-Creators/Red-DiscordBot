@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+from datetime import timezone
 from collections import namedtuple
 from copy import copy
 from typing import Union, Optional, Literal
@@ -14,6 +15,7 @@ from redbot.cogs.warnings.helpers import (
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
+from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
@@ -89,13 +91,13 @@ class Warnings(commands.Cog):
             {
                 "name": "warning",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Warning",
             },
             {
                 "name": "unwarned",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Unwarned",
             },
         ]
@@ -364,7 +366,7 @@ class Warnings(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        points: Optional[int] = 1,
+        points: UserInputOptional[int] = 1,
         *,
         reason: str,
     ):
@@ -480,30 +482,27 @@ class Warnings(commands.Cog):
         else:
             if not dm_failed:
                 await ctx.tick()
-        try:
-            reason_msg = _(
-                "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
-            ).format(
-                reason=_("{description}\nPoints: {points}").format(
-                    description=reason_type["description"], points=reason_type["points"]
-                ),
-                prefix=ctx.clean_prefix,
-                user=user.id,
-                message=ctx.message.id,
-            )
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "warning",
-                user,
-                ctx.message.author,
-                reason_msg,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        reason_msg = _(
+            "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
+        ).format(
+            reason=_("{description}\nPoints: {points}").format(
+                description=reason_type["description"], points=reason_type["points"]
+            ),
+            prefix=ctx.clean_prefix,
+            user=user.id,
+            message=ctx.message.id,
+        )
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            "warning",
+            user,
+            ctx.message.author,
+            reason_msg,
+            until=None,
+            channel=None,
+        )
 
     @commands.command()
     @commands.guild_only()
@@ -615,19 +614,16 @@ class Warnings(commands.Cog):
                 current_point_count -= user_warnings[warn_id]["points"]
                 await member_settings.total_points.set(current_point_count)
                 user_warnings.pop(warn_id)
-        try:
-            await modlog.create_case(
-                self.bot,
-                ctx.guild,
-                ctx.message.created_at,
-                "unwarned",
-                member,
-                ctx.message.author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError:
-            pass
+        await modlog.create_case(
+            self.bot,
+            ctx.guild,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            "unwarned",
+            member,
+            ctx.message.author,
+            reason,
+            until=None,
+            channel=None,
+        )
 
         await ctx.tick()
