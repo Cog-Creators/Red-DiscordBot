@@ -16,7 +16,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install build-essential debhelper devscripts equivs python3-all \
-            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
+            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
+            python3-virtualenv sphinx-rtd-theme-common
       - name: Install dh-virtualenv
         shell: bash -leo pipefail {0}
         run: |
