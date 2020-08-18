@@ -20,7 +20,7 @@ jobs:
       - name: Install dh-virtualenv
         run: |
           echo "deb http://ftp.debian.org/debian jessie-backports main" \
-          sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
+            | sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
           sudo apt-get update
           sudo apt-get install -t jessie-backports dh-virtualenv
       - name: Build Debian package
