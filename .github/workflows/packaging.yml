@@ -8,12 +8,25 @@ jobs:
   debian:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.ref }
       - name: Create output directory
         run: mkdir artifacts
+      - name: Install dependencies
+        run: |
+          sudo apt-get install build-essential debhelper devscripts equivs python3-all \
+            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
+      - name: Install dh-virtualenv
+        run: |
+          mkdir $HOME/temp && cd $HOME/temp
+          git clone https://github.com/spotify/dh-virtualenv.git
+          cd dh-virtualenv
+          sudo mk-build-deps -ri
+          dpkg-buildpackage -us -uc -b
+          sudo dpkg -i ../dh-virtualenv_*.deb
       - name: Build Debian package
-        uses: dawidd6/action-debian-package@v1.0.1
-        with:
-          artifacts_directory: artifacts
+        run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
