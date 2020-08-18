@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 import discord
 from redbot.core import commands
@@ -38,20 +39,11 @@ class Announcer:
         """
         self.active = False
 
-    async def _get_announce_channel(self, guild: discord.Guild) -> discord.TextChannel:
+    async def _get_announce_channel(self, guild: discord.Guild) -> Optional[discord.TextChannel]:
+        if await self.ctx.bot.cog_disabled_in_guild_raw("Admin", guild.id):
+            return
         channel_id = await self.config.guild(guild).announce_channel()
-        channel = None
-
-        if channel_id is not None:
-            channel = guild.get_channel(channel_id)
-
-        if channel is None:
-            channel = guild.system_channel
-
-        if channel is None:
-            channel = guild.text_channels[0]
-
-        return channel
+        return guild.get_channel(channel_id)
 
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
@@ -60,15 +52,16 @@ class Announcer:
             if not self.active:
                 return
 
-            if await self.config.guild(g).announce_ignore():
-                continue
-
             channel = await self._get_announce_channel(g)
 
-            try:
-                await channel.send(self.message)
-            except discord.Forbidden:
-                failed.append(str(g.id))
+            if channel:
+                if channel.permissions_for(g.me).send_messages:
+                    try:
+                        await channel.send(self.message)
+                    except discord.Forbidden:
+                        failed.append(str(g.id))
+                else:
+                    failed.append(str(g.id))
 
         if failed:
             msg = (

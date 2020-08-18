@@ -27,6 +27,7 @@ from ..sql_statements import (
     PRAGMA_SET_read_uncommitted,
     PRAGMA_SET_temp_store,
     PRAGMA_SET_user_version,
+    HANDLE_DISCORD_DATA_DELETION_QUERY,
 )
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult
@@ -57,6 +58,8 @@ class PlaylistWrapper:
         self.statement.get_all = PLAYLIST_FETCH_ALL
         self.statement.get_all_with_filter = PLAYLIST_FETCH_ALL_WITH_FILTER
         self.statement.get_all_converter = PLAYLIST_FETCH_ALL_CONVERTER
+
+        self.statement.drop_user_playlists = HANDLE_DISCORD_DATA_DELETION_QUERY
 
     async def init(self) -> None:
         """Initialize the Playlist table"""
@@ -246,4 +249,12 @@ class PlaylistWrapper:
                     "playlist_url": playlist_url,
                     "tracks": json.dumps(tracks),
                 },
+            )
+
+    async def handle_playlist_user_id_deletion(self, user_id: int):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(
+                self.database.cursor().execute,
+                self.statement.drop_user_playlists,
+                {"user_id": user_id},
             )

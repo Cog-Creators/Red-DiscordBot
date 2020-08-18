@@ -7,7 +7,6 @@ from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
     HitboxStream,
-    MixerStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -40,7 +39,7 @@ log = logging.getLogger("red.core.cogs.Streams")
 class Streams(commands.Cog):
     """Various commands relating to streaming platforms.
 
-    You can check if a Twitch, YouTube, Picarto or Mixer stream is
+    You can check if a Twitch, YouTube or Picarto stream is
     currently live.
     """
 
@@ -79,6 +78,10 @@ class Streams(commands.Cog):
 
         self._ready_event: asyncio.Event = asyncio.Event()
         self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
 
     def check_name_or_id(self, data: str) -> bool:
         matched = self.yt_cid_pattern.fullmatch(data)
@@ -223,15 +226,9 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def hitbox(self, ctx: commands.Context, channel_name: str):
-        """Check if a Hitbox channel is live."""
+    async def smashcast(self, ctx: commands.Context, channel_name: str):
+        """Check if a smashcast channel is live."""
         stream = HitboxStream(name=channel_name)
-        await self.check_online(ctx, stream)
-
-    @commands.command()
-    async def mixer(self, ctx: commands.Context, channel_name: str):
-        """Check if a Mixer channel is live."""
-        stream = MixerStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -243,7 +240,7 @@ class Streams(commands.Cog):
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, MixerStream, HitboxStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, HitboxStream, YoutubeStream, TwitchStream],
     ):
         try:
             info = await stream.is_online()
@@ -280,7 +277,7 @@ class Streams(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod()
+    @checks.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
         pass
@@ -308,15 +305,10 @@ class Streams(commands.Cog):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
-    @streamalert.command(name="hitbox")
-    async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Hitbox stream."""
+    @streamalert.command(name="smashcast")
+    async def smashcast_alert(self, ctx: commands.Context, channel_name: str):
+        """Toggle alerts in this channel for a Smashcast stream."""
         await self.stream_alert(ctx, HitboxStream, channel_name)
-
-    @streamalert.command(name="mixer")
-    async def mixer_alert(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Mixer stream."""
-        await self.stream_alert(ctx, MixerStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
@@ -431,9 +423,9 @@ class Streams(commands.Cog):
         await self.add_or_remove(ctx, stream)
 
     @commands.group()
-    @checks.mod()
+    @checks.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
-        """Set tokens for accessing streams."""
+        """Manage stream alert settings."""
         pass
 
     @streamset.command(name="timer")
@@ -505,14 +497,13 @@ class Streams(commands.Cog):
 
     @message.command(name="mention")
     @commands.guild_only()
-    async def with_mention(self, ctx: commands.Context, message: str = None):
+    async def with_mention(self, ctx: commands.Context, *, message: str = None):
         """Set stream alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
+        Use `{stream}` in the message to insert the channel or user name.
 
-        Use `{stream.name}` in the message to insert the channel or user name.
-
-        For example: `[p]streamset message mention "{mention}, {stream.name} is live!"`
+        For example: `[p]streamset message mention {mention}, {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
@@ -523,12 +514,12 @@ class Streams(commands.Cog):
 
     @message.command(name="nomention")
     @commands.guild_only()
-    async def without_mention(self, ctx: commands.Context, message: str = None):
+    async def without_mention(self, ctx: commands.Context, *, message: str = None):
         """Set stream alert message when mentions are disabled.
 
-        Use `{stream.name}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or user name.
 
-        For example: `[p]streamset message nomention "{stream.name} is live!"`
+        For example: `[p]streamset message nomention {stream} is live!`
         """
         if message is not None:
             guild = ctx.guild
@@ -702,6 +693,8 @@ class Streams(commands.Cog):
                         continue
                     for message in stream._messages_cache:
                         with contextlib.suppress(Exception):
+                            if await self.bot.cog_disabled_in_guild(self, message.guild):
+                                continue
                             autodelete = await self.config.guild(message.guild).autodelete()
                             if autodelete:
                                 await message.delete()
@@ -714,17 +707,26 @@ class Streams(commands.Cog):
                         channel = self.bot.get_channel(channel_id)
                         if not channel:
                             continue
+                        if await self.bot.cog_disabled_in_guild(self, channel.guild):
+                            continue
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
-                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(
+                            channel.guild, channel
+                        )
 
                         if mention_str:
                             alert_msg = await self.config.guild(
                                 channel.guild
                             ).live_message_mention()
                             if alert_msg:
-                                content = alert_msg.format(mention=mention_str, stream=stream)
+                                content = alert_msg  # Stop bad things from happening here...
+                                content = content.replace(
+                                    "{stream.name}", str(stream.name)
+                                )  # Backwards compatability
+                                content = content.replace("{stream}", str(stream.name))
+                                content = content.replace("{mention}", mention_str)
                             else:
                                 content = _("{mention}, {stream} is live!").format(
                                     mention=mention_str,
@@ -737,7 +739,11 @@ class Streams(commands.Cog):
                                 channel.guild
                             ).live_message_nomention()
                             if alert_msg:
-                                content = alert_msg.format(stream=stream)
+                                content = alert_msg  # Stop bad things from happening here...
+                                content = content.replace(
+                                    "{stream.name}", str(stream.name)
+                                )  # Backwards compatability
+                                content = content.replace("{stream}", str(stream.name))
                             else:
                                 content = _("{stream} is live!").format(
                                     stream=escape(
@@ -745,14 +751,20 @@ class Streams(commands.Cog):
                                     )
                                 )
 
-                        m = await channel.send(content, embed=embed)
+                        m = await channel.send(
+                            content,
+                            embed=embed,
+                            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+                        )
                         stream._messages_cache.append(m)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+    async def _get_mention_str(
+        self, guild: discord.Guild, channel: discord.TextChannel
+    ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
@@ -764,9 +776,10 @@ class Streams(commands.Cog):
         if await settings.mention_here():
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
+        can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
         for role in guild.roles:
             if await self.config.role(role).mention():
-                if can_manage_roles and not role.mentionable:
+                if not can_mention_everyone and can_manage_roles and not role.mentionable:
                     try:
                         await role.edit(mentionable=True)
                     except discord.Forbidden:

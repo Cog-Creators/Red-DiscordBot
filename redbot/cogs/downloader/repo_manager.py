@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import keyword
 import os
 import pkgutil
 import shlex
@@ -198,6 +199,11 @@ class Repo(RepoJSONMixin):
         descendant_rev : `str`
             Descendant revision
 
+        Raises
+        ------
+        .UnknownRevision
+            When git cannot find one of the provided revisions.
+
         Returns
         -------
         bool
@@ -212,10 +218,17 @@ class Repo(RepoJSONMixin):
             maybe_ancestor_rev=maybe_ancestor_rev,
             descendant_rev=descendant_rev,
         )
-        p = await self._run(git_command, valid_exit_codes=valid_exit_codes)
+        p = await self._run(git_command, valid_exit_codes=valid_exit_codes, debug_only=True)
 
         if p.returncode in valid_exit_codes:
             return not bool(p.returncode)
+
+        # this is a plumbing command so we're safe here
+        stderr = p.stderr.decode(**DECODE_PARAMS).strip()
+        if stderr.startswith(("fatal: Not a valid object name", "fatal: Not a valid commit name")):
+            rev, *__ = stderr[31:].split(maxsplit=1)
+            raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
+
         raise errors.GitException(
             f"Git failed to determine if commit {maybe_ancestor_rev}"
             f" is ancestor of {descendant_rev} for repo at path: {self.folder_path}",
@@ -495,6 +508,9 @@ class Repo(RepoJSONMixin):
                     )
         """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
+            if not name.isidentifier() or keyword.iskeyword(name):
+                # reject package names that can't be valid python identifiers
+                continue
             if is_pkg:
                 curr_modules.append(
                     Installable(location=self.folder_path / name, repo=self, commit=self.commit)

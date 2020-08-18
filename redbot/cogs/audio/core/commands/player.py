@@ -10,6 +10,7 @@ from discord.embeds import EmptyEmbed
 from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.commands import UserInputOptional
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
@@ -122,7 +123,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_bumpplay(
-        self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
+        self, ctx: commands.Context, play_now: UserInputOptional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
         query = Query.process_input(query, self.local_folder_current_path)
@@ -358,9 +359,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
         playlist_search_controls = {
             "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
@@ -368,9 +369,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
         api_data = await self._check_api_tokens()
@@ -576,6 +577,16 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 notify_channel = self.bot.get_channel(notify_channel)
                 await self.send_embed_msg(notify_channel, title=_("Couldn't get a valid track."))
             return
+        except TrackEnqueueError:
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable get a track from Lavalink at the moment, try again in a few "
+                    "minutes."
+                ),
+            )
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
@@ -617,9 +628,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
         if not self._player_check(ctx):
