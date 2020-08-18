@@ -21,7 +21,7 @@ jobs:
                 libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
                 libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
           apt -y install debhelper devscripts equivs python3-all python3-setuptools \
-            python3.8-dev python3-pip dh-python dh-virtualenv
+            python3-pip dh-python dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
