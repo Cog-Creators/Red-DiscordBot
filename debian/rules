@@ -1,0 +1,9 @@
+#! /usr/bin/make -f
+
+#export DH_VERBOSE = 1
+
+%:
+	dh $@ --with python-virtualenv
+
+override_dh_installinit:
+	dh_installsystemd --no-stop-on-upgrade --no-start --no-enable
