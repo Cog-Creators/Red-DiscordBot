@@ -483,9 +483,8 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         author = ctx.author
-        author_pos = await bank.get_leaderboard_position(author)
         embed_requested = await ctx.embed_requested()
-        footer_message = _("You are {author_pos}/{len_board}. Page {page_num}/{page_len}.")
+        footer_message = _("Page {page_num}/{page_len}.")
         max_bal = await bank.get_max_balance(ctx.guild)
 
         if top < 1:
@@ -551,10 +550,7 @@ class Economy(commands.Cog):
                     embed.description = box(temp_msg, lang="md")
                     embed.set_footer(
                         text=footer_message.format(
-                            author_pos=author_pos,
-                            len_board=len(bank_sorted),
-                            page_num=len(highscores) + 1,
-                            page_len=ceil(len(bank_sorted) / 10),
+                            page_num=len(highscores) + 1, page_len=ceil(len(bank_sorted) / 10),
                         )
                     )
                     highscores.append(embed)
@@ -569,10 +565,7 @@ class Economy(commands.Cog):
                 embed.description = box(temp_msg, lang="md")
                 embed.set_footer(
                     text=footer_message.format(
-                        author_pos=author_pos,
-                        len_board=len(bank_sorted),
-                        page_num=len(highscores) + 1,
-                        page_len=ceil(len(bank_sorted) / 10),
+                        page_num=len(highscores) + 1, page_len=ceil(len(bank_sorted) / 10),
                     )
                 )
                 highscores.append(embed)
