@@ -19,7 +19,7 @@ jobs:
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
       - name: Install dh-virtualenv
         run: |
-          echo "deb http://archive.debian.org/debian jessie-backports main" \
+          echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" \
             | sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
           sudo apt-get update
           sudo apt-get install -t jessie-backports dh-virtualenv
