@@ -5,5 +5,8 @@
 %:
 	dh $@ --with python-virtualenv
 
+override_dh_virtualenv:
+    dh_virtualenv --python python3
+
 override_dh_installinit:
 	dh_installsystemd --no-stop-on-upgrade --no-start --no-enable
