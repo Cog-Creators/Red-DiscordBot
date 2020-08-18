@@ -21,18 +21,12 @@ jobs:
                 libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
                 libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git \
                 openjdk-11-jre-headless debhelper devscripts equivs python3-all \
-                python3-setuptools python3-pip dh-python dh-virtualenv
+                python3-setuptools python3-pip dh-python
           CXX=/usr/bin/g++
-      - name: Install Python
+      - name: Install dh-virtualenv
         shell: bash -leo pipefail {0}
         run: |
-          command -v pyenv && pyenv update || curl https://pyenv.run | bash
-          echo 'export PATH="'$HOME'/.pyenv/bin:$PATH"' >> ~/.profile
-          echo 'eval "$(pyenv init -)"' >> ~/.profile
-          echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.profile
-          source ~/.profile
-          CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
-          pyenv global 3.8.5
+          docker build --tag dh-venv-builder https://github.com/spotify/dh-virtualenv#1.2.1 --build-arg distro=ubuntu:focal
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
