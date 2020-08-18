@@ -7,6 +7,7 @@ on:
 jobs:
   debian:
     runs-on: ubuntu-latest
+    container: debian:buster
     steps:
       - uses: actions/checkout@v2
         with:
@@ -16,14 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install build-essential debhelper devscripts equivs python3-all \
-            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
-      - name: Install dh-virtualenv
-        run: |
-          echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" \
-            | sudo tee /etc/apt/sources.list.d/jessie-backports.list >/dev/null
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010
-          sudo apt-get update
-          sudo apt-get install -t jessie-backports dh-virtualenv
+            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
