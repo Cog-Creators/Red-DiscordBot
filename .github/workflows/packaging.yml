@@ -7,7 +7,6 @@ on:
 jobs:
   debian:
     runs-on: ubuntu-latest
-    container: debian:buster
     steps:
       - uses: actions/checkout@v2
         with:
@@ -16,13 +15,8 @@ jobs:
         run: mkdir artifacts
       - name: Install dependencies
         run: |
-          apt update
-          apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-                libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-                libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git \
-                openjdk-11-jre-headless debhelper devscripts equivs python3-all \
-                python3-setuptools python3-pip docker
-          CXX=/usr/bin/g++
+          sudo apt-get install build-essential debhelper devscripts equivs python3-all \
+            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless
       - name: Install dh-virtualenv
         shell: bash -leo pipefail {0}
         run: |
