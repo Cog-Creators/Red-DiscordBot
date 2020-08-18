@@ -23,6 +23,16 @@ jobs:
                 openjdk-11-jre-headless debhelper devscripts equivs python3-all \
                 python3-setuptools python3-pip dh-python dh-virtualenv
           CXX=/usr/bin/g++
+      - name: Install Python
+        shell: bash -leo pipefail {0}
+        run: |
+          command -v pyenv && pyenv update || curl https://pyenv.run | bash
+          echo 'export PATH="'$HOME'/.pyenv/bin:$PATH"' >> ~/.profile
+          echo 'eval "$(pyenv init -)"' >> ~/.profile
+          echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.profile
+          source ~/.profile
+          CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
+          pyenv global 3.8.5
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
