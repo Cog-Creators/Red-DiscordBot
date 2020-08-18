@@ -22,6 +22,7 @@ jobs:
         run: |
           docker build --tag dh-venv-builder https://github.com/spotify/dh-virtualenv.git#1.2.1 --build-arg distro=ubuntu:focal
           mkdir -p dist && docker run --rm dh-venv-builder tar -C /dpkg -c . | tar -C dist -xv
+          sudo dpkg -i dist/dh-virtualenv*.deb
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
