@@ -21,7 +21,7 @@ jobs:
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx aptitude
       - name: Check dependencies
         run: |
-          aptitude python3-sphinx-rtd-theme
+          aptitude why python3-sphinx-rtd-theme
           apt-cache policy python3-sphinx-rtd-theme
       - name: Install dh-virtualenv
         shell: bash -leo pipefail {0}
