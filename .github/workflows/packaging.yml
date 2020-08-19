@@ -19,14 +19,14 @@ jobs:
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Build Debian package
-        run: dpkg-buildpackage -us -uc -b
+        run: dpkg-buildpackage -us -uc -b && cd ..
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: Debian packaging output
           path: |
-            ../red-discordbot*.deb
-            ../red-discordbot*.ddeb
-            ../red-discordbot*.buildinfo
-            ../red-discordbot*.changes
-            ../red-discordbot*.orig.tar.gz
+            ./red-discordbot*.deb
+            ./red-discordbot*.ddeb
+            ./red-discordbot*.buildinfo
+            ./red-discordbot*.changes
+            ./red-discordbot*.orig.tar.gz
