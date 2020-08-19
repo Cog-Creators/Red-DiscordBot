@@ -6,7 +6,7 @@ on:
 
 jobs:
   debian:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -15,17 +15,10 @@ jobs:
         run: mkdir artifacts
       - name: Install dependencies
         run: |
-          sudo add-apt-repository ppa:ecppa/bionic-backports
           sudo apt update
           sudo apt install build-essential debhelper devscripts equivs python3-all \
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
-            python3-virtualenv python3-sphinx-rtd-theme python3-sphinx
-      - name: Install dh-virtualenv
-        shell: bash -leo pipefail {0}
-        run: |
-          docker build --tag dh-venv-builder https://github.com/spotify/dh-virtualenv.git#1.2.1 --build-arg distro=ubuntu:focal
-          mkdir -p dist && docker run --rm dh-venv-builder tar -C /dpkg -c . | tar -C dist -xv
-          sudo dpkg -i dist/dh-virtualenv*.deb
+            python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
