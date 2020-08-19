@@ -21,7 +21,9 @@ jobs:
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Build Debian package
-        run: dpkg-buildpackage -us -uc -b --builddirectory ./artifacts
+        env:
+          DEB_BUILD_OPTIONS: --builddirectory ./artifacts
+        run: dpkg-buildpackage -us -uc -b
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
