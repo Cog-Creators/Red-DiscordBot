@@ -53,7 +53,7 @@ msgstr "Özel komut yönetimi"
 #: redbot/cogs/customcom/customcom.py:243
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n\\n        This is helpful for copy and pasting."
-msgstr ""
+msgstr "Bir komutun Markdown özelliklerini almanıza yarar.\\n\\n        Bu, kopyala yapıştır yapmanız için kolay bir yöntemdir."
 
 #: redbot/cogs/customcom/customcom.py:264
 msgid "Response #{num}/{total}"
@@ -196,7 +196,7 @@ msgstr "Bu özel komutu bulamadım."
 
 #: redbot/cogs/customcom/customcom.py:510
 msgid "Deleted User"
-msgstr ""
+msgstr "Silinmiş Kullanıcı"
 
 #: redbot/cogs/customcom/customcom.py:516
 msgid "Random"

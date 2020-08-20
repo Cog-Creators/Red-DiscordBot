@@ -131,7 +131,7 @@ msgstr "Anonsların sunucuya nasıl gönderileceğini belirleyin."
 #: redbot/cogs/admin/admin.py:356
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr ""
+msgstr "\\n        Botun yollaması için bir duyuru kanalı ayarlayın.\\n\\n        Eğer kanal boş bırakılırsa mevcut kanal ayarlanır.\\n        "
 
 #: redbot/cogs/admin/admin.py:365
 msgid "The announcement channel has been set to {channel.mention}"
@@ -140,7 +140,7 @@ msgstr "{channel.mention} duyuru kanalı olarak ayarlandı"
 #: redbot/cogs/admin/admin.py:370
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Kanalı duyuru ayarından kaldır."
 
 #: redbot/cogs/admin/admin.py:395
 #, docstring

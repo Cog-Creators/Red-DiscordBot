@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-08-20 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr "Can't pay for this command in DM without a global bank."
 
 #: redbot/core/bank.py:936
 msgid "You need at least {cost} {currency} to use this command."
-msgstr ""
+msgstr "Bu komutu kullanabilmen için {cost} {currency} ihtiyacın var."
 
 #: redbot/core/cog_manager.py:320
 #, docstring
@@ -147,7 +147,7 @@ msgstr "Red Sürümü"
 
 #: redbot/core/core_commands.py:430 redbot/core/core_commands.py:473
 msgid "Yes, {version} is available."
-msgstr ""
+msgstr "Evet, {version} şu anda mevcut."
 
 #: redbot/core/core_commands.py:434 redbot/core/core_commands.py:477
 msgid "Checking for updates failed."
@@ -183,7 +183,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:481
 msgid "**About Red**\\n"
-msgstr ""
+msgstr "**Red Hakkında**\\n"
 
 #: redbot/core/core_commands.py:492
 msgid "**About this instance**\\n"
@@ -209,12 +209,12 @@ msgstr "Şu zamandan beri açık: **{time_quantity}** ({timestamp} UTC)"
 #: redbot/core/core_commands.py:522
 #, docstring
 msgid " Commands which interact with the data [botname] has about you. "
-msgstr ""
+msgstr " Bu botun [botname] sizinle ilgili hangi verileri elde ediyor komutları. "
 
 #: redbot/core/core_commands.py:529
 #, docstring
 msgid " Find out what type of data [botname] stores and why. "
-msgstr ""
+msgstr " [botname] hangi verileri alıyor ve neden alıyor bulun. "
 
 #: redbot/core/core_commands.py:534
 msgid "This bot stores some data about users as necessary to function. This is mostly the ID your user is assigned by Discord, linked to a handful of things depending on what you interact with in the bot. There are a few commands which store it to keep track of who created something. (such as playlists) For full details about this as well as more in depth details of what is stored and why, see {link}.\\n\\nAdditionally, 3rd party addons loaded by the bot's owner may or may not store additional things. You can use `{prefix}mydata 3rdparty` to view the statements provided by each 3rd-party addition."
@@ -227,7 +227,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:558
 msgid "I need to be able to attach files (try in DMs?)."
-msgstr ""
+msgstr "Dosya eklemem gerekiyor. (DM'den deneyebilirsin)."
 
 #: redbot/core/core_commands.py:568
 msgid "This instance does not appear to have any 3rd-party extensions loaded."
@@ -247,7 +247,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:606
 msgid "Here's a generated page with the statements provided by 3rd-party extensions."
-msgstr ""
+msgstr "İşte 3. taraf uzantıların sağladığı ifadelerle oluşturulmuş bir sayfa."
 
 #: redbot/core/core_commands.py:622
 msgid "Did not get confirmation, cancelling."
@@ -272,19 +272,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:667
 msgid "This may take some time."
-msgstr ""
+msgstr "Bu biraz zaman alacak."
 
 #: redbot/core/core_commands.py:680
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}.\\nPlease contact the owner of this bot to address this.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) {mention}, her neyse aşağıdaki modüllerde bir hata aldım: {modules}. Ayrıca bu coglarla alakalıda: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:695
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following cogs errored: {cogs}.\\nPlease contact the owner of this bot to address this.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) {mention}, her neyse aşağıdaki modüllerde bir hata aldım: {cogs}. Ayrıca bu coglarla alakalıda:.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:705
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following modules errored: {modules}.\\nPlease contact the owner of this bot to address this.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) {mention}, her neyse aşağıdaki modüllerde bir hata aldım: {modules}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:715
 msgid "I've deleted any non-operational data about you (that I know how to delete) {mention}"
@@ -297,11 +297,11 @@ msgstr ""
 #: redbot/core/core_commands.py:733
 #, docstring
 msgid " [Coming Soon] Get what data [botname] has about you. "
-msgstr ""
+msgstr " [Çok Yakında] [botname] botunun sizin hakkınızda olan datalarını alın. "
 
 #: redbot/core/core_commands.py:735
 msgid "This command doesn't do anything yet, but we're working on adding support for this."
-msgstr ""
+msgstr "Bu komut şu anda hiç bir şey yapmıyor fakat bunun için üzerinde çalışıyoruz."
 
 #: redbot/core/core_commands.py:744
 #, docstring
@@ -324,7 +324,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:769
 msgid "User can not delete their own data."
-msgstr ""
+msgstr "Kullanıcılar kendi datalarını silemezler."
 
 #: redbot/core/core_commands.py:773
 #, docstring
@@ -354,7 +354,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:842
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following cogs errored: {cogs}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Bu kullanıcıyla alakalı olan tüm verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki coglarla alakalı bir hata aldım: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:853
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
@@ -362,7 +362,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:863 redbot/core/core_commands.py:1005
 msgid "I've deleted all data about that user that I know how to delete."
-msgstr ""
+msgstr "O kullanıcıyla ilgili nasıl sileceğimi bildiğim tüm verileri sildim."
 
 #: redbot/core/core_commands.py:867
 msgid "{mention} The following cogs did not handle deletion:\\n{cogs}."
@@ -379,19 +379,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:900
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki modüllerde bir hata aldım: {modules}. Ayrıca bu coglarla alakalıda: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:915
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following cogs errored: {cogs}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki coglarla alakalı bir hata aldım: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:926
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following modules errored: {modules}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Bu kullanıcıyla alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki coglarla alakalı bir hata aldım: {modules}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:937
 msgid "I've deleted all non-operational data about that user that I know how to delete."
-msgstr ""
+msgstr "O kullanıcıyla ilgili nasıl sileceğimi bildiğim tüm verileri sildim."
 
 #: redbot/core/core_commands.py:945
 msgid "{mention} The following cogs did not handle deletion:\\n{cogs}."
@@ -400,7 +400,7 @@ msgstr ""
 #: redbot/core/core_commands.py:952
 #, docstring
 msgid " Delete data [botname] has about a user. "
-msgstr ""
+msgstr " [botname] botunun sizin hakkınızda olan dataları silin. "
 
 #: redbot/core/core_commands.py:955
 msgid "This will cause the bot to get rid of or disassociate a lot of data about the specified user. This may include more than just end user data, including anti abuse records.\\n\\nIf you are sure this is what you intend to do please respond with the following:"
@@ -408,15 +408,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:969
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Bu kullanıcıyla alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki modüllerde bir hata aldım: {modules}. Ayrıca bu coglarla alakalıda: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:984
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following cogs errored: {cogs}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Bu kullanıcıyla alakalı olan tüm verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki coglarla alakalı bir hata aldım: {cogs}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:995
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}.\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "Sizinle alakalı olan operasyonel olmayan verileri silmeye çalıştım (nasıl sileceğimi biliyorum) her neyse aşağıdaki modüllerle alakalı bir hata aldım: {modules}.\\nBunu çözmek için lütfen bot sahibi ile iletişime geçin.\\nNot: Bu hatalar dışında, verileriniz silinmiş olmalı."
 
 #: redbot/core/core_commands.py:1009
 msgid "{mention} The following cogs did not handle deletion:\\n{cogs}."
@@ -1276,111 +1276,111 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2511
 #, docstring
-msgid "\\n        Whitelist management commands.\\n        "
+msgid "\\n        Allowlist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2518
 #, docstring
-msgid "\\n        Adds a user to the whitelist.\\n        "
+msgid "\\n        Adds a user to the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2528
-msgid "Users added to whitelist."
+msgid "Users added to allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2532
 #, docstring
-msgid "\\n        Lists whitelisted users.\\n        "
+msgid "\\n        Lists users on the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2541
-msgid "Whitelisted Users:"
-msgstr "Beyaz listeye alınmış Ip`ler:"
+msgid "Users on allowlist:"
+msgstr ""
 
 #: redbot/core/core_commands.py:2550
 #, docstring
-msgid "\\n        Removes user from whitelist.\\n        "
+msgid "\\n        Removes user from the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2560
-msgid "Users have been removed from whitelist."
+msgid "Users have been removed from the allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2564
 #, docstring
-msgid "\\n        Clears the whitelist.\\n        "
+msgid "\\n        Clears the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2568
-msgid "Whitelist has been cleared."
-msgstr "Beyaz Liste temizlendi."
+msgid "Allowlist has been cleared."
+msgstr ""
 
 #: redbot/core/core_commands.py:2573
 #, docstring
-msgid "\\n        Blacklist management commands.\\n        "
+msgid "\\n        Blocklist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2580
 #, docstring
-msgid "\\n        Adds a user to the blacklist.\\n        "
+msgid "\\n        Adds a user to the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2593
-msgid "You cannot blacklist an owner!"
-msgstr "Arkadaşını kara listeye ekleyemezsin!"
+msgid "You cannot add an owner to the blocklist!"
+msgstr ""
 
 #: redbot/core/core_commands.py:2599
-msgid "User added to blacklist."
-msgstr "%s kara listeye eklendi."
+msgid "User added to blocklist."
+msgstr ""
 
 #: redbot/core/core_commands.py:2603
 #, docstring
-msgid "\\n        Lists blacklisted users.\\n        "
+msgid "\\n        Lists users on the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2612
-msgid "Blacklisted Users:"
+msgid "Users on blocklist:"
 msgstr ""
 
 #: redbot/core/core_commands.py:2621
 #, docstring
-msgid "\\n        Removes user from blacklist.\\n        "
+msgid "\\n        Removes user from the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2631
-msgid "Users have been removed from blacklist."
+msgid "Users have been removed from blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2635
 #, docstring
-msgid "\\n        Clears the blacklist.\\n        "
+msgid "\\n        Clears the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2639
-msgid "Blacklist has been cleared."
+msgid "Blocklist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2645
 #, docstring
-msgid "\\n        Whitelist management commands.\\n        "
+msgid "\\n        Server specific allowlist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2654
 #, docstring
-msgid "\\n        Adds a user or role to the whitelist.\\n        "
+msgid "\\n        Adds a user or role to the server allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2669
-msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the whitelist first."
+msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the allowlist first."
 msgstr ""
 
 #: redbot/core/core_commands.py:2677
-msgid "{names} added to whitelist."
+msgid "{names} added to allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2681
 #, docstring
-msgid "\\n        Lists whitelisted users and roles.\\n        "
+msgid "\\n        Lists users and roles on the  server allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2690
@@ -1389,7 +1389,7 @@ msgstr "Beyaz liste kullanıcılar ve roller:"
 
 #: redbot/core/core_commands.py:2701
 #, docstring
-msgid "\\n        Removes user or role from whitelist.\\n        "
+msgid "\\n        Removes user or role from the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2716
@@ -1397,47 +1397,47 @@ msgid "I cannot allow you to do this, as it would remove your ability to run com
 msgstr ""
 
 #: redbot/core/core_commands.py:2724
-msgid "{names} removed from the local whitelist."
+msgid "{names} removed from the server allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2729
 #, docstring
-msgid "\\n        Clears the whitelist.\\n        "
+msgid "\\n        Clears the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2733
-msgid "Local whitelist has been cleared."
+msgid "Server allowlist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2739
 #, docstring
-msgid "\\n        Blacklist management commands.\\n        "
+msgid "\\n        Server specific blocklist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2748
 #, docstring
-msgid "\\n        Adds a user or role to the blacklist.\\n        "
+msgid "\\n        Adds a user or role to the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2758
-msgid "You cannot blacklist yourself!"
+msgid "You cannot add yourself to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2761
-msgid "You cannot blacklist the guild owner!"
+msgid "You cannot add the guild owner to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2764
-msgid "You cannot blacklist a bot owner!"
+msgid "You cannot add a bot owner to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2771
-msgid "{names} added to the local blacklist."
+msgid "{names} added to the server blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2776
 #, docstring
-msgid "\\n        Lists blacklisted users and roles.\\n        "
+msgid "\\n        Lists users and roles on the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2785
@@ -1446,20 +1446,20 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2796
 #, docstring
-msgid "\\n        Removes user or role from blacklist.\\n        "
+msgid "\\n        Removes user or role from blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2808
-msgid "{names} removed from the local blacklist."
+msgid "{names} removed from the server blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2813
 #, docstring
-msgid "\\n        Clears the blacklist.\\n        "
+msgid "\\n        Clears the server blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2817
-msgid "Local blacklist has been cleared."
+msgid "Server blocklist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2822
@@ -1783,7 +1783,7 @@ msgstr ""
 #: redbot/core/core_commands.py:3351
 #, docstring
 msgid "Remove a channel or category from the ignore list.\\n\\n        Defaults to the current channel.\\n        "
-msgstr ""
+msgstr "Bir kanalı ya da kategoriyi yasaklı listesinden kaldırın.\\n\\n        Bir kanal girilmezse mevcut kanal olarak seçilecek.\\n        "
 
 #: redbot/core/core_commands.py:3360
 msgid "Channel removed from ignore list."
@@ -1943,7 +1943,7 @@ msgstr "Bilinmiyor"
 #: redbot/core/modlog.py:347 redbot/core/modlog.py:369
 #: redbot/core/modlog.py:384
 msgid "Deleted User."
-msgstr ""
+msgstr "Silinmiş Kullanıcı."
 
 #: redbot/core/modlog.py:349 redbot/core/modlog.py:371
 #: redbot/core/modlog.py:387

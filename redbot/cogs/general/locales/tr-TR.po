@@ -129,7 +129,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:130
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
-msgstr ""
+msgstr "İyi denemeydi. Sence bu komik mi?\\n Şuna ne dersin *bu* yerine:\\n\\n"
 
 #: redbot/cogs/general/general.py:141
 msgid "*flips a coin and... "
@@ -199,7 +199,7 @@ msgstr ""
 #: redbot/cogs/general/general.py:249
 #, docstring
 msgid "\\n        Show server information.\\n    \\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
-msgstr ""
+msgstr "\\n        Sunucu bilgilerini göster.\\n    \\n        `detaylar`: Daha fazla bilgi göstermesi için sonuna `True` ekleyin.\\n        Normal yazılması varsayılan.\\n        "
 
 #: redbot/cogs/general/general.py:257
 msgid "Created on {date}. That's over {num} days ago!"
@@ -235,7 +235,7 @@ msgstr "Sunucu kimliği: "
 
 #: redbot/cogs/general/general.py:277
 msgid "  •  Use {command} for more info on the server."
-msgstr ""
+msgstr "  •  Bu komutu kullanarak {command} sunucu hakkında daha fazla bilgi alabilirsiniz."
 
 #: redbot/cogs/general/general.py:303
 msgid "\\nShard ID: **{shard_id}/{shard_count}**"
@@ -383,7 +383,7 @@ msgstr "Özelleştirilebilir"
 
 #: redbot/cogs/general/general.py:379
 msgid "Community"
-msgstr ""
+msgstr "Topluluk"
 
 #: redbot/cogs/general/general.py:380
 msgid "Public disabled"
@@ -403,11 +403,11 @@ msgstr "Özel URL"
 
 #: redbot/cogs/general/general.py:384
 msgid "More Emojis"
-msgstr ""
+msgstr "Daha fazla emojiler"
 
 #: redbot/cogs/general/general.py:385
 msgid "Commerce"
-msgstr ""
+msgstr "Ticaret"
 
 #: redbot/cogs/general/general.py:386
 msgid "News Channels"

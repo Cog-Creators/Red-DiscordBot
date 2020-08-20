@@ -25,23 +25,23 @@ msgstr "Fazla etiketleme (Autoban)"
 
 #: redbot/cogs/mod/events.py:76
 msgid "Mention Spam (Autokick)"
-msgstr ""
+msgstr "Etiket Spamı (Otomatik Kick)"
 
 #: redbot/cogs/mod/events.py:91
 msgid "Mention spam (Autokick)"
-msgstr ""
+msgstr "Etiket spamı (Otomatik Kick)"
 
 #: redbot/cogs/mod/events.py:100
 msgid "Please do not mass mention people!"
-msgstr ""
+msgstr "Lütfen toplu olarak insanları etiketlemeyin!"
 
 #: redbot/cogs/mod/events.py:104
 msgid "{member}, Please do not mass mention people!"
-msgstr ""
+msgstr "{member}, lütfen insanları toplu etiket atarak rahatsız etmeyin!"
 
 #: redbot/cogs/mod/events.py:123
 msgid "Mention spam (Autowarn)"
-msgstr ""
+msgstr "Etiket spamı (Otomatik Uyarı)"
 
 #: redbot/cogs/mod/kickban.py:74 redbot/cogs/mod/kickban.py:444
 msgid "I cannot let you do that. Self-harm is bad {}"
@@ -160,7 +160,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:477
 msgid "You have been temporarily banned from {server_name} until {date}."
-msgstr ""
+msgstr "Bu sunucudan {server_name} geçici olarak yasaklandın. Şu zamana kadar {date}."
 
 #: redbot/cogs/mod/kickban.py:481
 msgid " Here is an invite for when your ban expires: {invite_link}"
@@ -223,7 +223,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:672
 msgid "Unbanned that user from this server."
-msgstr ""
+msgstr "Bu kullanıcının yasağını bu sunucudan kaldırın."
 
 #: redbot/cogs/mod/kickban.py:678
 msgid "I don't share another server with this user. I can't reinvite them."
@@ -482,11 +482,11 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:191
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n({} gün önce)"
 
 #: redbot/cogs/mod/names.py:192
 msgid "{}\\n({} days ago)"
-msgstr ""
+msgstr "{}\\n({} gün önce)"
 
 #: redbot/cogs/mod/names.py:204
 msgid "Chilling in {} status"
@@ -498,11 +498,11 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:245
 msgid "Joined Discord on"
-msgstr ""
+msgstr "Discord'a Katıldı"
 
 #: redbot/cogs/mod/names.py:246
 msgid "Joined this server on"
-msgstr ""
+msgstr "Bu sunucuya katıldı"
 
 #: redbot/cogs/mod/names.py:248
 msgid "Roles"
@@ -510,11 +510,11 @@ msgstr "Roller"
 
 #: redbot/cogs/mod/names.py:252
 msgid "Previous Names"
-msgstr ""
+msgstr "Geçmiş İsimleri"
 
 #: redbot/cogs/mod/names.py:256
 msgid "Previous Nicknames"
-msgstr ""
+msgstr "Geçmiş Kullanıcı adları"
 
 #: redbot/cogs/mod/names.py:259
 msgid "Current voice channel"
@@ -568,7 +568,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:42
 msgid "Warn mention spam: {num_mentions}\\n"
-msgstr ""
+msgstr "Etiket uyarısı: {num_mentions}\\n"
 
 #: redbot/cogs/mod/settings.py:43 redbot/cogs/mod/settings.py:48
 #: redbot/cogs/mod/settings.py:53
@@ -577,7 +577,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:47
 msgid "Kick mention spam: {num_mentions}\\n"
-msgstr ""
+msgstr "Etiket spamı kick: {num_mentions}\\n"
 
 #: redbot/cogs/mod/settings.py:52
 msgid "Ban mention spam: {num_mentions}\\n"
@@ -636,24 +636,24 @@ msgstr ""
 #: redbot/cogs/mod/settings.py:105
 #, docstring
 msgid "\\n        Manage the automoderation settings for mentionspam.\\n        "
-msgstr ""
+msgstr "\\n        Etiket spamı için otomatik moderatör ayarlarını yönetin.\\n        "
 
 #: redbot/cogs/mod/settings.py:112
 #, docstring
 msgid "\\n        Sets the autowarn conditions for mention spam.\\n\\n        Users will be warned if they send any messages which contain more than\\n        `<max_mentions>` mentions.\\n\\n        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.\\n        "
-msgstr ""
+msgstr "\\n        Etiket spamı için otomatik uyarıları ayarlayın.\\n\\n        Üyeler uyarı alacaklar eğer bu sayıdan daha fazla \\n        `<max_mentions>` etiket atarlarsa.\\n\\n        `<max_mentions>` 0 dan daha büyük olmalıdır. 0 yaparak bu özelliği kapatabilirsiniz.\\n        "
 
 #: redbot/cogs/mod/settings.py:123
 msgid "Autowarn for mention spam is already disabled."
-msgstr ""
+msgstr "Otomatik etiket uyarı sistemi zaten kapalı."
 
 #: redbot/cogs/mod/settings.py:125
 msgid "Autowarn for mention spam disabled."
-msgstr ""
+msgstr "Otomatik etiket spam özelliği kapatıldı."
 
 #: redbot/cogs/mod/settings.py:128
 msgid "`<max_mentions>` must be 1 or higher to autowarn."
-msgstr ""
+msgstr "Otomatik uyarı sistemi için `<max_mentions>` sayısı 1 ya da daha fazla olmalıdır."
 
 #: redbot/cogs/mod/settings.py:134
 msgid "\\nAutowarn is equal to or higher than autokick."
@@ -665,24 +665,24 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:142
 msgid "Autowarn for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autowarned.\\n{mismatch_message}"
-msgstr ""
+msgstr "Otomatik etiket uyarı sistemi açıldı. Eğer birileri bu sayıdan {max_mentions} daha fazla etiket atarlarsa uyarı alacaklar.\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:152
 #, docstring
 msgid "\\n        Sets the autokick conditions for mention spam.\\n\\n        Users will be kicked if they send any messages which contain more than\\n        `<max_mentions>` mentions.\\n\\n        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.\\n        "
-msgstr ""
+msgstr "\\n        Etiket spamı için otomatik kick ayarlayın.\\n\\n        Üyeler sunucudan atılacaklar eğer bu sayıdan daha fazla \\n        `<max_mentions>` etiket atarlarsa.\\n\\n        `<max_mentions>` 0 dan daha büyük olmalıdır. 0 yaparak bu özelliği kapatabilirsiniz.\\n        "
 
 #: redbot/cogs/mod/settings.py:163
 msgid "Autokick for mention spam is already disabled."
-msgstr ""
+msgstr "Otomatik kick sistemi zaten kapalı."
 
 #: redbot/cogs/mod/settings.py:165
 msgid "Autokick for mention spam disabled."
-msgstr ""
+msgstr "Otomatik etiket spam kick özelliği kapatıldı."
 
 #: redbot/cogs/mod/settings.py:168
 msgid "`<max_mentions>` must be 1 or higher to autokick."
-msgstr ""
+msgstr "Otomatik kick sistemi için `<max_mentions>` sayısı 1 ya da daha fazla olmalıdır."
 
 #: redbot/cogs/mod/settings.py:174
 msgid "\\nAutokick is equal to or lower than autowarn."
@@ -694,12 +694,12 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:182
 msgid "Autokick for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autokicked.\\n{mismatch_message}"
-msgstr ""
+msgstr "Otomatik etiket kick sistemi açıldı. Eğer birileri bu sayıdan {max_mentions} daha fazla etiket atarlarsa sunucudan atılacaklar..\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:192
 #, docstring
 msgid "Set the autoban conditions for mention spam.\\n\\n        Users will be banned if they send any message which contains more than\\n        `<max_mentions>` mentions.\\n\\n        `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.\\n        "
-msgstr ""
+msgstr "\\n        Etiket spamı için otomatik yasaklamaları ayarlayın.\\n\\n        Üyeler uyarı alacaklar eğer bu sayıdan daha fazla \\n        `<max_mentions>` etiket atarlarsa.\\n\\n        `<max_mentions>` 0 dan daha büyük olmalıdır. 0 yaparak bu özelliği kapatabilirsiniz.\\n        "
 
 #: redbot/cogs/mod/settings.py:202
 msgid "Autoban for mention spam is already disabled."
@@ -711,7 +711,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:207
 msgid "`<max_mentions>` must be 1 or higher to autoban."
-msgstr ""
+msgstr "Otomatik yasaklama için `<max_mentions>` sayısı 1 ya da daha fazla olmalıdır."
 
 #: redbot/cogs/mod/settings.py:213
 msgid "\\nAutoban is equal to or lower than autowarn."
@@ -723,7 +723,7 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:221
 msgid "Autoban for mention spam enabled. Anyone mentioning {max_mentions} or more different people in a single message will be autobanned.\\n{mismatch_message}"
-msgstr ""
+msgstr "Otomatik etiket yasaklama sistemi açıldı. Eğer birileri bu sayıdan {max_mentions} daha fazla etiket atarlarsa yasaklama alacaklar.\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:231
 #, docstring

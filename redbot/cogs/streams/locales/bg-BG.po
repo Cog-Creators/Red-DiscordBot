@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-20 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -175,114 +175,114 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:501
 #, docstring
-msgid "Set stream alert message when mentions are enabled.\\n\\n        Use `{mention}` in the message to insert the selected mentions.\\n\\n        Use `{stream.name}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message mention \\\"{mention}, {stream.name} is live!\\\"`\\n        "
+msgid "Set stream alert message when mentions are enabled.\\n\\n        Use `{mention}` in the message to insert the selected mentions.\\n        Use `{stream}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message mention {mention}, {stream} is live!`\\n        "
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:512 redbot/cogs/streams/streams.py:528
+#: redbot/cogs/streams/streams.py:511 redbot/cogs/streams/streams.py:527
 msgid "Stream alert message set!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:519
+#: redbot/cogs/streams/streams.py:518
 #, docstring
-msgid "Set stream alert message when mentions are disabled.\\n\\n        Use `{stream.name}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message nomention \\\"{stream.name} is live!\\\"`\\n        "
+msgid "Set stream alert message when mentions are disabled.\\n\\n        Use `{stream}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message nomention {stream} is live!`\\n        "
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:535
+#: redbot/cogs/streams/streams.py:534
 #, docstring
 msgid "Reset the stream alert messages in this server."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:539
+#: redbot/cogs/streams/streams.py:538
 msgid "Stream alerts in this server will now use the default alert message."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:544
+#: redbot/cogs/streams/streams.py:543
 #, docstring
 msgid "Manage mention settings for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:550
+#: redbot/cogs/streams/streams.py:549
 #, docstring
 msgid "Toggle the `@​everyone` mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:555
+#: redbot/cogs/streams/streams.py:554
 msgid "`@​everyone` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:558
+#: redbot/cogs/streams/streams.py:557
 msgid "When a stream is live, `@​everyone` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:563
+#: redbot/cogs/streams/streams.py:562
 #, docstring
 msgid "Toggle the `@​here` mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:568
+#: redbot/cogs/streams/streams.py:567
 msgid "`@​here` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:571
+#: redbot/cogs/streams/streams.py:570
 msgid "When a stream is live, `@​here` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:576
+#: redbot/cogs/streams/streams.py:575
 #, docstring
 msgid "Toggle a role mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:581
+#: redbot/cogs/streams/streams.py:580
 msgid "`@​{role.name}` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:587
+#: redbot/cogs/streams/streams.py:586
 msgid "When a stream or community is live, `@​{role.name}` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:591
+#: redbot/cogs/streams/streams.py:590
 msgid "Since the role is not mentionable, it will be momentarily made mentionable when announcing a streamalert. Please make sure I have the correct permissions to manage this role, or else members of this role won't receive a notification."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:602
+#: redbot/cogs/streams/streams.py:601
 #, docstring
 msgid "Toggle alert deletion for when streams go offline."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:605
+#: redbot/cogs/streams/streams.py:604
 msgid "The notifications will be deleted once streams go offline."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:607
+#: redbot/cogs/streams/streams.py:606
 msgid "Notifications will no longer be deleted."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:612
+#: redbot/cogs/streams/streams.py:611
 #, docstring
 msgid "Toggle excluding rerun streams from alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:617
+#: redbot/cogs/streams/streams.py:616
 msgid "Streams of type 'rerun' will be included in alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:620
+#: redbot/cogs/streams/streams.py:619
 msgid "Streams of type 'rerun' will no longer send an alert."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:628
+#: redbot/cogs/streams/streams.py:627
 msgid "I'll now send a notification in this channel when {stream.name} is live."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:637
+#: redbot/cogs/streams/streams.py:636
 msgid "I won't send notifications about {stream.name} in this channel anymore."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:725
+#: redbot/cogs/streams/streams.py:731
 msgid "{mention}, {stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:738
+#: redbot/cogs/streams/streams.py:748
 msgid "{stream} is live!"
 msgstr ""
 

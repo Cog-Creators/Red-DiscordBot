@@ -118,7 +118,7 @@ msgstr ""
 #: redbot/cogs/warnings/warnings.py:213
 #, docstring
 msgid "Create an automated action.\\n\\n        Duplicate action names are not allowed.\\n        "
-msgstr ""
+msgstr "Crée une action automatisée.\\n\\n        Les noms d'actions dupliqués ne sont pas autorisés.\\n        "
 
 #: redbot/cogs/warnings/warnings.py:234
 msgid "Duplicate action name found!"
@@ -271,7 +271,7 @@ msgstr "Cet utilisateur n'a aucun avertissement !"
 
 #: redbot/cogs/warnings/warnings.py:529 redbot/cogs/warnings/warnings.py:563
 msgid "Deleted Moderator"
-msgstr ""
+msgstr "Modérateur Supprimé"
 
 #: redbot/cogs/warnings/warnings.py:532 redbot/cogs/warnings/warnings.py:566
 msgid "Unknown Moderator ({})"
