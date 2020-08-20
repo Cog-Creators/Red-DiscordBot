@@ -570,17 +570,11 @@ class Economy(commands.Cog):
         - `<show_global>` Whether to include results from all servers. This will default to false unless specified.
         """
         guild = ctx.guild
-
-        base_embed = discord.Embed(title=_("Economy Leaderboard"))
-        if show_global and await bank.is_global():
+        if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
             bank_sorted = await bank.get_leaderboard(guild=guild)
-            if guild:
-                base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
-
         try:
             bank_sorted[0][1]["balance"]
             # first user is the largest we'll see
