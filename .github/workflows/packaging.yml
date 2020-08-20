@@ -20,6 +20,16 @@ jobs:
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
+      - name: Debug
+        run: |
+          pwd
+          ls
+          cd ..
+          pwd
+          ls
+          cd $HOME
+          pwd
+          ls
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
