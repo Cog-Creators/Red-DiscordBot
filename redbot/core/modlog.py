@@ -240,13 +240,13 @@ class Case:
         guild: discord.Guild,
         created_at: int,
         action_type: str,
-        user: Union[discord.User, int],
-        moderator: Optional[Union[discord.User, int]],
+        user: Union[discord.abc.User, int],
+        moderator: Optional[Union[discord.abc.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[Union[discord.User, int]] = None,
+        amended_by: Optional[Union[discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -260,10 +260,14 @@ class Case:
             self.user = user.id
         self.last_known_username = last_known_username
         self.moderator = moderator
+        if isinstance(moderator, discord.Object):
+            self.moderator = moderator.id
         self.reason = reason
         self.until = until
         self.channel = channel
         self.amended_by = amended_by
+        if isinstance(amended_by, discord.Object):
+            self.amended_by = amended_by.id
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
@@ -800,8 +804,8 @@ async def create_case(
     guild: discord.Guild,
     created_at: datetime,
     action_type: str,
-    user: Union[discord.User, int],
-    moderator: Optional[Union[discord.User, int]] = None,
+    user: Union[discord.abc.User, int],
+    moderator: Optional[Union[discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
     channel: Optional[discord.TextChannel] = None,
