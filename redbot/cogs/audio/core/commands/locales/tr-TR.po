@@ -782,19 +782,19 @@ msgstr "Lavalink Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgstr "Cog versiyon:            [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr ""
+msgstr "Red-Lavalink:           [{lavalink_version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr ""
+msgstr "External sunucu:        [{use_external_lavalink}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\n"
-msgstr ""
+msgstr "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer versiyon:     [{lavaplayer}]\\nJava versiyon:           [{jvm}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1093
 msgid "Localtracks path:       [{localpath}]\\n"
@@ -1040,11 +1040,11 @@ msgstr "Bir önceki çalınan şarkının en başına geri döner"
 #: redbot/cogs/audio/core/commands/controller.py:486
 #: redbot/cogs/audio/core/commands/controller.py:495
 msgid "Unable To Skip Tracks"
-msgstr ""
+msgstr "Parçalar Atlanamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:241
 msgid "You must be in the voice channel to skip the track."
-msgstr ""
+msgstr "Şarkıyı geçebilmek için kanal da olmanız gerekli."
 
 #: redbot/cogs/audio/core/commands/controller.py:253
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
@@ -1192,7 +1192,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:487
 msgid "You can only skip the current track."
-msgstr ""
+msgstr "Sadece mevcut şarkıyı geçebilirsin."
 
 #: redbot/cogs/audio/core/commands/controller.py:496
 msgid "Can't skip to a specific track in vote mode without the DJ role."

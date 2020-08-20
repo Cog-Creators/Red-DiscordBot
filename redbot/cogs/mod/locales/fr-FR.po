@@ -675,11 +675,11 @@ msgstr ""
 
 #: redbot/cogs/mod/settings.py:163
 msgid "Autokick for mention spam is already disabled."
-msgstr ""
+msgstr "L'expulsion automatique pour le spam de mention est déjà désactivée."
 
 #: redbot/cogs/mod/settings.py:165
 msgid "Autokick for mention spam disabled."
-msgstr ""
+msgstr "Expulsion automatique pour le spam de mention désactivée."
 
 #: redbot/cogs/mod/settings.py:168
 msgid "`<max_mentions>` must be 1 or higher to autokick."
