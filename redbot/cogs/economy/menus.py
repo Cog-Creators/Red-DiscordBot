@@ -85,6 +85,7 @@ class LeaderboardSource(menus.ListPageSource):
                     accounts = await bank._config.all_users()
                 else:
                     accounts = await bank._config.all_members(guild=guild)
+                account_count = len(accounts)
                 overall = 0
                 for key, value in accounts.items():
                     overall += value["balance"]
@@ -98,7 +99,7 @@ class LeaderboardSource(menus.ListPageSource):
             bank_name = _("{} leaderboard.").format(self._bank_name)
             page = discord.Embed(
                 title=_("{}\nYou are currently #{}/{}").format(
-                    bank_name, self._author_position, len(self.entries)
+                    bank_name, self._author_position, account_count
                 ),
                 color=await menu.ctx.embed_color(),
                 description="{} ```py\n{}\n{}```".format(
