@@ -256,6 +256,8 @@ class Case:
         self.created_at = created_at
         self.action_type = action_type
         self.user = user
+        if isinstance(user, discord.Object):
+            self.user = user.id
         self.last_known_username = last_known_username
         self.moderator = moderator
         self.reason = reason
@@ -388,12 +390,10 @@ class Case:
                 user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
-            avatar_url = None
         else:
             user = escape_spoilers(
                 filter_invites(f"{self.user} ({self.user.id})")
             )  # Invites and spoilers get rendered even in embeds.
-            avatar_url = self.user.avatar_url
 
         if embed:
             emb = discord.Embed(title=title, description=reason)
@@ -801,10 +801,11 @@ async def create_case(
     created_at: datetime,
     action_type: str,
     user: Union[discord.User, int],
-    moderator: Optional[Union[discord.User, discord.Member]] = None,
+    moderator: Optional[Union[discord.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
     channel: Optional[discord.TextChannel] = None,
+    last_known_username: Optional[str] = None,
 ) -> Optional[Case]:
     """
     Creates a new case.
@@ -861,6 +862,7 @@ async def create_case(
             amended_by=None,
             modified_at=None,
             message=None,
+            last_known_username=last_known_username,
         )
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)
