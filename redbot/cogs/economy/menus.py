@@ -49,7 +49,6 @@ class LeaderboardSource(menus.ListPageSource):
             bal_len=bal_len + 6,
             pound_len=pound_len + 3,
         )
-        percent = round((int(self._author_balance) / self._total_balance * 100), 3)
         for pos, acc in enumerate(entries, start=position):
             try:
                 user = guild.get_member(int(acc[0])) or bot.get_user(int(acc[0]))
@@ -81,7 +80,6 @@ class LeaderboardSource(menus.ListPageSource):
         if await menu.ctx.embed_requested():
             if self._bank_name is None:
                 self._bank_name = await bank.get_bank_name(guild)
-            bank_name = _("{} leaderboard.").format(self._bank_name)
             if self._total_balance is None:
                 if await bank.is_global():
                     accounts = await bank._config.all_users()
@@ -96,6 +94,8 @@ class LeaderboardSource(menus.ListPageSource):
             if self._author_balance is None:
                 self._author_balance = await bank.get_balance(menu.ctx.author)
 
+            percent = round((int(self._author_balance) / self._total_balance * 100), 3)
+            bank_name = _("{} leaderboard.").format(self._bank_name)
             page = discord.Embed(
                 title=_("{}\nYou are currently #{}/{}").format(
                     bank_name, self._author_position, len(self.entries)
