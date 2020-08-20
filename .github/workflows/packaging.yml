@@ -25,7 +25,7 @@ jobs:
         with:
           name: Debian packaging output
           path: |
-            ./red-discordbot*.deb
-            ./red-discordbot*.ddeb
-            ./red-discordbot*.buildinfo
-            ./red-discordbot*.changes
+            $GITHUB_WORKSPACE/../red-discordbot*.deb
+            $GITHUB_WORKSPACE/../red-discordbot*.ddeb
+            $GITHUB_WORKSPACE/../red-discordbot*.buildinfo
+            $GITHUB_WORKSPACE/../red-discordbot*.changes
