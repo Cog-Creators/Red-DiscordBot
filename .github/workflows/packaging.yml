@@ -20,22 +20,12 @@ jobs:
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -b
-      - name: Debug
-        run: |
-          pwd
-          ls
-          cd ..
-          pwd
-          ls
-          cd $HOME
-          pwd
-          ls
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: Debian packaging output
           path: |
-            $GITHUB_WORKSPACE/../red-discordbot*.deb
-            $GITHUB_WORKSPACE/../red-discordbot*.ddeb
-            $GITHUB_WORKSPACE/../red-discordbot*.buildinfo
-            $GITHUB_WORKSPACE/../red-discordbot*.changes
+            $HOME/work/Red-DiscordBot/red-discordbot*.deb
+            $HOME/work/Red-DiscordBot/red-discordbot*.ddeb
+            $HOME/work/Red-DiscordBot/red-discordbot*.buildinfo
+            $HOME/work/Red-DiscordBot/red-discordbot*.changes
