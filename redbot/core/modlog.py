@@ -800,7 +800,7 @@ async def create_case(
     guild: discord.Guild,
     created_at: datetime,
     action_type: str,
-    user: Union[discord.User, discord.Member],
+    user: Union[discord.User, int],
     moderator: Optional[Union[discord.User, discord.Member]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
