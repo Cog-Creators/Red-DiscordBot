@@ -40,22 +40,6 @@ class LeaderboardSource(menus.ListPageSource):
         bal_len_max = len(humanize_number(self.max_bal))
         if bal_len > bal_len_max:
             bal_len = bal_len_max
-        if self._bank_name is None:
-            self._bank_name = await bank.get_bank_name(guild)
-        bank_name = _("{} leaderboard.").format(self._bank_name)
-        if self._total_balance is None:
-            if await bank.is_global():
-                accounts = await bank._config.all_users()
-            else:
-                accounts = await bank._config.all_members(guild=guild)
-            overall = 0
-            for key, value in accounts.items():
-                overall += value["balance"]
-            self._total_balance = overall
-        if self._author_position is None:
-            self._author_position = await bank.get_leaderboard_position(menu.ctx.author)
-        if self._author_balance is None:
-            self._author_balance = await bank.get_balance(menu.ctx.author)
 
         pound_len = len(str(position + 9))
         header = "{pound:{pound_len}}{score:{bal_len}}{name:2}\n".format(
@@ -95,6 +79,23 @@ class LeaderboardSource(menus.ListPageSource):
                     f"<<{name}>>\n"
                 )
         if await menu.ctx.embed_requested():
+            if self._bank_name is None:
+                self._bank_name = await bank.get_bank_name(guild)
+            bank_name = _("{} leaderboard.").format(self._bank_name)
+            if self._total_balance is None:
+                if await bank.is_global():
+                    accounts = await bank._config.all_users()
+                else:
+                    accounts = await bank._config.all_members(guild=guild)
+                overall = 0
+                for key, value in accounts.items():
+                    overall += value["balance"]
+                self._total_balance = overall
+            if self._author_position is None:
+                self._author_position = await bank.get_leaderboard_position(menu.ctx.author)
+            if self._author_balance is None:
+                self._author_balance = await bank.get_balance(menu.ctx.author)
+
             page = discord.Embed(
                 title=_("{}\nYou are currently #{}/{}").format(
                     bank_name, self._author_position, len(self.entries)
