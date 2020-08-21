@@ -29,3 +29,9 @@ newenv:
 	$(MAKE) syncenv
 syncenv:
 	.venv/bin/pip install -Ur ./tools/dev-requirements.txt
+
+# Packaging
+updatedebian:
+	$(PYTHON) ./tools/update_debian.py --update
+checkdebian:
+	$(PYTHON) ./tools/update_debian.py
