@@ -48,8 +48,13 @@ class Events(MixinMeta):
         mentions = set(message.mentions)
         if mention_spam["ban"]:
             if len(mentions) >= mention_spam["ban"]:
+                default_days = await self.config.guild(guild).default_days()
                 try:
-                    await guild.ban(author, reason=_("Mention spam (Autoban)"))
+                    await guild.ban(
+                        author,
+                        reason=_("Mention spam (Autoban)"),
+                        delete_message_days=default_days,
+                    )
                 except discord.HTTPException:
                     log.warning(
                         "Failed to ban a member ({member}) for mention spam in server {guild}.".format(
