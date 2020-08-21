@@ -30,4 +30,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Debian packaging output
-          path: artifacts/*
+          path: |
+            artifacts/*.deb
+            artifacts/*.ddeb
+            artifacts/*.buildinfo
+            artifacts/*.changes
