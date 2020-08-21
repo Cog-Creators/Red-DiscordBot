@@ -34,7 +34,7 @@ msgstr ""
 #: redbot/cogs/audio/core/events/dpy.py:96
 #: redbot/cogs/audio/core/events/dpy.py:104
 msgid "Invalid Argument"
-msgstr ""
+msgstr "Geçersiz argüment"
 
 #: redbot/cogs/audio/core/events/dpy.py:97
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
@@ -46,7 +46,7 @@ msgstr "Geçersiz Ortam"
 
 #: redbot/cogs/audio/core/events/dpy.py:115
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Lavalink'e bağlanırken bir bağlantı hatası oluştu."
 
 #: redbot/cogs/audio/core/events/dpy.py:123
 msgid "No Player Available"
@@ -75,7 +75,7 @@ msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika s
 
 #: redbot/cogs/audio/core/events/lavalink.py:106
 msgid "Auto Play started."
-msgstr ""
+msgstr "Otomatik çalma başladı."
 
 #: redbot/cogs/audio/core/events/lavalink.py:121
 msgid "Now Playing"

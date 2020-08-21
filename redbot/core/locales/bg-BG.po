@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-08-20 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -1276,111 +1276,111 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2511
 #, docstring
-msgid "\\n        Whitelist management commands.\\n        "
+msgid "\\n        Allowlist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2518
 #, docstring
-msgid "\\n        Adds a user to the whitelist.\\n        "
+msgid "\\n        Adds a user to the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2528
-msgid "Users added to whitelist."
+msgid "Users added to allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2532
 #, docstring
-msgid "\\n        Lists whitelisted users.\\n        "
+msgid "\\n        Lists users on the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2541
-msgid "Whitelisted Users:"
+msgid "Users on allowlist:"
 msgstr ""
 
 #: redbot/core/core_commands.py:2550
 #, docstring
-msgid "\\n        Removes user from whitelist.\\n        "
+msgid "\\n        Removes user from the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2560
-msgid "Users have been removed from whitelist."
+msgid "Users have been removed from the allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2564
 #, docstring
-msgid "\\n        Clears the whitelist.\\n        "
+msgid "\\n        Clears the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2568
-msgid "Whitelist has been cleared."
+msgid "Allowlist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2573
 #, docstring
-msgid "\\n        Blacklist management commands.\\n        "
+msgid "\\n        Blocklist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2580
 #, docstring
-msgid "\\n        Adds a user to the blacklist.\\n        "
+msgid "\\n        Adds a user to the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2593
-msgid "You cannot blacklist an owner!"
+msgid "You cannot add an owner to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2599
-msgid "User added to blacklist."
+msgid "User added to blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2603
 #, docstring
-msgid "\\n        Lists blacklisted users.\\n        "
+msgid "\\n        Lists users on the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2612
-msgid "Blacklisted Users:"
+msgid "Users on blocklist:"
 msgstr ""
 
 #: redbot/core/core_commands.py:2621
 #, docstring
-msgid "\\n        Removes user from blacklist.\\n        "
+msgid "\\n        Removes user from the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2631
-msgid "Users have been removed from blacklist."
+msgid "Users have been removed from blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2635
 #, docstring
-msgid "\\n        Clears the blacklist.\\n        "
+msgid "\\n        Clears the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2639
-msgid "Blacklist has been cleared."
+msgid "Blocklist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2645
 #, docstring
-msgid "\\n        Whitelist management commands.\\n        "
+msgid "\\n        Server specific allowlist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2654
 #, docstring
-msgid "\\n        Adds a user or role to the whitelist.\\n        "
+msgid "\\n        Adds a user or role to the server allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2669
-msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the whitelist first."
+msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the allowlist first."
 msgstr ""
 
 #: redbot/core/core_commands.py:2677
-msgid "{names} added to whitelist."
+msgid "{names} added to allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2681
 #, docstring
-msgid "\\n        Lists whitelisted users and roles.\\n        "
+msgid "\\n        Lists users and roles on the  server allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2690
@@ -1389,7 +1389,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2701
 #, docstring
-msgid "\\n        Removes user or role from whitelist.\\n        "
+msgid "\\n        Removes user or role from the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2716
@@ -1397,47 +1397,47 @@ msgid "I cannot allow you to do this, as it would remove your ability to run com
 msgstr ""
 
 #: redbot/core/core_commands.py:2724
-msgid "{names} removed from the local whitelist."
+msgid "{names} removed from the server allowlist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2729
 #, docstring
-msgid "\\n        Clears the whitelist.\\n        "
+msgid "\\n        Clears the allowlist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2733
-msgid "Local whitelist has been cleared."
+msgid "Server allowlist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2739
 #, docstring
-msgid "\\n        Blacklist management commands.\\n        "
+msgid "\\n        Server specific blocklist management commands.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2748
 #, docstring
-msgid "\\n        Adds a user or role to the blacklist.\\n        "
+msgid "\\n        Adds a user or role to the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2758
-msgid "You cannot blacklist yourself!"
+msgid "You cannot add yourself to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2761
-msgid "You cannot blacklist the guild owner!"
+msgid "You cannot add the guild owner to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2764
-msgid "You cannot blacklist a bot owner!"
+msgid "You cannot add a bot owner to the blocklist!"
 msgstr ""
 
 #: redbot/core/core_commands.py:2771
-msgid "{names} added to the local blacklist."
+msgid "{names} added to the server blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2776
 #, docstring
-msgid "\\n        Lists blacklisted users and roles.\\n        "
+msgid "\\n        Lists users and roles on the blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2785
@@ -1446,20 +1446,20 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2796
 #, docstring
-msgid "\\n        Removes user or role from blacklist.\\n        "
+msgid "\\n        Removes user or role from blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2808
-msgid "{names} removed from the local blacklist."
+msgid "{names} removed from the server blocklist."
 msgstr ""
 
 #: redbot/core/core_commands.py:2813
 #, docstring
-msgid "\\n        Clears the blacklist.\\n        "
+msgid "\\n        Clears the server blocklist.\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:2817
-msgid "Local blacklist has been cleared."
+msgid "Server blocklist has been cleared."
 msgstr ""
 
 #: redbot/core/core_commands.py:2822

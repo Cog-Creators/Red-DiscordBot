@@ -102,7 +102,7 @@ msgstr ""
 
 #: redbot/cogs/reports/reports.py:309
 msgid "This server has no reports channel set up. Please contact a server admin."
-msgstr ""
+msgstr "Bu sunucunun bir report kanalı yok. Lütfen sunucu yetkilisi ile iletişime geçin."
 
 #: redbot/cogs/reports/reports.py:315
 msgid "There was an error sending your report, please contact a server admin."
