@@ -8,9 +8,9 @@ jobs:
   debian:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/setup-python@v1
-        with:
-          python-version: "3.8"
+      # - uses: actions/setup-python@v1
+      #   with:
+      #     python-version: "3.8"
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.ref }}
