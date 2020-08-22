@@ -7,11 +7,16 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`TurnrDev`
 
 End-user changelog
 ------------------
 
+
+Economy
+*******
+
+- Added embed option for ``[p]leaderboard`` (:issue:`4184`, :issue:`4104`)
 
 
 Developer changelog
