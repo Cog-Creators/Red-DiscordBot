@@ -21,7 +21,7 @@ jobs:
           sudo apt install build-essential debhelper devscripts equivs python3-all \
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
-      - uses: Install Red
+      - name: Install Red
         run: pip3 install ./redbot
       - name: Check version number
         run: make checkdebian
