@@ -311,7 +311,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 name=name, permissions=perms, reason=_("Mute role setup")
             )
         except discord.errors.Forbidden:
-            return
+            return await ctx.send(_("I could not create a muted role in this server."))
+        errors = []
         for channel in ctx.guild.channels:
             overs = discord.PermissionOverwrite()
             if isinstance(channel, discord.TextChannel):
@@ -322,7 +323,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await channel.set_permissions(role, overwrite=overs, reason=_("Mute role setup"))
             except discord.errors.Forbidden:
+                errors.append(f"{channel.mention}")
                 continue
+        if errors:
+            msg = _("I could not set overwrites for the following channels: {channels}").format(
+                channels=humanize_list(errors)
+            )
+            for page in pagify(msg):
+                await ctx.send(page)
         await self.config.guild(ctx.guild).mute_role.set(role.id)
         await ctx.send(_("Mute role set to {role}").format(role=role.name))
 
@@ -614,7 +622,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.handle_issues(ctx, message, issue)
 
     @checks.mod_or_permissions(manage_roles=True)
-    @commands.command(name="channelunmute", aliases=["unmutechannel"])
+    @commands.command(name="unmutechannel", aliases=["channelunmute"])
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
     async def unmute_channel(
