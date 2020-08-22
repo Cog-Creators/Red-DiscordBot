@@ -4,15 +4,15 @@ import discord
 import logging
 
 from abc import ABC
-from typing import cast, Optional, Dict, List, Tuple
-from datetime import datetime, timedelta
+from typing import cast, Optional, Dict, List, Tuple, Literal, Coroutine
+from datetime import datetime, timedelta, timezone
 
 from .converters import MuteTime
 from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
-from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list
+from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -74,9 +74,24 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._channel_mutes: Dict[int, Dict[int, dict]] = {}
         self._ready = asyncio.Event()
         self.bot.loop.create_task(self.initialize())
-        self._unmute_tasks = {}
+        self._unmute_tasks: Dict[str, Coroutine] = {}
         self._unmute_task = asyncio.create_task(self._handle_automatic_unmute())
         # dict of guild id, member id and time to be unmuted
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self._ready.wait()
+        all_members = await self.config.all_members()
+        for g_id, m_id in all_members.items():
+            if m_id == user_id:
+                await self.config.member_from_ids(g_id, m_id).clear()
 
     async def initialize(self):
         guild_data = await self.config.all_guilds()
@@ -137,7 +152,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if guild is None:
                 continue
             for u_id, data in mutes.items():
-                time_to_unmute = data["until"] - datetime.utcnow().timestamp()
+                time_to_unmute = data["until"] - datetime.now(timezone.utc).timestamp()
                 if time_to_unmute < 120.0:
                     self._unmute_tasks[f"{g_id}{u_id}"] = asyncio.create_task(
                         self._auto_unmute_user(guild, data)
@@ -148,7 +163,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(guild).muted_users.set(self._server_mutes[g_id])
 
     async def _auto_unmute_user(self, guild: discord.Guild, data: dict):
-        delay = 120 - (data["until"] - datetime.utcnow().timestamp())
+        delay = 120 - (data["until"] - datetime.now(timezone.utc).timestamp())
         if delay < 1:
             delay = 0
         await asyncio.sleep(delay)
@@ -163,7 +178,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        datetime.utcnow(),
+                        datetime.now(timezone.utc),
                         "sunmute",
                         member,
                         author,
@@ -183,7 +198,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if channel is None:
                 continue
             for u_id, data in mutes.items():
-                time_to_unmute = data["until"] - datetime.utcnow().timestamp()
+                time_to_unmute = data["until"] - datetime.now(timezone.utc).timestamp()
                 if time_to_unmute < 120.0:
                     self._unmute_tasks[f"{c_id}{u_id}"] = asyncio.create_task(
                         self._auto_channel_unmute_user(channel, data)
@@ -193,7 +208,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.channel(channel).muted_users.set(self._channel_mutes[c_id])
 
     async def _auto_channel_unmute_user(self, channel: discord.TextChannel, data: dict):
-        delay = 120 - (data["until"] - datetime.utcnow().timestamp())
+        delay = 120 - (data["until"] - datetime.now(timezone.utc).timestamp())
         if delay < 1:
             delay = 0
         await asyncio.sleep(delay)
@@ -210,7 +225,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         channel.guild,
-                        datetime.utcnow(),
+                        datetime.now(timezone.utc),
                         "cunmute",
                         member,
                         author,
@@ -352,17 +367,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not users:
             return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot mute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot mute yourself."))
         duration = time_and_reason.get("duration", {})
         reason = time_and_reason.get("reason", None)
         time = ""
         until = None
         if duration:
-            until = datetime.utcnow() + timedelta(**duration)
+            until = datetime.now(timezone.utc) + timedelta(**duration)
             time = _(" for ") + humanize_timedelta(timedelta=timedelta(**duration))
         else:
             default_duration = await self.config.guild(ctx.guild).default_time()
             if default_duration:
-                until = datetime.utcnow() + timedelta(**default_duration)
+                until = datetime.now(timezone.utc) + timedelta(**default_duration)
                 time = _(" for ") + humanize_timedelta(timedelta=timedelta(**default_duration))
         author = ctx.message.author
         guild = ctx.guild
@@ -386,8 +405,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
                 except RuntimeError as e:
                     log.error(_("Error creating modlog case"), exc_info=e)
-        if not success_list:
-            return await ctx.send(issue)
+        if not success_list and issue:
+            resp = pagify(issue)
+            return await ctx.send_interactive(resp)
         if until:
             if ctx.guild.id not in self._server_mutes:
                 self._server_mutes[ctx.guild.id] = {}
@@ -469,17 +489,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not users:
             return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot mute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot mute yourself."))
         duration = time_and_reason.get("duration", {})
         reason = time_and_reason.get("reason", None)
         until = None
         time = ""
         if duration:
-            until = datetime.utcnow() + timedelta(**duration)
+            until = datetime.now(timezone.utc) + timedelta(**duration)
             time = _(" for ") + humanize_timedelta(timedelta=timedelta(**duration))
         else:
             default_duration = await self.config.guild(ctx.guild).default_time()
             if default_duration:
-                until = datetime.utcnow() + timedelta(**default_duration)
+                until = datetime.now(timezone.utc) + timedelta(**default_duration)
                 time = _(" for ") + humanize_timedelta(timedelta=timedelta(**default_duration))
         author = ctx.message.author
         channel = ctx.message.channel
@@ -542,6 +566,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not users:
             return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot unmute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot unmute yourself."))
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
@@ -564,7 +592,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 except RuntimeError as e:
                     log.error(_("Error creating modlog case"), exc_info=e)
         if not success_list:
-            return await ctx.send(issue)
+            resp = pagify(issue)
+            return await ctx.send_interactive(resp)
         if ctx.guild.id in self._server_mutes:
             if user.id in self._server_mutes[ctx.guild.id]:
                 for user in success_list:
@@ -598,6 +627,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not users:
             return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot unmute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot unmute yourself."))
         channel = ctx.channel
         author = ctx.author
         guild = ctx.guild
