@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/setup-python@v1
         with:
-          python_version: "3.8"
+          python-version: "3.8"
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.ref }}
