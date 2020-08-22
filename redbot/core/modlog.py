@@ -240,13 +240,13 @@ class Case:
         guild: discord.Guild,
         created_at: int,
         action_type: str,
-        user: Union[discord.abc.User, int],
-        moderator: Optional[Union[discord.abc.User, int]],
+        user: Union[discord.Object, discord.abc.User, int],
+        moderator: Optional[Union[discord.Object, discord.abc.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[Union[discord.abc.User, int]] = None,
+        amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -286,9 +286,12 @@ class Case:
         data.pop("case_number", None)
         # last username is set based on passed user object
         data.pop("last_known_username", None)
-
         for item in list(data.keys()):
-            setattr(self, item, data[item])
+            if isinstance(item, discord.Object):
+                # probably expensive to call but meh should capture all cases
+                setattr(self, item, data[item].id)
+            else:
+                setattr(self, item, data[item])
 
         # update last known username
         if not isinstance(self.user, int):
@@ -804,8 +807,8 @@ async def create_case(
     guild: discord.Guild,
     created_at: datetime,
     action_type: str,
-    user: Union[discord.abc.User, int],
-    moderator: Optional[Union[discord.abc.User, int]] = None,
+    user: Union[discord.Object, discord.abc.User, int],
+    moderator: Optional[Union[discord.Object, discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
     channel: Optional[discord.TextChannel] = None,
