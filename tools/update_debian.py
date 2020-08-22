@@ -1,6 +1,9 @@
-import redbot
 import re
 import sys
+
+print(sys.path)
+
+import redbot
 
 DEBIAN_PACKAGE_VERSION_RE = re.compile(r"(?:Standards-Version: )(?P<version>(\d\.?){3,}\w*)")
 
