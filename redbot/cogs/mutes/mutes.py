@@ -354,6 +354,54 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.command()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
+    async def activemutes(self, ctx: commands.Context):
+        """
+            Displays active mutes on this server.
+        """
+
+        msg = ""
+        for guild_id, mutes_data in self._server_mutes.items():
+            for user_id, mutes in mutes_data.items():
+                user = ctx.guild.get_member(user_id)
+                if not user:
+                    user_str = f"<@!{user_id}>"
+                else:
+                    user_str = user.mention
+                time_left = timedelta(
+                    seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
+                )
+                time_str = humanize_timedelta(timedelta=time_left)
+                msg += _("Server Mute: {member}").format(member=user_str)
+                if time_str:
+                    msg += _("Remaining: {time_left}\n").format(time_left=time_str)
+                else:
+                    msg += "\n"
+        for channel_id, mutes_data in self._channel_mutes.items():
+            msg += f"<#{channel_id}>\n"
+            for user_id, mutes in mutes_data.items():
+                user = ctx.guild.get_member(user_id)
+                if not user:
+                    user_str = f"<@!{user_id}>"
+                else:
+                    user_str = user.mention
+
+                time_left = timedelta(
+                    seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
+                )
+                time_str = humanize_timedelta(timedelta=time_left)
+                msg += _("Channel Mute: {member} ").format(member=user_str)
+                if time_str:
+                    msg += _("Remaining: {time_left}\n").format(time_left=time_str)
+                else:
+                    msg += "\n"
+        if msg:
+            await ctx.maybe_send_embed(msg)
+        else:
+            await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.mod_or_permissions(manage_roles=True)
     async def mute(
         self,
         ctx: commands.Context,
