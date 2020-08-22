@@ -829,9 +829,9 @@ async def create_case(
         The time the action occurred at
     action_type: str
         The type of action that was taken
-    user: Union[discord.User, discord.Member]
+    user: Union[discord.Object, discord.abc.User, int]
         The user target by the action
-    moderator: Optional[Union[discord.User, discord.Member]]
+    moderator: Optional[Union[discord.Object, discord.abc.User, int]]
         The moderator who took the action
     reason: Optional[str]
         The reason the action was taken
@@ -839,6 +839,8 @@ async def create_case(
         The time the action is in effect until
     channel: Optional[discord.TextChannel]
         The channel the action was taken in
+    last_known_username: Optional[str]
+        The last known username of the user
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
