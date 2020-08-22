@@ -320,7 +320,7 @@ class RedBase(
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         guild_id: int
 
         Returns
