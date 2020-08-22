@@ -22,7 +22,7 @@ jobs:
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       - name: Install Red
-        run: pip3 install ./redbot
+        run: pip3 install .
       - name: Check version number
         run: make checkdebian
       - name: Build Debian package
