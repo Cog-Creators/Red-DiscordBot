@@ -26,9 +26,9 @@ jobs:
         run: |
           mkdir artifacts
           cd ..
-          ls
           mv -t Red-DiscordBot/artifacts red-discordbot*.dsc red-discordbot*.tar.gz \
-            red-discordbot*.buildinfo red-discordbot*.changes
+            red-discordbot*.buildinfo red-discordbot*.changes \
+            red-discordbot*.deb red-discordbot*.ddeb
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
