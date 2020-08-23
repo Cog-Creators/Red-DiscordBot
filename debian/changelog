@@ -1,3 +1,9 @@
+red-discordbot (3.4.1.test1) bionic; urgency=medium
+
+  * Testing
+
+ -- El Laggron <laggron42@gmail.com>  Sat, 23 Aug 2020 16:49:00 +0000
+
 red-discordbot (3.4.1.dev1) bionic; urgency=medium
 
   * First release
