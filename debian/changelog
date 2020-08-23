@@ -1,3 +1,9 @@
+red-discordbot (3.4.1.test2) bionic; urgency=medium
+
+  * Remove py2
+
+ -- El Laggron <laggron42@gmail.com>  Sat, 23 Aug 2020 17:13:00 +0000
+
 red-discordbot (3.4.1.test1) bionic; urgency=medium
 
   * Testing
