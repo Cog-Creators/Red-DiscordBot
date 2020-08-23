@@ -1141,7 +1141,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
-            await ctx.send(_("No exception has occurred yet"))
+            await ctx.send(_("No exception has occurred yet."))
 
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
@@ -2151,7 +2151,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             show_hidden = not await ctx.bot._config.help.show_hidden()
         await ctx.bot._config.help.show_hidden.set(show_hidden)
         if show_hidden:
-            await ctx.send(_("Help will not filter hidden commands"))
+            await ctx.send(_("Help will not filter hidden commands."))
         else:
             await ctx.send(_("Help will filter hidden commands."))
 
