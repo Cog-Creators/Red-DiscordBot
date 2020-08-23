@@ -14,6 +14,8 @@ jobs:
         with:
           ref: ${{ env.ref }}
       - name: Install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           apt update
           apt install -y build-essential debhelper devscripts equivs python3-all \
