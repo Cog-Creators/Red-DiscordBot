@@ -15,9 +15,9 @@ jobs:
           ref: ${{ env.ref }}
       - name: Install dependencies
         run: |
-          sudo add-apt-repository -y ppa:deadsnakes/ppa
-          sudo apt update
-          sudo apt install build-essential debhelper devscripts equivs python3-all \
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt update
+          apt install build-essential debhelper devscripts equivs python3-all \
             python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       # - name: Check version number
