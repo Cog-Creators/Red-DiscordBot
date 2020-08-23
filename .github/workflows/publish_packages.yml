@@ -8,7 +8,7 @@ jobs:
   debian:
     runs-on: ubuntu-18.04
     container:
-      image: ubuntu:20.10-groovy
+      image: ubuntu:20.10
     steps:
       - uses: actions/checkout@v2
         with:
