@@ -4,11 +4,11 @@ Priority: extra
 Maintainer: "Cog-Creators" <cogcreators@gmail.com>
 Standards-Version: 3.4.1.test3
 Build-Depends: debhelper (>= 11~), dh-virtualenv (>= 1.2.1), python3-all, python3.8-dev, python3-setuptools, python3-pip, git, openjdk-11-jre-headless
-Breaks: python2.7, python2.7-minimal, libpython2.7-stdlib, libpython2.7-minimal
 
 Package: red-discordbot
 Architecture: any
 Depends: ${python3:Depends}, ${misc:Depends}
+Pre-Depends: python3 (>= 3.8.1), ${misc:Pre-Depends}
 X-Python3-Version: >= 3.8.1
 Homepage: https://github.com/Cog-Creators/Red-DiscordBot
 Description: A highly customisable Discord bot
