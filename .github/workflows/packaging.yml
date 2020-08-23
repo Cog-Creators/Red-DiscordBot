@@ -21,7 +21,7 @@ jobs:
       - name: Check version number
         run: make checkdebian
       - name: Build Debian package
-        run: dpkg-buildpackage -us -uc -g
+        run: dpkg-buildpackage -us -uc -F
       - name: Move packages
         run: |
           mkdir artifacts
