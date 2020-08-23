@@ -21,11 +21,12 @@ jobs:
       - name: Check version number
         run: make checkdebian
       - name: Build Debian package
-        run: dpkg-buildpackage -us -uc -S
+        run: dpkg-buildpackage -us -uc -g
       - name: Move packages
         run: |
           mkdir artifacts
           cd ..
+          ls
           mv -t Red-DiscordBot/artifacts red-discordbot*.dsc red-discordbot*.tar.gz \
             red-discordbot*.buildinfo red-discordbot*.changes
       - name: Upload artifact
