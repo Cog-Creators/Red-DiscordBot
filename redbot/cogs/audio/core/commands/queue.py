@@ -49,10 +49,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return None
 
         queue_controls = {
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
-            "\N{INFORMATION SOURCE}": _queue_menu,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
+            "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}": _queue_menu,
         }
 
         if not self._player_check(ctx):
@@ -107,16 +107,16 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 return
 
-            expected: Union[Tuple[str, ...]] = ("⏮", "⏹", "⏯", "⏭", "\N{CROSS MARK}")
             emoji = {
-                "prev": "⏮",
-                "stop": "⏹",
-                "pause": "⏯",
-                "next": "⏭",
+                "prev": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                "stop": "\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}",
+                "pause": "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                "next": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
                 "close": "\N{CROSS MARK}",
             }
+            expected = tuple(emoji.values())
             if not player.queue and not autoplay:
-                expected = ("⏹", "⏯", "\N{CROSS MARK}")
+                expected = (emoji["stop"], emoji["pause"], emoji["close"])
             if player.current:
                 task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:5])
             else:

@@ -3,7 +3,8 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
-from typing import cast, Iterable, Union
+from math import ceil
+from typing import cast, Iterable, Union, Literal
 
 import discord
 
@@ -11,8 +12,9 @@ from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 
@@ -21,6 +23,7 @@ T_ = Translator("Economy", __file__)
 logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+VARIATION_SELECTOR = "\N{VARIATION SELECTOR-16}"
 MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
@@ -33,8 +36,8 @@ class SMReel(Enum):
     sunflower = "\N{SUNFLOWER}"
     six = "\N{DIGIT SIX}" + NUM_ENC
     mushroom = "\N{MUSHROOM}"
-    heart = "\N{HEAVY BLACK HEART}"
-    snowflake = "\N{SNOWFLAKE}"
+    heart = "\N{HEAVY BLACK HEART}" + VARIATION_SELECTOR
+    snowflake = "\N{SNOWFLAKE}" + VARIATION_SELECTOR
 
 
 _ = lambda s: s
@@ -136,7 +139,6 @@ class Economy(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_global(**self.default_global_settings)
@@ -144,6 +146,23 @@ class Economy(commands.Cog):
         self.config.register_user(**self.default_user_settings)
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self.config.user_from_id(user_id).clear()
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     @guild_only_check()
     @commands.group(name="bank")
@@ -464,14 +483,22 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         author = ctx.author
+        embed_requested = await ctx.embed_requested()
+        footer_message = _("Page {page_num}/{page_len}.")
         max_bal = await bank.get_max_balance(ctx.guild)
+
         if top < 1:
             top = 10
+
+        base_embed = discord.Embed(title=_("Economy Leaderboard"))
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+            base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
             bal_len_max = len(humanize_number(max_bal))
@@ -518,15 +545,41 @@ class Economy(commands.Cog):
                     f"<<{author.display_name}>>\n"
                 )
             if pos % 10 == 0:
-                highscores.append(box(temp_msg, lang="md"))
+                if embed_requested:
+                    embed = base_embed.copy()
+                    embed.description = box(temp_msg, lang="md")
+                    embed.set_footer(
+                        text=footer_message.format(
+                            page_num=len(highscores) + 1, page_len=ceil(len(bank_sorted) / 10),
+                        )
+                    )
+                    highscores.append(embed)
+                else:
+                    highscores.append(box(temp_msg, lang="md"))
                 temp_msg = header
             pos += 1
 
         if temp_msg != header:
-            highscores.append(box(temp_msg, lang="md"))
+            if embed_requested:
+                embed = base_embed.copy()
+                embed.description = box(temp_msg, lang="md")
+                embed.set_footer(
+                    text=footer_message.format(
+                        page_num=len(highscores) + 1, page_len=ceil(len(bank_sorted) / 10),
+                    )
+                )
+                highscores.append(embed)
+            else:
+                highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
-            await menu(ctx, highscores, DEFAULT_CONTROLS)
+            await menu(
+                ctx,
+                highscores,
+                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
+            )
+        else:
+            await ctx.send(_("No balances found."))
 
     @commands.command()
     @guild_only_check()

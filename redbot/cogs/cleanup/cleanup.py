@@ -25,6 +25,10 @@ class Cleanup(commands.Cog):
         super().__init__()
         self.bot = bot
 
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
+
     @staticmethod
     async def check_100_plus(ctx: commands.Context, number: int) -> bool:
         """
@@ -374,7 +378,7 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, number, channel.name
+            author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
 

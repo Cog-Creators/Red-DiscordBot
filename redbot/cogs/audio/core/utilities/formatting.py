@@ -365,9 +365,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
         seek = "\N{RADIO BUTTON}"
         if paused:
-            msg = "\N{DOUBLE VERTICAL BAR}"
+            msg = "\N{DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}"
         else:
-            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}"
+            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}"
         for i in range(sections):
             if i == loc_time:
                 msg += seek

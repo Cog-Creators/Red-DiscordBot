@@ -1,10 +1,12 @@
 import discord
 import re
-from typing import Union, Set
+from datetime import timezone
+from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_list
 
 _ = Translator("Filter", __file__)
@@ -32,6 +34,21 @@ class Filter(commands.Cog):
         self.config.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
 
     def cog_unload(self):
         self.register_task.cancel()
@@ -255,7 +272,7 @@ class Filter(commands.Cog):
         elif isinstance(server_or_channel, discord.TextChannel):
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
-                    if w.lower not in cur_list and w:
+                    if w.lower() not in cur_list and w:
                         cur_list.append(w.lower())
                         added = True
 
@@ -323,10 +340,11 @@ class Filter(commands.Cog):
         filter_time = guild_data["filterban_time"]
         user_count = member_data["filter_count"]
         next_reset_time = member_data["next_reset_time"]
+        created_at = message.created_at.replace(tzinfo=timezone.utc)
 
         if filter_count > 0 and filter_time > 0:
-            if message.created_at.timestamp() >= next_reset_time:
-                next_reset_time = message.created_at.timestamp() + filter_time
+            if created_at.timestamp() >= next_reset_time:
+                next_reset_time = created_at.timestamp() + filter_time
                 async with self.config.member(author).all() as member_data:
                     member_data["next_reset_time"] = next_reset_time
                     if user_count > 0:
@@ -345,10 +363,7 @@ class Filter(commands.Cog):
                 if filter_count > 0 and filter_time > 0:
                     user_count += 1
                     await self.config.member(author).filter_count.set(user_count)
-                    if (
-                        user_count >= filter_count
-                        and message.created_at.timestamp() < next_reset_time
-                    ):
+                    if user_count >= filter_count and created_at.timestamp() < next_reset_time:
                         reason = _("Autoban (too many filtered messages.)")
                         try:
                             await guild.ban(author, reason=reason)
@@ -358,7 +373,7 @@ class Filter(commands.Cog):
                             await modlog.create_case(
                                 self.bot,
                                 guild,
-                                message.created_at,
+                                message.created_at.replace(tzinfo=timezone.utc),
                                 "filterban",
                                 author,
                                 guild.me,

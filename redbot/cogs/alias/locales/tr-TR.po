@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-06-18 12:13+0000\n"
+"POT-Creation-Date: 2020-08-06 12:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -15,146 +15,146 @@ msgstr ""
 "X-Crowdin-File-ID: 8\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/alias/alias.py:31
+#: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
 msgstr "Komutlar için kısaltma yaratır.\\n\\n    Kısaltmalar, komutlar için alternatiftir. Hem\\n    kısaltma hem de komut bir arada kullanılabilir\\n  Sadece kısaltmalar da kullanılabilir \\\"x y z\\\".\\n\\n    Çalıştırıldığında, diğer adlar ek bağımsız değişkenleri\\n kabul eder ve bunları depolanan diğer ada ekler.\\n    "
 
-#: redbot/cogs/alias/alias.py:86
+#: redbot/cogs/alias/alias.py:173
 msgid "No prefix found."
 msgstr "Prefix yani komut başlangıcı bulunamadı."
 
-#: redbot/cogs/alias/alias.py:116
+#: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\\n"
 msgstr "Takma adlar"
 
-#: redbot/cogs/alias/alias.py:118
+#: redbot/cogs/alias/alias.py:205
 msgid "\\n\\nPage {page}/{total}"
 msgstr "Sayfa"
 
-#: redbot/cogs/alias/alias.py:128
+#: redbot/cogs/alias/alias.py:215
 #, docstring
 msgid "Manage command aliases."
 msgstr "Komut kısaltmalarını yönet."
 
-#: redbot/cogs/alias/alias.py:133
+#: redbot/cogs/alias/alias.py:220
 #, docstring
 msgid "Manage global aliases."
 msgstr "Global kısaltmaları yönet."
 
-#: redbot/cogs/alias/alias.py:140
+#: redbot/cogs/alias/alias.py:227
 #, docstring
 msgid "Add an alias for a command."
 msgstr "Bir komut için kısaltma ekleyin."
 
-#: redbot/cogs/alias/alias.py:145
+#: redbot/cogs/alias/alias.py:232
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
 msgstr "{name} adı ile yeni bir kısaltma oluşturmaya çalıştınız, ancak botta bu ad ile mevcut bir komut bulunuyor."
 
-#: redbot/cogs/alias/alias.py:156
+#: redbot/cogs/alias/alias.py:243
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
 msgstr "{name} adıyla yeni bir diğer ad oluşturmaya çalıştınız, ancak bu diğer ad zaten var."
 
-#: redbot/cogs/alias/alias.py:167
+#: redbot/cogs/alias/alias.py:254
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "{name} adı ile yeni bir kısaltma oluşturmaya çalıştınız, ancak belirttiğiniz geçersiz bir kısaltmadır. Kısaltmalar boşluk içermemelidir."
 
-#: redbot/cogs/alias/alias.py:179 redbot/cogs/alias/alias.py:238
+#: redbot/cogs/alias/alias.py:266 redbot/cogs/alias/alias.py:325
 msgid "You attempted to create a new alias for a command that doesn't exist."
 msgstr "Mevcut olmayan bir komut için kısayol oluşturmaya çalıştınız."
 
-#: redbot/cogs/alias/alias.py:193
+#: redbot/cogs/alias/alias.py:280
 msgid "A new alias with the trigger `{name}` has been created."
 msgstr "Yeni bir kısaltma '{name}' ismi ile oluşturuldu."
 
-#: redbot/cogs/alias/alias.py:199
+#: redbot/cogs/alias/alias.py:286
 #, docstring
 msgid "Add a global alias for a command."
 msgstr "Bir komut için global bir kısaltma ekleyin."
 
-#: redbot/cogs/alias/alias.py:204
+#: redbot/cogs/alias/alias.py:291
 msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
 msgstr "{name} adı ile global bir kısaltma yaratmaya çalıştınız, ancak botta bu isimde bir komut mevcut."
 
-#: redbot/cogs/alias/alias.py:215
+#: redbot/cogs/alias/alias.py:302
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
 msgstr "{name} adıyla yeni bir genel diğer ad oluşturmaya çalıştınız, ancak bu diğer ad zaten var."
 
-#: redbot/cogs/alias/alias.py:226
+#: redbot/cogs/alias/alias.py:313
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
 msgstr "{name} ile yeni bir global kısaltma oluşturmaya çalıştınız ancak bu kısaltma geçerli değil. Kısaltmalar boşluk içeremez."
 
-#: redbot/cogs/alias/alias.py:249
+#: redbot/cogs/alias/alias.py:336
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "Yeni bir global kısaltma '{name}' ismi ile oluşturuldu."
 
-#: redbot/cogs/alias/alias.py:256
+#: redbot/cogs/alias/alias.py:343
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Kısaltma komutlarını detaylıca öğrenmek için yardım komutunu kullanmayı deneyiniz."
 
-#: redbot/cogs/alias/alias.py:261
+#: redbot/cogs/alias/alias.py:348
 msgid "No such alias exists."
 msgstr "Böyle bir kısaltma mevcut değil."
 
-#: redbot/cogs/alias/alias.py:265
+#: redbot/cogs/alias/alias.py:352
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Kısaltmanın hangi komutu uyguladığını gösterir."
 
-#: redbot/cogs/alias/alias.py:270
+#: redbot/cogs/alias/alias.py:357
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "'{alias_name}' kısaltması '{command} ' komutunu uygulayacak"
 
-#: redbot/cogs/alias/alias.py:275
+#: redbot/cogs/alias/alias.py:362
 msgid "There is no alias with the name `{name}`"
 msgstr "{name} adında bir kısaltma mevcut değil"
 
-#: redbot/cogs/alias/alias.py:281
+#: redbot/cogs/alias/alias.py:368
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Bu sunucuda mevcut bir kısaltmayı silin."
 
-#: redbot/cogs/alias/alias.py:283 redbot/cogs/alias/alias.py:315
+#: redbot/cogs/alias/alias.py:370 redbot/cogs/alias/alias.py:402
 msgid "There are no aliases on this server."
 msgstr "Bu sunucuda herhangi bir kısaltma mevcut değil."
 
-#: redbot/cogs/alias/alias.py:288 redbot/cogs/alias/alias.py:303
+#: redbot/cogs/alias/alias.py:375 redbot/cogs/alias/alias.py:390
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "`{name}`adlı kısaltma başarıyla silindi."
 
-#: redbot/cogs/alias/alias.py:291 redbot/cogs/alias/alias.py:306
+#: redbot/cogs/alias/alias.py:378 redbot/cogs/alias/alias.py:393
 msgid "Alias with name `{name}` was not found."
 msgstr "{name} adlı kısaltma bulunamadı."
 
-#: redbot/cogs/alias/alias.py:296
+#: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Mevcut bir global kısaltmayı silin."
 
-#: redbot/cogs/alias/alias.py:298
+#: redbot/cogs/alias/alias.py:385
 msgid "There are no global aliases on this bot."
 msgstr "Bu botta herhangi bir global kısaltma bulunmuyor."
 
-#: redbot/cogs/alias/alias.py:312
+#: redbot/cogs/alias/alias.py:399
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Bu sunucudaki kullanılabilir kısaltmaları listeleyin."
 
-#: redbot/cogs/alias/alias.py:321
+#: redbot/cogs/alias/alias.py:408
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Bot üzerindeki global kullanılabilir kısaltmaları listeleyin."
 
-#: redbot/cogs/alias/alias.py:324
+#: redbot/cogs/alias/alias.py:411
 msgid "There are no global aliases."
 msgstr "Herhangi bir global kısaltma mevcut değil."
 
-#: redbot/cogs/alias/alias_entry.py:174
+#: redbot/cogs/alias/alias_entry.py:198
 msgid "Arguments must be specified with a number."
 msgstr "Değişkenler numara içermelidir."
 
-#: redbot/cogs/alias/alias_entry.py:181
+#: redbot/cogs/alias/alias_entry.py:205
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Değişkenler sıralı olmalıdır. Eksik değişkenler: "
 

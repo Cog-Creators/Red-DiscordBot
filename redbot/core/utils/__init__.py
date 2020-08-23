@@ -1,7 +1,6 @@
 from __future__ import annotations
 import asyncio
-import warnings
-from asyncio import AbstractEventLoop, as_completed, Semaphore
+from asyncio import as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
 from typing import (
@@ -155,10 +154,7 @@ async def _sem_wrapper(sem, task):
 
 
 def bounded_gather_iter(
-    *coros_or_futures,
-    loop: Optional[AbstractEventLoop] = None,
-    limit: int = 4,
-    semaphore: Optional[Semaphore] = None,
+    *coros_or_futures, limit: int = 4, semaphore: Optional[Semaphore] = None,
 ) -> Iterator[Awaitable[Any]]:
     """
     An iterator that returns tasks as they are ready, but limits the
@@ -168,8 +164,6 @@ def bounded_gather_iter(
     ----------
     *coros_or_futures
         The awaitables to run in a bounded concurrent fashion.
-    loop : asyncio.AbstractEventLoop
-        The event loop to use for the semaphore and :meth:`asyncio.gather`.
     limit : Optional[`int`]
         The maximum number of concurrent tasks. Used when no ``semaphore``
         is passed.
@@ -182,14 +176,6 @@ def bounded_gather_iter(
     TypeError
         When invalid parameters are passed
     """
-    if loop is not None:
-        warnings.warn(
-            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
-            " and will be removed in the first minor release after 2020-08-05.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
     loop = asyncio.get_running_loop()
 
     if semaphore is None:
@@ -212,7 +198,6 @@ def bounded_gather_iter(
 
 def bounded_gather(
     *coros_or_futures,
-    loop: Optional[AbstractEventLoop] = None,
     return_exceptions: bool = False,
     limit: int = 4,
     semaphore: Optional[Semaphore] = None,
@@ -224,8 +209,6 @@ def bounded_gather(
     ----------
     *coros_or_futures
         The awaitables to run in a bounded concurrent fashion.
-    loop : asyncio.AbstractEventLoop
-        The event loop to use for the semaphore and :meth:`asyncio.gather`.
     return_exceptions : bool
         If true, gather exceptions in the result list instead of raising.
     limit : Optional[`int`]
@@ -240,14 +223,6 @@ def bounded_gather(
     TypeError
         When invalid parameters are passed
     """
-    if loop is not None:
-        warnings.warn(
-            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
-            " and will be removed in the first minor release after 2020-08-05.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
     loop = asyncio.get_running_loop()
 
     if semaphore is None:
