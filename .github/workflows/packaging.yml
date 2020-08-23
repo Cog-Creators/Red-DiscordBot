@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir artifacts
           cd ..
+          ls
           mv -t Red-DiscordBot/artifacts red-discordbot*.deb red-discordbot*.ddeb \
             red-discordbot*.buildinfo red-discordbot*.changes
       - name: Upload artifact
@@ -33,7 +34,5 @@ jobs:
         with:
           name: Debian packaging output
           path: |
-            artifacts/*.deb
-            artifacts/*.ddeb
             artifacts/*.buildinfo
             artifacts/*.changes
