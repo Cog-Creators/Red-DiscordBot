@@ -1,3 +1,9 @@
+red-discordbot (3.4.1.test5) bionic; urgency=medium
+
+  * Force version
+
+ -- El Laggron <laggron42@gmail.com>  Sat, 23 Aug 2020 18:41:00 +0000
+
 red-discordbot (3.4.1.test4) bionic; urgency=medium
 
   * Add Pre-Depends

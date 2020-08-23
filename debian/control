@@ -2,7 +2,7 @@ Source: red-discordbot
 Section: python
 Priority: extra
 Maintainer: "Cog-Creators" <cogcreators@gmail.com>
-Standards-Version: 3.4.1.test3
+Standards-Version: 3.4.1.test5
 Build-Depends: debhelper (>= 11~), dh-virtualenv (>= 1.2.1), python3-all, python3.8-dev, python3-setuptools, python3-pip, git, openjdk-11-jre-headless
 
 Package: red-discordbot
