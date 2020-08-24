@@ -121,11 +121,11 @@ class ModSettings(MixinMeta):
         If enabled all mentions will count including duplicated mentions.
         If disabled only unique mentions will count.
 
-        Default is settings is False.
+        Default setting is False.
         """
         if toggle is True:
             await self.config.guild(ctx.guild).mention_spam.strict.set(True)
-            return await ctx.send(_("Mention spam wll now account for same mentions."))
+            return await ctx.send(_("Mention spam will now account for same mentions."))
         elif toggle is False:
             await self.config.guild(ctx.guild).mention_spam.strict.set(False)
             return await ctx.send(_("Mention spam will only account for different mentions."))
