@@ -1922,8 +1922,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if len(username) > 32:
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
-            else:
-                await self._name(name=username)
+            await self._name(name=username)
         except discord.HTTPException:
             await ctx.send(
                 _(
@@ -1945,8 +1944,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if len(nickname) > 32:
                 await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
                 return
-            else:
-                await ctx.guild.me.edit(nick=nickname)
+            await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own nickname."))
         else:
