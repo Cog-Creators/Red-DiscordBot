@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`TurnrDev`
+| :ghuser:`maxbooiii`, :ghuser:`TurnrDev`
 
 End-user changelog
 ------------------
