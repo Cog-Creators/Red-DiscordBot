@@ -7,11 +7,16 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`maxbooiii`, :ghuser:`TurnrDev`
+| :ghuser:`hisztendahl`, :ghuser:`maxbooiii`, :ghuser:`TurnrDev`
 
 End-user changelog
 ------------------
 
+Core
+****
+
+- Fixed incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
+- Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 
 Economy
 *******
