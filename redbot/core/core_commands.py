@@ -1923,7 +1923,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
             else:
-                print("USERNAME LENGTH OK")
                 await self._name(name=username)
         except discord.HTTPException:
             await ctx.send(
