@@ -9,11 +9,11 @@ import types
 import re
 from contextlib import redirect_stdout
 from copy import copy
-from typing import Optional
 
 import discord
 
 from . import checks, commands
+from .commands import NoParseOptional as Optional
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
 from .utils.predicates import MessagePredicate
@@ -309,9 +309,9 @@ class Dev(commands.Cog):
             except discord.HTTPException as e:
                 await ctx.send(_("Unexpected error: `{}`").format(e))
 
-    @repl.command()
+    @repl.command(aliases=["resume"])
     async def pause(self, ctx, toggle: Optional[bool] = None):
-        """Pauses the REPL running in the current channel"""
+        """Pauses/resumes the REPL running in the current channel"""
         if not ctx.channel.id in self.sessions:
             await ctx.send(_("There is no currently running REPL session in this channel."))
             return
