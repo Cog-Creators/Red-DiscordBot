@@ -1440,7 +1440,7 @@ class Downloader(commands.Cog):
             if len(installed_cogs) > 1:
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
             else:
-                message += _("\n{cog} updated.").format(cog=updated_cognames[0])
+                message += _("\n{cog} updated.").format(cog=inline(tuple(updated_cognames)[0]))
             if cogs_with_changed_eud_statement:
                 if len(cogs_with_changed_eud_statement) > 1:
                     message += (
@@ -1452,10 +1452,10 @@ class Downloader(commands.Cog):
                     )
                 else:
                     message += _("End user data statements for {cog} have been changed.").format(
-                        cog=cogs_with_changed_eud_statement[0]
-                    ) + _("\nYou can use {command} to see the updated statements.\n").format(
-                        command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
-                    )
+                        cog=tuple(cogs_with_changed_eud_statement)[0]
+                        ) + _("\nYou can use {command} to see the updated statements.\n").format(
+                            command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
+                        )
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
             if len(failed_cogs) > 1:
