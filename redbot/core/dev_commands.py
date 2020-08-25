@@ -312,7 +312,7 @@ class Dev(commands.Cog):
     @repl.command()
     async def pause(self, ctx, toggle: Optional[bool] = None):
         """Pauses the REPL running in the current channel"""
-        if not ctx.channel.id in self.sessions:
+        if ctx.channel.id not in self.sessions:
             await ctx.send(_("There is no currently running REPL session in this channel."))
             return
 
