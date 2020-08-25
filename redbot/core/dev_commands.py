@@ -332,9 +332,9 @@ class Dev(commands.Cog):
         self.sessions[ctx.channel.id] = toggle
 
         if toggle:
-            await ctx.send(_("The REPL session in this channel is now enabled."))
+            await ctx.send(_("The REPL session in this channel has been resumed."))
         else:
-            await ctx.send(_("The REPL session in this channel is now disabled."))
+            await ctx.send(_("The REPL session in this channel is now paused."))
 
     @commands.command()
     @checks.is_owner()
