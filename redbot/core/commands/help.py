@@ -42,7 +42,7 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, humanize_list, humanize_number, pagify
+from ..utils.chat_formatting import box, humanize_list, humanize_number, humanize_timedelta, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
