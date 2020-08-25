@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
+| :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -22,6 +22,11 @@ Custom Commands
 ***************
 
 - Fixed ungraceful error being thrown on ``[p]cc edit`` (:issue:`4325`)
+
+Dev
+***
+
+- Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
 
 Economy
 *******
