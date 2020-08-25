@@ -6,9 +6,7 @@ This module contains useful functions and classes for command argument conversio
 Some of the converters within are included provisionaly and are marked as such.
 """
 import functools
-import os
 import re
-import warnings
 from datetime import timedelta
 from typing import (
     TYPE_CHECKING,
@@ -22,6 +20,7 @@ from typing import (
     TypeVar,
     Literal as Literal,
     Any,
+    Union as UserInputOptional,
 )
 
 import discord
@@ -153,57 +152,6 @@ class GuildConverter(discord.Guild):
             raise BadArgument(_('Server "{name}" not found.').format(name=argument))
 
         return ret
-
-
-class _APIToken(discord.ext.commands.Converter):
-    """Converts to a `dict` object.
-
-    This will parse the input argument separating the key value pairs into a 
-    format to be used for the core bots API token storage.
-    
-    This will split the argument by a space, comma, or semicolon and return a dict
-    to be stored. Since all API's are different and have different naming convention,
-    this leaves the onus on the cog creator to clearly define how to setup the correct
-    credential names for their cogs.
-
-    Note: Core usage of this has been replaced with `DictConverter` use instead.
-
-    .. warning::
-        This will be removed in the first minor release after 2020-08-05.
-    """
-
-    async def convert(self, ctx: "Context", argument) -> dict:
-        bot = ctx.bot
-        result = {}
-        match = re.split(r";|,| ", argument)
-        # provide two options to split incase for whatever reason one is part of the api key we're using
-        if len(match) > 1:
-            result[match[0]] = "".join(r for r in match[1:])
-        else:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
-        if not result:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
-        return result
-
-
-_APIToken.__name__ = "APIToken"
-
-
-def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
-    # honestly, this is awesome (PEP-562)
-    if name == "APIToken":
-        warnings.warn(
-            "`APIToken` is deprecated since Red 3.3.0 and will be removed"
-            " in the first minor release after 2020-08-05. Use `DictConverter` instead.",
-            DeprecationWarning,
-            stacklevel=stacklevel,
-        )
-        return globals()["_APIToken"]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-def __dir__() -> List[str]:
-    return [*globals().keys(), "APIToken"]
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
@@ -387,9 +335,6 @@ if not TYPE_CHECKING:
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
 
-        .. warning::
-            This converter class is still provisional.
-
         .. seealso::
             The `ignore_optional_for_conversion` option of commands.
         """
@@ -400,34 +345,18 @@ if not TYPE_CHECKING:
             return key
 
 
-_T_OPT = TypeVar("_T_OPT", bound=Type)
+_T = TypeVar("_T")
 
-if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
-
-    class UserInputOptional(Generic[_T_OPT]):
-        """
-        This can be used when user input should be converted as discord.py
-        treats `typing.Optional`, but the type should not be equivalent to
-        ``typing.Union[DesiredType, None]`` for type checking.
-
-
-        .. warning::
-            This converter class is still provisional.
-
-            This class may not play well with mypy yet
-            and may still require you guard this in a
-            type checking conditional import vs the desired types
-
-            We're aware and looking into improving this.
-        """
-
-        def __class_getitem__(cls, key: _T_OPT) -> _T_OPT:
-            if isinstance(key, tuple):
-                raise TypeError("Must only provide a single type to Optional")
-            return key
-
-
-else:
+if not TYPE_CHECKING:
+    #: This can be used when user input should be converted as discord.py
+    #: treats `typing.Optional`, but the type should not be equivalent to
+    #: ``typing.Union[DesiredType, None]`` for type checking.
+    #:
+    #: Note: In type checking context, this type hint can be passed
+    #: multiple types, but such usage is not supported and will fail at runtime
+    #:
+    #: .. warning::
+    #:    This converter class is still provisional.
     UserInputOptional = Optional
 
 

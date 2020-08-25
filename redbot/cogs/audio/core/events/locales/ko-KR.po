@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-07-30 12:18+0000\n"
+"POT-Creation-Date: 2020-08-13 12:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -101,7 +101,11 @@ msgstr "오디오 플레이어를 오류로 중지합니다. 오디오 명령어
 msgid "Track Stuck"
 msgstr "트랙 걸림"
 
-#: redbot/cogs/audio/core/events/lavalink.py:206
+#: redbot/cogs/audio/core/events/lavalink.py:202
+msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
+msgstr ""
+
+#: redbot/cogs/audio/core/events/lavalink.py:208
 msgid "Track Error"
 msgstr "트랙 에러"
 

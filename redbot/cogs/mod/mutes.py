@@ -1,8 +1,10 @@
 import asyncio
+from datetime import timezone
 from typing import cast, Optional
 
 import discord
 from redbot.core import commands, checks, i18n, modlog
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
 from .abc import MixinMeta
@@ -106,7 +108,7 @@ class MuteMixin(MixinMeta):
         await modlog.create_case(
             self.bot,
             guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "voiceunban",
             user,
             author,
@@ -147,7 +149,7 @@ class MuteMixin(MixinMeta):
         await modlog.create_case(
             self.bot,
             guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "voiceban",
             user,
             author,
@@ -187,7 +189,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "vmute",
                 user,
                 author,
@@ -231,7 +233,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "cmute",
                 user,
                 author,
@@ -254,22 +256,22 @@ class MuteMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
 
         mute_success = []
-        for channel in guild.channels:
-            success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
-            mute_success.append((success, issue))
-            await asyncio.sleep(0.1)
-        await modlog.create_case(
-            self.bot,
-            guild,
-            ctx.message.created_at,
-            "smute",
-            user,
-            author,
-            reason,
-            until=None,
-            channel=None,
-        )
-        await ctx.send(_("User has been muted in this server."))
+        async with ctx.typing():
+            for channel in guild.channels:
+                success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+                mute_success.append((success, issue))
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
+                "smute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=None,
+            )
+            await ctx.send(_("User has been muted in this server."))
 
     @commands.group()
     @commands.guild_only()
@@ -304,7 +306,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "vunmute",
                 user,
                 author,
@@ -348,7 +350,7 @@ class MuteMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "cunmute",
                 user,
                 author,
@@ -373,14 +375,23 @@ class MuteMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason)
 
         unmute_success = []
-        for channel in guild.channels:
-            success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
-            unmute_success.append((success, message))
-            await asyncio.sleep(0.1)
-        await modlog.create_case(
-            self.bot, guild, ctx.message.created_at, "sunmute", user, author, reason, until=None,
-        )
-        await ctx.send(_("User has been unmuted in this server."))
+        async with ctx.typing():
+            for channel in guild.channels:
+                success, message = await self.unmute_user(
+                    guild, channel, author, user, audit_reason
+                )
+                unmute_success.append((success, message))
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
+                "sunmute",
+                user,
+                author,
+                reason,
+                until=None,
+            )
+            await ctx.send(_("User has been unmuted in this server."))
 
     async def mute_user(
         self,

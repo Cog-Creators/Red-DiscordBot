@@ -539,7 +539,7 @@ class Trivia(commands.Cog):
             )
             padding = [" " * (len(h) - len(f)) for h, f in zip(headers, fields)]
             fields = tuple(f + padding[i] for i, f in enumerate(fields))
-            lines.append(" | ".join(fields).format(member=member, **m_data))
+            lines.append(" | ".join(fields))
             if rank == top:
                 break
         return "\n".join(lines)

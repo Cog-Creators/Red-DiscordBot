@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+from datetime import timezone
 from collections import namedtuple
 from copy import copy
 from typing import Union, Optional, Literal
@@ -14,6 +15,7 @@ from redbot.cogs.warnings.helpers import (
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
+from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
@@ -89,13 +91,13 @@ class Warnings(commands.Cog):
             {
                 "name": "warning",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Warning",
             },
             {
                 "name": "unwarned",
                 "default_setting": True,
-                "image": "\N{WARNING SIGN}",
+                "image": "\N{WARNING SIGN}\N{VARIATION SELECTOR-16}",
                 "case_str": "Unwarned",
             },
         ]
@@ -364,7 +366,7 @@ class Warnings(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        points: Optional[int] = 1,
+        points: UserInputOptional[int] = 1,
         *,
         reason: str,
     ):
@@ -493,7 +495,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "warning",
             user,
             ctx.message.author,
@@ -615,7 +617,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at,
+            ctx.message.created_at.replace(tzinfo=timezone.utc),
             "unwarned",
             member,
             ctx.message.author,

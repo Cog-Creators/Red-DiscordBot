@@ -1,11 +1,12 @@
 import asyncio
 import contextlib
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
+from redbot.core.commands import UserInputOptional
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
 from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
@@ -119,7 +120,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "ban",
                 user,
                 author,
@@ -141,10 +142,11 @@ class KickBanMixin(MixinMeta):
 
                 async with self.config.guild(guild).current_tempbans() as guild_tempbans:
                     for uid in guild_tempbans.copy():
-                        unban_time = datetime.utcfromtimestamp(
-                            await self.config.member_from_ids(guild.id, uid).banned_until()
+                        unban_time = datetime.fromtimestamp(
+                            await self.config.member_from_ids(guild.id, uid).banned_until(),
+                            timezone.utc,
                         )
-                        if datetime.utcnow() > unban_time:  # Time to unban the user
+                        if datetime.now(timezone.utc) > unban_time:  # Time to unban the user
                             queue_entry = (guild.id, uid)
                             try:
                                 await guild.unban(
@@ -227,7 +229,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "kick",
                 user,
                 author,
@@ -409,7 +411,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "hackban",
                 user_id,
                 author,
@@ -427,7 +429,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: Optional[commands.TimedeltaConverter] = timedelta(days=1),
+        duration: UserInputOptional[commands.TimedeltaConverter] = timedelta(days=1),
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -435,7 +437,7 @@ class KickBanMixin(MixinMeta):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        unban_time = datetime.utcnow() + duration
+        unban_time = datetime.now(timezone.utc) + duration
 
         if author == user:
             await ctx.send(
@@ -490,7 +492,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "tempban",
                 user,
                 author,
@@ -573,7 +575,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "softban",
                 user,
                 author,
@@ -620,7 +622,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "vkick",
                 member,
                 author,
@@ -659,7 +661,7 @@ class KickBanMixin(MixinMeta):
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "unban",
                 user,
                 author,
