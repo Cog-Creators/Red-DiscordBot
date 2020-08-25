@@ -23,6 +23,7 @@ import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
+from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -2076,6 +2077,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.message.delete()
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+
+    @_set.command()
+    @checks.is_owner()
+    async def listapi(self, ctx: commands.Context):
+        """Show all external API keys (services) that have been set.
+
+        This command does not expose tokens associated with keys,
+        but may expose them if tokens have been incorrectly set as keys."""
+
+        keys = await ctx.bot.get_shared_api_keys()
+        if not keys:
+            await ctx.send(_("No API keys have been set yet."))
+            return
+
+        sorted_keys = sorted(keys, key=lambda r: str.lower(r))
+        joined = _("Set API keys:\n")
+        for key in keys:
+            joined += "{}\n".format(key)
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @commands.group()
     @checks.is_owner()
