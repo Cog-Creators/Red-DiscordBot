@@ -238,13 +238,24 @@ class Dev(commands.Cog):
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send(
-                _("Already running a REPL session in this channel. Exit it with `quit`.")
-            )
+            if self.sessions[ctx.channel.id]:
+                await ctx.send(
+                    _("Already running a REPL session in this channel. Exit it with `quit`.")
+                )
+            else:
+                await ctx.send(
+                    _(
+                        "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
+                    ).format(ctx.prefix)
+                )
             return
 
         self.sessions[ctx.channel.id] = True
-        await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
+        await ctx.send(
+            _(
+                "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
+            ).format(ctx.prefix)
+        )
 
         while True:
             response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
