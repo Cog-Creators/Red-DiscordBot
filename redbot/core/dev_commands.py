@@ -9,6 +9,7 @@ import types
 import re
 from contextlib import redirect_stdout
 from copy import copy
+from typing import Optional
 
 import discord
 
@@ -43,7 +44,7 @@ class Dev(commands.Cog):
     def __init__(self):
         super().__init__()
         self._last_result = None
-        self.sessions = set()
+        self.sessions = {}
 
     @staticmethod
     def async_compile(source, filename, mode):
@@ -214,7 +215,7 @@ class Dev(commands.Cog):
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def repl(self, ctx):
         """Open an interactive REPL.
@@ -242,17 +243,20 @@ class Dev(commands.Cog):
             )
             return
 
-        self.sessions.add(ctx.channel.id)
+        self.sessions[ctx.channel.id] = True
         await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
 
         while True:
             response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
 
+            if not self.sessions[ctx.channel.id]:
+                continue
+
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
-                self.sessions.remove(ctx.channel.id)
+                del self.sessions[ctx.channel.id]
                 return
 
             executor = None
@@ -304,6 +308,22 @@ class Dev(commands.Cog):
                 pass
             except discord.HTTPException as e:
                 await ctx.send(_("Unexpected error: `{}`").format(e))
+
+    @repl.command()
+    async def pause(self, ctx, toggle: Optional[bool] = None):
+        """Pauses the REPL running in the current channel"""
+        if not ctx.channel.id in self.sessions:
+            await ctx.send(_("There is no currently running REPL session in this channel."))
+            return
+
+        if toggle is None:
+            toggle = not self.sessions[ctx.channel.id]
+        self.sessions[ctx.channel.id] = toggle
+
+        if toggle:
+            await ctx.send(_("The REPL session in this channel is now enabled."))
+        else:
+            await ctx.send(_("The REPL session in this channel is now disabled."))
 
     @commands.command()
     @checks.is_owner()
