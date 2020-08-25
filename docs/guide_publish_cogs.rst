@@ -55,6 +55,9 @@ Keys common to both repo and cog info.json (case sensitive)
 Keys specific to the cog info.json (case sensitive)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- ``end_user_data_statement`` (string) - A statement explaining what end user data the cog is storing.
+  This is displayed when a user executes ``[p]cog info``. If the statement has changed since last update, user will be informed during the update.
+
 - ``min_bot_version`` (string) - Min version number of Red in the format ``MAJOR.MINOR.MICRO``
 
 - ``max_bot_version`` (string) - Max version number of Red in the format ``MAJOR.MINOR.MICRO``,

@@ -1,10 +1,49 @@
 .. 3.3.x Changelogs
 
+Redbot 3.3.12 (2020-08-18)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
+
+Mod
+***
+
+- ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
+- Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
+
+Streams
+*******
+
+- Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
+
+Trivia Lists
+************
+
+- Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
+- Added ``whosthatpokemon3`` trivia containing Pokémons from 3rd generation (:issue:`4141`)
+
+
+Miscellaneous
+-------------
+
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
+- Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
+
+
 Redbot 3.3.11 (2020-08-10)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -43,10 +82,10 @@ Warnings
 
 
 Redbot 3.3.10 (2020-07-09)
-===================================
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`Injabie3`, :ghuser:`mikeshardmind`
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -127,11 +166,6 @@ Developer changelog
 - Vendor the ``discord.ext.menus`` module (:issue:`4039`)
 
 
-Documentation changes
----------------------
-
-
-
 Miscellaneous
 -------------
 
@@ -144,6 +178,7 @@ Miscellaneous
 - Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
 - Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
 - Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
+
 
 Redbot 3.3.9 (2020-06-12)
 =========================

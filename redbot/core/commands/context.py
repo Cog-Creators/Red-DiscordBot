@@ -255,7 +255,10 @@ class Context(DPYContext):
                 embed=discord.Embed(description=message, color=(await self.embed_colour()))
             )
         else:
-            return await self.send(message)
+            return await self.send(
+                message,
+                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
+            )
 
     @property
     def clean_prefix(self) -> str:

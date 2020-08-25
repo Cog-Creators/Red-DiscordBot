@@ -88,9 +88,9 @@ msgstr "{} geçersiz mesaj ID'si."
 
 #: redbot/cogs/cleanup/converters.py:27
 msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{arg} tamsayı değil."
 
 #: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} pozitif bir tamsayı değil."
 

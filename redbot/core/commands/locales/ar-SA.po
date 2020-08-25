@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-20 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
@@ -19,31 +19,27 @@ msgstr ""
 msgid "\\\"{argument}\\\" is not a number."
 msgstr ""
 
-#: redbot/core/commands/converter.py:113
+#: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr ""
 
-#: redbot/core/commands/converter.py:119
+#: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:125
+#: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:153
+#: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
 msgstr ""
 
-#: redbot/core/commands/converter.py:183 redbot/core/commands/converter.py:185
-msgid "The provided tokens are not in a valid format."
-msgstr ""
-
-#: redbot/core/commands/converter.py:239
+#: redbot/core/commands/converter.py:187
 msgid "Unexpected key {key}"
 msgstr ""
 
-#: redbot/core/commands/converter.py:460
+#: redbot/core/commands/converter.py:389
 msgid "Expected one of: {}"
 msgstr ""
 
