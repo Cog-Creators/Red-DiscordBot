@@ -11,7 +11,7 @@ find detailed docs about usage and commands.
 
 .. note:: This cog is not like the other cogs. It is loaded by default, not
     included in the cogs paths and it cannot be unloaded. It contains needed
-    commands for cogs management.
+    commands for cog management.
 
 .. _cogmanaerui-usage:
 
@@ -60,7 +60,7 @@ You can now use the command we talked about before: type ``[p]addpath
 <your_path>``.
 
 .. attention:: A path shouldn't have spaces in it. If it does, add quotation
-    marks, or an antislash before the space.
+    marks, or a backslash before the space.
 
 In that ``MyCogs`` folder, you can drop your package. You should now have
 something like this:
@@ -94,9 +94,9 @@ cogs
 
 **Description**
 
-Return a list of loaded and unloaded cogs on the bot.
+Returns a list of loaded and unloaded cogs on the bot.
 
-Cogs are unloaded by default, this is where you can find your cogs if you
+Cogs are unloaded by default. This is where you can find your cogs if you
 installed some recently.
 
 All of the cogs located inside a cog path will be listed here. You can see a
@@ -193,7 +193,7 @@ reorderpath
 **Description**
 
 Reorders the paths listed with the :ref:`paths <cogmanagerui-command-paths>`
-comand. The goal of this command is to allow the discovery of different cogs.
+command. The goal of this command is to allow the discovery of different cogs.
 If there are multiple packages with the same names, the one that is inside the
 highest folder in the list will be kept and the other ones will be ignored.
 
