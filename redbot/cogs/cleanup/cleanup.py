@@ -578,3 +578,27 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
+
+    @cleanup.command(name="reactions")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    async def cleanup_reactions(self, ctx: commands.Context, number: positive_int):
+        """Clear reactions from the specified number of messages."""
+        msgs = 0
+
+        async for message in ctx. channel.history(limit=positive_int):
+            if message.reactions:
+                await message.clear_reactions()
+                msgs += 1
+
+        if msgs > 1:
+            log.info(
+                "%s (%s) cleared reactions from %s messages in channel %s (%s).",
+                ctx.author,
+                ctx.author.id,
+                msgs,
+                ctx.channel,
+                ctx.channel.id,
+            )
+
+        await ctx.message.delete()
