@@ -1057,6 +1057,25 @@ class RedBase(
             for name in token_names:
                 group.pop(name, None)
 
+    async def remove_shared_api_services(self, *service_names: str):
+        """
+        Removes shared API services, as well as keys and tokens associated with them.
+
+        Parameters
+        ----------
+        service_names: str
+            the services to remove
+
+        Examples
+        ----------
+        Removing the youtube service
+
+        >>> await ctx.bot.remove_shared_api_services("youtube")
+        """
+        async with self._config.custom(SHARED_API_TOKENS).all() as group:
+            for service in service_names:
+                group.clear_raw(service)
+
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
