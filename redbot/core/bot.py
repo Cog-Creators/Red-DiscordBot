@@ -7,7 +7,6 @@ import shutil
 import sys
 import contextlib
 import weakref
-import functools
 from collections import namedtuple
 from contextvars import ContextVar
 from copy import copy
@@ -16,6 +15,7 @@ from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import (
+    Iterable,
     Optional,
     Union,
     List,
@@ -717,7 +717,9 @@ class RedBase(
         return True
 
     async def add_to_blocklist(
-        self, who_or_what: List[discord.Role, discord.User], guild: Optional[discord.Guild] = None
+        self,
+        who_or_what: Iterable[discord.Role, discord.User],
+        guild: Optional[discord.Guild] = None,
     ):
         """
         Adds users and roles to the blocklist.
@@ -744,7 +746,9 @@ class RedBase(
         return uids
 
     async def add_to_allowlist(
-        self, who_or_what: List[discord.Role, discord.User], guild: Optional[discord.Guild] = None
+        self,
+        who_or_what: Iterable[discord.Role, discord.User],
+        guild: Optional[discord.Guild] = None,
     ):
         """
         Adds users and roles to the allowlist.
@@ -771,7 +775,7 @@ class RedBase(
         return uids
 
     async def add_to_blocklist_raw(
-        self, who_or_what_ids: List[int], guild_id: Optional[int] = None
+        self, who_or_what_ids: Iterable[int], guild_id: Optional[int] = None
     ):
         """
         Adds users and roles to the blocklist.
@@ -799,7 +803,7 @@ class RedBase(
         return who_or_what_ids
 
     async def add_to_allowlist_raw(
-        self, who_or_what_ids: List[int], guild_id: Optional[int] = None
+        self, who_or_what_ids: Iterable[int], guild_id: Optional[int] = None
     ):
         """
         Adds users and roles to the allowlist.
@@ -827,7 +831,9 @@ class RedBase(
         return who_or_what_ids
 
     async def remove_from_blocklist(
-        self, who_or_what: List[discord.Role, discord.User], guild: Optional[discord.Guild] = None
+        self,
+        who_or_what: Iterable[discord.Role, discord.User],
+        guild: Optional[discord.Guild] = None,
     ):
         """
         Remove users and roles from the blocklist.
@@ -854,7 +860,9 @@ class RedBase(
         return uids
 
     async def remove_from_allowlist(
-        self, who_or_what: List[discord.Role, discord.User], guild: Optional[discord.Guild] = None
+        self,
+        who_or_what: Iterable[discord.Role, discord.User],
+        guild: Optional[discord.Guild] = None,
     ):
         """
         Remove users and roles from the allowlist.
@@ -881,7 +889,7 @@ class RedBase(
         return uids
 
     async def remove_from_blocklist_raw(
-        self, who_or_what_ids: List[int], guild_id: Optional[int] = None
+        self, who_or_what_ids: Iterable[int], guild_id: Optional[int] = None
     ):
         """
         Remove users and roles from the blocklist.
@@ -909,7 +917,7 @@ class RedBase(
         return who_or_what_ids
 
     async def remove_from_allowlist_raw(
-        self, who_or_what_ids: List[int], guild_id: Optional[int] = None
+        self, who_or_what_ids: Iterable[int], guild_id: Optional[int] = None
     ):
         """
         Remove users and roles from the allowlist.
