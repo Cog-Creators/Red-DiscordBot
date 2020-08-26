@@ -2100,6 +2100,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @api.command(name="remove")
     async def api_remove(self, ctx: commands.Context, *services: str):
         """Remove the given services with all their keys and tokens."""
+        services = list(services)
         await self.bot.remove_shared_api_services(services)
         await ctx.send(_("Services deleted successfully."))
 
