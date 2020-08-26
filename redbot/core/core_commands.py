@@ -2080,7 +2080,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @api.command(name="list")
-    @checks.is_owner()
     async def api_list(self, ctx: commands.Context):
         """Show all external API keys (services) that have been set.
 
