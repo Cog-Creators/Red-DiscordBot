@@ -2093,7 +2093,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         sorted_keys = sorted(keys, key=lambda r: str.lower(r))
         joined = _("Set API keys:\n")
-        for key in keys:
+        for key in sorted_keys:
             joined += "{}\n".format(key)
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
