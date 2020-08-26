@@ -2080,19 +2080,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @api.command(name="list")
     async def api_list(self, ctx: commands.Context):
-        """Show all external API keys (services) that have been set.
+        """Show all external API services that have been set.
 
-        This command does not expose tokens associated with keys,
+        This command does not expose keys or tokens associated with services,
         but may expose them if tokens have been incorrectly set as keys."""
 
-        keys = await ctx.bot.get_shared_api_keys()
-        if not keys:
-            await ctx.send(_("No API keys have been set yet."))
+        services = await ctx.bot.get_shared_api_services()
+        if not services:
+            await ctx.send(_("No API services have been set yet."))
             return
 
-        sorted_keys = sorted(keys, key=lambda r: str.lower(r))
+        sorted_services = sorted(services, key=lambda r: str.lower(r))
         joined = _("Set API keys:\n")
-        for key in sorted_keys:
+        for key in sorted_services:
             joined += "{}\n".format(key)
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
