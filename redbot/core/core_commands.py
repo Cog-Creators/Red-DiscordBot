@@ -2097,6 +2097,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
+    @api.command(name="remove")
+    async def api_remove(self, ctx: commands.Context, *services: str):
+        """Remove the given services with all their keys and tokens."""
+        await self.bot.remove_shared_api_services(services)
+        await ctx.send(_("Services deleted successfully."))
+
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
