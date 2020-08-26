@@ -2083,7 +2083,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Show all external API services that have been set.
 
         This command does not expose keys or tokens associated with services,
-        but may expose them if tokens have been incorrectly set as keys."""
+        but may expose them if tokens have been incorrectly set as services."""
 
         services = await ctx.bot.get_shared_api_services()
         if not services:
