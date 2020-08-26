@@ -586,7 +586,7 @@ class Cleanup(commands.Cog):
         """Clear reactions from the specified number of messages."""
         msgs = 0
 
-        async for message in ctx. channel.history(limit=positive_int):
+        async for message in ctx.channel.history(limit=number):
             if message.reactions:
                 await message.clear_reactions()
                 msgs += 1
