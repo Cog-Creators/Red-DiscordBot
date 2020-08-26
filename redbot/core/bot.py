@@ -517,7 +517,7 @@ class RedBase(
 
     async def add_to_blocklist(
         self,
-        who_or_what: Iterable[discord.Role, discord.User],
+        who_or_what: Iterable[Union[discord.Role, discord.User]],
         guild: Optional[discord.Guild] = None,
     ):
         """
@@ -546,7 +546,7 @@ class RedBase(
 
     async def add_to_allowlist(
         self,
-        who_or_what: Iterable[discord.Role, discord.User],
+        who_or_what: Iterable[Union[discord.Role, discord.User]],
         guild: Optional[discord.Guild] = None,
     ):
         """
@@ -631,7 +631,7 @@ class RedBase(
 
     async def remove_from_blocklist(
         self,
-        who_or_what: Iterable[discord.Role, discord.User],
+        who_or_what: Iterable[Union[discord.Role, discord.User]],
         guild: Optional[discord.Guild] = None,
     ):
         """
@@ -660,7 +660,7 @@ class RedBase(
 
     async def remove_from_allowlist(
         self,
-        who_or_what: Iterable[discord.Role, discord.User],
+        who_or_what: Iterable[Union[discord.Role, discord.User]],
         guild: Optional[discord.Guild] = None,
     ):
         """
