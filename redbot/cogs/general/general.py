@@ -248,14 +248,15 @@ class General(commands.Cog):
     async def serverinfo(self, ctx, details: bool = False):
         """
         Show server information.
-    
+
         `details`: Shows more information when set to `True`.
         Default to False.
         """
         guild = ctx.guild
         passed = (ctx.message.created_at - guild.created_at).days
         created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
+            date=guild.created_at.strftime("%d %b %Y %H:%M"),
+            num=humanize_number(passed),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])

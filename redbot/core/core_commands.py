@@ -443,7 +443,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
-            dpy_version = "{}".format(discord.__version__,)
+            dpy_version = "{}".format(discord.__version__)
             red_version = "{}".format(__version__)
 
             about = _(
