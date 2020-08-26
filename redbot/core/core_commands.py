@@ -2529,7 +2529,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
+        await self.bot.add_to_allowlist_raw(uids, None)
 
         await ctx.send(_("Users added to allowlist."))
 
@@ -2561,7 +2561,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
+        await self.bot.remove_from_allowlist(uids, None)
 
         await ctx.send(_("Users have been removed from the allowlist."))
 
@@ -2600,8 +2600,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
 
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
-
+        await self.bot.add_to_blocklist_raw(uids, None)
         await ctx.send(_("User added to blocklist."))
 
     @blocklist.command(name="list")
@@ -2632,7 +2631,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
+        await self.bot.remove_from_blocklist_raw(uids, None)
 
         await ctx.send(_("Users have been removed from blocklist."))
 
@@ -2678,7 +2677,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "please ensure to add yourself to the allowlist first."
                     )
                 )
-        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+        await self.bot.add_to_allowlist_raw(uids, ctx.guild.id)
 
         await ctx.send(_("{names} added to allowlist.").format(names=humanize_list(names)))
 
@@ -2724,7 +2723,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "remove your ability to run commands."
                     )
                 )
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        await self.bot.remove_from_allowlist(uids, ctx.guild.id)
 
         await ctx.send(
             _("{names} removed from the server allowlist.").format(names=humanize_list(names))
@@ -2771,7 +2770,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
-        await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
+        await self.bot.add_to_blocklist_raw(uids, ctx.guild.id)
 
         await ctx.send(
             _("{names} added to the server blocklist.").format(names=humanize_list(names))
@@ -2808,7 +2807,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
-        await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
+        await self.bot.remove_from_blocklist_raw(uids, ctx.guild.id)
 
         await ctx.send(
             _("{names} removed from the server blocklist.").format(names=humanize_list(names))
