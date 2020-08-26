@@ -3618,11 +3618,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<users...>` - The user or users to add to the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
+        await self.bot.add_to_allowlist_raw(uids, None)
         if len(uids) > 1:
             await ctx.send(_("Users have been added to the allowlist."))
         else:
             await ctx.send(_("User has been added to the allowlist."))
+        await ctx.send(_("Users added to allowlist."))
 
     @allowlist.command(name="list")
     async def allowlist_list(self, ctx: commands.Context):
@@ -3665,7 +3666,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<users...>` - The user or users to remove from the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
+        await self.bot.remove_from_allowlist(uids, None)
         if len(uids) > 1:
             await ctx.send(_("Users have been removed from the allowlist."))
         else:
@@ -3716,7 +3717,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
 
         uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
+        await self.bot.add_to_blocklist_raw(uids, None)
         if len(uids) > 1:
             await ctx.send(_("Users have been added to the blocklist."))
         else:
@@ -3761,6 +3762,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<users...>` - The user or users to remove from the blocklist.
         """
         uids = {getattr(user, "id", user) for user in users}
+        await self.bot.remove_from_blocklist_raw(uids, None)
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
         if len(uids) > 1:
             await ctx.send(_("Users have been removed from the blocklist."))
@@ -3820,7 +3822,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "please ensure to add yourself to the allowlist first."
                     )
                 )
-        await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
+        await self.bot.add_to_allowlist_raw(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been added to the allowlist."))
@@ -3883,7 +3885,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "remove your ability to run commands."
                     )
                 )
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
+        await self.bot.remove_from_allowlist(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been removed from the server allowlist."))
@@ -3942,7 +3944,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
-        await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
+        await self.bot.add_to_blocklist_raw(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been added from the server blocklist."))
@@ -3992,7 +3994,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
-        await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
+        await self.bot.remove_from_blocklist_raw(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been removed from the server blocklist."))
