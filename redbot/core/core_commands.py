@@ -2061,6 +2061,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
     @_set.command()
+    @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """Set various external API tokens.
@@ -2078,9 +2079,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
-    @_set.command()
+    @api.command(name="list")
     @checks.is_owner()
-    async def listapi(self, ctx: commands.Context):
+    async def api_list(self, ctx: commands.Context):
         """Show all external API keys (services) that have been set.
 
         This command does not expose tokens associated with keys,
