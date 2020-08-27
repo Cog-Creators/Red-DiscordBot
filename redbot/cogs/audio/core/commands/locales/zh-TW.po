@@ -425,7 +425,7 @@ msgstr "播放清單{id}在{scope}範圍內不存在。"
 #: redbot/cogs/audio/core/commands/playlists.py:1545
 #: redbot/cogs/audio/core/commands/playlists.py:1649
 msgid "Missing Arguments"
-msgstr ""
+msgstr "缺少參數"
 
 #: redbot/cogs/audio/core/commands/audioset.py:534
 #: redbot/cogs/audio/core/commands/playlists.py:990
@@ -436,7 +436,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:540
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "撥放清單 {name} (`{id}`) [**{scope}**] 將會被設定成自動撥放"
 
 #: redbot/cogs/audio/core/commands/audioset.py:553
 #, docstring
@@ -445,7 +445,7 @@ msgstr "將自動播放重置回預設的播放清單。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:559
 msgid "Set auto-play playlist to play recently played tracks."
-msgstr ""
+msgstr "將自動撥放清單設定為最近撥放過的歌曲"
 
 #: redbot/cogs/audio/core/commands/audioset.py:565
 #, docstring
@@ -481,11 +481,11 @@ msgstr "\\n已停用自動播放。"
 #: redbot/cogs/audio/core/commands/audioset.py:630
 #, docstring
 msgid "Toggle DJ mode.\\n\\n        DJ mode allows users with the DJ role to use audio commands.\\n        "
-msgstr ""
+msgstr "切換為DJ模式\\n\\n  DJ模式將會允許擁有DJ角色的使用者使用音樂類的指令\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:641
 msgid "Missing DJ Role"
-msgstr ""
+msgstr "缺少DJ角色"
 
 #: redbot/cogs/audio/core/commands/audioset.py:642
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
@@ -596,7 +596,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:381
 #: redbot/cogs/audio/core/commands/player.py:391
 msgid "Invalid Environment"
-msgstr ""
+msgstr "無效的環境。\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:842
 msgid "The localtracks path location has been set to {localpath}"
@@ -613,15 +613,15 @@ msgstr "無效的長度"
 
 #: redbot/cogs/audio/core/commands/audioset.py:860
 msgid "Length can't be less than zero."
-msgstr ""
+msgstr "長度不能小於0"
 
 #: redbot/cogs/audio/core/commands/audioset.py:864
 msgid "Track max length disabled."
-msgstr ""
+msgstr "樂曲最大長度設定已關閉"
 
 #: redbot/cogs/audio/core/commands/audioset.py:870
 msgid "Track max length set to {seconds}."
-msgstr ""
+msgstr "樂曲的最大長度被設定為 {seconds}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:880
 #, docstring
@@ -630,7 +630,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:886
 msgid "Notify mode: {true_or_false}."
-msgstr ""
+msgstr "通知模式: {true_or_false}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:895
 #, docstring
@@ -644,11 +644,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:915
 #, docstring
 msgid "Set the role to use for DJ mode."
-msgstr ""
+msgstr "設定DJ角色來使用DJ模式"
 
 #: redbot/cogs/audio/core/commands/audioset.py:924
 msgid "Settings Changed"
-msgstr ""
+msgstr "設定值已變更"
 
 #: redbot/cogs/audio/core/commands/audioset.py:925
 msgid "DJ role set to: {role.name}."
@@ -673,15 +673,15 @@ msgstr "自動播放:        [{autoplay}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:971
 msgid "Disconnect timer: [{num_seconds}]\\n"
-msgstr ""
+msgstr "自動斷線計時器: [{num_seconds}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:975
 msgid "Auto Pause timer: [{num_seconds}]\\n"
-msgstr ""
+msgstr "自動暫停計時器: [{num_seconds}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:979
 msgid "DJ Role:          [{role.name}]\\n"
-msgstr ""
+msgstr "DJ角色:          [{role.name}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:981
 msgid "Jukebox:          [{jukebox_name}]\\n"
@@ -689,7 +689,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:982
 msgid "Command price:    [{jukebox_price}]\\n"
-msgstr ""
+msgstr "指令的費用:    [{jukebox_price}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:986
 msgid "Max track length: [{tracklength}]\\n"
