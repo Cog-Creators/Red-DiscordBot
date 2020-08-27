@@ -53,7 +53,7 @@ from .settings_caches import (
 )
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
-from .utils._internal_utils import deprecated_removed, send_to_owners_with_prefix_replaced
+from .utils._internal_utils import deprecated_removed, send_to_owners_with_prefix_replaced, ProxyCounter
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
@@ -94,6 +94,7 @@ class RedBase(
         self._config = Config.get_core_conf(force_registration=False)
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
+        self._counter = ProxyCounter()
         self._owner_sudo_tasks: Dict[int, asyncio.Task] = {}
         self._last_exception = None
         self._config.register_global(
@@ -563,9 +564,19 @@ class RedBase(
         )
 
     @property
-    def counter(self) -> NoReturn:
-        raise AttributeError(
-            "Please make your own counter object by importing ``Counter`` from ``collections``."
+    def counter(self):
+        return self._counter
+
+    @counter.setter
+    def counter(self, value) -> NoReturn:
+        raise RuntimeError(
+            "Please don't try to replace the counter attribute as other cogs may depend on it."
+        )
+
+    @counter.deleter
+    def counter(self, value) -> NoReturn:
+        raise RuntimeError(
+            "Please don't try to delete the counter attribute as other cogs may depend on it."
         )
 
     @property

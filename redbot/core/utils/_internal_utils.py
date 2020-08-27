@@ -17,10 +17,12 @@ from typing import (
     AsyncIterator,
     Awaitable,
     Callable,
+    Dict,
     Generator,
     Iterable,
     Iterator,
     List,
+    NoReturn,
     Optional,
     Union,
     TypeVar,
@@ -32,7 +34,7 @@ from typing import (
 import aiohttp
 import discord
 import pkg_resources
-from discord.ext.commands import check
+from discord.ext.commands import Cog, check
 from fuzzywuzzy import fuzz, process
 from redbot import VersionInfo
 from tqdm import tqdm
@@ -333,6 +335,93 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+class ProxyCounter:
+    __slots__ = ("__counters",)
+
+    def __init__(self):
+        self.__counters: Dict[str, Dict[str, int]] = {}
+
+    def register_counters(self, cog: Cog, *counters: str) -> None:
+        self.register_counters_raw(cog.qualified_name, *counters)
+
+    def register_counters_raw(self, cog_qualified_name: str, *counters: str) -> None:
+        cog_qualified_name = str(cog_qualified_name)
+        if cog_qualified_name not in self.__counters:
+            self.__counters[cog_qualified_name] = {}
+        for counter in counters:
+            counter = str(counter)
+            if counter not in self.__counters[cog_qualified_name]:
+                self.__counters[cog_qualified_name][counter] = 0
+
+    def unregister_counter(self, cog: Cog, counter: str) -> None:
+        self.unregister_counter_raw(cog.qualified_name, counter)
+
+    def unregister_counter_raw(self, cog_qualified_name: str, counter: str) -> None:
+        cog_qualified_name = str(cog_qualified_name)
+        counter = str(counter)
+        if not self.__contains__((cog_qualified_name, counter)):
+            raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
+        del self.__counters[cog_qualified_name][counter]
+
+    def get(self, cog: Cog, counter: str) -> int:
+        return self.get_raw(cog.qualified_name, counter)
+
+    def get_raw(self, cog_qualified_name: str, counter: str) -> int:
+        return self.__getitem__((cog_qualified_name, counter,))
+
+    def tick(self, cog: Cog, counter: str) -> int:
+        return self.tick_raw(cog.qualified_name, counter)
+
+    def tick_raw(self, cog_qualified_name: str, counter: str) -> int:
+        cog_qualified_name = str(cog_qualified_name)
+        counter = str(counter)
+        if not self.__contains__((cog_qualified_name, counter)):
+            raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
+        self.__counters[cog_qualified_name][counter] += 1
+        return self.__counters[cog_qualified_name][counter]
+
+    def contains(self, cog: Cog, counter: str) -> bool:
+        return self.contains_raw(cog.qualified_name, counter)
+
+    def contains_raw(self, cog_qualified_name: str, counter: str) -> bool:
+        return self.__contains__((cog_qualified_name, counter,))
+
+    def get_all(self) -> Dict[str, Dict[str, int]]:
+        return self.__counters
+
+    def __contains__(self, keys: Tuple[Union[Cog, str], str]) -> bool:
+        cog, counter = keys[0], str(keys[1])
+        if isinstance(cog, Cog):
+            cog_name = str(cog.qualified_name)
+        else:
+            cog_name = str(cog)
+        if cog_name in self.__counters:
+            if counter in self.__counters[cog_name]:
+                return True
+        return False
+
+    def __getitem__(self, keys: Tuple[Union[Cog, str], str]) -> int:
+        cog, counter = keys[0], str(keys[1])
+        if isinstance(cog, Cog):
+            cog_name = str(cog.qualified_name)
+        else:
+            cog_name = str(cog)
+
+        if cog_name not in self.__counters:
+            raise KeyError(f"'{cog_name}' hasn't registered any counters.")
+
+        if counter not in self.__counters[cog_name]:
+            raise KeyError(f"'{counter}' hasn't been registered under '{cog_name}'.")
+
+        return self.__counters[cog_name][counter]
+
+    def __delitem__(self, keys: Tuple[Union[Cog, str], str]) -> NoReturn:
+        raise NotImplementedError
+
+    def __setitem__(self, keys: Tuple[Union[Cog, str], str], value: int) -> NoReturn:
+        raise NotImplementedError
 
 
 def deprecated_removed(
