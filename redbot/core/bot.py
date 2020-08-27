@@ -95,6 +95,24 @@ class RedBase(
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
         self._counter = ProxyCounter()
+        self._counter.register_counters_raw(
+            "Red",
+            "on_connect",
+            "on_ready",
+            "on_command_completion",
+            "on_command_error",
+            "on_command_error_command_invoke_error",
+            "on_command_error_bot_missing_permissions",
+            "on_message",
+            "on_command_add",
+            "on_guild_join",
+            "on_guild_available",
+            "on_guild_remove",
+            "on_cog_add",
+            "on_message_without_command",
+            "on_modlog_case_edit",
+            "on_modlog_case_create",
+        )
         self._owner_sudo_tasks: Dict[int, asyncio.Task] = {}
         self._last_exception = None
         self._config.register_global(
@@ -1630,6 +1648,8 @@ class RedBase(
                 ctx = None
 
             if ctx is None or ctx.valid is False:
+                self.counter.inc_raw("Red", "on_message_without_command")
+                self.dispatch("message_without_command", message)
                 self.dispatch("message_without_command", message)
         finally:
             if self._sudo_ctx_var is not None:

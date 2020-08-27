@@ -299,6 +299,7 @@ class Case:
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
         await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
+        self.bot.counter.inc_raw("Red", "on_modlog_case_edit")
         self.bot.dispatch("modlog_case_edit", self)
         if not self.message:
             return
@@ -903,7 +904,7 @@ async def create_case(
         )
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)
-
+    bot.counter.inc_raw("Red", "on_modlog_case_create")
     await set_contextual_locales_from_guild(bot, guild)
     bot.dispatch("modlog_case_create", case)
     try:

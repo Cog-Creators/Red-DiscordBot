@@ -390,11 +390,11 @@ class ProxyCounter:
         return self.__getitem__((cog_qualified_name, counter,))
 
     @final
-    def inc(self, cog: Cog, counter: str) -> int:
-        return self.inc_raw(cog.qualified_name, counter)
+    def inc(self, cog: Cog, counter: str, by: int = 1) -> int:
+        return self.inc_raw(cog.qualified_name, counter, by=by)
 
     @final
-    def inc_raw(self, cog_qualified_name: str, counter: str) -> int:
+    def inc_raw(self, cog_qualified_name: str, counter: str, by: int = 1) -> int:
         if not type(cog_qualified_name) is str:
             raise TypeError(
                 f"Expected cog_qualified_name to be a string, received {cog_qualified_name.__class__.__name__} instead."
@@ -405,7 +405,16 @@ class ProxyCounter:
             )
         if not self.__contains__((cog_qualified_name, counter)):
             raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
-        self.__counters[cog_qualified_name][counter] += 1
+        if not type(by) is int:
+            raise TypeError(
+                f"Expected counter to be an integer, received {counter.__class__.__name__} instead."
+            )
+        elif by < 0:
+            raise ValueError(
+                f"'by' needs to be greater than or equals to 0, however '{by}' was provided."
+            )
+
+        self.__counters[cog_qualified_name][counter] += by
         return self.__counters[cog_qualified_name][counter]
 
     @final

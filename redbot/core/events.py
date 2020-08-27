@@ -21,7 +21,7 @@ from redbot.core.i18n import (
     set_contextual_locales_from_guild,
 )
 from .utils import AsyncIter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from .. import __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
 from .utils._internal_utils import (
@@ -57,11 +57,13 @@ _ = Translator(__name__, __file__)
 def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
+        bot.counter.inc_raw("Red", "on_connect")
         if bot._uptime is None:
             log.info("Connected to Discord. Getting ready...")
 
     @bot.event
     async def on_ready():
+        bot.counter.inc_raw("Red", "on_ready")
         if bot._uptime is not None:
             return
 
@@ -211,6 +213,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):
+        bot.counter.inc_raw("Red", "on_command_completion")
         await bot._delete_delay(ctx)
 
     @bot.event
@@ -249,6 +252,7 @@ def init_events(bot, cli_flags):
             if disabled_message:
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
+            bot.counter.inc_raw("Red", "on_command_error_command_invoke_error")
             log.exception(
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
@@ -278,6 +282,7 @@ def init_events(bot, cli_flags):
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
+            bot.counter.inc_raw("Red", "on_command_error_bot_missing_permissions")
             if bin(error.missing.value).count("1") == 1:  # Only one perm missing
                 msg = _("I require the {permission} permission to execute that command.").format(
                     permission=format_perms_list(error.missing)
@@ -345,10 +350,13 @@ def init_events(bot, cli_flags):
                     ).format(type=error.per.name)
             await ctx.send(msg)
         else:
+            bot.counter.inc_raw("Red", "on_command_error")
+
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
     async def on_message(message):
+        bot.counter.inc_raw("Red", "on_message")
         await set_contextual_locales_from_guild(bot, message.guild)
 
         await bot.process_commands(message)
@@ -369,6 +377,8 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_add(command: commands.Command):
+        bot.counter.inc_raw("Red", "on_command_add")
+
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
@@ -387,17 +397,20 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_guild_join(guild: discord.Guild):
+        bot.counter.inc_raw("Red", "on_guild_join")
         await _guild_added(guild)
 
     @bot.event
     async def on_guild_available(guild: discord.Guild):
         # We need to check guild-disabled commands here since some cogs
         # are loaded prior to `on_ready`.
+        bot.counter.inc_raw("Red", "on_guild_available")
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_leave(guild: discord.Guild):
+    async def on_guild_remove(guild: discord.Guild):
         # Clean up any unneeded checks
+        bot.counter.inc_raw("Red", "on_guild_remove")
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)
@@ -406,6 +419,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_cog_add(cog: commands.Cog):
+        bot.counter.inc_raw("Red", "on_cog_add")
         confs = get_latest_confs()
         for c in confs:
             uuid = c.unique_identifier
