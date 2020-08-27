@@ -390,11 +390,11 @@ class ProxyCounter:
         return self.__getitem__((cog_qualified_name, counter,))
 
     @final
-    def tick(self, cog: Cog, counter: str) -> int:
+    def inc(self, cog: Cog, counter: str) -> int:
         return self.tick_raw(cog.qualified_name, counter)
 
     @final
-    def tick_raw(self, cog_qualified_name: str, counter: str) -> int:
+    def inc_raw(self, cog_qualified_name: str, counter: str) -> int:
         if not type(cog_qualified_name) is str:
             raise TypeError(
                 f"Expected cog_qualified_name to be a string, received {cog_qualified_name.__class__.__name__} instead."
