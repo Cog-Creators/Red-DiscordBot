@@ -564,7 +564,7 @@ class RedBase(
         )
 
     @property
-    def counter(self):
+    def counter(self) -> ProxyCounter:
         return self._counter
 
     @counter.setter

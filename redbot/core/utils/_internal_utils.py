@@ -391,7 +391,7 @@ class ProxyCounter:
 
     @final
     def inc(self, cog: Cog, counter: str) -> int:
-        return self.tick_raw(cog.qualified_name, counter)
+        return self.inc_raw(cog.qualified_name, counter)
 
     @final
     def inc_raw(self, cog_qualified_name: str, counter: str) -> int:
@@ -471,6 +471,12 @@ class ProxyCounter:
     @final
     def __setitem__(self, keys: Tuple[Union[Cog, str], str], value: int) -> NoReturn:
         raise NotImplementedError("This operation is not supported.")
+
+    @final
+    def __repr__(self) -> str:
+        return "ProxyCounter(cogs={}, counters={})".format(
+            len(self.__counters), sum(len(v) for v in self.__counters.values())
+        )
 
 
 def deprecated_removed(
