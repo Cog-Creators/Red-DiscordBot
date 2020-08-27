@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
+import copy
 import json
 import logging
 import os
@@ -322,17 +323,16 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         return release, required_python
 
 
+@final
 class ProxyCounter:
     __slots__ = ("__counters",)
 
     def __init__(self):
         self.__counters: Dict[str, Dict[str, int]] = {}
 
-    @final
     def register_counters(self, cog: Cog, *counters: str) -> None:
         self.register_counters_raw(cog.qualified_name, *counters)
 
-    @final
     def register_counters_raw(self, cog_qualified_name: str, *counters: str) -> None:
         if not type(cog_qualified_name) is str:
             raise TypeError(
@@ -347,11 +347,9 @@ class ProxyCounter:
             if counter not in self.__counters[cog_qualified_name]:
                 self.__counters[cog_qualified_name][counter] = 0
 
-    @final
     def unregister_counter(self, cog: Cog, counter: str) -> None:
         self.unregister_counter_raw(cog.qualified_name, counter)
 
-    @final
     def unregister_counter_raw(self, cog_qualified_name: str, counter: str) -> None:
         if not type(cog_qualified_name) is str:
             raise TypeError(
@@ -365,19 +363,15 @@ class ProxyCounter:
             raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
         del self.__counters[cog_qualified_name][counter]
 
-    @final
     def get(self, cog: Cog, counter: str) -> int:
         return self.get_raw(cog.qualified_name, counter)
 
-    @final
     def get_raw(self, cog_qualified_name: str, counter: str) -> int:
         return self.__getitem__((cog_qualified_name, counter,))
 
-    @final
     def inc(self, cog: Cog, counter: str, by: int = 1) -> int:
         return self.inc_raw(cog.qualified_name, counter, by=by)
 
-    @final
     def inc_raw(self, cog_qualified_name: str, counter: str, by: int = 1) -> int:
         if not type(cog_qualified_name) is str:
             raise TypeError(
@@ -401,19 +395,35 @@ class ProxyCounter:
         self.__counters[cog_qualified_name][counter] += by
         return self.__counters[cog_qualified_name][counter]
 
-    @final
     def contains(self, cog: Cog, counter: str) -> bool:
         return self.contains_raw(cog.qualified_name, counter)
 
-    @final
     def contains_raw(self, cog_qualified_name: str, counter: str) -> bool:
         return self.__contains__((cog_qualified_name, counter,))
 
-    @final
     def get_all(self) -> Dict[str, Dict[str, int]]:
-        return self.__counters
+        return copy.deepcopy(self.__counters)
 
-    @final
+    def walk_counters(self, cog: Optional[Cog] = None) -> Optional[Tuple[str, str, int]]:
+        if cog:
+            if isinstance(cog, Cog):
+                cog_name = cog.qualified_name
+            else:
+                cog_name = cog
+
+            if not type(cog_name) is str:
+                raise TypeError(
+                    f"Expected cog_name to be a string, received {cog_name.__class__.__name__} instead."
+                )
+            if cog_name not in self.__counters:
+                return
+            for counter, value in self.__counters[cog_name].items():
+                yield cog_name, counter, value
+        else:
+            for cog_name, cog_counters in self.__counters.items():
+                for counter, value in cog_counters.items():
+                    yield cog_name, counter, value
+
     def __contains__(self, keys: Tuple[Union[Cog, str], str]) -> bool:
         cog, counter = keys[0], keys[1]
         if not type(counter) is str:
@@ -434,7 +444,6 @@ class ProxyCounter:
                 return True
         return False
 
-    @final
     def __getitem__(self, keys: Tuple[Union[Cog, str], str]) -> int:
         cog, counter = keys[0], keys[1]
         if not type(counter) is str:
@@ -457,15 +466,31 @@ class ProxyCounter:
 
         return self.__counters[cog_name][counter]
 
-    @final
+    def __dir__(self):
+        return [
+            "__contains__",
+            "__repr__",
+            "__getitem__",
+            "contains",
+            "contains_raw",
+            "get",
+            "get_all",
+            "get_raw",
+            "inc",
+            "inc_raw",
+            "register_counters",
+            "register_counters_raw",
+            "unregister_counter",
+            "unregister_counter_raw",
+            "walk_counters",
+        ]
+
     def __delitem__(self, keys: Tuple[Union[Cog, str], str]) -> NoReturn:
         raise NotImplementedError("This operation is not supported.")
 
-    @final
     def __setitem__(self, keys: Tuple[Union[Cog, str], str], value: int) -> NoReturn:
         raise NotImplementedError("This operation is not supported.")
 
-    @final
     def __repr__(self) -> str:
         return "ProxyCounter(cogs={}, counters={})".format(
             len(self.__counters), sum(len(v) for v in self.__counters.values())
