@@ -373,7 +373,9 @@ class ProxyCounter:
         if not all(type(counter) is str for counter in counters):
             raise TypeError("Expected counter to be a string.")
         if not cog_qualified_name.lower().startswith("red_"):
-            raise RuntimeError("This private method should only be used to register cogs to the 'red_'.")
+            raise RuntimeError(
+                "This private method should only be used to register cogs to the 'red_'."
+            )
         if cog_qualified_name not in self.__counters:
             self.__counters[cog_qualified_name] = {}
         for counter in counters:
@@ -445,7 +447,9 @@ class ProxyCounter:
         if not self.__contains__((cog_qualified_name, counter)):
             raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
         if not cog_qualified_name.lower().startswith("red_"):
-            raise RuntimeError("You cannot increment counters outside the 'red_' namespace with this private method.")
+            raise RuntimeError(
+                "You cannot increment counters outside the 'red_' namespace with this private method."
+            )
         if not type(by) is int:
             raise TypeError(
                 f"Expected counter to be an integer, received {counter.__class__.__name__} instead."
