@@ -574,7 +574,7 @@ class RedBase(
         )
 
     @counter.deleter
-    def counter(self, value) -> NoReturn:
+    def counter(self) -> NoReturn:
         raise RuntimeError(
             "Please don't try to delete the counter attribute as other cogs may depend on it."
         )
