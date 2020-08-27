@@ -61,7 +61,7 @@
     },
     "requirements": {
       "type": "array",
-      "description": "list of required libraries that are passed to pip on cog install.",
+      "description": "List of required libraries that are passed to pip on cog install.",
       "items": {
         "type": "string"
       }
