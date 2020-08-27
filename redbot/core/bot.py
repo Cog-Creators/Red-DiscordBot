@@ -119,7 +119,7 @@ class RedBase(
             "on_red_audio_queue_end",
             "on_red_audio_track_start",
             "on_red_audio_track_end",
-            "on_filter_message_delete"
+            "on_filter_message_delete",
         )
         self._last_exception = None
         self._config.register_global(
