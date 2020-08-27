@@ -29,6 +29,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     cast,
+    final,
 )
 
 import aiohttp
@@ -343,11 +344,18 @@ class ProxyCounter:
     def __init__(self):
         self.__counters: Dict[str, Dict[str, int]] = {}
 
+    @final
     def register_counters(self, cog: Cog, *counters: str) -> None:
         self.register_counters_raw(cog.qualified_name, *counters)
 
+    @final
     def register_counters_raw(self, cog_qualified_name: str, *counters: str) -> None:
-        cog_qualified_name = str(cog_qualified_name)
+        if not type(cog_qualified_name) is str:
+            raise TypeError(
+                f"Expected cog_qualified_name to be a string, received {cog_qualified_name.__class__.__name__} instead."
+            )
+        if not all(type(counter) is str for counter in counters):
+            raise TypeError(f"Expected counter to be a string.")
         if cog_qualified_name not in self.__counters:
             self.__counters[cog_qualified_name] = {}
         for counter in counters:
@@ -355,60 +363,99 @@ class ProxyCounter:
             if counter not in self.__counters[cog_qualified_name]:
                 self.__counters[cog_qualified_name][counter] = 0
 
+    @final
     def unregister_counter(self, cog: Cog, counter: str) -> None:
         self.unregister_counter_raw(cog.qualified_name, counter)
 
+    @final
     def unregister_counter_raw(self, cog_qualified_name: str, counter: str) -> None:
-        cog_qualified_name = str(cog_qualified_name)
-        counter = str(counter)
+        if not type(cog_qualified_name) is str:
+            raise TypeError(
+                f"Expected cog_qualified_name to be a string, received {cog_qualified_name.__class__.__name__} instead."
+            )
+        if not type(counter) is str:
+            raise TypeError(
+                f"Expected counter to be a string, received {counter.__class__.__name__} instead."
+            )
         if not self.__contains__((cog_qualified_name, counter)):
             raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
         del self.__counters[cog_qualified_name][counter]
 
+    @final
     def get(self, cog: Cog, counter: str) -> int:
         return self.get_raw(cog.qualified_name, counter)
 
+    @final
     def get_raw(self, cog_qualified_name: str, counter: str) -> int:
         return self.__getitem__((cog_qualified_name, counter,))
 
+    @final
     def tick(self, cog: Cog, counter: str) -> int:
         return self.tick_raw(cog.qualified_name, counter)
 
+    @final
     def tick_raw(self, cog_qualified_name: str, counter: str) -> int:
-        cog_qualified_name = str(cog_qualified_name)
-        counter = str(counter)
+        if not type(cog_qualified_name) is str:
+            raise TypeError(
+                f"Expected cog_qualified_name to be a string, received {cog_qualified_name.__class__.__name__} instead."
+            )
+        if not type(counter) is str:
+            raise TypeError(
+                f"Expected counter to be a string, received {counter.__class__.__name__} instead."
+            )
         if not self.__contains__((cog_qualified_name, counter)):
             raise KeyError(f"'{counter}' hasn't been registered under '{cog_qualified_name}'.")
         self.__counters[cog_qualified_name][counter] += 1
         return self.__counters[cog_qualified_name][counter]
 
+    @final
     def contains(self, cog: Cog, counter: str) -> bool:
         return self.contains_raw(cog.qualified_name, counter)
 
+    @final
     def contains_raw(self, cog_qualified_name: str, counter: str) -> bool:
         return self.__contains__((cog_qualified_name, counter,))
 
+    @final
     def get_all(self) -> Dict[str, Dict[str, int]]:
         return self.__counters
 
+    @final
     def __contains__(self, keys: Tuple[Union[Cog, str], str]) -> bool:
-        cog, counter = keys[0], str(keys[1])
+        cog, counter = keys[0], keys[1]
+        if not type(counter) is str:
+            raise TypeError(
+                f"Expected counter to be a string, received {counter.__class__.__name__} instead."
+            )
         if isinstance(cog, Cog):
-            cog_name = str(cog.qualified_name)
+            cog_name = cog.qualified_name
         else:
-            cog_name = str(cog)
+            cog_name = cog
+
+        if not type(cog_name) is str:
+            raise TypeError(
+                f"Expected cog_name to be a string, received {cog_name.__class__.__name__} instead."
+            )
         if cog_name in self.__counters:
             if counter in self.__counters[cog_name]:
                 return True
         return False
 
+    @final
     def __getitem__(self, keys: Tuple[Union[Cog, str], str]) -> int:
-        cog, counter = keys[0], str(keys[1])
+        cog, counter = keys[0], keys[1]
+        if not type(counter) is str:
+            raise TypeError(
+                f"Expected counter to be a string, received {counter.__class__.__name__} instead."
+            )
         if isinstance(cog, Cog):
-            cog_name = str(cog.qualified_name)
+            cog_name = cog.qualified_name
         else:
-            cog_name = str(cog)
-
+            cog_name = cog
+        if not type(cog_name) is str:
+            raise TypeError(
+                f"Expected cog_name to be a string, received {cog_name.__class__.__name__} instead."
+            )
         if cog_name not in self.__counters:
             raise KeyError(f"'{cog_name}' hasn't registered any counters.")
 
@@ -417,11 +464,13 @@ class ProxyCounter:
 
         return self.__counters[cog_name][counter]
 
+    @final
     def __delitem__(self, keys: Tuple[Union[Cog, str], str]) -> NoReturn:
-        raise NotImplementedError
+        raise NotImplementedError("This operation is not supported.")
 
+    @final
     def __setitem__(self, keys: Tuple[Union[Cog, str], str], value: int) -> NoReturn:
-        raise NotImplementedError
+        raise NotImplementedError("This operation is not supported.")
 
 
 def deprecated_removed(
