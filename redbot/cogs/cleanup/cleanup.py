@@ -583,13 +583,18 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
     async def cleanup_reactions(self, ctx: commands.Context, number: positive_int):
-        """Clear reactions from the specified number of messages."""
+        """Clear reactions from the specified number of messages.
+        
+        You can clear reactions from 100 messages at most."""
         msgs = 0
-
-        async for message in ctx.channel.history(limit=number):
+        if number > 100:
+            number = 100
+        async for message in ctx.channel.history(limit=300):
             if message.reactions:
                 await message.clear_reactions()
                 msgs += 1
+            if msgs == number:
+                break
 
         if msgs > 1:
             log.info(
