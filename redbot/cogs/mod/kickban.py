@@ -17,6 +17,9 @@ log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 
+SLIME = 204027971516891136
+
+
 class KickBanMixin(MixinMeta):
     """
     Kick and ban commands and tasks go here.
@@ -79,7 +82,7 @@ class KickBanMixin(MixinMeta):
                 "hierarchy."
             )
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            return _("I cannot do that due to discord hierarchy rules.")
+            return _("I cannot do that due to Discord hierarchy rules.")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
@@ -199,7 +202,7 @@ class KickBanMixin(MixinMeta):
             )
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules."))
+            await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
         audit_reason = get_audit_reason(author, reason)
         toggle = await self.config.guild(guild).dm_on_kickban()
@@ -282,10 +285,10 @@ class KickBanMixin(MixinMeta):
         *,
         reason: str = None,
     ):
-        """Preemptively bans user(s) from the server
+        """Preemptively bans user(s) from the server.
 
         User IDs need to be provided in order to ban
-        using this command"""
+        using this command."""
         banned = []
         errors = {}
         upgrades = []
@@ -454,7 +457,7 @@ class KickBanMixin(MixinMeta):
             )
             return
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
         if days is None:
@@ -478,7 +481,7 @@ class KickBanMixin(MixinMeta):
                 server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
             )
             if invite:
-                msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
+                msg += _("Here is an invite for when your ban expires: {invite_link}.").format(
                     invite_link=invite
                 )
             await user.send(msg)
@@ -539,7 +542,7 @@ class KickBanMixin(MixinMeta):
                 _(
                     "You have been banned and "
                     "then unbanned as a quick way to delete your messages.\n"
-                    "You can now join the server again. {invite_link}"
+                    "You can now join the server again. {invite_link}."
                 ).format(invite_link=invite)
             )
         except discord.HTTPException:
@@ -685,7 +688,7 @@ class KickBanMixin(MixinMeta):
                     await user.send(
                         _(
                             "You've been unbanned from {server}.\n"
-                            "Here is an invite for that server: {invite_link}"
+                            "Here is an invite for that server: {invite_link}."
                         ).format(server=guild.name, invite_link=invite.url)
                     )
                 except discord.Forbidden:
@@ -693,13 +696,13 @@ class KickBanMixin(MixinMeta):
                         _(
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
-                            "Here's the invite link: {invite_link}"
+                            "Here's the invite link: {invite_link}."
                         ).format(invite_link=invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user"
-                            "an invite. Here's the link so you can try: {invite_link}"
+                            "an invite. Here's the link so you can try: {invite_link}."
                         ).format(invite_link=invite.url)
                     )
