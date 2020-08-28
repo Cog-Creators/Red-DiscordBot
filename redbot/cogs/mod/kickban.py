@@ -17,9 +17,6 @@ log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
 
 
-SLIME = 204027971516891136
-
-
 class KickBanMixin(MixinMeta):
     """
     Kick and ban commands and tasks go here.
