@@ -203,16 +203,16 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     return await get_balance(member) >= amount
 
 
-async def set_balance(member: Union[discord.Member, discord.User], amount: float) -> int:
+async def set_balance(member: Union[discord.Member, discord.User], amount: Union[int, float]) -> int:
     """Set an account balance.
 
     Parameters
     ----------
     member : Union[discord.Member, discord.User]
         The member whose balance to set.
-    amount : int
-        The amount to set the balance to.
-
+    amount : Union[int, float]
+        The amount to set the balance to. [This gets converted to an integer]
+    
     Returns
     -------
     int
