@@ -1,16 +1,19 @@
 # Cogs
-/redbot/cogs/audio/**                     @aikaterna @Drapersniper
-/redbot/cogs/downloader/*                 @jack1142
-/redbot/cogs/streams/*                    @palmtree5
+/redbot/cogs/audio/** @aikaterna @Drapersniper
+/redbot/cogs/downloader/* @jack1142
+/redbot/cogs/streams/* @palmtree5
+
+# Trivia Lists
+/redbot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna
 
 # Tests
-/redbot/pytest/downloader*                @jack1142
-/tests/cogs/downloader/*                  @jack1142
+/redbot/pytest/downloader* @jack1142
+/tests/cogs/downloader/* @jack1142
 
 # CI
-/.travis.yml                              @Kowlin
-/crowdin.yml                              @Kowlin
-/.github/workflows/*                      @Kowlin
+/.travis.yml @Kowlin
+/crowdin.yml @Kowlin
+/.github/workflows/* @Kowlin
 
 # Excludes
-locales/*                                 @ghost
+locales/* @ghost
