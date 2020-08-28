@@ -203,7 +203,7 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     return await get_balance(member) >= amount
 
 
-async def set_balance(member: Union[discord.Member, discord.User], amount: int) -> int:
+async def set_balance(member: Union[discord.Member, discord.User], amount: float) -> int:
     """Set an account balance.
 
     Parameters
@@ -229,6 +229,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         ``bank._MAX_BALANCE``.
 
     """
+    amount = int(amount)
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     guild = getattr(member, "guild", None)
