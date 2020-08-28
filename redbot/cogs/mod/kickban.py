@@ -172,7 +172,7 @@ class KickBanMixin(MixinMeta):
                                 guild_tempbans.remove(uid)
             await asyncio.sleep(60)
 
-    @commands.command
+    @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
     @checks.admin_or_permissions(kick_members=True)
