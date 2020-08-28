@@ -478,7 +478,7 @@ class KickBanMixin(MixinMeta):
                 server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
             )
             if invite:
-                msg += _(" Here is an invite for when your ban expires: <{invite_link}>.").format(
+                msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
                     invite_link=invite
                 )
             await user.send(msg)
@@ -539,7 +539,7 @@ class KickBanMixin(MixinMeta):
                 _(
                     "You have been banned and "
                     "then unbanned as a quick way to delete your messages.\n"
-                    "You can now join the server again. <{invite_link}>."
+                    "You can now join the server again. {invite_link}"
                 ).format(invite_link=invite)
             )
         except discord.HTTPException:
@@ -685,7 +685,7 @@ class KickBanMixin(MixinMeta):
                     await user.send(
                         _(
                             "You've been unbanned from {server}.\n"
-                            "Here is an invite for that server: <{invite_link}>."
+                            "Here is an invite for that server: {invite_link}"
                         ).format(server=guild.name, invite_link=invite.url)
                     )
                 except discord.Forbidden:
@@ -693,13 +693,13 @@ class KickBanMixin(MixinMeta):
                         _(
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
-                            "Here's the invite link: <{invite_link}>."
+                            "Here's the invite link: {invite_link}"
                         ).format(invite_link=invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user"
-                            "an invite. Here's the link so you can try: <{invite_link}>."
+                            "an invite. Here's the link so you can try: {invite_link}"
                         ).format(invite_link=invite.url)
                     )
