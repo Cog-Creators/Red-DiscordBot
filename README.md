@@ -12,17 +12,17 @@
   <a href="https://discord.gg/red">
     <img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield" alt="Discord Server">
   </a>
-  <a href="https://www.patreon.com/Red_Devs">
-    <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
-  </a>
   <a href="https://www.python.org/downloads/">
-        <img src="https://img.shields.io/badge/Made%20With-Python%203.8-blue.svg" alt="Made with Python 3.8">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/Red-Discordbot">
   </a>
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
   </a>
+  <a href="https://pypi.org/project/Red-DiscordBot/">
+     <img alt="PyPI" src="https://img.shields.io/pypi/v/Red-Discordbot">
+  </a>
   <a href="https://github.com/Rapptz/discord.py/">
-      <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+     <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
   </a>
 </p>
 <p align="center">
@@ -37,6 +37,9 @@
   </a>
   <a href="http://makeapullrequest.com">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
+  </a>
+  <a href="https://www.patreon.com/Red_Devs">
+    <img src="https://img.shields.io/badge/Support-Red!-red.svg" alt="Support Red on Patreon!">
   </a>
 </p>
 
