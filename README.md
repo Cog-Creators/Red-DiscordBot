@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
   </a>
   <a href="https://www.python.org/downloads/">
-    <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/Red-Discordbot">
+        <img src="https://img.shields.io/badge/Made%20With-Python%203.8-blue.svg" alt="Made with Python 3.8">
   </a>
   <a href="https://crowdin.com/project/red-discordbot">
     <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
