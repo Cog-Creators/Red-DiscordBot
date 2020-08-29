@@ -10,6 +10,9 @@
 /redbot/pytest/downloader* @jack1142
 /tests/cogs/downloader/* @jack1142
 
+# Schemas
+/schema/*
+
 # CI
 /.travis.yml @Kowlin
 /crowdin.yml @Kowlin
