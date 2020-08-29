@@ -207,7 +207,9 @@ class Streams(commands.Cog):
         await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(
-            name=channel_name, token=token, bearer=self.ttv_bearer_cache.get("access_token", None),
+            name=channel_name,
+            token=token,
+            bearer=self.ttv_bearer_cache.get("access_token", None),
         )
         await self.check_online(ctx, stream)
 

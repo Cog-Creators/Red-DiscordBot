@@ -154,7 +154,7 @@ async def _sem_wrapper(sem, task):
 
 
 def bounded_gather_iter(
-    *coros_or_futures, limit: int = 4, semaphore: Optional[Semaphore] = None,
+    *coros_or_futures, limit: int = 4, semaphore: Optional[Semaphore] = None
 ) -> Iterator[Awaitable[Any]]:
     """
     An iterator that returns tasks as they are ready, but limits the

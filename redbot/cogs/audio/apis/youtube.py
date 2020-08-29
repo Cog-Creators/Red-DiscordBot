@@ -33,7 +33,7 @@ class YouTubeWrapper:
     def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token
 
-    async def _get_api_key(self,) -> str:
+    async def _get_api_key(self) -> str:
         """Get the stored youtube token"""
         if not self._token:
             self._token = await self.bot.get_shared_api_tokens("youtube")

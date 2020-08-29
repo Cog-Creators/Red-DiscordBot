@@ -1422,8 +1422,10 @@ class RedBase(
         await self._red_ready.wait()
 
     async def _delete_delay(self, ctx: commands.Context):
-        """Currently used for:
-            * delete delay"""
+        """
+        Currently used for:
+          * delete delay
+        """
         guild = ctx.guild
         if guild is None:
             return
