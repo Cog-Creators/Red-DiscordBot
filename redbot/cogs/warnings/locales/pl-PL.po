@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/helpers.py:72
 msgid "I could not find a command from that input!"
-msgstr ""
+msgstr "Nie mogłem/am znaleźć polecenia z tego wejścia!"
 
 #: redbot/cogs/warnings/helpers.py:77
 msgid "That command requires bot owner. I can't allow you to use that for an action"
