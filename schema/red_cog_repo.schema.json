@@ -1,7 +1,7 @@
 {
   "$id": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog_repo.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Red-DiscordBot Сog Repo",
+  "title": "Red-DiscordBot Сog Repo metadata file",
   "type": "object",
   "properties": {
     "author": {
