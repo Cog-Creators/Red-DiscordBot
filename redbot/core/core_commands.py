@@ -1331,6 +1331,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("Global locale has been set."))
 
     @_set.command()
+    @commands.guild_only()
     @checks.guildowner_or_permissions(manage_guild=True)
     async def locale(self, ctx: commands.Context, language_code: str):
         """
@@ -1367,6 +1368,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.send(_("Locale has been set."))
 
     @_set.command(aliases=["globalregion"])
+    @commands.guild_only()
     @checks.is_owner()
     async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
