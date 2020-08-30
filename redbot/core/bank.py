@@ -924,8 +924,8 @@ def cost(amount: int):
     Other exceptions will propagate and will be handled by Red's (and/or
     any other configured) error handling.
 
-    TODO: Add documentation for input/output/exceptions
     """
+    # TODO: Add documentation for input/output/exceptions
     if not isinstance(amount, int) or amount < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 
