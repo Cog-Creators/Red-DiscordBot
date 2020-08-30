@@ -45,6 +45,7 @@ from .settings_caches import (
     IgnoreManager,
     WhitelistBlacklistManager,
     DisabledCogCache,
+    I18nManager,
 )
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
