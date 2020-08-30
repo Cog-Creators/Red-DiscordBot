@@ -16,6 +16,10 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
 Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section.
 
+.. contents:: Choose the version you're currently on from the list below:
+    :local:
+    :depth: 1
+
 
 Red 3.2.0 or newer
 ******************
@@ -23,15 +27,17 @@ Red 3.2.0 or newer
 Windows
 -------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
-1. Activate your venv with the following command:
+1. Shut your bot down.
+
+2. Activate your venv with the following command:
 
     .. code:: none
 
         "%userprofile%\redenv\Scripts\activate.bat"
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -41,12 +47,16 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
+
 Linux & Mac
 -----------
 
-If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 commands.
+If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
-1. Activate your virtual environment.
+1. Shut your bot down.
+
+2. Activate your virtual environment.
   
     If you used ``venv`` for your virtual environment, use:
 
@@ -60,7 +70,7 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
         pyenv shell <name>
 
-2. Update Red with this command:
+3. Update Red with this command:
 
     .. code:: none
 
@@ -70,18 +80,19 @@ If you have Red 3.2.0 or newer, all you have to do to upgrade Red is running 2 c
 
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
+4. Start your bot.
 
 Red 3.1.X
 *********
 
-If you have Red 3.1.X, you will need to follow the install instructions for your operating system:
+If you have Red 3.1.X, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
 - `Windows <install_windows>`
 - `Linux & Mac <install_linux_mac>`
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
 
 .. attention::
 
@@ -114,11 +125,11 @@ Red 3.0.2 and older
 
            redbot-setup --edit
 
-If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system:
+If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
 - `Windows <install_windows>`
 - `Linux & Mac <install_linux_mac>`
 
 Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
 
-If you already have Red installed in a virtual environment, you will need to delete it before starting this process.
+**If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**

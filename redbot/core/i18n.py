@@ -18,6 +18,7 @@ __all__ = [
     "cog_i18n",
     "Translator",
     "get_babel_locale",
+    "get_babel_regional_format",
 ]
 
 log = logging.getLogger("red.i18n")

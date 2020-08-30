@@ -1,9 +1,10 @@
+import asyncio
 import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Iterable, List, Mapping, Tuple, Dict, Set
+from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal
 from urllib.parse import quote_plus
 
 import discord
@@ -11,7 +12,7 @@ from fuzzywuzzy import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus
+from redbot.core.utils import menus, AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -38,16 +39,40 @@ class OnCooldown(CCError):
     pass
 
 
+class CommandNotEdited(CCError):
+    pass
+
+
 class CommandObj:
     def __init__(self, **kwargs):
-        config = kwargs.get("config")
+        self.config = kwargs.get("config")
         self.bot = kwargs.get("bot")
-        self.db = config.guild
+        self.db = self.config.guild
 
     @staticmethod
     async def get_commands(config) -> dict:
         _commands = await config.commands()
         return {k: v for k, v in _commands.items() if _commands[k]}
+
+    async def redact_author_ids(self, user_id: int):
+
+        all_guilds = await self.config.all_guilds()
+
+        for guild_id in all_guilds.keys():
+            await asyncio.sleep(0)
+            async with self.config.guild_from_id(guild_id).commands() as all_commands:
+                async for com_name, com_info in AsyncIter(all_commands.items(), steps=100):
+                    if not com_info:
+                        continue
+
+                    if com_info.get("author", {}).get("id", 0) == user_id:
+                        com_info["author"]["id"] = 0xDE1
+                        com_info["author"]["name"] = "Deleted User"
+
+                    if editors := com_info.get("editors", None):
+                        for index, editor_id in enumerate(editors):
+                            if editor_id == user_id:
+                                editors[index] = 0xDE1
 
     async def get_responses(self, ctx):
         intro = _(
@@ -143,9 +168,9 @@ class CommandObj:
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await self.bot.wait_for("message", check=pred, timeout=30)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 await ctx.send(_("Response timed out, please try again later."))
-                return
+                raise CommandNotEdited()
             if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
@@ -154,9 +179,9 @@ class CommandObj:
                     resp = await self.bot.wait_for(
                         "message", check=MessagePredicate.same_context(ctx), timeout=180
                     )
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     await ctx.send(_("Response timed out, please try again later."))
-                    return
+                    raise CommandNotEdited()
                 response = resp.content
 
         if response:
@@ -200,6 +225,17 @@ class CustomCommands(commands.Cog):
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
         self.cooldowns = {}
 
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self.commandobj.redact_author_ids(user_id)
+
     @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
@@ -209,7 +245,7 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
         """Get the raw response of a custom command, to get the proper markdown.
-        
+
         This is helpful for copy and pasting."""
         commands = await self.config.guild(ctx.guild).commands()
         if command not in commands:
@@ -416,6 +452,8 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
+        except CommandNotEdited:
+            pass
 
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
@@ -464,7 +502,7 @@ class CustomCommands(commands.Cog):
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
         except NotFound:
-            ctx.send(_("I could not not find that custom command."))
+            await ctx.send(_("I could not not find that custom command."))
             return
 
         responses = cmd["response"]
@@ -472,12 +510,14 @@ class CustomCommands(commands.Cog):
         if isinstance(responses, str):
             responses = [responses]
 
-        author = ctx.guild.get_member(cmd["author"]["id"])
-        # If the author is still in the server, show their current name
-        if author:
-            author = "{} ({})".format(author, cmd["author"]["id"])
+        _aid = cmd["author"]["id"]
+
+        if _aid == 0xDE1:
+            author = _("Deleted User")
+        elif member := ctx.guild.get_member(_aid):
+            author = f"{member} ({_aid})"
         else:
-            author = "{} ({})".format(cmd["author"]["name"], cmd["author"]["id"])
+            author = f"{cmd['author']['name']} ({_aid})"
 
         _type = _("Random") if len(responses) > 1 else _("Normal")
 
@@ -490,7 +530,7 @@ class CustomCommands(commands.Cog):
             command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
-        cooldowns = cmd["cooldowns"]
+        cooldowns = cmd.get("cooldowns", {})
 
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
@@ -514,6 +554,9 @@ class CustomCommands(commands.Cog):
         user_allowed = True
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+            return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
 
         ctx = await self.bot.get_context(message)

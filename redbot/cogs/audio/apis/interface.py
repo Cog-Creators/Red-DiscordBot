@@ -102,7 +102,9 @@ class AudioAPIInterface:
         return track
 
     async def route_tasks(
-        self, action_type: str = None, data: Union[List[MutableMapping], MutableMapping] = None,
+        self,
+        action_type: str = None,
+        data: Union[List[MutableMapping], MutableMapping] = None,
     ) -> None:
         """Separate the tasks and run them in the appropriate functions"""
 
@@ -566,7 +568,7 @@ class AudioAPIInterface:
                     if len(player.queue) >= 10000:
                         continue
                     if guild_data["maxlength"] > 0:
-                        if self.cog.is_track_too_long(single_track, guild_data["maxlength"]):
+                        if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(

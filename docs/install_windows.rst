@@ -4,27 +4,39 @@
 Installing Red on Windows
 =========================
 
----------------
-Needed Software
----------------
+-------------------------------
+Installing the pre-requirements
+-------------------------------
 
-The following software dependencies can all be installed quickly and easily through PowerShell,
-using a trusted package manager for Windows called `Chocolatey <https://chocolatey.org>`_
+Please install the pre-requirements by following instructions from one of the following subsections.
 
-We also provide instructions for manually installing all of the dependencies.
+The pre-requirements are:
+ - Python 3.8.1 or greater
+ - Pip 18.1 or greater
+ - Git 2.11+
+ - Java Runtime Environment 11 (for audio support)
 
-******************************************
-Installing using powershell and chocolatey
-******************************************
+We also recommend installing some basic compiler tools, in case our dependencies don't provide
+pre-built "wheels" for your architecture.
+
+.. contents:: Choose a method of installing pre-requirements:
+    :local:
+
+----
+
+*********************************************
+Using PowerShell and Chocolatey (recommended)
+*********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
-right-click on it and then click "Run as administrator"
+right-click on it and then click "Run as administrator".
 
 Then run each of the following commands:
 
 .. code-block:: none
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2019-workload-vctools -y
@@ -39,6 +51,8 @@ For Audio support, you should also run the following command before exiting:
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
 
+----
+
 ********************************
 Manually installing dependencies
 ********************************
@@ -50,7 +64,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 <https://www.python.org/downloads/>`_ - Red needs Python 3.8.1 or greater
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -61,6 +75,9 @@ Manually installing dependencies
 
 * `Java 11 <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
 
+From here, continue onto `creating-venv-windows`.
+
+----
 
 .. _creating-venv-windows:
 
@@ -70,7 +87,7 @@ Creating a Virtual Environment
 
 .. tip::
 
-    If you want to learn more about virtual environments, see page: `about-venvs`
+    If you want to learn more about virtual environments, see page: `about-venvs`.
 
 We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward.
@@ -79,7 +96,12 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``redenv`` and it will be located in your home directory.
 
-Start with opening a command prompt (open Start, search for "command prompt", then click it)
+Start with opening a command prompt (open Start, search for "command prompt", then click it).
+
+.. note:: 
+
+    You shouldn't run command prompt as administrator when creating your virtual environment, or
+    running Red.
 
 .. warning::
 
@@ -127,11 +149,6 @@ Run **one** of the following set of commands, depending on what extras you want 
 
         python -m pip install -U pip setuptools wheel
         python -m pip install -U Red-DiscordBot[postgres]
-
-
-.. note::
-
-    These commands are also used for updating Red
 
 --------------------------
 Setting Up and Running Red

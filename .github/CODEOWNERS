@@ -1,6 +1,3 @@
-# Default
-*                                   @Twentysix26
-
 # Core
 redbot/core/bank.py                      @palmtree5
 redbot/core/checks.py                    @tekulvw
@@ -63,3 +60,6 @@ redbot/setup.py                     @tekulvw
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
 .github/workflows/*                 @Kowlin
+
+# Excludes
+**/locales/*                        @ghost

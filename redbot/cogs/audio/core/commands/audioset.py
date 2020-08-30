@@ -418,12 +418,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_audioset.group(name="globaldb", enabled=False, hidden=True)
-    @commands.is_owner()
-    async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change global db settings."""
-
     @command_audioset.group(name="autoplay")
+    @commands.guild_only()
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_autoplay(self, ctx: commands.Context):
         """Change auto-play setting."""
@@ -732,14 +728,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset.command(name="lyrics")
     @commands.guild_only()
     @commands.mod_or_permissions(administrator=True)
-    async def command_audioset_lryics(self, ctx: commands.Context):
+    async def command_audioset_lyrics(self, ctx: commands.Context):
         """Prioritise tracks with lyrics."""
         prefer_lyrics = await self.config.guild(ctx.guild).prefer_lyrics()
         await self.config.guild(ctx.guild).prefer_lyrics.set(not prefer_lyrics)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Prefer tracks with lryics: {true_or_false}.").format(
+            description=_("Prefer tracks with lyrics: {true_or_false}.").format(
                 true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
             ),
         )
@@ -1069,9 +1065,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\n---"
             + _("Lavalink Settings")
             + "---        \n"
-            + _("Cog version:      [{version}]\n")
-            + _("Red-Lavalink:     [{lavalink_version}]\n")
-            + _("External server:  [{use_external_lavalink}]\n")
+            + _("Cog version:            [{version}]\n")
+            + _("Red-Lavalink:           [{lavalink_version}]\n")
+            + _("External server:        [{use_external_lavalink}]\n")
         ).format(
             version=__version__,
             lavalink_version=lavalink.__version__,
@@ -1079,8 +1075,22 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
+        if not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+            msg += _(
+                "Lavalink build:         [{llbuild}]\n"
+                "Lavalink branch:        [{llbranch}]\n"
+                "Release date:           [{build_time}]\n"
+                "Lavaplayer version:     [{lavaplayer}]\n"
+                "Java version:           [{jvm}]\n"
+            ).format(
+                build_time=self.player_manager.build_time,
+                llbuild=self.player_manager.ll_build,
+                llbranch=self.player_manager.ll_branch,
+                lavaplayer=self.player_manager.lavaplayer,
+                jvm=self.player_manager.jvm,
+            )
         if is_owner:
-            msg += _("Localtracks path: [{localpath}]\n").format(**global_data)
+            msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
 
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 

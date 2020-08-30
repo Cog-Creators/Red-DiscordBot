@@ -44,17 +44,19 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         #     notify_channel = player.fetch("channel")
         #     if not notify_channel:
         #         player.store("channel", ctx.channel.id)
+        self._daily_global_playlist_cache.setdefault(
+            self.bot.user.id, await self.config.daily_playlists()
+        )
+        if self.local_folder_current_path is None:
+            self.local_folder_current_path = Path(await self.config.localpath())
+        if not ctx.guild:
+            return
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         self._daily_playlist_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
         )
-        self._daily_global_playlist_cache.setdefault(
-            self.bot.user.id, await self.config.daily_playlists()
-        )
-        if self.local_folder_current_path is None:
-            self.local_folder_current_path = Path(await self.config.localpath())
         if dj_enabled:
             dj_role = self._dj_role_cache.setdefault(
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
@@ -76,12 +78,12 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if isinstance(error, commands.ArgParserFailure):
             handled = True
             msg = _("`{user_input}` is not a valid value for `{command}`").format(
-                user_input=error.user_input, command=error.cmd,
+                user_input=error.user_input, command=error.cmd
             )
             if error.custom_help_msg:
                 msg += f"\n{error.custom_help_msg}"
             await self.send_embed_msg(
-                ctx, title=_("Unable To Parse Argument"), description=msg, error=True,
+                ctx, title=_("Unable To Parse Argument"), description=msg, error=True
             )
             if error.send_cmd_help:
                 await ctx.send_help()
@@ -99,7 +101,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 else:
                     await self.send_embed_msg(
-                        ctx, title=_("Invalid Argument"), description=error.args[0], error=True,
+                        ctx, title=_("Invalid Argument"), description=error.args[0], error=True
                     )
             else:
                 await ctx.send_help()
@@ -176,6 +178,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_voice_state_update(
         self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ) -> None:
+        if await self.bot.cog_disabled_in_guild(self, member.guild):
+            return
         await self.cog_ready_event.wait()
         if after.channel != before.channel:
             try:

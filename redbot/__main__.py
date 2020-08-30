@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import pip
+import pkg_resources
 import platform
 import shutil
 import signal
@@ -318,7 +319,7 @@ def handle_edit(cli_flags: Namespace):
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
     """
     This runs the bot.
-    
+
     Any shutdown which is a result of not being able to log in needs to raise
     a SystemExit exception.
 
@@ -346,6 +347,14 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
         sys.path.append(str(LIB_PATH))
+
+        # "It's important to note that the global `working_set` object is initialized from
+        # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
+        # all future `sys.path` manipulation via `pkg_resources` APIs. If you manually modify
+        # `sys.path`, you must invoke the appropriate methods on the `working_set` instance
+        # to keep it in sync."
+        # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
+        pkg_resources.working_set.add_entry(str(LIB_PATH))
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:
