@@ -1557,8 +1557,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_ids = guild_data["mod_role"]
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-            guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
-                admin=admin_roles_str, mod=mod_roles_str
+
+            guild_locale = await self.bot._i18n_cache.get_locale(ctx.guild)
+            guild_regional_format = await self.bot._i18n_cache.get_regional_format(ctx.guild) or _(
+                "Same as bot's locale"
+            )
+
+            guild_settings = _(
+                "Admin roles: {admin}\n"
+                "Mod roles: {mod}\n"
+                "Locale: {guild_locale}\n"
+                "Regional format: {guild_regional_format}\n"
+            ).format(
+                admin=admin_roles_str,
+                mod=mod_roles_str,
+                guild_locale=guild_locale,
+                guild_regional_format=guild_regional_format,
             )
         else:
             guild_settings = ""
@@ -1573,8 +1587,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "{bot_name} Settings:\n\n"
             "Prefixes: {prefixes}\n"
             "{guild_settings}"
-            "Locale: {locale}\n"
-            "Regional format: {regional_format}"
+            "Global locale: {locale}\n"
+            "Global regional format: {regional_format}"
         ).format(
             bot_name=ctx.bot.user.name,
             prefixes=prefix_string,
