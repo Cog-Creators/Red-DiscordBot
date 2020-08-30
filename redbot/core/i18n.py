@@ -3,6 +3,7 @@ import functools
 import io
 import os
 import logging
+import discord
 
 from pathlib import Path
 from typing import Callable, Union, Dict, Optional
@@ -10,6 +11,7 @@ from contextvars import ContextVar
 
 import babel.localedata
 from babel.core import Locale
+
 
 __all__ = [
     "get_locale",
@@ -19,6 +21,9 @@ __all__ = [
     "Translator",
     "get_babel_locale",
     "get_babel_regional_format",
+    "get_locale_from_guild",
+    "get_regional_format_from_guild",
+    "set_contextual_locales_from_guild"
 ]
 
 log = logging.getLogger("red.i18n")
@@ -70,6 +75,58 @@ def set_contextual_regional_format(regional_format: Optional[str]) -> None:
 def reload_locales() -> None:
     for translator in _translators:
         translator.load_translations()
+
+
+async def get_locale_from_guild(bot, guild: Optional[discord.Guild]) -> str:
+    """
+    Get locale set for the given guild.
+
+    Parameters
+    ----------
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+
+    Returns
+    -------
+    str
+        Guild's locale string.
+    """
+    return await bot._i18n_cache.get_locale(guild)
+
+
+async def get_regional_format_from_guild(bot, guild: Optional[discord.Guild]) -> str:
+    """
+    Get regional format for the given guild.
+
+    Parameters
+    ----------
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+
+    Returns
+    -------
+    str
+        Guild's locale string.
+    """
+    return await bot._i18n_cache.get_regional_format(guild)
+
+
+async def set_contextual_locales_from_guild(bot, guild: Optional[discord.Guild]) -> None:
+    """
+    Set contextual locales (locale and regional format) for given guild context.
+
+    Parameters
+    ----------
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+    """
+    locale = await bot.get_locale_from_guild(guild)
+    regional_format = await bot.get_regional_format_from_guild(guild)
+    set_contextual_locale(locale)
+    set_contextual_regional_format(regional_format)
 
 
 def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
