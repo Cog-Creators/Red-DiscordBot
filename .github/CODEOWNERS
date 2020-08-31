@@ -11,7 +11,7 @@
 /tests/cogs/downloader/* @jack1142
 
 # Schemas
-/schema/*
+/schema/* @jack1142
 
 # CI
 /.travis.yml @Kowlin
