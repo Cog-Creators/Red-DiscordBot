@@ -63,8 +63,8 @@ def set_contextual_locale(locale: str) -> None:
 
 
 def get_regional_format() -> str:
-    if _current_regional_format is None:
-        return _current_locale
+    if _current_regional_format.get() is None:
+        return str(_current_locale.get())
     return str(_current_regional_format.get())
 
 
