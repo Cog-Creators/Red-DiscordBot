@@ -6,6 +6,7 @@ import contextlib
 import copy
 import json
 import logging
+import math
 import os
 import re
 import shutil
@@ -14,6 +15,7 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    Any,
     AsyncIterable,
     AsyncIterator,
     Awaitable,
@@ -61,10 +63,14 @@ __all__ = (
     "send_to_owners_with_prefix_replaced",
     "expected_version",
     "fetch_latest_red_version_info",
+    "_is_unsafe_on_strict_config",
     "deprecated_removed",
     "async_tqdm",
     "is_sudo_enabled",
 )
+
+UTF8_RE = re.compile(r"^[\U00000000-\U0010FFFF]*$")
+MIN_INT, MAX_INT = 1 - (2 ** 64), (2 ** 64) - 1
 
 _T = TypeVar("_T")
 
@@ -337,6 +343,28 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+def _is_unsafe_on_strict_config(data: Any) -> bool:
+    _type = type(data)
+    if _type not in {dict, list, str, int, float}:
+        return True
+    if _type is dict:
+        for k, v in data.items():
+            if _is_unsafe_on_strict_config(k) or _is_unsafe_on_strict_config(v):
+                return True
+    if _type is list:
+        for i in data:
+            if _is_unsafe_on_strict_config(i):
+                return True
+    if _type is str and not UTF8_RE.match(data):
+        return True
+    if _type is int:
+        if not (MIN_INT < data < MAX_INT):
+            return True
+    if _type is float:
+        if math.isnan(data) or math.isinf(data):
+            return True
 
 
 @final

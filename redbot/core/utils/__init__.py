@@ -24,12 +24,14 @@ from typing import (
 )
 
 from discord.utils import maybe_coroutine
+from ._internal_utils import _is_unsafe_on_strict_config
 
 __all__ = (
     "bounded_gather",
     "bounded_gather_iter",
     "deduplicate_iterables",
     "AsyncIter",
+    "is_safe_for_strict_config",
     "get_end_user_data_statement",
     "get_end_user_data_statement_or_raise",
 )
@@ -509,6 +511,17 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             raise TypeError("Mapping must be a callable.")
         self._map = func
         return self
+
+
+def is_safe_for_strict_config(value: Any) -> bool:
+    """
+
+    Parameters
+    ----------
+    value: Any
+        The object to be checked.
+    """
+    return not _is_unsafe_on_strict_config(value)
 
 
 def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
