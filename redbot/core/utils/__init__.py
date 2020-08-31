@@ -514,12 +514,17 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
 
 def is_safe_for_strict_config(value: Any) -> bool:
-    """
+    """Checks ``value`` agaisn't a stricter ruleset which will be enforced in a future iteration on ``Config``.
 
     Parameters
     ----------
     value: Any
         The object to be checked.
+
+    Returns
+    -------
+    bool
+        Whether or not ``value`` respect the stricter data boundaries.
     """
     return not _is_unsafe_on_strict_config(value)
 
