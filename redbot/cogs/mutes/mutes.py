@@ -283,8 +283,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def mute_role(self, ctx: commands.Context, *, role: discord.Role = None):
         """Sets the role to be applied when muting a user.
 
-            If no role is setup the bot will attempt to mute a user by setting
-            channel overwrites in all channels to prevent the user from sending messages.
+        If no role is setup the bot will attempt to mute a user by setting
+        channel overwrites in all channels to prevent the user from sending messages.
         """
         if not role:
             await self.config.guild(ctx.guild).mute_role.set(None)
@@ -298,11 +298,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
         """Create a Muted role.
 
-            This will create a role and apply overwrites to all available channels
-            to more easily setup muting a user.
+        This will create a role and apply overwrites to all available channels
+        to more easily setup muting a user.
 
-            If you already have a muted role created on the server use
-            `[p]muteset role ROLE_NAME_HERE`
+        If you already have a muted role created on the server use
+        `[p]muteset role ROLE_NAME_HERE`
         """
         perms = discord.Permissions()
         perms.update(send_messages=False, speak=False, add_reactions=False)
@@ -337,7 +337,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="time")
     async def default_mute_time(self, ctx: commands.Context, *, time: MuteTime):
         """
-            Set the default mute time for the mute command.
+        Set the default mute time for the mute command.
         """
         data = time.get("duration", {})
         if not data:
@@ -356,7 +356,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @checks.mod_or_permissions(manage_roles=True)
     async def activemutes(self, ctx: commands.Context):
         """
-            Displays active mutes on this server.
+        Displays active mutes on this server.
         """
 
         msg = ""
@@ -730,10 +730,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
 
     async def mute_user(
-        self, guild: discord.Guild, author: discord.Member, user: discord.Member, reason: str,
+        self,
+        guild: discord.Guild,
+        author: discord.Member,
+        user: discord.Member,
+        reason: str,
     ) -> Tuple[bool, Optional[str]]:
         """
-            Handles muting users
+        Handles muting users
         """
         mute_role = await self.config.guild(guild).mute_role()
         if mute_role:
@@ -762,10 +766,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return True, None
 
     async def unmute_user(
-        self, guild: discord.Guild, author: discord.Member, user: discord.Member, reason: str,
+        self,
+        guild: discord.Guild,
+        author: discord.Member,
+        user: discord.Member,
+        reason: str,
     ) -> Tuple[bool, Optional[str]]:
         """
-            Handles muting users
+        Handles muting users
         """
         mute_role = await self.config.guild(guild).mute_role()
         if mute_role:
