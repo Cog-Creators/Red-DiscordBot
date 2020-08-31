@@ -2090,17 +2090,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("No API services have been set yet."))
             return
 
-        sorted_services = sorted(services, key=lambda r: str.lower(r))
+        sorted_services = sorted(services, key=str.lower)
         joined = _("Set API services:\n")
         for key in sorted_services:
-            joined += "{}\n".format(key)
+            joined += "+ {}\n".format(key)
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @api.command(name="remove")
     async def api_remove(self, ctx: commands.Context, *services: str):
         """Remove the given services with all their keys and tokens."""
-        services = list(services)
         await self.bot.remove_shared_api_services(services)
         await ctx.send(_("Services deleted successfully."))
 
