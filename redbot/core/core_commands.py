@@ -1559,7 +1559,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
 
             guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
-            guild_regional_format = await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+            guild_regional_format = (
+                await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+            )
 
             guild_settings = _(
                 "Admin roles: {admin}\n"
