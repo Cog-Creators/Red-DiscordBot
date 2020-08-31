@@ -79,7 +79,7 @@ class KickBanMixin(MixinMeta):
                 "hierarchy."
             )
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            return _("I cannot do that due to discord hierarchy rules.")
+            return _("I cannot do that due to Discord hierarchy rules.")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
 
@@ -199,7 +199,7 @@ class KickBanMixin(MixinMeta):
             )
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules."))
+            await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
         audit_reason = get_audit_reason(author, reason)
         toggle = await self.config.guild(guild).dm_on_kickban()
@@ -282,10 +282,10 @@ class KickBanMixin(MixinMeta):
         *,
         reason: str = None,
     ):
-        """Preemptively bans user(s) from the server
+        """Preemptively bans user(s) from the server.
 
         User IDs need to be provided in order to ban
-        using this command"""
+        using this command."""
         banned = []
         errors = {}
         upgrades = []
@@ -454,7 +454,7 @@ class KickBanMixin(MixinMeta):
             )
             return
         elif guild.me.top_role <= user.top_role or user == guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
         if days is None:
