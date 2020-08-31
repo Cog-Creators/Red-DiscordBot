@@ -1146,7 +1146,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
-        """Show's [botname]'s invite url."""
+        """Shows [botname]'s invite url."""
         try:
             await ctx.author.send(await self._invite_url())
         except discord.errors.Forbidden:
