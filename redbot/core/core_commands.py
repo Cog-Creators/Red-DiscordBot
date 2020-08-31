@@ -1558,10 +1558,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
 
-            guild_locale = await self.bot._i18n_cache.get_locale(ctx.guild)
-            guild_regional_format = await self.bot._i18n_cache.get_regional_format(ctx.guild) or _(
-                "Same as bot's locale"
-            )
+            guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
+            guild_regional_format = await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
 
             guild_settings = _(
                 "Admin roles: {admin}\n"
@@ -1580,7 +1578,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
-        regional_format = global_data["regional_format"] or _("Same as bot's locale")
+        regional_format = global_data["regional_format"] or locale
 
         prefix_string = " ".join(prefixes)
         settings = _(
