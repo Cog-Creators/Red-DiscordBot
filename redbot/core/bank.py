@@ -112,8 +112,8 @@ async def _schema_0_to_1():
     group = _config._get_base_group(_config.MEMBER)
     async with group.all() as bank_member_data:
         for guild_data in bank_member_data.values():
-            for member_config in bank_member_data.values():
-                member_config["balance"] = int(user_config["balance"])
+            for member_config in guild_data.values():
+                member_config["balance"] = int(member_config["balance"])
 
 
 async def _process_data_deletion(
