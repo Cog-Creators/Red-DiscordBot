@@ -134,8 +134,8 @@ async def set_contextual_locales_from_guild(bot: Red, guild: Optional[discord.Gu
          The guild contextual locale is set for.
          Use `None` if the context doesn't involve guild.
     """
-    locale = await bot.get_locale_from_guild(guild)
-    regional_format = await bot.get_regional_format_from_guild(guild)
+    locale = await get_locale_from_guild(bot, guild)
+    regional_format = await get_regional_format_from_guild(bot, guild)
     set_contextual_locale(locale)
     set_contextual_regional_format(regional_format)
 
