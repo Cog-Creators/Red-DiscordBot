@@ -191,6 +191,11 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     amount : int
         The amount the member wants to spend.
 
+    Raises
+    ------
+    TypeError
+        If the amount is not an `int`.
+
     Returns
     -------
     bool
@@ -198,6 +203,8 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
         amount, else :code:`False`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         return False
     return await get_balance(member) >= amount
@@ -212,7 +219,6 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         The member whose balance to set.
     amount : int
         The amount to set the balance to.
-
     Returns
     -------
     int
@@ -227,8 +233,12 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
     BalanceTooHigh
         If attempting to set the balance to a value greater than
         ``bank._MAX_BALANCE``.
+    TypeError
+        If the amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     guild = getattr(member, "guild", None)
@@ -799,7 +809,12 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         If the bank is guild-specific and guild was not provided.
     ValueError
         If the amount is less than 0 or higher than 2 ** 63 - 1.
+    TypeError
+        If the amount is not an `int`.
+
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if not (0 < amount <= _MAX_BALANCE):
         raise ValueError(
             "Amount must be greater than zero and less than {max}.".format(
@@ -868,9 +883,12 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         If the bank is guild-specific and guild was not provided.
     ValueError
         If the amount is less than 0 or higher than the max allowed balance.
+    TypeError
+        If the amount is not an `int`.
 
     """
-    amount = int(amount)
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     max_bal = await get_max_balance(guild)
 
     if not (0 <= amount <= max_bal):
@@ -905,7 +923,9 @@ def cost(amount: int):
 
     Other exceptions will propagate and will be handled by Red's (and/or
     any other configured) error handling.
+
     """
+    # TODO: Add documentation for input/output/exceptions
     if not isinstance(amount, int) or amount < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 
