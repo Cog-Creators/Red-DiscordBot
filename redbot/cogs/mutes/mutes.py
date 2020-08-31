@@ -163,7 +163,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(guild).muted_users.set(self._server_mutes[g_id])
 
     async def _auto_unmute_user(self, guild: discord.Guild, data: dict):
-        delay = 120 - (data["until"] - datetime.now(timezone.utc).timestamp())
+        delay = data["until"] - datetime.now(timezone.utc).timestamp()
         if delay < 1:
             delay = 0
         await asyncio.sleep(delay)
@@ -208,7 +208,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.channel(channel).muted_users.set(self._channel_mutes[c_id])
 
     async def _auto_channel_unmute_user(self, channel: discord.TextChannel, data: dict):
-        delay = 120 - (data["until"] - datetime.now(timezone.utc).timestamp())
+        delay = data["until"] - datetime.now(timezone.utc).timestamp()
         if delay < 1:
             delay = 0
         await asyncio.sleep(delay)
