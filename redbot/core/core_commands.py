@@ -2063,7 +2063,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """Set various external API tokens.
+        """Set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
