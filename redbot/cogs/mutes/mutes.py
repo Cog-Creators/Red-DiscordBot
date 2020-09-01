@@ -152,6 +152,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if guild is None:
                 continue
             for u_id, data in mutes.items():
+                if data["until"] is None:
+                    continue
                 time_to_unmute = data["until"] - datetime.now(timezone.utc).timestamp()
                 if time_to_unmute < 120.0:
                     self._unmute_tasks[f"{g_id}{u_id}"] = asyncio.create_task(
@@ -360,44 +362,51 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
 
         msg = ""
-        for guild_id, mutes_data in self._server_mutes.items():
+        if ctx.guild.id in self._server_mutes:
+            mutes_data = self._server_mutes[ctx.guild.id]
             for user_id, mutes in mutes_data.items():
                 user = ctx.guild.get_member(user_id)
                 if not user:
                     user_str = f"<@!{user_id}>"
                 else:
                     user_str = user.mention
-                time_left = timedelta(
-                    seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
-                )
-                time_str = humanize_timedelta(timedelta=time_left)
+                if mutes["until"]:
+                    time_left = timedelta(
+                        seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
+                    )
+                    time_str = humanize_timedelta(timedelta=time_left)
+                else:
+                    time_str = ""
                 msg += _("Server Mute: {member}").format(member=user_str)
                 if time_str:
                     msg += _("Remaining: {time_left}\n").format(time_left=time_str)
                 else:
                     msg += "\n"
-        for channel_id, mutes_data in self._channel_mutes.items():
-            msg += f"<#{channel_id}>\n"
-            for user_id, mutes in mutes_data.items():
-                user = ctx.guild.get_member(user_id)
-                if not user:
-                    user_str = f"<@!{user_id}>"
-                else:
-                    user_str = user.mention
-
-                time_left = timedelta(
-                    seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
-                )
-                time_str = humanize_timedelta(timedelta=time_left)
-                msg += _("Channel Mute: {member} ").format(member=user_str)
-                if time_str:
-                    msg += _("Remaining: {time_left}\n").format(time_left=time_str)
-                else:
-                    msg += "\n"
-        if msg:
-            await ctx.maybe_send_embed(msg)
-        else:
-            await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
+            for channel_id, mutes_data in self._channel_mutes.items():
+                msg += f"<#{channel_id}>\n"
+                for user_id, mutes in mutes_data.items():
+                    user = ctx.guild.get_member(user_id)
+                    if not user:
+                        user_str = f"<@!{user_id}>"
+                    else:
+                        user_str = user.mention
+                    if mutes["until"]:
+                        time_left = timedelta(
+                            seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
+                        )
+                        time_str = humanize_timedelta(timedelta=time_left)
+                    else:
+                        time_str = ""
+                    msg += _("Channel Mute: {member} ").format(member=user_str)
+                    if time_str:
+                        msg += _("Remaining: {time_left}\n").format(time_left=time_str)
+                    else:
+                        msg += "\n"
+            if msg:
+                for page in pagify(msg):
+                    await ctx.maybe_send_embed(page)
+                return
+        await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
 
     @commands.command()
     @commands.guild_only()
@@ -464,17 +473,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not success_list and issue:
             resp = pagify(issue)
             return await ctx.send_interactive(resp)
-        if until:
-            if ctx.guild.id not in self._server_mutes:
-                self._server_mutes[ctx.guild.id] = {}
-            for user in success_list:
-                mute = {
-                    "author": ctx.message.author.id,
-                    "member": user.id,
-                    "until": until.timestamp(),
-                }
-                self._server_mutes[ctx.guild.id][user.id] = mute
-            await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
+        if ctx.guild.id not in self._server_mutes:
+            self._server_mutes[ctx.guild.id] = {}
+        for user in success_list:
+            mute = {
+                "author": ctx.message.author.id,
+                "member": user.id,
+                "until": until.timestamp() if until else None,
+            }
+            self._server_mutes[ctx.guild.id][user.id] = mute
+        await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
         verb = _("has")
         if len(success_list) > 1:
             verb = _("have")
@@ -588,17 +596,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 except RuntimeError as e:
                     log.error(_("Error creating modlog case"), exc_info=e)
         if success_list:
-            if until:
-                if channel.id not in self._channel_mutes:
-                    self._channel_mutes[channel.id] = {}
-                for user in success_list:
-                    mute = {
-                        "author": ctx.message.author.id,
-                        "member": user.id,
-                        "until": until.timestamp(),
-                    }
-                    self._channel_mutes[channel.id][user.id] = mute
-                await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
+            if channel.id not in self._channel_mutes:
+                self._channel_mutes[channel.id] = {}
+            for user in success_list:
+                mute = {
+                    "author": ctx.message.author.id,
+                    "member": user.id,
+                    "until": until.timestamp() if until else None,
+                }
+                self._channel_mutes[channel.id][user.id] = mute
+            await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
             verb = _("has")
             if len(success_list) > 1:
                 verb = _("have")
