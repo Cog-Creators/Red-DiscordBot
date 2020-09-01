@@ -47,7 +47,10 @@ __all__ = [
 
 _MAX_BALANCE = 2 ** 63 - 1
 
+_SCHEMA_VERSION = 1
+
 _DEFAULT_GLOBAL = {
+    "schema_version": 0,
     "is_global": False,
     "bank_name": "Twentysix bank",
     "currency": "credits",
@@ -73,13 +76,48 @@ log = logging.getLogger("red.core.bank")
 _data_deletion_lock = asyncio.Lock()
 
 
-def _init():
+async def _init():
     global _config
     _config = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _config.register_global(**_DEFAULT_GLOBAL)
     _config.register_guild(**_DEFAULT_GUILD)
     _config.register_member(**_DEFAULT_MEMBER)
     _config.register_user(**_DEFAULT_USER)
+    await _migrate_config()
+
+
+async def _migrate_config():
+    schema_version = await _config.schema_version()
+
+    if schema_version == _SCHEMA_VERSION:
+        return
+
+    if schema_version == 0:
+        await _schema_0_to_1()
+        schema_version += 1
+        await _config.schema_version.set(schema_version)
+
+
+async def _schema_0_to_1():
+    # convert floats in bank balances to ints
+
+    # don't use anything seen below in extensions, it's optimized and controlled for here,
+    # but can't be safe in 3rd party use
+
+    # this CANNOT use ctx manager, because ctx managers compare before and after,
+    # and floats can be equal to ints: (1.0 == 1) is True
+    group = _config._get_base_group(_config.USER)
+    bank_user_data = await group.all()
+    for user_config in bank_user_data.values():
+        user_config["balance"] = int(user_config["balance"])
+    await group.set(bank_user_data)
+
+    group = _config._get_base_group(_config.MEMBER)
+    bank_member_data = await group.all()
+    for guild_data in bank_member_data.values():
+        for member_config in guild_data.values():
+            member_config["balance"] = int(member_config["balance"])
+    await group.set(bank_member_data)
 
 
 async def _process_data_deletion(

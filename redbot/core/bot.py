@@ -738,7 +738,7 @@ class RedBase(
             self.add_cog(Dev())
 
         await modlog._init(self)
-        bank._init()
+        await bank._init()
 
         packages = []
 
