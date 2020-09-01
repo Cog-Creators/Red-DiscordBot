@@ -376,7 +376,9 @@ class Case:
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.fromtimestamp(self.modified_at, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+                datetime.fromtimestamp(self.modified_at, tz=timezone.utc).strftime(
+                    "%Y-%m-%d %H:%M:%S UTC"
+                )
             )
 
         if isinstance(self.user, int):
