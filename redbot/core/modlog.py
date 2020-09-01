@@ -417,7 +417,7 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
+            emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
