@@ -460,7 +460,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
                         "smute",
                         user,
                         author,
@@ -585,7 +585,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
                         "cmute",
                         user,
                         author,
@@ -645,7 +645,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
                         "sunmute",
                         user,
                         author,
@@ -710,7 +710,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
                         "cunmute",
                         user,
                         author,
