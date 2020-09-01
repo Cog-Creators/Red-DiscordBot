@@ -353,8 +353,8 @@ class Case:
         until = None
         duration = None
         if self.until:
-            start = datetime.utcfromtimestamp(self.created_at)
-            end = datetime.utcfromtimestamp(self.until)
+            start = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
+            end = datetime.fromtimestamp(self.until, tz=timezone.utc)
             end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
             duration = end - start
             dur_fmt = _strfdelta(duration)
@@ -376,7 +376,7 @@ class Case:
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S UTC")
+                datetime.fromtimestamp(self.modified_at, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
             )
 
         if isinstance(self.user, int):
@@ -415,7 +415,7 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
+            emb.timestamp = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
             return emb
         else:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
