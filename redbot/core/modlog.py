@@ -818,7 +818,9 @@ async def create_case(
     guild: discord.Guild
         The guild the action was taken in
     created_at: datetime
-        The time the action occurred at
+        The time the action occurred at.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     action_type: str
         The type of action that was taken
     user: Union[discord.User, discord.Member]
@@ -828,7 +830,9 @@ async def create_case(
     reason: Optional[str]
         The reason the action was taken
     until: Optional[datetime]
-        The time the action is in effect until
+        The time the action is in effect until.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     channel: Optional[discord.TextChannel]
         The channel the action was taken in
     """
