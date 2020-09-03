@@ -194,7 +194,7 @@ class Mod(
     @commands.is_owner()
     async def movedeletedelay(self, ctx: commands.Context) -> None:
         """
-            Move deletedelay settings to core
+        Move deletedelay settings to core
         """
         all_guilds = await self.config.all_guilds()
         for guild_id, settings in all_guilds.items():

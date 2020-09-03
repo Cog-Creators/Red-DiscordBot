@@ -146,8 +146,10 @@ class ServerManager:
     @staticmethod
     async def _get_java_version() -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
-        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-            "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        _proc: asyncio.subprocess.Process = (
+            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
+                "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()

@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/general/general.py:46
 #, docstring
 msgid "General commands."
-msgstr "Generalne komendy."
+msgstr "Ogólne komendy."
 
 #: redbot/cogs/general/general.py:51
 msgid "As I see it, yes"
@@ -235,11 +235,11 @@ msgstr "ID serwera: "
 
 #: redbot/cogs/general/general.py:277
 msgid "  •  Use {command} for more info on the server."
-msgstr ""
+msgstr "  • Użyj {command}, aby uzyskać więcej informacji o serwerze."
 
 #: redbot/cogs/general/general.py:303
 msgid "\\nShard ID: **{shard_id}/{shard_count}**"
-msgstr "\\nID sharda: **{shard_id}/{shard_count}**"
+msgstr "\\nID Sharda: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
@@ -367,7 +367,7 @@ msgstr "4 - Ekstermalny"
 
 #: redbot/cogs/general/general.py:375
 msgid "Partnered"
-msgstr ""
+msgstr "Partnerzy"
 
 #: redbot/cogs/general/general.py:376
 msgid "Verified"
@@ -375,7 +375,7 @@ msgstr "Zweryfikowany"
 
 #: redbot/cogs/general/general.py:377
 msgid "Server Discovery"
-msgstr ""
+msgstr "Wykrywanie serwera"
 
 #: redbot/cogs/general/general.py:378
 msgid "Featurable"

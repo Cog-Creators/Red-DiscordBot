@@ -3,6 +3,7 @@ import time
 from enum import Enum
 from random import randint, choice
 from typing import Final
+import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
@@ -214,9 +215,7 @@ class General(commands.Cog):
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
-        search_terms = escape(
-            search_terms.replace("+", "%2B").replace(" ", "+"), mass_mentions=True
-        )
+        search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
@@ -248,14 +247,15 @@ class General(commands.Cog):
     async def serverinfo(self, ctx, details: bool = False):
         """
         Show server information.
-    
+
         `details`: Shows more information when set to `True`.
         Default to False.
         """
         guild = ctx.guild
         passed = (ctx.message.created_at - guild.created_at).days
         created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
+            date=guild.created_at.strftime("%d %b %Y %H:%M"),
+            num=humanize_number(passed),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
@@ -481,12 +481,14 @@ class General(commands.Cog):
         """
 
         try:
-            url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
+            url = "https://api.urbandictionary.com/v0/define"
+
+            params = {"term": str(word).lower()}
 
             headers = {"content-type": "application/json"}
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as response:
+                async with session.get(url, headers=headers, params=params) as response:
                     data = await response.json()
 
         except aiohttp.ClientError:

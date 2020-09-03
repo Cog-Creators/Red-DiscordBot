@@ -443,7 +443,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
-            dpy_version = "{}".format(discord.__version__,)
+            dpy_version = "{}".format(discord.__version__)
             red_version = "{}".format(__version__)
 
             about = _(
@@ -1141,12 +1141,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
-            await ctx.send(_("No exception has occurred yet"))
+            await ctx.send(_("No exception has occurred yet."))
 
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
-        """Show's [botname]'s invite url."""
+        """Shows [botname]'s invite url."""
         try:
             await ctx.author.send(await self._invite_url())
         except discord.errors.Forbidden:
@@ -1919,6 +1919,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username."""
         try:
+            if len(username) > 32:
+                await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
+                return
             await self._name(name=username)
         except discord.HTTPException:
             await ctx.send(
@@ -1938,6 +1941,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
         try:
+            if len(nickname) > 32:
+                await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
+                return
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own nickname."))
@@ -2151,7 +2157,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             show_hidden = not await ctx.bot._config.help.show_hidden()
         await ctx.bot._config.help.show_hidden.set(show_hidden)
         if show_hidden:
-            await ctx.send(_("Help will not filter hidden commands"))
+            await ctx.send(_("Help will not filter hidden commands."))
         else:
             await ctx.send(_("Help will filter hidden commands."))
 

@@ -1,0 +1,27 @@
+{
+  "$id": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog_repo.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Red-DiscordBot Сog Repo metadata file",
+  "type": "object",
+  "properties": {
+    "author": {
+      "type": "array",
+      "description": "List of names of authors of the cog",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "A long description of the cog or repo. For cogs, this is displayed when a user executes [p]cog info."
+    },
+    "install_msg": {
+      "type": "string",
+      "description": "The message that gets displayed when a cog is installed or a repo is added"
+    },
+    "short": {
+      "type": "string",
+      "description": "A short description of the cog or repo. For cogs, this info is displayed when a user executes [p]cog list"
+    }
+  }
+}

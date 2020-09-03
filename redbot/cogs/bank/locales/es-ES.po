@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/bank/bank.py:36
 #, docstring
 msgid "Bank"
-msgstr ""
+msgstr "Banco"
 
 #: redbot/cogs/bank/bank.py:48
 #, docstring
@@ -66,11 +66,11 @@ msgstr ""
 #: redbot/cogs/bank/bank.py:106
 #, docstring
 msgid "Set the bank's name."
-msgstr ""
+msgstr "Establece el nombre del banco."
 
 #: redbot/cogs/bank/bank.py:108
 msgid "Bank name has been set to: {name}"
-msgstr ""
+msgstr "Nombre del banco cambiado a: {name}"
 
 #: redbot/cogs/bank/bank.py:114
 #, docstring

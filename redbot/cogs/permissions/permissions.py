@@ -453,7 +453,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-       `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
         if not who_or_what:
             await ctx.send_help()
