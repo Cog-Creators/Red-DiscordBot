@@ -199,7 +199,7 @@ msgstr ""
 #: redbot/cogs/general/general.py:248
 #, docstring
 msgid "\\n        Show server information.\\n\\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
-msgstr ""
+msgstr "\\n        Mostrar información del servidor.\\n\\n        `details`: Muestra más información cuando se establece en `True`.\\n        Por defecto False.\\n        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"

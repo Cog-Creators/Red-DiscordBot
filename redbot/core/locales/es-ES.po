@@ -521,7 +521,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1149
 #, docstring
 msgid "Shows [botname]'s invite url."
-msgstr ""
+msgstr "Muestra la url de invitación de [botname]."
 
 #: redbot/core/core_commands.py:1161
 #, docstring
