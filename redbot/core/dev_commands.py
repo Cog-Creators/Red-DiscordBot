@@ -1,6 +1,7 @@
 import ast
 import asyncio
 import aiohttp
+import importlib
 import inspect
 import io
 import textwrap
@@ -29,6 +30,31 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 _ = Translator("Dev", __file__)
 
 START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+
+
+class EnvImporter(dict):
+    @classmethod
+    def from_context(cls, ctx: commands.Context, **kwargs):
+        self = cls(
+            bot=ctx.bot,
+            ctx=ctx,
+            channel=ctx.channel,
+            author=ctx.author,
+            guild=ctx.guild,
+            message=ctx.message,
+            asyncio=asyncio,  # not including this can cause errors with async-compile
+            __name__="__main__",  # not including this can cause errors with typing (#3648)
+            # eval and exec automatically put this in, but repl doesn't necessarily use either
+            __builtins__=__builtins__,
+        )
+        self.update(kwargs)
+        return self
+
+    def __missing__(self, key):
+        try:
+            return importlib.import_module(key)
+        except ImportError:
+            raise KeyError(key) from None
 
 
 class Dev(commands.Cog):
@@ -111,24 +137,14 @@ class Dev(commands.Cog):
             channel  - the current channel object
             author   - command author's member object
             message  - the command's message object
+            aiohttp  - aiohttp library
             discord  - discord.py library
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
+        env = EnvImporter.from_context(
+            ctx, _=self._last_result, aiohttp=aiohttp, discord=discord, commands=commands
+        )
 
         code = self.cleanup_code(code)
 
@@ -165,24 +181,14 @@ class Dev(commands.Cog):
             channel  - the current channel object
             author   - command author's member object
             message  - the command's message object
+            aiohttp  - aiohttp library
             discord  - discord.py library
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
+        env = EnvImporter.from_context(
+            ctx, _=self._last_result, aiohttp=aiohttp, discord=discord, commands=commands
+        )
 
         body = self.cleanup_code(body)
         stdout = io.StringIO()
@@ -224,18 +230,7 @@ class Dev(commands.Cog):
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
         """
-        variables = {
-            "ctx": ctx,
-            "bot": ctx.bot,
-            "message": ctx.message,
-            "guild": ctx.guild,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "asyncio": asyncio,
-            "_": None,
-            "__builtins__": __builtins__,
-            "__name__": "__main__",
-        }
+        variables = EnvImporter.from_context(ctx, _=self._last_result)
 
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
