@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional, Hong Kong\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,8 @@ msgid "I cannot let you do that. You are not higher than the user in the role hi
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:82 redbot/cogs/mod/kickban.py:202
-msgid "I cannot do that due to discord hierarchy rules."
+#: redbot/cogs/mod/kickban.py:457
+msgid "I cannot do that due to Discord hierarchy rules."
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:84 redbot/cogs/mod/kickban.py:325
@@ -114,7 +115,7 @@ msgstr ""
 
 #: redbot/cogs/mod/kickban.py:285
 #, docstring
-msgid "Preemptively bans user(s) from the server\\n\\n        User IDs need to be provided in order to ban\\n        using this command"
+msgid "Preemptively bans user(s) from the server.\\n\\n        User IDs need to be provided in order to ban\\n        using this command."
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:294
@@ -152,10 +153,6 @@ msgstr ""
 #: redbot/cogs/mod/kickban.py:437
 #, docstring
 msgid "Temporarily ban a user from this server."
-msgstr ""
-
-#: redbot/cogs/mod/kickban.py:457
-msgid "I cannot do that due to discord hierarchy rules"
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:477
@@ -265,7 +262,7 @@ msgstr ""
 
 #: redbot/cogs/mod/mod.py:196
 #, docstring
-msgid "\\n            Move deletedelay settings to core\\n        "
+msgid "\\n        Move deletedelay settings to core\\n        "
 msgstr ""
 
 #: redbot/cogs/mod/mod.py:205
