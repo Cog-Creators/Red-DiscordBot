@@ -380,14 +380,19 @@ class Warnings(commands.Cog):
         `<reason>` can be a registered reason if it exists or a custom one
         is created by default.
         """
-        channel = ctx.channel
         guild = ctx.guild
         if user == ctx.author:
-            await ctx.send(_("You cannot warn yourself."))
-            return
+            return await ctx.send(_("You cannot warn yourself."))
         if user.bot:
-            await ctx.send(_("You cannot warn other bots."))
-            return
+            return await ctx.send(_("You cannot warn other bots."))
+        if user == ctx.guild.owner:
+            return await ctx.send(_("You cannot warn the server owner."))
+        if user.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
+            return await ctx.send(
+                _(
+                    "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
+                )
+            )
         guild_settings = await self.config.guild(ctx.guild).all()
         custom_allowed = guild_settings["allow_custom_reasons"]
 
