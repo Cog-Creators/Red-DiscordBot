@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-27 12:21+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -15,11 +15,11 @@ msgstr ""
 "X-Crowdin-File-ID: 4\n"
 "Language: de_DE\n"
 
-#: redbot/core/bank.py:929
+#: redbot/core/bank.py:987
 msgid "Can't pay for this command in DM without a global bank."
 msgstr "Dieser Befehl kann nicht ohne eine globale Bank in DM bezahlt werden."
 
-#: redbot/core/bank.py:936
+#: redbot/core/bank.py:994
 msgid "You need at least {cost} {currency} to use this command."
 msgstr "Sie benötigen mindestens {cost} {currency} um diesen Befehl zu verwenden."
 
@@ -209,12 +209,12 @@ msgstr "Erhalten für: **{time_quantity}** (seit {timestamp} UTC)"
 #: redbot/core/core_commands.py:522
 #, docstring
 msgid " Commands which interact with the data [botname] has about you. "
-msgstr ""
+msgstr " Befehle, die mit den Daten [botname] über Ihnen hat interagieren. "
 
 #: redbot/core/core_commands.py:529
 #, docstring
 msgid " Find out what type of data [botname] stores and why. "
-msgstr ""
+msgstr " Finden Sie heraus, welche Art von Daten [botname] speichert und warum. "
 
 #: redbot/core/core_commands.py:534
 msgid "This bot stores some data about users as necessary to function. This is mostly the ID your user is assigned by Discord, linked to a handful of things depending on what you interact with in the bot. There are a few commands which store it to keep track of who created something. (such as playlists) For full details about this as well as more in depth details of what is stored and why, see {link}.\\n\\nAdditionally, 3rd party addons loaded by the bot's owner may or may not store additional things. You can use `{prefix}mydata 3rdparty` to view the statements provided by each 3rd-party addition."
@@ -520,8 +520,8 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1149
 #, docstring
-msgid "Show's [botname]'s invite url."
-msgstr "Zeigt die Einladungs-URL von [botname] an."
+msgid "Shows [botname]'s invite url."
+msgstr ""
 
 #: redbot/core/core_commands.py:1161
 #, docstring
@@ -1948,43 +1948,43 @@ msgstr "die Windows-Eingabeaufforderung(CMD)"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: redbot/core/events.py:150
+#: redbot/core/events.py:152
 msgid "\\n\\nYou have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\\n\\nYou will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr "\\n\\nDu hast Python `{py_version}` aber dieses Update benötigt `{req_py}`. Du kannst nicht einfach den Update-Befehl ausführen.\\n\\n Besuche die Anleitung unter dem obigen Link und folge den dort aufgeführten Schritten. Wenn du weitere Hilfe beim Updaten benötigst schau im #support Kanal in <https://discord.gg/red> vorbei"
 
-#: redbot/core/events.py:224
+#: redbot/core/events.py:226
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr "`{user_input}` ist kein gültiger Wert für `{command}`"
 
-#: redbot/core/events.py:249
+#: redbot/core/events.py:251
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr "Fehler im Befehl '{command}'. Überprüfen Sie Ihre Konsole oder Protokolle für Details."
 
-#: redbot/core/events.py:274
+#: redbot/core/events.py:276
 msgid "I require the {permission} permission to execute that command."
 msgstr "Ich benötige die Berechtigung {permission}, um diesen Befehl auszuführen."
 
-#: redbot/core/events.py:278
+#: redbot/core/events.py:280
 msgid "I require {permission_list} permissions to execute that command."
 msgstr "Ich benötige folgende Berechtigungen, um diesen Befehl auszuführen: {permission_list}"
 
-#: redbot/core/events.py:286
+#: redbot/core/events.py:288
 msgid "That command is not available in DMs."
 msgstr "Dieser Befehl ist nicht in Direktnachrichten verfügbar."
 
-#: redbot/core/events.py:288
+#: redbot/core/events.py:290
 msgid "That command is only available in DMs."
 msgstr "Dieser Befehl kann nur in Direktnachrichten genutzt werden."
 
-#: redbot/core/events.py:293
+#: redbot/core/events.py:295
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr "Dieser Befehl ist noch nicht wieder bereit. Versuche es in {delay} erneut."
 
-#: redbot/core/events.py:295
+#: redbot/core/events.py:297
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr "Dieser Befehl ist noch nicht wieder bereit. Versuche es in einer Sekunde erneut."
 
-#: redbot/core/events.py:299
+#: redbot/core/events.py:301
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr "Zu viele Personen benutzen diesen command. Er kann nur {number} Mal pro {type} verwendet werden."
 

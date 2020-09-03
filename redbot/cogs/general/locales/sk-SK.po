@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "MIME-Version: 1.0\n"
@@ -15,193 +15,193 @@ msgstr ""
 "X-Crowdin-File-ID: 17\n"
 "Language: sk_SK\n"
 
-#: redbot/cogs/general/general.py:46
+#: redbot/cogs/general/general.py:47
 #, docstring
 msgid "General commands."
 msgstr "Všeobecné príkazy."
 
-#: redbot/cogs/general/general.py:51
+#: redbot/cogs/general/general.py:52
 msgid "As I see it, yes"
 msgstr "Ako to vidím, tak áno"
 
-#: redbot/cogs/general/general.py:52
+#: redbot/cogs/general/general.py:53
 msgid "It is certain"
 msgstr "To je isté"
 
-#: redbot/cogs/general/general.py:53
+#: redbot/cogs/general/general.py:54
 msgid "It is decidedly so"
 msgstr "Rozhodne to je tak"
 
-#: redbot/cogs/general/general.py:54
+#: redbot/cogs/general/general.py:55
 msgid "Most likely"
 msgstr "Pravdepodobne"
 
-#: redbot/cogs/general/general.py:55
+#: redbot/cogs/general/general.py:56
 msgid "Outlook good"
 msgstr "Vyzerá, že áno"
 
-#: redbot/cogs/general/general.py:56
+#: redbot/cogs/general/general.py:57
 msgid "Signs point to yes"
 msgstr "Náznaky ukazujú, že áno"
 
-#: redbot/cogs/general/general.py:57
+#: redbot/cogs/general/general.py:58
 msgid "Without a doubt"
 msgstr "Bezpochýb"
 
-#: redbot/cogs/general/general.py:58
+#: redbot/cogs/general/general.py:59
 msgid "Yes"
 msgstr "Áno"
 
-#: redbot/cogs/general/general.py:59
+#: redbot/cogs/general/general.py:60
 msgid "Yes – definitely"
 msgstr "Rozhodne áno"
 
-#: redbot/cogs/general/general.py:60
+#: redbot/cogs/general/general.py:61
 msgid "You may rely on it"
 msgstr "Môžeš sa na to spoľahnúť"
 
-#: redbot/cogs/general/general.py:61
+#: redbot/cogs/general/general.py:62
 msgid "Reply hazy, try again"
 msgstr "Odpoveď by bola nepríjemná, skús znova"
 
-#: redbot/cogs/general/general.py:62
+#: redbot/cogs/general/general.py:63
 msgid "Ask again later"
 msgstr "Opýtaj sa znova neskôr"
 
-#: redbot/cogs/general/general.py:63
+#: redbot/cogs/general/general.py:64
 msgid "Better not tell you now"
 msgstr "Radšej ti to teraz nepoviem"
 
-#: redbot/cogs/general/general.py:64
+#: redbot/cogs/general/general.py:65
 msgid "Cannot predict now"
 msgstr "Teraz to nedokážem povedať"
 
-#: redbot/cogs/general/general.py:65
+#: redbot/cogs/general/general.py:66
 msgid "Concentrate and ask again"
 msgstr "Koncentruj sa a opýtaj sa znova"
 
-#: redbot/cogs/general/general.py:66
+#: redbot/cogs/general/general.py:67
 msgid "Don't count on it"
 msgstr "Nepočítaj s tým"
 
-#: redbot/cogs/general/general.py:67
+#: redbot/cogs/general/general.py:68
 msgid "My reply is no"
 msgstr "Moja odpoveď je nie"
 
-#: redbot/cogs/general/general.py:68
+#: redbot/cogs/general/general.py:69
 msgid "My sources say no"
 msgstr "Moje zdroje hovoria nie"
 
-#: redbot/cogs/general/general.py:69
+#: redbot/cogs/general/general.py:70
 msgid "Outlook not so good"
 msgstr "Vyzerá to tak, že nie"
 
-#: redbot/cogs/general/general.py:70
+#: redbot/cogs/general/general.py:71
 msgid "Very doubtful"
 msgstr "Veľmi pochybné"
 
-#: redbot/cogs/general/general.py:84
+#: redbot/cogs/general/general.py:85
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:91
+#: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
 msgstr ""
 
-#: redbot/cogs/general/general.py:97
+#: redbot/cogs/general/general.py:98
 #, docstring
 msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:112
+#: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
 msgstr ""
 
-#: redbot/cogs/general/general.py:115
+#: redbot/cogs/general/general.py:116
 msgid "{author.mention} Max allowed number is {maxamount}."
 msgstr ""
 
-#: redbot/cogs/general/general.py:122
+#: redbot/cogs/general/general.py:123
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:130
+#: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
 msgstr ""
 
-#: redbot/cogs/general/general.py:141
+#: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
 msgstr ""
 
-#: redbot/cogs/general/general.py:141
+#: redbot/cogs/general/general.py:142
 msgid "HEADS!*"
 msgstr "ČÍSLO!*"
 
-#: redbot/cogs/general/general.py:141
+#: redbot/cogs/general/general.py:142
 msgid "TAILS!*"
 msgstr "ZNAK!*"
 
-#: redbot/cogs/general/general.py:145
+#: redbot/cogs/general/general.py:146
 #, docstring
 msgid "Play Rock Paper Scissors."
 msgstr ""
 
-#: redbot/cogs/general/general.py:150
+#: redbot/cogs/general/general.py:151
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
 msgstr ""
 
-#: redbot/cogs/general/general.py:171
+#: redbot/cogs/general/general.py:172
 msgid "{choice} You win {author.mention}!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:177
+#: redbot/cogs/general/general.py:178
 msgid "{choice} You lose {author.mention}!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:183
+#: redbot/cogs/general/general.py:184
 msgid "{choice} We're square {author.mention}!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:190
+#: redbot/cogs/general/general.py:191
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:197
+#: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
 msgstr "Nevyzerá to ako otázka."
 
-#: redbot/cogs/general/general.py:201
+#: redbot/cogs/general/general.py:202
 #, docstring
 msgid "Start or stop the stopwatch."
 msgstr ""
 
-#: redbot/cogs/general/general.py:205
+#: redbot/cogs/general/general.py:206
 msgid " Stopwatch started!"
 msgstr " Stopky spustené!"
 
-#: redbot/cogs/general/general.py:210
+#: redbot/cogs/general/general.py:211
 msgid " Stopwatch stopped! Time: **{seconds}**"
 msgstr ""
 
-#: redbot/cogs/general/general.py:216
+#: redbot/cogs/general/general.py:217
 #, docstring
 msgid "Create a lmgtfy link."
 msgstr ""
 
-#: redbot/cogs/general/general.py:225
+#: redbot/cogs/general/general.py:224
 #, docstring
 msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:249
+#: redbot/cogs/general/general.py:248
 #, docstring
-msgid "\\n        Show server information.\\n    \\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
+msgid "\\n        Show server information.\\n\\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:257
+#: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
 msgstr ""
 
@@ -478,31 +478,31 @@ msgstr ""
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:494 redbot/cogs/general/general.py:560
+#: redbot/cogs/general/general.py:496 redbot/cogs/general/general.py:562
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
-#: redbot/cogs/general/general.py:500
+#: redbot/cogs/general/general.py:502
 msgid "No Urban Dictionary entries were found."
 msgstr ""
 
-#: redbot/cogs/general/general.py:506
+#: redbot/cogs/general/general.py:508
 msgid "{word} by {author}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:511
+#: redbot/cogs/general/general.py:513
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:517
+#: redbot/cogs/general/general.py:519
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:536
+#: redbot/cogs/general/general.py:538
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:542
+#: redbot/cogs/general/general.py:544
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 

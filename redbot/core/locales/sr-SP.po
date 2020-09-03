@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-27 12:21+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "MIME-Version: 1.0\n"
@@ -15,11 +15,11 @@ msgstr ""
 "X-Crowdin-File-ID: 4\n"
 "Language: sr_SP\n"
 
-#: redbot/core/bank.py:929
+#: redbot/core/bank.py:987
 msgid "Can't pay for this command in DM without a global bank."
 msgstr ""
 
-#: redbot/core/bank.py:936
+#: redbot/core/bank.py:994
 msgid "You need at least {cost} {currency} to use this command."
 msgstr ""
 
@@ -520,7 +520,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1149
 #, docstring
-msgid "Show's [botname]'s invite url."
+msgid "Shows [botname]'s invite url."
 msgstr ""
 
 #: redbot/core/core_commands.py:1161
@@ -1913,43 +1913,43 @@ msgstr ""
 msgid "Terminal"
 msgstr ""
 
-#: redbot/core/events.py:150
+#: redbot/core/events.py:152
 msgid "\\n\\nYou have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\\n\\nYou will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/events.py:224
+#: redbot/core/events.py:226
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
-#: redbot/core/events.py:249
+#: redbot/core/events.py:251
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/events.py:274
+#: redbot/core/events.py:276
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:278
+#: redbot/core/events.py:280
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:286
+#: redbot/core/events.py:288
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:288
+#: redbot/core/events.py:290
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:293
+#: redbot/core/events.py:295
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr ""
 
-#: redbot/core/events.py:295
+#: redbot/core/events.py:297
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:299
+#: redbot/core/events.py:301
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr ""
 
