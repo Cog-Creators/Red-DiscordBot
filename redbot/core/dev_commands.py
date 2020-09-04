@@ -137,6 +137,7 @@ class Dev(commands.Cog):
             channel  - the current channel object
             author   - command author's member object
             message  - the command's message object
+            asyncio  - the asyncio standard library
             aiohttp  - aiohttp library
             discord  - discord.py library
             commands - redbot.core.commands
@@ -181,6 +182,7 @@ class Dev(commands.Cog):
             channel  - the current channel object
             author   - command author's member object
             message  - the command's message object
+            asyncio  - the asyncio standard library
             aiohttp  - aiohttp library
             discord  - discord.py library
             commands - redbot.core.commands
