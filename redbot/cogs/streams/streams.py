@@ -484,7 +484,7 @@ class Streams(commands.Cog):
             return await ctx.send(
                 _("That channel has not been set up for stream alerts in this channel!")
             )
-        async with aiohttp.ClientSession as session:
+        async with aiohttp.ClientSession() as session:
             async with session.get(
                 "https://api.smashcast.tv/search/games", params={"q": game_name}
             ) as resp:
