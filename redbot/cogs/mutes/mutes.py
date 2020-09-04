@@ -377,7 +377,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     time_str = humanize_timedelta(timedelta=time_left)
                 else:
                     time_str = ""
-                msg += _("Server Mute: {member}").format(member=user_str)
+                msg += _("Mute: {member}").format(member=user_str)
                 if time_str:
                     msg += _("Remaining: {time_left}\n").format(time_left=time_str)
                 else:
