@@ -1,5 +1,6 @@
 import ast
 import asyncio
+from typing import Any
 import aiohttp
 import importlib
 import inspect
@@ -33,6 +34,10 @@ START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
 
 
 class EnvImporter(dict):
+    def __init__(self, *args, **kwargs):
+        self.imported = []
+        super().__init__(*args, **kwargs)
+
     @classmethod
     def from_context(cls, ctx: commands.Context, **kwargs):
         self = cls(
@@ -52,9 +57,21 @@ class EnvImporter(dict):
 
     def __missing__(self, key):
         try:
-            return importlib.import_module(key)
+            module = importlib.import_module(key)
         except ImportError:
             raise KeyError(key) from None
+        else:
+            self.imported.append(key)
+            self[key] = module
+            return module
+
+    async def send_imports(self, ctx: commands.Context):
+        if not self.imported:
+            return
+        message = "\n".join(f"import {key}" for key in self.imported)
+        self.imported.clear()
+        for page in pagify(message, shorten_by=10):
+            await ctx.send(box(page, lang="py"))
 
 
 class Dev(commands.Cog):
@@ -153,15 +170,18 @@ class Dev(commands.Cog):
             compiled = self.async_compile(code, "<string>", "eval")
             result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
+            await env.send_imports(ctx)
             await ctx.send(self.get_syntax_error(e))
             return
         except Exception as e:
+            await env.send_imports(ctx)
             await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
 
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await env.send_imports(ctx)
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")
@@ -201,6 +221,7 @@ class Dev(commands.Cog):
             compiled = self.async_compile(to_compile, "<string>", "exec")
             exec(compiled, env)
         except SyntaxError as e:
+            await env.send_imports(ctx)
             return await ctx.send(self.get_syntax_error(e))
 
         func = env["func"]
@@ -221,6 +242,7 @@ class Dev(commands.Cog):
             msg = printed
         msg = self.sanitize_output(ctx, msg)
 
+        await env.send_imports(ctx)
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
     @commands.group(invoke_without_command=True)
@@ -281,6 +303,7 @@ class Dev(commands.Cog):
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
+                    await variables.send_imports(ctx)
                     await ctx.send(self.get_syntax_error(e))
                     continue
 
@@ -311,6 +334,7 @@ class Dev(commands.Cog):
             msg = self.sanitize_output(ctx, msg)
 
             try:
+                await variables.send_imports(ctx)
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")
             except discord.Forbidden:
                 pass
