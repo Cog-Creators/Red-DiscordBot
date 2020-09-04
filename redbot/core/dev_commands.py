@@ -68,9 +68,12 @@ class EnvImporter(dict):
     async def send_imports(self, ctx: commands.Context):
         if not self.imported:
             return
-        message = "\n".join(f"import {key}" for key in self.imported)
+        message = [
+            "# These modules were automatically imported when running your code:",
+            *map("import {}".format, self.imported),
+        ]
         self.imported.clear()
-        for page in pagify(message, shorten_by=10):
+        for page in pagify("\n".join(message), shorten_by=10):
             await ctx.send(box(page, lang="py"))
 
 
