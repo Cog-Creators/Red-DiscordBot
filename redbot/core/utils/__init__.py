@@ -1,8 +1,11 @@
 from __future__ import annotations
 import asyncio
+import json
+import logging
 from asyncio import as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
+from pathlib import Path
 from typing import (
     Any,
     AsyncIterator,
@@ -22,8 +25,15 @@ from typing import (
 
 from discord.utils import maybe_coroutine
 
-__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
+__all__ = (
+    "bounded_gather",
+    "bounded_gather_iter",
+    "deduplicate_iterables",
+    "AsyncIter",
+    "get_end_user_statement",
+)
 
+log = logging.getLogger("red.core.utils")
 
 _T = TypeVar("_T")
 _S = TypeVar("_S")
@@ -498,3 +508,39 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             raise TypeError("Mapping must be a callable.")
         self._map = func
         return self
+
+
+def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
+    """
+    This function attempts to get the ``end_user_data_statement`` key from a cogs ``info.json``. This will log the reason if ``None`` is returned.
+
+    Parameters
+    ----------
+    file: Union[pathlib.Path, str]
+        The ``__file__`` variable for the cogs ``__init__.py`` file.
+
+    Returns
+    -------
+    Optional[str]
+        The end user statement found in the info.json or ``None`` if there was an issue finding one.
+    """
+    try:
+        file = Path(file).parent.absolute()
+        info_json = file / "info.json"
+        with info_json.open() as fp:
+            statement = json.load(fp)["end_user_data_statement"]
+    except FileNotFoundError:
+        log.critical("'%s' does not exist.", str(info_json))
+    except KeyError:
+        log.critical("'%s' is missing an entry for 'end_user_data_statement'", str(info_json))
+    except json.JSONDecodeError as exc:
+        log.critical("'%s' is not a valid JSON file.", str(info_json), exc_info=exc)
+    except Exception as exc:
+        log.critical(
+            "There was an error when trying to load the end user statement from '%s'.",
+            str(info_json),
+            exc_info=exc,
+        )
+    else:
+        return statement
+    return None
