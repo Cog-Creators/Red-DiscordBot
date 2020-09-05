@@ -657,13 +657,15 @@ class RedBase(
 
         return self._color
 
-    async def get_or_fetch_channel(self, channel_id: int) -> Union[discord.abc.GuildChannel, discord.abc.PrivateChannel]:
+    async def get_or_fetch_channel(
+        self, channel_id: int
+    ) -> Union[discord.abc.GuildChannel, discord.abc.PrivateChannel]:
         """
         Retrieves a discord.abc.GuildChannel or discord.abc.PrivateChannel with the specified ID.
 
         .. warning::
 
-           This method maybe make an API call if the channel is not found in the bot cache. For general usage, consider `bot.get_channel` instead.
+           This method maybe make an API call if the channel is not found in the bot cache. For general usage, consider ``bot.get_channel`` instead.
 
         Raises
         -------
@@ -694,7 +696,7 @@ class RedBase(
 
         .. warning::
 
-            This method maybe make an API call if the user is not found in the bot cache. For general usage, consider `bot.get_user` instead.
+            This method maybe make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
 
         Parameters
         -----------
