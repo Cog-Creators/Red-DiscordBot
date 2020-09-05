@@ -657,6 +657,67 @@ class RedBase(
 
         return self._color
 
+    async def get_or_fetch_channel(self, channel_id: int) -> Union[discord.abc.GuildChannel, discord.abc.PrivateChannel]:
+        """
+        Retrieves a discord.abc.GuildChannel or discord.abc.PrivateChannel with the specified ID.
+
+        .. warning::
+
+           This method maybe make an API call if the channel is not found in the bot cache. For general usage, consider `bot.get_channel` instead.
+
+        Raises
+        -------
+        discord.InvalidData
+           An unknown channel type was received from Discord.
+        discord.HTTPException
+           Retrieving the channel failed.
+        discord.NotFound
+           Invalid Channel ID.
+        discord.Forbidden
+           You do not have permission to fetch this channel.
+
+        Returns
+        --------
+        Union[discord.abc.GuildChannel, discord.abc.PrivateChannel]
+           The channel from the ID.
+        """
+        if (channel := self.get_channel(channel_id)) is not None:
+            return channel
+        return await self.fetch_channel(channel_id)
+
+    async def get_or_fetch_user(self, user_id: int) -> discord.User:
+        """
+        Retrieves a discord.User based on their ID. This can only
+        be used by bot accounts. You do not have to share any guilds
+        with the user to get this information, however many operations
+        do require that you do.
+
+        .. warning::
+
+            This method maybe make an API call if the user is not found in the bot cache. For general usage, consider `bot.get_user` instead.
+
+        Parameters
+        -----------
+        user_id: int
+            The user's ID to fetch from.
+
+        Raises
+        -------
+        discord.NotFound
+            A user with this ID does not exist.
+        discord.HTTPException
+            Fetching the user failed.
+
+        Returns
+        --------
+        discord.User
+            The user you requested.
+        """
+
+        if (user := self.get_user(user_id)) is not None:
+            return user
+        return await self.fetch_user(user_id)
+
     get_embed_colour = get_embed_color
 
     # start config migrations
