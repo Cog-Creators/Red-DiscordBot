@@ -523,6 +523,14 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     -------
     Optional[str]
         The end user statement found in the info.json or ``None`` if there was an issue finding one.
+
+    Examples
+    --------
+    >>> # In cogs `__init__.py`
+    >>> from redbot.core.utils import get_end_user_statement
+    >>> __red_end_user_data_statement__  = get_end_user_statement(__file__)
+    >>> def setup(bot):
+            ...
     """
     try:
         file = Path(file).parent.absolute()
