@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -15,47 +15,47 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: de_DE\n"
 
-#: redbot/cogs/audio/apis/interface.py:280
+#: redbot/cogs/audio/apis/interface.py:282
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Der Spotify API Key oder das Client secret wurden nicht richtig eingestellt.\\n Benutze `{prefix}audioset spotifyapi` für eine Anleitung."
+msgstr "Der Spotify-API-Schlüssel oder Client-Secret wurde nicht richtig gesetzt. \\nBenutze `{prefix}Audioset spotifyapi` für Anweisungen."
 
-#: redbot/cogs/audio/apis/interface.py:322
+#: redbot/cogs/audio/apis/interface.py:324
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "Dies scheint keine gültige Spotify-Playlist/Album-URL oder Spotify-Code zu sein."
 
-#: redbot/cogs/audio/apis/interface.py:443
+#: redbot/cogs/audio/apis/interface.py:445
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Dies scheint keine unterstützte Spotify-URL oder Spotify-Code zu sein."
 
-#: redbot/cogs/audio/apis/interface.py:509
+#: redbot/cogs/audio/apis/interface.py:511
 msgid "The connection was reset while loading the playlist."
 msgstr "Die Verbindung wurde zurückgesetzt beim Laden der Playlist."
 
-#: redbot/cogs/audio/apis/interface.py:518
+#: redbot/cogs/audio/apis/interface.py:520
 msgid "Player timeout, skipping remaining tracks."
 msgstr "Audioplayer-Timeout. Verbleibende Titel werden übersprungen."
 
-#: redbot/cogs/audio/apis/interface.py:542
+#: redbot/cogs/audio/apis/interface.py:544
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Fehler beim laden der Tracks. Verbleibende Tracks werden übersprungen."
 
-#: redbot/cogs/audio/apis/interface.py:592
+#: redbot/cogs/audio/apis/interface.py:594
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Nichts Gefunden.\\n Der Youtube API Key könnte falsch sein oder du überschreitest das Rate Limit der Youtube Suche.\\n Kontrollieren den Youtube API Key nocheinmal und dann folge der Anleitung bei `{prefix}audioset youtubeapi`."
 
-#: redbot/cogs/audio/apis/interface.py:602
+#: redbot/cogs/audio/apis/interface.py:604
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} Tracks können nicht zur Warteschlange hinzugefügt werden."
 
-#: redbot/cogs/audio/apis/interface.py:610
+#: redbot/cogs/audio/apis/interface.py:612
 msgid "Playlist Enqueued"
 msgstr "Wiedergabeliste eingereiht"
 
-#: redbot/cogs/audio/apis/interface.py:611
+#: redbot/cogs/audio/apis/interface.py:613
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "Es wurden {num} Tracks zu der Playlist hinzugefügt.{maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:617
+#: redbot/cogs/audio/apis/interface.py:619
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "{time} bis zum Start der Wiedergabeliste: beginnt bei #{position} in der Warteschlange"
 
