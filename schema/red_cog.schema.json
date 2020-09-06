@@ -1,0 +1,98 @@
+{
+  "$id": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Red-DiscordBot Сog metadata file",
+  "type": "object",
+  "properties": {
+    "author": {
+      "type": "array",
+      "description": "List of names of authors of the cog",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "A long description of the cog or repo. For cogs, this is displayed when a user executes [p]cog info."
+    },
+    "install_msg": {
+      "type": "string",
+      "description": "The message that gets displayed when a cog is installed or a repo is added"
+    },
+    "short": {
+      "type": "string",
+      "description": "A short description of the cog or repo. For cogs, this info is displayed when a user executes [p]cog list"
+    },
+    "end_user_data_statement": {
+      "type": "string",
+      "description": "A statement explaining what end user data the cog is storing. This is displayed when a user executes [p]cog info. If the statement has changed since last update, user will be informed during the update."
+    },
+    "min_bot_version": {
+      "type": "string",
+      "description": "Min version number of Red in the format MAJOR.MINOR.MICRO",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)((a|b|rc)(0|[1-9][0-9]*))?(\\.post(0|[1-9][0-9]*))?(\\.dev(0|[1-9][0-9]*))?$"
+    },
+    "max_bot_version": {
+      "type": "string",
+      "description": "Max version number of Red in the format MAJOR.MINOR.MICRO, if min_bot_version is newer than max_bot_version, max_bot_version will be ignored",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)((a|b|rc)(0|[1-9][0-9]*))?(\\.post(0|[1-9][0-9]*))?(\\.dev(0|[1-9][0-9]*))?$"
+    },
+    "min_python_version": {
+      "type": "array",
+      "description": "Min version number of Python in the format [MAJOR, MINOR, PATCH]",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "integer"
+      }
+    },
+    "hidden": {
+      "type": "boolean",
+      "description": "Determines if a cog is visible in the cog list for a repo."
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Determines if a cog is available for install."
+    },
+    "required_cogs": {
+      "type": "object",
+      "description": "A dict of required cogs that this cog depends on in the format {cog_name : repo_url}. Downloader will not deal with this functionality but it may be useful for other cogs.",
+      "$ref": "#/definitions/required_cog"
+    },
+    "requirements": {
+      "type": "array",
+      "description": "List of required libraries that are passed to pip on cog install.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "A list of strings that are related to the functionality of the cog. Used to aid in searching.",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "type": {
+      "type": "string",
+      "description": "Optional, defaults to COG. Must be either COG or SHARED_LIBRARY. If SHARED_LIBRARY then hidden will be True.",
+      "enum": [
+        "COG",
+        "SHARED_LIBRARY"
+      ]
+    }
+  },
+  "definitions": {
+    "required_cog": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

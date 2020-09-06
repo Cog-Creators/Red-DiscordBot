@@ -3,14 +3,15 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Literal
 
 import discord
+from redbot.core.utils import AsyncIter
+
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from .casetypes import CASETYPES
 from .events import Events
 from .kickban import KickBanMixin
 from .mutes import MuteMixin
@@ -48,7 +49,7 @@ class Mod(
     default_global_settings = {"version": ""}
 
     default_guild_settings = {
-        "ban_mention_spam": False,
+        "mention_spam": {"ban": None, "kick": None, "warn": None},
         "delete_repeats": -1,
         "ignored": False,
         "respect_hierarchy": True,
@@ -81,6 +82,34 @@ class Mod(
 
         self._ready = asyncio.Event()
 
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_members = await self.config.all_members()
+
+        async for guild_id, guild_data in AsyncIter(all_members.items(), steps=100):
+            if user_id in guild_data:
+                await self.config.member_from_ids(guild_id, user_id).clear()
+
+        await self.config.user_from_id(user_id).clear()
+
+        guild_data = await self.config.all_guilds()
+
+        async for guild_id, guild_data in AsyncIter(guild_data.items(), steps=100):
+            if user_id in guild_data["current_tempbans"]:
+                async with self.config.guild_from_id(guild_id).current_tempbans() as tbs:
+                    try:
+                        tbs.remove(user_id)
+                    except ValueError:
+                        pass
+                    # possible with a context switch between here and getting all guilds
+
     async def initialize(self):
         await self._maybe_update_config()
         self._ready.set()
@@ -95,30 +124,57 @@ class Mod(
         """Maybe update `delete_delay` value set by Config prior to Mod 1.0.0."""
         if not await self.config.version():
             guild_dict = await self.config.all_guilds()
-            for guild_id, info in guild_dict.items():
+            async for guild_id, info in AsyncIter(guild_dict.items(), steps=25):
                 delete_repeats = info.get("delete_repeats", False)
                 if delete_repeats:
                     val = 3
                 else:
                     val = -1
-                await self.config.guild(discord.Object(id=guild_id)).delete_repeats.set(val)
+                await self.config.guild_from_id(guild_id).delete_repeats.set(val)
             await self.config.version.set("1.0.0")  # set version of last update
         if await self.config.version() < "1.1.0":
-            msg = _(
-                "Ignored guilds and channels have been moved. "
-                "Please use `[p]moveignoredchannels` if "
-                "you were previously using these functions."
-            )
-            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+            message_sent = False
+            async for e in AsyncIter((await self.config.all_channels()).values(), steps=25):
+                if e["ignored"] is not False:
+                    msg = _(
+                        "Ignored guilds and channels have been moved. "
+                        "Please use `[p]moveignoredchannels` to migrate the old settings."
+                    )
+                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    message_sent = True
+                    break
+            if message_sent is False:
+                async for e in AsyncIter((await self.config.all_guilds()).values(), steps=25):
+                    if e["ignored"] is not False:
+                        msg = _(
+                            "Ignored guilds and channels have been moved. "
+                            "Please use `[p]moveignoredchannels` to migrate the old settings."
+                        )
+                        self.bot.loop.create_task(
+                            send_to_owners_with_prefix_replaced(self.bot, msg)
+                        )
+                        break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
-            msg = _(
-                "Delete delay settings have been moved. "
-                "Please use `[p]movedeletedelay` if "
-                "you were previously using these functions."
-            )
-            self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+            async for e in AsyncIter((await self.config.all_guilds()).values(), steps=25):
+                if e["delete_delay"] != -1:
+                    msg = _(
+                        "Delete delay settings have been moved. "
+                        "Please use `[p]movedeletedelay` to migrate the old settings."
+                    )
+                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    break
             await self.config.version.set("1.2.0")
+        if await self.config.version() < "1.3.0":
+            guild_dict = await self.config.all_guilds()
+            async for guild_id in AsyncIter(guild_dict.keys(), steps=25):
+                async with self.config.guild_from_id(guild_id).all() as guild_data:
+                    current_state = guild_data.pop("ban_mention_spam", False)
+                    if current_state is not False:
+                        if "mention_spam" not in guild_data:
+                            guild_data["mention_spam"] = {}
+                        guild_data["mention_spam"]["ban"] = current_state
+            await self.config.version.set("1.3.0")
 
     @commands.command()
     @commands.is_owner()
@@ -138,7 +194,7 @@ class Mod(
     @commands.is_owner()
     async def movedeletedelay(self, ctx: commands.Context) -> None:
         """
-            Move deletedelay settings to core
+        Move deletedelay settings to core
         """
         all_guilds = await self.config.all_guilds()
         for guild_id, settings in all_guilds.items():

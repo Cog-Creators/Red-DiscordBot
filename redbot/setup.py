@@ -12,6 +12,7 @@ from typing import Dict, Any, Optional, Union
 import appdirs
 import click
 
+from redbot.core.cli import confirm
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
@@ -128,16 +129,23 @@ def get_name() -> str:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name is case-sensitive and can only include characters"
-            " A-z, numbers, underscores, and hyphens."
+            "This name is case-sensitive and should only include characters"
+            " A-z, numbers, underscores (_) and periods (.)."
         )
         name = input("> ")
-        if re.fullmatch(r"[a-zA-Z0-9_\-]*", name) is None:
+        if re.fullmatch(r"[A-Za-z0-9_\.\-]*", name) is None:
             print(
-                "ERROR: Instance name can only include"
-                " characters A-z, numbers, underscores, and hyphens!"
+                "ERROR: Instance names can only include characters A-z, numbers, "
+                "underscores (_) and periods (.)."
             )
             name = ""
+        elif "-" in name and not confirm(
+            "Hyphens (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
+            default=False,
+        ):
+            name = ""
+
+        print()  # new line for aesthetics
     return name
 
 
@@ -313,7 +321,7 @@ def cli(ctx, debug):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.option(
     "--no-prompt",
     "interactive",
@@ -378,7 +386,7 @@ def delete(
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument("backend", type=click.Choice(["json", "postgres"]))
 def convert(instance, backend):
     """Convert data backend of an instance."""
@@ -406,7 +414,7 @@ def convert(instance, backend):
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument(
     "destination_folder",
     type=click.Path(

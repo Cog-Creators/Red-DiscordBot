@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
-from typing import List, Union, Optional, cast, TYPE_CHECKING
+from datetime import datetime, timedelta, timezone
+from typing import List, Literal, Union, Optional, cast, TYPE_CHECKING
 
 import discord
 
 from redbot.core import Config
-
+from .utils import AsyncIter
 from .utils.common_filters import (
     filter_invites,
     filter_mass_mentions,
@@ -47,8 +47,39 @@ _CASETYPES = "CASETYPES"
 _CASES = "CASES"
 _SCHEMA_VERSION = 4
 
+_data_deletion_lock = asyncio.Lock()
 
 _ = Translator("ModLog", __file__)
+
+
+async def _process_data_deletion(
+    *, requester: Literal["discord_deleted_user", "owner", "user", "user_strict"], user_id: int
+):
+    if requester != "discord_deleted_user":
+        return
+
+    # Oh, how I wish it was as simple as I wanted...
+
+    key_paths = []
+
+    async with _data_deletion_lock:
+        all_cases = await _config.custom(_CASES).all()
+        async for guild_id_str, guild_cases in AsyncIter(all_cases.items(), steps=100):
+            async for case_num_str, case in AsyncIter(guild_cases.items(), steps=100):
+                for keyname in ("user", "moderator", "amended_by"):
+                    if (case.get(keyname, 0) or 0) == user_id:  # this could be None...
+                        key_paths.append((guild_id_str, case_num_str))
+
+        async with _config.custom(_CASES).all() as all_cases:
+            for guild_id_str, case_num_str in key_paths:
+                case = all_cases[guild_id_str][case_num_str]
+                if (case.get("user", 0) or 0) == user_id:
+                    case["user"] = 0xDE1
+                    case.pop("last_known_username", None)
+                if (case.get("moderator", 0) or 0) == user_id:
+                    case["moderator"] = 0xDE1
+                if (case.get("amended_by", 0) or 0) == user_id:
+                    case["amended_by"] = 0xDE1
 
 
 async def _init(bot: Red):
@@ -96,7 +127,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
@@ -132,7 +164,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -208,12 +241,12 @@ class Case:
         created_at: int,
         action_type: str,
         user: Union[discord.User, int],
-        moderator: discord.User,
+        moderator: Optional[Union[discord.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[discord.User] = None,
+        amended_by: Optional[Union[discord.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -266,6 +299,18 @@ class Case:
                 await self.message.edit(embed=case_content)
             else:
                 await self.message.edit(content=case_content)
+        except discord.Forbidden:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID due to missing permissions."
+            )
+        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+            log.exception(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s due to unexpected error.",
+                self.case_number,
+                self.guild.id,
+            )
         finally:
             return None
 
@@ -294,38 +339,53 @@ class Case:
         else:
             reason = _("**Reason:** Use the `reason` command to add it")
 
-        if self.moderator is not None:
-            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
-        else:
+        if self.moderator is None:
             moderator = _("Unknown")
+        elif isinstance(self.moderator, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            if self.moderator == 0xDE1:
+                moderator = _("Deleted User.")
+            else:
+                translated = _("Unknown or Deleted User")
+                moderator = f"[{translated}] ({self.moderator})"
+        else:
+            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         until = None
         duration = None
         if self.until:
-            start = datetime.fromtimestamp(self.created_at)
-            end = datetime.fromtimestamp(self.until)
-            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S")
+            start = datetime.utcfromtimestamp(self.created_at)
+            end = datetime.utcfromtimestamp(self.until)
+            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
             duration = dur_fmt
 
-        amended_by = None
-        if self.amended_by:
-            amended_by = escape_spoilers(
-                "{}#{} ({})".format(
-                    self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
-                )
-            )
+        if self.amended_by is None:
+            amended_by = None
+        elif isinstance(self.amended_by, int):
+            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            if self.amended_by == 0xDE1:
+                amended_by = _("Deleted User.")
+            else:
+                translated = _("Unknown or Deleted User")
+                amended_by = f"[{translated}] ({self.amended_by})"
+        else:
+            amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
 
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
+                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S UTC")
             )
 
         if isinstance(self.user, int):
-            if self.last_known_username is None:
-                user = f"[Unknown or Deleted User] ({self.user})"
+            if self.user == 0xDE1:
+                user = _("Deleted User.")
+            elif self.last_known_username is None:
+                # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+                translated = _("Unknown or Deleted User")
+                user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
             avatar_url = None
@@ -355,7 +415,7 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.fromtimestamp(self.created_at)
+            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
             return emb
         else:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
@@ -383,10 +443,14 @@ class Case:
             The case in the form of a dict
 
         """
-        if self.moderator is not None:
-            mod = self.moderator.id
+        if self.moderator is None or isinstance(self.moderator, int):
+            mod = self.moderator
         else:
-            mod = None
+            mod = self.moderator.id
+        if self.amended_by is None or isinstance(self.amended_by, int):
+            amended_by = self.amended_by
+        else:
+            amended_by = self.amended_by.id
         if isinstance(self.user, int):
             user_id = self.user
         else:
@@ -402,7 +466,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
-            "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
+            "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
         }
@@ -754,7 +818,9 @@ async def create_case(
     guild: discord.Guild
         The guild the action was taken in
     created_at: datetime
-        The time the action occurred at
+        The time the action occurred at.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     action_type: str
         The type of action that was taken
     user: Union[discord.User, discord.Member]
@@ -764,7 +830,9 @@ async def create_case(
     reason: Optional[str]
         The reason the action was taken
     until: Optional[datetime]
-        The time the action is in effect until
+        The time the action is in effect until.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     channel: Optional[discord.TextChannel]
         The channel the action was taken in
     """
@@ -811,8 +879,20 @@ async def create_case(
         else:
             msg = await mod_channel.send(case_content)
         await case.edit({"message": msg})
-    except (RuntimeError, discord.HTTPException):
+    except RuntimeError:  # modlog channel isn't set
         pass
+    except discord.Forbidden:
+        log.info(
+            "Modlog failed to edit the Discord message for"
+            " the case #%s from guild with ID due to missing permissions."
+        )
+    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        log.exception(
+            "Modlog failed to send the Discord message for"
+            " the case #%s from guild with ID %s due to unexpected error.",
+            case.case_number,
+            case.guild.id,
+        )
     finally:
         return case
 

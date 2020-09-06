@@ -69,12 +69,12 @@ class Context(DPYContext):
 
         Other Parameters
         ----------------
-        filter : Callable[`str`] -> `str`
-            A function which is used to sanitize the ``content`` before
-            it is sent. Defaults to
-            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+        filter : callable (`str`) -> `str`, optional
+            A function which is used to filter the ``content`` before
+            it is sent.
             This must take a single `str` as an argument, and return
-            the sanitized `str`.
+            the processed `str`. When `None` is passed, ``content`` won't be touched.
+            Defaults to `None`.
         **kwargs
             See `discord.ext.commands.Context.send`.
 
@@ -85,7 +85,7 @@ class Context(DPYContext):
 
         """
 
-        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+        _filter = kwargs.pop("filter", None)
 
         if _filter and content:
             content = _filter(str(content))
@@ -255,18 +255,25 @@ class Context(DPYContext):
                 embed=discord.Embed(description=message, color=(await self.embed_colour()))
             )
         else:
-            return await self.send(message)
+            return await self.send(
+                message,
+                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
+            )
 
     @property
     def clean_prefix(self) -> str:
-        """str: The command prefix, but a mention prefix is displayed nicer."""
+        """
+        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
+        This can be used in a context where discord user mentions might not render properly.
+        """
         me = self.me
         pattern = re.compile(rf"<@!?{me.id}>")
-        return pattern.sub(f"@{me.display_name}", self.prefix)
+        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
-        """discord.abc.User: The bot member or user object.
+        """
+        discord.abc.User: The bot member or user object.
 
         If the context is DM, this will be a `discord.User` object.
         """

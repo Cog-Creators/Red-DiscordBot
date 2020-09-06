@@ -191,7 +191,7 @@ def _update_event_loop_policy():
             _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
-__version__ = "3.3.8.dev1"
+__version__ = "3.4.1.dev1"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
@@ -213,13 +213,3 @@ if "--debug" not in _sys.argv:
     # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
     #   self._event = asyncio.Event(loop=loop)
     _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=21)
-    # DeprecationWarning: rename klass to create_protocol
-    #   warnings.warn("rename klass to create_protocol", DeprecationWarning)
-    _warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, module="websockets", lineno=407
-    )
-    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
-    #   transport, protocol = await self._create_connection()
-    _warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, module="websockets", lineno=535
-    )

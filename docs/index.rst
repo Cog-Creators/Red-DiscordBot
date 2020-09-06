@@ -31,6 +31,10 @@ Welcome to Red - Discord Bot's documentation!
     :caption: User guides:
 
     getting_started
+    cog_guides/admin
+    cog_guides/alias
+    cog_guides/bank
+    red_core_data_statement
 
 .. toctree::
     :maxdepth: 2
@@ -58,6 +62,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Changelogs:
 
+    changelog_3_4_0
     changelog_3_3_0
     release_notes_3_2_0
     changelog_3_2_0

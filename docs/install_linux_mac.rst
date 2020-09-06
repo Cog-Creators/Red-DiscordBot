@@ -43,14 +43,14 @@ Arch Linux
 
 .. code-block:: none
 
-    sudo pacman -Syu python python-pip git jre-openjdk-headless base-devel
+    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel
 
 Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-centos:
-.. _install-rhel:
+.. _install-centos7:
+.. _install-rhel7:
 
 ~~~~~~~~~~~~~~~~~
 CentOS and RHEL 7
@@ -58,17 +58,27 @@ CentOS and RHEL 7
 
 .. code-block:: none
 
-    yum -y groupinstall development
-    yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+    sudo yum -y groupinstall development
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
-      openssl-devel xz xz-devel libffi-devel findutils git2u java-11-openjdk
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install centos-release-scl
+    sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
+    echo "source scl_source enable devtoolset-8" >> ~/.bashrc
+    source ~/.bashrc
+
+In order to install Git 2.11 or greater, we recommend adding the IUS repository:
+
+.. code-block:: none
+
+    sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
+    sudo yum -y swap git git224
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
 ----
 
-.. _install-centos8:
-.. _install-rhel8:
+.. _install-centos:
+.. _install-rhel:
 
 ~~~~~~~~~~~~~~~~~
 CentOS and RHEL 8
@@ -76,38 +86,11 @@ CentOS and RHEL 8
 
 .. code-block:: none
 
-    yum -y install epel-release
-    yum update -y
-    yum -y groupinstall development
-    yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite \
-     sqlite-devel openssl-devel xz xz-devel libffi-devel findutils java-11-openjdk
-     
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
-
-----
-
-.. _install-debian-stretch:
-
-~~~~~~~~~~~~~~
-Debian Stretch
-~~~~~~~~~~~~~~
-
-.. note::
-
-    This guide is only for Debian Stretch users, these instructions won't work with
-    Raspbian Stretch. Raspbian Buster is the only version of Raspbian supported by Red.
-
-We recommend installing pyenv as a method of installing non-native versions of python on
-Debian Stretch. This guide will tell you how. First, run the following commands:
-
-.. code-block:: none
-
-    sudo echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/red-sources.list
-    sudo apt update
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
-    CXX=/usr/bin/g++
+    sudo yum -y install epel-release
+    sudo yum -y update
+    sudo yum -y groupinstall development
+    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel \
+      openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -127,8 +110,8 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 
     sudo apt update
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+      libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+      libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -141,12 +124,12 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 30 and above has all required packages available in official repositories. Install
+Fedora Linux 31 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
 
-    sudo dnf -y install python38 git java-latest-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools
 
 Continue by `creating-venv-linux`.
 
@@ -186,10 +169,10 @@ Continue by `creating-venv-linux`.
 openSUSE
 ~~~~~~~~
 
-openSUSE Leap
-*************
+openSUSE Leap 15.1+
+*******************
 
-We recommend installing a community package to get Python 3.8 on openSUSE Leap. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.1+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -197,14 +180,17 @@ First, add the Opt-Python community repository:
 .. code-block:: none
 
     source /etc/os-release
-    sudo zypper ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
+    sudo zypper -n ar -f \
+      https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ \
+      Opt-Python
+    sudo zypper -n --gpg-auto-import-keys ref
 
 Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
@@ -230,25 +216,31 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper install python3-base python3-pip git-core java-12-openjdk-headless
-    sudo zypper install -t pattern devel_basis
+    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless
+    sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-ubuntu:
+.. _install-ubuntu-1604:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Ubuntu LTS versions (20.04, 18.04, and 16.04)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+Ubuntu 16.04 LTS
+~~~~~~~~~~~~~~~~
 
-We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+We recommend adding the ``openjdk-r`` ppa to install Java 11:
 
 .. code-block:: none
 
     sudo apt update
     sudo apt -y install software-properties-common
+    sudo add-apt-repository -yu ppa:openjdk-r/ppa
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
     sudo add-apt-repository -yu ppa:git-core/ppa
 
 We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
@@ -261,7 +253,63 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git default-jre-headless \
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
+      build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu-1804:
+
+~~~~~~~~~~~~~~~~
+Ubuntu 18.04 LTS
+~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:git-core/ppa
+
+We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+
+.. code-block:: none
+
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
+      build-essential
+
+Continue by `creating-venv-linux`.
+
+----
+
+.. _install-ubuntu:
+
+~~~~~~~~~~~~~~~~
+Ubuntu 20.04 LTS
+~~~~~~~~~~~~~~~~
+
+We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
+
+.. code-block:: none
+
+    sudo apt update
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:git-core/ppa
+
+Now install the pre-requirements with apt:
+
+.. code-block:: none
+
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless \
       build-essential
 
 Continue by `creating-venv-linux`.
@@ -289,7 +337,7 @@ installing pyenv. To do this, first run the following commands:
 
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
       libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
-      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre
+      libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -315,14 +363,14 @@ virtual environment.
 
     command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
-After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
-instructions given to fix that, then close and reopen your shell.
+**After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
+instructions given to fix that, then close and reopen your shell.**
 
 Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.2 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -334,7 +382,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.2
+    pyenv global 3.8.5
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 

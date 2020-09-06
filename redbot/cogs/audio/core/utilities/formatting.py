@@ -165,7 +165,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         elif guild_data["maxlength"] > 0:
 
-            if self.is_track_too_long(search_choice.length, guild_data["maxlength"]):
+            if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
@@ -365,9 +365,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
         seek = "\N{RADIO BUTTON}"
         if paused:
-            msg = "\N{DOUBLE VERTICAL BAR}"
+            msg = "\N{DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}"
         else:
-            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}"
+            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}"
         for i in range(sections):
             if i == loc_time:
                 msg += seek

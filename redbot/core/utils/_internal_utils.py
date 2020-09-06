@@ -19,10 +19,14 @@ from typing import (
     Optional,
     Union,
     TYPE_CHECKING,
+    Tuple,
 )
 
+import aiohttp
 import discord
+import pkg_resources
 from fuzzywuzzy import fuzz, process
+from redbot import VersionInfo
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -33,7 +37,16 @@ if TYPE_CHECKING:
 
 main_log = logging.getLogger("red")
 
-__all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+__all__ = (
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "create_backup",
+    "send_to_owners_with_preprocessor",
+    "send_to_owners_with_prefix_replaced",
+    "expected_version",
+    "fetch_latest_red_version_info",
+)
 
 
 def safe_delete(pth: Path):
@@ -278,7 +291,28 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
     async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
-        prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}", prefixes[0])
+        prefix = re.sub(
+            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
+        )
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+
+
+def expected_version(current: str, expected: str) -> bool:
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    return current in pkg_resources.Requirement.parse(f"x{expected}")
+
+
+async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+                data = await r.json()
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None, None
+    else:
+        release = VersionInfo.from_str(data["info"]["version"])
+        required_python = data["info"]["requires_python"]
+
+        return release, required_python
