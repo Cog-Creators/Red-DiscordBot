@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -54,8 +54,9 @@ msgid "I cannot let you do that. You are not higher than the user in the role hi
 msgstr "Ich kann dich das nicht tun lassen. Du bist nicht höher in der Rollenhierarchie als der Benutzer."
 
 #: redbot/cogs/mod/kickban.py:82 redbot/cogs/mod/kickban.py:202
-msgid "I cannot do that due to discord hierarchy rules."
-msgstr "Das kann ich aufgrund der Discord-Hierarchie nicht tun."
+#: redbot/cogs/mod/kickban.py:457
+msgid "I cannot do that due to Discord hierarchy rules."
+msgstr ""
 
 #: redbot/cogs/mod/kickban.py:84 redbot/cogs/mod/kickban.py:325
 #: redbot/cogs/mod/kickban.py:464
@@ -114,8 +115,8 @@ msgstr "Erledigt. Einstein hat eine Theorie über Zeit entwickelt und es war ver
 
 #: redbot/cogs/mod/kickban.py:285
 #, docstring
-msgid "Preemptively bans user(s) from the server\\n\\n        User IDs need to be provided in order to ban\\n        using this command"
-msgstr "Beendet Benutzer(n) vom Server\\n\\n        Benutzer-IDs, um\\n        mit diesem Befehl zu verbieten"
+msgid "Preemptively bans user(s) from the server.\\n\\n        User IDs need to be provided in order to ban\\n        using this command."
+msgstr ""
 
 #: redbot/cogs/mod/kickban.py:294
 msgid "Banned {num} users from the server."
@@ -153,10 +154,6 @@ msgstr "Konnte {user_id} nicht bannen: fehlende Berechtigungen."
 #, docstring
 msgid "Temporarily ban a user from this server."
 msgstr "Bannt einen Benutzer vorübergehend vom Server."
-
-#: redbot/cogs/mod/kickban.py:457
-msgid "I cannot do that due to discord hierarchy rules"
-msgstr "Ich kann das aufgrund von Discord Hierarchie-Regeln nicht tun"
 
 #: redbot/cogs/mod/kickban.py:477
 msgid "You have been temporarily banned from {server_name} until {date}."
@@ -265,8 +262,8 @@ msgstr "Ignorierte Kanäle und Server wiederhergestellt."
 
 #: redbot/cogs/mod/mod.py:196
 #, docstring
-msgid "\\n            Move deletedelay settings to core\\n        "
-msgstr "\\n            Verschiebe die automatische Befehlslöschung in den Kern\\n        "
+msgid "\\n        Move deletedelay settings to core\\n        "
+msgstr ""
 
 #: redbot/cogs/mod/mod.py:205
 msgid "Delete delay settings restored."

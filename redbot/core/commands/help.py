@@ -623,7 +623,10 @@ class RedHelpFormatter(HelpFormatterABC):
 
     @staticmethod
     async def help_filter_func(
-        ctx, objects: Iterable[SupportsCanSee], help_settings: HelpSettings, bypass_hidden=False,
+        ctx,
+        objects: Iterable[SupportsCanSee],
+        help_settings: HelpSettings,
+        bypass_hidden=False,
     ) -> AsyncIterator[SupportsCanSee]:
         """
         This does most of actual filtering.

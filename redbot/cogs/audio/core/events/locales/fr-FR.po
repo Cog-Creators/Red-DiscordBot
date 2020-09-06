@@ -63,7 +63,7 @@ msgstr "Impossible d'obtenir la piste"
 
 #: redbot/cogs/audio/core/events/dpy.py:133
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Je ne parviens actuellement pas à me connecter à Lavalink pour l'instant. Réessayez dans quelques minutes."
 
 #: redbot/cogs/audio/core/events/lavalink.py:74
 msgid "Couldn't get a valid track."

@@ -103,7 +103,7 @@ msgstr "Zacięty utwór"
 
 #: redbot/cogs/audio/core/events/lavalink.py:202
 msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
-msgstr ""
+msgstr "Odtwarzanie utworu zostało zatrzymane z powodu nieoczekiwanego błędu.\\n{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:208
 msgid "Track Error"

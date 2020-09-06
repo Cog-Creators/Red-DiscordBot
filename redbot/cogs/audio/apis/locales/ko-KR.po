@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -15,47 +15,47 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: ko_KR\n"
 
-#: redbot/cogs/audio/apis/interface.py:280
+#: redbot/cogs/audio/apis/interface.py:282
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify API 키 또는 client secret이 올바르게 설정되지 않았습니다. \\n`{prefix}audioset spotifyapi`을 사용하여 지침을 확인하세요."
 
-#: redbot/cogs/audio/apis/interface.py:322
+#: redbot/cogs/audio/apis/interface.py:324
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "유효한 Spotify 재생 목록, 앨범 URL 또는 코드가 아닌것 같습니다."
 
-#: redbot/cogs/audio/apis/interface.py:443
+#: redbot/cogs/audio/apis/interface.py:445
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "지원되는 Spotify URL 또는 코드가 아닌 것 같습니다."
 
-#: redbot/cogs/audio/apis/interface.py:509
+#: redbot/cogs/audio/apis/interface.py:511
 msgid "The connection was reset while loading the playlist."
 msgstr "재생 목록을 로드하는 동안 연결이 재설정되었습니다."
 
-#: redbot/cogs/audio/apis/interface.py:518
+#: redbot/cogs/audio/apis/interface.py:520
 msgid "Player timeout, skipping remaining tracks."
 msgstr "플래이어 시간이 초과되었습니다. 남은 트랙들을 건너 뜁니다."
 
-#: redbot/cogs/audio/apis/interface.py:542
+#: redbot/cogs/audio/apis/interface.py:544
 msgid "Failing to get tracks, skipping remaining."
 msgstr "트랙을 추가하지 못해 나머지는 건너 뜁니다."
 
-#: redbot/cogs/audio/apis/interface.py:592
+#: redbot/cogs/audio/apis/interface.py:594
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "검색 결과가 없습니다.\\n 유튜브 API키가 유효하지 않거나 유튜브 검색 서비스 제한이 걸렸을 수도 있습니다. \\n유튜브 API 키를 다시 확인하고 `{prefix}audioset youtubeapi`.에서 지침을 확인하세요."
 
-#: redbot/cogs/audio/apis/interface.py:602
+#: redbot/cogs/audio/apis/interface.py:604
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} 을 대기열에 추가할 수 없습니다."
 
-#: redbot/cogs/audio/apis/interface.py:610
+#: redbot/cogs/audio/apis/interface.py:612
 msgid "Playlist Enqueued"
 msgstr "대기중인 재생 목록"
 
-#: redbot/cogs/audio/apis/interface.py:611
+#: redbot/cogs/audio/apis/interface.py:613
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "대기열에 {num} 개의 트랙이 추가되었습니다. {maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:617
+#: redbot/cogs/audio/apis/interface.py:619
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "재생 목록 재생이 시작될 때까지 {time} 남았습니다.: 대기열의 #{position} 에 시작합니다."
 

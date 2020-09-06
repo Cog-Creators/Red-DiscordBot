@@ -76,7 +76,8 @@ class Admin(commands.Cog):
         self.config.register_global(serverlocked=False, schema_version=0)
 
         self.config.register_guild(
-            announce_channel=None, selfroles=[],  # Integer ID  # List of integer ID's
+            announce_channel=None,  # Integer ID
+            selfroles=[],  # List of integer ID's
         )
 
         self.__current_announcer = None

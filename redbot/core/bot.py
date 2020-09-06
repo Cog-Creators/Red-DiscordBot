@@ -320,7 +320,7 @@ class RedBase(
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         guild_id: int
 
         Returns
@@ -738,7 +738,7 @@ class RedBase(
             self.add_cog(Dev())
 
         await modlog._init(self)
-        bank._init()
+        await bank._init()
 
         packages = []
 
@@ -1422,8 +1422,10 @@ class RedBase(
         await self._red_ready.wait()
 
     async def _delete_delay(self, ctx: commands.Context):
-        """Currently used for:
-            * delete delay"""
+        """
+        Currently used for:
+          * delete delay
+        """
         guild = ctx.guild
         if guild is None:
             return
