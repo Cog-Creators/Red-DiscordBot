@@ -535,14 +535,15 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     try:
         file = Path(file).parent.absolute()
         info_json = file / "info.json"
-        with info_json.open() as fp:
-            statement = json.load(fp)["end_user_data_statement"]
+        statement = get_end_user_statement_or_raise(info_json)
     except FileNotFoundError:
         log.critical("'%s' does not exist.", str(info_json))
     except KeyError:
         log.critical("'%s' is missing an entry for 'end_user_data_statement'", str(info_json))
     except json.JSONDecodeError as exc:
         log.critical("'%s' is not a valid JSON file.", str(info_json), exc_info=exc)
+    except UnicodeError as exc:
+        log.critical("'%s' has a bad encoding.", str(info_json), exc_info=exc)
     except Exception as exc:
         log.critical(
             "There was an error when trying to load the end user statement from '%s'.",
@@ -552,3 +553,36 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     else:
         return statement
     return None
+
+
+def get_end_user_statement_or_raise(file: Union[Path, str]) -> str:
+    """
+    This function attempts to get the ``end_user_data_statement`` key from a cogs ``info.json``.
+
+    Parameters
+    ----------
+    file: Union[pathlib.Path, str]
+        The ``__file__`` variable for the cogs ``__init__.py`` file.
+
+    Returns
+    -------
+    str
+        The end user statement found in the info.json.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``info.json`` does not exist.
+    KeyError
+        When ``info.json`` does not have the ``end_user_data_statement`` key.
+    json.JSONDecodeError
+        When ``info.json`` can't be decoded with ``json.load()``
+    UnicodeError
+        When ``info.json`` can't be decoded due to bad encoding.
+    Exception
+        Any other exception raised from ``pathlib`` and ``json`` modules when attempting to parse the ``info.json`` for the ``end_user_data_statement`` key.
+    """
+    file = Path(file).parent.absolute()
+    info_json = file / "info.json"
+    with info_json.open() as fp:
+        return json.load(fp)["end_user_data_statement"]
