@@ -169,7 +169,7 @@ async def close_menu(
 
 
 def start_adding_reactions(
-    message: discord.Message, emojis: Iterable[_ReactableEmoji],
+    message: discord.Message, emojis: Iterable[_ReactableEmoji]
 ) -> asyncio.Task:
     """Start adding reactions to a message.
 

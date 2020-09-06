@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -15,47 +15,47 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/audio/apis/interface.py:280
+#: redbot/cogs/audio/apis/interface.py:282
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. \\n `{prefix}audioset spotifyapi` komutundan bilgi alabilirsiniz."
 
-#: redbot/cogs/audio/apis/interface.py:322
+#: redbot/cogs/audio/apis/interface.py:324
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "Bu geçerli bir Spotify çalma listesi / albüm URL'si veya Kodu gibi görünmüyor."
 
-#: redbot/cogs/audio/apis/interface.py:443
+#: redbot/cogs/audio/apis/interface.py:445
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Bu geçerli bir Spotify URL'si ya da kodu gibi gözükmüyor."
 
-#: redbot/cogs/audio/apis/interface.py:509
+#: redbot/cogs/audio/apis/interface.py:511
 msgid "The connection was reset while loading the playlist."
 msgstr "Playlist yüklenirken bağlantı yenilendi."
 
-#: redbot/cogs/audio/apis/interface.py:518
+#: redbot/cogs/audio/apis/interface.py:520
 msgid "Player timeout, skipping remaining tracks."
 msgstr "Oynatıcı zaman aşımına uğradı, kalan parçalar atlanıyor."
 
-#: redbot/cogs/audio/apis/interface.py:542
+#: redbot/cogs/audio/apis/interface.py:544
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Parça alınamıyor, atlanıyor."
 
-#: redbot/cogs/audio/apis/interface.py:592
+#: redbot/cogs/audio/apis/interface.py:594
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Hiçbir şey bulunamadı.\\nYouTube API keyi yanlış ya da API kullanımınız sınırlandırılmış.\\nYouTube API keyinizi kontrol edin ve `{prefix}audioset youtubeapi`'de ki yönlendirmeleri takip edin."
 
-#: redbot/cogs/audio/apis/interface.py:602
+#: redbot/cogs/audio/apis/interface.py:604
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} parçalar sıraya alınamaz."
 
-#: redbot/cogs/audio/apis/interface.py:610
+#: redbot/cogs/audio/apis/interface.py:612
 msgid "Playlist Enqueued"
 msgstr "Playlist sıraya alındı"
 
-#: redbot/cogs/audio/apis/interface.py:611
+#: redbot/cogs/audio/apis/interface.py:613
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "{num} adet şarkı sıraya eklendi.{maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:617
+#: redbot/cogs/audio/apis/interface.py:619
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "Playlistin başlamasına {time} süre var: #{position} sırasında başlar"
 

@@ -27,7 +27,7 @@ class Reports(commands.Cog):
 
     Users can open reports using `[p]report`. These are then sent
     to a channel in the server for staff, and the report creator
-    gets a DM. Both can be used to communicate. 
+    gets a DM. Both can be used to communicate.
     """
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}

@@ -314,7 +314,8 @@ class Warnings(commands.Cog):
             for r, v in registered_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                        title=_("Reason: {name}").format(name=r), description=v["description"],
+                        title=_("Reason: {name}").format(name=r),
+                        description=v["description"],
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -343,7 +344,9 @@ class Warnings(commands.Cog):
                     em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
-                        name=_("Exceed command"), value=r["exceed_command"], inline=False,
+                        name=_("Exceed command"),
+                        value=r["exceed_command"],
+                        inline=False,
                     )
                     em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
                     msg_list.append(em)
@@ -377,14 +380,19 @@ class Warnings(commands.Cog):
         `<reason>` can be a registered reason if it exists or a custom one
         is created by default.
         """
-        channel = ctx.channel
         guild = ctx.guild
         if user == ctx.author:
-            await ctx.send(_("You cannot warn yourself."))
-            return
+            return await ctx.send(_("You cannot warn yourself."))
         if user.bot:
-            await ctx.send(_("You cannot warn other bots."))
-            return
+            return await ctx.send(_("You cannot warn other bots."))
+        if user == ctx.guild.owner:
+            return await ctx.send(_("You cannot warn the server owner."))
+        if user.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
+            return await ctx.send(
+                _(
+                    "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
+                )
+            )
         guild_settings = await self.config.guild(ctx.guild).all()
         custom_allowed = guild_settings["allow_custom_reasons"]
 
@@ -436,7 +444,10 @@ class Warnings(commands.Cog):
                 title = _("Warning from {user}").format(user=ctx.author)
             else:
                 title = _("Warning")
-            em = discord.Embed(title=title, description=reason_type["description"],)
+            em = discord.Embed(
+                title=title,
+                description=reason_type["description"],
+            )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             try:
                 await user.send(
@@ -462,14 +473,18 @@ class Warnings(commands.Cog):
                 title = _("Warning from {user}").format(user=ctx.author)
             else:
                 title = _("Warning")
-            em = discord.Embed(title=title, description=reason_type["description"],)
+            em = discord.Embed(
+                title=title,
+                description=reason_type["description"],
+            )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
             if warn_channel:
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=user.mention), embed=em,
+                            _("{user} has been warned.").format(user=user.mention),
+                            embed=em,
                         )
 
             if not dm_failed:
