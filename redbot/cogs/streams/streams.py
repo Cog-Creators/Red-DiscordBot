@@ -305,7 +305,7 @@ class Streams(commands.Cog):
     @_twitch.command(name="addgame")
     async def twitch_addgame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
         """Add a game to send alerts for the specified channel.
-        
+
         Game name must be exactly the name that appears on the game's Twitch page"""
         stream = self.get_stream(TwitchStream, channel_name)
         if not stream:
