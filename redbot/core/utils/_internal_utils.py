@@ -277,6 +277,7 @@ async def send_to_owners_with_preprocessor(
         try:
             if preprocessor is not None:
                 content = await preprocessor(bot, location, content)
+            await location.send(f"The following message is from {cog_name}")
             await location.send(content, **kwargs)
         except Exception as _exc:
             main_log.error(
@@ -287,9 +288,6 @@ async def send_to_owners_with_preprocessor(
                 exc_info=_exc,
             )
 
-    content = "Message from {cog_name}:\n{content}".format(
-        cog_name=cog_name, content=content if content is not None else ""
-    )
     sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs) for d in destinations]
     await asyncio.gather(*sends)
 

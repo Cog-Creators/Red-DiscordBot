@@ -1407,6 +1407,7 @@ class RedBase(
 
         async def wrapped_send(location, content=None, **kwargs):
             try:
+                await location.send(f"The following message is from {cog_name}")
                 await location.send(content, **kwargs)
             except Exception as _exc:
                 log.error(
@@ -1417,9 +1418,6 @@ class RedBase(
                     exc_info=_exc,
                 )
 
-        content = "Message from {cog_name}:\n{content}".format(
-            cog_name=cog_name, content=content if content is not None else ""
-        )
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
 
