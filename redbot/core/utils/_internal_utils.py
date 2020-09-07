@@ -287,7 +287,7 @@ async def send_to_owners_with_preprocessor(
                 exc_info=_exc,
             )
 
-    content = "Message from {cog_name}\n{content}".format(
+    content = "Message from {cog_name}:\n{content}".format(
         cog_name=cog_name, content=content if content is not None else ""
     )
     content = content[:1999]
