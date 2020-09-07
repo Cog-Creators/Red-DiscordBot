@@ -1420,7 +1420,6 @@ class RedBase(
         content = "Message from {cog_name}:\n{content}".format(
             cog_name=cog_name, content=content if content is not None else ""
         )
-        content = content[:1999]
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
 
