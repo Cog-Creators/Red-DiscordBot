@@ -241,7 +241,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 # this might be worth moving to `bot.send_to_owners` at later date
 
 
-async def send_to_owners_with_preprocessor(
+def send_to_owners_with_preprocessor(
     bot: Red,
     content: str,
     *,
@@ -263,14 +263,48 @@ async def send_to_owners_with_preprocessor(
         bot object, owner notification destination and message content
         and returns the content that should be sent to given location.
     """
-    stack = inspect.stack()
-    cog_name = "Unknown"
-    if stack[1].function == "send_to_owners_with_prefix_replaced":
-        func = "send_to_owners_with_prefix_replaced"
-    else:
-        func = "send_to_owners_with_preprocessor"
-    cog_name = get_cog_by_call(bot, func)
+    try:
+        stack = inspect.stack()
+        if stack[1].function == "send_to_owners_with_prefix_replaced":
+            func = "send_to_owners_with_prefix_replaced"
+        else:
+            func = "send_to_owners_with_preprocessor"
+        cog_name = get_cog_by_call(bot, func)
 
+        return _send_to_owners_with_preprocessor(
+            cog_name=cog_name,
+            bot=bot,
+            content=content,
+            content_preprocessor=content_preprocessor,
+            **kwargs,
+        )
+    finally:
+        del stack
+
+
+async def _send_to_owners_with_preprocessor(
+    cog_name: str,
+    bot: Red,
+    content: str,
+    *,
+    content_preprocessor: Optional[
+        Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]
+    ] = None,
+    **kwargs,
+):
+    """
+    This sends something to all owners and their configured extra destinations.
+
+    This acts the same as `Red.send_to_owners`, with
+    one added keyword argument as detailed below in *Other Parameters*.
+
+    Other Parameters
+    ----------------
+    content_preprocessor: Optional[Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]]
+        Optional async function that takes
+        bot object, owner notification destination and message content
+        and returns the content that should be sent to given location.
+    """
     destinations = await bot.get_owner_notification_destinations()
 
     async def wrapped_send(bot, location, content=None, preprocessor=None, **kwargs):
@@ -293,7 +327,7 @@ async def send_to_owners_with_preprocessor(
     await asyncio.gather(*sends)
 
 
-async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
     """
     This sends something to all owners and their configured extra destinations.
 
@@ -308,7 +342,7 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
         )
         return content.replace("[p]", prefix)
 
-    await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+    return send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
 
 
 def expected_version(current: str, expected: str) -> bool:
@@ -331,31 +365,36 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
 
 
 def get_cog_by_call(bot: Red, func: str) -> str:
-    stack = inspect.stack()
-    cog_name = "Unknown"
-    valid = False
-    for index, item in enumerate(stack):
-        if item.function == func:
-            break
-    else:
-        index = -2
-    if index >= 0:
-        frm = stack[index + 1]
-        full_caller_page = inspect.getmodule(frm[0]).__package__
-        if full_caller_page.startswith("asyncio"):
-            return "A task, unable to pinpoint origin."
-        elif full_caller_page.startswith("redbot.cogs."):
-            cog_name = full_caller_page.split(".")[2]
-            return f"Red Core - `{cog_name}`"
-        elif full_caller_page.startswith("redbot"):
-            return "Red Core"
-        caller_package = full_caller_page.split(".")[0]
-        for cog_name, cog in bot._BotBase__cogs.items():
-            cog_package = inspect.getmodule(cog).__package__.split(".")[0]
-            if cog_package == caller_package:
-                valid = True
-                break
-    if not valid:
+    try:
+        stack = inspect.stack()
         cog_name = "Unknown"
-        main_log.warning("Red cannot figure out where the `%s` is being called from.", func)
-    return cog_name
+        valid = False
+        frm = None
+        for index, item in enumerate(stack):
+            if item.function == func:
+                break
+        else:
+            index = -2
+        if index >= 0:
+            frm = stack[index + 1]
+            full_caller_page = inspect.getmodule(frm[0]).__package__
+            if full_caller_page.startswith("asyncio"):
+                return "A task, unable to pinpoint origin."
+            elif full_caller_page.startswith("redbot.cogs."):
+                cog_name = full_caller_page.split(".")[2]
+                return f"Red Core - `{cog_name}`"
+            elif full_caller_page.startswith("redbot"):
+                return "Red Core"
+            caller_package = full_caller_page.split(".")[0]
+            for cog_name, cog in bot._BotBase__cogs.items():
+                cog_package = inspect.getmodule(cog).__package__.split(".")[0]
+                if cog_package == caller_package:
+                    valid = True
+                    break
+        if not valid:
+            cog_name = "Unknown"
+            main_log.warning("Red cannot figure out where the `%s` is being called from.", func)
+        return cog_name
+    finally:
+        del stack
+        del frm

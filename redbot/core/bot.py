@@ -1393,7 +1393,7 @@ class RedBase(
 
         return destinations
 
-    async def send_to_owners(self, content=None, **kwargs):
+    def send_to_owners(self, content=None, **kwargs):
         """
         This sends something to all owners and their configured extra destinations.
 
@@ -1402,7 +1402,16 @@ class RedBase(
         This logs failing sends
         """
         cog_name = get_cog_by_call(self, "send_to_owners")
+        return self._send_to_owners(cog_name, content, **kwargs)
 
+    async def _send_to_owners(self, cog_name: str, content=None, **kwargs):
+        """
+        This sends something to all owners and their configured extra destinations.
+
+        This takes the same arguments as discord.abc.Messageable.send
+
+        This logs failing sends
+        """
         destinations = await self.get_owner_notification_destinations()
 
         async def wrapped_send(location, content=None, **kwargs):
