@@ -344,6 +344,8 @@ def get_cog_by_call(bot: Red, func: str) -> str:
     if index >= 0:
         frm = stack[index + 1]
         caller_package = inspect.getmodule(frm[0]).__package__.split(".")[0]
+        if caller_package == "redbot":
+            return "Core"
         for cog_name, cog in bot._BotBase__cogs.items():
             cog_package = inspect.getmodule(cog).__package__.split(".")[0]
             if cog_package == caller_package:
