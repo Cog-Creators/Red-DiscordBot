@@ -277,8 +277,9 @@ async def send_to_owners_with_preprocessor(
         try:
             if preprocessor is not None:
                 content = await preprocessor(bot, location, content)
-            await location.send(f"The following message is from {cog_name}")
             await location.send(content, **kwargs)
+            await location.send(f"The message above came from: {cog_name}")
+
         except Exception as _exc:
             main_log.error(
                 "I could not send an owner notification from cog '%s' to %s (%s)",

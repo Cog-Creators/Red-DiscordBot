@@ -1407,8 +1407,8 @@ class RedBase(
 
         async def wrapped_send(location, content=None, **kwargs):
             try:
-                await location.send(f"The following message is from {cog_name}")
                 await location.send(content, **kwargs)
+                await location.send(f"The message above came from: {cog_name}")
             except Exception as _exc:
                 log.error(
                     "I could not send an owner notification from cog '%s' to %s (%s)",
