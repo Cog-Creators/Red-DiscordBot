@@ -50,7 +50,7 @@ from .settings_caches import (
 
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
-from .utils._internal_utils import send_to_owners_with_prefix_replaced
+from .utils._internal_utils import get_cog_by_call, send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
@@ -1401,6 +1401,8 @@ class RedBase(
 
         This logs failing sends
         """
+        cog_name = get_cog_by_call(self, "send_to_owners")
+
         destinations = await self.get_owner_notification_destinations()
 
         async def wrapped_send(location, content=None, **kwargs):
@@ -1408,12 +1410,17 @@ class RedBase(
                 await location.send(content, **kwargs)
             except Exception as _exc:
                 log.error(
-                    "I could not send an owner notification to %s (%s)",
+                    "I could not send an owner notification from cog '%s' to %s (%s)",
+                    cog_name,
                     location,
                     location.id,
                     exc_info=_exc,
                 )
 
+        content = "Message from {cog_name}\n{content}".format(
+            cog_name=cog_name, content=content if content is not None else ""
+        )
+        content = content[:1999]
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
 

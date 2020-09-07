@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
+import inspect
 import json
 import logging
 import os
@@ -262,6 +263,14 @@ async def send_to_owners_with_preprocessor(
         bot object, owner notification destination and message content
         and returns the content that should be sent to given location.
     """
+    stack = inspect.stack()
+    cog_name = "Unknown"
+    if stack[1].function == "send_to_owners_with_prefix_replaced":
+        func = "send_to_owners_with_prefix_replaced"
+    else:
+        func = "send_to_owners_with_preprocessor"
+    cog_name = get_cog_by_call(bot, func)
+
     destinations = await bot.get_owner_notification_destinations()
 
     async def wrapped_send(bot, location, content=None, preprocessor=None, **kwargs):
@@ -271,12 +280,17 @@ async def send_to_owners_with_preprocessor(
             await location.send(content, **kwargs)
         except Exception as _exc:
             main_log.error(
-                "I could not send an owner notification to %s (%s)",
+                "I could not send an owner notification from cog '%s' to %s (%s)",
+                cog_name,
                 location,
                 location.id,
                 exc_info=_exc,
             )
 
+    content = "Message from {cog_name}\n{content}".format(
+        cog_name=cog_name, content=content if content is not None else ""
+    )
+    content = content[:1999]
     sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs) for d in destinations]
     await asyncio.gather(*sends)
 
@@ -316,3 +330,25 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+def get_cog_by_call(bot: Red, func: str) -> str:
+    stack = inspect.stack()
+    cog_name = "Unknown"
+    valid = False
+    for index, item in enumerate(stack):
+        if item.function == func:
+            break
+    else:
+        index = -2
+    if index >= 0:
+        frm = stack[index + 1]
+        caller_package = inspect.getmodule(frm[0]).__package__.split(".")[0]
+        for cog_name, cog in bot._BotBase__cogs.items():
+            cog_package = inspect.getmodule(cog).__package__.split(".")[0]
+            if cog_package == caller_package:
+                valid = True
+                break
+    if not valid:
+        main_log.warning("Red cannot figure out where the `%s` is being called from.", func)
+    return cog_name
