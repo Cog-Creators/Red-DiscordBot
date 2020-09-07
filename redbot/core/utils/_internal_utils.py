@@ -342,7 +342,9 @@ def get_cog_by_call(bot: Red, func: str) -> str:
     if index >= 0:
         frm = stack[index + 1]
         full_caller_page = inspect.getmodule(frm[0]).__package__
-        if full_caller_page.startswith("redbot.cogs."):
+        if full_caller_page.startswith("asyncio"):
+            return "A task, unable to pinpoint origin."
+        elif full_caller_page.startswith("redbot.cogs."):
             cog_name = full_caller_page.split(".")[2]
             return f"Red Core - `{cog_name}`"
         elif full_caller_page.startswith("redbot"):
@@ -354,5 +356,6 @@ def get_cog_by_call(bot: Red, func: str) -> str:
                 valid = True
                 break
     if not valid:
+        cog_name = "Unknown"
         main_log.warning("Red cannot figure out where the `%s` is being called from.", func)
     return cog_name
