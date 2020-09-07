@@ -245,6 +245,7 @@ def send_to_owners_with_preprocessor(
     bot: Red,
     content: str,
     *,
+    show_origin_message: bool = True,
     content_preprocessor: Optional[
         Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]
     ] = None,
@@ -269,8 +270,10 @@ def send_to_owners_with_preprocessor(
             func = "send_to_owners_with_prefix_replaced"
         else:
             func = "send_to_owners_with_preprocessor"
-        cog_name = get_cog_by_call(bot, func)
-
+        if show_origin_message:
+            cog_name = get_cog_by_call(bot, func)
+        else:
+            cog_name = None
         return _send_to_owners_with_preprocessor(
             cog_name=cog_name,
             bot=bot,
@@ -312,12 +315,12 @@ async def _send_to_owners_with_preprocessor(
             if preprocessor is not None:
                 content = await preprocessor(bot, location, content)
             await location.send(content, **kwargs)
-            await location.send(f"The message above came from: {cog_name}")
+            if cog_name:
+                await location.send(f"The message above came from: {cog_name}")
 
         except Exception as _exc:
             main_log.error(
-                "I could not send an owner notification from cog '%s' to %s (%s)",
-                cog_name,
+                "I could not send an owner notification to %s (%s)",
                 location,
                 location.id,
                 exc_info=_exc,
@@ -327,7 +330,9 @@ async def _send_to_owners_with_preprocessor(
     await asyncio.gather(*sends)
 
 
-def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+def send_to_owners_with_prefix_replaced(
+    bot: Red, content: str, show_origin_message: bool = True, **kwargs
+):
     """
     This sends something to all owners and their configured extra destinations.
 
@@ -342,7 +347,9 @@ def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
         )
         return content.replace("[p]", prefix)
 
-    return send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+    return send_to_owners_with_preprocessor(
+        bot, content, show_origin_message=show_origin_message, content_preprocessor=preprocessor
+    )
 
 
 def expected_version(current: str, expected: str) -> bool:
@@ -367,7 +374,7 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
 def get_cog_by_call(bot: Red, func: str) -> str:
     try:
         stack = inspect.stack()
-        cog_name = "Unknown"
+        cog_name = None
         valid = False
         frm = None
         for index, item in enumerate(stack):
@@ -392,7 +399,7 @@ def get_cog_by_call(bot: Red, func: str) -> str:
                     valid = True
                     break
         if not valid:
-            cog_name = "Unknown"
+            cog_name = None
             main_log.warning("Red cannot figure out where the `%s` is being called from.", func)
         return cog_name
     finally:

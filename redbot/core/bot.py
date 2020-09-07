@@ -1393,7 +1393,7 @@ class RedBase(
 
         return destinations
 
-    def send_to_owners(self, content=None, **kwargs):
+    def send_to_owners(self, content=None, show_origin_message: bool = True, **kwargs):
         """
         This sends something to all owners and their configured extra destinations.
 
@@ -1401,10 +1401,15 @@ class RedBase(
 
         This logs failing sends
         """
-        cog_name = get_cog_by_call(self, "send_to_owners")
-        return self._send_to_owners(cog_name, content, **kwargs)
+        if show_origin_message:
+            cog_name = get_cog_by_call(self, "send_to_owners")
+        else:
+            cog_name = None
+        return self._send_to_owners(
+            cog_name, content, show_origin_message=show_origin_message, **kwargs
+        )
 
-    async def _send_to_owners(self, cog_name: str, content=None, **kwargs):
+    async def _send_to_owners(self, cog_name: Optional[str], content=None, **kwargs):
         """
         This sends something to all owners and their configured extra destinations.
 
@@ -1417,11 +1422,11 @@ class RedBase(
         async def wrapped_send(location, content=None, **kwargs):
             try:
                 await location.send(content, **kwargs)
-                await location.send(f"The message above came from: {cog_name}")
+                if cog_name:
+                    await location.send(f"The message above came from: {cog_name}")
             except Exception as _exc:
                 log.error(
-                    "I could not send an owner notification from cog '%s' to %s (%s)",
-                    cog_name,
+                    "I could not send an owner notification to %s (%s)",
                     location,
                     location.id,
                     exc_info=_exc,
