@@ -53,24 +53,24 @@ class Announcer:
                 return
 
             channel = await self._get_announce_channel(g)
-            failed_reason = None
+            fail_reason = None
 
             if channel is None:
-                failed_reason = _("The announcement channel was removed or not set.")
+                fail_reason = _("The announcement channel was removed or not set.")
             else:
                 if channel.permissions_for(g.me).send_messages:
                     try:
                         await channel.send(self.message)
                     except discord.Forbidden:
-                        failed_reason = _("I'm not allowed to do that.")
+                        fail_reason = _("I'm not allowed to do that.")
                 else:
-                    failed_reason = _(
+                    fail_reason = _(
                         "I do not have permissions to send messages in {channel}!"
                     ).format(channel=channel.mention)
 
-            if failed_reason is not None:
+            if fail_reason is not None:
                 failed_guilds.append(str(g.id))
-                fail_reasons.append(failed_reason)
+                fail_reasons.append(fail_reason)
 
         if failed_guilds:
             msg = (
