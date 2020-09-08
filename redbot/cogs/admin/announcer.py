@@ -79,7 +79,7 @@ class Announcer:
                 else _("I could not announce to the following servers: ")
             )
             errors_list = [
-                f"\n{inline(guild_id)}. Reason: {reason}"
+                _("\n{guild}. Reason: {reason}").format(guild=inline(guild_id), reason=reason)
                 for guild_id, reason in zip(failed_guilds, fail_reasons)
             ]
             msg += "".join(errors_list)
