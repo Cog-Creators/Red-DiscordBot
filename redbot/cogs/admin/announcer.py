@@ -53,14 +53,17 @@ class Announcer:
 
             channel = await self._get_announce_channel(g)
 
-            if channel:
-                if channel.permissions_for(g.me).send_messages:
-                    try:
-                        await channel.send(self.message)
-                    except discord.Forbidden:
-                        failed.append(str(g.id))
-                else:
+            if channel is None:
+                failed.append(str(g.id))
+                continue
+
+            if channel.permissions_for(g.me).send_messages:
+                try:
+                    await channel.send(self.message)
+                except discord.Forbidden:
                     failed.append(str(g.id))
+            else:
+                failed.append(str(g.id))
 
         if failed:
             msg = (
