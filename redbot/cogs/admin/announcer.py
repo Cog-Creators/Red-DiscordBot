@@ -79,9 +79,12 @@ class Announcer:
                 else _("I could not announce to the following servers: ")
             )
             errors_list = [
-                _("\nServer ID: {guild}. Reason: {reason}").format(guild=inline(guild_id), reason=reason)
+                _("\nServer ID: {guild}. Reason: {reason}").format(
+                    guild=inline(guild_id), reason=reason
+                )
                 for guild_id, reason in zip(failed_guilds, fail_reasons)
             ]
             msg += "".join(errors_list)
             await self.ctx.bot.send_to_owners(msg)
+
         self.active = False
