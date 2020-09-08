@@ -588,9 +588,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.guild.id not in self._server_mutes:
             self._server_mutes[ctx.guild.id] = {}
         for user in success_list:
-            self._server_mutes[ctx.guild.id][user.id]["until"] = (
-                until.timestamp() if until else None
-            )
+            if user.id in self._server_mutes[ctx.guild.id]:
+                self._server_mutes[ctx.guild.id][user.id]["until"] = (
+                    until.timestamp() if until else None
+                )
         await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
         verb = _("has")
         if len(success_list) > 1:
@@ -706,9 +707,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.error(_("Error creating modlog case"), exc_info=e)
         if success_list:
             for user in success_list:
-                self._channel_mutes[channel.id][user.id]["until"] = (
-                    until.timestamp() if until else None
-                )
+                if user.id in self._channel_mutes[channel.id]:
+                    self._channel_mutes[channel.id][user.id]["until"] = (
+                        until.timestamp() if until else None
+                    )
             await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
             verb = _("has")
             if len(success_list) > 1:
@@ -761,7 +763,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not success_list:
             resp = pagify(issue)
             return await ctx.send_interactive(resp)
-        await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
+        if self._server_mutes[ctx.guild.id]:
+            await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
+        else:
+            await self.config.guild(ctx.guild).clear()
         await ctx.send(
             _("{users} unmuted in this server.").format(
                 users=humanize_list([f"{u}" for u in success_list])
