@@ -46,31 +46,42 @@ class Announcer:
 
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
-        failed = []
+        failed_guilds = []
+        fail_reasons = []
         async for g in AsyncIter(guild_list, delay=0.5):
             if not self.active:
                 return
 
             channel = await self._get_announce_channel(g)
+            failed_reason = None
 
             if channel is None:
-                failed.append(str(g.id))
-                continue
-
-            if channel.permissions_for(g.me).send_messages:
-                try:
-                    await channel.send(self.message)
-                except discord.Forbidden:
-                    failed.append(str(g.id))
+                failed_reason = _("Channel removed or not set.")
             else:
-                failed.append(str(g.id))
+                if channel.permissions_for(g.me).send_messages:
+                    try:
+                        await channel.send(self.message)
+                    except discord.Forbidden:
+                        failed_reason = _("I'm not allowed to do that.")
+                else:
+                    failed_reason = _(
+                        "I do not have permissions to send messages in {channel}!"
+                    ).format(channel=channel.mention)
 
-        if failed:
+            if failed_reason is not None:
+                failed_guilds.append(str(g.id))
+                fail_reasons.append(failed_reason)
+
+        if failed_guilds:
             msg = (
-                _("I could not announce to the following server: ")
-                if len(failed) == 1
+                _("I could not announce to the following server:")
+                if len(failed_guilds) == 1
                 else _("I could not announce to the following servers: ")
             )
-            msg += humanize_list(tuple(map(inline, failed)))
+            errors_list = [
+                f"\n{inline(guild_id)}. Reason: {reason}"
+                for guild_id, reason in zip(failed_guilds, fail_reasons)
+            ]
+            msg += "".join(errors_list)
             await self.ctx.bot.send_to_owners(msg)
         self.active = False
