@@ -473,7 +473,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -486,7 +486,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
