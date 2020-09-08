@@ -56,7 +56,7 @@ class Announcer:
             failed_reason = None
 
             if channel is None:
-                failed_reason = _("Channel removed or not set.")
+                failed_reason = _("The announcement channel was removed or not set.")
             else:
                 if channel.permissions_for(g.me).send_messages:
                     try:
@@ -79,7 +79,7 @@ class Announcer:
                 else _("I could not announce to the following servers: ")
             )
             errors_list = [
-                _("\n{guild}. Reason: {reason}").format(guild=inline(guild_id), reason=reason)
+                _("\nServer ID: {guild}. Reason: {reason}").format(guild=inline(guild_id), reason=reason)
                 for guild_id, reason in zip(failed_guilds, fail_reasons)
             ]
             msg += "".join(errors_list)
