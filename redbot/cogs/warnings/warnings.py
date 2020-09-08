@@ -126,9 +126,9 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def senddm(self, ctx: commands.Context,true_or_false:bool):
+    async def senddm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether warnings should be sent to users in DMs."""
-        await self.config.guild(guild).toggle_dm.set(true_or_false)
+        await self.config.guild(ctx.guild).toggle_dm.set(true_or_false)
         if true_or_false:
             await ctx.send(_("I will now try to send warnings to users DMs."))
         else:
@@ -171,12 +171,12 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def usewarnchannel(self, ctx: commands.Context,true_or_false:bool):
+    async def usewarnchannel(self, ctx: commands.Context, true_or_false: bool):
         """
         Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.
         """
-        await self.config.guild(guild).toggle_channel.set(true_or_false)
-        channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
+        await self.config.guild(ctx.guild).toggle_channel.set(true_or_false)
+        channel = self.bot.get_channel(await self.config.guild(ctx.guild).warn_channel())
         if true_or_false:
             if channel:
                 await ctx.send(
