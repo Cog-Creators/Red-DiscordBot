@@ -4,7 +4,7 @@ import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import humanize_list, inline
+from redbot.core.utils.chat_formatting import inline
 
 _ = Translator("Announcer", __file__)
 
