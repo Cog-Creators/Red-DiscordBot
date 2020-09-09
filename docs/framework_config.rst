@@ -448,13 +448,13 @@ much the same way they would in V2. The following examples will demonstrate how 
 
 .. code-block:: python
 
-    from redbot.core import Config
+    from redbot.core import Config, commands
 
 
-    class ExampleCog:
+    class ExampleCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, 1234567890)
-
+            self.config.init_custom("V2", 1)
             self.data = {}
 
         async def load_data(self):
