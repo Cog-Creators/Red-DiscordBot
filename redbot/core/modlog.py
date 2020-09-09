@@ -388,12 +388,10 @@ class Case:
                 user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
-            avatar_url = None
         else:
             user = escape_spoilers(
                 filter_invites(f"{self.user} ({self.user.id})")
             )  # Invites and spoilers get rendered even in embeds.
-            avatar_url = self.user.avatar_url
 
         if embed:
             emb = discord.Embed(title=title, description=reason)
@@ -427,7 +425,7 @@ class Case:
             if until and duration:
                 case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
             if self.channel:
-                if isinstance(self.channel,int):
+                if isinstance(self.channel, int):
                     case_text += _("**Channel**: {} (Deleted)\n").format(self.channel)
                 else:
                     case_text += _("**Channel**: {}\n").format(self.channel.name)
