@@ -427,7 +427,10 @@ class Case:
             if until and duration:
                 case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
             if self.channel:
-                case_text += _("**Channel**: {}\n").format(self.channel.name)
+                if isinstance(self.channel,int):
+                    case_text += _("**Channel**: {} (Deleted)\n").format(self.channel)
+                else:
+                    case_text += _("**Channel**: {}\n").format(self.channel.name)
             if amended_by:
                 case_text += _("**Amended by:** {}\n").format(amended_by)
             if last_modified:
