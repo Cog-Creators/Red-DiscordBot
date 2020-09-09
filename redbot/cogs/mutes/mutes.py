@@ -930,7 +930,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         del self._server_mutes[guild.id][user.id]
                 await user.remove_roles(role, reason=reason)
             except discord.errors.Forbidden:
-                if temp:
+                if _temp:
                     self._server_mutes[guild.id][user.id] = _temp
                 return False, mute_unmute_issues["permissions_issue"]
             return True, None
