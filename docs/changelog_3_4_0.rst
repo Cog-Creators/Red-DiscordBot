@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
+| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
