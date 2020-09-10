@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
+| :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -33,6 +33,10 @@ Economy
 
 - Added embed option for ``[p]leaderboard`` (:issue:`4184`, :issue:`4104`)
 
+General
+*******
+
+- Fixed issues with text not being properly URL encoded (:issue:`4024`)
 
 Developer changelog
 -------------------
