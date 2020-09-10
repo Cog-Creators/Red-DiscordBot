@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
+| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`TurnrDev`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -37,6 +37,11 @@ General
 *******
 
 - Fixed issues with text not being properly URL encoded (:issue:`4024`)
+
+Warnings
+********
+
+- Fixed users being able to warn users above them in hierarchy (:issue:`4100`)
 
 Developer changelog
 -------------------
