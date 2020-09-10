@@ -54,7 +54,10 @@ Bank
 Documentation changes
 ---------------------
 
+Modlog
+******
 
+- Clarified that naive ``datetime`` objects will be treated as local times for paramaters ``created_at`` and ``until`` in ``create_case`` (:issue:`4389`)
 
 Miscellaneous
 -------------
