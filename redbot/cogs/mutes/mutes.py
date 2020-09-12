@@ -5,7 +5,7 @@ import logging
 
 from abc import ABC
 from copy import copy
-from typing import cast, Optional, Dict, List, Tuple, Literal, Coroutine
+from typing import cast, Optional, Dict, List, Tuple, Literal, Coroutine, Union
 from datetime import datetime, timedelta, timezone
 
 from .converters import MuteTime
@@ -173,7 +173,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 to_clear.append(g_id)
             await self.config.guild(guild).muted_users.set(self._server_mutes[g_id])
         for g_id in to_clear:
-            await self.config.guild_from_id(g_id).clear()
+            await self.config.guild_from_id(g_id).muted_users.clear()
 
     async def _auto_unmute_user(self, guild: discord.Guild, data: dict):
         delay = data["until"] - datetime.now(timezone.utc).timestamp()
@@ -225,7 +225,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 to_clear.append(c_id)
             await self.config.channel(channel).muted_users.set(self._channel_mutes[c_id])
         for c_id in to_clear:
-            await self.config.channel_from_id(c_id).clear()
+            await self.config.channel_from_id(c_id).muted_users.clear()
 
     async def _auto_channel_unmute_user(self, channel: discord.TextChannel, data: dict):
         delay = data["until"] - datetime.now(timezone.utc).timestamp()
@@ -505,7 +505,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 msg += _(
                     "Reacting with \N{WHITE HEAVY CHECK MARK} will continue "
                     "the mute with overwrites and stop this message from appearing again, "
-                    "Reacting with \N{CROSS MARK} will end the mute attempt."
+                    "Reacting with \N{NEGATIVE SQUARED CROSS MARK} will end the mute attempt."
                 )
             else:
                 msg += _(
@@ -554,9 +554,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         to_del = []
         if ctx.guild.id in self._server_mutes:
             mutes_data = self._server_mutes[ctx.guild.id]
+            to_rem = []
             if mutes_data:
+
                 msg += _("__Server Mutes__\n")
                 for user_id, mutes in mutes_data.items():
+                    if not mutes:
+                        to_rem.append(user_id)
+                        continue
                     user = ctx.guild.get_member(user_id)
                     if not user:
                         user_str = f"<@!{user_id}>"
@@ -574,6 +579,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         msg += _("__Remaining__: {time_left}\n").format(time_left=time_str)
                     else:
                         msg += "\n"
+            for _id in to_rem:
+                try:
+                    del self._server_mutes[ctx.guild.id][_id]
+                except KeyError:
+                    pass
         for channel_id, mutes_data in self._channel_mutes.items():
             if not mutes_data:
                 to_del.append(channel_id)
@@ -581,6 +591,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if channel_id in [c.id for c in ctx.guild.channels]:
                 msg += _("__<#{channel_id}> Mutes__\n").format(channel_id=channel_id)
                 for user_id, mutes in mutes_data.items():
+                    if not mutes:
+                        continue
                     user = ctx.guild.get_member(user_id)
                     if not user:
                         user_str = f"<@!{user_id}>"
@@ -654,7 +666,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             audit_reason = get_audit_reason(author, reason)
             success_list = []
             for user in users:
-                success, issue = await self.mute_user(guild, author, user, audit_reason)
+                success, issue = await self.mute_user(guild, author, user, until, audit_reason)
                 if success:
                     success_list.append(user)
                     try:
@@ -676,12 +688,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return await ctx.send_interactive(resp)
             if ctx.guild.id not in self._server_mutes:
                 self._server_mutes[ctx.guild.id] = {}
-            for user in success_list:
-                if user.id in self._server_mutes[ctx.guild.id]:
-                    self._server_mutes[ctx.guild.id][user.id]["until"] = (
-                        until.timestamp() if until else None
-                    )
-            await self.config.guild(ctx.guild).muted_users.set(self._server_mutes[ctx.guild.id])
             verb = _("has")
             if len(success_list) > 1:
                 verb = _("have")
@@ -778,7 +784,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             success_list = []
             for user in users:
                 success, issue = await self.channel_mute_user(
-                    guild, channel, author, user, audit_reason
+                    guild, channel, author, user, until, audit_reason
                 )
                 if success:
                     success_list.append(user)
@@ -798,12 +804,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     except RuntimeError as e:
                         log.error(_("Error creating modlog case"), exc_info=e)
             if success_list:
-                for user in success_list:
-                    if user.id in self._channel_mutes[channel.id]:
-                        self._channel_mutes[channel.id][user.id]["until"] = (
-                            until.timestamp() if until else None
-                        )
-                await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
                 verb = _("has")
                 if len(success_list) > 1:
                     verb = _("have")
@@ -818,7 +818,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(manage_roles=True)
     async def unmute(
-        self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        reason: Optional[str] = None,
     ):
         """Unmute users.
 
@@ -858,12 +862,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if not success_list:
                 resp = pagify(issue)
                 return await ctx.send_interactive(resp)
-            if self._server_mutes[ctx.guild.id]:
+
+            if ctx.guild.id in self._server_mutes and self._server_mutes[ctx.guild.id]:
                 await self.config.guild(ctx.guild).muted_users.set(
                     self._server_mutes[ctx.guild.id]
                 )
             else:
-                await self.config.guild(ctx.guild).clear()
+                await self.config.guild(ctx.guild).muted_users.clear()
             await ctx.send(
                 _("{users} unmuted in this server.").format(
                     users=humanize_list([f"{u}" for u in success_list])
@@ -881,7 +886,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(manage_roles=True)
     @commands.guild_only()
     async def unmute_channel(
-        self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: str = None
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        reason: Optional[str] = None,
     ):
         """Unmute a user in this channel.
 
@@ -927,7 +936,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if self._channel_mutes[channel.id]:
                     await self.config.channel(channel).set(self._channel_mutes[channel.id])
                 else:
-                    await self.config.channel(channel).clear()
+                    await self.config.channel(channel).muted_users.clear()
                 await ctx.send(
                     _("{users} unmuted in this channel.").format(
                         users=humanize_list([f"{u}" for u in success_list])
@@ -939,7 +948,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         guild: discord.Guild,
         author: discord.Member,
         user: discord.Member,
-        reason: str,
+        until: Optional[datetime] = None,
+        reason: Optional[str] = None,
     ) -> Tuple[bool, Optional[str]]:
         """
         Handles muting users
@@ -962,9 +972,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 self._server_mutes[guild.id][user.id] = {
                     "author": author.id,
                     "member": user.id,
-                    "until": None,
+                    "until": until.timestamp() if until else None,
                 }
                 await user.add_roles(role, reason=reason)
+                await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
             except discord.errors.Forbidden:
                 del self._server_mutes[guild.id][
                     user.id
@@ -976,7 +987,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             perms_cache = {}
             tasks = []
             for channel in guild.channels:
-                tasks.append(self.channel_mute_user(guild, channel, author, user, reason))
+                tasks.append(self.channel_mute_user(guild, channel, author, user, until, reason))
             task_result = await asyncio.gather(*tasks)
             for success, issue in task_result:
                 if not success:
@@ -997,7 +1008,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         guild: discord.Guild,
         author: discord.Member,
         user: discord.Member,
-        reason: str,
+        reason: Optional[str] = None,
     ) -> Tuple[bool, Optional[str]]:
         """
         Handles muting users
@@ -1043,8 +1054,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         channel: discord.abc.GuildChannel,
         author: discord.Member,
         user: discord.Member,
-        reason: str,
-    ) -> Tuple[bool, Optional[str]]:
+        until: Optional[datetime] = None,
+        reason: Optional[str] = None,
+    ) -> Tuple[bool, Union[str, Dict[str, Optional[bool]]]]:
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
@@ -1052,7 +1064,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if permissions.administrator:
             return False, _(mute_unmute_issues["is_admin"])
 
-        new_overs = {}
+        new_overs: dict = {}
         if not isinstance(channel, discord.TextChannel):
             new_overs.update(speak=False)
         if not isinstance(channel, discord.VoiceChannel):
@@ -1069,7 +1081,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             self._channel_mutes[channel.id][user.id] = {
                 "author": author.id,
                 "member": user.id,
-                "until": None,
+                "until": until.timestamp() if until else None,
             }
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
@@ -1090,7 +1102,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         channel: discord.abc.GuildChannel,
         author: discord.Member,
         user: discord.Member,
-        reason: str,
+        reason: Optional[str] = None,
     ) -> Tuple[bool, Optional[str]]:
         overwrites = channel.overwrites_for(user)
         perms_cache = await self.config.member(user).perms_cache()
@@ -1116,16 +1128,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 _temp = copy(self._channel_mutes[channel.id][user.id])
                 del self._channel_mutes[channel.id][user.id]
         except discord.Forbidden:
-            if channel.id in self._channel_mutes:
+            if channel.id in self._channel_mutes and _temp:
                 self._channel_mutes[channel.id][user.id] = _temp
             return False, _(mute_unmute_issues["permissions_issue"])
         except discord.NotFound as e:
             if e.code == 10003:
-                if channel.id in self._channel_mutes:
+                if channel.id in self._channel_mutes and _temp:
                     self._channel_mutes[channel.id][user.id] = _temp
                 return False, _(mute_unmute_issues["unknown_channel"])
             elif e.code == 10009:
-                if channel.id in self._channel_mutes:
+                if channel.id in self._channel_mutes and _temp:
                     self._channel_mutes[channel.id][user.id] = _temp
                 return False, _(mute_unmute_issues["left_guild"])
         return True, None
