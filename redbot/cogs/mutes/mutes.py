@@ -630,8 +630,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Mute users.
 
-        `[users]...` is a space separated list of usernames, ID's, or mentions.
-        `[time_and_reason={}]` is the time to mute for and reason. Time is
+        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason]` is the time to mute for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
         is provided the mute will be indefinite.
 
@@ -738,7 +738,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         name="mutechannel", aliases=["channelmute"], usage="[users...] [time_and_reason]"
     )
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(manage_roles=True)
     async def channel_mute(
         self,
@@ -749,8 +748,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Mute a user in the current text channel.
 
-        `[users]...` is a space separated list of usernames, ID's, or mentions.
-        `[time_and_reason={}]` is the time to mute for and reason. Time is
+        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason]` is the time to mute for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
         is provided the mute will be indefinite.
 
@@ -815,9 +814,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
                 )
 
-    @commands.command()
+    @commands.command(usage="[users...] [reason]")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(manage_roles=True)
     async def unmute(
         self,
@@ -828,7 +826,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Unmute users.
 
-        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[users...]` is a space separated list of usernames, ID's, or mentions.
         `[reason]` is the reason for the unmute.
         """
         if not users:
@@ -884,8 +882,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 await self.handle_issues(ctx, message, issue)
 
     @checks.mod_or_permissions(manage_roles=True)
-    @commands.command(name="unmutechannel", aliases=["channelunmute"])
-    @commands.bot_has_permissions(manage_roles=True)
+    @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="[users...] [reason]")
     @commands.guild_only()
     async def unmute_channel(
         self,
@@ -896,7 +893,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Unmute a user in this channel.
 
-        `[users]...` is a space separated list of usernames, ID's, or mentions.
+        `[users...]` is a space separated list of usernames, ID's, or mentions.
         `[reason]` is the reason for the unmute.
         """
         if not users:
