@@ -330,7 +330,7 @@ def underline(text: str, escape_formatting: bool = True) -> str:
 def quote(text: str, escape_formatting: bool = False) -> str:
     """Quotes the given text.
 
-    Note: By default, this function will **not** escape ``text`` prior to underlining.
+    Note: By default, this function will **not** escape ``text`` prior to quoting.
 
     Parameters
     ----------
