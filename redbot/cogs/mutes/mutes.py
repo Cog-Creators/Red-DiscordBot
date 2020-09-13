@@ -618,7 +618,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
         await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
 
-    @commands.command()
+    @commands.command(usage="[users...] [time_and_reason]")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def mute(
@@ -734,7 +734,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await query.clear_reactions()
             await ctx.send(issue)
 
-    @commands.command(name="mutechannel", aliases=["channelmute"])
+    @commands.command(
+        name="mutechannel", aliases=["channelmute"], usage="[users...] [time_and_reason]"
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(manage_roles=True)
