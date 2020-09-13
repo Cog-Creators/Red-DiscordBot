@@ -142,8 +142,10 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else _("Terminal")
                     )
-                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
-                        python=sys.executable, package_extras=package_extras
+                    extra_update += (
+                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                            python=sys.executable, package_extras=package_extras
+                        )
                     )
 
                 else:

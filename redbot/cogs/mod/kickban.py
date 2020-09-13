@@ -278,7 +278,7 @@ class KickBanMixin(MixinMeta):
     async def ban(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, int],
+        user: Union[discord.Member, discord.User, RawUserIds],
         days: Optional[int] = None,
         *,
         reason: str = None,
