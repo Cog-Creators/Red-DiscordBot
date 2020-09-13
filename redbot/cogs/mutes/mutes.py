@@ -273,6 +273,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         roles_added = list(a - b)
         if mute_role in roles_removed:
             # send modlog case for unmute and remove from cache
+            if guild.id not in self._server_mutes:
+                # they weren't a tracked mute so we can return early
+                return
             if after.id in self._server_mutes[guild.id]:
                 try:
                     await modlog.create_case(
@@ -289,6 +292,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 del self._server_mutes[guild.id][after.id]
         if mute_role in roles_added:
             # send modlog case for mute and add to cache
+            if guild.id not in self._server_mutes:
+                # initialize the guild in the cache to prevent keyerrors
+                self._server_mutes[guild.id] = {}
             if after.id not in self._server_mutes[guild.id]:
                 try:
                     await modlog.create_case(
@@ -307,7 +313,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "member": after.id,
                     "until": None,
                 }
-        await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
+        if guild.id in self._server_mutes:
+            await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
