@@ -125,10 +125,14 @@ class ModSettings(MixinMeta):
         """
         if toggle is True:
             await self.config.guild(ctx.guild).mention_spam.strict.set(True)
-            return await ctx.send(_("Mention spam will now account for multiple mentions of the same user."))
+            return await ctx.send(
+                _("Mention spam will now account for multiple mentions of the same user.")
+            )
         elif toggle is False:
             await self.config.guild(ctx.guild).mention_spam.strict.set(False)
-            return await ctx.send(_("Mention spam will only account for mentions of different users."))
+            return await ctx.send(
+                _("Mention spam will only account for mentions of different users.")
+            )
 
     @mentionspam.command(name="warn")
     @commands.guild_only()
