@@ -67,7 +67,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "respect_hierarchy": True,
             "muted_users": {},
             "default_time": {},
-            "removed_users": [],
+            "removed_users": {},
         }
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
@@ -363,8 +363,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
         guild = member.guild
+        until = None
         if guild.id in self._server_mutes:
             if member.id in self._server_mutes[guild.id]:
+                until = self._server_mutes[guild.id][member.id]["until"]
                 del self._server_mutes[guild.id][member.id]
         for channel in guild.channels:
             if channel.id in self._channel_mutes:
@@ -375,7 +377,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
         if mute_role in [r.id for r in member.roles]:
             async with self.config.guild(guild).removed_users() as removed_users:
-                removed_users.append(member.id)
+                removed_users[str(member.id)] = int(until) if until else None
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -384,15 +386,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not mute_role:
             return
         async with self.config.guild(guild).removed_users() as removed_users:
-            if member.id in removed_users:
-                removed_users.remove(member.id)
+            if str(member.id) in removed_users:
+                until_ts = removed_users[str(member.id)]
+                until = datetime.fromtimestamp(until_ts, tz=timezone.utc) if until_ts else None
+                # datetime is required to utilize the mutes method
+                if until and until < datetime.now(tz=timezone.utc):
+                    return
+                removed_users.pop(str(member.id))
                 role = guild.get_role(mute_role)
                 if not role:
                     return
-                try:
-                    await member.add_roles(role, reason=_("Previously muted in this server."))
-                except discord.errors.Forbidden:
-                    return
+                await self.mute_user(
+                    guild, guild.me, member, until, _("Previously muted in this server.")
+                )
 
     @commands.group()
     @commands.guild_only()
