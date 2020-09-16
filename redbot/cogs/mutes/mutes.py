@@ -1019,7 +1019,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     mute_success.append(f"{chan} - {issue}")
                 else:
                     chan_id = task["channel"].id
-                    perms_cache[str(chan_id)] = issue.get("old_overs")
+                    perms_cache[str(chan_id)] = task.get("old_overs")
             await self.config.member(user).perms_cache.set(perms_cache)
             if mute_success and len(mute_success) == len(guild.channels):
                 return False, "\n".join(s for s in mute_success)
