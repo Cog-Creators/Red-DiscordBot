@@ -559,8 +559,8 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
 
 
 async def get_leaderboard_position(
-    member: Union[discord.User, discord.Member]
-) -> Union[int, None]:
+    member: Union[discord.User, discord.Member], *args, **kwargs
+) -> Union[int, None] or List[tuple]:
     """
     Get the leaderboard position for the specified user
 
@@ -569,10 +569,18 @@ async def get_leaderboard_position(
     member : `discord.User` or `discord.Member`
         The user to get the leaderboard position of
 
+    returnLeaderboardSize : Boolean to return the size of the
+        overall leaderboard or not
+
+
     Returns
     -------
     `int`
         The position of the user on the leaderboard
+
+    'int', 'int'
+        The position of the user on the leaderboard followed
+        by the size of the leaderboard
 
     Raises
     ------
@@ -580,6 +588,8 @@ async def get_leaderboard_position(
         If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
+    returnLeaderboardSize = kwargs.get("returnLeaderboardSize")
+
     if await is_global():
         guild = None
     else:
@@ -591,9 +601,13 @@ async def get_leaderboard_position(
     else:
         pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
         if pos is None:
-            return None
+            returnPos = None
         else:
-            return pos[0]
+            returnPos = pos[0]
+    if returnLeaderboardSize:
+        return returnPos, len(leaderboard)
+    else:
+        return returnPos
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
