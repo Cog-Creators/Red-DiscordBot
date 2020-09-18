@@ -1,5 +1,7 @@
+import contextlib
 import getpass
 import json
+import pickle
 import sys
 from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
@@ -13,6 +15,7 @@ except ModuleNotFoundError:
 
 from ... import data_manager, errors
 from ..base import BaseDriver, IdentifierData, ConfigCategory
+from ..cache import ConfigDriverCache
 from ..log import log
 
 __all__ = ["PostgresDriver"]
@@ -36,9 +39,22 @@ def encode_identifier_data(
     )
 
 
+# The cache is global, but still increases in size based on the number
+# of cogs loaded. This is so we have a scalable cache size, but the LRU
+# lookup is global.
+_cache = ConfigDriverCache()
+
+
 class PostgresDriver(BaseDriver):
 
     _pool: Optional["asyncpg.pool.Pool"] = None
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        _cache.max_size += 1024
+
+    def __del__(self) -> None:
+        _cache.max_size -= 1024
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
@@ -139,43 +155,60 @@ class PostgresDriver(BaseDriver):
 
     async def get(self, identifier_data: IdentifierData):
         try:
+            ret = _cache[identifier_data]
+        except KeyError:
+            pass
+        else:
+            if ret is KeyError:
+                raise KeyError
+            return pickle.loads(pickle.dumps(ret, -1))
+
+        try:
             result = await self._execute(
                 "SELECT red_config.get($1)",
                 encode_identifier_data(identifier_data),
                 method=self._pool.fetchval,
             )
         except asyncpg.UndefinedTableError:
+            _cache[identifier_data] = KeyError
             raise KeyError from None
 
         if result is None:
             # The result is None both when postgres yields no results, or when it yields a NULL row
             # A 'null' JSON value would be returned as encoded JSON, i.e. the string 'null'
+            _cache[identifier_data] = KeyError
             raise KeyError
+
+        _cache[identifier_data] = json.loads(result)
         return json.loads(result)
 
     async def set(self, identifier_data: IdentifierData, value=None):
+        dumped = json.dumps(value)
         try:
             await self._execute(
                 "SELECT red_config.set($1, $2::jsonb)",
                 encode_identifier_data(identifier_data),
-                json.dumps(value),
+                dumped,
             )
         except asyncpg.ErrorInAssignmentError:
             raise errors.CannotSetSubfield
 
+        _cache[identifier_data] = json.loads(dumped)
+
     async def clear(self, identifier_data: IdentifierData):
-        try:
+        with contextlib.suppress(asyncpg.UndefinedTableError):
             await self._execute(
                 "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
             )
-        except asyncpg.UndefinedTableError:
-            pass
+
+        with contextlib.suppress(KeyError):
+            del _cache[identifier_data]
 
     async def inc(
         self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
     ) -> Union[int, float]:
         try:
-            return await self._execute(
+            result = await self._execute(
                 f"SELECT red_config.inc($1, $2, $3)",
                 encode_identifier_data(identifier_data),
                 value,
@@ -185,16 +218,24 @@ class PostgresDriver(BaseDriver):
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
 
+        _cache[identifier_data] = result
+
+        return result
+
     async def toggle(self, identifier_data: IdentifierData, default: bool) -> bool:
         try:
-            return await self._execute(
-                "SELECT red_config.inc($1, $2)",
+            result = await self._execute(
+                "SELECT red_config.toggle($1, $2)",
                 encode_identifier_data(identifier_data),
                 default,
                 method=self._pool.fetchval,
             )
         except asyncpg.WrongObjectTypeError as exc:
             raise errors.StoredTypeError(*exc.args)
+
+        _cache[identifier_data] = result
+
+        return result
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
