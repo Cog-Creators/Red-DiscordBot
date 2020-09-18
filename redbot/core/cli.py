@@ -193,15 +193,16 @@ def parse_cli_flags(args):
         help="Allows mentioning the bot as an alternative to using the bot prefix",
     )
     parser.add_argument(
+        "--zmq",
         "--rpc",
         action="store_true",
-        help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
+        help="Enables the built-in ZMQ server. Please read the docs prior to enabling this!",
     )
     parser.add_argument(
-        "--rpc-port",
+        "--zmq-port",
         type=int,
         default=6133,
-        help="The port of the built-in RPC server to use. Default to 6133.",
+        help="The port of the built-in ZMQ server to use. Default to 6133.",
     )
     parser.add_argument("--token", type=str, help="Run Red with the given token.")
     parser.add_argument(
