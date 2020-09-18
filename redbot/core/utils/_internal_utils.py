@@ -265,8 +265,8 @@ def send_to_owners_with_preprocessor(
         and returns the content that should be sent to given location.
     """
     try:
-        stack = inspect.stack()
-        if stack[1].function == "send_to_owners_with_prefix_replaced":
+        frame = inspect.currentframe().f_back
+        if frame.f_code.co_name == "send_to_owners_with_prefix_replaced":
             func = "send_to_owners_with_prefix_replaced"
         else:
             func = "send_to_owners_with_preprocessor"
@@ -394,7 +394,7 @@ def get_cog_by_call(bot: Red, func: str) -> str:
                 return "Red Core"
             caller_package = full_caller_page.split(".")[0]
             for cog_name, cog in bot._BotBase__cogs.items():
-                cog_package = inspect.getmodule(cog).__package__.split(".")[0]
+                cog_package = cog.__module__.split(".")[0]
                 if cog_package == caller_package:
                     valid = True
                     break
