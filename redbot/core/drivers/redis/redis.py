@@ -2,6 +2,7 @@ import asyncio
 import base64
 import contextlib
 import getpass
+import pickle
 import re
 from typing import Optional, Callable, Any, Union, AsyncIterator, Tuple, Pattern
 
@@ -206,7 +207,7 @@ class RedisDriver(BaseDriver):
         else:
             if ret is KeyError:
                 raise KeyError
-            return ret
+            return pickle.loads(pickle.dumps(ret, -1))
         _full_identifiers = identifier_data.to_tuple()
         cog_name, full_identifiers = self._escape_key(_full_identifiers[0]), _full_identifiers[1:]
         full_identifiers = list(map(self._escape_key, full_identifiers))
