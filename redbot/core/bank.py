@@ -600,7 +600,7 @@ async def get_leaderboard_position(
     else:
         pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
         if pos is None:
-            returnPos = None
+            return_pos = None
         else:
             return_pos = pos[0]
     if return_lb_size is True:
