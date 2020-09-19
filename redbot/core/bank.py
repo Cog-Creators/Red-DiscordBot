@@ -603,7 +603,7 @@ async def get_leaderboard_position(
             returnPos = None
         else:
             return_pos = pos[0]
-    if returnLeaderboardSize:
+    if return_lb_size is True:
         return returnPos, len(leaderboard)
     else:
         return return_pos
