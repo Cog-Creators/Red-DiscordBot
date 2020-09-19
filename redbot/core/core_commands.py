@@ -1781,7 +1781,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         data = await r.read()
                 except aiohttp.InvalidURL:
                     return await ctx.send(_("That URL is invalid."))
-                except aiohttp.ClientConnectionError:
+                except aiohttp.ClientError:
                     return await ctx.send(_("Something went wrong while trying to get the image."))
         else:
             await ctx.send_help()
