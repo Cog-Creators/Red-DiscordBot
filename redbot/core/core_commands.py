@@ -1776,8 +1776,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 url = url[1:-1]
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as r:
-                    data = await r.read()
+                try:
+                    async with session.get(url) as r:
+                        data = await r.read()
+                except aiohttp.InvalidURL:
+                    return await ctx.send(_("That URL is invalid."))
+                except aiohttp.ClientError:
+                    return await ctx.send(_("Something went wrong while trying to get the image."))
         else:
             await ctx.send_help()
             return
