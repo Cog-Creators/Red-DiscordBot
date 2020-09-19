@@ -571,7 +571,6 @@ async def get_leaderboard_position(
 
     return_lb_size : bool
         Whether or not to return a tuple with position and size of leaderboard
-        overall leaderboard or not
 
 
     Returns
