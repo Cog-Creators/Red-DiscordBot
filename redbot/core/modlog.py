@@ -841,6 +841,8 @@ async def create_case(
         The channel the action was taken in
     last_known_username: Optional[str]
         The last known username of the user
+        Note: This is ignored if a Member or User object is provided
+        in the user field
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
