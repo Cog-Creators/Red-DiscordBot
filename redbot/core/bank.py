@@ -607,7 +607,7 @@ async def get_leaderboard_position(
     if returnLeaderboardSize:
         return returnPos, len(leaderboard)
     else:
-        return returnPos
+        return return_pos
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
