@@ -569,7 +569,8 @@ async def get_leaderboard_position(
     member : `discord.User` or `discord.Member`
         The user to get the leaderboard position of
 
-    returnLeaderboardSize : Boolean to return the size of the
+    return_lb_size : bool
+        Whether or not to return a tuple with position and size of leaderboard
         overall leaderboard or not
 
 
