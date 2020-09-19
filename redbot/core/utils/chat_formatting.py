@@ -327,17 +327,13 @@ def underline(text: str, escape_formatting: bool = True) -> str:
     return "__{}__".format(text)
 
 
-def quote(text: str, escape_formatting: bool = False) -> str:
+def quote(text: str) -> str:
     """Quotes the given text.
-
-    Note: By default, this function will **not** escape ``text`` prior to quoting.
 
     Parameters
     ----------
     text : str
         The text to be marked up.
-    escape_formatting : `bool`, optional
-        Set to :code:`True` to escape markdown formatting in the text.
 
     Returns
     -------
@@ -345,7 +341,6 @@ def quote(text: str, escape_formatting: bool = False) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
     return textwrap.indent(text, "> ", lambda l: True)
 
 
