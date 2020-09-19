@@ -560,7 +560,7 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
 
 async def get_leaderboard_position(
     member: Union[discord.User, discord.Member], *args, **kwargs
-) -> Union[int, None] or List[tuple]:
+) -> Union[Optional[int], Tuple[Optional[int], int]]:
     """
     Get the leaderboard position for the specified user
 
