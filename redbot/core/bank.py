@@ -589,7 +589,6 @@ async def get_leaderboard_position(
         If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
-    returnLeaderboardSize = kwargs.get("returnLeaderboardSize")
 
     if await is_global():
         guild = None
