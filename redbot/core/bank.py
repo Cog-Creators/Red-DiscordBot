@@ -579,7 +579,7 @@ async def get_leaderboard_position(
     `int`
         The position of the user on the leaderboard
 
-    'int', 'int'
+   Tuple[Optional[int], int]
         The position of the user on the leaderboard followed
         by the size of the leaderboard
 
