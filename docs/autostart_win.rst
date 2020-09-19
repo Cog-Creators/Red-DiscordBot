@@ -80,9 +80,9 @@ Now that the service has been configured, run the following command:
 
 .. code-block:: none
 
-    nssm set redbot ObjectName $Env:COMPUTERNAME\$Env:USERNAME <password>
+    nssm set redbot ObjectName $Env:COMPUTERNAME\$Env:USERNAME $([System.Net.NetworkCredential]::new("", $(Read-Host -AsSecureString "Password")).Password)
 
-replacing <password> with the password you use to login to your computer. This
+entering the password you use to login to your computer when prompted. This
 sets the service to run under your user account so it can find your instances.
 
 --------------------
