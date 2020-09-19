@@ -1128,8 +1128,8 @@ class RedBase(
 
         cog.requires.reset()
 
-        for meth in self.zmq_handlers.pop(cogname.upper(), ()):
-            self.unregister_zmq_handler(meth)
+        with contextlib.suppress(TypeError):
+            self._zmq.remove_cog(cog.__cog_name__)
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
@@ -1240,6 +1240,10 @@ class RedBase(
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
+            cog_methods = [m[1] for m in inspect.getmembers(cog, predicate=inspect.ismethod)]
+            for method in cog_methods:
+                if hasattr(method, "__red_zmq_method__"):
+                    self._zmq.add_method(cog.__cog_name__, method.__red_zmq_method__, method)
         except Exception:
             for hook in added_hooks:
                 try:

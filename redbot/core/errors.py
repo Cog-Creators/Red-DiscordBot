@@ -103,3 +103,12 @@ class InvalidRequest(ZMQError):
 
     def __str__(self) -> str:
         return f"Invalid ZMQ Request: {self.message}"
+
+class HandlerError(ZMQError):
+    """Raised when a ZMQ handler runs into an error."""
+    def __init__(self, exc: Exception, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.exc = exc
+
+    def __str__(self) -> str:
+        return f"ZMQ Handler Error: {type(self.exc)}: {self.exc}"

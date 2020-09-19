@@ -45,6 +45,7 @@ from .utils.chat_formatting import (
     pagify,
 )
 from .commands.requires import PrivilegeLevel
+from .zmq import zmq_handler, ZMQRequest
 
 
 _entities = {
@@ -100,16 +101,19 @@ TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
-        self.bot.register_rpc_handler(self._load)
-        self.bot.register_rpc_handler(self._unload)
-        self.bot.register_rpc_handler(self._reload)
-        self.bot.register_rpc_handler(self._name)
-        self.bot.register_rpc_handler(self._prefixes)
-        self.bot.register_rpc_handler(self._version_info)
-        self.bot.register_rpc_handler(self._invite_url)
+        """
+        self.bot.register_zmq_handler(self._load)
+        self.bot.register_zmq_handler(self._unload)
+        self.bot.register_zmq_handler(self._reload)
+        self.bot.register_zmq_handler(self._name)
+        self.bot.register_zmq_handler(self._prefixes)
+        self.bot.register_zmq_handler(self._version_info)
+        self.bot.register_zmq_handler(self._invite_url)
+        """
 
+    @zmq_handler()
     async def _load(
-        self, pkg_names: Iterable[str]
+        self, *, pkg_names: Iterable[str], request: Optional[ZMQRequest] = None
     ) -> Tuple[
         List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
     ]:
@@ -197,7 +201,7 @@ class CoreLogic:
                 if maybe_repo is not None:
                     repos_with_shared_libs.add(maybe_repo.name)
 
-        return (
+        returning = (
             loaded_packages,
             failed_packages,
             invalid_pkg_names,
@@ -206,6 +210,11 @@ class CoreLogic:
             failed_with_reason_packages,
             repos_with_shared_libs,
         )
+
+        if request:
+            await request.send_message(returning)
+        else:
+            return returning
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
@@ -229,7 +238,8 @@ class CoreLogic:
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
-    async def _unload(self, pkg_names: Iterable[str]) -> Tuple[List[str], List[str]]:
+    @zmq_handler()
+    async def _unload(self, *, pkg_names: Iterable[str], request: Optional[ZMQRequest] = None) -> Tuple[List[str], List[str]]:
         """
         Unloads packages with the given names.
 
@@ -256,10 +266,16 @@ class CoreLogic:
             else:
                 failed_packages.append(name)
 
-        return unloaded_packages, failed_packages
+        returning = (unloaded_packages, failed_packages)
 
+        if request:
+            await request.send_message(returning)
+        else:
+            return returning
+
+    @zmq_handler()
     async def _reload(
-        self, pkg_names: Sequence[str]
+        self, *, pkg_names: Sequence[str], request: Optional[ZMQRequest] = None
     ) -> Tuple[
         List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
     ]:
@@ -276,7 +292,7 @@ class CoreLogic:
         tuple
             Tuple as returned by `CoreLogic._load()`
         """
-        await self._unload(pkg_names)
+        await self._unload(pkg_names=pkg_names)
 
         (
             loaded,
@@ -286,19 +302,31 @@ class CoreLogic:
             already_loaded,
             load_failed_with_reason,
             repos_with_shared_libs,
-        ) = await self._load(pkg_names)
+        ) = await self._load(pkg_names=pkg_names)
 
-        return (
-            loaded,
-            load_failed,
-            invalid_pkg_names,
-            not_found,
-            already_loaded,
-            load_failed_with_reason,
-            repos_with_shared_libs,
-        )
+        if request:
+            await request.send_message((
+                loaded,
+                load_failed,
+                invalid_pkg_names,
+                not_found,
+                already_loaded,
+                load_failed_with_reason,
+                repos_with_shared_libs,
+            ))
+        else:
+            return (
+                loaded,
+                load_failed,
+                invalid_pkg_names,
+                not_found,
+                already_loaded,
+                load_failed_with_reason,
+                repos_with_shared_libs,
+            )
 
-    async def _name(self, name: Optional[str] = None) -> str:
+    @zmq_handler()
+    async def _name(self, *, name: Optional[str] = None, request: Optional[ZMQRequest] = None) -> str:
         """
         Gets or sets the bot's username.
 
@@ -315,9 +343,13 @@ class CoreLogic:
         if name is not None:
             await self.bot.user.edit(username=name)
 
-        return self.bot.user.name
+        if request:
+            await request.send_message(self.bot.user.name)
+        else:
+            return self.bot.user.name
 
-    async def _prefixes(self, prefixes: Optional[Sequence[str]] = None) -> List[str]:
+    @zmq_handler()
+    async def _prefixes(self, *, prefixes: Optional[Sequence[str]] = None, request: Optional[ZMQRequest] = None) -> List[str]:
         """
         Gets or sets the bot's global prefixes.
 
@@ -333,8 +365,14 @@ class CoreLogic:
         """
         if prefixes:
             await self.bot.set_prefixes(guild=None, prefixes=prefixes)
-            return prefixes
-        return await self.bot._prefix_cache.get_prefixes(guild=None)
+            if request:
+                await request.send_message(prefixes)
+            else:
+                return prefixes
+        if request:
+            await request.send_message(await self.bot._prefix_cache.get_prefixes(guild=None))
+        else:
+            return await self.bot._prefix_cache.get_prefixes(guild=None)
 
     @classmethod
     async def _version_info(cls) -> Dict[str, str]:
@@ -348,7 +386,8 @@ class CoreLogic:
         """
         return {"redbot": __version__, "discordpy": discord.__version__}
 
-    async def _invite_url(self) -> str:
+    @zmq_handler()
+    async def _invite_url(self, *, request: Optional[ZMQRequest] = None) -> str:
         """
         Generates the invite URL for the bot.
 
@@ -360,7 +399,10 @@ class CoreLogic:
         app_info = await self.bot.application_info()
         perms_int = await self.bot._config.invite_perm()
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(app_info.id, permissions)
+        if request:
+            await request.send_message(discord.utils.oauth_url(app_info.id, permissions))
+        else:
+            return discord.utils.oauth_url(app_info.id, permissions)
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -1290,7 +1332,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 already_loaded,
                 failed_with_reason,
                 repos_with_shared_libs,
-            ) = await self._load(cogs)
+            ) = await self._load(pkg_names=cogs)
 
         output = []
 
@@ -1388,7 +1430,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not cogs:
             return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
-        unloaded, failed = await self._unload(cogs)
+        unloaded, failed = await self._unload(pkg_names=cogs)
 
         output = []
 
@@ -1435,7 +1477,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 already_loaded,
                 failed_with_reason,
                 repos_with_shared_libs,
-            ) = await self._reload(cogs)
+            ) = await self._reload(pkg_names=cogs)
 
         output = []
 
