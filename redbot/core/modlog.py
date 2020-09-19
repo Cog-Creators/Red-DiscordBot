@@ -286,12 +286,12 @@ class Case:
         data.pop("case_number", None)
         # last username is set based on passed user object
         data.pop("last_known_username", None)
-        for item in list(data.keys()):
-            if isinstance(item, discord.Object):
+        for item, value in data.items():
+            if isinstance(value, discord.Object):
                 # probably expensive to call but meh should capture all cases
-                setattr(self, item, data[item].id)
+                setattr(self, item, value.id)
             else:
-                setattr(self, item, data[item])
+                setattr(self, item, value)
 
         # update last known username
         if not isinstance(self.user, int):
