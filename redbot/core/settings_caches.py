@@ -109,8 +109,9 @@ class I18nManager:
             if out is None:
                 self._guild_regional_format[guild.id] = None
                 return self._guild_regional_format[None]
-            else:
-                return self._guild_regional_format[guild.id]
+            else:  # Not cached, got a custom regional format.
+                self._guild_regional_format[guild.id] = out
+                return out
 
     async def set_regional_format(
         self, guild: discord.Guild, regional_format: Union[str, None]
