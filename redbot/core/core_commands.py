@@ -2105,7 +2105,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if language_code is None:
             i18n.set_contextual_regional_format(None)
             await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
-            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            await ctx.send(_("Regional formatting will now be based on bot's locale in this server."))
             return
 
         try:
