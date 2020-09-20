@@ -65,23 +65,23 @@ class I18nManager:
     async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
         # Ensure global locale is in the cache
-        if "global_locale" not in self._guild_locale:
+        if None not in self._guild_locale:
             global_locale = await self._config.locale()
-            self._guild_locale['global_locale'] = global_locale
+            self._guild_locale[None] = global_locale
 
         if guild is None:  # Not a guild so cannot support guild locale
             # Return the bot's globally set locale if its None on a guild scope.
-            return self._guild_locale['global_locale']
+            return self._guild_locale[None]
         elif guild.id in self._guild_locale:  # Cached guild
             if self._guild_locale[guild.id] is None:
-                return self._guild_locale['global_locale']
+                return self._guild_locale[None]
             else:
                 return self._guild_locale[guild.id]
         else:  # Uncached guild
             out = await self._config.guild(guild).locale()  # No locale set
             if out is None:
                 self._guild_locale[guild.id] = None
-                return self._guild_locale['global_locale']
+                return self._guild_locale[None]
             else:
                 return self._guild_locale[guild.id]
 
@@ -93,22 +93,22 @@ class I18nManager:
     async def get_regional_format(self, guild: Union[discord.Guild, None]) -> Optional[str]:
         """Get the regional format from the cache"""
         # Ensure global locale is in the cache
-        if "global_regional_locale" not in self._guild_regional_format:
+        if None not in self._guild_regional_format:
             global_regional_format = await self._config.regional_format()
-            self._guild_regional_format['global_regional_locale'] = global_regional_format
+            self._guild_regional_format[None] = global_regional_format
 
         if guild is None:  # Not a guild so cannot support guild locale
-            return self._guild_regional_format['global_regional_locale']
+            return self._guild_regional_format[None]
         elif guild.id in self._guild_regional_format:  # Cached guild
             if self._guild_regional_format[guild.id] is None:
-                return self._guild_regional_format['global_regional_locale']
+                return self._guild_regional_format[None]
             else:
-                return self._guild_regional_format[guild.id]
+                return self._guild_regional_format[None]
         else:  # Uncached guild
             out = await self._config.guild(guild).regional_format()  # No locale set
             if out is None:
                 self._guild_regional_format[guild.id] = None
-                return self._guild_regional_format['global_regional_locale']
+                return self._guild_regional_format[None]
             else:
                 return self._guild_regional_format[guild.id]
 
