@@ -246,8 +246,8 @@ class ModInfo(MixinMeta):
         data.add_field(name=_("Joined this server on"), value=joined_on)
         if role_str is not None:
             data.add_field(
-                name=_("Roles") if len(roles) > 2 else _("Role"), value=role_str, inline=False
-            )  # len(roles) > 2 because @everyone is a "role" which is just not displayed.
+                name=_("Roles") if len(roles) > 1 else _("Role"), value=role_str, inline=False
+            )
         if names:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
