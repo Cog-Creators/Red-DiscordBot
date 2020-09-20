@@ -59,23 +59,31 @@ class PrefixManager:
 class I18nManager:
     def __init__(self, config: Config):
         self._config: Config = config
-        self._guild_locale: Dict[int, str] = {}
-        self._guild_regional_format: Dict[int, str] = {}
+        self._guild_locale: Dict[int, Union[str, None]] = {}
+        self._guild_regional_format: Dict[int, Union[str, None]] = {}
 
     async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
-        if guild is None:
+        # Ensure global locale is in the cache
+        if "global_locale" not in self._guild_locale:
+            global_locale = await self._config.locale()
+            self._guild_locale['global_locale'] = global_locale
+
+        if guild is None:  # Not a guild so cannot support guild locale
             # Return the bot's globally set locale if its None on a guild scope.
-            out = await self._config.locale()
-        elif guild.id in self._guild_locale:
-            out = self._guild_locale[guild.id]
-        else:
-            out = await self._config.guild(guild).locale()
-            if out is None:
-                out = await self._config.locale()
+            return self._guild_locale['global_locale']
+        elif guild.id in self._guild_locale:  # Cached guild
+            if self._guild_locale[guild.id] is None:
+                return self._guild_locale['global_locale']
             else:
-                self._guild_locale[guild.id] = out
-        return out
+                return self._guild_locale[guild.id]
+        else:  # Uncached guild
+            out = await self._config.guild(guild).locale()  # No locale set
+            if out is None:
+                self._guild_locale[guild.id] = None
+                return self._guild_locale['global_locale']
+            else:
+                return self._guild_locale[guild.id]
 
     async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]) -> None:
         """Set the guild locale in the config and cache"""
@@ -84,17 +92,25 @@ class I18nManager:
 
     async def get_regional_format(self, guild: Union[discord.Guild, None]) -> Optional[str]:
         """Get the regional format from the cache"""
-        if guild is None:
-            out = await self._config.regional_format()
-        elif guild.id in self._guild_regional_format:
-            out = self._guild_regional_format[guild.id]
-        else:
-            out = await self._config.guild(guild).regional_format()
-            if out is None:
-                out = await self._config.regional_format()
+        # Ensure global locale is in the cache
+        if "global_regional_locale" not in self._guild_regional_format:
+            global_regional_format = await self._config.regional_format()
+            self._guild_regional_format['global_regional_locale'] = global_regional_format
+
+        if guild is None:  # Not a guild so cannot support guild locale
+            return self._guild_regional_format['global_regional_locale']
+        elif guild.id in self._guild_regional_format:  # Cached guild
+            if self._guild_regional_format[guild.id] is None:
+                return self._guild_regional_format['global_regional_locale']
             else:
-                self._guild_regional_format[guild.id] = out
-        return out
+                return self._guild_regional_format[guild.id]
+        else:  # Uncached guild
+            out = await self._config.guild(guild).regional_format()  # No locale set
+            if out is None:
+                self._guild_regional_format[guild.id] = None
+                return self._guild_regional_format['global_regional_locale']
+            else:
+                return self._guild_regional_format[guild.id]
 
     async def set_regional_format(
         self, guild: discord.Guild, regional_format: Union[str, None]
