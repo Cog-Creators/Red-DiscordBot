@@ -284,8 +284,8 @@ Now let's see an example that uses multiple identifiers:
             await ctx.send("Your access to this channel is {}".format("Allowed" if allowed else "Denied"))
 
 In the above example, we defined the custom group "ChannelAccess" to accept two identifiers
-using :py:meth:`Config.init_custom`. Then, we were able to set the default value for any members
-access to any channel as `False` until they are granted access by the bot owner.
+using :py:meth:`Config.init_custom`. Then, we were able to set the default value for any member's
+access to any channel to `False` until the bot owner grants them access.
 
 .. important::
 
