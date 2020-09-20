@@ -15,7 +15,12 @@ from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
-from redbot.core.i18n import Translator, set_contextual_locale, set_contextual_regional_format
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locale,
+    set_contextual_regional_format,
+    set_contextual_locales_from_guild
+)
 from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
