@@ -2100,7 +2100,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         `<language_code>` can be any language code with country code included,
         e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
 
-        Leave `<language_code>` empty to base regional formatting on bot's locale.
+        Leave `<language_code>` empty to base regional formatting on bot's locale in this server.
         """
         if language_code is None:
             i18n.set_contextual_regional_format(None)
