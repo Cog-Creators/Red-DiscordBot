@@ -255,7 +255,7 @@ Now lets use this custom group:
 Here we used :py:meth:`Config.custom` to access our custom group much like we would have used :py:meth:`Config.guild`.
 Since it's a custom group, we need to use :code:`id` attribute of guild to get a unique identifier.
 
-Now lets show and example that uses multiple identifiers:
+Now let's see an example that uses multiple identifiers:
 
 .. code-block:: python
 
