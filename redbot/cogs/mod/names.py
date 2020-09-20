@@ -260,7 +260,7 @@ class ModInfo(MixinMeta):
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(nicks))
             data.add_field(
-                name=_("Previous Nicknames") if len(val) > 1 else _("Previous Nickname"),
+                name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),
                 value=val,
                 inline=False,
             )
