@@ -234,7 +234,7 @@ accept one identifier by calling :py:meth:`Config.init_custom` with the argument
     :py:meth:`Config.init_custom` **must** be called prior to using a custom group.
 
 
-Now lets use this custom group:
+Now let's use this custom group:
 
 .. code-block:: python
 
