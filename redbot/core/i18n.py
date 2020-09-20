@@ -251,12 +251,6 @@ class Translator(Callable[[str], str]):
         except KeyError:
             return untranslated
 
-    def check_cache_for_locale(self, locale: str) -> bool:
-        """Check is an locale exists with in the cache"""
-        if locale in self.translations:
-            return True
-        return False
-
     def load_translations(self):
         """
         Loads the current translations.
