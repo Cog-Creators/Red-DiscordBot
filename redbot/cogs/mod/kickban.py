@@ -62,7 +62,7 @@ class KickBanMixin(MixinMeta):
 
     async def ban_user(
         self,
-        user: Union[discord.Member, discord.User],
+        user: Union[discord.Member, discord.User, discord.Object],
         ctx: commands.Context,
         days: int = 0,
         reason: str = None,
@@ -72,6 +72,9 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
 
         removed_temp = False
+
+        if not (0 <= days <= 7):
+            return _("Invalid days. Must be between 0 and 7.")
 
         if isinstance(user, discord.Member):
             if author == user:
@@ -116,9 +119,6 @@ class KickBanMixin(MixinMeta):
 
             ban_type = "hackban"
 
-        if not (0 <= days <= 7):
-            return _("Invalid days. Must be between 0 and 7.")
-
         audit_reason = get_audit_reason(author, reason)
 
         queue_entry = (guild.id, user.id)
@@ -140,6 +140,8 @@ class KickBanMixin(MixinMeta):
                 end_result = _("Done. It was about time.")
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
+        except discord.NotFound:
+            return _(f"User {user.id} does not exist.")
         except Exception as e:
             log.exception(
                 "{}({}) attempted to {} {}({}), but an error occurred.".format(
@@ -293,11 +295,7 @@ class KickBanMixin(MixinMeta):
         if days is None:
             days = await self.config.guild(guild).default_days()
         if isinstance(user, int):
-            try:
-                user = await self.bot.fetch_user(user)
-            except discord.errors.NotFound:
-                await ctx.send_help()
-                return
+            user = discord.Object(id=user)
 
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
