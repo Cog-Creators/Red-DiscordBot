@@ -225,7 +225,7 @@ Tutorial example.
             self.config.register_custom("CustomGuildGroup", **default_guild)
 
 In the above, we registered the custom group named "CustomGuildGroup" to contain the same defaults
-that :code:`self.config.guild` normally would. First we initialized the group "CustomGuildGroup" to
+that :code:`self.config.guild` normally would. First, we initialized the group "CustomGuildGroup" to
 accept one identifier by calling :py:meth:`Config.init_custom` with the argument :code:`1`. Then we used
 :py:meth:`Config.register_custom` to register the default values.
 
