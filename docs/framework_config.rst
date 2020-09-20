@@ -199,7 +199,7 @@ This usage guide will cover the following features:
 
 Custom Groups
 ^^^^^^^^^^^^^
-While Config has built in groups for the common discord objects,
+While Config has built-in groups for the common discord objects,
 sometimes you need a combination of these or your own defined grouping.
 Config handles this by allowing you to define custom groups.
 
