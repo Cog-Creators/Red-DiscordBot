@@ -72,9 +72,13 @@ class APIDriver(BaseDriver):
     async def initialize(cls, **storage_details) -> None:
         host = storage_details["host"]
         password = storage_details["password"]
+        sockets = storage_details["unix_socket"]
         cls.__token = password
         cls.__base_url = host
-        cls.__session = aiohttp.ClientSession(json_serialize=cls._dump_to_string)
+        cls.__session = aiohttp.ClientSession(
+            json_serialize=cls._dump_to_string,
+            connector=aiohttp.UnixConnector(path=sockets) if sockets else None,
+        )
 
     @classmethod
     async def teardown(cls) -> None:
@@ -85,7 +89,7 @@ class APIDriver(BaseDriver):
     def get_config_details():
         host = (
             input(
-                f"Enter the API server's base url "
+                f"Enter the API server's base url. "
                 f"If left blank, Red will try the following, in order:\n"
                 f" - http://localhost:8005.\n"
                 f"> "
@@ -103,11 +107,15 @@ class APIDriver(BaseDriver):
         )
         if compare_digest(password, "NONE"):
             password = None
-
-        return {
-            "host": host,
-            "password": password,
-        }
+        sockets = (
+            input(
+                f"Enter the path full to your UNIX socket file. "
+                f"If left blank, Red will use a TCP connector:\n"
+                f"> "
+            )
+            or None
+        )
+        return {"host": host, "password": password, "unix_socket": sockets}
 
     async def get(self, identifier_data: IdentifierData):
         full_identifiers = identifier_data.to_dict()
