@@ -5,6 +5,7 @@ from .. import data_manager
 from .base import IdentifierData, BaseDriver, ConfigCategory
 from .json import JsonDriver
 from .postgres import PostgresDriver
+from .apidriver import APIDriver
 
 __all__ = [
     "get_driver",
@@ -12,6 +13,7 @@ __all__ = [
     "IdentifierData",
     "BaseDriver",
     "JsonDriver",
+    "APIDriver",
     "PostgresDriver",
     "BackendType",
 ]
@@ -24,12 +26,19 @@ class BackendType(enum.Enum):
     JSON = "JSON"
     #: Postgres storage backend.
     POSTGRES = "Postgres"
+    #: API storage backend
+    API = "API"
+
     # Dead drivers below retained for error handling.
     MONGOV1 = "MongoDB"
     MONGO = "MongoDBV2"
 
 
-_DRIVER_CLASSES = {BackendType.JSON: JsonDriver, BackendType.POSTGRES: PostgresDriver}
+_DRIVER_CLASSES = {
+    BackendType.JSON: JsonDriver,
+    BackendType.POSTGRES: PostgresDriver,
+    BackendType.API: APIDriver,
+}
 
 
 def _get_driver_class_include_old(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
