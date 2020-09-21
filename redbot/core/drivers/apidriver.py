@@ -74,11 +74,12 @@ class APIDriver(BaseDriver):
         password = storage_details["password"]
         cls.__token = password
         cls.__base_url = host
-        cls.__session = aiohttp.ClientSession()
+        cls.__session = aiohttp.ClientSession(json_serialize=cls._dump_to_string)
 
     @classmethod
     async def teardown(cls) -> None:
-        await cls.__session.close()
+        if cls.__session and not cls.__session.closed:
+            await cls.__session.close()
 
     @staticmethod
     def get_config_details():
@@ -114,7 +115,6 @@ class APIDriver(BaseDriver):
             url=_GET_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
             data=JsonPayload({"identifier": full_identifiers}),
-            json_serialize=self._dump_to_string,
         ) as response:
             if response.status == 200:
                 return self._load_to_string(await response.json(loads=json_loads))
@@ -129,7 +129,6 @@ class APIDriver(BaseDriver):
             data=JsonPayload(
                 {"identifier": full_identifiers, "config_data": self._dump_to_string(value)}
             ),
-            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -144,7 +143,6 @@ class APIDriver(BaseDriver):
             url=_CLEAR_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
             data=JsonPayload({"identifier": full_identifiers}),
-            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -170,7 +168,6 @@ class APIDriver(BaseDriver):
                     "default": self._dump_to_string(default),
                 }
             ),
-            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -193,7 +190,6 @@ class APIDriver(BaseDriver):
                     "default": self._dump_to_string(default),
                 }
             ),
-            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -209,7 +205,6 @@ class APIDriver(BaseDriver):
             url=_CLEAR_ALL_ENDPOINT.replace("{base}", cls.__base_url),
             headers={"Authorization": cls.__token},
             param={"i_want_to_do_this": True},
-            json_serialize=cls._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -223,7 +218,6 @@ class APIDriver(BaseDriver):
         async with cls.__session.post(
             url=_AITER_COGS_ENDPOINT.replace("{base}", cls.__base_url),
             headers={"Authorization": cls.__token},
-            json_serialize=cls._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             return cls._load_to_string(response_output)
