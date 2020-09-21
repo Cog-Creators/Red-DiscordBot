@@ -7,7 +7,17 @@ from redbot.core import errors
 from redbot.core.drivers.log import log
 from secrets import compare_digest
 
-import ujson
+try:
+    import orjson
+
+    ujson = None
+    json_loads = orjson.loads
+except ImportError:
+    orjson = None
+    import ujson
+
+    json_loads = ujson.loads
+
 
 from .base import BaseDriver, IdentifierData, ConfigCategory
 
@@ -77,7 +87,10 @@ class APIDriver(BaseDriver):
             json={"identifier": full_identifiers},
         ) as response:
             if response.status == 200:
-                return await response.json(loads=ujson.loads)
+                response = await response.json(loads=json_loads)
+                if orjson:
+                    response = response.decode("utf-8")
+                return response
             else:
                 raise KeyError
 
@@ -88,8 +101,10 @@ class APIDriver(BaseDriver):
             headers={"Authorization": self.__token},
             json={"identifier": full_identifiers, "config_data": ujson.dumps(value)},
         ) as response:
-            response_output = await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
             if response.status == 200:
+                if orjson:
+                    response_output = response_output.decode("utf-8")
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -101,8 +116,10 @@ class APIDriver(BaseDriver):
             headers={"Authorization": self.__token},
             json={"identifier": full_identifiers},
         ) as response:
-            response_output = await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
             if response.status == 200:
+                if orjson:
+                    response_output = response_output.decode("utf-8")
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -117,10 +134,16 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_INCREMENT_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers, "config_data": ujson.dumps(value), "default": ujson.dumps(default)},
+            json={
+                "identifier": full_identifiers,
+                "config_data": ujson.dumps(value),
+                "default": ujson.dumps(default),
+            },
         ) as response:
-            response_output = await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
             if response.status == 200:
+                if orjson:
+                    response_output = response_output.decode("utf-8")
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -132,10 +155,16 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_TOGGLE_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers, "config_data": ujson.dumps(value), "default": ujson.dumps(default)},
+            json={
+                "identifier": full_identifiers,
+                "config_data": ujson.dumps(value),
+                "default": ujson.dumps(default),
+            },
         ) as response:
-            response_output = await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
             if response.status == 200:
+                if orjson:
+                    response_output = response_output.decode("utf-8")
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -148,8 +177,10 @@ class APIDriver(BaseDriver):
             headers={"Authorization": cls.__token},
             param={"i_want_to_do_this": True},
         ) as response:
-            response_output = await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
             if response.status == 200:
+                if orjson:
+                    response_output = response_output.decode("utf-8")
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -160,7 +191,10 @@ class APIDriver(BaseDriver):
             url=_AITER_COGS_ENDPOINT.replace("{base}", cls.__base_url),
             headers={"Authorization": cls.__token},
         ) as response:
-            return await response.json(loads=ujson.loads)
+            response_output = await response.json(loads=json_loads)
+            if orjson:
+                response_output = response_output.decode("utf-8")
+            return response_output
 
     async def import_data(self, cog_data, custom_group_data):
         log.info(f"Converting Cog: {self.cog_name}")
