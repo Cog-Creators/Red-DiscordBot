@@ -60,7 +60,11 @@ class RedisDriver(BaseDriver):
         port = storage_details["port"]
         password = storage_details["password"]
         database = storage_details.get("database", 0)
-        address = f"redis://{host}:{port}"
+        socket = storage_details.get("unix_socket")
+        if socket:
+            address = socket
+        else:
+            address = f"redis://{host}:{port}"
         cls._pool = await create_redis_pool(
             address=address,
             db=database,
@@ -161,12 +165,21 @@ class RedisDriver(BaseDriver):
                 print("Database must be a number")
             else:
                 break
+        sockets = (
+                input(
+                    f"Enter the path full to your UNIX socket file. "
+                    f"If left blank, Red will use a TCP connector (only set this if you also connect the Redis server to the same socket):\n"
+                    f"> "
+                )
+                or None
+        )
 
         return {
             "host": host,
             "port": port,
             "password": password,
             "database": database,
+            "unix_socket": sockets
         }
 
     async def _pre_flight(self, identifier_data: IdentifierData):
