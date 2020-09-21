@@ -156,7 +156,7 @@ You can start using the downloader cog by loading it: ``[p]load downloader``
 You can find cogs by searching on `<https://index.discord.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
-.. note:: We're currently working on a better website for listing repositories and their cogs. Stay tuned!
+.. note:: An even better way to discover new cogs and repositories is in the works! Stay tuned!
 
 Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
