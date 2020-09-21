@@ -132,7 +132,7 @@ class ModSettings(MixinMeta):
                 msg = _("Mention spam currently only accounts for mentions of different users.")
             await ctx.send(msg)
             return
-        
+
         if enabled:
             msg = _("Mention spam will now account for multiple mentions of the same user.")
         else:
