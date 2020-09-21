@@ -1,7 +1,9 @@
 import getpass
-from typing import Final, Optional, Union, AsyncIterator, Tuple
+from typing import Any, Final, Optional, Union, AsyncIterator, Tuple
 
 import aiohttp
+from aiohttp import BytesPayload
+from aiohttp.typedefs import JSONEncoder
 
 from redbot.core import errors
 from redbot.core.drivers.log import log
@@ -33,6 +35,30 @@ _INCREMENT_ENDPOINT: Final[str] = "{base}/config/increment"
 _TOGGLE_ENDPOINT: Final[str] = "{base}/config/toggle"
 _CLEAR_ENDPOINT: Final[str] = "{base}/config/clear"
 _CLEAR_ALL_ENDPOINT: Final[str] = "{base}/config/clear_all"
+
+
+class JsonPayload(BytesPayload):
+    def __init__(
+        self,
+        value: Any,
+        encoding: str = "utf-8",
+        content_type: str = "application/json",
+        dumps: JSONEncoder = json_dumps,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        if orjson:
+            super().__init__(
+                dumps(value), content_type=content_type, encoding=encoding, *args, **kwargs
+            )
+        else:
+            super().__init__(
+                dumps(value).encode(encoding),
+                content_type=content_type,
+                encoding=encoding,
+                *args,
+                **kwargs,
+            )
 
 
 # noinspection PyProtectedMember
@@ -87,13 +113,11 @@ class APIDriver(BaseDriver):
         async with self.__session.post(
             url=_GET_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers},
+            data=JsonPayload({"identifier": full_identifiers}),
+            json_serialize=self._dump_to_string,
         ) as response:
             if response.status == 200:
-                response = await response.json(loads=json_loads)
-                if orjson:
-                    response = response.decode("utf-8")
-                return response
+                return self._load_to_string(await response.json(loads=json_loads))
             else:
                 raise KeyError
 
@@ -102,12 +126,14 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_SET_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers, "config_data": json_dumps(value)},
+            data=JsonPayload(
+                {"identifier": full_identifiers, "config_data": self._dump_to_string(value)}
+            ),
+            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
-                if orjson:
-                    response_output = response_output.decode("utf-8")
+                response_output = self._load_to_string(response_output)
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -117,12 +143,12 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_CLEAR_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers},
+            data=JsonPayload({"identifier": full_identifiers}),
+            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
-                if orjson:
-                    response_output = response_output.decode("utf-8")
+                response_output = self._load_to_string(response_output)
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -137,16 +163,18 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_INCREMENT_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={
-                "identifier": full_identifiers,
-                "config_data": json_dumps(value),
-                "default": json_dumps(default),
-            },
+            data=JsonPayload(
+                {
+                    "identifier": full_identifiers,
+                    "config_data": self._dump_to_string(value),
+                    "default": self._dump_to_string(default),
+                }
+            ),
+            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
-                if orjson:
-                    response_output = response_output.decode("utf-8")
+                response_output = self._load_to_string(response_output)
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -158,16 +186,18 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_TOGGLE_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={
-                "identifier": full_identifiers,
-                "config_data": json_dumps(value),
-                "default": json_dumps(default),
-            },
+            data=JsonPayload(
+                {
+                    "identifier": full_identifiers,
+                    "config_data": self._dump_to_string(value),
+                    "default": self._dump_to_string(default),
+                }
+            ),
+            json_serialize=self._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
-                if orjson:
-                    response_output = response_output.decode("utf-8")
+                response_output = self._load_to_string(response_output)
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -179,11 +209,11 @@ class APIDriver(BaseDriver):
             url=_CLEAR_ALL_ENDPOINT.replace("{base}", cls.__base_url),
             headers={"Authorization": cls.__token},
             param={"i_want_to_do_this": True},
+            json_serialize=cls._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
-                if orjson:
-                    response_output = response_output.decode("utf-8")
+                response_output = cls._load_to_string(response_output)
                 return response_output.get("value")
             else:
                 raise errors.ConfigError(str(response_output))
@@ -193,11 +223,10 @@ class APIDriver(BaseDriver):
         async with cls.__session.post(
             url=_AITER_COGS_ENDPOINT.replace("{base}", cls.__base_url),
             headers={"Authorization": cls.__token},
+            json_serialize=cls._dump_to_string,
         ) as response:
             response_output = await response.json(loads=json_loads)
-            if orjson:
-                response_output = response_output.decode("utf-8")
-            return response_output
+            return cls._load_to_string(response_output)
 
     async def import_data(self, cog_data, custom_group_data):
         log.info(f"Converting Cog: {self.cog_name}")
@@ -231,3 +260,18 @@ class APIDriver(BaseDriver):
                 await self.set(ident_data, data)
             except Exception as err:
                 log.critical(f"Error saving: {ident_data.__repr__()}: {data}", exc_info=err)
+
+    @staticmethod
+    def _load_to_string(value: Any) -> Any:
+        if not orjson:
+            return value
+        if hasattr(value, "decode"):
+            return value.decode("utf-8")
+        return value
+
+    @staticmethod
+    def _dump_to_string(value: Any) -> Any:
+        if not orjson:
+            return ujson.dumps(value)
+        else:
+            return orjson.dumps(value).decode("utf-8")
