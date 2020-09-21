@@ -114,25 +114,31 @@ class ModSettings(MixinMeta):
 
     @mentionspam.command(name="strict")
     @commands.guild_only()
-    async def mentionspam_strict(self, ctx: commands.Context, toggle: bool = False):
+    async def mentionspam_strict(self, ctx: commands.Context, enabled: bool = None):
         """
         Setting to account for duplicate mentions.
 
         If enabled all mentions will count including duplicated mentions.
         If disabled only unique mentions will count.
 
-        Default setting is False.
+        Use this command without any parameter to see current setting.
         """
-        if toggle is True:
-            await self.config.guild(ctx.guild).mention_spam.strict.set(True)
-            return await ctx.send(
-                _("Mention spam will now account for multiple mentions of the same user.")
-            )
-        elif toggle is False:
-            await self.config.guild(ctx.guild).mention_spam.strict.set(False)
-            return await ctx.send(
-                _("Mention spam will only account for mentions of different users.")
-            )
+        guild = ctx.guild
+        if enabled is None:
+            state = await self.config(guild).mention_spam.strict()
+            if state:
+                msg = _("Mention spam currently accounts for multiple mentions of the same user.")
+            else:
+                msg = _("Mention spam currently only accounts for mentions of different users.")
+            await ctx.send(msg)
+            return
+        
+        if enabled:
+            msg = _("Mention spam will now account for multiple mentions of the same user.")
+        else:
+            msg = _("Mention spam will only account for mentions of different users.")
+        await self.config.guild(ctx.guild).mention_spam.strict.set(enabled)
+        await ctx.send(msg)
 
     @mentionspam.command(name="warn")
     @commands.guild_only()
