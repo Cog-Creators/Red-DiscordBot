@@ -87,10 +87,10 @@ class APIDriver(BaseDriver):
             input(
                 f"Enter the API server's base url "
                 f"If left blank, Red will try the following, in order:\n"
-                f" - http://localhost:8000.\n"
+                f" - http://localhost:8005.\n"
                 f"> "
             )
-            or "http://localhost:8000"
+            or "http://localhost:8005"
         )
         if host.endswith("/"):
             host = host[:-1]
