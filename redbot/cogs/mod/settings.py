@@ -125,7 +125,7 @@ class ModSettings(MixinMeta):
         """
         guild = ctx.guild
         if enabled is None:
-            state = await self.config(guild).mention_spam.strict()
+            state = await self.config.guild(guild).mention_spam.strict()
             if state:
                 msg = _("Mention spam currently accounts for multiple mentions of the same user.")
             else:
