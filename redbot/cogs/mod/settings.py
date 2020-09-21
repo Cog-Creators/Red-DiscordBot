@@ -137,7 +137,7 @@ class ModSettings(MixinMeta):
             msg = _("Mention spam will now account for multiple mentions of the same user.")
         else:
             msg = _("Mention spam will only account for mentions of different users.")
-        await self.config.guild(ctx.guild).mention_spam.strict.set(enabled)
+        await self.config.guild(guild).mention_spam.strict.set(enabled)
         await ctx.send(msg)
 
     @mentionspam.command(name="warn")
