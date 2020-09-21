@@ -12,11 +12,13 @@ try:
 
     ujson = None
     json_loads = orjson.loads
+    json_dumps = orjson.dumps
 except ImportError:
-    orjson = None
     import ujson
 
+    orjson = None
     json_loads = ujson.loads
+    json_dumps = ujson.dumps
 
 
 from .base import BaseDriver, IdentifierData, ConfigCategory
@@ -38,6 +40,7 @@ class APIDriver(BaseDriver):
     __token: Optional[str] = None
     __base_url: Optional[str] = None
     __session: Optional[aiohttp.ClientSession] = None
+    _decoder: str = "orjson" if orjson else "ujson"
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
@@ -99,7 +102,7 @@ class APIDriver(BaseDriver):
         async with self.__session.put(
             url=_SET_ENDPOINT.replace("{base}", self.__base_url),
             headers={"Authorization": self.__token},
-            json={"identifier": full_identifiers, "config_data": ujson.dumps(value)},
+            json={"identifier": full_identifiers, "config_data": json_dumps(value)},
         ) as response:
             response_output = await response.json(loads=json_loads)
             if response.status == 200:
@@ -136,8 +139,8 @@ class APIDriver(BaseDriver):
             headers={"Authorization": self.__token},
             json={
                 "identifier": full_identifiers,
-                "config_data": ujson.dumps(value),
-                "default": ujson.dumps(default),
+                "config_data": json_dumps(value),
+                "default": json_dumps(default),
             },
         ) as response:
             response_output = await response.json(loads=json_loads)
@@ -157,8 +160,8 @@ class APIDriver(BaseDriver):
             headers={"Authorization": self.__token},
             json={
                 "identifier": full_identifiers,
-                "config_data": ujson.dumps(value),
-                "default": ujson.dumps(default),
+                "config_data": json_dumps(value),
+                "default": json_dumps(default),
             },
         ) as response:
             response_output = await response.json(loads=json_loads)
