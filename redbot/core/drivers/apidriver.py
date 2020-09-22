@@ -1,8 +1,9 @@
+import asyncio
 import getpass
 from typing import Any, Final, Optional, Union, AsyncIterator, Tuple
 
 import aiohttp
-from aiohttp import BytesPayload
+from aiohttp import BytesPayload, ClientTimeout
 from aiohttp.typedefs import JSONEncoder
 
 from redbot.core import errors
@@ -85,6 +86,7 @@ class APIDriver(BaseDriver):
         cls.__session = aiohttp.ClientSession(
             json_serialize=cls._dump_to_string,
             connector=aiohttp.UnixConnector(path=sockets) if sockets else None,
+            timeout=ClientTimeout(total=1),
         )
 
     @classmethod
@@ -126,45 +128,54 @@ class APIDriver(BaseDriver):
 
     async def get(self, identifier_data: IdentifierData):
         full_identifiers = identifier_data.to_dict()
-        async with self.__session.post(
-            url=_GET_ENDPOINT.replace("{base}", self.__base_url),
-            headers={"Authorization": self.__token},
-            data=JsonPayload({"identifier": full_identifiers}),
-        ) as response:
-            if response.status == 200:
-                return self._load_to_string(await response.json(loads=json_loads))
-            else:
-                raise KeyError
+        try:
+            async with self.__session.post(
+                url=_GET_ENDPOINT.replace("{base}", self.__base_url),
+                headers={"Authorization": self.__token},
+                data=JsonPayload({"identifier": full_identifiers}),
+            ) as response:
+                if response.status == 200:
+                    return self._load_to_string(await response.json(loads=json_loads))
+                else:
+                    raise KeyError
+        except asyncio.exceptions.TimeoutError:
+            return await self.get(identifier_data=identifier_data)
 
     async def set(self, identifier_data: IdentifierData, value=None):
         full_identifiers = identifier_data.to_dict()
-        async with self.__session.put(
-            url=_SET_ENDPOINT.replace("{base}", self.__base_url),
-            headers={"Authorization": self.__token},
-            data=JsonPayload(
-                {"identifier": full_identifiers, "config_data": self._dump_to_string(value)}
-            ),
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            if response.status == 200:
-                response_output = self._load_to_string(response_output)
-                return response_output.get("value")
-            else:
-                raise errors.ConfigError(str(response_output))
+        try:
+            async with self.__session.put(
+                url=_SET_ENDPOINT.replace("{base}", self.__base_url),
+                headers={"Authorization": self.__token},
+                data=JsonPayload(
+                    {"identifier": full_identifiers, "config_data": self._dump_to_string(value)}
+                ),
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                if response.status == 200:
+                    response_output = self._load_to_string(response_output)
+                    return response_output.get("value")
+                else:
+                    raise errors.ConfigError(str(response_output))
+        except asyncio.exceptions.TimeoutError:
+            return await self.set(identifier_data=identifier_data, value=value)
 
     async def clear(self, identifier_data: IdentifierData):
         full_identifiers = identifier_data.to_dict()
-        async with self.__session.put(
-            url=_CLEAR_ENDPOINT.replace("{base}", self.__base_url),
-            headers={"Authorization": self.__token},
-            data=JsonPayload({"identifier": full_identifiers}),
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            if response.status == 200:
-                response_output = self._load_to_string(response_output)
-                return response_output.get("value")
-            else:
-                raise errors.ConfigError(str(response_output))
+        try:
+            async with self.__session.put(
+                url=_CLEAR_ENDPOINT.replace("{base}", self.__base_url),
+                headers={"Authorization": self.__token},
+                data=JsonPayload({"identifier": full_identifiers}),
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                if response.status == 200:
+                    response_output = self._load_to_string(response_output)
+                    return response_output.get("value")
+                else:
+                    raise errors.ConfigError(str(response_output))
+        except asyncio.exceptions.TimeoutError:
+            return await self.clear(identifier_data=identifier_data)
 
     async def inc(
         self,
@@ -172,70 +183,82 @@ class APIDriver(BaseDriver):
         value: Union[int, float],
         default: Union[int, float] = 0,
     ) -> Union[int, float]:
-        full_identifiers = identifier_data.to_dict()
-        async with self.__session.put(
-            url=_INCREMENT_ENDPOINT.replace("{base}", self.__base_url),
-            headers={"Authorization": self.__token},
-            data=JsonPayload(
-                {
-                    "identifier": full_identifiers,
-                    "config_data": self._dump_to_string(value),
-                    "default": self._dump_to_string(default),
-                }
-            ),
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            if response.status == 200:
-                response_output = self._load_to_string(response_output)
-                return response_output.get("value")
-            else:
-                raise errors.ConfigError(str(response_output))
+        try:
+            full_identifiers = identifier_data.to_dict()
+            async with self.__session.put(
+                url=_INCREMENT_ENDPOINT.replace("{base}", self.__base_url),
+                headers={"Authorization": self.__token},
+                data=JsonPayload(
+                    {
+                        "identifier": full_identifiers,
+                        "config_data": self._dump_to_string(value),
+                        "default": self._dump_to_string(default),
+                    }
+                ),
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                if response.status == 200:
+                    response_output = self._load_to_string(response_output)
+                    return response_output.get("value")
+                else:
+                    raise errors.ConfigError(str(response_output))
+        except asyncio.exceptions.TimeoutError:
+            return await self.inc(identifier_data=identifier_data, value=value, default=default)
 
     async def toggle(
         self, identifier_data: IdentifierData, value: bool = None, default: Optional[bool] = None
     ) -> bool:
-        full_identifiers = identifier_data.to_dict()
-        async with self.__session.put(
-            url=_TOGGLE_ENDPOINT.replace("{base}", self.__base_url),
-            headers={"Authorization": self.__token},
-            data=JsonPayload(
-                {
-                    "identifier": full_identifiers,
-                    "config_data": self._dump_to_string(value),
-                    "default": self._dump_to_string(default),
-                }
-            ),
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            if response.status == 200:
-                response_output = self._load_to_string(response_output)
-                return response_output.get("value")
-            else:
-                raise errors.ConfigError(str(response_output))
+        try:
+            full_identifiers = identifier_data.to_dict()
+            async with self.__session.put(
+                url=_TOGGLE_ENDPOINT.replace("{base}", self.__base_url),
+                headers={"Authorization": self.__token},
+                data=JsonPayload(
+                    {
+                        "identifier": full_identifiers,
+                        "config_data": self._dump_to_string(value),
+                        "default": self._dump_to_string(default),
+                    }
+                ),
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                if response.status == 200:
+                    response_output = self._load_to_string(response_output)
+                    return response_output.get("value")
+                else:
+                    raise errors.ConfigError(str(response_output))
+        except asyncio.exceptions.TimeoutError:
+            return await self.toggle(identifier_data=identifier_data, value=value, default=default)
 
     @classmethod
     async def delete_all_data(cls, **kwargs) -> None:
         """Delete all data being stored by this driver."""
-        async with cls.__session.put(
-            url=_CLEAR_ALL_ENDPOINT.replace("{base}", cls.__base_url),
-            headers={"Authorization": cls.__token},
-            param={"i_want_to_do_this": True},
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            if response.status == 200:
-                response_output = cls._load_to_string(response_output)
-                return response_output.get("value")
-            else:
-                raise errors.ConfigError(str(response_output))
+        try:
+            async with cls.__session.put(
+                url=_CLEAR_ALL_ENDPOINT.replace("{base}", cls.__base_url),
+                headers={"Authorization": cls.__token},
+                param={"i_want_to_do_this": True},
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                if response.status == 200:
+                    response_output = cls._load_to_string(response_output)
+                    return response_output.get("value")
+                else:
+                    raise errors.ConfigError(str(response_output))
+        except asyncio.exceptions.TimeoutError:
+            return await cls.delete_all_data(**kwargs)
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
-        async with cls.__session.post(
-            url=_AITER_COGS_ENDPOINT.replace("{base}", cls.__base_url),
-            headers={"Authorization": cls.__token},
-        ) as response:
-            response_output = await response.json(loads=json_loads)
-            return cls._load_to_string(response_output)
+        try:
+            async with cls.__session.post(
+                url=_AITER_COGS_ENDPOINT.replace("{base}", cls.__base_url),
+                headers={"Authorization": cls.__token},
+            ) as response:
+                response_output = await response.json(loads=json_loads)
+                return cls._load_to_string(response_output)
+        except asyncio.exceptions.TimeoutError:
+            return await cls.aiter_cogs()
 
     async def import_data(self, cog_data, custom_group_data):
         log.info(f"Converting Cog: {self.cog_name}")
