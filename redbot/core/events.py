@@ -292,7 +292,7 @@ def init_events(bot, cli_flags):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
             if ctx.author.id in bot.owner_ids:
-                if bot._cli_flags.dev:
+                if bot._bypass_cooldowns:
                     await ctx.reinvoke()
                     return
             if delay := humanize_timedelta(seconds=error.retry_after):

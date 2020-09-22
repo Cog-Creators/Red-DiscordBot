@@ -369,3 +369,18 @@ class Dev(commands.Cog):
         await asyncio.sleep(2)
         ctx.message.author = old_author
         ctx.message.content = old_content
+
+    @commands.command()
+    @checks.is_owner()
+    async def bypasscooldowns(self, ctx, toggle: Optional[bool] = None):
+        """Give bot owners the ability to bypass cooldowns.
+
+        Does not persist through restarts."""
+        if toggle is None:
+            toggle = not ctx.bot._bypass_cooldowns
+        ctx.bot._bypass_cooldowns = toggle
+
+        if toggle:
+            await ctx.send(_("Bot owners will now bypass all commands with cooldowns."))
+        else:
+            await ctx.send(_("Bot owners will no longer bypass all commands with cooldowns."))
