@@ -16,11 +16,18 @@ try:
     json_loads = orjson.loads
     json_dumps = orjson.dumps
 except ImportError:
-    import ujson
+    try:
+        import ujson
 
-    orjson = None
-    json_loads = ujson.loads
-    json_dumps = ujson.dumps
+        orjson = None
+        json_loads = ujson.loads
+        json_dumps = ujson.dumps
+    except ImportError:
+        import json as ujson
+
+        orjson = None
+        json_loads = ujson.loads
+        json_dumps = ujson.dumps
 
 
 from .base import BaseDriver, IdentifierData, ConfigCategory
