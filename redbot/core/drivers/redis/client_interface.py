@@ -1,8 +1,4 @@
-try:
-    # pylint: disable=import-error
-    import ujson as json
-except ImportError:
-    import json
+from .. import json_module as json
 
 from aioredis import Redis, create_pool
 from aioredis.commands import Pipeline
