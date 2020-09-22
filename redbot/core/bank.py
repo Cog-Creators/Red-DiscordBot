@@ -562,30 +562,30 @@ async def get_leaderboard_position(
     member: Union[discord.User, discord.Member], return_lb_size: bool = False
 ) -> Union[Optional[int], Tuple[Optional[int], int]]:
     """
-    Get the leaderboard position for the specified user
+     Get the leaderboard position for the specified user
 
-    Parameters
-    ----------
-    member : `discord.User` or `discord.Member`
-        The user to get the leaderboard position of
+     Parameters
+     ----------
+     member : `discord.User` or `discord.Member`
+         The user to get the leaderboard position of
 
-    return_lb_size : bool
-        Whether or not to return a tuple with position and size of leaderboard
+     return_lb_size : bool
+         Whether or not to return a tuple with position and size of leaderboard
 
 
-    Returns
-    -------
-    `int`
-        The position of the user on the leaderboard
+     Returns
+     -------
+     `int`
+         The position of the user on the leaderboard
 
-   Tuple[Optional[int], int]
-        The position of the user on the leaderboard followed
-        by the size of the leaderboard
+    Tuple[Optional[int], int]
+         The position of the user on the leaderboard followed
+         by the size of the leaderboard
 
-    Raises
-    ------
-    TypeError
-        If the bank is currently guild-specific and a `discord.User` object was passed in
+     Raises
+     ------
+     TypeError
+         If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
 
