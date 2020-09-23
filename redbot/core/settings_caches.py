@@ -59,8 +59,8 @@ class PrefixManager:
 class I18nManager:
     def __init__(self, config: Config):
         self._config: Config = config
-        self._guild_locale: Dict[int, Union[str, None]] = {}
-        self._guild_regional_format: Dict[int, Union[str, None]] = {}
+        self._guild_locale: Dict[Union[int, None], Union[str, None]] = {}
+        self._guild_regional_format: Dict[Union[int, None], Union[str, None]] = {}
 
     async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
