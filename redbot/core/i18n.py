@@ -262,7 +262,7 @@ class Translator(Callable[[str], str]):
             return
         if locale in self.translations:
             # Locales cannot be loaded twice as they have an entry in
-            # self.translations, which is created in L#92.
+            # self.translations
             return
 
         locale_path = get_locale_path(self.cog_folder, "po")
