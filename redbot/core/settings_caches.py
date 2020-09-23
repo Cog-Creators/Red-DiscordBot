@@ -103,7 +103,7 @@ class I18nManager:
             if self._guild_regional_format[guild.id] is None:
                 return self._guild_regional_format[None]
             else:
-                return self._guild_regional_format[None]
+                return self._guild_regional_format[guild.id]
         else:  # Uncached guild
             out = await self._config.guild(guild).regional_format()  # No locale set
             if out is None:
