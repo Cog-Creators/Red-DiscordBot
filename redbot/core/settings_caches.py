@@ -83,7 +83,8 @@ class I18nManager:
                 self._guild_locale[guild.id] = None
                 return self._guild_locale[None]
             else:
-                return self._guild_locale[guild.id]
+                self._guild_locale[guild.id] = out
+                return out
 
     async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]) -> None:
         """Set the guild locale in the config and cache"""
