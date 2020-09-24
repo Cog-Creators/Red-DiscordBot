@@ -23,7 +23,7 @@ async def dpymenu(
     page: int = 0,
     timeout: int = 60,
     wait: bool = False,
-    delete_message_after: bool = False,
+    delete_message_after: bool = True,
     clear_reactions_after: bool = True,
 ):
     if controls is not None:
@@ -53,7 +53,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         source: _dpy_menus.PageSource,
         cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
-        delete_message_after: bool = False,
+        delete_message_after: bool = True,
         add_reactions: bool = True,
         using_custom_emoji: bool = False,
         using_embeds: bool = False,
@@ -134,6 +134,21 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
             # An error happened that can be handled, so ignore it.
             pass
 
+    async def finalize(self, timed_out):
+        """|coro|
+
+        A coroutine that is called when the menu loop has completed
+        its run. This is useful if some asynchronous clean-up is
+        required after the fact.
+
+        Parameters
+        --------------
+        timed_out: :class:`bool`
+            Whether the menu completed due to timing out.
+        """
+        if timed_out and self.delete_message_after:
+            self.delete_message_after = False
+
     def _skip_single_arrows(self):
         max_pages = self._source.get_max_pages()
         if max_pages is None:
@@ -161,6 +176,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
 
     async def _internal_loop(self):
         try:
+            self.__timed_out = False
             loop = self.bot.loop
             # Ensure the name exists for the cancellation handling
             tasks = []
@@ -205,7 +221,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
                 # consider this my warning.
 
         except asyncio.TimeoutError:
-            pass
+            self.__timed_out = True
         finally:
             self._event.set()
 
@@ -214,9 +230,11 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
                 task.cancel()
 
             try:
-                await self.finalize()
+                await self.finalize(self.__timed_out)
             except Exception:
                 pass
+            finally:
+                self.__timed_out = False
 
             # Can't do any requests if the bot is closed
             if self.bot.is_closed():
@@ -414,7 +432,7 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
         source: _dpy_menus.PageSource,
         cog: Optional[commands.Cog] = None,
         clear_reactions_after: bool = True,
-        delete_message_after: bool = False,
+        delete_message_after: bool = True,
         add_reactions: bool = True,
         timeout: int = 60,
         accept_keywords: bool = False,
@@ -424,9 +442,15 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
             keyword_to_reaction_mapping = {
                 _("last"): ["\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
                 _("first"): ["\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
-                _("next"): ["\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",],
-                _("previous"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
-                _("prev"): ["\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",],
+                _("next"): [
+                    "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
+                ],
+                _("previous"): [
+                    "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+                ],
+                _("prev"): [
+                    "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+                ],
                 _("close"): ["\N{CROSS MARK}"],
             }
         else:
