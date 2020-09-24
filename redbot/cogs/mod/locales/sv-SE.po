@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2020-09-24 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -501,40 +501,52 @@ msgstr ""
 msgid "Joined this server on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:248
+#: redbot/cogs/mod/names.py:249
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:252
+#: redbot/cogs/mod/names.py:249
+msgid "Role"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:255
 msgid "Previous Names"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:256
-msgid "Previous Nicknames"
-msgstr ""
-
-#: redbot/cogs/mod/names.py:259
-msgid "Current voice channel"
+#: redbot/cogs/mod/names.py:255
+msgid "Previous Name"
 msgstr ""
 
 #: redbot/cogs/mod/names.py:263
+msgid "Previous Nicknames"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:263
+msgid "Previous Nickname"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:269
+msgid "Current voice channel"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:273
 msgid "Member #{} | User ID: {}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:277
+#: redbot/cogs/mod/names.py:287
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:281
+#: redbot/cogs/mod/names.py:291
 msgid "**Past 20 names**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:287
+#: redbot/cogs/mod/names.py:297
 msgid "**Past 20 nicknames**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:294
+#: redbot/cogs/mod/names.py:304
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr ""
 

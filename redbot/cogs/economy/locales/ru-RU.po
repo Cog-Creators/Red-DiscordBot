@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:47
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
-msgstr ""
+msgstr "ДЖЕКПОТ! 226! Ваша ставка умножена на 50!"
 
 #: redbot/cogs/economy/economy.py:51
 msgid "4LC! Your bid has been multiplied * 25!"
-msgstr ""
+msgstr "4LC! Ваша ставка была умножена на 25!"
 
 #: redbot/cogs/economy/economy.py:55
 msgid "Three cherries! Your bid has been multiplied * 20!"
