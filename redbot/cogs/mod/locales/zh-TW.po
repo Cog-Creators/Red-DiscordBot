@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2020-09-24 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -501,40 +501,52 @@ msgstr "加入Discord於"
 msgid "Joined this server on"
 msgstr "加入這個伺服器於"
 
-#: redbot/cogs/mod/names.py:248
+#: redbot/cogs/mod/names.py:249
 msgid "Roles"
 msgstr "身分組"
 
-#: redbot/cogs/mod/names.py:252
+#: redbot/cogs/mod/names.py:249
+msgid "Role"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:255
 msgid "Previous Names"
 msgstr "以前的名字"
 
-#: redbot/cogs/mod/names.py:256
+#: redbot/cogs/mod/names.py:255
+msgid "Previous Name"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:263
 msgid "Previous Nicknames"
 msgstr "以前的暱稱"
 
-#: redbot/cogs/mod/names.py:259
+#: redbot/cogs/mod/names.py:263
+msgid "Previous Nickname"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:269
 msgid "Current voice channel"
 msgstr "目前的語音頻道"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:273
 msgid "Member #{} | User ID: {}"
 msgstr "成員 #{} | 使用者ID: {}"
 
-#: redbot/cogs/mod/names.py:277
+#: redbot/cogs/mod/names.py:287
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr "顯示用戶以前的姓名和暱稱。"
 
-#: redbot/cogs/mod/names.py:281
+#: redbot/cogs/mod/names.py:291
 msgid "**Past 20 names**:"
 msgstr "**過去的20個名字**:"
 
-#: redbot/cogs/mod/names.py:287
+#: redbot/cogs/mod/names.py:297
 msgid "**Past 20 nicknames**:"
 msgstr "**過去的20個暱稱**:"
 
-#: redbot/cogs/mod/names.py:294
+#: redbot/cogs/mod/names.py:304
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr "該使用者沒有任何姓名或暱稱的更改記錄。"
 
