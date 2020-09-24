@@ -216,7 +216,7 @@ msgstr "Кажется, этот пользователь не забанен!"
 
 #: redbot/cogs/mod/kickban.py:658
 msgid "Something went wrong while attempting to unban that user."
-msgstr ""
+msgstr "Что-то пошло не так при попытке разбанить этого пользователя."
 
 #: redbot/cogs/mod/kickban.py:672
 msgid "Unbanned that user from this server."
