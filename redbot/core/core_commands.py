@@ -2091,7 +2091,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         sorted_services = sorted(services, key=str.lower)
-        joined = _("Set API services:\n")
+        joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
         for key in sorted_services:
             joined += "+ {}\n".format(key)
         for page in pagify(joined, ["\n"], shorten_by=16):

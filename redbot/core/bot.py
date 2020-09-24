@@ -1065,7 +1065,7 @@ class RedBase(
         Parameters
         ----------
         service_names: str
-            the services to remove
+            The services to remove.
 
         Examples
         ----------
