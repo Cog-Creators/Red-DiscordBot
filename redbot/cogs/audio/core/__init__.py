@@ -82,6 +82,7 @@ class Audio(
 
         default_global = dict(
             schema_version=1,
+            owner_notification=0,
             cache_level=0,
             cache_age=365,
             daily_playlists=False,

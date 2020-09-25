@@ -14,6 +14,7 @@ __author__ = ["aikaterna", "Draper"]
 
 _ = Translator("Audio", Path(__file__).parent)
 _SCHEMA_VERSION: Final[int] = 3
+_OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
