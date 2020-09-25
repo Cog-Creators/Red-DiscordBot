@@ -73,3 +73,7 @@ Additional References
 .. automethod:: Red.set_shared_api_tokens
 
 .. automethod:: Red.remove_shared_api_tokens
+
+.. automethod:: Red.get_shared_api_services
+
+.. automethod:: Red.remove_shared_api_services
