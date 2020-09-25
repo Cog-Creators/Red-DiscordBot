@@ -210,7 +210,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return False
 
     async def self_deafen(self, player: lavalink.Player) -> None:
-        guild_id = player.channel.guild.id
+        guild_id = self.rgetattr(player, "channel.guild.id", None)
+        if not guild_id:
+            return
+        if not self.config.guild_from_id(guild_id).auto_deafen():
+            return
         channel_id = player.channel.id
         node = player.manager.node
         voice_ws = node.get_voice_ws(guild_id)

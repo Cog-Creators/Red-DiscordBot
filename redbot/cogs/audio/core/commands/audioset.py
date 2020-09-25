@@ -889,6 +889,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
+    @command_audioset.command(name="autodeafen")
+    @commands.guild_only()
+    @commands.mod_or_permissions(manage_guild=True)
+    async def command_audioset_auto_deafen(self, ctx: commands.Context):
+        """Toggle whether the bot will be auto deafened upon joining the voice channel."""
+        auto_deafen = await self.config.guild(ctx.guild).auto_deafen()
+        await self.config.guild(ctx.guild).auto_deafen.set(not auto_deafen)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Auto Deafen: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
+            ),
+        )
+
     @command_audioset.command(name="restrict")
     @commands.is_owner()
     @commands.guild_only()
@@ -953,6 +968,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
         persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
+        auto_deafen = _("Enabled") if data["auto_deafen"] else _("Disabled")
 
         countrycode = data["country_code"]
 
@@ -997,6 +1013,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Songs as status:  [{status}]\n"
             "Persist queue:    [{persist_queue}]\n"
             "Spotify search:   [{countrycode}]\n"
+            "Auto-Deafen:      [{countrycode}]\n"
         ).format(
             countrycode=countrycode,
             repeat=song_repeat,
@@ -1005,6 +1022,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             status=song_status,
             bumpped_shuffle=bumpped_shuffle,
             persist_queue=persist_queue,
+            auto_deafen=auto_deafen,
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
