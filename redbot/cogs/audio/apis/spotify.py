@@ -1,16 +1,18 @@
 import base64
 import contextlib
+import json
 import logging
 import time
-from typing import List, Mapping, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
+
+from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
 
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 from ..errors import SpotifyFetchError
 
@@ -46,7 +48,7 @@ class SpotifyWrapper:
 
     @staticmethod
     def spotify_format_call(query_type: str, key: str) -> Tuple[str, MutableMapping]:
-        """Format the spotify endpoint"""
+        """Format the spotify endpoint."""
         params: MutableMapping = {}
         if query_type == "album":
             query = f"{ALBUMS_ENDPOINT}/{key}/tracks"
@@ -59,7 +61,7 @@ class SpotifyWrapper:
     async def get_spotify_track_info(
         self, track_data: MutableMapping, ctx: Context
     ) -> Tuple[str, ...]:
-        """Extract track info from spotify response"""
+        """Extract track info from spotify response."""
         prefer_lyrics = await self.cog.get_lyrics_status(ctx)
         track_name = track_data["name"]
         if prefer_lyrics:
@@ -75,14 +77,14 @@ class SpotifyWrapper:
 
     @staticmethod
     async def is_access_token_valid(token: MutableMapping) -> bool:
-        """Check if current token is not too old"""
+        """Check if current token is not too old."""
         return (token["expires_at"] - int(time.time())) < 60
 
     @staticmethod
     def make_auth_header(
         client_id: Optional[str], client_secret: Optional[str]
     ) -> MutableMapping[str, Union[str, int]]:
-        """Make Authorization header for spotify token"""
+        """Make Authorization header for spotify token."""
         if client_id is None:
             client_id = ""
         if client_secret is None:
@@ -93,11 +95,11 @@ class SpotifyWrapper:
     async def get(
         self, url: str, headers: MutableMapping = None, params: MutableMapping = None
     ) -> MutableMapping[str, str]:
-        """Make a GET request to the spotify API"""
+        """Make a GET request to the spotify API."""
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
-            data = await r.json()
+            data = await r.json(loads=json.loads)
             if r.status != 200:
                 log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
             return data
@@ -106,7 +108,7 @@ class SpotifyWrapper:
         self._token = new_token
 
     async def get_token(self) -> None:
-        """Get the stored spotify tokens"""
+        """Get the stored spotify tokens."""
         if not self._token:
             self._token = await self.bot.get_shared_api_tokens("spotify")
 
@@ -114,10 +116,17 @@ class SpotifyWrapper:
         self.client_secret = self._token.get("client_secret", "")
 
     async def get_country_code(self, ctx: Context = None) -> str:
-        return await self.config.guild(ctx.guild).country_code() if ctx else "US"
+        return (
+            (
+                await self.config.user(ctx.author).country_code()
+                or await self.config.guild(ctx.guild).country_code()
+            )
+            if ctx
+            else "US"
+        )
 
     async def request_access_token(self) -> MutableMapping:
-        """Make a spotify call to get the auth token"""
+        """Make a spotify call to get the auth token."""
         await self.get_token()
         payload = {"grant_type": "client_credentials"}
         headers = self.make_auth_header(self.client_id, self.client_secret)
@@ -125,7 +134,7 @@ class SpotifyWrapper:
         return r
 
     async def get_access_token(self) -> Optional[str]:
-        """Get the access_token"""
+        """Get the access_token."""
         if self.spotify_token and not await self.is_access_token_valid(self.spotify_token):
             return self.spotify_token["access_token"]
         token = await self.request_access_token()
@@ -142,20 +151,20 @@ class SpotifyWrapper:
     async def post(
         self, url: str, payload: MutableMapping, headers: MutableMapping = None
     ) -> MutableMapping:
-        """Make a POST call to spotify"""
+        """Make a POST call to spotify."""
         async with self.session.post(url, data=payload, headers=headers) as r:
-            data = await r.json()
+            data = await r.json(loads=json.loads)
             if r.status != 200:
                 log.debug(f"Issue making POST request to {url}: [{r.status}] {data}")
             return data
 
     async def make_get_call(self, url: str, params: MutableMapping) -> MutableMapping:
-        """Make a Get call to spotify"""
+        """Make a Get call to spotify."""
         token = await self.get_access_token()
         return await self.get(url, params=params, headers={"Authorization": f"Bearer {token}"})
 
     async def get_categories(self, ctx: Context = None) -> List[MutableMapping]:
-        """Get the spotify categories"""
+        """Get the spotify categories."""
         country_code = await self.get_country_code(ctx=ctx)
         params: MutableMapping = {"country": country_code} if country_code else {}
         result = await self.make_get_call(CATEGORY_ENDPOINT, params=params)
@@ -171,7 +180,7 @@ class SpotifyWrapper:
         return [{c["name"]: c["id"]} for c in categories if c]
 
     async def get_playlist_from_category(self, category: str, ctx: Context = None):
-        """Get spotify playlists for the specified category"""
+        """Get spotify playlists for the specified category."""
         url = f"{CATEGORY_ENDPOINT}/{category}/playlists"
         country_code = await self.get_country_code(ctx=ctx)
         params: MutableMapping = {"country": country_code} if country_code else {}

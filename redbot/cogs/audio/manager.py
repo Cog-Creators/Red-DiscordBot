@@ -1,6 +1,7 @@
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
+import json
 import logging
 import pathlib
 import platform
@@ -9,14 +10,17 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import ClassVar, Final, List, Optional, Tuple, Pattern
 
+from typing import ClassVar, Final, List, Optional, Pattern, Tuple
+
+# Cog Dependencies
 import aiohttp
-from tqdm import tqdm
 
 from redbot.core import data_manager
+from tqdm import tqdm
 
 from .errors import LavalinkDownloadFailed
+from .utils import task_callback
 
 log = logging.getLogger("red.audio.manager")
 JAR_VERSION: Final[str] = "3.3.1"
@@ -121,6 +125,7 @@ class ServerManager:
             log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
+        self._monitor_task.add_done_callback(task_callback)
 
     async def _get_jar_args(self) -> List[str]:
         (java_available, java_version) = await self._has_java()
@@ -228,7 +233,7 @@ class ServerManager:
 
     async def _download_jar(self) -> None:
         log.info("Downloading Lavalink.jar...")
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
                     # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
