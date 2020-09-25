@@ -39,6 +39,7 @@ from discord.ext.commands import (
     Greedy,
 )
 
+from .ephemeral import Ephemeral
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
@@ -295,6 +296,9 @@ class Command(CogCommandMixin, DPYCommand):
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
+        self._ephemerality = Ephemeral(kwargs.pop("ephemeral", 0))
+        if self._ephemerality.name.startswith("_"):
+            raise ValueError(f"Invalid ephemerality: {self._ephemerality.value}")
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
         if self.parent is None:
@@ -377,6 +381,14 @@ class Command(CogCommandMixin, DPYCommand):
                             self.params[key] = value = value.replace(annotation=temp_type)
             except AttributeError:
                 continue
+
+    @property
+    def ephemerality(self) -> Ephemeral:
+        # ephemerality only means something for root commands
+        root = self.root_parent or self
+        if root._ephemerality is not None:
+            return root._ephemerality
+        return Ephemeral.DEFAULT
 
     @property
     def help(self):
@@ -1122,6 +1134,10 @@ class _RuleDropper(CogCommandMixin):
 
     This should not be used by 3rd-party extensions directly for their own objects.
     """
+
+    @property
+    def ephemerality(self):
+        return Ephemeral.DEFAULT
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         """ This will do nothing. """

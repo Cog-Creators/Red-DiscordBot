@@ -34,6 +34,7 @@ from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
+from .commands.ephemeral import Ephemeral, EphemeralMapping
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -200,6 +201,7 @@ class RedBase(
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
         super().__init__(*args, help_command=None, **kwargs)
+        self.all_commands = EphemeralMapping(self.all_commands)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
@@ -1124,7 +1126,8 @@ class RedBase(
             else:
                 self.remove_permissions_hook(hook)
 
-        super().remove_cog(cogname)
+        with self.all_commands._shield(*cog.__cog_commands__):
+            super().remove_cog(cogname)
 
         cog.requires.reset()
 
@@ -1236,7 +1239,8 @@ class RedBase(
                     self.add_permissions_hook(hook)
                     added_hooks.append(hook)
 
-            super().add_cog(cog)
+            with self.all_commands._shield(*cog.__cog_commands__):
+                super().add_cog(cog)
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
@@ -1269,11 +1273,15 @@ class RedBase(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> None:
-        command = self.get_command(name)
+    def remove_command(self, name: Union[str, commands.Command]) -> None:
+        if isinstance(name, str):
+            command = self.get_command(name)
+        else:
+            command, name = name, name.name
         if isinstance(command, commands.commands._RuleDropper):
             return
-        command = super().remove_command(name)
+        with self.all_commands._shield(command):
+            command = super().remove_command(name)
         if not command:
             return
         command.requires.reset()
