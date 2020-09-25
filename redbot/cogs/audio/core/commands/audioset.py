@@ -1380,6 +1380,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         state = await self.config.global_db_enabled()
         await self.config.global_db_enabled.set(not state)
+        if not state:  # Ensure a call is made if the API is enabled to update user perms
+            self.global_api_user = await self.api_interface.global_cache_api.get_perms()
         await ctx.send(
             _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
         )
