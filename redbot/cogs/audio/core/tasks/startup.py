@@ -145,7 +145,7 @@ This API will also be help your bot by reducing the likelihood of YouTube rate-l
 To use this API **you will be required to have an access token**, to obtain this token please join <https://discordapp.com/invite/zkmDzhs> and read the instructions there.
 Note: Just like any request your bot makes this service will be able to see your bot IP, your IP is not used for anything in the server but we felt that disclosing this to potential user is an important step since the service is managed by Draper and Cog-Creators org.
 
-Since I'm already setting this message, I would highly recommend that you enable your local cache if you havent yet, to do so you can run `[p]audioset cache 5` this cache only stores metadata so it shouldn't use up a lot of space, how ever it will make repeated audio requests faster and further reduce the likelihook of YouTube rate limiting your bot."""
+Since I'm already sending this message, I would highly recommend that you enable your local cache if you havent yet, to do so you can run `[p]audioset cache 5` this cache only stores metadata so it shouldn't use up a lot of space, however it will make repeated audio requests faster and further reduce the likelihook of YouTube rate limiting your bot."""
             )
             await send_to_owners_with_prefix_replaced(self.bot, msg)
             await self.config.owner_notification.set(1)
