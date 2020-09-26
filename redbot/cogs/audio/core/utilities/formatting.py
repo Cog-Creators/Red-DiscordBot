@@ -375,7 +375,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
-        """Format the values into a pretified codeblock."""
+        """Format the values into a prettified codeblock."""
         author = self.bot.get_user(pauthor) or pauthor or _("Unknown")
         line = _(
             " - Name:   <{pname}>\n"

@@ -630,12 +630,12 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Pick a track with a search.
 
         Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc
-        <search term>` will search SoundCloud instead of YouTube.
+        <search term>` to search on SoundCloud instead of YouTube.
         """
 
         if not isinstance(query, (str, Query)):
             raise RuntimeError(
-                f"Expect 'query' to be a string or Query object but recieved: {type(query)} is an unexpected argument type please report it."
+                f"Expected 'query' to be a string or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
             )
 
         async def _search_menu(

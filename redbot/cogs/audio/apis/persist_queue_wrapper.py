@@ -87,7 +87,7 @@ class QueueInterface:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                    debug_exc_log(log, exc, "Failed to complete playlist fetch from database")
                     return []
 
         async for index, row in AsyncIter(row_result).enumerate(start=1):
