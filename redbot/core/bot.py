@@ -1058,7 +1058,7 @@ class RedBase(
             for name in token_names:
                 group.pop(name, None)
 
-    async def remove_shared_api_services(self, service_names: Iterable[str]):
+    async def remove_shared_api_services(self, *service_names: str):
         """
         Removes shared API services, as well as keys and tokens associated with them.
 
