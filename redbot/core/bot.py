@@ -987,7 +987,7 @@ class RedBase(
         """
         return await self._config.guild(discord.Object(id=guild_id)).mod_role()
 
-    async def get_shared_api_tokens(self, service_name: Optional[str]=None) -> Dict[str, str]:
+    async def get_shared_api_tokens(self, service_name: Optional[str] = None) -> Dict[str, str]:
         """
         Gets the shared API tokens for a service, or all of them if no argument specified.
 
