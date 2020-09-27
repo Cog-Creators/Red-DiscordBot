@@ -158,6 +158,7 @@ class GuildConverter(discord.Guild):
 
         return ret
 
+
 class ZMQGuildConverter:
     """Converts an ID to a `discord.Guild` object.
 
@@ -168,11 +169,12 @@ class ZMQGuildConverter:
     def zmq_convert(argument: int, request: "ZMQRequest"):
         if not type(argument) is int:
             raise TypeError("Guild ID must be an integer")
-        
+
         guild = request.manager.bot.get_guild(argument)
         if not guild:
             raise InvalidRequest(request.message, f"Failed to find Guild with ID {argument}")
         return guild
+
 
 class ZMQChannelConverter:
     """Converts an ID to a `discord.Channel` object.
@@ -184,11 +186,12 @@ class ZMQChannelConverter:
     def zmq_convert(argument: int, request: "ZMQRequest"):
         if not type(argument) is int:
             raise TypeError("Channel ID must be an integer")
-        
+
         channel = request.manager.bot.get_channel(argument)
         if not channel:
             raise InvalidRequest(request.message, f"Failed to find Channel with ID {argument}")
         return channel
+
 
 class ZMQUserConverter:
     """Converts an ID to a `discord.User` object.
@@ -200,7 +203,7 @@ class ZMQUserConverter:
     def zmq_convert(argument: int, request: "ZMQRequest"):
         if not type(argument) is int:
             raise TypeError("User ID must be an integer")
-        
+
         user = request.manager.bot.get_user(argument)
         if not user:
             raise InvalidRequest(request.message, f"Failed to find user with ID {argument}")

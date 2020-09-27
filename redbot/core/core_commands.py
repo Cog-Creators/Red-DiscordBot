@@ -239,7 +239,9 @@ class CoreLogic:
             importlib._bootstrap._exec(lib.__spec__, lib)
 
     @zmq_handler()
-    async def _unload(self, *, pkg_names: Iterable[str], request: Optional[ZMQRequest] = None) -> Tuple[List[str], List[str]]:
+    async def _unload(
+        self, *, pkg_names: Iterable[str], request: Optional[ZMQRequest] = None
+    ) -> Tuple[List[str], List[str]]:
         """
         Unloads packages with the given names.
 
@@ -305,15 +307,17 @@ class CoreLogic:
         ) = await self._load(pkg_names=pkg_names)
 
         if request:
-            await request.send_message((
-                loaded,
-                load_failed,
-                invalid_pkg_names,
-                not_found,
-                already_loaded,
-                load_failed_with_reason,
-                repos_with_shared_libs,
-            ))
+            await request.send_message(
+                (
+                    loaded,
+                    load_failed,
+                    invalid_pkg_names,
+                    not_found,
+                    already_loaded,
+                    load_failed_with_reason,
+                    repos_with_shared_libs,
+                )
+            )
         else:
             return (
                 loaded,
@@ -326,7 +330,9 @@ class CoreLogic:
             )
 
     @zmq_handler()
-    async def _name(self, *, name: Optional[str] = None, request: Optional[ZMQRequest] = None) -> str:
+    async def _name(
+        self, *, name: Optional[str] = None, request: Optional[ZMQRequest] = None
+    ) -> str:
         """
         Gets or sets the bot's username.
 
@@ -349,7 +355,9 @@ class CoreLogic:
             return self.bot.user.name
 
     @zmq_handler()
-    async def _prefixes(self, *, prefixes: Optional[Sequence[str]] = None, request: Optional[ZMQRequest] = None) -> List[str]:
+    async def _prefixes(
+        self, *, prefixes: Optional[Sequence[str]] = None, request: Optional[ZMQRequest] = None
+    ) -> List[str]:
         """
         Gets or sets the bot's global prefixes.
 

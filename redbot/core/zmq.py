@@ -15,13 +15,10 @@ log = logging.getLogger("red.zmq")
 
 __all__ = ["ZMQ", "ZMQMixin", "zmq_handler"]
 
-REQUEST_SCHEMA = Schema({
-    "requester": str,
-    "cog": str,
-    "method": str,
-    "id": int,
-    SOptional("kwargs", default={}): dict
-})
+REQUEST_SCHEMA = Schema(
+    {"requester": str, "cog": str, "method": str, "id": int, SOptional("kwargs", default={}): dict}
+)
+
 
 def zmq_handler(name: Optional[str] = None):
     def wrapped(func):
@@ -30,6 +27,7 @@ def zmq_handler(name: Optional[str] = None):
             name = func.__name__
         setattr(func, "__red_zmq_method__", name)
         return func
+
     return wrapped
 
 
@@ -55,7 +53,7 @@ class ZMQRequest:
             self.message = REQUEST_SCHEMA.validate(self.message)
         except SchemaError as e:
             raise InvalidRequest(self.message, str(e))
-        
+
         try:
             self._callback = self.manager.zmq_mapping[self.message["cog"]][self.message["method"]]
         except KeyError as e:
@@ -72,7 +70,9 @@ class ZMQRequest:
         i = iter(self.callback_args.items())
 
         if "request" in self.message["kwargs"]:
-            raise InvalidRequest(self.message, "ZMQ requests must not contain request keyword argument")
+            raise InvalidRequest(
+                self.message, "ZMQ requests must not contain request keyword argument"
+            )
 
         for name, param in i:
             if name == "request":
@@ -90,13 +90,20 @@ class ZMQRequest:
                     try:
                         method = param.annotation.zmq_convert
                     except AttributeError:
-                        raise InvalidRequest(self.message, f"Annotation for paramater {name} is missing zmq_convert function")
+                        raise InvalidRequest(
+                            self.message,
+                            f"Annotation for paramater {name} is missing zmq_convert function",
+                        )
                     if asyncio.iscoroutinefunction(method):
-                        converted = await method(argument=self.message["kwargs"][name], request=self)
+                        converted = await method(
+                            argument=self.message["kwargs"][name], request=self
+                        )
                     else:
                         converted = method(argument=self.message["kwargs"][name], request=self)
             except Exception as e:
-                raise InvalidRequest(self.message, f"Failed to convert {name} argument to {param.annotation}: {e}")
+                raise InvalidRequest(
+                    self.message, f"Failed to convert {name} argument to {param.annotation}: {e}"
+                )
             self.kwargs[name] = converted
 
         self.kwargs["request"] = self
@@ -116,13 +123,9 @@ class ZMQRequest:
             _id = self.message["id"]
         except:
             _id = 0
-        sending = {
-            "status": status,
-            "id": _id,
-            "message": content
-        }
+        sending = {"status": status, "id": _id, "message": content}
         prepared = zmq.utils.jsonapi.dumps(sending)
-        await self.manager.client.send_multipart([self.address, b'', prepared])
+        await self.manager.client.send_multipart([self.address, b"", prepared])
 
 
 class ZMQ:
@@ -157,15 +160,14 @@ class ZMQ:
         except Exception as e:
             await request.send_message(str(e), status=500)
 
-
     async def zmq_processor(self):
         while True:
             address, *frames = await self.client.recv_multipart()
             # This shouldn't be processed if there is no empty frame
-            if frames[0] != b'':
+            if frames[0] != b"":
                 continue
             else:
-                del frames[0] # Remove empty frame
+                del frames[0]  # Remove empty frame
             r = ZMQRequest(self, address, frames)
             self.queue.add(self.bot.loop.create_task(self.handle_message(r)))
 
@@ -182,7 +184,7 @@ class ZMQ:
         else:
             self._started = True
             log.debug("Created ZMQ server listener on port %s", port)
-            await asyncio.sleep(.3) # Give time for the server to initialize
+            await asyncio.sleep(0.3)  # Give time for the server to initialize
             self.main_task = self.bot.loop.create_task(self.zmq_processor())
 
     async def close(self):
@@ -199,9 +201,9 @@ class ZMQ:
         if not asyncio.iscoroutinefunction(method):
             raise TypeError("ZMQ methods must be coroutines.")
 
-        if cog not in self.zmq_mapping: # This should not happen, but let's put it in just in case
+        if cog not in self.zmq_mapping:  # This should not happen, but let's put it in just in case
             self.zmq_mapping[cog] = {}
-        
+
         if name in self.zmq_mapping[cog]:
             raise TypeError(f"A ZMQ method with the name {name} already exists in this cog.")
 
@@ -216,22 +218,22 @@ class ZMQ:
                 raise TypeError(f"ZMQ handler {name}'s {pname} argument is not type-hinted")
             if pname == "request":
                 found_request = True
-        
+
         if not found_request:
             raise TypeError(f"ZMQ handler {name} is missing a request keyword argument")
-        
+
         self.zmq_mapping[cog][name] = method
 
     def remove_method(self, cog: str, name: str):
         if cog not in self.zmq_mapping or name not in self.zmq_mapping[cog]:
             raise TypeError("Cog or method name not registered in ZMQ mapping.")
-        
+
         del self.zmq_mapping[cog][name]
 
     def remove_cog(self, cog: str):
         if cog not in self.zmq_mapping:
             raise TypeError("Cog not registered in ZMQ mapping.")
-    
+
         del self.zmq_mapping[cog]
 
 
@@ -268,8 +270,10 @@ class ZMQMixin:
         try:
             cog = method.__self__.__cog_name__
         except AttributeError:
-            raise TypeError("Failed to determine cog name from ZMQ method.  Please use inside a class that inherits commands.Cog or set __cog_name__")
-        
+            raise TypeError(
+                "Failed to determine cog name from ZMQ method.  Please use inside a class that inherits commands.Cog or set __cog_name__"
+            )
+
         if not name:
             name = method.__name__
 
@@ -296,7 +300,7 @@ class ZMQMixin:
             cog = method.__self__.__cog_name__
         except AttributeError:
             raise TypeError("Failed to determine cog name from ZMQ method")
-        
+
         name = method.__name__
 
         self._zmq.remove_method(cog, name)
