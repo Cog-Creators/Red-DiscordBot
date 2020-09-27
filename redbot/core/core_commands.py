@@ -2078,22 +2078,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
+    # @commands.dm_only()
     @api.command(name="list")
     async def api_list(self, ctx: commands.Context):
-        """Show all external API services that have been set.
+        """Show all external API services along with their keys and tokens that have been set.
 
-        This command does not expose keys or tokens associated with services,
-        but may expose them if tokens have been incorrectly set as services."""
+        API keys are sensitive information. Use with caution."""
 
-        services = await ctx.bot.get_shared_api_services()
+        services: dict = await ctx.bot.get_shared_api_tokens()
         if not services:
             await ctx.send(_("No API services have been set yet."))
             return
 
-        sorted_services = sorted(services, key=str.lower)
+        sorted_services = sorted(services.keys(), key=str.lower)
+
         joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
-        for key in sorted_services:
-            joined += "+ {}\n".format(key)
+        for service_name in sorted_services:
+            joined += "+ {}\n".format(service_name)
+            for key_name in services[service_name].keys():
+                joined += "- {}: {}\n".format(key_name, services[service_name][key_name])
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
