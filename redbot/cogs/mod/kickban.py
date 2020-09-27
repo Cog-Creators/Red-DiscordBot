@@ -62,7 +62,7 @@ class KickBanMixin(MixinMeta):
 
     async def ban_user(
         self,
-        user: Union[discord.Member, discord.User, discord.Object],
+        user: Union[discord.Member, discord.Object],
         ctx: commands.Context,
         days: int = 0,
         reason: str = None,
@@ -141,7 +141,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except discord.NotFound:
-            return _(f"User {user.id} does not exist.")
+            return _(f'User "{user.id}" not found')
         except Exception as e:
             log.exception(
                 "{}({}) attempted to {} {}({}), but an error occurred.".format(
@@ -280,7 +280,7 @@ class KickBanMixin(MixinMeta):
     async def ban(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, discord.User, RawUserIds],
+        user: Union[discord.Member, RawUserIds],
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -429,7 +429,7 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
-                        errors[user_id] = _("User {user_id} does not exist.").format(
+                        errors[user_id] = _('User "{user_id} not found').format(
                             user_id=user_id
                         )
                         continue
