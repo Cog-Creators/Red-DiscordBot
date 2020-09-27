@@ -2078,7 +2078,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
-    # @commands.dm_only()
     @api.command(name="list")
     async def api_list(self, ctx: commands.Context):
         """Show all external API services along with their keys and tokens that have been set.
@@ -2096,7 +2095,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for service_name in sorted_services:
             joined += "+ {}\n".format(service_name)
             for key_name in services[service_name].keys():
-                joined += "- {}: {}\n".format(key_name, services[service_name][key_name])
+                joined += "- {}\n".format(key_name)
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
