@@ -2102,8 +2102,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @api.command(name="remove")
     async def api_remove(self, ctx: commands.Context, *services: str):
         """Remove the given services with all their keys and tokens."""
-        await self.bot.remove_shared_api_services(services)
-        await ctx.send(_("Services deleted successfully."))
+        bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
+        services = [s for s in services if s in bot_services]
+
+        if services:
+            await self.bot.remove_shared_api_services(*services)
+            msg = "".join([f"`{s}`, " for s in services])[:-2]
+            await ctx.send(_("Services deleted successfully:\n{}".format(msg)))
+        else:
+            await ctx.send(_("The services you provided weren't set anyway."))
 
     @commands.group()
     @checks.is_owner()
