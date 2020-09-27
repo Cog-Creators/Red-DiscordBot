@@ -987,15 +987,9 @@ class RedBase(
         """
         return await self._config.guild(discord.Object(id=guild_id)).mod_role()
 
-    async def get_shared_api_services(self) -> List[str]:
+    async def get_shared_api_tokens(self, service_name: Optional[str]=None) -> Dict[str, str]:
         """
-        Gets the shared API service names.
-        """
-        return list((await self._config.custom(SHARED_API_TOKENS).all()).keys())
-
-    async def get_shared_api_tokens(self, service_name: str) -> Dict[str, str]:
-        """
-        Gets the shared API tokens for a service
+        Gets the shared API tokens for a service, or all of them if no argument specified.
 
         Parameters
         ----------
@@ -1008,7 +1002,10 @@ class RedBase(
             A Mapping of token names to tokens.
             This mapping exists because some services have multiple tokens.
         """
-        return await self._config.custom(SHARED_API_TOKENS, service_name).all()
+        if service_name is None:
+            return await self._config.custom(SHARED_API_TOKENS).all()
+        else:
+            return await self._config.custom(SHARED_API_TOKENS, service_name).all()
 
     async def set_shared_api_tokens(self, service_name: str, **tokens: str):
         """
