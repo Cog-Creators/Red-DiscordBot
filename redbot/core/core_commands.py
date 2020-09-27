@@ -2080,9 +2080,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @api.command(name="list")
     async def api_list(self, ctx: commands.Context):
-        """Show all external API services along with their keys and tokens that have been set.
+        """Show all external API services along with their keys that have been set.
 
-        API keys are sensitive information. Use with caution."""
+        Secrets are not shown."""
 
         services: dict = await ctx.bot.get_shared_api_tokens()
         if not services:
