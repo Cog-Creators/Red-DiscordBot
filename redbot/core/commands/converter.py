@@ -27,15 +27,20 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 
+from ..errors import InvalidRequest
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta, humanize_list
 
 if TYPE_CHECKING:
     from .context import Context
+    from ..zmq import ZMQRequest
 
 __all__ = [
     "DictConverter",
     "GuildConverter",
+    "ZMQGuildConverter",
+    "ZMQChannelConverter",
+    "ZMQUserConverter",
     "UserInputOptional",
     "NoParseOptional",
     "TimedeltaConverter",
@@ -152,6 +157,54 @@ class GuildConverter(discord.Guild):
             raise BadArgument(_('Server "{name}" not found.').format(name=argument))
 
         return ret
+
+class ZMQGuildConverter:
+    """Converts an ID to a `discord.Guild` object.
+
+    This is here primarily as a convenient converter for ZMQ methods,
+    but can be used for other purposes, however discouraged."""
+
+    @staticmethod
+    def zmq_convert(argument: int, request: "ZMQRequest"):
+        if not type(argument) is int:
+            raise TypeError("Guild ID must be an integer")
+        
+        guild = request.manager.bot.get_guild(argument)
+        if not guild:
+            raise InvalidRequest(request.message, f"Failed to find Guild with ID {argument}")
+        return guild
+
+class ZMQChannelConverter:
+    """Converts an ID to a `discord.Channel` object.
+
+    This is here primarily as a convenient converter for ZMQ methods,
+    but can be used for other purposes, however discouraged."""
+
+    @staticmethod
+    def zmq_convert(argument: int, request: "ZMQRequest"):
+        if not type(argument) is int:
+            raise TypeError("Channel ID must be an integer")
+        
+        channel = request.manager.bot.get_channel(argument)
+        if not channel:
+            raise InvalidRequest(request.message, f"Failed to find Channel with ID {argument}")
+        return channel
+
+class ZMQUserConverter:
+    """Converts an ID to a `discord.User` object.
+
+    This is here primarily as a convenient converter for ZMQ methods,
+    but can be used for other purposes, however discouraged."""
+
+    @staticmethod
+    def zmq_convert(argument: int, request: "ZMQRequest"):
+        if not type(argument) is int:
+            raise TypeError("User ID must be an integer")
+        
+        user = request.manager.bot.get_user(argument)
+        if not user:
+            raise InvalidRequest(request.message, f"Failed to find user with ID {argument}")
+        return user
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when

@@ -19,6 +19,7 @@ REQUEST_SCHEMA = Schema({
     "requester": str,
     "cog": str,
     "method": str,
+    "id": int,
     SOptional("kwargs", default={}): dict
 })
 
@@ -45,7 +46,7 @@ class ZMQRequest:
         self.callback_args = None
         self.kwargs = {}
 
-    def parse_message(self):
+    async def parse_message(self):
         try:
             self.message = zmq.utils.jsonapi.loads(self.message)
         except Exception as e:
@@ -60,9 +61,9 @@ class ZMQRequest:
         except KeyError as e:
             raise InvalidRequest(self.message, str(e))
 
-        self.parse_args()
+        await self.parse_args()
 
-    def parse_args(self):
+    async def parse_args(self):
         if self._callback is None:
             raise TypeError("ZMQRequest.parse_message must be called before ZMQRequest.parse_args")
         if self.callback_args:
@@ -83,7 +84,17 @@ class ZMQRequest:
                     self.kwargs[name] = param.default
                     continue
             try:
-                converted = param.annotation(self.message["kwargs"]["name"])
+                if param.annotation.__module__ == "builtins":
+                    converted = param.annotation(self.message["kwargs"][name])
+                else:
+                    try:
+                        method = param.annotation.zmq_convert
+                    except AttributeError:
+                        raise InvalidRequest(self.message, f"Annotation for paramater {name} is missing zmq_convert function")
+                    if asyncio.iscoroutinefunction(method):
+                        converted = await method(argument=self.message["kwargs"][name], request=self)
+                    else:
+                        converted = method(argument=self.message["kwargs"][name], request=self)
             except Exception as e:
                 raise InvalidRequest(self.message, f"Failed to convert {name} argument to {param.annotation}: {e}")
             self.kwargs[name] = converted
@@ -101,8 +112,13 @@ class ZMQRequest:
             raise HandlerError(e)
 
     async def send_message(self, content: Dict, status: int = 200):
+        try:
+            _id = self.message["id"]
+        except:
+            _id = 0
         sending = {
             "status": status,
+            "id": _id,
             "message": content
         }
         prepared = zmq.utils.jsonapi.dumps(sending)
@@ -130,7 +146,7 @@ class ZMQ:
         try:
             log.info("Received a message")
             try:
-                request.parse_message()
+                await request.parse_message()
             except InvalidRequest as e:
                 await request.send_message(str(e), status=400)
                 return
