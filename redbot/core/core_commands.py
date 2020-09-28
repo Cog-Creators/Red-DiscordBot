@@ -1953,7 +1953,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
         try:
-            if len(nickname) > 32:
+            if nickname and len(nickname) > 32:
                 await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
                 return
             await ctx.guild.me.edit(nick=nickname)
