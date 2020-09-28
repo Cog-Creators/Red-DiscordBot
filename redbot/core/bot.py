@@ -91,6 +91,7 @@ class RedBase(
         self._config = Config.get_core_conf(force_registration=False)
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
+        self._owner_sudo_tasks: Dict[int, asyncio.Task] = {}
         self._last_exception = None
         self._config.register_global(
             token=None,
