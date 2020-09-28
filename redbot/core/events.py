@@ -200,7 +200,7 @@ def init_events(bot, cli_flags):
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
 
-        if not bot._true_owner_ids:
+        if not bot.true_owner_ids:
             # we could possibly exit here in future
             log.warning("Bot doesn't have any owner set!")
 
