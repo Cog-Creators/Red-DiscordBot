@@ -524,7 +524,8 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     Returns
     -------
     Optional[str]
-        The end user statement found in the info.json or ``None`` if there was an issue finding one.
+        The end user data statement found in the info.json
+        or ``None`` if there was an issue finding one.
 
     Examples
     --------
