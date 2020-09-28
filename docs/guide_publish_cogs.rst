@@ -85,5 +85,4 @@ Keys specific to the cog info.json (case sensitive)
   ``SHARED_LIBRARY``. If ``SHARED_LIBRARY`` then ``hidden`` will be ``True``.
 
 .. warning::
-    Shared libraries are deprecated since version 3.2 and are marked for removal in version 3.4.
-
+    Shared libraries are deprecated since version 3.2 and are marked for removal in the future.
