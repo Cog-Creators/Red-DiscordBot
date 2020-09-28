@@ -45,7 +45,11 @@ class Events(MixinMeta):
         guild, author = message.guild, message.author
         mention_spam = await self.config.guild(guild).mention_spam.all()
 
-        mentions = set(message.mentions)
+        if mention_spam["strict"]:  # if strict is enabled
+            mentions = message.raw_mentions
+        else:  # if not enabled
+            mentions = set(message.mentions)
+
         if mention_spam["ban"]:
             if len(mentions) >= mention_spam["ban"]:
                 try:
