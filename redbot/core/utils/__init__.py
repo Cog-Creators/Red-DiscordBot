@@ -30,8 +30,8 @@ __all__ = (
     "bounded_gather_iter",
     "deduplicate_iterables",
     "AsyncIter",
-    "get_end_user_statement",
-    "get_end_user_statement_or_raise",
+    "get_end_user_data_statement",
+    "get_end_user_data_statement_or_raise",
 )
 
 log = logging.getLogger("red.core.utils")
@@ -511,7 +511,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
         return self
 
 
-def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
+def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
     """
     This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
     This will log the reason if ``None`` is returned.
@@ -530,15 +530,15 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     Examples
     --------
     >>> # In cog's `__init__.py`
-    >>> from redbot.core.utils import get_end_user_statement
-    >>> __red_end_user_data_statement__  = get_end_user_statement(__file__)
+    >>> from redbot.core.utils import get_end_user_data_statement
+    >>> __red_end_user_data_statement__  = get_end_user_data_statement(__file__)
     >>> def setup(bot):
     ...     ...
     """
     try:
         file = Path(file).parent.absolute()
         info_json = file / "info.json"
-        statement = get_end_user_statement_or_raise(info_json)
+        statement = get_end_user_data_statement_or_raise(info_json)
     except FileNotFoundError:
         log.critical("'%s' does not exist.", str(info_json))
     except KeyError:
@@ -558,7 +558,7 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     return None
 
 
-def get_end_user_statement_or_raise(file: Union[Path, str]) -> str:
+def get_end_user_data_statement_or_raise(file: Union[Path, str]) -> str:
     """
     This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
 
