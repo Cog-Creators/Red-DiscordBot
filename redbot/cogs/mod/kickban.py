@@ -9,9 +9,10 @@ from redbot.core import commands, i18n, checks, modlog
 from redbot.core.commands import UserInputOptional
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
-from redbot.core.utils.mod import is_allowed_by_hierarchy, get_audit_reason
+from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
+from .utils import is_allowed_by_hierarchy
 
 log = logging.getLogger("red.mod")
 _ = i18n.Translator("Mod", __file__)
