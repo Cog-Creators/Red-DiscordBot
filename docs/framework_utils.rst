@@ -8,7 +8,7 @@ General Utility
 ===============
 
 .. automodule:: redbot.core.utils
-    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_statement
+    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_statement, get_end_user_statement_or_raise
 
 .. autoclass:: AsyncIter
     :members:

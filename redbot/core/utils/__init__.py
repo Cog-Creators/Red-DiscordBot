@@ -31,6 +31,7 @@ __all__ = (
     "deduplicate_iterables",
     "AsyncIter",
     "get_end_user_statement",
+    "get_end_user_statement_or_raise",
 )
 
 log = logging.getLogger("red.core.utils")
@@ -512,12 +513,13 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
 
 def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
     """
-    This function attempts to get the ``end_user_data_statement`` key from a cogs ``info.json``. This will log the reason if ``None`` is returned.
+    This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
+    This will log the reason if ``None`` is returned.
 
     Parameters
     ----------
     file: Union[pathlib.Path, str]
-        The ``__file__`` variable for the cogs ``__init__.py`` file.
+        The ``__file__`` variable for the cog's ``__init__.py`` file.
 
     Returns
     -------
@@ -526,11 +528,11 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
 
     Examples
     --------
-    >>> # In cogs `__init__.py`
+    >>> # In cog's `__init__.py`
     >>> from redbot.core.utils import get_end_user_statement
     >>> __red_end_user_data_statement__  = get_end_user_statement(__file__)
     >>> def setup(bot):
-            ...
+    ...     ...
     """
     try:
         file = Path(file).parent.absolute()
@@ -546,7 +548,7 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
         log.critical("'%s' has a bad encoding.", str(info_json), exc_info=exc)
     except Exception as exc:
         log.critical(
-            "There was an error when trying to load the end user statement from '%s'.",
+            "There was an error when trying to load the end user data statement from '%s'.",
             str(info_json),
             exc_info=exc,
         )
@@ -557,17 +559,17 @@ def get_end_user_statement(file: Union[Path, str]) -> Optional[str]:
 
 def get_end_user_statement_or_raise(file: Union[Path, str]) -> str:
     """
-    This function attempts to get the ``end_user_data_statement`` key from a cogs ``info.json``.
+    This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
 
     Parameters
     ----------
     file: Union[pathlib.Path, str]
-        The ``__file__`` variable for the cogs ``__init__.py`` file.
+        The ``__file__`` variable for the cog's ``__init__.py`` file.
 
     Returns
     -------
     str
-        The end user statement found in the info.json.
+        The end user data statement found in the info.json.
 
     Raises
     ------
@@ -580,9 +582,10 @@ def get_end_user_statement_or_raise(file: Union[Path, str]) -> str:
     UnicodeError
         When ``info.json`` can't be decoded due to bad encoding.
     Exception
-        Any other exception raised from ``pathlib`` and ``json`` modules when attempting to parse the ``info.json`` for the ``end_user_data_statement`` key.
+        Any other exception raised from ``pathlib`` and ``json`` modules
+        when attempting to parse the ``info.json`` for the ``end_user_data_statement`` key.
     """
     file = Path(file).parent.absolute()
     info_json = file / "info.json"
-    with info_json.open() as fp:
+    with info_json.open(encoding="utf-8") as fp:
         return json.load(fp)["end_user_data_statement"]
