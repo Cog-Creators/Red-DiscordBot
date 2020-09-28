@@ -38,7 +38,7 @@ class ModLog(commands.Cog):
         await modlog.handle_auditype_key()
         await ctx.tick()
 
-    @modlogset.command()
+    @modlogset.command(aliases=["channel"])
     @commands.guild_only()
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set a channel as the modlog.
