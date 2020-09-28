@@ -9,6 +9,7 @@ import contextlib
 import weakref
 import functools
 from collections import namedtuple
+from copy import copy
 from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
@@ -237,6 +238,18 @@ class RedBase(
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
+
+    @property
+    def true_owner_ids(self):
+        return copy(self._true_owner_ids)
+
+    @true_owner_ids.setter
+    def true_owner_ids(self, value: Any) -> NoReturn:
+        raise RuntimeError("Don't try to assign to this attribute")
+
+    @true_owner_ids.deleter
+    def true_owner_ids(self) -> NoReturn:
+        raise RuntimeError("Don't try to delete to this attribute")
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
@@ -1631,7 +1644,7 @@ class RedBase(
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        for user_id in self._true_owner_ids:
+        for user_id in self.true_owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams
