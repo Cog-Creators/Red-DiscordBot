@@ -36,7 +36,7 @@ from . import (
     i18n,
 )
 from .utils import AsyncIter
-from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled
+from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsudo
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -4799,7 +4799,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         return msg
 
     @commands.command(
-        cls=commands.commands._IsTrueBotOwner, name="sudo",
+        cls=commands.commands._IsTrueBotOwner,
+        name="sudo",
     )
     async def sudo(self, ctx: commands.Context):
         """Enable your bot owner privileges.
@@ -4809,8 +4810,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if ctx.author.id not in self.bot.owner_ids:
             self.bot.owner_ids.add(ctx.author.id)
             await ctx.send(_("Your bot owner privileges have been enabled."))
-            await asyncio.sleep(delay=await self.bot._config.sudotime())
-            self.bot.owner_ids.discard(ctx.author.id)
+            if ctx.author.id in self.bot._owner_sudo_tasks:
+                self.bot._owner_sudo_tasks[ctx.author.id].cancel()
+                del self.bot._owner_sudo_tasks[ctx.author.id]
+            self.bot._owner_sudo_tasks[ctx.author.id] = asyncio.create_task(
+                timed_unsudo(ctx.author.id, self.bot)
+            )
             return
         await ctx.send(_("Your bot owner privileges are already enabled."))
 
@@ -4836,7 +4841,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @commands.command(
-        cls=commands.commands._IsTrueBotOwner, name="unsudo",
+        cls=commands.commands._IsTrueBotOwner,
+        name="unsudo",
     )
     async def unsudo(self, ctx: commands.Context):
         """Disable your bot owner privileges."""
