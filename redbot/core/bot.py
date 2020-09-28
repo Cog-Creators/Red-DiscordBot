@@ -249,7 +249,7 @@ class RedBase(
 
     @true_owner_ids.deleter
     def true_owner_ids(self) -> NoReturn:
-        raise RuntimeError("Don't try to delete to this attribute")
+        raise RuntimeError("Don't try to delete this attribute")
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
