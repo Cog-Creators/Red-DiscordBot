@@ -297,16 +297,17 @@ def init_events(bot, cli_flags):
                 msg = _("This command is on cooldown. Try again in 1 second.")
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
+            times_plural = ["s" if error.per > 1 else ""]
             if error.per is commands.BucketType.default:
                 msg = _(
                     "Too many people using this command."
-                    " It can only be used {number} time(s) concurrently."
-                ).format(number=error.number)
+                    " It can only be used {number} time{times_plural} concurrently."
+                ).format(number=error.number, times_plural=times_plural)
             else:
                 msg = _(
                     "Too many people using this command."
-                    " It can only be used {number} time(s) per {type} concurrently."
-                ).format(number=error.number, type=error.per.name)
+                    " It can only be used {number} time{times_plural} per {type} concurrently."
+                ).format(number=error.number, type=error.per.name, times_plural=times_plural)
             await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
