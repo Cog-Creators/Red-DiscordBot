@@ -429,9 +429,7 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
-                        errors[user_id] = _('User "{user_id} not found').format(
-                            user_id=user_id
-                        )
+                        errors[user_id] = _('User "{user_id} not found').format(user_id=user_id)
                         continue
                     except discord.Forbidden:
                         errors[user_id] = _(
