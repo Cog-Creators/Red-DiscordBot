@@ -2117,7 +2117,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             await ctx.send(msg)
         else:
-            await ctx.send(_("The services you provided weren't set anyway."))
+            await ctx.send(_("None of the services you provided had any keys set."))
 
     @commands.group()
     @checks.is_owner()
