@@ -2107,7 +2107,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if services:
             await self.bot.remove_shared_api_services(*services)
-            msg = "".join([f"`{s}`, " for s in services])[:-2]
+            msg = humanize_list(services)
             await ctx.send(_("Services deleted successfully:\n{}".format(msg)))
         else:
             await ctx.send(_("The services you provided weren't set anyway."))
