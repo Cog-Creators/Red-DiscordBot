@@ -2095,7 +2095,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for service_name in sorted_services:
             joined += "+ {}\n".format(service_name)
             for key_name in services[service_name].keys():
-                joined += "- {}\n".format(key_name)
+                joined += "  - {}\n".format(key_name)
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
