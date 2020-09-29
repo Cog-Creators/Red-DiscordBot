@@ -26,6 +26,7 @@ from typing import (
     Any,
     Literal,
     MutableMapping,
+    overload,
 )
 from types import MappingProxyType
 
@@ -986,20 +987,32 @@ class RedBase(
         """
         return await self._config.guild(discord.Object(id=guild_id)).mod_role()
 
-    async def get_shared_api_tokens(self, service_name: Optional[str] = None) -> Dict[str, str]:
+    @overload
+    async def get_shared_api_tokens(self, service_name: str = ...) -> Dict[str, str]:
+        ...
+
+    @overload
+    async def get_shared_api_tokens(self, service_name: None = ...) -> Dict[str, Dict[str, str]]:
+        ...
+
+    async def get_shared_api_tokens(
+        self, service_name: Optional[str] = None
+    ) -> Union[Dict[str, Dict[str, str]], Dict[str, str]]:
         """
         Gets the shared API tokens for a service, or all of them if no argument specified.
 
         Parameters
         ----------
-        service_name: str
-            The service to get tokens for.
+        service_name: str, optional
+            The service to get tokens for. Leave empty to get tokens for all services.
 
         Returns
         -------
-        Dict[str, str]
+        Dict[str, Dict[str, str]] or Dict[str, str]
             A Mapping of token names to tokens.
             This mapping exists because some services have multiple tokens.
+            If ``service_name`` is `None`, this method will return
+            a mapping with mappings for all services.
         """
         if service_name is None:
             return await self._config.custom(SHARED_API_TOKENS).all()
@@ -1060,7 +1073,7 @@ class RedBase(
 
         Parameters
         ----------
-        service_names: str
+        *service_names: str
             The services to remove.
 
         Examples
