@@ -18,7 +18,7 @@ from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
-from .checks import do_install_agreement
+from .checks import do_install_agreement, do_update_confirmation
 from .converters import InstalledCog
 from .installable import InstallableType, Installable, InstalledModule
 from .log import log
@@ -1042,6 +1042,20 @@ class Downloader(commands.Cog):
                 cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
 
                 if updates_available:
+                    cognames = [cog.name for cog in cogs_to_update]
+                    libnames = [lib.name for lib in libs_to_update]
+                    update_message = _("These cogs will be updated: ") + humanize_list(
+                        tuple(map(inline, cognames))
+                    )
+                    update_message += _(
+                        "\nThese shared libraries will be updated: "
+                    ) + humanize_list(tuple(map(inline, libnames)))
+
+                    confirmed = await do_update_confirmation(ctx, update_message)
+
+                    if not confirmed:
+                        return
+
                     updated_cognames, message = await self._update_cogs_and_libs(
                         ctx, cogs_to_update, libs_to_update, current_cog_versions=cogs_to_check
                     )
