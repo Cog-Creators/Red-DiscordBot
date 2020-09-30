@@ -53,6 +53,8 @@ class Trivia(commands.Cog):
             reveal_answer=True,
             payout_multiplier=0.0,
             allow_override=True,
+            audio_delay=30.0,
+            audio_repeat=True,
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
@@ -92,7 +94,9 @@ class Trivia(commands.Cog):
                 "Points to win: {max_score}\n"
                 "Reveal answer on timeout: {reveal_answer}\n"
                 "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}"
+                "Allow lists to override settings: {allow_override}\n"
+                "Audio answer time limit: {audio_delay} seconds\n"
+                "Repeat audio shorter than time limit: {audio_repeat}"
             ).format(**settings_dict),
             lang="py",
         )
@@ -198,6 +202,32 @@ class Trivia(commands.Cog):
             await ctx.send(_("Done. Payout multiplier set to {num}.").format(num=multiplier))
         else:
             await ctx.send(_("Done. I will no longer reward the winner with a payout."))
+
+    @triviaset.group(name="audio")
+    @commands.is_owner()
+    async def triviaset_audio(self, ctx: commands.Context):
+        """Manage Audio Trivia Settings"""
+        pass
+
+    @triviaset_audio.command(name="timelimit")
+    async def triviaset_audio_timelimit(self, ctx: commands.Context, seconds: finite_float):
+        """Set the maximum seconds permitted to answer an audio question."""
+        if seconds < 4.0:
+            await ctx.send(_("Must be at least 4 seconds."))
+            return
+        settings = self.config.guild(ctx.guild)
+        await settings.audiodelay.set(seconds)
+        await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
+
+    @triviaset_audio.command(name="repeat")
+    async def triviaset_audio_repeat(self, ctx: commands.Context, enabled: bool):
+        """Set whether to repeat audio clips that are shorter than the configured time limit."""
+        settings = self.config.guild(ctx.guild)
+        await settings.audio_repeat.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll repeat the audio if it's shorter than the time limit."))
+        else:
+            await ctx.send(_("Alright, I won't repeat audio shorter than the time limit."))
 
     @triviaset.group(name="custom")
     @commands.is_owner()
@@ -693,7 +723,10 @@ class Trivia(commands.Cog):
             session.force_stop()
 
 
-def get_core_lists() -> List[pathlib.Path]:
+def get_core_lists(audio=False) -> List[pathlib.Path]:
     """Return a list of paths for all trivia lists packaged with the bot."""
-    core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
+    if audio:
+        core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/audiolists"
+    else:
+        core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
     return list(core_lists_path.glob("*.yaml"))
