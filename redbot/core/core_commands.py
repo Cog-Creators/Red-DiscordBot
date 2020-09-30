@@ -3354,6 +3354,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("This server is already being ignored."))
 
+    @ignore.command(name="allexcept")
+    async def ignore_all(
+        self,
+        ctx,
+        channels: commands.Greedy[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Ignore all channels except a specified channel."""
+        channels = channels or [ctx.channel]
+        channels = set(ctx.guild.channels) - set(channels)
+        for channel in channels:
+            await self.bot._ignored_cache.set_ignored_channel(channel, True)
+        await ctx.send(
+            _("{amount_channels} channel{plural} have been added to the ignore list.").format(
+                amount_channels=len(channels), plural="s" if len(channels) != 1 else ""
+            )
+        )
+
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
@@ -3389,6 +3406,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("This server has been removed from the ignore list."))
         else:
             await ctx.send(_("This server is not in the ignore list."))
+
+    @unignore.command(name="allexcept")
+    async def unignore_all(
+        self,
+        ctx,
+        channels: commands.Greedy[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+    ):
+        """Unignore all channels except specified channel(s)."""
+        channels = channels or [ctx.channel]
+        channels = set(ctx.guild.channels) - set(channels)
+        for channel in channels:
+            await self.bot._ignored_cache.set_ignored_channel(channel, False)
+        await ctx.send(
+            _("{amount_channels} channel{plural} have been removed from the ignore list.").format(
+                amount_channels=len(channels), plural="s" if len(channels) != 1 else ""
+            )
+        )
 
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
