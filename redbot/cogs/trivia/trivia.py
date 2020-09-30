@@ -3,7 +3,7 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import List, Literal
+from typing import List, Literal, Optional, Union
 
 import io
 import yaml
@@ -11,6 +11,8 @@ import discord
 
 from redbot.core import Config, commands, checks
 from redbot.cogs.bank import is_owner_if_bank_global
+from redbot.cogs.audio import Audio
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
@@ -24,6 +26,7 @@ from .log import LOG
 from .session import TriviaSession
 
 __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
+
 
 UNIQUE_ID = 0xB3C0E453
 
@@ -40,8 +43,9 @@ class InvalidListError(Exception):
 class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot: Red):
         super().__init__()
+        self.bot = bot
         self.trivia_sessions = []
         self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -216,7 +220,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Must be at least 4 seconds."))
             return
         settings = self.config.guild(ctx.guild)
-        await settings.audiodelay.set(seconds)
+        await settings.audio_delay.set(seconds)
         await ctx.send(_("Done. Maximum seconds to answer set to {num}.").format(num=seconds))
 
     @triviaset_audio.command(name="repeat")
@@ -327,6 +331,7 @@ class Trivia(commands.Cog):
             return
         trivia_dict = {}
         authors = []
+        any_audio = False
         for category in reversed(categories):
             # We reverse the categories so that the first list's config takes
             # priority over the others.
@@ -347,8 +352,12 @@ class Trivia(commands.Cog):
                     ).format(name=category)
                 )
             else:
-                trivia_dict.update(dict_)
-                authors.append(trivia_dict.pop("AUTHOR", None))
+                is_audio = dict_.pop("AUDIO", False)
+                authors.append(dict_.pop("AUTHOR", None))
+                trivia_dict.update(
+                    {_q: {"audio": is_audio, "answers": _a} for _q, _a in dict_.items()}
+                )
+                any_audio = any_audio or is_audio
                 continue
             return
         if not trivia_dict:
@@ -356,12 +365,43 @@ class Trivia(commands.Cog):
                 _("The trivia list was parsed successfully, however it appears to be empty!")
             )
             return
+
+        # Only run if there are audio questions queued
+        if not any_audio:
+            audio = None
+        else:
+            audio: Optional["Audio"] = self.bot.get_cog("Audio")
+            if audio is None:
+                await ctx.send(_("Audio lists were parsed but Audio is not loaded!"))
+                return
+
+            status = await audio.config.status()
+            notify = await audio.config.guild(ctx.guild).notify()
+
+            if status:
+                await ctx.send(
+                    _(
+                        "It is recommended to disable audio status with `{prefix}audioset status`"
+                    ).format(prefix=ctx.prefix)
+                )
+            if notify:
+                await ctx.send(
+                    _(
+                        "It is recommended to disable audio notify with `{prefix}audioset notify`"
+                    ).format(prefix=ctx.prefix)
+                )
+
+            # Attempt to summon the bot to the current audio channel, has own error checking
+            failed = await ctx.invoke(audio.command_summon)
+            if failed:
+                return
+
         settings = await self.config.guild(ctx.guild).all()
-        config = trivia_dict.pop("CONFIG", None)
+        config = trivia_dict.pop("CONFIG", {"answer": None})["answer"]
         if config and settings["allow_override"]:
             settings.update(config)
         settings["lists"] = dict(zip(categories, reversed(authors)))
-        session = TriviaSession.start(ctx, trivia_dict, settings)
+        session = TriviaSession.start(ctx, trivia_dict, settings, audio)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
@@ -648,7 +688,7 @@ class Trivia(commands.Cog):
 
         Parameters
         ----------
-        file : discord.Attachment
+        attachment : discord.Attachment
             A discord message attachment.
 
         Returns
@@ -722,11 +762,11 @@ class Trivia(commands.Cog):
         for session in self.trivia_sessions:
             session.force_stop()
 
+    def _cog_data_path(self, audio=False):
+        return cog_data_path(self)
 
-def get_core_lists(audio=False) -> List[pathlib.Path]:
+
+def get_core_lists() -> List[pathlib.Path]:
     """Return a list of paths for all trivia lists packaged with the bot."""
-    if audio:
-        core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/audiolists"
-    else:
-        core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
+    core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
     return list(core_lists_path.glob("*.yaml"))

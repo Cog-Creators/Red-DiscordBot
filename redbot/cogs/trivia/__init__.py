@@ -6,5 +6,5 @@ from .log import *
 
 def setup(bot):
     """Load Trivia."""
-    cog = Trivia()
+    cog = Trivia(bot)
     bot.add_cog(cog)

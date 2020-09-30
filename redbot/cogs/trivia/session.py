@@ -3,7 +3,10 @@ import asyncio
 import time
 import random
 from collections import Counter
+from typing import Union, Optional
+
 import discord
+from redbot.cogs.audio import Audio
 from redbot.core import bank, errors
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
@@ -54,6 +57,8 @@ class TriviaSession:
          - ``bot_plays`` (`bool`)
          - ``allow_override`` (`bool`)
          - ``payout_multiplier`` (`float`)
+    audio : `Optional[Audio]`
+        Optional Audio cog indicating whether this trivia session will include audio questions
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type `discord.Member`.
@@ -62,7 +67,13 @@ class TriviaSession:
 
     """
 
-    def __init__(self, ctx, question_list: dict, settings: dict):
+    def __init__(
+        self,
+        ctx,
+        question_list: dict,
+        settings: dict,
+        audio: "Optional[Audio]" = None,
+    ):
         self.ctx = ctx
         list_ = list(question_list.items())
         random.shuffle(list_)
@@ -72,9 +83,10 @@ class TriviaSession:
         self.count = 0
         self._last_response = time.time()
         self._task = None
+        self.audio = audio
 
     @classmethod
-    def start(cls, ctx, question_list, settings):
+    def start(cls, ctx, question_list, settings, audio=None):
         """Create and start a trivia session.
 
         This allows the session to manage the running and cancellation of its
@@ -88,6 +100,8 @@ class TriviaSession:
             Same as `TriviaSession.question_list`
         settings : `dict`
             Same as `TriviaSession.settings`
+        audio : Optional[Audio]`
+            Same as `TriviaSession.audio`
 
         Returns
         -------
@@ -95,7 +109,7 @@ class TriviaSession:
             The new trivia session being run.
 
         """
-        session = cls(ctx, question_list, settings)
+        session = cls(ctx, question_list, settings, audio)
         loop = ctx.bot.loop
         session._task = loop.create_task(session.run())
         session._task.add_done_callback(session._error_handler)
@@ -127,14 +141,60 @@ class TriviaSession:
         await self._send_startup_msg()
         max_score = self.settings["max_score"]
         delay = self.settings["delay"]
+        audio_delay = self.settings["audio_delay"]
         timeout = self.settings["timeout"]
-        for question, answers in self._iter_questions():
+        if self.audio is not None:
+            import lavalink
+
+            player = lavalink.get_player(self.ctx.guild.id)
+            player.store("channel", self.ctx.channel.id)  # What's this for? I dunno
+            await self.audio.set_player_settings(self.ctx)
+        else:
+            lavalink = None
+            player = False
+
+        for question, answers, audio_url in self._iter_questions():
             async with self.ctx.typing():
                 await asyncio.sleep(3)
             self.count += 1
             msg = bold(_("Question number {num}!").format(num=self.count)) + "\n\n" + question
+            if player:  # Stop regardless if next question is audio
+                await player.stop()
+            if audio_url:
+                if not player:
+                    LOG.debug("Got an audio question in a non-audio trivia session")
+                    continue
+
+                load_result = await player.load_tracks(audio_url)
+                if (
+                    load_result.has_error
+                    or load_result.load_type != lavalink.enums.LoadType.TRACK_LOADED
+                ):
+                    await self.ctx.send(
+                        _("Audio Track has an error, skipping. See logs for details")
+                    )
+                    LOG.info(f"Track has error: {load_result.exception_message}")
+                    continue
+                tracks = load_result.tracks
+                track = tracks[0]
+                seconds = track.length / 1000
+                track.uri = ""  # Hide the info from `now`
+                if self.settings["audio_repeat"] and seconds < audio_delay:
+                    # Append it until it's longer than the delay
+                    tot_length = seconds + 0
+                    while tot_length < audio_delay:
+                        player.add(self.ctx.author, track)
+                        tot_length += seconds
+                else:
+                    player.add(self.ctx.author, track)
+
+                if not player.current:
+                    await player.play()
+
             await self.ctx.send(msg)
-            continue_ = await self.wait_for_answer(answers, delay, timeout)
+            continue_ = await self.wait_for_answer(
+                answers, audio_delay if audio_url else delay, timeout
+            )
             if continue_ is False:
                 break
             if any(score >= max_score for score in self.scores.values()):
@@ -167,9 +227,13 @@ class TriviaSession:
             `str`).
 
         """
-        for question, answers in self.question_list:
-            answers = _parse_answers(answers)
-            yield question, answers
+        for question, q_data in self.question_list:
+            answers = _parse_answers(q_data["answers"])
+            _audio = q_data["audio"]
+            if _audio:
+                yield _audio, answers, question
+            else:
+                yield question, answers, _audio
 
     async def wait_for_answer(self, answers, delay: float, timeout: float):
         """Wait for a correct answer, and then respond.
@@ -263,6 +327,8 @@ class TriviaSession:
         if multiplier > 0:
             await self.pay_winner(multiplier)
         self.stop()
+        if self.audio is not None:
+            await self.ctx.invoke(self.audio.command_disconnect)
 
     async def send_table(self):
         """Send a table of scores to the session's channel."""
