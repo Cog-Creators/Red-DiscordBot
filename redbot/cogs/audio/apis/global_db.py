@@ -153,12 +153,13 @@ class GlobalCacheWrapper:
         if not self.cog.global_api_user.get("can_delete"):
             return
         api_url = f"{_API_URL}api/v2/queries/es/id"
-        async with self.session.delete(
-            api_url,
-            headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
-            params={"id": id},
-        ) as r:
-            await r.read()
+        with contextlib.suppress(Exception):
+            async with self.session.delete(
+                api_url,
+                headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
+                params={"id": id},
+            ) as r:
+                await r.read()
 
     async def get_perms(self):
         global_api_user = copy(self.cog.global_api_user)
@@ -166,7 +167,7 @@ class GlobalCacheWrapper:
         is_enabled = await self.config.global_db_enabled()
         if (not is_enabled) or self.api_key is None:
             return global_api_user
-        with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
+        with contextlib.suppress(Exception):
             async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
                 async with session.get(
                     f"{_API_URL}api/v2/users/me",
