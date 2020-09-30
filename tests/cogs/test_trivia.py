@@ -21,6 +21,9 @@ def test_trivia_lists():
                     elif key == "AUTHOR":
                         if not isinstance(dict_[key], str):
                             problem_lists.append((l.stem, "AUTHOR is not a string"))
+                    elif key == "AUDIO":
+                        if not isinstance(dict_[key], str):
+                            problem_lists.append((l.stem, "AUTHOR is not a string"))
                     else:
                         if not isinstance(dict_[key], list):
                             problem_lists.append(
