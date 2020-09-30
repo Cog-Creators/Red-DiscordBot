@@ -213,7 +213,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(player, "channel.guild.id", None)
         if not guild_id:
             return
-        if not self.config.guild_from_id(guild_id).auto_deafen():
+        if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
         channel_id = player.channel.id
         node = player.manager.node
