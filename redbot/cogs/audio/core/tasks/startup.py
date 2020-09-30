@@ -142,8 +142,8 @@ Audio version 2.3.0+ brings you access to the **Global Audio API**, `[p]help aud
 This API will allow your to use the Spotify functionally of Audio with a much smaller YouTube API key usage, as it will attempt to look for results in the API before using your key.
 This API will also help your bot by reducing the likelihood of YouTube rate-limiting your bot for making requests too often.
 
-To use this API **you will be required to have an access token**, to obtain this token please join <https://discordapp.com/invite/zkmDzhs> and read the instructions there.
-Note: Just like any request your bot makes this service will be able to see your bot IP, your IP is not used for anything in the server but we felt that disclosing this to potential users is an important step since the service is managed by Draper and Cog-Creators org.
+To use this API **you will be required to have an access token**, to obtain this token please join <https://discord.gg/red> and run `?audioapi register` in #testing.
+Note: Just like any request your bot makes this service will be able to see your bot IP, your bot IP is not used for anything in the server but we felt that disclosing this to potential users is an important step since the service is managed by Draper and Cog-Creators org.
 
 Since I'm already sending this message, I would highly recommend that you enable your local cache if you haven't yet, to do so you can run `[p]audioset cache 5` This cache only stores metadata so it shouldn't use up a lot of space, however it will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot."""
             )
