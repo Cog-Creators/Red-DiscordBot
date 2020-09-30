@@ -3360,7 +3360,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ctx,
         channels: commands.Greedy[Union[discord.TextChannel, discord.CategoryChannel]] = None,
     ):
-        """Ignore all channels except a specified channel."""
+        """Ignore all channels except specified channel(s)."""
         channels = channels or [ctx.channel]
         channels = set(ctx.guild.channels) - set(channels)
         for channel in channels:
