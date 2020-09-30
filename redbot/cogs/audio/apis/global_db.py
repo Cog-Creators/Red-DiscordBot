@@ -34,7 +34,6 @@ class GlobalCacheWrapper:
         self.session = session
         self.api_key = None
         self._handshake_token = ""
-        self._handshake_token = ""
         self.has_api_key = None
         self._token: Mapping[str, str] = {}
         self.cog = cog
@@ -175,6 +174,8 @@ class GlobalCacheWrapper:
                 ) as resp:
                     if resp.status == 200:
                         search_response = await resp.json(loads=json.loads)
-                        global_api_user.update(search_response)
                         global_api_user["fetched"] = True
+                        global_api_user["can_read"] = search_response.get("can_read", False)
+                        global_api_user["can_post"] = search_response.get("can_post", False)
+                        global_api_user["can_delete"] = search_response.get("can_delete", False)
         return global_api_user
