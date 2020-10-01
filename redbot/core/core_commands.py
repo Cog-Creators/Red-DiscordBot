@@ -1050,7 +1050,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         await self.bot._config.embeds.set(enabled)
         await ctx.send(
-            _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
+            _("Embeds are now {} by default.").format(_("disabled") if enabled else _("enabled"))
         )
 
     @embedset.command(name="server", aliases=["guild"])
