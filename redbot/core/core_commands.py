@@ -1040,7 +1040,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @embedset.command(name="global")
     @checks.is_owner()
-    async def embedset_global(self, ctx: commands.Context,enabled: bool):
+    async def embedset_global(self, ctx: commands.Context, enabled: bool):
         """
         Set the global embed setting.
 
@@ -1721,7 +1721,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx: commands.Context,enabled:bool):
+    async def serverfuzzy(self, ctx: commands.Context, enabled: bool):
         """
         Set whether to enable fuzzy command search for the server.
 
@@ -1736,7 +1736,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def fuzzy(self, ctx: commands.Context, enabled:bool):
+    async def fuzzy(self, ctx: commands.Context, enabled: bool):
         """
         Set whether to enable fuzzy command search in DMs.
 
