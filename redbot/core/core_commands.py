@@ -1040,16 +1040,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @embedset.command(name="global")
     @checks.is_owner()
-    async def embedset_global(self, ctx: commands.Context):
+    async def embedset_global(self, ctx: commands.Context,enabled: bool):
         """
-        Toggle the global embed setting.
+        Set the global embed setting.
 
         This is used as a fallback if the user
         or guild hasn't set a preference. The
         default is to use embeds.
         """
-        current = await self.bot._config.embeds()
-        await self.bot._config.embeds.set(not current)
+        await self.bot._config.embeds.set(enabled)
         await ctx.send(
             _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
         )
@@ -1059,7 +1058,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the guild's embed setting.
+        Set the guild's embed setting.
 
         If enabled is None, the setting will be unset and
         the global default will be used instead.
@@ -1084,7 +1083,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the channel's embed setting.
+        Set the channel's embed setting.
 
         If enabled is None, the setting will be unset and
         the guild default will be used instead.
@@ -1107,7 +1106,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the user's embed setting for DMs.
+        Set the user's embed setting for DMs.
 
         If enabled is None, the setting will be unset and
         the global default will be used instead.
@@ -1722,33 +1721,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx: commands.Context):
+    async def serverfuzzy(self, ctx: commands.Context,enabled:bool):
         """
-        Toggle whether to enable fuzzy command search for the server.
+        Set whether to enable fuzzy command search for the server.
 
         Default is for fuzzy command search to be disabled.
         """
-        current_setting = await ctx.bot._config.guild(ctx.guild).fuzzy()
-        await ctx.bot._config.guild(ctx.guild).fuzzy.set(not current_setting)
+        await ctx.bot._config.guild(ctx.guild).fuzzy.set(enabled)
         await ctx.send(
             _("Fuzzy command search has been {} for this server.").format(
-                _("disabled") if current_setting else _("enabled")
+                _("enabled") if enabled else _("disabled")
             )
         )
 
     @_set.command()
     @checks.is_owner()
-    async def fuzzy(self, ctx: commands.Context):
+    async def fuzzy(self, ctx: commands.Context, enabled:bool):
         """
-        Toggle whether to enable fuzzy command search in DMs.
+        Set whether to enable fuzzy command search in DMs.
 
         Default is for fuzzy command search to be disabled.
         """
-        current_setting = await ctx.bot._config.fuzzy()
-        await ctx.bot._config.fuzzy.set(not current_setting)
+        await ctx.bot._config.fuzzy.set(enabled)
         await ctx.send(
             _("Fuzzy command search has been {} in DMs.").format(
-                _("disabled") if current_setting else _("enabled")
+                _("enabled") if enabled else _("disabled")
             )
         )
 
