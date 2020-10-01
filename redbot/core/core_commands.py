@@ -1931,18 +1931,28 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username."""
         try:
+            if self.bot.user.public_flags.verified_bot:
+                await ctx.send(
+                    _(
+                        "The username of a verified bot cannot be manually changed."
+                        " Please contact Discord support to change it."
+                    )
+                )
+                return
             if len(username) > 32:
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
             await self._name(name=username)
-        except discord.HTTPException:
+        except discord.HTTPException as e:
+            error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
             await ctx.send(
                 _(
-                    "Failed to change name. Remember that you can "
-                    "only do it up to 2 times an hour. Use "
-                    "nicknames if you need frequent changes. "
-                    "`{}set nickname`"
-                ).format(ctx.clean_prefix)
+                    "Failed to change the username. "
+                    "Discord returned the following error:\n"
+                    "``{}``\n\n"
+                    "Remember that you can only do it up to 2 times an hour."
+                    " Use nicknames if you need frequent changes. `{}set nickname`"
+                ).format(error_string, ctx.clean_prefix)
             )
         else:
             await ctx.send(_("Done."))
