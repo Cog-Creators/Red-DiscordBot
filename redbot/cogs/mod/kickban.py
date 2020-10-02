@@ -124,7 +124,8 @@ class KickBanMixin(MixinMeta):
         queue_entry = (guild.id, user.id)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
-            if removed_temp == True:
+            if removed_temp:
+```
                 log.info(
                     "{}({}) upgraded the tempban for {} to a permaban.".format(
                         author.name, author.id, user.id
