@@ -62,7 +62,7 @@ msgstr "Şarkı sıraya eklendi"
 #: redbot/cogs/audio/core/utilities/formatting.py:164
 #: redbot/cogs/audio/core/utilities/player.py:514
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Bu şarkının sunucuda çalınmasına izin verilmiyor."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:175
 #: redbot/cogs/audio/core/utilities/player.py:529
@@ -164,11 +164,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:224
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi Spotify kullanıcı ID ve Spotify client secret ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset spotifyapi` komutunu kullanınız."
 
 #: redbot/cogs/audio/core/utilities/player.py:234
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi YouTube API anahtarı ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset youtubeapi` komutunu kullanınız."
 
 #: redbot/cogs/audio/core/utilities/player.py:243
 #: redbot/cogs/audio/core/utilities/player.py:344
@@ -245,7 +245,7 @@ msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktı
 
 #: redbot/cogs/audio/core/utilities/player.py:454
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} şarkıları sıraya alınamaz."
 
 #: redbot/cogs/audio/core/utilities/player.py:460
 msgid "No Title"
@@ -291,7 +291,7 @@ msgstr "Tahmini kalan süre: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:604
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika sonra tekrar deneyin."
 
 #: redbot/cogs/audio/core/utilities/player.py:613
 msgid "The connection was reset while loading the playlist."
@@ -392,7 +392,7 @@ msgstr "Playlist başlatabilmek için bir kanal da olmanız gerekli."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:643
 msgid "the Global"
-msgstr ""
+msgstr "Evrensel"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:643
 msgid "Global"
