@@ -141,7 +141,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except discord.NotFound:
-            return _('User "{user_id}" not found').format(user_id=user.id)
+            return _('User with ID {user_id} not found').format(user_id=user.id)
         except Exception as e:
             log.exception(
                 "{}({}) attempted to {} {}({}), but an error occurred.".format(
