@@ -107,51 +107,49 @@ class KickBanMixin(MixinMeta):
         else:
             tempbans = await self.config.guild(guild).current_tempbans()
 
-            ban_list = await guild.bans()
-            for entry in ban_list:
-                if entry.user.id == user.id:
-                    if user.id in tempbans:
-                        async with self.config.guild(guild).current_tempbans() as tempbans:
-                            tempbans.remove(user.id)
-                        removed_temp = True
-                    else:
-                        return _("User {user_id} is already banned.").format(user_id=user.id)
+            ban_list = [ban.user.id for ban in await guild.bans()]
+            if user.id in ban_list:
+                if user.id in tempbans:
+                    async with self.config.guild(guild).current_tempbans() as tempbans:
+                        tempbans.remove(user.id)
+                    removed_temp = True
+                else:
+                    return _("User {user_id} is already banned.").format(user_id=user.id)
 
             ban_type = "hackban"
 
         audit_reason = get_audit_reason(author, reason)
 
         queue_entry = (guild.id, user.id)
-        try:
-            await guild.ban(user, reason=audit_reason, delete_message_days=days)
-            if removed_temp:
-```
-                log.info(
-                    "{}({}) upgraded the tempban for {} to a permaban.".format(
-                        author.name, author.id, user.id
-                    )
+        if removed_temp:
+            log.info(
+                "{}({}) upgraded the tempban for {} to a permaban.".format(
+                    author.name, author.id, user.id
                 )
-                end_result = _(
-                    "User with ID {user_id} was upgraded from a temporary to a permanent ban."
-                ).format(user_id=user.id)
-            else:
+            )
+            end_result = _(
+                "User with ID {user_id} was upgraded from a temporary to a permanent ban."
+            ).format(user_id=user.id)
+        else:
+            try:
+                await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
                         author.name, author.id, ban_type, user.name, user.id, str(days)
                     )
                 )
                 end_result = _("Done. It was about time.")
-        except discord.Forbidden:
-            return _("I'm not allowed to do that.")
-        except discord.NotFound:
-            return _('User with ID {user_id} not found').format(user_id=user.id)
-        except Exception as e:
-            log.exception(
-                "{}({}) attempted to {} {}({}), but an error occurred.".format(
-                    author.name, author.id, ban_type, user.name, user.id
+            except discord.Forbidden:
+                return _("I'm not allowed to do that.")
+            except discord.NotFound:
+                return _('User with ID {user_id} not found').format(user_id=user.id)
+            except Exception as e:
+                log.exception(
+                    "{}({}) attempted to {} {}({}), but an error occurred.".format(
+                        author.name, author.id, ban_type, user.name, user.id
+                    )
                 )
-            )
-            return _("An unexpected error occurred.")
+                return _("An unexpected error occurred.")
 
         if create_modlog_case:
             await modlog.create_case(
