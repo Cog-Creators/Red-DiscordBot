@@ -130,7 +130,9 @@ class KickBanMixin(MixinMeta):
                         author.name, author.id, user.id
                     )
                 )
-                end_result = _("{user}'s ban was upgraded from a temporary to a permanent ban.").format(user=user.id)
+                end_result = _(
+                    "User with ID {user_id} was upgraded from a temporary to a permanent ban."
+                ).format(user_id=user.id)
             else:
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
