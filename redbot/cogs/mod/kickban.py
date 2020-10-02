@@ -62,7 +62,7 @@ class KickBanMixin(MixinMeta):
 
     async def ban_user(
         self,
-        user: Union[discord.Member, discord.Object],
+        user: Union[discord.Member, discord.User, discord.Object],
         ctx: commands.Context,
         days: int = 0,
         reason: str = None,
@@ -130,7 +130,7 @@ class KickBanMixin(MixinMeta):
                         author.name, author.id, user.id
                     )
                 )
-                end_result = _(f"{user} was upgraded from a temporary to a permanent ban.")
+                end_result = _("{user}'s ban was upgraded from a temporary to a permanent ban.").format(user=user.id)
             else:
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
@@ -141,7 +141,7 @@ class KickBanMixin(MixinMeta):
         except discord.Forbidden:
             return _("I'm not allowed to do that.")
         except discord.NotFound:
-            return _(f'User "{user.id}" not found')
+            return _('User "{user_id}" not found').format(user_id=user.id)
         except Exception as e:
             log.exception(
                 "{}({}) attempted to {} {}({}), but an error occurred.".format(
@@ -287,6 +287,8 @@ class KickBanMixin(MixinMeta):
     ):
         """Ban a user from this server and optionally delete days of messages.
 
+        A user ID should be provided if the user is not a member of this server.
+
         If days is not a number, it's treated as the first word of the reason.
 
         Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
@@ -295,7 +297,8 @@ class KickBanMixin(MixinMeta):
         if days is None:
             days = await self.config.guild(guild).default_days()
         if isinstance(user, int):
-            user = discord.Object(id=user)
+            get_user = self.bot.get_user(user)
+            user = get_user or discord.Object(id=user)
 
         result = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
