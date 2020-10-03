@@ -82,8 +82,6 @@ class KickBanMixin(MixinMeta):
             return _("I cannot do that due to discord hierarchy rules.")
         elif not (0 <= days <= 7):
             return _("Invalid days. Must be between 0 and 7.")
-        elif len(reason) > 512:
-            return _("Reason must be shorter or equal to 512 characters.")
 
         toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
@@ -99,6 +97,9 @@ class KickBanMixin(MixinMeta):
                 await user.send(embed=em)
 
         audit_reason = get_audit_reason(author, reason)
+        audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+            "..." if len(audit_reason) > 512 else ""
+        )
 
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
@@ -202,6 +203,9 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to discord hierarchy rules."))
             return
         audit_reason = get_audit_reason(author, reason)
+        audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+            "..." if len(audit_reason) > 512 else ""
+        )
         toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
@@ -356,8 +360,15 @@ class KickBanMixin(MixinMeta):
                 else:
                     # Instead of replicating all that handling... gets attr from decorator
                     try:
+                        audit_reason = reason[0 : 509 if len(reason) > 512 else 512] + (
+                            "..." if len(reason) > 512 else ""
+                        )
                         result = await self.ban_user(
-                            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+                            user=user,
+                            ctx=ctx,
+                            days=days,
+                            reason=audit_reason,
+                            create_modlog_case=True,
                         )
                         if result is True:
                             banned.append(user_id)
@@ -379,6 +390,9 @@ class KickBanMixin(MixinMeta):
         for user_id in user_ids:
             user = discord.Object(id=user_id)
             audit_reason = get_audit_reason(author, reason)
+            audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+                "..." if len(audit_reason) > 512 else ""
+            )
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
@@ -525,6 +539,9 @@ class KickBanMixin(MixinMeta):
             return
 
         audit_reason = get_audit_reason(author, reason)
+        audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+            "..." if len(audit_reason) > 512 else ""
+        )
 
         invite = await self.get_invite_for_reinvite(ctx)
         if invite is None:
@@ -641,6 +658,9 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(ctx.author, reason)
+        audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+            "..." if len(audit_reason) > 512 else ""
+        )
         bans = await guild.bans()
         bans = [be.user for be in bans]
         user = discord.utils.get(bans, id=user_id)
