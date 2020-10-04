@@ -136,3 +136,9 @@ Request Status Code
 -------------------
 
 Red's ZMQ manager also allows for status codes to be sent with ``request.send_message``, via the ``status`` parameter.  On the client side, this will be available in ``request["status"]``, at the same depth as message.  Note that any error raised while converting arguments will return status code ``400`` and errors while running the command will return status code ``500``.
+
+----------------------
+Cog Name Customization
+----------------------
+
+By default, ZMQ methods are placed under cog name in the ZMQ method mapping, but this only works for when the method is in the same class that inherits form ``commands.Cog``.  If a separate class is needed, a custom class-level variable named ``__cog_name__`` can be set, which will be used for registration.
