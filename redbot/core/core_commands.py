@@ -1139,7 +1139,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if self.bot._last_exception:
             for page in pagify(self.bot._last_exception, shorten_by=10):
-                await destination.send(box(page, lang="py"))
+                try:
+                    await destination.send(box(page, lang="py"))
+                except discord.HTTPException:
+                    await ctx.channel.send(
+                        "I couldn't send the traceback message to you in DM. "
+                        "Either you blocked me or you disabled DMs in this server."
+                    )
+                    return
         else:
             await ctx.send(_("No exception has occurred yet."))
 
@@ -1776,8 +1783,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 url = url[1:-1]
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as r:
-                    data = await r.read()
+                try:
+                    async with session.get(url) as r:
+                        data = await r.read()
+                except aiohttp.InvalidURL:
+                    return await ctx.send(_("That URL is invalid."))
+                except aiohttp.ClientError:
+                    return await ctx.send(_("Something went wrong while trying to get the image."))
         else:
             await ctx.send_help()
             return
@@ -1941,7 +1953,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
         try:
-            if len(nickname) > 32:
+            if nickname and len(nickname) > 32:
                 await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
                 return
             await ctx.guild.me.edit(nick=nickname)

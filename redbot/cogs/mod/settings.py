@@ -28,6 +28,7 @@ class ModSettings(MixinMeta):
         warn_mention_spam = data["mention_spam"]["warn"]
         kick_mention_spam = data["mention_spam"]["kick"]
         ban_mention_spam = data["mention_spam"]["ban"]
+        strict_mention_spam = data["mention_spam"]["strict"]
         respect_hierarchy = data["respect_hierarchy"]
         delete_delay = data["delete_delay"]
         reinvite_on_unban = data["reinvite_on_unban"]
@@ -53,6 +54,11 @@ class ModSettings(MixinMeta):
             num_mentions=_("{num} mentions").format(num=ban_mention_spam)
             if ban_mention_spam
             else _("No")
+        )
+        msg += (
+            _("Mention Spam Strict: All mentions will count including duplicates\n")
+            if strict_mention_spam
+            else _("Mention Spam Strict: Only unique mentions will count\n")
         )
         msg += _("Respects hierarchy: {yes_or_no}\n").format(
             yes_or_no=_("Yes") if respect_hierarchy else _("No")
@@ -106,6 +112,34 @@ class ModSettings(MixinMeta):
         Manage the automoderation settings for mentionspam.
         """
 
+    @mentionspam.command(name="strict")
+    @commands.guild_only()
+    async def mentionspam_strict(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Setting to account for duplicate mentions.
+
+        If enabled all mentions will count including duplicated mentions.
+        If disabled only unique mentions will count.
+
+        Use this command without any parameter to see current setting.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            state = await self.config.guild(guild).mention_spam.strict()
+            if state:
+                msg = _("Mention spam currently accounts for multiple mentions of the same user.")
+            else:
+                msg = _("Mention spam currently only accounts for mentions of different users.")
+            await ctx.send(msg)
+            return
+
+        if enabled:
+            msg = _("Mention spam will now account for multiple mentions of the same user.")
+        else:
+            msg = _("Mention spam will only account for mentions of different users.")
+        await self.config.guild(guild).mention_spam.strict.set(enabled)
+        await ctx.send(msg)
+
     @mentionspam.command(name="warn")
     @commands.guild_only()
     async def mentionspam_warn(self, ctx: commands.Context, max_mentions: int):
@@ -141,7 +175,7 @@ class ModSettings(MixinMeta):
         await ctx.send(
             _(
                 "Autowarn for mention spam enabled. "
-                "Anyone mentioning {max_mentions} or more different people "
+                "Anyone mentioning {max_mentions} or more people "
                 "in a single message will be autowarned.\n{mismatch_message}"
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )
@@ -181,7 +215,7 @@ class ModSettings(MixinMeta):
         await ctx.send(
             _(
                 "Autokick for mention spam enabled. "
-                "Anyone mentioning {max_mentions} or more different people "
+                "Anyone mentioning {max_mentions} or more people "
                 "in a single message will be autokicked.\n{mismatch_message}"
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )
@@ -220,7 +254,7 @@ class ModSettings(MixinMeta):
         await ctx.send(
             _(
                 "Autoban for mention spam enabled. "
-                "Anyone mentioning {max_mentions} or more different people "
+                "Anyone mentioning {max_mentions} or more people "
                 "in a single message will be autobanned.\n{mismatch_message}"
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )

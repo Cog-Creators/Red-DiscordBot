@@ -153,14 +153,10 @@ download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
 
-You can find cogs by searching on ``cogs.red``. Find whatever you want,
+You can find cogs by searching on `<https://index.discord.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
-.. note:: ``cogs.red``, the website that list all of the cogs is not
-    ready for v3 yet. For now, you can refer to `this post
-    <https://cogboard.red/t/approved-repositories/210>`_.
-
-.. 26-cogs not available, let's use my repo :3
+.. note:: An even better way to discover new cogs and repositories is in the works! Stay tuned!
 
 Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
