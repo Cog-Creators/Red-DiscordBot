@@ -101,15 +101,6 @@ TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
-        """
-        self.bot.register_zmq_handler(self._load)
-        self.bot.register_zmq_handler(self._unload)
-        self.bot.register_zmq_handler(self._reload)
-        self.bot.register_zmq_handler(self._name)
-        self.bot.register_zmq_handler(self._prefixes)
-        self.bot.register_zmq_handler(self._version_info)
-        self.bot.register_zmq_handler(self._invite_url)
-        """
 
     @zmq_handler()
     async def _load(
