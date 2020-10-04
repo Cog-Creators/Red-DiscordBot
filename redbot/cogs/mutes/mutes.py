@@ -116,7 +116,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for task in self._unmute_tasks.values():
             task.cancel()
 
-    async def is_allowed_by_hierarchy(self, guild: discord.Guild, mod: discord.Member, user: discord.Member):
+    async def is_allowed_by_hierarchy(
+        self, guild: discord.Guild, mod: discord.Member, user: discord.Member
+    ):
         is_special = mod == guild.owner or await self.bot.is_owner(mod)
         return mod.top_role.position > user.top_role or is_special
 
