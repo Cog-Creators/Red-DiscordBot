@@ -249,7 +249,7 @@ class Context(DPYContext):
         discord.HTTPException
             see `discord.abc.Messageable.send`
         ValueError
-            when message's length is not between 1 and 2000 characters.
+            when the message's length is not between 1 and 2000 characters.
         """
         if not message or len(message) > 2000:
             raise ValueError("Message length must be between 1 and 2000")
