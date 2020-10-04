@@ -120,7 +120,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self, guild: discord.Guild, mod: discord.Member, user: discord.Member
     ):
         is_special = mod == guild.owner or await self.bot.is_owner(mod)
-        return mod.top_role.position > user.top_role or is_special
+        return mod.top_role.position > user.top_role.position or is_special
 
     async def _handle_automatic_unmute(self):
         await self.bot.wait_until_red_ready()
