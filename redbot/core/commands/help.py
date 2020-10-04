@@ -816,3 +816,4 @@ async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
     (Help!)
     """
     await ctx.bot.send_help_for(ctx, thing_to_get_help_for, from_help_command=True)
+    await ctx.tick()
