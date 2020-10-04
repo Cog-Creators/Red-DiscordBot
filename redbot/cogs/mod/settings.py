@@ -84,7 +84,7 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def hierarchy(self, ctx: commands.Context, enabled:bool):
+    async def hierarchy(self, ctx: commands.Context, enabled: bool):
         """Set role hierarchy check for mods and admins.
 
         **WARNING**: Disabling this setting will allow mods to take
@@ -301,7 +301,7 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def reinvite(self, ctx: commands.Context, enabled:bool):
+    async def reinvite(self, ctx: commands.Context, enabled: bool):
         """Set whether an invite will be sent to a user when unbanned.
 
         If this is True, the bot will attempt to create and send a single-use invite
