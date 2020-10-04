@@ -14,7 +14,7 @@ from .voicemutes import VoiceMutes
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
-from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
+from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
@@ -115,6 +115,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._unmute_task.cancel()
         for task in self._unmute_tasks.values():
             task.cancel()
+
+    async def is_allowed_by_hierarchy(self, guild: discord.Guild, mod: discord.Member, user: discord.Member):
+        is_special = mod == guild.owner or await self.bot.is_owner(mod)
+        return mod.top_role.position > user.top_role or is_special
 
     async def _handle_automatic_unmute(self):
         await self.bot.wait_until_red_ready()
@@ -981,7 +985,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if mute_role:
             try:
-                if not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+                if not await self.is_allowed_by_hierarchy(guild, author, user):
                     return False, _(mute_unmute_issues["hierarchy_problem"])
                 role = guild.get_role(mute_role)
                 if not role:
@@ -1043,7 +1047,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         _temp = None  # used to keep the cache incase of permissions errors
         if mute_role:
             try:
-                if not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+                if not await self.is_allowed_by_hierarchy(guild, author, user):
                     return False, _(mute_unmute_issues["hierarchy_problem"])
                 role = guild.get_role(mute_role)
                 if not role:
@@ -1101,7 +1105,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not isinstance(channel, discord.VoiceChannel):
             new_overs.update(send_messages=False, add_reactions=False)
 
-        if not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+        if not await self.is_allowed_by_hierarchy(guild, author, user):
             return {
                 "success": False,
                 "channel": channel,
@@ -1160,7 +1164,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             old_values = {"send_messages": None, "add_reactions": None, "speak": None}
 
-        if not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+        if not await self.is_allowed_by_hierarchy(guild, author, user):
             return {
                 "success": False,
                 "channel": channel,
