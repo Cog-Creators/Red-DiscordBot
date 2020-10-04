@@ -177,7 +177,8 @@ class CogManager:
             Path to remove.
 
         """
-        path = self._ensure_path_obj(path).resolve()
+        if type(path) is str:
+            path = self._ensure_path_obj(path).resolve()
         paths = await self.user_defined_paths()
 
         paths.remove(path)
