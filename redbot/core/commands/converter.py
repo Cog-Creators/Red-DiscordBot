@@ -177,7 +177,7 @@ class ZMQGuildConverter:
 
 
 class ZMQChannelConverter:
-    """Converts an ID to a `discord.Channel` object.
+    """Converts an ID to a `discord.GuildChannel` object.
 
     This is here primarily as a convenient converter for ZMQ methods,
     but can be used for other purposes, however discouraged."""
