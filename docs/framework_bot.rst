@@ -13,8 +13,8 @@ RedBase
     :members:
     :exclude-members: get_context
 
-    .. automethod:: register_rpc_handler
-    .. automethod:: unregister_rpc_handler
+    .. automethod:: register_zmq_handler
+    .. automethod:: unregister_zmq_handler
 
 Red
 ^^^
