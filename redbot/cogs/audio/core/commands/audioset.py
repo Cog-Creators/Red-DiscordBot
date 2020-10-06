@@ -1111,12 +1111,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Release date:           [{build_time}]\n"
                 "Lavaplayer version:     [{lavaplayer}]\n"
                 "Java version:           [{jvm}]\n"
+                "Java Executable:        [{jv_exec}]\n"
             ).format(
                 build_time=self.player_manager.build_time,
                 llbuild=self.player_manager.ll_build,
                 llbranch=self.player_manager.ll_branch,
                 lavaplayer=self.player_manager.lavaplayer,
                 jvm=self.player_manager.jvm,
+                jv_exec=self.player_manager.path,
             )
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
