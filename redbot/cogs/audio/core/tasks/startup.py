@@ -135,17 +135,17 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             return
         if current_notification < 1 <= _OWNER_NOTIFICATION:
             msg = _(
-                """Hey, first of all sorry for this notification, it is not something we wish to do often but this update to the Audio Cog warrants it in this case.
-            
-Audio version 2.3.0+ brings you access to the **Global Audio API**, `[p]help audioset globalapi` for more info, this **API is disabled by default and will never be enabled until you manually enable it**.
+                """Hello, this message brings you an important update regarding the core Audio cog:
+                
+Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
+See `[p]help audioset globalapi` for more informations.
+Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.
 
-This API will allow your to use the Spotify functionally of Audio with a much smaller YouTube API key usage, as it will attempt to look for results in the API before using your key.
-This API will also help your bot by reducing the likelihood of YouTube rate-limiting your bot for making requests too often.
+An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.
+Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.
 
-To use this API **you will be required to have an access token**, to obtain this token please join <https://discord.gg/red> and run `?audioapi register` in #testing.
-Note: Just like any request your bot makes this service will be able to see your bot IP, your bot IP is not used for anything in the server but we felt that disclosing this to potential users is an important step since the service is managed by Draper and Cog-Creators org.
-
-Since I'm already sending this message, I would highly recommend that you enable your local cache if you haven't yet, to do so you can run `[p]audioset cache 5` This cache only stores metadata so it shouldn't use up a lot of space, however it will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot."""
+On a related note, it is highly recommended that you enable your local cache if you haven't yet.
+To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
             )
             await send_to_owners_with_prefix_replaced(self.bot, msg)
             await self.config.owner_notification.set(1)
