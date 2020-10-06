@@ -1013,7 +1013,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Songs as status:  [{status}]\n"
             "Persist queue:    [{persist_queue}]\n"
             "Spotify search:   [{countrycode}]\n"
-            "Auto-Deafen:      [{countrycode}]\n"
+            "Auto-Deafen:      [{auto_deafen}]\n"
         ).format(
             countrycode=countrycode,
             repeat=song_repeat,
