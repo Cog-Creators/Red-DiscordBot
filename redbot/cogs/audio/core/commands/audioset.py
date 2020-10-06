@@ -1104,7 +1104,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+        if is_owner and not global_data["use_external_lavalink"] and self.player_manager.ll_build:
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
