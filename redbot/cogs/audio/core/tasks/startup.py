@@ -138,7 +138,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 """Hello, this message brings you an important update regarding the core Audio cog:
                 
 Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
-See `[p]help audioset globalapi` for more informations.
+See `[p]help audioset globalapi` for more information.
 Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.
 
 An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.
