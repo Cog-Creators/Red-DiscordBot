@@ -126,7 +126,8 @@ def init_events(bot, cli_flags):
                         except pkg_resources.DistributionNotFound:
                             pass
                         else:
-                            installed_extras.append(extra)
+                            if extra not in {"dev", "all"}:
+                                installed_extras.append(extra)
 
                     if installed_extras:
                         package_extras = f"[{','.join(installed_extras)}]"
