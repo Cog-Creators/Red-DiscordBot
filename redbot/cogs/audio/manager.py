@@ -154,7 +154,6 @@ class ServerManager:
         if not java_available:
             self.java_available = False
             self.java_version = None
-            self._java_exc = "java"
         else:
             self._java_version = version = await self._get_java_version()
             self._java_available = (11, 0) <= version < (12, 0)
