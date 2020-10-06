@@ -2451,7 +2451,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         'Appearance' tab. Enable 'Developer Mode', then right click
         a user and click on 'Copy ID'.
         """
-        destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
+        destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
             await ctx.send(
                 _(
