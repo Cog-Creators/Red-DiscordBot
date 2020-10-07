@@ -457,10 +457,10 @@ class KickBanMixin(MixinMeta):
         elif guild.me.top_role <= user.top_role or user == guild.owner:
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
-        
+
         if duration is None:
             duration = timedelta(days=await self.config.guild(guild).default_tempban_duration())
-            
+
         if days is None:
             days = await self.config.guild(guild).default_days()
 
