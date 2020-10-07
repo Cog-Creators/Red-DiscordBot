@@ -58,6 +58,7 @@ class Mod(
         "current_tempbans": [],
         "dm_on_kickban": False,
         "default_days": 0,
+        "default_temban_duration": 1,
     }
 
     default_channel_settings = {"ignored": False}
