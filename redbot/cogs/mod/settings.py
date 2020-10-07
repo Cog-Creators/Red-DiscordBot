@@ -34,6 +34,7 @@ class ModSettings(MixinMeta):
         reinvite_on_unban = data["reinvite_on_unban"]
         dm_on_kickban = data["dm_on_kickban"]
         default_days = data["default_days"]
+        default_tempban_duration = data["default_tempban_duration"]
         msg = ""
         msg += _("Delete repeats: {num_repeats}\n").format(
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
@@ -80,6 +81,7 @@ class ModSettings(MixinMeta):
             )
         else:
             msg += _("Default message history delete on ban: Don't delete any\n")
+        msg += _("Tempban default: {days}").format(default_tempban_duration)
         await ctx.send(box(msg))
 
     @modset.command()
@@ -364,4 +366,16 @@ class ModSettings(MixinMeta):
             _("{days} days worth of messages will be deleted when a user is banned.").format(
                 days=days
             )
+        )
+
+    @modset.command()
+    @commands.guild_only()
+    async def defaultduration(self, ctx: commands.Context, days: int = 0):
+        """Set the default number of days to be used when a user is tempbanned."""
+        guild = ctx.guild
+        if not (0 <= days):
+            return await ctx.send(_("Invalid number of days. Must be above 0."))
+        await self.config.guild(guild).default_tempban_duration.set(days)
+        await ctx.send(
+            _("The default duration for tempbanning a user is now {days} days.").format(days=days)
         )
