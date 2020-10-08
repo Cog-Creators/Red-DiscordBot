@@ -505,9 +505,12 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{word} by {author}").format(
+                    title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
+                    if len(title) > 256:
+                        title = "{}...".format(title[:253])
+                    embed.title = title
                     embed.url = ud["permalink"]
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)
