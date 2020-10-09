@@ -163,9 +163,9 @@ Mute users.
 
 .. _mod-command-mute-voice:
 
-^^^^^
+"""""
 voice
-^^^^^
+"""""
 
 **Syntax**
 
@@ -179,9 +179,9 @@ Mute a user in their current voice channel.
 
 .. _mod-command-mute-channel:
 
-^^^^^^^
+"""""""
 channel
-^^^^^^^
+"""""""
 
 .. note:: |mod-lock|
 
@@ -197,9 +197,9 @@ Mute a user in the current text channel.
 
 .. _mod-command-mute-server:
 
-^^^^^^
+""""""
 server
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -233,9 +233,9 @@ Unmute users.
 
 .. _mod-command-unmute-channel:
 
-^^^^^^^
+"""""""
 channel
-^^^^^^^
+"""""""
 
 .. note:: |mod-lock|
 
@@ -251,9 +251,9 @@ Unmute a user in this channel.
 
 .. _mod-command-unmute-server:
 
-^^^^^^
+""""""
 server
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -269,9 +269,9 @@ Unmute a user in this server.
 
 .. _mod-command-unmute-voice:
 
-^^^^^
+"""""
 voice
-^^^^^
+"""""
 
 **Syntax**
 
@@ -444,9 +444,9 @@ Manage server administration settings.
 
 .. _mod-command-modset-defaultdays:
 
-^^^^^^^^^^^
+"""""""""""
 defaultdays
-^^^^^^^^^^^
+"""""""""""
 
 **Syntax**
 
@@ -462,9 +462,9 @@ The number of days must be between 0 and 7.
 
 .. _mod-command-modset-deleterepeats:
 
-^^^^^^^^^^^^^
+"""""""""""""
 deleterepeats
-^^^^^^^^^^^^^
+"""""""""""""
 
 **Syntax**
 
@@ -482,9 +482,9 @@ Set to -1 to disable this feature.
 
 .. _mod-command-modset-mentionspam:
 
-^^^^^^^^^^^
+"""""""""""
 mentionspam
-^^^^^^^^^^^
+"""""""""""
 
 **Syntax**
 
@@ -498,9 +498,9 @@ Manage the automoderation settings for mentionspam.
 
 .. _mod-command-modset-mentionspam-strict:
 
-^^^^^^
+""""""
 strict
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -519,9 +519,9 @@ Use this command without any parameter to see current setting.
 
 .. _mod-command-modset-mentionspam-warn:
 
-^^^^
+""""
 warn
-^^^^
+""""
 
 **Syntax**
 
@@ -540,9 +540,9 @@ Users will be warned if they send any messages which contain more than
 
 .. _mod-command-modset-mentionspam-kick:
 
-^^^^
+""""
 kick
-^^^^
+""""
 
 **Syntax**
 
@@ -561,9 +561,9 @@ Users will be kicked if they send any messages which contain more than
 
 .. _mod-command-modset-mentionspam-ban:
 
-^^^
+"""
 ban
-^^^
+"""
 
 **Syntax**
 
@@ -582,9 +582,9 @@ Users will be banned if they send any message which contains more than
 
 .. _mod-command-modset-showsettings:
 
-^^^^^^^^^^^^
+""""""""""""
 showsettings
-^^^^^^^^^^^^
+""""""""""""
 
 **Syntax**
 
@@ -598,9 +598,9 @@ Show the current server administration settings.
 
 .. _mod-command-modset-reinvite:
 
-^^^^^^^^
+""""""""
 reinvite
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -617,9 +617,9 @@ to the newly-unbanned user.
 
 .. _mod-command-modset-hierarchy:
 
-^^^^^^^^^
+"""""""""
 hierarchy
-^^^^^^^^^
+"""""""""
 
 **Syntax**
 
@@ -638,9 +638,9 @@ This is enabled by default.
 
 .. _mod-command-modset-dm:
 
-^^
+""
 dm
-^^
+""
 
 **Syntax**
 

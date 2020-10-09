@@ -74,9 +74,9 @@ Repo management commands.
 
 .. _downloader-command-repo-update:
 
-^^^^^^
+""""""
 update
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -90,9 +90,9 @@ Update all repos, or ones of your choosing.
 
 .. _downloader-command-repo-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -106,9 +106,9 @@ List all installed repos.
 
 .. _downloader-command-repo-info:
 
-^^^^
+""""
 info
-^^^^
+""""
 
 **Syntax**
 
@@ -122,9 +122,9 @@ Show information about a repo.
 
 .. _downloader-command-repo-delete:
 
-^^^^^^
+""""""
 delete
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -138,9 +138,9 @@ Remove a repo and its files.
 
 .. _downloader-command-repo-add:
 
-^^^
+"""
 add
-^^^
+"""
 
 **Syntax**
 
@@ -175,9 +175,9 @@ Cog installation management commands.
 
 .. _downloader-command-cog-checkforupdates:
 
-^^^^^^^^^^^^^^^
+"""""""""""""""
 checkforupdates
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
 **Syntax**
 
@@ -194,9 +194,9 @@ Use `[p]cog update` to update cogs.
 
 .. _downloader-command-cog-listpinned:
 
-^^^^^^^^^^
+""""""""""
 listpinned
-^^^^^^^^^^
+""""""""""
 
 **Syntax**
 
@@ -210,9 +210,9 @@ List currently pinned cogs.
 
 .. _downloader-command-cog-installversion:
 
-^^^^^^^^^^^^^^
+""""""""""""""
 installversion
-^^^^^^^^^^^^^^
+""""""""""""""
 
 **Syntax**
 
@@ -226,9 +226,9 @@ Install a cog from the specified revision of given repo.
 
 .. _downloader-command-cog-pin:
 
-^^^
+"""
 pin
-^^^
+"""
 
 **Syntax**
 
@@ -242,9 +242,9 @@ Pin cogs - this will lock cogs on their current version.
 
 .. _downloader-command-cog-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -258,9 +258,9 @@ List all available cogs from a single repo.
 
 .. _downloader-command-cog-updateallfromrepos:
 
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 updateallfromrepos
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 
 **Syntax**
 
@@ -274,9 +274,9 @@ Update all cogs from repos of your choosing.
 
 .. _downloader-command-cog-info:
 
-^^^^
+""""
 info
-^^^^
+""""
 
 **Syntax**
 
@@ -290,9 +290,9 @@ List information about a single cog.
 
 .. _downloader-command-cog-reinstallreqs:
 
-^^^^^^^^^^^^^
+"""""""""""""
 reinstallreqs
-^^^^^^^^^^^^^
+"""""""""""""
 
 **Syntax**
 
@@ -309,9 +309,9 @@ because of change in minor version of Python.
 
 .. _downloader-command-cog-unpin:
 
-^^^^^
+"""""
 unpin
-^^^^^
+"""""
 
 **Syntax**
 
@@ -325,9 +325,9 @@ Unpin cogs - this will remove update lock from cogs.
 
 .. _downloader-command-cog-updatetoversion:
 
-^^^^^^^^^^^^^^^
+"""""""""""""""
 updatetoversion
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
 **Syntax**
 
@@ -345,9 +345,9 @@ downgrade the cog, uninstall and install it again.
 
 .. _downloader-command-cog-install:
 
-^^^^^^^
+"""""""
 install
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -361,9 +361,9 @@ Install a cog from the given repo.
 
 .. _downloader-command-cog-update:
 
-^^^^^^
+""""""
 update
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -377,9 +377,9 @@ Update all cogs, or ones of your choosing.
 
 .. _downloader-command-cog-uninstall:
 
-^^^^^^^^^
+"""""""""
 uninstall
-^^^^^^^^^
+"""""""""
 
 **Syntax**
 

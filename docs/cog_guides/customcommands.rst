@@ -46,9 +46,9 @@ Custom commands management.
 
 .. _customcommands-command-customcom-show:
 
-^^^^
+""""
 show
-^^^^
+""""
 
 **Syntax**
 
@@ -62,9 +62,9 @@ Shows a custom command's responses and its settings.
 
 .. _customcommands-command-customcom-search:
 
-^^^^^^
+""""""
 search
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -78,9 +78,9 @@ Searches through custom commands, according to the query.
 
 .. _customcommands-command-customcom-raw:
 
-^^^
+"""
 raw
-^^^
+"""
 
 **Syntax**
 
@@ -96,9 +96,9 @@ This is helpful for copy and pasting.
 
 .. _customcommands-command-customcom-cooldown:
 
-^^^^^^^^
+""""""""
 cooldown
-^^^^^^^^
+""""""""
 
 .. note:: |mod-lock|
 
@@ -121,9 +121,9 @@ Example:
 
 .. _customcommands-command-customcom-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -140,9 +140,9 @@ markdown escaped and newlines replaced with spaces.
 
 .. _customcommands-command-customcom-delete:
 
-^^^^^^
+""""""
 delete
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -161,9 +161,9 @@ Example:
 
 .. _customcommands-command-customcom-create:
 
-^^^^^^
+""""""
 create
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -183,9 +183,9 @@ CCs can be enhanced with arguments, see the guide
 
 .. _customcommands-command-customcom-create-simple:
 
-^^^^^^
+""""""
 simple
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -204,9 +204,9 @@ Example:
 
 .. _customcommands-command-customcom-create-random:
 
-^^^^^^
+""""""
 random
-^^^^^^
+""""""
 
 .. note:: |mod-lock|
 
@@ -224,9 +224,9 @@ Note: This command is interactive.
 
 .. _customcommands-command-customcom-edit:
 
-^^^^
+""""
 edit
-^^^^
+""""
 
 .. note:: |mod-lock|
 

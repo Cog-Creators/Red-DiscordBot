@@ -48,9 +48,9 @@ Manage filter settings.
 
 .. _filter-command-filterset-ban:
 
-^^^
+"""
 ban
-^^^
+"""
 
 **Syntax**
 
@@ -69,9 +69,9 @@ Set both to zero to disable autoban.
 
 .. _filter-command-filterset-defaultname:
 
-^^^^^^^^^^^
+"""""""""""
 defaultname
-^^^^^^^^^^^
+"""""""""""
 
 **Syntax**
 
@@ -110,9 +110,9 @@ Use double quotes to add or remove sentences.
 
 .. _filter-command-filter-delete:
 
-^^^^^^
+""""""
 delete
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -132,9 +132,9 @@ Examples:
 
 .. _filter-command-filter-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -148,9 +148,9 @@ Send a list of this servers filtered words.
 
 .. _filter-command-filter-names:
 
-^^^^^
+"""""
 names
-^^^^^
+"""""
 
 **Syntax**
 
@@ -166,9 +166,9 @@ This is disabled by default.
 
 .. _filter-command-filter-channel:
 
-^^^^^^^
+"""""""
 channel
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -184,9 +184,9 @@ Use double quotes to add or remove sentences.
 
 .. _filter-command-filter-channel-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -200,9 +200,9 @@ Send the list of the channel's filtered words.
 
 .. _filter-command-filter-channel-add:
 
-^^^
+"""
 add
-^^^
+"""
 
 **Syntax**
 
@@ -222,9 +222,9 @@ Examples:
 
 .. _filter-command-filter-channel-remove:
 
-^^^^^^
+""""""
 remove
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -244,9 +244,9 @@ Examples:
 
 .. _filter-command-filter-add:
 
-^^^
+"""
 add
-^^^
+"""
 
 **Syntax**
 

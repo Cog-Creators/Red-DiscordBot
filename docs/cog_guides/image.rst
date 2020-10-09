@@ -48,9 +48,9 @@ Make sure to set the Client ID using `[p]imgurcreds`.
 
 .. _image-command-imgur-search:
 
-^^^^^^
+""""""
 search
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -67,9 +67,9 @@ Command can return up to 5 images.
 
 .. _image-command-imgur-subreddit:
 
-^^^^^^^^^
+"""""""""
 subreddit
-^^^^^^^^^
+"""""""""
 
 **Syntax**
 

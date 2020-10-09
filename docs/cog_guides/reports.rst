@@ -52,9 +52,9 @@ Manage Reports.
 
 .. _reports-command-reportset-toggle:
 
-^^^^^^
+""""""
 toggle
-^^^^^^
+""""""
 
 .. note:: |admin-lock|
 
@@ -70,9 +70,9 @@ Enable or Disable reporting for this server.
 
 .. _reports-command-reportset-output:
 
-^^^^^^
+""""""
 output
-^^^^^^
+""""""
 
 .. note:: |admin-lock|
 
@@ -107,9 +107,9 @@ Use without arguments for interactive reporting, or do
 
 .. _reports-command-report-interact:
 
-^^^^^^^^
+""""""""
 interact
-^^^^^^^^
+""""""""
 
 .. note:: |mod-lock|
 

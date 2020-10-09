@@ -48,9 +48,9 @@ Manage Trivia settings.
 
 .. _trivia-command-triviaset-custom:
 
-^^^^^^
+""""""
 custom
-^^^^^^
+""""""
 
 .. note:: |owner-lock|
 
@@ -66,9 +66,9 @@ Manage Custom Trivia lists.
 
 .. _trivia-command-triviaset-custom-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -82,9 +82,9 @@ List uploaded custom trivia.
 
 .. _trivia-command-triviaset-custom-upload:
 
-^^^^^^
+""""""
 upload
-^^^^^^
+""""""
 
 .. note:: |owner-lock|
 
@@ -100,9 +100,9 @@ Upload a trivia file.
 
 .. _trivia-command-triviaset-custom-delete:
 
-^^^^^^
+""""""
 delete
-^^^^^^
+""""""
 
 .. note:: |owner-lock|
 
@@ -118,9 +118,9 @@ Delete a trivia file.
 
 .. _trivia-command-triviaset-override:
 
-^^^^^^^^
+""""""""
 override
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -134,9 +134,9 @@ Allow/disallow trivia lists to override settings.
 
 .. _trivia-command-triviaset-revealanswer:
 
-^^^^^^^^^^^^
+""""""""""""
 revealanswer
-^^^^^^^^^^^^
+""""""""""""
 
 **Syntax**
 
@@ -153,9 +153,9 @@ in time.
 
 .. _trivia-command-triviaset-payout:
 
-^^^^^^
+""""""
 payout
-^^^^^^
+""""""
 
 .. note:: |admin-lock|
 
@@ -178,9 +178,9 @@ this multiplier.
 
 .. _trivia-command-triviaset-stopafter:
 
-^^^^^^^^^
+"""""""""
 stopafter
-^^^^^^^^^
+"""""""""
 
 **Syntax**
 
@@ -194,9 +194,9 @@ Set how long until trivia stops due to no response.
 
 .. _trivia-command-triviaset-botplays:
 
-^^^^^^^^
+""""""""
 botplays
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -212,9 +212,9 @@ If enabled, the bot will gain a point if no one guesses correctly.
 
 .. _trivia-command-triviaset-maxscore:
 
-^^^^^^^^
+""""""""
 maxscore
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -228,9 +228,9 @@ Set the total points required to win.
 
 .. _trivia-command-triviaset-timelimit:
 
-^^^^^^^^^
+"""""""""
 timelimit
-^^^^^^^^^
+"""""""""
 
 **Syntax**
 
@@ -244,9 +244,9 @@ Set the maximum seconds permitted to answer a question.
 
 .. _trivia-command-triviaset-showsettings:
 
-^^^^^^^^^^^^
+""""""""""""
 showsettings
-^^^^^^^^^^^^
+""""""""""""
 
 **Syntax**
 
@@ -279,9 +279,9 @@ questions from all of them.
 
 .. _trivia-command-trivia-list:
 
-^^^^
+""""
 list
-^^^^
+""""
 
 **Syntax**
 
@@ -295,9 +295,9 @@ List available trivia categories.
 
 .. _trivia-command-trivia-leaderboard:
 
-^^^^^^^^^^^
+"""""""""""
 leaderboard
-^^^^^^^^^^^
+"""""""""""
 
 **Syntax**
 
@@ -314,9 +314,9 @@ subcommands for a more customised leaderboard.
 
 .. _trivia-command-trivia-leaderboard-global:
 
-^^^^^^
+""""""
 global
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -338,9 +338,9 @@ Global trivia leaderboard.
 
 .. _trivia-command-trivia-leaderboard-server:
 
-^^^^^^
+""""""
 server
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -362,9 +362,9 @@ Leaderboard for this server.
 
 .. _trivia-command-trivia-stop:
 
-^^^^
+""""
 stop
-^^^^
+""""
 
 **Syntax**
 

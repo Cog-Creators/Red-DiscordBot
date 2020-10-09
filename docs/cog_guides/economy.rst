@@ -46,9 +46,9 @@ Manage the bank.
 
 .. _economy-command-bank-prune:
 
-^^^^^
+"""""
 prune
-^^^^^
+"""""
 
 .. note:: |admin-lock|
 
@@ -64,9 +64,9 @@ Prune bank accounts.
 
 .. _economy-command-bank-prune-global:
 
-^^^^^^
+""""""
 global
-^^^^^^
+""""""
 
 .. note:: |owner-lock|
 
@@ -82,9 +82,9 @@ Prune bank accounts for users who no longer share a server with the bot.
 
 .. _economy-command-bank-prune-server:
 
-^^^^^^
+""""""
 server
-^^^^^^
+""""""
 
 .. note:: |guildowner-lock|
 
@@ -100,9 +100,9 @@ Prune bank accounts for users no longer in the server.
 
 .. _economy-command-bank-prune-user:
 
-^^^^
+""""
 user
-^^^^
+""""
 
 **Syntax**
 
@@ -116,9 +116,9 @@ Delete the bank account of a specified user.
 
 .. _economy-command-bank-transfer:
 
-^^^^^^^^
+""""""""
 transfer
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -132,9 +132,9 @@ Transfer currency to other users.
 
 .. _economy-command-bank-set:
 
-^^^
+"""
 set
-^^^
+"""
 
 .. note:: |admin-lock|
 
@@ -157,9 +157,9 @@ Examples:
 
 .. _economy-command-bank-reset:
 
-^^^^^
+"""""
 reset
-^^^^^
+"""""
 
 .. note:: |guildowner-lock|
 
@@ -175,9 +175,9 @@ Delete all bank accounts.
 
 .. _economy-command-bank-balance:
 
-^^^^^^^
+"""""""
 balance
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -277,9 +277,9 @@ Manage Economy settings.
 
 .. _economy-command-economyset-slotmin:
 
-^^^^^^^
+"""""""
 slotmin
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -293,9 +293,9 @@ Set the minimum slot machine bid.
 
 .. _economy-command-economyset-paydayamount:
 
-^^^^^^^^^^^^
+""""""""""""
 paydayamount
-^^^^^^^^^^^^
+""""""""""""
 
 **Syntax**
 
@@ -309,9 +309,9 @@ Set the amount earned each payday.
 
 .. _economy-command-economyset-slotmax:
 
-^^^^^^^
+"""""""
 slotmax
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -325,9 +325,9 @@ Set the maximum slot machine bid.
 
 .. _economy-command-economyset-rolepaydayamount:
 
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 rolepaydayamount
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 **Syntax**
 
@@ -341,9 +341,9 @@ Set the amount earned each payday for a role.
 
 .. _economy-command-economyset-slottime:
 
-^^^^^^^^
+""""""""
 slottime
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -357,9 +357,9 @@ Set the cooldown for the slot machine.
 
 .. _economy-command-economyset-registeramount:
 
-^^^^^^^^^^^^^^
+""""""""""""""
 registeramount
-^^^^^^^^^^^^^^
+""""""""""""""
 
 **Syntax**
 
@@ -373,9 +373,9 @@ Set the initial balance for new bank accounts.
 
 .. _economy-command-economyset-showsettings:
 
-^^^^^^^^^^^^
+""""""""""""
 showsettings
-^^^^^^^^^^^^
+""""""""""""
 
 **Syntax**
 
@@ -389,9 +389,9 @@ Shows the current economy settings
 
 .. _economy-command-economyset-paydaytime:
 
-^^^^^^^^^^
+""""""""""
 paydaytime
-^^^^^^^^^^
+""""""""""
 
 **Syntax**
 

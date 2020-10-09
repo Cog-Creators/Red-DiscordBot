@@ -48,9 +48,9 @@ Delete messages.
 
 .. _cleanup-command-cleanup-after:
 
-^^^^^
+"""""
 after
-^^^^^
+"""""
 
 **Syntax**
 
@@ -68,9 +68,9 @@ and copy its id.
 
 .. _cleanup-command-cleanup-before:
 
-^^^^^^
+""""""
 before
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -88,9 +88,9 @@ and copy its id.
 
 .. _cleanup-command-cleanup-bot:
 
-^^^
+"""
 bot
-^^^
+"""
 
 **Syntax**
 
@@ -104,9 +104,9 @@ Clean up command messages and messages from the bot.
 
 .. _cleanup-command-cleanup-text:
 
-^^^^
+""""
 text
-^^^^
+""""
 
 **Syntax**
 
@@ -125,9 +125,9 @@ Remember to use double quotes.
 
 .. _cleanup-command-cleanup-messages:
 
-^^^^^^^^
+""""""""
 messages
-^^^^^^^^
+""""""""
 
 **Syntax**
 
@@ -144,9 +144,9 @@ Example:
 
 .. _cleanup-command-cleanup-self:
 
-^^^^
+""""
 self
-^^^^
+""""
 
 **Syntax**
 
@@ -163,9 +163,9 @@ it is used for pattern matching - only messages containing the given text will b
 
 .. _cleanup-command-cleanup-between:
 
-^^^^^^^
+"""""""
 between
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -184,9 +184,9 @@ Example:
 
 .. _cleanup-command-cleanup-user:
 
-^^^^
+""""
 user
-^^^^
+""""
 
 **Syntax**
 
@@ -204,9 +204,9 @@ Examples:
 
 .. _cleanup-command-cleanup-spam:
 
-^^^^
+""""
 spam
-^^^^
+""""
 
 **Syntax**
 

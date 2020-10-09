@@ -48,9 +48,9 @@ Manage modlog settings.
 
 .. _modlog-command-modlogset-cases:
 
-^^^^^
+"""""
 cases
-^^^^^
+"""""
 
 **Syntax**
 
@@ -64,9 +64,9 @@ Enable or disable case creation for a mod action.
 
 .. _modlog-command-modlogset-modlog:
 
-^^^^^^
+""""""
 modlog
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -82,9 +82,9 @@ Omit `<channel>` to disable the modlog.
 
 .. _modlog-command-modlogset-fixcasetypes:
 
-^^^^^^^^^^^^
+""""""""""""
 fixcasetypes
-^^^^^^^^^^^^
+""""""""""""
 
 .. note:: |owner-lock|
 
@@ -100,9 +100,9 @@ Command to fix misbehaving casetypes.
 
 .. _modlog-command-modlogset-resetcases:
 
-^^^^^^^^^^
+""""""""""
 resetcases
-^^^^^^^^^^
+""""""""""
 
 **Syntax**
 

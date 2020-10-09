@@ -101,9 +101,9 @@ Commands
             cog_command = f"""
 .. {reference}-command-{get_parent_tree(command)}:
 
-{'^'*len(command.name)}
+{'^'*len(command.name) if not command.parent else '"'*len(command.name)}
 {command.name}
-{'^'*len(command.name)}
+{'^'*len(command.name) if not command.parent else '"'*len(command.name)}
 """
             if command.requires.privilege_level in privilege_levels:
                 cog_command += f"""

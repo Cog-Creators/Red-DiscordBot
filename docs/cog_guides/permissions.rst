@@ -46,9 +46,9 @@ Command permission management tools.
 
 .. _permissions-command-permissions-explain:
 
-^^^^^^^
+"""""""
 explain
-^^^^^^^
+"""""""
 
 **Syntax**
 
@@ -62,9 +62,9 @@ Explain how permissions works.
 
 .. _permissions-command-permissions-setdefaultserverrule:
 
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 setdefaultserverrule
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -89,9 +89,9 @@ rule for. This is case sensitive.
 
 .. _permissions-command-permissions-addglobalrule:
 
-^^^^^^^^^^^^^
+"""""""""""""
 addglobalrule
-^^^^^^^^^^^^^
+"""""""""""""
 
 .. note:: |owner-lock|
 
@@ -114,9 +114,9 @@ This is case sensitive.
 
 .. _permissions-command-permissions-canrun:
 
-^^^^^^
+""""""
 canrun
-^^^^^^
+""""""
 
 **Syntax**
 
@@ -133,9 +133,9 @@ server and text channel.
 
 .. _permissions-command-permissions-addserverrule:
 
-^^^^^^^^^^^^^
+"""""""""""""
 addserverrule
-^^^^^^^^^^^^^
+"""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -158,9 +158,9 @@ This is case sensitive.
 
 .. _permissions-command-permissions-removeserverrule:
 
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 removeserverrule
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -181,9 +181,9 @@ from. This is case sensitive.
 
 .. _permissions-command-permissions-removeglobalrule:
 
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 removeglobalrule
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -204,9 +204,9 @@ from. This is case sensitive.
 
 .. _permissions-command-permissions-setdefaultglobalrule:
 
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 setdefaultglobalrule
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -231,9 +231,9 @@ rule for. This is case sensitive.
 
 .. _permissions-command-permissions-acl:
 
-^^^
+"""
 acl
-^^^
+"""
 
 .. note:: |guildowner-lock|
 
@@ -249,9 +249,9 @@ Manage permissions with YAML files.
 
 .. _permissions-command-permissions-acl-yamlexample:
 
-^^^^^^^^^^^
+"""""""""""
 yamlexample
-^^^^^^^^^^^
+"""""""""""
 
 **Syntax**
 
@@ -265,9 +265,9 @@ Sends an example of the yaml layout for permissions
 
 .. _permissions-command-permissions-acl-getserver:
 
-^^^^^^^^^
+"""""""""
 getserver
-^^^^^^^^^
+"""""""""
 
 .. note:: |guildowner-lock|
 
@@ -283,9 +283,9 @@ Get a YAML file detailing all rules in this server.
 
 .. _permissions-command-permissions-acl-setglobal:
 
-^^^^^^^^^
+"""""""""
 setglobal
-^^^^^^^^^
+"""""""""
 
 .. note:: |owner-lock|
 
@@ -307,9 +307,9 @@ setting the new rules.
 
 .. _permissions-command-permissions-acl-updateserver:
 
-^^^^^^^^^^^^
+""""""""""""
 updateserver
-^^^^^^^^^^^^
+""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -328,9 +328,9 @@ file.
 
 .. _permissions-command-permissions-acl-setserver:
 
-^^^^^^^^^
+"""""""""
 setserver
-^^^^^^^^^
+"""""""""
 
 .. note:: |guildowner-lock|
 
@@ -349,9 +349,9 @@ server to the rules specified in the uploaded file.
 
 .. _permissions-command-permissions-acl-updateglobal:
 
-^^^^^^^^^^^^
+""""""""""""
 updateglobal
-^^^^^^^^^^^^
+""""""""""""
 
 .. note:: |owner-lock|
 
@@ -370,9 +370,9 @@ file.
 
 .. _permissions-command-permissions-acl-getglobal:
 
-^^^^^^^^^
+"""""""""
 getglobal
-^^^^^^^^^
+"""""""""
 
 .. note:: |owner-lock|
 
@@ -388,9 +388,9 @@ Get a YAML file detailing all global rules.
 
 .. _permissions-command-permissions-clearglobalrules:
 
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 clearglobalrules
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -406,9 +406,9 @@ Reset all global rules.
 
 .. _permissions-command-permissions-clearserverrules:
 
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 clearserverrules
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 .. note:: |guildowner-lock|
 
