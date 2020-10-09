@@ -1,32 +1,26 @@
 .. _cleanup:
-.. |cogname| replace:: cleanup.rst
 
 =======
 Cleanup
 =======
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the cleanup cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load cleanup
 
-.. _bank-usage:
+.. _cleanup-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Commands for cleaning up messages.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _cleanup-commands:
 
@@ -52,79 +46,25 @@ cleanup
 
 Delete messages.
 
-.. _cleanup-command-cleanup-bot:
+.. _cleanup-command-cleanup-after:
 
-^^^
-bot
-^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup bot <number> [delete_pinned=False]
-
-**Description**
-
-Clean up command messages and messages from the bot.
-
-.. _cleanup-command-cleanup-between:
-
-^^^^^^^
-between
-^^^^^^^
+^^^^^
+after
+^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cleanup between <one> <two> [delete_pinned=False]
+    [p]cleanup after <message_id> [delete_pinned=False]
 
 **Description**
 
-Delete the messages between Messsage One and Message Two, providing the messages IDs.
+Delete all messages after a specified message.
 
-The first message ID should be the older message and the second one the newer.
-
-Example:
-    `[p]cleanup between 123456789123456789 987654321987654321`
-
-.. _cleanup-command-cleanup-spam:
-
-^^^^
-spam
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup spam [number=50]
-
-**Description**
-
-Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
-
-Defaults to 50.
-
-.. _cleanup-command-cleanup-self:
-
-^^^^
-self
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup self <number> [match_pattern] [delete_pinned=False]
-
-**Description**
-
-Clean up messages owned by the bot.
-
-By default, all messages are cleaned. If a third argument is specified,
-it is used for pattern matching - only messages containing the given text will be deleted.
+To get a message id, enable developer mode in Discord's
+settings, 'appearance' tab. Then right click a message
+and copy its id.
 
 .. _cleanup-command-cleanup-before:
 
@@ -146,24 +86,21 @@ To get a message id, enable developer mode in Discord's
 settings, 'appearance' tab. Then right click a message
 and copy its id.
 
-.. _cleanup-command-cleanup-messages:
+.. _cleanup-command-cleanup-bot:
 
-^^^^^^^^
-messages
-^^^^^^^^
+^^^
+bot
+^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cleanup messages <number> [delete_pinned=False]
+    [p]cleanup bot <number> [delete_pinned=False]
 
 **Description**
 
-Delete the last X messages.
-
-Example:
-    `[p]cleanup messages 26`
+Clean up command messages and messages from the bot.
 
 .. _cleanup-command-cleanup-text:
 
@@ -186,6 +123,65 @@ Example:
 
 Remember to use double quotes.
 
+.. _cleanup-command-cleanup-messages:
+
+^^^^^^^^
+messages
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup messages <number> [delete_pinned=False]
+
+**Description**
+
+Delete the last X messages.
+
+Example:
+    `[p]cleanup messages 26`
+
+.. _cleanup-command-cleanup-self:
+
+^^^^
+self
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup self <number> [match_pattern] [delete_pinned=False]
+
+**Description**
+
+Clean up messages owned by the bot.
+
+By default, all messages are cleaned. If a third argument is specified,
+it is used for pattern matching - only messages containing the given text will be deleted.
+
+.. _cleanup-command-cleanup-between:
+
+^^^^^^^
+between
+^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup between <one> <two> [delete_pinned=False]
+
+**Description**
+
+Delete the messages between Messsage One and Message Two, providing the messages IDs.
+
+The first message ID should be the older message and the second one the newer.
+
+Example:
+    `[p]cleanup between 123456789123456789 987654321987654321`
+
 .. _cleanup-command-cleanup-user:
 
 ^^^^
@@ -206,22 +202,20 @@ Examples:
     `[p]cleanup user @Twentysix 2`
     `[p]cleanup user Red 6`
 
-.. _cleanup-command-cleanup-after:
+.. _cleanup-command-cleanup-spam:
 
-^^^^^
-after
-^^^^^
+^^^^
+spam
+^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cleanup after <message_id> [delete_pinned=False]
+    [p]cleanup spam [number=50]
 
 **Description**
 
-Delete all messages after a specified message.
+Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
 
-To get a message id, enable developer mode in Discord's
-settings, 'appearance' tab. Then right click a message
-and copy its id.
+Defaults to 50.

@@ -1,32 +1,26 @@
 .. _permissions:
-.. |cogname| replace:: permissions.rst
 
 ===========
 Permissions
 ===========
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the permissions cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load permissions
 
-.. _bank-usage:
+.. _permissions-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Customise permissions for commands and cogs.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _permissions-commands:
 
@@ -49,6 +43,49 @@ permissions
 **Description**
 
 Command permission management tools.
+
+.. _permissions-command-permissions-explain:
+
+^^^^^^^
+explain
+^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions explain 
+
+**Description**
+
+Explain how permissions works.
+
+.. _permissions-command-permissions-setdefaultserverrule:
+
+^^^^^^^^^^^^^^^^^^^^
+setdefaultserverrule
+^^^^^^^^^^^^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions setdefaultserverrule <allow_or_deny> <cog_or_command>
+
+**Description**
+
+Set the default rule for a command in this server.
+
+This is the rule a command will default to when no other rule
+is found.
+
+`<allow_or_deny>` should be one of "allow", "deny" or "clear".
+"clear" will reset the default rule.
+
+`<cog_or_command>` is the cog or command to set the default
+rule for. This is case sensitive.
 
 .. _permissions-command-permissions-addglobalrule:
 
@@ -75,40 +112,6 @@ This is case sensitive.
 
 `<who_or_what>` is one or more users, channels or roles the rule is for.
 
-.. _permissions-command-permissions-explain:
-
-^^^^^^^
-explain
-^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions explain 
-
-**Description**
-
-Explain how permissions works.
-
-.. _permissions-command-permissions-clearserverrules:
-
-^^^^^^^^^^^^^^^^
-clearserverrules
-^^^^^^^^^^^^^^^^
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions clearserverrules 
-
-**Description**
-
-Reset all rules in this server.
-
 .. _permissions-command-permissions-canrun:
 
 ^^^^^^
@@ -128,26 +131,28 @@ Check if a user can run a command.
 This will take the current context into account, such as the
 server and text channel.
 
-.. _permissions-command-permissions-removeglobalrule:
+.. _permissions-command-permissions-addserverrule:
 
-^^^^^^^^^^^^^^^^
-removeglobalrule
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
+addserverrule
+^^^^^^^^^^^^^
 
-.. note:: |owner-lock|
+.. note:: |guildowner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]permissions removeglobalrule <cog_or_command> <who_or_what>...
+    [p]permissions addserverrule <allow_or_deny> <cog_or_command> <who_or_what>...
 
 **Description**
 
-Remove a global rule from a command.
+Add a rule to a command in this server.
 
-`<cog_or_command>` is the cog or command to remove the rule
-from. This is case sensitive.
+`<allow_or_deny>` should be one of "allow" or "deny".
+
+`<cog_or_command>` is the cog or command to add the rule to.
+This is case sensitive.
 
 `<who_or_what>` is one or more users, channels or roles the rule is for.
 
@@ -174,6 +179,56 @@ from. This is case sensitive.
 
 `<who_or_what>` is one or more users, channels or roles the rule is for.
 
+.. _permissions-command-permissions-removeglobalrule:
+
+^^^^^^^^^^^^^^^^
+removeglobalrule
+^^^^^^^^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions removeglobalrule <cog_or_command> <who_or_what>...
+
+**Description**
+
+Remove a global rule from a command.
+
+`<cog_or_command>` is the cog or command to remove the rule
+from. This is case sensitive.
+
+`<who_or_what>` is one or more users, channels or roles the rule is for.
+
+.. _permissions-command-permissions-setdefaultglobalrule:
+
+^^^^^^^^^^^^^^^^^^^^
+setdefaultglobalrule
+^^^^^^^^^^^^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions setdefaultglobalrule <allow_or_deny> <cog_or_command>
+
+**Description**
+
+Set the default global rule for a command.
+
+This is the rule a command will default to when no other rule
+is found.
+
+`<allow_or_deny>` should be one of "allow", "deny" or "clear".
+"clear" will reset the default rule.
+
+`<cog_or_command>` is the cog or command to set the default
+rule for. This is case sensitive.
+
 .. _permissions-command-permissions-acl:
 
 ^^^
@@ -191,6 +246,22 @@ acl
 **Description**
 
 Manage permissions with YAML files.
+
+.. _permissions-command-permissions-acl-yamlexample:
+
+^^^^^^^^^^^
+yamlexample
+^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions acl yamlexample 
+
+**Description**
+
+Sends an example of the yaml layout for permissions
 
 .. _permissions-command-permissions-acl-getserver:
 
@@ -234,6 +305,27 @@ to the rules specified in the uploaded file.
 This does not validate the names of commands and cogs before
 setting the new rules.
 
+.. _permissions-command-permissions-acl-updateserver:
+
+^^^^^^^^^^^^
+updateserver
+^^^^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]permissions acl updateserver 
+
+**Description**
+
+Update rules for this server with a YAML file.
+
+This won't touch any rules not specified in the YAML
+file.
+
 .. _permissions-command-permissions-acl-setserver:
 
 ^^^^^^^^^
@@ -276,43 +368,6 @@ Update global rules with a YAML file.
 This won't touch any rules not specified in the YAML
 file.
 
-.. _permissions-command-permissions-acl-updateserver:
-
-^^^^^^^^^^^^
-updateserver
-^^^^^^^^^^^^
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions acl updateserver 
-
-**Description**
-
-Update rules for this server with a YAML file.
-
-This won't touch any rules not specified in the YAML
-file.
-
-.. _permissions-command-permissions-acl-yamlexample:
-
-^^^^^^^^^^^
-yamlexample
-^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions acl yamlexample 
-
-**Description**
-
-Sends an example of the yaml layout for permissions
-
 .. _permissions-command-permissions-acl-getglobal:
 
 ^^^^^^^^^
@@ -330,31 +385,6 @@ getglobal
 **Description**
 
 Get a YAML file detailing all global rules.
-
-.. _permissions-command-permissions-addserverrule:
-
-^^^^^^^^^^^^^
-addserverrule
-^^^^^^^^^^^^^
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions addserverrule <allow_or_deny> <cog_or_command> <who_or_what>...
-
-**Description**
-
-Add a rule to a command in this server.
-
-`<allow_or_deny>` should be one of "allow" or "deny".
-
-`<cog_or_command>` is the cog or command to add the rule to.
-This is case sensitive.
-
-`<who_or_what>` is one or more users, channels or roles the rule is for.
 
 .. _permissions-command-permissions-clearglobalrules:
 
@@ -374,38 +404,11 @@ clearglobalrules
 
 Reset all global rules.
 
-.. _permissions-command-permissions-setdefaultglobalrule:
+.. _permissions-command-permissions-clearserverrules:
 
-^^^^^^^^^^^^^^^^^^^^
-setdefaultglobalrule
-^^^^^^^^^^^^^^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]permissions setdefaultglobalrule <allow_or_deny> <cog_or_command>
-
-**Description**
-
-Set the default global rule for a command.
-
-This is the rule a command will default to when no other rule
-is found.
-
-`<allow_or_deny>` should be one of "allow", "deny" or "clear".
-"clear" will reset the default rule.
-
-`<cog_or_command>` is the cog or command to set the default
-rule for. This is case sensitive.
-
-.. _permissions-command-permissions-setdefaultserverrule:
-
-^^^^^^^^^^^^^^^^^^^^
-setdefaultserverrule
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
+clearserverrules
+^^^^^^^^^^^^^^^^
 
 .. note:: |guildowner-lock|
 
@@ -413,17 +416,8 @@ setdefaultserverrule
 
 .. code-block:: none
 
-    [p]permissions setdefaultserverrule <allow_or_deny> <cog_or_command>
+    [p]permissions clearserverrules 
 
 **Description**
 
-Set the default rule for a command in this server.
-
-This is the rule a command will default to when no other rule
-is found.
-
-`<allow_or_deny>` should be one of "allow", "deny" or "clear".
-"clear" will reset the default rule.
-
-`<cog_or_command>` is the cog or command to set the default
-rule for. This is case sensitive.
+Reset all rules in this server.

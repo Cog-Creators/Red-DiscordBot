@@ -1,32 +1,26 @@
 .. _economy:
-.. |cogname| replace:: economy.rst
 
 =======
 Economy
 =======
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the economy cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load economy
 
-.. _bank-usage:
+.. _economy-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Get rich and have fun with imaginary currency!
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _economy-commands:
 
@@ -50,24 +44,6 @@ bank
 
 Manage the bank.
 
-.. _economy-command-bank-reset:
-
-^^^^^
-reset
-^^^^^
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank reset [confirmation=False]
-
-**Description**
-
-Delete all bank accounts.
-
 .. _economy-command-bank-prune:
 
 ^^^^^
@@ -86,21 +62,23 @@ prune
 
 Prune bank accounts.
 
-.. _economy-command-bank-prune-user:
+.. _economy-command-bank-prune-global:
 
-^^^^
-user
-^^^^
+^^^^^^
+global
+^^^^^^
+
+.. note:: |owner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bank prune user <user> [confirmation=False]
+    [p]bank prune global [confirmation=False]
 
 **Description**
 
-Delete the bank account of a specified user.
+Prune bank accounts for users who no longer share a server with the bot.
 
 .. _economy-command-bank-prune-server:
 
@@ -120,23 +98,37 @@ server
 
 Prune bank accounts for users no longer in the server.
 
-.. _economy-command-bank-prune-global:
+.. _economy-command-bank-prune-user:
 
-^^^^^^
-global
-^^^^^^
-
-.. note:: |owner-lock|
+^^^^
+user
+^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bank prune global [confirmation=False]
+    [p]bank prune user <user> [confirmation=False]
 
 **Description**
 
-Prune bank accounts for users who no longer share a server with the bot.
+Delete the bank account of a specified user.
+
+.. _economy-command-bank-transfer:
+
+^^^^^^^^
+transfer
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bank transfer <to> <amount>
+
+**Description**
+
+Transfer currency to other users.
 
 .. _economy-command-bank-set:
 
@@ -163,21 +155,23 @@ Examples:
 - `[p]bank set @Twentysix +2` - Increases balance by 2
 - `[p]bank set @Twentysix -6` - Decreases balance by 6
 
-.. _economy-command-bank-transfer:
+.. _economy-command-bank-reset:
 
-^^^^^^^^
-transfer
-^^^^^^^^
+^^^^^
+reset
+^^^^^
+
+.. note:: |guildowner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bank transfer <to> <amount>
+    [p]bank reset [confirmation=False]
 
 **Description**
 
-Transfer currency to other users.
+Delete all bank accounts.
 
 .. _economy-command-bank-balance:
 
@@ -281,6 +275,38 @@ economyset
 
 Manage Economy settings.
 
+.. _economy-command-economyset-slotmin:
+
+^^^^^^^
+slotmin
+^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]economyset slotmin <bid>
+
+**Description**
+
+Set the minimum slot machine bid.
+
+.. _economy-command-economyset-paydayamount:
+
+^^^^^^^^^^^^
+paydayamount
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]economyset paydayamount <creds>
+
+**Description**
+
+Set the amount earned each payday.
+
 .. _economy-command-economyset-slotmax:
 
 ^^^^^^^
@@ -313,53 +339,21 @@ rolepaydayamount
 
 Set the amount earned each payday for a role.
 
-.. _economy-command-economyset-slotmin:
+.. _economy-command-economyset-slottime:
 
-^^^^^^^
-slotmin
-^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]economyset slotmin <bid>
-
-**Description**
-
-Set the minimum slot machine bid.
-
-.. _economy-command-economyset-paydaytime:
-
-^^^^^^^^^^
-paydaytime
-^^^^^^^^^^
+^^^^^^^^
+slottime
+^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]economyset paydaytime <seconds>
+    [p]economyset slottime <seconds>
 
 **Description**
 
-Set the cooldown for payday.
-
-.. _economy-command-economyset-paydayamount:
-
-^^^^^^^^^^^^
-paydayamount
-^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]economyset paydayamount <creds>
-
-**Description**
-
-Set the amount earned each payday.
+Set the cooldown for the slot machine.
 
 .. _economy-command-economyset-registeramount:
 
@@ -377,22 +371,6 @@ registeramount
 
 Set the initial balance for new bank accounts.
 
-.. _economy-command-economyset-slottime:
-
-^^^^^^^^
-slottime
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]economyset slottime <seconds>
-
-**Description**
-
-Set the cooldown for the slot machine.
-
 .. _economy-command-economyset-showsettings:
 
 ^^^^^^^^^^^^
@@ -408,3 +386,19 @@ showsettings
 **Description**
 
 Shows the current economy settings
+
+.. _economy-command-economyset-paydaytime:
+
+^^^^^^^^^^
+paydaytime
+^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]economyset paydaytime <seconds>
+
+**Description**
+
+Set the cooldown for payday.

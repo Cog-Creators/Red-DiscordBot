@@ -1,32 +1,26 @@
 .. _modlog:
-.. |cogname| replace:: modlog.rst
 
 ======
 ModLog
 ======
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the modlog cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load modlog
 
-.. _bank-usage:
+.. _modlog-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Manage log channels for moderation actions.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _modlog-commands:
 
@@ -52,6 +46,22 @@ modlogset
 
 Manage modlog settings.
 
+.. _modlog-command-modlogset-cases:
+
+^^^^^
+cases
+^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset cases [action]
+
+**Description**
+
+Enable or disable case creation for a mod action.
+
 .. _modlog-command-modlogset-modlog:
 
 ^^^^^^
@@ -69,22 +79,6 @@ modlog
 Set a channel as the modlog.
 
 Omit `<channel>` to disable the modlog.
-
-.. _modlog-command-modlogset-cases:
-
-^^^^^
-cases
-^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modlogset cases [action]
-
-**Description**
-
-Enable or disable case creation for a mod action.
 
 .. _modlog-command-modlogset-fixcasetypes:
 

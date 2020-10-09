@@ -1,32 +1,26 @@
 .. _trivia:
-.. |cogname| replace:: trivia.rst
 
 ======
 Trivia
 ======
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the trivia cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load trivia
 
-.. _bank-usage:
+.. _trivia-usage:
 
 -----
 Usage
 -----
 
-This cog is used to run trivia sessions. The bot will ask
-questions from a list and wait to hear responses from
-anyone in the channel. The winner will be chosen by whoever
-has the most correct answers.
+Play trivia with friends!
 
-There are lots of included topics to use, as well as
-support to create your own lists trivia lists.
 
 .. _trivia-commands:
 
@@ -51,148 +45,6 @@ triviaset
 **Description**
 
 Manage Trivia settings.
-
-.. _trivia-command-triviaset-payout:
-
-^^^^^^
-payout
-^^^^^^
-
-.. note:: |admin-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset payout <multiplier>
-
-**Description**
-
-Set the payout multiplier.
-
-This can be any positive decimal number. If a user wins trivia when at
-least 3 members are playing, they will receive credits. Set to 0 to
-disable.
-
-The number of credits is determined by multiplying their total score by
-this multiplier.
-
-.. _trivia-command-triviaset-timelimit:
-
-^^^^^^^^^
-timelimit
-^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset timelimit <seconds>
-
-**Description**
-
-Set the maximum seconds permitted to answer a question.
-
-.. _trivia-command-triviaset-stopafter:
-
-^^^^^^^^^
-stopafter
-^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset stopafter <seconds>
-
-**Description**
-
-Set how long until trivia stops due to no response.
-
-.. _trivia-command-triviaset-maxscore:
-
-^^^^^^^^
-maxscore
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset maxscore <score>
-
-**Description**
-
-Set the total points required to win.
-
-.. _trivia-command-triviaset-override:
-
-^^^^^^^^
-override
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset override <enabled>
-
-**Description**
-
-Allow/disallow trivia lists to override settings.
-
-.. _trivia-command-triviaset-botplays:
-
-^^^^^^^^
-botplays
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset botplays <true_or_false>
-
-**Description**
-
-Set whether or not the bot gains points.
-
-If enabled, the bot will gain a point if no one guesses correctly.
-
-.. _trivia-command-triviaset-revealanswer:
-
-^^^^^^^^^^^^
-revealanswer
-^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset revealanswer <true_or_false>
-
-**Description**
-
-Set whether or not the answer is revealed.
-
-If enabled, the bot will reveal the answer if no one guesses correctly
-in time.
-
-.. _trivia-command-triviaset-showsettings:
-
-^^^^^^^^^^^^
-showsettings
-^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]triviaset showsettings 
-
-**Description**
-
-Show the current trivia settings.
 
 .. _trivia-command-triviaset-custom:
 
@@ -228,6 +80,24 @@ list
 
 List uploaded custom trivia.
 
+.. _trivia-command-triviaset-custom-upload:
+
+^^^^^^
+upload
+^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset custom upload 
+
+**Description**
+
+Upload a trivia file.
+
 .. _trivia-command-triviaset-custom-delete:
 
 ^^^^^^
@@ -246,23 +116,147 @@ delete
 
 Delete a trivia file.
 
-.. _trivia-command-triviaset-custom-upload:
+.. _trivia-command-triviaset-override:
 
-^^^^^^
-upload
-^^^^^^
-
-.. note:: |owner-lock|
+^^^^^^^^
+override
+^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]triviaset custom upload 
+    [p]triviaset override <enabled>
 
 **Description**
 
-Upload a trivia file.
+Allow/disallow trivia lists to override settings.
+
+.. _trivia-command-triviaset-revealanswer:
+
+^^^^^^^^^^^^
+revealanswer
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset revealanswer <true_or_false>
+
+**Description**
+
+Set whether or not the answer is revealed.
+
+If enabled, the bot will reveal the answer if no one guesses correctly
+in time.
+
+.. _trivia-command-triviaset-payout:
+
+^^^^^^
+payout
+^^^^^^
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset payout <multiplier>
+
+**Description**
+
+Set the payout multiplier.
+
+This can be any positive decimal number. If a user wins trivia when at
+least 3 members are playing, they will receive credits. Set to 0 to
+disable.
+
+The number of credits is determined by multiplying their total score by
+this multiplier.
+
+.. _trivia-command-triviaset-stopafter:
+
+^^^^^^^^^
+stopafter
+^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset stopafter <seconds>
+
+**Description**
+
+Set how long until trivia stops due to no response.
+
+.. _trivia-command-triviaset-botplays:
+
+^^^^^^^^
+botplays
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset botplays <true_or_false>
+
+**Description**
+
+Set whether or not the bot gains points.
+
+If enabled, the bot will gain a point if no one guesses correctly.
+
+.. _trivia-command-triviaset-maxscore:
+
+^^^^^^^^
+maxscore
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset maxscore <score>
+
+**Description**
+
+Set the total points required to win.
+
+.. _trivia-command-triviaset-timelimit:
+
+^^^^^^^^^
+timelimit
+^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset timelimit <seconds>
+
+**Description**
+
+Set the maximum seconds permitted to answer a question.
+
+.. _trivia-command-triviaset-showsettings:
+
+^^^^^^^^^^^^
+showsettings
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset showsettings 
+
+**Description**
+
+Show the current trivia settings.
 
 .. _trivia-command-trivia:
 
@@ -298,22 +292,6 @@ list
 **Description**
 
 List available trivia categories.
-
-.. _trivia-command-trivia-stop:
-
-^^^^
-stop
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]trivia stop 
-
-**Description**
-
-Stop an ongoing trivia session.
 
 .. _trivia-command-trivia-leaderboard:
 
@@ -381,3 +359,19 @@ Leaderboard for this server.
  - `games` : total games played
 
 `<top>` is the number of ranks to show on the leaderboard.
+
+.. _trivia-command-trivia-stop:
+
+^^^^
+stop
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia stop 
+
+**Description**
+
+Stop an ongoing trivia session.

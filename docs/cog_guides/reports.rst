@@ -1,32 +1,30 @@
 .. _reports:
-.. |cogname| replace:: reports.rst
 
 =======
 Reports
 =======
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the reports cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load reports
 
-.. _bank-usage:
+.. _reports-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Create user reports that server staff can respond to.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
+Users can open reports using `[p]report`. These are then sent
+to a channel in the server for staff, and the report creator
+gets a DM. Both can be used to communicate.
+
 
 .. _reports-commands:
 
@@ -52,24 +50,6 @@ reportset
 
 Manage Reports.
 
-.. _reports-command-reportset-output:
-
-^^^^^^
-output
-^^^^^^
-
-.. note:: |admin-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]reportset output <channel>
-
-**Description**
-
-Set the channel where reports will be sent.
-
 .. _reports-command-reportset-toggle:
 
 ^^^^^^
@@ -87,6 +67,24 @@ toggle
 **Description**
 
 Enable or Disable reporting for this server.
+
+.. _reports-command-reportset-output:
+
+^^^^^^
+output
+^^^^^^
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]reportset output <channel>
+
+**Description**
+
+Set the channel where reports will be sent.
 
 .. _reports-command-report:
 

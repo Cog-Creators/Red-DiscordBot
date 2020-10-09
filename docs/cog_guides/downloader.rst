@@ -1,32 +1,34 @@
 .. _downloader:
-.. |cogname| replace:: downloader.rst
 
 ==========
 Downloader
 ==========
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the downloader cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load downloader
 
-.. _bank-usage:
+.. _downloader-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Install community cogs made by Cog Creators.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
+Community cogs, also called third party cogs, are not included
+in the default Red install.
+
+Community cogs come in repositories. Repos are a group of cogs
+you can install. You always need to add the creator's repository
+using the `[p]repo` command before you can install one or more
+cogs from the creator.
+
 
 .. _downloader-commands:
 
@@ -70,57 +72,6 @@ repo
 
 Repo management commands.
 
-.. _downloader-command-repo-info:
-
-^^^^
-info
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo info <repo_name>
-
-**Description**
-
-Show information about a repo.
-
-.. _downloader-command-repo-add:
-
-^^^
-add
-^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo add <name> <repo_url> [branch]
-
-**Description**
-
-Add a new repo.
-
-Repo names can only contain characters A-z, numbers, underscores, and hyphens.
-The branch will be the default branch if not specified.
-
-.. _downloader-command-repo-delete:
-
-^^^^^^
-delete
-^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo delete <repo_name>
-
-**Description**
-
-Remove a repo and its files.
-
 .. _downloader-command-repo-update:
 
 ^^^^^^
@@ -153,6 +104,57 @@ list
 
 List all installed repos.
 
+.. _downloader-command-repo-info:
+
+^^^^
+info
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo info <repo_name>
+
+**Description**
+
+Show information about a repo.
+
+.. _downloader-command-repo-delete:
+
+^^^^^^
+delete
+^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo delete <repo_name>
+
+**Description**
+
+Remove a repo and its files.
+
+.. _downloader-command-repo-add:
+
+^^^
+add
+^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo add <name> <repo_url> [branch]
+
+**Description**
+
+Add a new repo.
+
+Repo names can only contain characters A-z, numbers, underscores, and hyphens.
+The branch will be the default branch if not specified.
+
 .. _downloader-command-cog:
 
 ^^^
@@ -171,21 +173,40 @@ cog
 
 Cog installation management commands.
 
-.. _downloader-command-cog-updateallfromrepos:
+.. _downloader-command-cog-checkforupdates:
 
-^^^^^^^^^^^^^^^^^^
-updateallfromrepos
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
+checkforupdates
+^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog updateallfromrepos <repos>
+    [p]cog checkforupdates 
 
 **Description**
 
-Update all cogs from repos of your choosing.
+Check for available cog updates (including pinned cogs).
+
+This command doesn't update cogs, it only checks for updates.
+Use `[p]cog update` to update cogs.
+
+.. _downloader-command-cog-listpinned:
+
+^^^^^^^^^^
+listpinned
+^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog listpinned 
+
+**Description**
+
+List currently pinned cogs.
 
 .. _downloader-command-cog-installversion:
 
@@ -202,6 +223,105 @@ installversion
 **Description**
 
 Install a cog from the specified revision of given repo.
+
+.. _downloader-command-cog-pin:
+
+^^^
+pin
+^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog pin <cogs>
+
+**Description**
+
+Pin cogs - this will lock cogs on their current version.
+
+.. _downloader-command-cog-list:
+
+^^^^
+list
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog list <repo_name>
+
+**Description**
+
+List all available cogs from a single repo.
+
+.. _downloader-command-cog-updateallfromrepos:
+
+^^^^^^^^^^^^^^^^^^
+updateallfromrepos
+^^^^^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog updateallfromrepos <repos>
+
+**Description**
+
+Update all cogs from repos of your choosing.
+
+.. _downloader-command-cog-info:
+
+^^^^
+info
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog info <repo_name> <cog_name>
+
+**Description**
+
+List information about a single cog.
+
+.. _downloader-command-cog-reinstallreqs:
+
+^^^^^^^^^^^^^
+reinstallreqs
+^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog reinstallreqs 
+
+**Description**
+
+This command will reinstall cog requirements and shared libraries for all installed cogs.
+
+Red might ask user to use this when it clears contents of lib folder
+because of change in minor version of Python.
+
+.. _downloader-command-cog-unpin:
+
+^^^^^
+unpin
+^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog unpin <cogs>
+
+**Description**
+
+Unpin cogs - this will remove update lock from cogs.
 
 .. _downloader-command-cog-updatetoversion:
 
@@ -223,53 +343,21 @@ Note that update doesn't mean downgrade and therefore revision
 has to be newer than the one that cog currently has. If you want to
 downgrade the cog, uninstall and install it again.
 
-.. _downloader-command-cog-unpin:
+.. _downloader-command-cog-install:
 
-^^^^^
-unpin
-^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog unpin <cogs>
-
-**Description**
-
-Unpin cogs - this will remove update lock from cogs.
-
-.. _downloader-command-cog-listpinned:
-
-^^^^^^^^^^
-listpinned
-^^^^^^^^^^
+^^^^^^^
+install
+^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog listpinned 
+    [p]cog install <repo_name> <cogs>
 
 **Description**
 
-List currently pinned cogs.
-
-.. _downloader-command-cog-pin:
-
-^^^
-pin
-^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog pin <cogs>
-
-**Description**
-
-Pin cogs - this will lock cogs on their current version.
+Install a cog from the given repo.
 
 .. _downloader-command-cog-update:
 
@@ -305,92 +393,6 @@ Uninstall cogs.
 
 You may only uninstall cogs which were previously installed
 by Downloader.
-
-.. _downloader-command-cog-checkforupdates:
-
-^^^^^^^^^^^^^^^
-checkforupdates
-^^^^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog checkforupdates 
-
-**Description**
-
-Check for available cog updates (including pinned cogs).
-
-This command doesn't update cogs, it only checks for updates.
-Use `[p]cog update` to update cogs.
-
-.. _downloader-command-cog-list:
-
-^^^^
-list
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog list <repo_name>
-
-**Description**
-
-List all available cogs from a single repo.
-
-.. _downloader-command-cog-install:
-
-^^^^^^^
-install
-^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog install <repo_name> <cogs>
-
-**Description**
-
-Install a cog from the given repo.
-
-.. _downloader-command-cog-reinstallreqs:
-
-^^^^^^^^^^^^^
-reinstallreqs
-^^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog reinstallreqs 
-
-**Description**
-
-This command will reinstall cog requirements and shared libraries for all installed cogs.
-
-Red might ask user to use this when it clears contents of lib folder
-because of change in minor version of Python.
-
-.. _downloader-command-cog-info:
-
-^^^^
-info
-^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog info <repo_name> <cog_name>
-
-**Description**
-
-List information about a single cog.
 
 .. _downloader-command-findcog:
 

@@ -1,32 +1,26 @@
 .. _mod:
-.. |cogname| replace:: mod.rst
 
 ===
 Mod
 ===
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the mod cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load mod
 
-.. _bank-usage:
+.. _mod-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Moderation tools.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _mod-commands:
 
@@ -167,6 +161,22 @@ mute
 
 Mute users.
 
+.. _mod-command-mute-voice:
+
+^^^^^
+voice
+^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]mute voice <user> [reason]
+
+**Description**
+
+Mute a user in their current voice channel.
+
 .. _mod-command-mute-channel:
 
 ^^^^^^^
@@ -202,22 +212,6 @@ server
 **Description**
 
 Mutes user in the server.
-
-.. _mod-command-mute-voice:
-
-^^^^^
-voice
-^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]mute voice <user> [reason]
-
-**Description**
-
-Mute a user in their current voice channel.
 
 .. _mod-command-unmute:
 
@@ -255,22 +249,6 @@ channel
 
 Unmute a user in this channel.
 
-.. _mod-command-unmute-voice:
-
-^^^^^
-voice
-^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]unmute voice <user> [reason]
-
-**Description**
-
-Unmute a user in their current voice channel.
-
 .. _mod-command-unmute-server:
 
 ^^^^^^
@@ -288,6 +266,22 @@ server
 **Description**
 
 Unmute a user in this server.
+
+.. _mod-command-unmute-voice:
+
+^^^^^
+voice
+^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]unmute voice <user> [reason]
+
+**Description**
+
+Unmute a user in their current voice channel.
 
 .. _mod-command-kick:
 
@@ -448,6 +442,24 @@ modset
 
 Manage server administration settings.
 
+.. _mod-command-modset-defaultdays:
+
+^^^^^^^^^^^
+defaultdays
+^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset defaultdays [days=0]
+
+**Description**
+
+Set the default number of days worth of messages to be deleted when a user is banned.
+
+The number of days must be between 0 and 7.
+
 .. _mod-command-modset-deleterepeats:
 
 ^^^^^^^^^^^^^
@@ -467,99 +479,6 @@ Enable auto-deletion of repeated messages.
 Must be between 2 and 20.
 
 Set to -1 to disable this feature.
-
-.. _mod-command-modset-showsettings:
-
-^^^^^^^^^^^^
-showsettings
-^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modset showsettings 
-
-**Description**
-
-Show the current server administration settings.
-
-.. _mod-command-modset-reinvite:
-
-^^^^^^^^
-reinvite
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modset reinvite 
-
-**Description**
-
-Toggle whether an invite will be sent to a user when unbanned.
-
-If this is True, the bot will attempt to create and send a single-use invite
-to the newly-unbanned user.
-
-.. _mod-command-modset-hierarchy:
-
-^^^^^^^^^
-hierarchy
-^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modset hierarchy 
-
-**Description**
-
-Toggle role hierarchy check for mods and admins.
-
-**WARNING**: Disabling this setting will allow mods to take
-actions on users above them in the role hierarchy!
-
-This is enabled by default.
-
-.. _mod-command-modset-dm:
-
-^^
-dm
-^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modset dm [enabled]
-
-**Description**
-
-Toggle whether a message should be sent to a user when they are kicked/banned.
-
-If this option is enabled, the bot will attempt to DM the user with the guild name
-and reason as to why they were kicked/banned.
-
-.. _mod-command-modset-defaultdays:
-
-^^^^^^^^^^^
-defaultdays
-^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]modset defaultdays [days=0]
-
-**Description**
-
-Set the default number of days worth of messages to be deleted when a user is banned.
-
-The number of days must be between 0 and 7.
 
 .. _mod-command-modset-mentionspam:
 
@@ -660,6 +579,81 @@ Users will be banned if they send any message which contains more than
 `<max_mentions>` mentions.
 
 `<max_mentions>` Must be 0 or greater. Set to 0 to disable this feature.
+
+.. _mod-command-modset-showsettings:
+
+^^^^^^^^^^^^
+showsettings
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset showsettings 
+
+**Description**
+
+Show the current server administration settings.
+
+.. _mod-command-modset-reinvite:
+
+^^^^^^^^
+reinvite
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset reinvite 
+
+**Description**
+
+Toggle whether an invite will be sent to a user when unbanned.
+
+If this is True, the bot will attempt to create and send a single-use invite
+to the newly-unbanned user.
+
+.. _mod-command-modset-hierarchy:
+
+^^^^^^^^^
+hierarchy
+^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset hierarchy 
+
+**Description**
+
+Toggle role hierarchy check for mods and admins.
+
+**WARNING**: Disabling this setting will allow mods to take
+actions on users above them in the role hierarchy!
+
+This is enabled by default.
+
+.. _mod-command-modset-dm:
+
+^^
+dm
+^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm [enabled]
+
+**Description**
+
+Toggle whether a message should be sent to a user when they are kicked/banned.
+
+If this option is enabled, the bot will attempt to DM the user with the guild name
+and reason as to why they were kicked/banned.
 
 .. _mod-command-moveignoredchannels:
 

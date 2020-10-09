@@ -32,6 +32,11 @@ class CogGuideCog(commands.Cog):
         return
 
     @commands.command()
+    async def allcogguidescog(self, ctx: commands.Context):
+        for cog in self.bot.cogs:
+            await self.cogguidecog(ctx, cog)
+
+    @commands.command()
     async def cogguidecog(self, ctx: commands.Context, camel_cog_name: str):
         cog: Optional[Cog] = self.bot.get_cog(camel_cog_name)
         if cog is None:
@@ -39,47 +44,43 @@ class CogGuideCog(commands.Cog):
             return
         path: pathlib.Path = cog_data_path(self)
 
-        lower_cog_name = f"{camel_cog_name.lower()}.rst"
+        lower_cog_name = f"{camel_cog_name.lower()}"
         reference = f"_{camel_cog_name.lower()}"
 
-        filepath = path / lower_cog_name
+        filename = f"{lower_cog_name}.rst"
+
+        filepath = path / filename
 
         privilege_levels = {
-            PrivilegeLevel.MOD: '|mod-lock|',
-            PrivilegeLevel.ADMIN: '|admin-lock|',
-            PrivilegeLevel.GUILD_OWNER: '|guildowner-lock|',
-            PrivilegeLevel.BOT_OWNER: '|owner-lock|'
+            PrivilegeLevel.MOD: "|mod-lock|",
+            PrivilegeLevel.ADMIN: "|admin-lock|",
+            PrivilegeLevel.GUILD_OWNER: "|guildowner-lock|",
+            PrivilegeLevel.BOT_OWNER: "|owner-lock|",
         }
 
         intro = f""".. {reference}:
-.. |cogname| replace:: {lower_cog_name}
 
 {'=' * len(camel_cog_name)}
 {camel_cog_name}
 {'=' * len(camel_cog_name)}
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the {lower_cog_name} cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load {'customcom' if lower_cog_name =='customcommands' else lower_cog_name}
 
-.. _bank-usage:
+.. _{lower_cog_name}-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+{cog.description if cog.description else "This is a general description of what the cog does. This should be a very basic explanation, addressing the core purpose of the cog. This is some additional information about what this cog can do. Try to answer *the* most frequently asked question."}
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 """
         cog_commands_intro = f"""
 .. {reference}-commands:
@@ -125,7 +126,7 @@ Commands
         for com in cog.walk_commands():
             cog_commands_list.append(get_command_rst(com))
 
-        with filepath.open('w', encoding='utf-8') as f:
+        with filepath.open("w", encoding="utf-8") as f:
             f.write(intro)
             f.write(cog_commands_intro)
             f.writelines(cog_commands_list)

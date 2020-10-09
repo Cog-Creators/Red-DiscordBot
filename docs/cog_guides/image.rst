@@ -1,32 +1,26 @@
 .. _image:
-.. |cogname| replace:: image.rst
 
 =====
 Image
 =====
 
-This is the cog guide for the |cogname| cog. You will
+This is the cog guide for the image cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load |cogname|
+        [p]load image
 
-.. _bank-usage:
+.. _image-usage:
 
 -----
 Usage
 -----
 
-This is a general description of what the cog does.
-This should be a very basic explanation, addressing
-the core purpose of the cog.
+Image related commands.
 
-This is some additional information about what this
-cog can do. Try to answer *the* most frequently
-asked question.
 
 .. _image-commands:
 
