@@ -1,5 +1,6 @@
 .. _trivia:
-.. |cogname| replace:: trivia
+.. |cogname| replace:: trivia.rst
+
 ======
 Trivia
 ======
@@ -19,40 +20,185 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-This cog is used to run trivia sessions. T
+This cog is used to run trivia sessions. The bot will ask
+questions from a list and wait to hear responses from
+anyone in the channel. The winner will be chosen by whoever
+has the most correct answers.
 
-You will be able to switch between a global and a server-
-wide bank and choose the bank/currency name.
+There are lots of included topics to use, as well as
+support to create your own lists trivia lists.
 
-.. _bank-commands:
+.. _trivia-commands:
 
 --------
 Commands
 --------
 
-.. _bank-command-bankset:
+.. _trivia-command-triviaset:
 
-^^^^^^^
-bankset
-^^^^^^^
+^^^^^^^^^
+triviaset
+^^^^^^^^^
 
-.. note:: |guildowner-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bankset
+    [p]triviaset 
 
 **Description**
 
-Base command for configuring bank settings.
+Manage Trivia settings.
 
-.. _bank-command-bankset-toggleglobal:
+.. _trivia-command-triviaset-payout:
 
-""""""""""""""""""""
-bankset toggleglobal
-""""""""""""""""""""
+^^^^^^
+payout
+^^^^^^
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset payout <multiplier>
+
+**Description**
+
+Set the payout multiplier.
+
+This can be any positive decimal number. If a user wins trivia when at
+least 3 members are playing, they will receive credits. Set to 0 to
+disable.
+
+The number of credits is determined by multiplying their total score by
+this multiplier.
+
+.. _trivia-command-triviaset-timelimit:
+
+^^^^^^^^^
+timelimit
+^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset timelimit <seconds>
+
+**Description**
+
+Set the maximum seconds permitted to answer a question.
+
+.. _trivia-command-triviaset-stopafter:
+
+^^^^^^^^^
+stopafter
+^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset stopafter <seconds>
+
+**Description**
+
+Set how long until trivia stops due to no response.
+
+.. _trivia-command-triviaset-maxscore:
+
+^^^^^^^^
+maxscore
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset maxscore <score>
+
+**Description**
+
+Set the total points required to win.
+
+.. _trivia-command-triviaset-override:
+
+^^^^^^^^
+override
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset override <enabled>
+
+**Description**
+
+Allow/disallow trivia lists to override settings.
+
+.. _trivia-command-triviaset-botplays:
+
+^^^^^^^^
+botplays
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset botplays <true_or_false>
+
+**Description**
+
+Set whether or not the bot gains points.
+
+If enabled, the bot will gain a point if no one guesses correctly.
+
+.. _trivia-command-triviaset-revealanswer:
+
+^^^^^^^^^^^^
+revealanswer
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset revealanswer <true_or_false>
+
+**Description**
+
+Set whether or not the answer is revealed.
+
+If enabled, the bot will reveal the answer if no one guesses correctly
+in time.
+
+.. _trivia-command-triviaset-showsettings:
+
+^^^^^^^^^^^^
+showsettings
+^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]triviaset showsettings 
+
+**Description**
+
+Show the current trivia settings.
+
+.. _trivia-command-triviaset-custom:
+
+^^^^^^
+custom
+^^^^^^
 
 .. note:: |owner-lock|
 
@@ -60,125 +206,178 @@ bankset toggleglobal
 
 .. code-block:: none
 
-    [p]bankset toggleglobal [confirm=False]
+    [p]triviaset custom 
 
 **Description**
 
-Makes the bank global instead of server-wide. If it
-is already global, the command will switch it back
-to the server-wide bank.
+Manage Custom Trivia lists.
 
-.. warning:: Using this command will reset **all** accounts.
+.. _trivia-command-triviaset-custom-list:
 
-**Arguments**
-
-* ``[confirm=False]``: Put ``yes`` to confirm.
-
-.. _bank-command-bankset-creditsname:
-
-"""""""""""""""""""
-bankset creditsname
-"""""""""""""""""""
-
-.. note:: |owner-lock| However, if the bank is server-wide, the
-    server owner or an administrator can use this command.
+^^^^
+list
+^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bankset creditsname <name>
+    [p]triviaset custom list 
 
 **Description**
 
-Change the credits name of the bank. It is ``credits`` by default.
+List uploaded custom trivia.
 
-For example, if you switch it to ``dollars``, the payday
-command will show this:
+.. _trivia-command-triviaset-custom-delete:
 
-.. TODO reference the payday command
+^^^^^^
+delete
+^^^^^^
 
-.. code-block:: none
-
-    Here, take some dollars. Enjoy! (+120 dollars!)
-
-    You currently have 220 dollars.
-
-**Arguments**
-
-* ``<name>``: The new credits name.
-
-.. _bank-command-bankset-bankname:
-
-""""""""""""""""
-bankset bankname
-""""""""""""""""
-
-.. note:: |owner-lock| However, if the bank is server-wide, the
-    server owner or an administrator can use this command.
+.. note:: |owner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bankset bankname <name>
+    [p]triviaset custom delete <name>
 
 **Description**
 
-Set bank's name.
+Delete a trivia file.
 
-**Arguments**
+.. _trivia-command-triviaset-custom-upload:
 
-* ``<name>``: The new bank's name.
+^^^^^^
+upload
+^^^^^^
 
-.. _bank-command-bankset-maxbal:
-
-""""""""""""""
-bankset maxbal
-""""""""""""""
-
-.. note:: |owner-lock| However, if the bank is server-wide, the
-    server owner or an administrator can use this command.
+.. note:: |owner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bankset maxbal <amount>
+    [p]triviaset custom upload 
 
 **Description**
 
-Defines the maximum amount of money a user can have with the bot.
+Upload a trivia file.
 
-If an user reaches this limit, he will be unable to gain more money.
+.. _trivia-command-trivia:
 
-**Arguments**
-
-*   ``<amount>``: The maximum amount of money for users.
-
-.. _bank-command-bankset-showsettings:
-
-""""""""""""""""""""
-bankset showsettings
-""""""""""""""""""""
-
-.. note:: |owner-lock| However, if the bank is server-wide, the
-    server owner or an administrator can use this command.
+^^^^^^
+trivia
+^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]bankset showsettings
+    [p]trivia [categories...]
 
 **Description**
 
-Shows the current settings of your bank.
+Start trivia session on the specified category.
 
-This will display the following information:
+You may list multiple categories, in which case the trivia will involve
+questions from all of them.
 
-*   Name of the bank
-*   Scope of the bank (global or per server)
-*   Currency name
-*   Default balance
-*   Maximum allowed balance
+.. _trivia-command-trivia-list:
+
+^^^^
+list
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia list 
+
+**Description**
+
+List available trivia categories.
+
+.. _trivia-command-trivia-stop:
+
+^^^^
+stop
+^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia stop 
+
+**Description**
+
+Stop an ongoing trivia session.
+
+.. _trivia-command-trivia-leaderboard:
+
+^^^^^^^^^^^
+leaderboard
+^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia leaderboard 
+
+**Description**
+
+Leaderboard for trivia.
+
+Defaults to the top 10 of this server, sorted by total wins. Use
+subcommands for a more customised leaderboard.
+
+.. _trivia-command-trivia-leaderboard-global:
+
+^^^^^^
+global
+^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia leaderboard global [sort_by=wins] [top=10]
+
+**Description**
+
+Global trivia leaderboard.
+
+`<sort_by>` can be any of the following fields:
+ - `wins`  : total wins
+ - `avg`   : average score
+ - `total` : total correct answers from all sessions
+ - `games` : total games played
+
+`<top>` is the number of ranks to show on the leaderboard.
+
+.. _trivia-command-trivia-leaderboard-server:
+
+^^^^^^
+server
+^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]trivia leaderboard server [sort_by=wins] [top=10]
+
+**Description**
+
+Leaderboard for this server.
+
+`<sort_by>` can be any of the following fields:
+ - `wins`  : total wins
+ - `avg`   : average score
+ - `total` : total correct answers
+ - `games` : total games played
+
+`<top>` is the number of ranks to show on the leaderboard.

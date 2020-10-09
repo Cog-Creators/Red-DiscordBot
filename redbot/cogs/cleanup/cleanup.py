@@ -178,7 +178,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages from a specified user.
 
         Examples:
-            `[p]cleanup user @\u200bTwentysix 2`
+            `[p]cleanup user @Twentysix 2`
             `[p]cleanup user Red 6`
         """
         channel = ctx.channel
