@@ -119,15 +119,14 @@ def init_events(bot, cli_flags):
                 if expected_version(current_python, py_version_req):
                     installed_extras = []
                     for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None:
+                        if extra is None or extra in {"dev", "all"}:
                             continue
                         try:
                             pkg_resources.require(req.name for req in reqs)
                         except pkg_resources.DistributionNotFound:
                             pass
                         else:
-                            if extra not in {"dev", "all"}:
-                                installed_extras.append(extra)
+                            installed_extras.append(extra)
 
                     if installed_extras:
                         package_extras = f"[{','.join(installed_extras)}]"
