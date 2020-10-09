@@ -144,7 +144,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for task_id in list(self._unmute_tasks.keys()):
             task = self._unmute_tasks[task_id]
 
-            if task.canceled():
+            if task.cancelled():
                 self._unmute_tasks.pop(task_id, None)
                 continue
 
