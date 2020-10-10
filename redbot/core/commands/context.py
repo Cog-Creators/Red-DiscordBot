@@ -118,7 +118,7 @@ class Context(DPYContext):
     async def react_quietly(
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
     ) -> bool:
-        """Adds a reaction to to the command message.
+        """Adds a reaction to the command message.
 
         Returns
         -------
@@ -131,6 +131,24 @@ class Context(DPYContext):
             return False
         else:
             return True
+
+    async def delete(self):
+        """Quietly deletes the command message.
+
+        Returns
+        -------
+        bool
+            :code:`True` if adding the reaction succeeded.
+        """
+        if self.channel.permissions_for(self.me).manage_messages:
+            try:
+                await self.message.delete()
+            except discord.HTTPException:
+                return False
+            else:
+                return True
+        else:
+            return False
 
     async def send_interactive(
         self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
