@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -55,6 +55,12 @@ Bank
 ****
 
 - Bank API methods now throw TypeError if a non-integer amount is supplied (:issue:`4376`)
+
+Modlog
+******
+
+- Added option to accept a ``discord.Object`` in case creation (:issue:`4326`)
+- Added ``last_known_username`` parameter to ``create_case`` function (:issue:`4326`)
 
 Documentation changes
 ---------------------
