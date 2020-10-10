@@ -109,6 +109,7 @@ Miscellaneous
 -------------
 
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
+- Replaced ``cogs.red`` with new Red Index (:issue:`4439`)
 
 
 Redbot 3.4.0 (2020-08-17)
