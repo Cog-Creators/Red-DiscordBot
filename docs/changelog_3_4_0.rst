@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -83,7 +83,7 @@ Modlog
 Miscellaneous
 -------------
 
-
+- Added JSON schema files for ``info.json`` files (:issue:`4375`)
 
 
 Redbot 3.4.0 (2020-08-17)
