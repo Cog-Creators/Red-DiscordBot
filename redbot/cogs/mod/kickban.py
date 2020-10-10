@@ -127,18 +127,17 @@ class KickBanMixin(MixinMeta):
                     author.name, author.id, user.id
                 )
             )
-            end_result = _(
-                "User with ID {user_id} was upgraded from a temporary to a permanent ban."
-            ).format(user_id=user.id)
+            end_result = 1
         else:
+            username = user.name if hasattr(user, "name") else "Unknown"
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
-                        author.name, author.id, ban_type, user.name, user.id, str(days)
+                        author.name, author.id, ban_type, username, user.id, str(days)
                     )
                 )
-                end_result = _("Done. It was about time.")
+                end_result = True
             except discord.Forbidden:
                 return _("I'm not allowed to do that.")
             except discord.NotFound:
@@ -146,7 +145,7 @@ class KickBanMixin(MixinMeta):
             except Exception as e:
                 log.exception(
                     "{}({}) attempted to {} {}({}), but an error occurred.".format(
-                        author.name, author.id, ban_type, user.name, user.id
+                        author.name, author.id, ban_type, username, user.id
                     )
                 )
                 return _("An unexpected error occurred.")
@@ -305,7 +304,13 @@ class KickBanMixin(MixinMeta):
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
 
-        await ctx.send(result)
+        if isinstance(result, str):
+            await ctx.send(result)
+        else:
+            if result is 1:
+                await ctx.send(_("User with ID {user_id} was upgraded from a temporary to a permanent ban.").format(user_id=user.id))
+            else:
+                await ctx.send(_("Done. It was about time."))
 
     @commands.command(aliases=["hackban"])
     @commands.guild_only()
