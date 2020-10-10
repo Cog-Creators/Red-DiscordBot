@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -17,6 +17,7 @@ Core Bot
 
 - Fixed incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
+- Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
 
 Custom Commands
 ***************
