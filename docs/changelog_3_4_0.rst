@@ -52,6 +52,7 @@ Warnings
 ********
 
 - Fixed users being able to warn users above them in hierarchy (:issue:`4100`)
+- Added bool arguments to toggle commands to improve consistency (:issue:`4409`)
 
 Developer changelog
 -------------------
