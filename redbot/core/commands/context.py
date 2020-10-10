@@ -138,7 +138,7 @@ class Context(DPYContext):
         Returns
         -------
         bool
-            :code:`True` if adding the reaction succeeded.
+            :code:`True` if deleting the message succeeded.
         """
         if self.channel.permissions_for(self.me).manage_messages:
             try:
