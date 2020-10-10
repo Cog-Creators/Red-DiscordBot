@@ -23,6 +23,11 @@ Core Bot
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 
+Audio
+*****
+
+- Removed lavalink logs from being added to backup (:issue:`4453`, :issue:`4452`)
+
 Custom Commands
 ***************
 
