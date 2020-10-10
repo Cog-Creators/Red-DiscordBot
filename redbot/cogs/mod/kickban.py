@@ -141,7 +141,7 @@ class KickBanMixin(MixinMeta):
             except discord.Forbidden:
                 return _("I'm not allowed to do that.")
             except discord.NotFound:
-                return _('User with ID {user_id} not found').format(user_id=user.id)
+                return _("User with ID {user_id} not found").format(user_id=user.id)
             except Exception as e:
                 log.exception(
                     "{}({}) attempted to {} {}({}), but an error occurred.".format(
@@ -307,8 +307,12 @@ class KickBanMixin(MixinMeta):
         if isinstance(result, str):
             await ctx.send(result)
         else:
-            if result is 1:
-                await ctx.send(_("User with ID {user_id} was upgraded from a temporary to a permanent ban.").format(user_id=user.id))
+            if result == 1:
+                await ctx.send(
+                    _(
+                        "User with ID {user_id} was upgraded from a temporary to a permanent ban."
+                    ).format(user_id=user.id)
+                )
             else:
                 await ctx.send(_("Done. It was about time."))
 
@@ -438,9 +442,9 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
-                        errors[user_id] = _(
-                            'User with ID "{user_id}" not found'
-                        ).format(user_id=user_id)
+                        errors[user_id] = _('User with ID "{user_id}" not found').format(
+                            user_id=user_id
+                        )
                         continue
                     except discord.Forbidden:
                         errors[user_id] = _(
