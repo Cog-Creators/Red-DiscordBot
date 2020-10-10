@@ -73,6 +73,7 @@ Modlog
 
 - Added option to accept a ``discord.Object`` in case creation (:issue:`4326`)
 - Added ``last_known_username`` parameter to ``create_case`` function (:issue:`4326`)
+- Fixed error being raised with a deleted channel in ``case.message_content`` (:issue:`4415`)
 
 Utility
 *******
