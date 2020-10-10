@@ -84,6 +84,7 @@ Utility
 *******
 
 - Added ``redbot.core.utils.get_end_user_statement`` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
+- Added ``redbot.core.utils.chat_formatting.quote`` to quote text in a message (:issue:`4425`)
 
 Documentation changes
 ---------------------
