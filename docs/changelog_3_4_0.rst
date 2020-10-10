@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -43,6 +43,7 @@ Mod
 ***
 
 - Fixed nicknames not being properly stored and logged (:issue:`4131`)
+- Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count to mention spam cap (:issue:`4359`)
 
 Warnings
 ********
