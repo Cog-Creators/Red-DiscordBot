@@ -7,7 +7,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`Flame442`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -18,6 +18,8 @@ Core Bot
 - Fixed incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
+- Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
+- Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 
 Custom Commands
 ***************
@@ -52,6 +54,12 @@ Warnings
 
 Developer changelog
 -------------------
+
+Core
+****
+
+- Added ``bot.remove_shared_api_services`` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- Added option to return all tokens for an API service if ``service_name`` is not specified in ``bot.get_shared_api_tokens`` (:issue:`4370`)
 
 Bank
 ****
