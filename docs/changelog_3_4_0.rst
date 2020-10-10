@@ -19,6 +19,7 @@ Core Bot
 - Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
 - Fixed errors that could arise from invalid URLs (:issue:`4437`)
+- Fixed error being raised with ``[p]set nickname`` when no nickname was provided (:issue:`4451`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 
