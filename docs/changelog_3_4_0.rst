@@ -38,6 +38,11 @@ General
 
 - Fixed issues with text not being properly URL encoded (:issue:`4024`)
 
+Mod
+***
+
+- Fixed nicknames not being properly stored and logged (:issue:`4131`)
+
 Warnings
 ********
 
