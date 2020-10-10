@@ -73,6 +73,11 @@ Bank
 
 - Bank API methods now throw TypeError if a non-integer amount is supplied (:issue:`4376`)
 
+Mod
+***
+
+- Deprecated ``redbot.core.utils.mod.is_allowed_by_hierarchy`` (:issue:`4435`)
+
 Modlog
 ******
 
