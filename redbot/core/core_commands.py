@@ -1386,7 +1386,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if output:
             total_message = "\n\n".join(output)
-            for page in pagify(total_message):
+            for page in pagify(
+                total_message, delims=["\n", ", "], priority=True, page_length=1500
+            ):
+                if page.startswith(", "):
+                    page = page[2:]
                 await ctx.send(page)
 
     @commands.command()
