@@ -11,7 +11,7 @@ Installing the pre-requirements
 Please install the pre-requirements by following instructions from one of the following subsections.
 
 The pre-requirements are:
- - Python 3.8.1 or greater
+ - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -64,7 +64,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_; **Python 3.9 is currently not supported!**
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
