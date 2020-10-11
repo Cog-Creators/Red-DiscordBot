@@ -1949,10 +1949,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "Failed to change the username. "
                     "Discord returned the following error:\n"
-                    "``{}``\n\n"
+                    "{error_message}\n\n"
                     "Remember that you can only do it up to 2 times an hour."
-                    " Use nicknames if you need frequent changes. `{}set nickname`"
-                ).format(error_string, ctx.clean_prefix)
+                    " Use nicknames if you need frequent changes. {command}"
+                ).format(error_message=inline(error_string), command=inline(f"{ctx.clean_prefix}set nickname"))
             )
         else:
             await ctx.send(_("Done."))
