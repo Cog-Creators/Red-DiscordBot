@@ -385,7 +385,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about Red."""
+        """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -1537,9 +1537,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
-        """Attempts to restart Red.
+        """Attempts to restart [botname].
 
-        Makes Red quit with exit code 26.
+        Makes [botname] quit with exit code 26.
         The restart is not guaranteed: it must be dealt
         with by the process manager in use."""
         with contextlib.suppress(discord.HTTPException):
