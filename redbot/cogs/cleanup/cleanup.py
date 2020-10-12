@@ -656,7 +656,6 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
         
-    
     @cleanup.command(name="emoji")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
