@@ -17,6 +17,7 @@ _ = Translator("Cleanup", __file__)
 
 log = logging.getLogger("red.cleanup")
 
+
 LINKS = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
 EMOJIS = re.compile(
     r"(<(a)?:[a-zA-Z0-9\_]+:([0-9]+)>)"
