@@ -17,6 +17,12 @@ _ = Translator("Cleanup", __file__)
 
 log = logging.getLogger("red.cleanup")
 
+LINKS = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
+EMOJIS = re.compile(
+    r"(<(a)?:[a-zA-Z0-9\_]+:([0-9]+)>)"
+)  # TrusyJaid NotSoBot converter https://github.com/TrustyJAID/Trusty-cogs
+
+
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
@@ -649,3 +655,104 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
+        
+    
+    @cleanup.command(name="emoji")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    async def cleanup_emoji(
+        self,
+        ctx: commands.Context,
+        number: positive_int = PositiveInt(10),
+        delete_pinned: bool = False,
+    ):
+        """Delete messages containing emojis from the specified number of messages.
+        
+        Defaults to 10
+        """
+        channel = ctx.channel
+        author = ctx.message.author
+
+        if number > 100:
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
+
+        def check(m):
+            emojis = EMOJIS.finditer(m.content)
+            for emoji in emojis:
+                return True
+            return False
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
+        )
+        to_delete.append(ctx.message)
+
+        reason = (
+            "{}({}) deleted {} "
+            " messages containing emojis in channel {}."
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel.name,
+            )
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command(name="links")
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    async def cleanup_links(
+        self,
+        ctx: commands.Context,
+        number: positive_int = PositiveInt(10),
+        delete_pinned: bool = False,
+    ):
+        """Deletes messages containing links from the specified number of messages.
+        
+        Defaults to 10
+        """
+        channel = ctx.channel
+        author = ctx.message.author
+
+        if number > 100:
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
+
+        def check(m):
+            links = LINKS.finditer(m.content)
+            for link in links:
+                return True
+            return False
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
+        )
+        to_delete.append(ctx.message)
+
+        reason = (
+            "{}({}) deleted {} "
+            " messages containing links in channel {}."
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel.name,
+            )
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
