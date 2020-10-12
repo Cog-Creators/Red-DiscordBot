@@ -84,7 +84,7 @@ class KickBanMixin(MixinMeta):
                 )
             elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
                 return (
-                    False, 
+                    False,
                     _(
                         "I cannot let you do that. You are "
                         "not higher than the user in the role "
