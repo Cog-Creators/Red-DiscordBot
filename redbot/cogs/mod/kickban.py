@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
