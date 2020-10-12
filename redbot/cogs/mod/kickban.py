@@ -67,7 +67,7 @@ class KickBanMixin(MixinMeta):
         days: int = 0,
         reason: str = None,
         create_modlog_case=False,
-    ) -> Union[str, bool]:
+    ) -> Tuple[bool, str]:
         author = ctx.author
         guild = ctx.guild
 
@@ -78,17 +78,21 @@ class KickBanMixin(MixinMeta):
 
         if isinstance(user, discord.Member):
             if author == user:
-                return _("I cannot let you do that. Self-harm is bad {}").format(
-                    "\N{PENSIVE FACE}"
+                return (
+                    False,
+                    _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}"),
                 )
             elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
-                return _(
-                    "I cannot let you do that. You are "
-                    "not higher than the user in the role "
-                    "hierarchy."
+                return (
+                    False, 
+                    _(
+                        "I cannot let you do that. You are "
+                        "not higher than the user in the role "
+                        "hierarchy."
+                    ),
                 )
             elif guild.me.top_role <= user.top_role or user == guild.owner:
-                return _("I cannot do that due to Discord hierarchy rules.")
+                return False, _("I cannot do that due to Discord hierarchy rules.")
 
             toggle = await self.config.guild(guild).dm_on_kickban()
             if toggle:
@@ -114,7 +118,7 @@ class KickBanMixin(MixinMeta):
                         tempbans.remove(user.id)
                     removed_temp = True
                 else:
-                    return _("User {user_id} is already banned.").format(user_id=user.id)
+                    return False, _("User {user_id} is already banned.").format(user_id=user.id)
 
             ban_type = "hackban"
 
@@ -127,7 +131,9 @@ class KickBanMixin(MixinMeta):
                     author.name, author.id, user.id
                 )
             )
-            end_result = 1
+            success_message = _(
+                "User with ID {user_id} was upgraded from a temporary to a permanent ban."
+            ).format(user_id=user.id)
         else:
             username = user.name if hasattr(user, "name") else "Unknown"
             try:
@@ -137,18 +143,18 @@ class KickBanMixin(MixinMeta):
                         author.name, author.id, ban_type, username, user.id, str(days)
                     )
                 )
-                end_result = True
+                success_message = _("Done. That felt good.")
             except discord.Forbidden:
-                return _("I'm not allowed to do that.")
+                return False, _("I'm not allowed to do that.")
             except discord.NotFound:
-                return _("User with ID {user_id} not found").format(user_id=user.id)
+                return False, _("User with ID {user_id} not found").format(user_id=user.id)
             except Exception as e:
                 log.exception(
                     "{}({}) attempted to {} {}({}), but an error occurred.".format(
                         author.name, author.id, ban_type, username, user.id
                     )
                 )
-                return _("An unexpected error occurred.")
+                return False, _("An unexpected error occurred.")
 
         if create_modlog_case:
             await modlog.create_case(
@@ -163,7 +169,7 @@ class KickBanMixin(MixinMeta):
                 channel=None,
             )
 
-        return end_result
+        return True, success_message
 
     async def check_tempban_expirations(self):
         while self == self.bot.get_cog("Mod"):
@@ -300,21 +306,11 @@ class KickBanMixin(MixinMeta):
             get_user = self.bot.get_user(user)
             user = get_user or discord.Object(id=user)
 
-        result = await self.ban_user(
+        success_, message = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
         )
 
-        if isinstance(result, str):
-            await ctx.send(result)
-        else:
-            if result == 1:
-                await ctx.send(
-                    _(
-                        "User with ID {user_id} was upgraded from a temporary to a permanent ban."
-                    ).format(user_id=user.id)
-                )
-            else:
-                await ctx.send(_("Done. It was about time."))
+        await ctx.send(message)
 
     @commands.command(aliases=["hackban"])
     @commands.guild_only()
@@ -403,14 +399,14 @@ class KickBanMixin(MixinMeta):
                 else:
                     # Instead of replicating all that handling... gets attr from decorator
                     try:
-                        result = await self.ban_user(
+                        success, reason = await self.ban_user(
                             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                         )
-                        if result is True:
+                        if success:
                             banned.append(user_id)
                         else:
                             errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                                user_id=user_id, reason=result
+                                user_id=user_id, reason=reason
                             )
                     except Exception as e:
                         errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
