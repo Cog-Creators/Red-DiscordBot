@@ -75,6 +75,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     guild_id, await self.config.guild(guild).persist_queue()
                 )
                 if not persist_cache:
+                    log.warning(
+                        f"Failed to restore player for {guild_id} - Persistent cache is disabled."
+                    )
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
                 if self.lavalink_connection_aborted:
@@ -104,10 +107,25 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         except Exception as exc:
                             debug_exc_log(log, exc, "Failed to restore music voice channel")
                             if vc is None:
+                                log.warning(
+                                    f"Failed to restore player for {guild_id} - Exception - {exc}."
+                                )
                                 break
 
                 if tries >= 25 or guild is None or vc is None:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
+                    if tries >= 25:
+                        log.warning(
+                            f"Failed to restore player for {guild_id} - Unable to create player."
+                        )
+                    elif guild is None:
+                        log.warning(
+                            f"Failed to restore player for {guild_id} - Guild is no longer avaliable."
+                        )
+                    elif vc is None:
+                        log.warning(
+                            f"Failed to restore player for {guild_id} - VC no longer available."
+                        )
                     continue
 
                 shuffle = await self.config.guild(guild).shuffle()
