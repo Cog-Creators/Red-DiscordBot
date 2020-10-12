@@ -1,7 +1,9 @@
 from collections import defaultdict, deque
+from typing import Optional
+from datetime import timedelta
 
 from redbot.core import commands, i18n, checks
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, humanize_timedelta
 
 from .abc import MixinMeta
 
@@ -81,7 +83,9 @@ class ModSettings(MixinMeta):
             )
         else:
             msg += _("Default message history delete on ban: Don't delete any\n")
-        msg += _("Tempban default: {days}").format(default_tempban_duration)
+        msg += _("Tempban default: {duration}").format(
+            humanize_timedelta(seconds=default_tempban_duration)
+        )
         await ctx.send(box(msg))
 
     @modset.command()
@@ -370,12 +374,18 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def defaultduration(self, ctx: commands.Context, days: int = 0):
-        """Set the default number of days to be used when a user is tempbanned."""
+    async def defaultduration(
+        self,
+        ctx: commands.Context,
+        duration: Optional[commands.TimedeltaConverter] = timedelta(days=0),
+    ):
+        """Set the default time to be used when a user is tempbanned."""
         guild = ctx.guild
-        if not (0 <= days):
-            return await ctx.send(_("Invalid number of days. Must be above 0."))
-        await self.config.guild(guild).default_tempban_duration.set(days)
+        if not (timedelta(seconds=0) <= duration):
+            return await ctx.send(_("Invalid duration. Must be above 0."))
+        await self.config.guild(guild).default_tempban_duration.set(duration.total_seconds())
         await ctx.send(
-            _("The default duration for tempbanning a user is now {days} days.").format(days=days)
+            _("The default duration for tempbanning a user is now {days} ").format(
+                days=humanize_timedelta(timedelta=duration)
+            )
         )

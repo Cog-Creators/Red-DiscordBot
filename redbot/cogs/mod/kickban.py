@@ -438,7 +438,6 @@ class KickBanMixin(MixinMeta):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        unban_time = datetime.now(timezone.utc) + duration
 
         if author == user:
             await ctx.send(
@@ -459,7 +458,8 @@ class KickBanMixin(MixinMeta):
             return
 
         if duration is None:
-            duration = timedelta(days=await self.config.guild(guild).default_tempban_duration())
+            duration = timedelta(seconds=await self.config.guild(guild).default_tempban_duration())
+        unban_time = datetime.now(timezone.utc) + duration
 
         if days is None:
             days = await self.config.guild(guild).default_days()
