@@ -430,7 +430,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: UserInputOptional[commands.TimedeltaConverter] = None,
+        duration: Optional[commands.TimedeltaConverter] = None,
         days: Optional[int] = None,
         *,
         reason: str = None,
