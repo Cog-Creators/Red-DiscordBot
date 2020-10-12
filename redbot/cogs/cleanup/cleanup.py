@@ -25,7 +25,6 @@ EMOJIS = re.compile(
 )  # TrusyJaid NotSoBot converter https://github.com/TrustyJAID/Trusty-cogs
 
 
-
 @cog_i18n(_)
 class Cleanup(commands.Cog):
     """This cog contains commands used for "cleaning up" (deleting) messages.
@@ -657,7 +656,7 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
-        
+
     @cleanup.command(name="emoji")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
@@ -668,7 +667,7 @@ class Cleanup(commands.Cog):
         delete_pinned: bool = False,
     ):
         """Delete messages containing emojis from the specified number of messages.
-        
+
         Defaults to 10
         """
         channel = ctx.channel
@@ -718,7 +717,7 @@ class Cleanup(commands.Cog):
         delete_pinned: bool = False,
     ):
         """Deletes messages containing links from the specified number of messages.
-        
+
         Defaults to 10
         """
         channel = ctx.channel
