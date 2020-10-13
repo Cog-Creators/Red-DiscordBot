@@ -119,7 +119,7 @@ def init_events(bot, cli_flags):
                 if expected_version(current_python, py_version_req):
                     installed_extras = []
                     for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None:
+                        if extra is None or extra in {"dev", "all"}:
                             continue
                         try:
                             pkg_resources.require(req.name for req in reqs)

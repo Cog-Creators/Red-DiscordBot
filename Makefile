@@ -25,7 +25,7 @@ bumpdeps:
 # Development environment
 newenv:
 	$(PYTHON) -m venv --clear .venv
-	.venv/bin/pip install -U pip setuptools
+	.venv/bin/pip install -U pip setuptools wheel
 	$(MAKE) syncenv
 syncenv:
 	.venv/bin/pip install -Ur ./tools/dev-requirements.txt

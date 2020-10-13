@@ -2,14 +2,16 @@ import datetime
 import logging
 import math
 import re
+import time
+
 from typing import List, Optional
 
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
-from redbot.core.utils import AsyncIter
 
+from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
@@ -98,6 +100,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
@@ -128,7 +131,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except IndexError:
             search_choice = tracks[-1]
         if not hasattr(search_choice, "is_local") and getattr(search_choice, "uri", None):
-            description = self.get_track_description(search_choice, self.local_folder_current_path)
+            description = await self.get_track_description(
+                search_choice, self.local_folder_current_path
+            )
         else:
             search_choice = Query.process_input(search_choice, self.local_folder_current_path)
             if search_choice.is_local:
@@ -148,14 +153,12 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_dur = await self.queue_duration(ctx)
         queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
-
+        query = Query.process_input(search_choice, self.local_folder_current_path)
         if not await self.is_query_allowed(
             self.config,
-            ctx.guild,
-            (
-                f"{search_choice.title} {search_choice.author} {search_choice.uri} "
-                f"{str(Query.process_input(search_choice, self.local_folder_current_path))}"
-            ),
+            ctx,
+            f"{search_choice.title} {search_choice.author} {search_choice.uri} " f"{str(query)}",
+            query_obj=query,
         ):
             if IS_DEBUG:
                 log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
@@ -166,6 +169,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif guild_data["maxlength"] > 0:
 
             if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
+                search_choice.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
+                )
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
@@ -174,6 +184,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
         else:
+            search_choice.extras.update(
+                {
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": ctx.author.id,
+                }
+            )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
             self.bot.dispatch(
@@ -191,9 +208,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await player.play()
         return await self.send_embed_msg(ctx, embed=songembed)
 
-    def _format_search_options(self, search_choice):
+    async def _format_search_options(self, search_choice):
         query = Query.process_input(search_choice, self.local_folder_current_path)
-        description = self.get_track_description(search_choice, self.local_folder_current_path)
+        description = await self.get_track_description(
+            search_choice, self.local_folder_current_path
+        )
         return description, query
 
     async def _build_search_page(
@@ -259,10 +278,10 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
         return embed
 
-    def get_track_description(
+    async def get_track_description(
         self, track, local_folder_current_path, shorten=False
     ) -> Optional[str]:
-        """Get the user facing formatted track name"""
+        """Get the user facing formatted track name."""
         string = None
         if track and getattr(track, "uri", None):
             query = Query.process_input(track.uri, local_folder_current_path)
@@ -299,7 +318,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         string = "{}...".format((string[:40]).rstrip(" "))
                     string = f'**{escape(f"{string}", formatting=True)}**'
             else:
-                if track.author.lower() not in track.title.lower():
+                if track.is_stream:
+                    icy = await self.icyparser(track.uri)
+                    if icy:
+                        title = icy
+                    else:
+                        title = f"{track.title} - {track.author}"
+                elif track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
@@ -315,8 +340,10 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             string = f'**{escape(f"{string}", formatting=True)}**'
         return string
 
-    def get_track_description_unformatted(self, track, local_folder_current_path) -> Optional[str]:
-        """Get the user facing unformatted track name"""
+    async def get_track_description_unformatted(
+        self, track, local_folder_current_path
+    ) -> Optional[str]:
+        """Get the user facing unformatted track name."""
         if track and hasattr(track, "uri"):
             query = Query.process_input(track.uri, local_folder_current_path)
             if query.is_local or "localtracks/" in track.uri:
@@ -332,7 +359,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     return query.to_string_user()
             else:
-                if track.author.lower() not in track.title.lower():
+                if track.is_stream:
+                    icy = await self.icyparser(track.uri)
+                    if icy:
+                        title = icy
+                    else:
+                        title = f"{track.title} - {track.author}"
+                elif track.author.lower() not in track.title.lower():
                     title = f"{track.title} - {track.author}"
                 else:
                     title = track.title
@@ -342,7 +375,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return None
 
     def format_playlist_picker_data(self, pid, pname, ptracks, pauthor, scope) -> str:
-        """Format the values into a pretified codeblock"""
+        """Format the values into a prettified codeblock."""
         author = self.bot.get_user(pauthor) or pauthor or _("Unknown")
         line = _(
             " - Name:   <{pname}>\n"
@@ -359,9 +392,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         paused = player.paused
         pos = player.position
-        dur = player.current.length
+        dur = getattr(player.current, "length", player.position or 1)
         sections = 12
-        loc_time = round((pos / dur) * sections)
+        loc_time = round((pos / dur if dur != 0 else pos) * sections)
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
         seek = "\N{RADIO BUTTON}"
         if paused:

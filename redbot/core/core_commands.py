@@ -23,6 +23,7 @@ import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
+from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -384,7 +385,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about Red."""
+        """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -1385,7 +1386,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if output:
             total_message = "\n\n".join(output)
-            for page in pagify(total_message):
+            for page in pagify(
+                total_message, delims=["\n", ", "], priority=True, page_length=1500
+            ):
+                if page.startswith(", "):
+                    page = page[2:]
                 await ctx.send(page)
 
     @commands.command()
@@ -1536,9 +1541,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
-        """Attempts to restart Red.
+        """Attempts to restart [botname].
 
-        Makes Red quit with exit code 26.
+        Makes [botname] quit with exit code 26.
         The restart is not guaranteed: it must be dealt
         with by the process manager in use."""
         with contextlib.suppress(discord.HTTPException):
@@ -2071,10 +2076,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """Set various external API tokens.
+        """Set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
@@ -2088,6 +2093,47 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.message.delete()
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+
+    @api.command(name="list")
+    async def api_list(self, ctx: commands.Context):
+        """Show all external API services along with their keys that have been set.
+
+        Secrets are not shown."""
+
+        services: dict = await ctx.bot.get_shared_api_tokens()
+        if not services:
+            await ctx.send(_("No API services have been set yet."))
+            return
+
+        sorted_services = sorted(services.keys(), key=str.lower)
+
+        joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
+        for service_name in sorted_services:
+            joined += "+ {}\n".format(service_name)
+            for key_name in services[service_name].keys():
+                joined += "  - {}\n".format(key_name)
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
+
+    @api.command(name="remove")
+    async def api_remove(self, ctx: commands.Context, *services: str):
+        """Remove the given services with all their keys and tokens."""
+        bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
+        services = [s for s in services if s in bot_services]
+
+        if services:
+            await self.bot.remove_shared_api_services(*services)
+            if len(services) > 1:
+                msg = _("Services deleted successfully:\n{services_list}").format(
+                    services_list=humanize_list(services)
+                )
+            else:
+                msg = _("Service deleted successfully: {service_name}").format(
+                    service_name=services[0]
+                )
+            await ctx.send(msg)
+        else:
+            await ctx.send(_("None of the services you provided had any keys set."))
 
     @commands.group()
     @checks.is_owner()
@@ -2409,7 +2455,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         'Appearance' tab. Enable 'Developer Mode', then right click
         a user and click on 'Copy ID'.
         """
-        destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
+        destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
             await ctx.send(
                 _(
