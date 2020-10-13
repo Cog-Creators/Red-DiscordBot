@@ -202,7 +202,9 @@ class Alias(commands.Cog):
             else:
                 temp.extend(pagify(message, delims=["\n"], page_length=1850))
         await SimpleHybridMenu(
-            source=AliasSource(temp), cog=self, delete_message_after=True,
+            source=AliasSource(temp),
+            cog=self,
+            delete_message_after=True,
         ).start(ctx=ctx, wait=False)
 
     @commands.group()

@@ -586,7 +586,9 @@ class Economy(commands.Cog):
             return await ctx.send(_("There are no accounts in the bank."))
 
         await SimpleHybridMenu(
-            source=LeaderboardSource(bank_sorted), cog=self, delete_message_after=True,
+            source=LeaderboardSource(bank_sorted),
+            cog=self,
+            delete_message_after=True,
         ).start(ctx=ctx, wait=False)
 
     @commands.command()

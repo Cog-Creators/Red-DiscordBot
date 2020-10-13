@@ -17,9 +17,9 @@ from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
+
 from .menus import ReasonListSource, ActionListSource
 
 _ = Translator("Warnings", __file__)
@@ -310,7 +310,9 @@ class Warnings(commands.Cog):
             return await ctx.send(_("There are no reasons configured!"))
 
         await SimpleHybridMenu(
-            source=ReasonListSource(data.items()), cog=self, delete_message_after=True,
+            source=ReasonListSource(data.items()),
+            cog=self,
+            delete_message_after=True,
         ).start(ctx=ctx, wait=False)
 
     @commands.command()
@@ -323,7 +325,9 @@ class Warnings(commands.Cog):
         if not data:
             return await ctx.send(_("There are no actions configured!"))
         await SimpleHybridMenu(
-            source=ActionListSource(data), cog=self, delete_message_after=True,
+            source=ActionListSource(data),
+            cog=self,
+            delete_message_after=True,
         ).start(ctx=ctx, wait=False)
 
     @commands.command()
