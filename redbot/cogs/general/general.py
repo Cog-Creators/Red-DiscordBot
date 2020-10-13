@@ -3,6 +3,7 @@ import time
 from enum import Enum
 from random import randint, choice
 from typing import Final
+import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
@@ -22,7 +23,7 @@ _ = T_ = Translator("General", __file__)
 class RPS(Enum):
     rock = "\N{MOYAI}"
     paper = "\N{PAGE FACING UP}"
-    scissors = "\N{BLACK SCISSORS}"
+    scissors = "\N{BLACK SCISSORS}\N{VARIATION SELECTOR-16}"
 
 
 class RPSParser:
@@ -74,6 +75,10 @@ class General(commands.Cog):
     def __init__(self):
         super().__init__()
         self.stopwatches = {}
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """ Nothing to delete """
+        return
 
     @commands.command()
     async def choose(self, ctx, *choices):
@@ -210,9 +215,7 @@ class General(commands.Cog):
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
-        search_terms = escape(
-            search_terms.replace("+", "%2B").replace(" ", "+"), mass_mentions=True
-        )
+        search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
@@ -244,14 +247,15 @@ class General(commands.Cog):
     async def serverinfo(self, ctx, details: bool = False):
         """
         Show server information.
-    
+
         `details`: Shows more information when set to `True`.
         Default to False.
         """
         guild = ctx.guild
         passed = (ctx.message.created_at - guild.created_at).days
         created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
+            date=guild.created_at.strftime("%d %b %Y %H:%M"),
+            num=humanize_number(passed),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
@@ -267,7 +271,13 @@ class General(commands.Cog):
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
             data.add_field(name=_("Owner"), value=str(guild.owner))
-            data.set_footer(text=_("Server ID: ") + str(guild.id))
+            data.set_footer(
+                text=_("Server ID: ")
+                + str(guild.id)
+                + _("  •  Use {command} for more info on the server.").format(
+                    command=f"{ctx.clean_prefix}serverinfo 1"
+                )
+            )
             if guild.icon_url:
                 data.set_author(name=guild.name, url=guild.icon_url)
                 data.set_thumbnail(url=guild.icon_url)
@@ -304,7 +314,9 @@ class General(commands.Cog):
                 "\N{LARGE GREEN CIRCLE}": lambda x: x.status is discord.Status.online,
                 "\N{LARGE ORANGE CIRCLE}": lambda x: x.status is discord.Status.idle,
                 "\N{LARGE RED CIRCLE}": lambda x: x.status is discord.Status.do_not_disturb,
-                "\N{MEDIUM WHITE CIRCLE}": lambda x: x.status is discord.Status.offline,
+                "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}": lambda x: (
+                    x.status is discord.Status.offline
+                ),
                 "\N{LARGE PURPLE CIRCLE}": lambda x: any(
                     a.type is discord.ActivityType.streaming for a in x.activities
                 ),
@@ -364,7 +376,7 @@ class General(commands.Cog):
                 "VERIFIED": _("Verified"),
                 "DISCOVERABLE": _("Server Discovery"),
                 "FEATURABLE": _("Featurable"),
-                "PUBLIC": _("Public"),
+                "COMMUNITY": _("Community"),
                 "PUBLIC_DISABLED": _("Public disabled"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
@@ -377,7 +389,9 @@ class General(commands.Cog):
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
             }
             guild_features_list = [
-                f"✅ {name}" for feature, name in features.items() if feature in guild.features
+                f"\N{WHITE HEAVY CHECK MARK} {name}"
+                for feature, name in features.items()
+                if feature in guild.features
             ]
 
             joined_on = _(
@@ -467,12 +481,14 @@ class General(commands.Cog):
         """
 
         try:
-            url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
+            url = "https://api.urbandictionary.com/v0/define"
+
+            params = {"term": str(word).lower()}
 
             headers = {"content-type": "application/json"}
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as response:
+                async with session.get(url, headers=headers, params=params) as response:
                     data = await response.json()
 
         except aiohttp.ClientError:
@@ -489,9 +505,12 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{word} by {author}").format(
+                    title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
+                    if len(title) > 256:
+                        title = "{}...".format(title[:253])
+                    embed.title = title
                     embed.url = ud["permalink"]
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import timezone
 from collections import defaultdict, deque
 
 import discord
@@ -42,36 +42,93 @@ class Events(MixinMeta):
         return False
 
     async def check_mention_spam(self, message):
-        guild = message.guild
-        author = message.author
+        guild, author = message.guild, message.author
+        mention_spam = await self.config.guild(guild).mention_spam.all()
 
-        max_mentions = await self.config.guild(guild).ban_mention_spam()
-        if max_mentions:
+        if mention_spam["strict"]:  # if strict is enabled
+            mentions = message.raw_mentions
+        else:  # if not enabled
             mentions = set(message.mentions)
-            if len(mentions) >= max_mentions:
+
+        if mention_spam["ban"]:
+            if len(mentions) >= mention_spam["ban"]:
                 try:
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
-                    log.info(
-                        "Failed to ban member for mention spam in server {}.".format(guild.id)
+                    log.warning(
+                        "Failed to ban a member ({member}) for mention spam in server {guild}.".format(
+                            member=author.id, guild=guild.id
+                        )
                     )
                 else:
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            message.created_at,
-                            "ban",
-                            author,
-                            guild.me,
-                            _("Mention spam (Autoban)"),
-                            until=None,
-                            channel=None,
-                        )
-                    except RuntimeError as e:
-                        print(e)
-                        return False
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        message.created_at.replace(tzinfo=timezone.utc),
+                        "ban",
+                        author,
+                        guild.me,
+                        _("Mention spam (Autoban)"),
+                        until=None,
+                        channel=None,
+                    )
                     return True
+
+        if mention_spam["kick"]:
+            if len(mentions) >= mention_spam["kick"]:
+                try:
+                    await guild.kick(author, reason=_("Mention Spam (Autokick)"))
+                except discord.HTTPException:
+                    log.warning(
+                        "Failed to kick a member ({member}) for mention spam in server {guild}".format(
+                            member=author.id, guild=guild.id
+                        )
+                    )
+                else:
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        message.created_at.replace(tzinfo=timezone.utc),
+                        "kick",
+                        author,
+                        guild.me,
+                        _("Mention spam (Autokick)"),
+                        until=None,
+                        channel=None,
+                    )
+                    return True
+
+        if mention_spam["warn"]:
+            if len(mentions) >= mention_spam["warn"]:
+                try:
+                    await author.send(_("Please do not mass mention people!"))
+                except (discord.HTTPException, discord.Forbidden):
+                    try:
+                        await message.channel.send(
+                            _("{member}, Please do not mass mention people!").format(
+                                member=author.mention
+                            )
+                        )
+                    except (discord.HTTPException, discord.Forbidden):
+                        log.warning(
+                            "Failed to warn a member ({member}) for mention spam in server {guild}".format(
+                                member=author.id, guild=guild.id
+                            )
+                        )
+                        return False
+
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    message.created_at.replace(tzinfo=timezone.utc),
+                    "warning",
+                    author,
+                    guild.me,
+                    _("Mention spam (Autowarn)"),
+                    until=None,
+                    channel=None,
+                )
+                return True
         return False
 
     @commands.Cog.listener()
@@ -79,6 +136,10 @@ class Events(MixinMeta):
         author = message.author
         if message.guild is None or self.bot.user == author:
             return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
+            return
+
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
@@ -100,21 +161,24 @@ class Events(MixinMeta):
             async with self.config.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
-                if after.name in name_list:
+                if before.name in name_list:
                     # Ensure order is maintained without duplicates occurring
-                    name_list.remove(after.name)
-                name_list.append(after.name)
+                    name_list.remove(before.name)
+                name_list.append(before.name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.nick != after.nick and after.nick is not None:
+            guild = after.guild
+            if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+                return
             async with self.config.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
                     nick_list.remove(None)
-                if after.nick in nick_list:
-                    nick_list.remove(after.nick)
-                nick_list.append(after.nick)
+                if before.nick in nick_list:
+                    nick_list.remove(before.nick)
+                nick_list.append(before.nick)
                 while len(nick_list) > 20:
                     nick_list.pop(0)

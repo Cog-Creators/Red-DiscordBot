@@ -5,29 +5,23 @@ if [%1] == [] goto help
 REM This allows us to expand variables at execution
 setlocal ENABLEDELAYEDEXPANSION
 
-REM This will set PYFILES as a list of tracked .py files
-set PYFILES=
-for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
-    set PYFILES=!PYFILES! %%A
-)
-
 goto %1
 
 :reformat
-black !PYFILES!
+black "%~dp0."
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black --check !PYFILES!
+black --check "%~dp0."
 exit /B %ERRORLEVEL%
 
 :stylediff
-black --check --diff !PYFILES!
+black --check --diff "%~dp0."
 exit /B %ERRORLEVEL%
 
 :newenv
 py -3.8 -m venv --clear .venv
-.\.venv\Scripts\python -m pip install -U pip setuptools
+.\.venv\Scripts\python -m pip install -U pip setuptools wheel
 goto syncenv
 
 :syncenv

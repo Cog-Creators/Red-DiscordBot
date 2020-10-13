@@ -14,5 +14,10 @@
         | buck-out
         | build
         | dist
+        | redbot\/vendored
     )/
     '''
+
+[tool.pytest.ini_options]
+    minversion = "6.0"
+    addopts = "--import-mode=importlib"

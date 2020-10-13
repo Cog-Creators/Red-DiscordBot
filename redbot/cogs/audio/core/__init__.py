@@ -1,8 +1,11 @@
 import asyncio
+import json
+
 from collections import Counter
 from typing import Mapping
 
 import aiohttp
+import discord
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -49,6 +52,7 @@ class Audio(
         self._disconnected_players = {}
         self._daily_playlist_cache = {}
         self._daily_global_playlist_cache = {}
+        self._persist_queue_cache = {}
         self._dj_status_cache = {}
         self._dj_role_cache = {}
         self.skip_votes = {}
@@ -58,30 +62,47 @@ class Audio(
         self.player_automated_timer_task = None
         self.cog_cleaned_up = False
         self.lavalink_connection_aborted = False
+        self.permission_cache = discord.Permissions(
+            embed_links=True,
+            read_messages=True,
+            send_messages=True,
+            read_message_history=True,
+            add_reactions=True,
+        )
 
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.cog_ready_event = asyncio.Event()
         self.cog_init_task = None
+        self.global_api_user = {
+            "fetched": False,
+            "can_read": False,
+            "can_post": False,
+            "can_delete": False,
+        }
 
         default_global = dict(
             schema_version=1,
+            owner_notification=0,
             cache_level=0,
             cache_age=365,
             daily_playlists=False,
             global_db_enabled=False,
-            global_db_get_timeout=5,  # Here as a placeholder in case we want to enable the command
+            global_db_get_timeout=5,
             status=False,
             use_external_lavalink=False,
             restrict=True,
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
+            java_exc_path="java",
             **self._default_lavalink_settings,
         )
 
         default_guild = dict(
             auto_play=False,
+            auto_deafen=True,
             autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
+            persist_queue=True,
             disconnect=False,
             dj_enabled=False,
             dj_role=None,
@@ -119,3 +140,4 @@ class Audio(
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
+        self.config.register_user(country_code=None)

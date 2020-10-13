@@ -1,9 +1,11 @@
 import asyncio
 import logging
 import time
+
 from typing import Dict
 
 import lavalink
+
 from redbot.core.utils import AsyncIter
 
 from ...audio_logging import debug_exc_log
@@ -20,6 +22,8 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         while True:
             async for p in AsyncIter(lavalink.all_players()):
                 server = p.channel.guild
+                if await self.bot.cog_disabled_in_guild(self, server):
+                    continue
 
                 if [self.bot.user] == p.channel.members:
                     stop_times.setdefault(server.id, time.time())
@@ -46,6 +50,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         stop_times.pop(sid)
                         try:
                             player = lavalink.get_player(sid)
+                            await self.api_interface.persistent_queue_api.drop(sid)
                             await player.stop()
                             await player.disconnect()
                         except Exception as err:

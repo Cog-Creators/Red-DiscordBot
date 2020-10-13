@@ -196,7 +196,7 @@ class ModInfo(MixinMeta):
         elif user.status.name == "online":
             statusemoji = "\N{LARGE GREEN CIRCLE}"
         elif user.status.name == "offline":
-            statusemoji = "\N{MEDIUM WHITE CIRCLE}"
+            statusemoji = "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}"
         elif user.status.name == "dnd":
             statusemoji = "\N{LARGE RED CIRCLE}"
         elif user.status.name == "idle":
@@ -245,15 +245,25 @@ class ModInfo(MixinMeta):
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
         if role_str is not None:
-            data.add_field(name=_("Roles"), value=role_str, inline=False)
+            data.add_field(
+                name=_("Roles") if len(roles) > 1 else _("Role"), value=role_str, inline=False
+            )
         if names:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
-            data.add_field(name=_("Previous Names"), value=val, inline=False)
+            data.add_field(
+                name=_("Previous Names") if len(names) > 1 else _("Previous Name"),
+                value=val,
+                inline=False,
+            )
         if nicks:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(nicks))
-            data.add_field(name=_("Previous Nicknames"), value=val, inline=False)
+            data.add_field(
+                name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),
+                value=val,
+                inline=False,
+            )
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
