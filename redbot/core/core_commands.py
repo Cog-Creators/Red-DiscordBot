@@ -32,6 +32,8 @@ from . import (
     commands,
     errors,
     i18n,
+    bank,
+    modlog,
 )
 from .utils import AsyncIter
 from .utils._internal_utils import fetch_latest_red_version_info
@@ -1550,6 +1552,200 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if not silently:
                 await ctx.send(_("Restarting..."))
         await ctx.bot.shutdown(restart=True)
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.group()
+    async def bankset(self, ctx: commands.Context):
+        """Base command for bank settings."""
+
+    @bankset.command(name="showsettings")
+    async def bankset_showsettings(self, ctx: commands.Context):
+        """Show the current bank settings."""
+        cur_setting = await bank.is_global()
+        if cur_setting:
+            group = bank._config
+        else:
+            if not ctx.guild:
+                return
+            group = bank._config.guild(ctx.guild)
+        group_data = await group.all()
+        bank_name = group_data["bank_name"]
+        bank_scope = _("Global") if cur_setting else _("Server")
+        currency_name = group_data["currency"]
+        default_balance = group_data["default_balance"]
+        max_balance = group_data["max_balance"]
+
+        settings = _(
+            "Bank settings:\n\nBank name: {bank_name}\nBank scope: {bank_scope}\n"
+            "Currency: {currency_name}\nDefault balance: {default_balance}\n"
+            "Maximum allowed balance: {maximum_bal}\n"
+        ).format(
+            bank_name=bank_name,
+            bank_scope=bank_scope,
+            currency_name=currency_name,
+            default_balance=humanize_number(default_balance),
+            maximum_bal=humanize_number(max_balance),
+        )
+        await ctx.send(box(settings))
+
+    @bankset.command(name="toggleglobal")
+    @checks.is_owner()
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
+        """Toggle whether the bank is global or not.
+
+        If the bank is global, it will become per-server.
+        If the bank is per-server, it will become global.
+        """
+        cur_setting = await bank.is_global()
+
+        word = _("per-server") if cur_setting else _("global")
+        if confirm is False:
+            await ctx.send(
+                _(
+                    "This will toggle the bank to be {banktype}, deleting all accounts "
+                    "in the process! If you're sure, type `{command}`"
+                ).format(banktype=word, command=f"{ctx.clean_prefix}bankset toggleglobal yes")
+            )
+        else:
+            await bank.set_global(not cur_setting)
+            await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="bankname")
+    async def bankset_bankname(self, ctx: commands.Context, *, name: str):
+        """Set the bank's name."""
+        await bank.set_bank_name(name, ctx.guild)
+        await ctx.send(_("Bank name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="creditsname")
+    async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
+        """Set the name for the bank's currency."""
+        await bank.set_currency_name(name, ctx.guild)
+        await ctx.send(_("Currency name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="maxbal")
+    async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
+        """Set the maximum balance a user can get."""
+        try:
+            await bank.set_max_balance(amount, ctx.guild)
+        except ValueError:
+            # noinspection PyProtectedMember
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {max}.").format(
+                    max=humanize_number(bank._MAX_BALANCE)
+                )
+            )
+        await ctx.send(
+            _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
+        )
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command()
+    async def reset(self, ctx, confirmation: bool = False):
+        """Delete all bank accounts."""
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
+                    "`{prefix}bank reset yes`"
+                ).format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    prefix=ctx.clean_prefix,
+                )
+            )
+        else:
+            await bank.wipe_bank(guild=ctx.guild)
+            await ctx.send(
+                _("All bank accounts for {scope} have been deleted.").format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                )
+            )
+    
+    @commands.group()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def modlogset(self, ctx: commands.Context):
+        """Manage modlog settings."""
+        pass
+
+    @checks.is_owner()
+    @modlogset.command(hidden=True, name="fixcasetypes")
+    async def reapply_audittype_migration(self, ctx: commands.Context):
+        """Command to fix misbehaving casetypes."""
+        await modlog.handle_auditype_key()
+        await ctx.tick()
+
+    @modlogset.command(aliases=["channel"])
+    @commands.guild_only()
+    async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """Set a channel as the modlog.
+
+        Omit `<channel>` to disable the modlog.
+        """
+        guild = ctx.guild
+        if channel:
+            if channel.permissions_for(guild.me).send_messages:
+                await modlog.set_modlog_channel(guild, channel)
+                await ctx.send(
+                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
+                )
+            else:
+                await ctx.send(
+                    _("I do not have permissions to send messages in {channel}!").format(
+                        channel=channel.mention
+                    )
+                )
+        else:
+            try:
+                await modlog.get_modlog_channel(guild)
+            except RuntimeError:
+                await ctx.send(_("Mod log is already disabled."))
+            else:
+                await modlog.set_modlog_channel(guild, None)
+                await ctx.send(_("Mod log deactivated."))
+
+    @modlogset.command(name="cases")
+    @commands.guild_only()
+    async def set_cases(self, ctx: commands.Context, action: str = None):
+        """Enable or disable case creation for a mod action."""
+        guild = ctx.guild
+
+        if action is None:  # No args given
+            casetypes = await modlog.get_all_casetypes(guild)
+            await ctx.send_help()
+            lines = []
+            for ct in casetypes:
+                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
+                lines.append(f"{ct.name} : {enabled}")
+
+            await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
+            return
+
+        casetype = await modlog.get_casetype(action, guild)
+        if not casetype:
+            await ctx.send(_("That action is not registered."))
+        else:
+            enabled = await casetype.is_enabled()
+            await casetype.set_enabled(not enabled)
+            await ctx.send(
+                _("Case creation for {action_name} actions is now {enabled}.").format(
+                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
+                )
+            )
+
+    @modlogset.command()
+    @commands.guild_only()
+    async def resetcases(self, ctx: commands.Context):
+        """Reset all modlog cases in this server."""
+        guild = ctx.guild
+        await modlog.reset_cases(guild)
+        await ctx.send(_("Cases have been reset."))
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):

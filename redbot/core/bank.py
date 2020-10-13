@@ -142,6 +142,28 @@ async def _process_data_deletion(
                 await _config.member_from_ids(guild_id, user_id).clear()
 
 
+def is_owner_if_bank_global():
+    """
+    Command decorator. If the bank is global, it checks if the author is
+    bot owner, otherwise it only checks
+    if command was used in guild - it DOES NOT check any permissions.
+
+    When used on the command, this should be combined
+    with permissions check like `guildowner_or_permissions()`.
+    """
+
+    async def pred(ctx: commands.Context):
+        author = ctx.author
+        if not await is_global():
+            if not ctx.guild:
+                return False
+            return True
+        else:
+            return await ctx.bot.is_owner(author)
+
+    return commands.check(pred)
+
+
 class Account:
     """A single account.
 

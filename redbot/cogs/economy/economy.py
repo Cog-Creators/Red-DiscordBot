@@ -8,7 +8,6 @@ from typing import cast, Iterable, Union, Literal
 
 import discord
 
-from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
@@ -210,7 +209,7 @@ class Economy(commands.Cog):
             )
         )
 
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
@@ -256,30 +255,7 @@ class Economy(commands.Cog):
         else:
             await ctx.send(msg)
 
-    @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
-    @_bank.command()
-    async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
-                    "`{prefix}bank reset yes`"
-                ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.clean_prefix,
-                )
-            )
-        else:
-            await bank.wipe_bank(guild=ctx.guild)
-            await ctx.send(
-                _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
-                )
-            )
-
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.group(name="prune")
     async def _prune(self, ctx):
@@ -708,7 +684,7 @@ class Economy(commands.Cog):
         )
 
     @guild_only_check()
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
