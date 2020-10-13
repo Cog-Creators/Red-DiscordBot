@@ -1772,7 +1772,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
             await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
-    
+
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
