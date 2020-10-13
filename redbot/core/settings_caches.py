@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterable, Tuple
+from typing import Dict, List, Optional, Union, Set, Iterable, Tuple, overload
 import asyncio
 from argparse import Namespace
 from collections import defaultdict
@@ -86,8 +86,25 @@ class I18nManager:
                 self._guild_locale[guild.id] = out
                 return out
 
-    async def set_guild_locale(self, guild: discord.Guild, locale: Union[str, None]) -> None:
-        """Set the guild locale in the config and cache"""
+    @overload
+    async def set_locale(self, guild: None, locale: str):
+        ...
+
+    @overload
+    async def set_locale(self, guild: discord.Guild, locale: Union[str, None]):
+        ...
+
+    async def set_locale(
+        self, guild: Union[discord.Guild, None], locale: Union[str, None]
+    ) -> None:
+        """Set the locale in the config and cache"""
+        if guild is None:
+            if locale is None:
+                # this method should never be called like this
+                raise ValueError("Global locale can't be None!")
+            self._guild_locale[None] = locale
+            await self._config.locale.set(locale)
+            return
         self._guild_locale[guild.id] = locale
         await self._config.guild(guild).locale.set(locale)
 
@@ -115,9 +132,13 @@ class I18nManager:
                 return out
 
     async def set_regional_format(
-        self, guild: discord.Guild, regional_format: Union[str, None]
+        self, guild: Union[discord.Guild, None], regional_format: Union[str, None]
     ) -> None:
         """Set the regional format in the config and cache"""
+        if guild is None:
+            self._guild_regional_format[None] = regional_format
+            await self._config.regional_format.set(regional_format)
+            return
         self._guild_regional_format[guild.id] = regional_format
         await self._config.guild(guild).regional_format.set(regional_format)
 

@@ -2014,7 +2014,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_locale(standardized_locale_name)
-        await ctx.bot._config.locale.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
+        await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
         await ctx.send(_("Global locale has been set."))
 
     @_set.command()
@@ -2036,7 +2037,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if language_code.lower() == "default":
             global_locale = await self.bot._config.locale()
             i18n.set_contextual_locale(global_locale)
-            await self.bot._i18n_cache.set_guild_locale(ctx.guild, None)
+            await self.bot._i18n_cache.set_locale(ctx.guild, None)
             await ctx.send(_("Locale has been set to the default."))
             return
         try:
@@ -2051,7 +2052,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_contextual_locale(standardized_locale_name)
-        await self.bot._i18n_cache.set_guild_locale(ctx.guild, standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
     @_set.command(aliases=["globalregion"])
@@ -2068,7 +2069,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if language_code is None:
             i18n.set_regional_format(None)
-            await ctx.bot._config.regional_format.set(None)
+            await self.bot._i18n_cache.set_regional_format(None, None)
             await ctx.send(_("Global regional formatting will now be based on bot's locale."))
             return
 
@@ -2084,7 +2085,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_regional_format(standardized_locale_name)
-        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
         await ctx.send(
             _("Global regional formatting will now be based on `{language_code}` locale.").format(
                 language_code=standardized_locale_name
