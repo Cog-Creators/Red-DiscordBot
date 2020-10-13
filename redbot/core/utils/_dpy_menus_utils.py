@@ -8,7 +8,7 @@ from redbot.vendored.discord.ext import menus as _dpy_menus
 from .. import commands
 from ..commands import Context
 from ..i18n import Translator
-
+from ...vendored.discord.ext.menus import First, Last, button
 
 _ = Translator("Menus", __file__)
 
@@ -74,7 +74,9 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
             **kwargs,
         )
         if (
-            bad_stop := _dpy_menus._cast_emoji("\N{BLACK SQUARE FOR STOP}\ufe0f")
+            bad_stop := _dpy_menus._cast_emoji(
+                "\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}"
+            )
         ) and bad_stop in self._buttons:
             del self._buttons[bad_stop]
         self.cog = cog
@@ -154,6 +156,32 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         if max_pages is None:
             return True
         return max_pages == 1
+
+    def _skip_single_arrows_has_external_emojis_perm(self):
+        if self._skip_single_arrows():
+            return True
+        return self._has_external_emojis_perms()
+
+    def _skip_single_arrows_has_not_external_emojis_perm(self):
+        if self._skip_single_arrows():
+            return True
+        return self._has_not_external_emojis_perm()
+
+    def _skip_double_arrows_has_external_emojis_perm(self):
+        if self._skip_double_triangle_buttons():
+            return True
+        return self._has_external_emojis_perms()
+
+    def _skip_double_arrows_has_not_external_emojis_perm(self):
+        if self._skip_double_triangle_buttons():
+            return True
+        return self._has_not_external_emojis_perm()
+
+    def _has_external_emojis_perms(self):
+        return self.ctx.channel.permissions_for(self.ctx.me).external_emojis
+
+    def _has_not_external_emojis_perm(self):
+        return not self._has_external_emojis_perms()
 
     def _skip_double_triangle_buttons(self):
         max_pages = self._source.get_max_pages()
@@ -347,7 +375,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         self._event.clear()
         msg = self.message
         if msg is None:
-            self.message = msg = await self.send_initial_message(ctx, channel, page=0)
+            self.message = msg = await self.send_initial_message(ctx, channel, page=page)
         self._register_keyword()
         if self.should_add_reactions() or self._actions:
             # Start the task first so we can listen to reactions before doing anything
@@ -383,47 +411,47 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         kwargs = await self._get_kwargs_from_page(page)
         return await channel.send(**kwargs)
 
-    @_dpy_menus.button(
-        "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
-        position=_dpy_menus.First(1),
-        skip_if=_skip_single_arrows,
-    )
-    async def go_to_previous_page(self, payload):
-        """go to the previous page"""
-        await self.show_checked_page(self.current_page - 1)
-
-    @_dpy_menus.button(
-        "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
-        position=_dpy_menus.Last(0),
-        skip_if=_skip_single_arrows,
-    )
-    async def go_to_next_page(self, payload):
-        """go to the next page"""
-        await self.show_checked_page(self.current_page + 1)
-
-    @_dpy_menus.button(
-        "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=_dpy_menus.First(0),
-        skip_if=_skip_double_triangle_buttons,
+    @button(
+        "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_double_arrows_has_external_emojis_perm,
+        position=First(0),
     )
     async def go_to_first_page(self, payload):
         """go to the first page"""
         await self.show_page(0)
 
-    @_dpy_menus.button(
-        "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f",
-        position=_dpy_menus.Last(1),
-        skip_if=_skip_double_triangle_buttons,
+    @button(
+        "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_single_arrows_has_external_emojis_perm,
+        position=First(1),
+    )
+    async def go_to_previous_page(self, payload):
+        """go to the previous page"""
+        await self.show_checked_page(self.current_page - 1)
+
+    @button("\N{CROSS MARK}", skip_if=_has_external_emojis_perms, position=Last(0))
+    async def stop_pages(self, payload: discord.RawReactionActionEvent) -> None:
+        """stops the pagination session."""
+        self.stop()
+
+    @button(
+        "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_single_arrows_has_external_emojis_perm,
+        position=Last(1),
+    )
+    async def go_to_next_page(self, payload):
+        """go to the next page"""
+        await self.show_checked_page(self.current_page + 1)
+
+    @button(
+        "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_double_arrows_has_external_emojis_perm,
+        position=Last(2),
     )
     async def go_to_last_page(self, payload):
         """go to the last page"""
         # The call here is safe because it's guarded by skip_if
         await self.show_page(self._source.get_max_pages() - 1)
-
-    @_dpy_menus.button("\N{CROSS MARK}")
-    async def stop_pages(self, payload: discord.RawReactionActionEvent) -> None:
-        """stops the pagination session."""
-        self.stop()
 
 
 class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
@@ -440,16 +468,20 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
     ):
         if accept_keywords:
             keyword_to_reaction_mapping = {
-                _("last"): ["\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
-                _("first"): ["\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\ufe0f"],
+                _("last"): [
+                    "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                ],
+                _("first"): [
+                    "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                ],
                 _("next"): [
-                    "\N{BLACK RIGHT-POINTING TRIANGLE}\ufe0f",
+                    "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
                 ],
                 _("previous"): [
-                    "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+                    "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
                 ],
                 _("prev"): [
-                    "\N{BLACK LEFT-POINTING TRIANGLE}\ufe0f",
+                    "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
                 ],
                 _("close"): ["\N{CROSS MARK}"],
             }
@@ -468,7 +500,7 @@ class SimpleHybridMenu(HybridMenu, inherit_buttons=True):
 
 
 class SimpleSource(_dpy_menus.ListPageSource):
-    def __init__(self, pages: Iterable[Union[List[str], List[discord.Embed]]]):
+    def __init__(self, pages: Iterable[Union[str, discord.Embed]]):
         super().__init__(pages, per_page=1)
 
     async def format_page(

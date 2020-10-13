@@ -1,6 +1,5 @@
 import asyncio
 from datetime import datetime, timezone
-
 from typing import Optional, Union
 
 import discord
@@ -167,7 +166,9 @@ class ModLog(commands.Cog):
                 return await ctx.send(_("That user does not have any cases."))
 
         await SimpleHybridMenu(
-            source=CasesForSource(cases), cog=self, delete_message_after=True,
+            source=CasesForSource(cases),
+            cog=self,
+            delete_message_after=True,
         ).start(ctx=ctx, wait=False)
 
     @commands.command()

@@ -506,7 +506,9 @@ class General(commands.Cog):
             if not data.get("list"):
                 return await ctx.send(_("No Urban Dictionary entries were found."))
             await SimpleHybridMenu(
-                source=UrbanSource(data["list"]), cog=self, delete_message_after=True,
+                source=UrbanSource(data["list"]),
+                cog=self,
+                delete_message_after=True,
             ).start(ctx=ctx, wait=False)
         else:
             await ctx.send(

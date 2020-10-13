@@ -21,9 +21,12 @@ class UrbanSource(menus.ListPageSource):
     ) -> Union[discord.Embed, str]:
         if await menu.ctx.embed_requested():
             message = discord.Embed(colour=await menu.ctx.embed_colour())
-            message.title = _("{word} by {author}").format(
+            title = _("{word} by {author}").format(
                 word=entry["word"].capitalize(), author=entry["author"]
             )
+            if len(title) > 256:
+                title = "{}...".format(title[:253])
+            message.title = title
             message.url = entry["permalink"]
 
             description = _("{definition}\n\n**Example:** {example}").format(**entry)
