@@ -145,9 +145,7 @@ async def is_mod_or_superior(
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    if await bot.is_owner(user):
-        return True
-    if await bot.is_mod(user):
+    if user == user.guild.owner or await bot.is_owner(user) or await bot.is_mod(user):
         return True
 
     return False
@@ -222,9 +220,7 @@ async def is_admin_or_superior(
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    if await bot.is_owner(user):
-        return True
-    if await bot.is_admin(user):
+    if user == user.guild.owner or await bot.is_owner(user) or await bot.is_admin(user):
         return True
 
     return False
