@@ -1667,6 +1667,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     scope=self.bot.user.name if await bank.is_global() else _("this server")
                 )
             )
+
+    @bank.is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
+    @bankset.group(name="prune")
+    async def _prune(self, ctx):
+        """Prune bank accounts."""
+        pass
     
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)

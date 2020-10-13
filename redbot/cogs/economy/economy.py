@@ -255,13 +255,6 @@ class Economy(commands.Cog):
         else:
             await ctx.send(msg)
 
-    @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
-    @_bank.group(name="prune")
-    async def _prune(self, ctx):
-        """Prune bank accounts."""
-        pass
-
     @_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
     @checks.guildowner()
