@@ -435,7 +435,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await ctx.send(_("Channel overwrites will be used for mutes instead."))
         else:
             await self.config.guild(ctx.guild).mute_role.set(role.id)
-            self.mute_role_cache[guild.id] = role.id
+            self.mute_role_cache[ctx.guild.id] = role.id
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
 
     @muteset.command(name="makerole")
