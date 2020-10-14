@@ -17,7 +17,7 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.8.1 or greater
+ - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
