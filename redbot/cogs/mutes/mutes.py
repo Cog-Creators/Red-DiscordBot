@@ -79,6 +79,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._unmute_tasks: Dict[str, Coroutine] = {}
         self._unmute_task = asyncio.create_task(self._handle_automatic_unmute())
         # dict of guild id, member id and time to be unmuted
+        self.mute_role_cache = {}
 
     async def red_delete_data_for_user(
         self,
@@ -99,6 +100,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         guild_data = await self.config.all_guilds()
         for g_id, mutes in guild_data.items():
             self._server_mutes[g_id] = {}
+            if mutes["mute_role"]:
+                self.mute_role_cache[g_id] = mutes["mute_role"]
             for user_id, mute in mutes["muted_users"].items():
                 self._server_mutes[g_id][int(user_id)] = mute
         channel_data = await self.config.all_channels()
@@ -269,7 +272,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         Used to handle the cache if a member manually has the muted role removed
         """
         guild = before.guild
-        mute_role_id = await self.config.guild(before.guild).mute_role()
+        if guild.id not in self.mute_role_cache:
+            return
+        mute_role_id = self.mute_role_cache[guild.id]
         mute_role = guild.get_role(mute_role_id)
         if not mute_role:
             return
@@ -423,12 +428,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not role:
             await self.config.guild(ctx.guild).mute_role.set(None)
-            await self.config.guild(ctx.guild).sent_instructions(False)
+            del self.mute_role_cache[ctx.guild.id]
+            await self.config.guild(ctx.guild).sent_instructions.set(False)
             # reset this to warn users next time they may have accidentally
             # removed the mute role
             await ctx.send(_("Channel overwrites will be used for mutes instead."))
         else:
             await self.config.guild(ctx.guild).mute_role.set(role.id)
+            self.mute_role_cache[guild.id] = role.id
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
 
     @muteset.command(name="makerole")
