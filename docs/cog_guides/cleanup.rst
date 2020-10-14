@@ -19,7 +19,10 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Commands for cleaning up messages.
+This cog contains commands used for "cleaning up" (deleting) messages.
+
+It's designed as a moderator tool and offers many convenient use cases.
+All cleanup commands only apply to the channel the command is executed in
 
 
 .. _cleanup-commands:
@@ -44,29 +47,13 @@ cleanup
 
 **Description**
 
-Delete messages.
-
-.. _cleanup-command-cleanup-bot:
-
-"""
-bot
-"""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup bot <number> [delete_pinned=False]
-
-**Description**
-
-Clean up command messages and messages from the bot.
+Base command for deleting messages.
 
 .. _cleanup-command-cleanup-before:
 
-""""""
-before
-""""""
+""""""""""""""
+cleanup before
+""""""""""""""
 
 **Syntax**
 
@@ -84,9 +71,9 @@ and copy its id.
 
 .. _cleanup-command-cleanup-self:
 
-""""
-self
-""""
+""""""""""""
+cleanup self
+""""""""""""
 
 **Syntax**
 
@@ -103,9 +90,9 @@ it is used for pattern matching - only messages containing the given text will b
 
 .. _cleanup-command-cleanup-text:
 
-""""
-text
-""""
+""""""""""""
+cleanup text
+""""""""""""
 
 **Syntax**
 
@@ -124,9 +111,9 @@ Remember to use double quotes.
 
 .. _cleanup-command-cleanup-between:
 
-"""""""
-between
-"""""""
+"""""""""""""""
+cleanup between
+"""""""""""""""
 
 **Syntax**
 
@@ -145,9 +132,9 @@ Example:
 
 .. _cleanup-command-cleanup-spam:
 
-""""
-spam
-""""
+""""""""""""
+cleanup spam
+""""""""""""
 
 **Syntax**
 
@@ -163,9 +150,9 @@ Defaults to 50.
 
 .. _cleanup-command-cleanup-user:
 
-""""
-user
-""""
+""""""""""""
+cleanup user
+""""""""""""
 
 **Syntax**
 
@@ -178,14 +165,14 @@ user
 Delete the last X messages from a specified user.
 
 Examples:
-    ``[p]cleanup user @​Twentysix 2``
+    ``[p]cleanup user @Twentysix 2``
     ``[p]cleanup user Red 6``
 
 .. _cleanup-command-cleanup-messages:
 
-""""""""
-messages
-""""""""
+""""""""""""""""
+cleanup messages
+""""""""""""""""
 
 **Syntax**
 
@@ -202,9 +189,9 @@ Example:
 
 .. _cleanup-command-cleanup-after:
 
-"""""
-after
-"""""
+"""""""""""""
+cleanup after
+"""""""""""""
 
 **Syntax**
 
@@ -219,3 +206,19 @@ Delete all messages after a specified message.
 To get a message id, enable developer mode in Discord's
 settings, 'appearance' tab. Then right click a message
 and copy its id.
+
+.. _cleanup-command-cleanup-bot:
+
+"""""""""""
+cleanup bot
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup bot <number> [delete_pinned=False]
+
+**Description**
+
+Clean up command messages and messages from the bot.
