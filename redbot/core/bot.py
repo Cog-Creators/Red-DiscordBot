@@ -1148,7 +1148,7 @@ class RedBase(
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
-        if cog is None or isinstance(cog, commands.commands._RuleDropper):
+        if cog is None:
             return
 
         for cls in inspect.getmro(cog.__class__):
@@ -1305,9 +1305,6 @@ class RedBase(
                     subcommand.requires.ready_event.set()
 
     def remove_command(self, name: str) -> None:
-        command = self.get_command(name)
-        if isinstance(command, commands.commands._RuleDropper):
-            return
         command = super().remove_command(name)
         if not command:
             return
