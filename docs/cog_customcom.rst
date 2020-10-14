@@ -1,4 +1,5 @@
 .. CustomCommands Cog Reference
+.. _cog_customcom:
 
 ============================
 CustomCommands Cog Reference
