@@ -147,7 +147,6 @@ class ZMQ:
 
     async def handle_message(self, request):
         try:
-            log.info("Received a message")
             try:
                 await request.parse_message()
             except InvalidRequest as e:
