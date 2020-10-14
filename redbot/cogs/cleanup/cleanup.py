@@ -19,7 +19,11 @@ log = logging.getLogger("red.cleanup")
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
-    """Commands for cleaning up messages."""
+    """This cog contains commands used for "cleaning up" (deleting) messages.
+
+    It's designed as a moderator tool and offers many convenient use cases.
+    All cleanup commands only apply to the channel the command is executed in
+    """
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -117,7 +121,7 @@ class Cleanup(commands.Cog):
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
-        """Delete messages."""
+        """Base command for deleting messages."""
         pass
 
     @cleanup.command()
@@ -178,7 +182,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages from a specified user.
 
         Examples:
-            `[p]cleanup user @\u200bTwentysix 2`
+            `[p]cleanup user @Twentysix 2`
             `[p]cleanup user Red 6`
         """
         channel = ctx.channel
