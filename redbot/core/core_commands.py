@@ -3238,7 +3238,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if await ctx.bot.is_automod_immune(user_or_role):
             await ctx.send(_("They are immune."))
         else:
-            await ctx.send(_("They are not Immune."))
+            await ctx.send(_("They are not immune."))
 
     @checks.is_owner()
     @_set.group()
