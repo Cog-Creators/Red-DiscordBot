@@ -1926,6 +1926,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
 
     @commands.cooldown(1, 60, commands.BucketType.member)
     @command_playlist.command(

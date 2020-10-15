@@ -413,6 +413,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             "try again in a few minutes."
                         ),
                     )
+                except Exception as e:
+                    self.update_player_lock(ctx, False)
+                    raise e
 
                 track = result.tracks[0]
             except Exception as err:
@@ -599,6 +602,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
 
             tracks = result.tracks
             if not tracks:
@@ -625,6 +631,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
 
             tracks = result.tracks
 

@@ -125,6 +125,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
     @commands.command(name="bumpplay")
     @commands.guild_only()
@@ -230,6 +233,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
         if isinstance(tracks, discord.Message):
             return
         elif not tracks:
@@ -611,6 +617,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "minutes."
                 ),
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
@@ -745,6 +754,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
 
                     tracks = result.tracks
                 else:
@@ -761,6 +773,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if await self.config.use_external_lavalink() and query.is_local:
@@ -877,6 +892,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "try again in a few minutes."
                         ),
                     )
+                except Exception as e:
+                    self.update_player_lock(ctx, False)
+                    raise e
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
