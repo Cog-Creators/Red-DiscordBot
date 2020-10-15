@@ -32,7 +32,7 @@ class YouTubeWrapper:
         self._token: Mapping[str, str] = {}
         self.cog = cog
 
-    def update_token(self, new_token: Mapping[str, str]):
+    async def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token
 
     async def _get_api_key(

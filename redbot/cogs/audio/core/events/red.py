@@ -15,11 +15,11 @@ class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
         self, service_name: str, api_tokens: Mapping[str, str]
     ) -> None:
         if service_name == "youtube":
-            self.api_interface.youtube_api.update_token(api_tokens)
+            await self.api_interface.youtube_api.update_token(api_tokens)
         elif service_name == "spotify":
-            self.api_interface.spotify_api.update_token(api_tokens)
+            await self.api_interface.spotify_api.update_token(api_tokens)
         elif service_name == "audiodb":
-            self.api_interface.global_cache_api.update_token(api_tokens)
+            await self.api_interface.global_cache_api.update_token(api_tokens)
 
     async def red_delete_data_for_user(
         self,

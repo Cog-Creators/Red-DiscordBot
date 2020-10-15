@@ -104,7 +104,7 @@ class SpotifyWrapper:
                 log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
             return data
 
-    def update_token(self, new_token: Mapping[str, str]):
+    async def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token
 
     async def get_token(self) -> None:
