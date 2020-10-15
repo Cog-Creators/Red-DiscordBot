@@ -1378,7 +1378,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
         """Toggle the server settings.
 
-        Default is ON
+        Default is OFF
         """
         state = await self.config.global_db_enabled()
         await self.config.global_db_enabled.set(not state)
