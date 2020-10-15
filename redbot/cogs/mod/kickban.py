@@ -118,7 +118,10 @@ class KickBanMixin(MixinMeta):
                         tempbans.remove(user.id)
                     removed_temp = True
                 else:
-                    return False, _("User {user_id} is already banned.").format(user_id=user.id)
+                    return (
+                        False,
+                        _("User with ID {user_id} is already banned.").format(user_id=user.id),
+                    )
 
             ban_type = "hackban"
 
@@ -380,7 +383,7 @@ class KickBanMixin(MixinMeta):
                         # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
                         continue
                     else:
-                        errors[user_id] = _("User {user_id} is already banned.").format(
+                        errors[user_id] = _("User with ID {user_id} is already banned.").format(
                             user_id=user_id
                         )
 
@@ -438,13 +441,13 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
-                        errors[user_id] = _('User with ID "{user_id}" not found').format(
+                        errors[user_id] = _("User with ID {user_id} not found").format(
                             user_id=user_id
                         )
                         continue
                     except discord.Forbidden:
                         errors[user_id] = _(
-                            "Could not ban {user_id}: missing permissions."
+                            "Could not ban user with ID {user_id}: missing permissions."
                         ).format(user_id=user_id)
                         continue
                     else:
