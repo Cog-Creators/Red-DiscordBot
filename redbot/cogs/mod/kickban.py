@@ -473,7 +473,7 @@ class KickBanMixin(MixinMeta):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        duration: UserInputOptional[commands.TimedeltaConverter] = timedelta(days=1),
+        duration: Optional[commands.TimedeltaConverter] = None,
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -481,7 +481,6 @@ class KickBanMixin(MixinMeta):
         """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
-        unban_time = datetime.now(timezone.utc) + duration
 
         if author == user:
             await ctx.send(
@@ -500,6 +499,10 @@ class KickBanMixin(MixinMeta):
         elif guild.me.top_role <= user.top_role or user == guild.owner:
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
+
+        if duration is None:
+            duration = timedelta(seconds=await self.config.guild(guild).default_tempban_duration())
+        unban_time = datetime.now(timezone.utc) + duration
 
         if days is None:
             days = await self.config.guild(guild).default_days()
