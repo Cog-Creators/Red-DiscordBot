@@ -306,8 +306,7 @@ class KickBanMixin(MixinMeta):
         if days is None:
             days = await self.config.guild(guild).default_days()
         if isinstance(user, int):
-            get_user = self.bot.get_user(user)
-            user = get_user or discord.Object(id=user)
+            user = self.bot.get_user(user) or discord.Object(id=user)
 
         success_, message = await self.ban_user(
             user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
