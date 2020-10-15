@@ -1942,21 +1942,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if len(username) > 32:
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
-            await self._name(name=username)
-        except discord.HTTPException as e:
-            error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+            async with ctx.typing():
+                await asyncio.wait_for(self._name(name=username), timeout=30)
+        except asyncio.TimeoutError:
             await ctx.send(
                 _(
-                    "Failed to change the username. "
-                    "Discord returned the following error:\n"
-                    "{error_message}\n\n"
+                    "Changing the username timed out. "
                     "Remember that you can only do it up to 2 times an hour."
-                    " Use nicknames if you need frequent changes. {command}"
-                ).format(
-                    error_message=inline(error_string),
-                    command=inline(f"{ctx.clean_prefix}set nickname"),
-                )
+                    " Use nicknames if you need frequent changes: {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}set nickname"))
             )
+        except discord.HTTPException as e:
+            if e.code == 50035:
+                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+                await ctx.send(
+                    _(
+                        "Failed to change the username. "
+                        "Discord returned the following error:\n"
+                        "{error_message}"
+                    ).format(error_message=inline(error_string))
+                )
+            else:
+                log.error(
+                    "Unexpected error occurred when trying to change the username.", exc_info=e
+                )
+                await ctx.send(_("Unexpected error occurred when trying to change the username."))
         else:
             await ctx.send(_("Done."))
 
