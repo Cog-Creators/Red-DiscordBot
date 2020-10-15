@@ -346,7 +346,7 @@ class Reports(commands.Cog):
 
         if t is None:
             return
-        guild = t[0]
+        guild = t[0][0]
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
             await set_contextual_locales_from_guild(self.bot, guild)
