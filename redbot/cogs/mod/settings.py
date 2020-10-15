@@ -383,7 +383,7 @@ class ModSettings(MixinMeta):
         guild = ctx.guild
         await self.config.guild(guild).default_tempban_duration.set(duration.total_seconds())
         await ctx.send(
-            _("The default duration for tempbanning a user is now {uration}.").format(
+            _("The default duration for tempbanning a user is now {duration}.").format(
                 duration=humanize_timedelta(timedelta=duration)
             )
         )
