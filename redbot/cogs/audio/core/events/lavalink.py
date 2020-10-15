@@ -181,7 +181,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             early_exit = await self.increase_error_counter(player)
             if early_exit:
                 self._disconnected_players[guild_id] = True
-                self.update_player_lock[guild_id] = False
+                self.play_lock[guild_id] = False
                 eq = player.fetch("eq")
                 player.queue = []
                 player.store("playing_song", None)
