@@ -159,7 +159,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{search_choice.title} {search_choice.author} {search_choice.uri} " f"{str(query)}",
+            f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:
@@ -297,7 +297,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.author} - {track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = (
@@ -308,7 +308,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = f'**{escape(f"{track.title}", formatting=True)}**' + escape(
@@ -317,7 +317,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     string = query.to_string_user()
                     if shorten and len(string) > 40:
-                        string = "{}...".format((string[:40]).rstrip(" "))
+                        string = f"{(string[:40]).rstrip(' ')}..."
                     string = f'**{escape(f"{string}", formatting=True)}**'
             else:
                 if track.is_stream:
@@ -332,13 +332,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     title = track.title
                 string = f"{title}"
                 if shorten and len(string) > 40:
-                    string = "{}...".format((string[:40]).rstrip(" "))
+                    string = f"{(string[:40]).rstrip(' ')}..."
                     string = re.sub(RE_SQUARE, "", string)
                 string = f"**[{escape(string, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
             string = track.to_string_user() + " "
             if shorten and len(string) > 40:
-                string = "{}...".format((string[:40]).rstrip(" "))
+                string = f"{(string[:40]).rstrip(' ')}..."
             string = f'**{escape(f"{string}", formatting=True)}**'
         return string
 

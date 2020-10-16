@@ -101,9 +101,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.get_track_description(player.current, self.local_folder_current_path)
                 or ""
             )
-            song += _("\n Requested by: **{track.requester}**")
-            song += "\n\n{arrow}`{pos}`/`{dur}`"
-            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
+            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += "\n\n{arrow}`{pos}`/`{dur}`".format(arrow=arrow, pos=pos, dur=dur)
         else:
             song = _("Nothing.")
 

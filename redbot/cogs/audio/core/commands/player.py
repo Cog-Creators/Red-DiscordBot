@@ -257,7 +257,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
                 embed.description = _(
-                    "**{suffix}** is not a fully supported format and some " "tracks may not play."
+                    "**{suffix}** is not a fully supported format and some tracks may not play."
                 ).format(suffix=query.suffix)
             return await self.send_embed_msg(ctx, embed=embed)
         queue_dur = await self.track_remaining_duration(ctx)
