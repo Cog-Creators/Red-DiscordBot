@@ -1579,6 +1579,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or _("Same as bot's locale")
+        colour = discord.Colour(global_data["color"])
 
         prefix_string = " ".join(prefixes)
         settings = _(
@@ -1586,13 +1587,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "Prefixes: {prefixes}\n"
             "{guild_settings}"
             "Locale: {locale}\n"
-            "Regional format: {regional_format}"
+            "Regional format: {regional_format}\n"
+            "Default colour: {colour}"
         ).format(
             bot_name=ctx.bot.user.name,
             prefixes=prefix_string,
             guild_settings=guild_settings,
             locale=locale,
             regional_format=regional_format,
+            colour=colour,
         )
         for page in pagify(settings):
             await ctx.send(box(page))
