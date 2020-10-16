@@ -815,7 +815,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
                 return await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the the invokation of *this* command. However, because of
+            # will skip the the invocation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             if not await self.can_run(ctx, change_permission_state=True):

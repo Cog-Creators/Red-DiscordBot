@@ -524,7 +524,7 @@ class Requires:
         cur_state = self._get_rule_from_ctx(ctx)
         should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
         if should_invoke is None:
-            # NORMAL invokation, we simply follow standard procedure
+            # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
