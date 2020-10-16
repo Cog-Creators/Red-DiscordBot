@@ -87,7 +87,7 @@ class General(commands.Cog):
         To denote options which include whitespace, you should use
         double quotes.
         """
-        choices = [escape(c, mass_mentions=True) for c in choices]
+        choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
             await ctx.send(_("Not enough options to pick from."))
         else:
