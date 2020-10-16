@@ -1028,7 +1028,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             for task in task_result:
                 if not task["success"]:
                     chan = task["channel"].mention
-                    issue = task["issue"]
+                    issue = task["reason"]
                     mute_success.append(f"{chan} - {issue}")
                 else:
                     chan_id = task["channel"].id
@@ -1080,7 +1080,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             for task in results:
                 if not task["success"]:
                     chan = task["channel"].mention
-                    issue = task["issue"]
+                    issue = task["reason"]
                     mute_success.append(f"{chan} - {issue}")
             await self.config.member(user).clear()
             if mute_success:
