@@ -385,7 +385,7 @@ class Requires:
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
             If a global rule is set for a model,
-            it will be prefered over the guild rule.
+            it will be preferred over the guild rule.
 
         Returns
         -------
@@ -473,7 +473,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -486,7 +486,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
