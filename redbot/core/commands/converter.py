@@ -48,6 +48,7 @@ __all__ = [
 _ = Translator("commands.converter", __file__)
 
 ID_REGEX = re.compile(r"([0-9]{15,21})")
+MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
 # Taken with permission from
@@ -127,6 +128,18 @@ def parse_timedelta(
                 )
             return delta
     return None
+
+
+class RawUserIds(dpy_commands.Converter):
+    async def convert(self, ctx, argument):
+        # This is for the hackban and unban commands, where we receive IDs that
+        # are most likely not in the guild.
+        # Mentions are supported, but most likely won't ever be in cache.
+
+        if match := ID_REGEX.match(argument) or MENTION_REGEX.match(argument):
+            return int(match.group(1))
+
+        raise BadArgument(_("{} doesn't look like a valid user ID.").format(argument))
 
 
 class GuildConverter(discord.Guild):

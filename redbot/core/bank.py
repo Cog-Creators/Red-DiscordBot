@@ -43,6 +43,7 @@ __all__ = [
     "cost",
     "AbortPurchase",
     "bank_prune",
+    "is_owner_if_bank_global",
 ]
 
 _MAX_BALANCE = 2 ** 63 - 1

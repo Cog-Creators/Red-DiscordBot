@@ -29,6 +29,7 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
+    RawUserIds as RawUserIds,
 )
 from .errors import (
     ConversionFailure as ConversionFailure,

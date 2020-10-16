@@ -24,7 +24,6 @@ import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.cogs.mod.converters import RawUserIds
 
 from . import (
     __version__,
@@ -1748,7 +1747,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_prune.command(usage="<user> [confirmation=False]")
     async def user(
-        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
+        self,
+        ctx,
+        member_or_id: Union[discord.Member, commands.RawUserIds],
+        confirmation: bool = False,
     ):
         """Delete the bank account of a specified user."""
         global_bank = await bank.is_global()
