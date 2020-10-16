@@ -1,15 +1,18 @@
 import asyncio
 import contextlib
 import logging
+from pathlib import Path
 
 import discord
 import lavalink
 
+from redbot.core.i18n import Translator
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):

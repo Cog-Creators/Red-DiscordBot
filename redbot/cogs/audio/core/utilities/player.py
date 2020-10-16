@@ -1,5 +1,6 @@
 import logging
 import time
+from pathlib import Path
 
 from typing import List, Optional, Tuple, Union
 
@@ -9,6 +10,7 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import bold, escape
 
@@ -17,9 +19,10 @@ from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 from ...utils import Notifier
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):

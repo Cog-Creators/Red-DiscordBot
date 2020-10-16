@@ -3,6 +3,7 @@ import logging
 import math
 import re
 import time
+from pathlib import Path
 
 from typing import List, Optional
 
@@ -11,16 +12,17 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
-
+_ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
 

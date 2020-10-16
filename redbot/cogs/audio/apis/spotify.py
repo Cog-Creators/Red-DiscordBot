@@ -3,6 +3,7 @@ import contextlib
 import json
 import logging
 import time
+from pathlib import Path
 
 from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
@@ -19,7 +20,7 @@ from ..errors import SpotifyFetchError
 if TYPE_CHECKING:
     from .. import Audio
 
-_ = Translator("Audio", __file__)
+_ = Translator("Audio", Path(__file__))
 
 log = logging.getLogger("red.cogs.Audio.api.Spotify")
 

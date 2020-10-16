@@ -1,4 +1,10 @@
+from pathlib import Path
+
 import aiohttp
+
+from redbot.core.i18n import Translator
+
+_ = Translator("Audio", Path(__file__))
 
 
 class AudioError(Exception):
