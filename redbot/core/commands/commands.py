@@ -134,7 +134,7 @@ class CogCommandMixin:
                 return ctx.clean_prefix
             if s == "[botname]":
                 return ctx.me.display_name
-            # We shouldnt get here:
+            # We shouldn't get here:
             return s
 
         return formatting_pattern.sub(replacement, text)
