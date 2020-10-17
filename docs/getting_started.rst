@@ -82,19 +82,18 @@ parameters.
     [p]help command
 
 .. note::
-    Arguments enclosed in ``< >`` means that the argument is **required**
-    for the command to work.
+    Arguments enclosed in ``< >`` are **required** for the command to work.
 
-    Arguments enclosed in ``[ ]`` means that the argument is **optional**
-    for the command; you can decide whether to use it or not.
+    Arguments enclosed in ``[ ]`` are **optional** for the command;
+    you can decide whether to use them or not.
     
     If your argument includes spaces like ``Hello world!``, most of the time
     you will need to place it in double quotes like this: ``"Hello world!"``.
     Sometimes (especially for the last argument) these double quotes are not
     required.
 
-    Arguments followed by ``=something`` means that, if not specified,
-    the argument will be equal to ``something``.
+    Arguments followed by ``=value`` means that, if not specified,
+    the argument will be equal to ``value``.
 
     For example, the command ``[p]cleanup messages`` in the cleanup cog has
     the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
