@@ -73,4 +73,4 @@ Enabling Privileged Intents
 
     Red bots with over 100 servers require `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_ which is not covered in this guide.
 
-*Parts of this guide has been adapted from* `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ *and* `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
+*Parts of this guide have been adapted from* `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ *and* `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
