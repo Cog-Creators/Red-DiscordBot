@@ -1,6 +1,6 @@
 from typing import NewType, TYPE_CHECKING
 
-from redbot.core.commands import BadArgument, Context, Converter, check
+from redbot.core.commands import BadArgument, Context, Converter, permissions_check
 from redbot.core.utils.mod import is_mod_or_superior, check_permissions
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import inline
@@ -41,4 +41,4 @@ def check_self_permissions():
             return True
         return False
 
-    return check(predicate)
+    return permissions_check(predicate)
