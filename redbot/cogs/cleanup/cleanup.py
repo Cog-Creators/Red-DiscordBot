@@ -10,7 +10,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
-from .converters import PositiveInt, RawMessageIds, positive_int
+from .converters import PositiveInt, RawMessageIds, positive_int, check_self_permissions
 
 _ = Translator("Cleanup", __file__)
 
@@ -468,6 +468,7 @@ class Cleanup(commands.Cog):
         await mass_purge(to_delete, channel)
 
     @cleanup.command(name="self")
+    @check_self_permissions()
     async def cleanup_self(
         self,
         ctx: commands.Context,
