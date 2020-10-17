@@ -43,7 +43,7 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
         print(
             "Please enter a valid token.\n"
             "You can find out how to obtain a token with this guide:\n"
-            "https://docs.discord.red/en/stable/bot_application_guide#creating-a-bot-account"
+            "https://docs.discord.red/en/stable/bot_application_guide.html#creating-a-bot-account"
         )
         while not token:
             token = input("> ")
