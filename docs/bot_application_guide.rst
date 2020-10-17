@@ -64,7 +64,7 @@ Enabling Privileged Intents
     .. image:: /.resources/bot-guide/discord_bot_tab.png
         :alt: The bot tab in the application page.
 
-5. Scroll down to the "Privileged Gateway Intents" section and enable both privileged intents.
+5. Scroll down to the "Privileged Gateway Intents" section and enable both privileged intents and save your changes.
 
     .. image:: /.resources/bot-guide/discord_privileged_intents.png
         :alt: The privileged gateway intents selector.
