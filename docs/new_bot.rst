@@ -1,3 +1,79 @@
-# Creating a bot account. 
+===========================================
+Creating an bot account for use with Red
+===========================================
 
-To use Red you will require a bot account that can be created by going to https://discord.com/developers/applications. 
+To use Red you will require a bot account and to enable privileged intents. Both these steps will be covered below.
+
+-------------------------------
+Creating the bot application
+-------------------------------
+
+In order to use Red, we must first create a Discord Bot account.
+
+Creating a Bot account is a pretty straightforward process.
+
+1. Make sure you're logged on to the `Discord website <https://discord.com>`_.
+2. Navigate to the `application page <https://discord.com/developers/applications>`_
+3. Click on the "New Application" button.
+
+    .. image:: /.resources/bot-guide/discord_create_app_button.png
+        :alt: The new application button.
+
+4. Give the application a name and click "Create".
+
+    .. image::  /.resources/bot-guide/discord_create_app_form.png
+        :alt: The new application form filled in.
+
+5. Create a Bot User by navigating to the "Bot" tab and clicking "Add Bot".
+
+    - Click "Yes, do it!" to continue.
+
+    .. image::  /.resources/bot-guide/discord_create_bot_user.png
+        :alt: The Add Bot button.
+6. Make sure that **Public Bot** is ticked if you want others to invite your bot.
+
+    - Make sure **Require OAuth2 Code Grant** is unchecked.
+
+    .. image::  /.resources/bot-guide/discord_bot_user_options.png
+        :alt: How the Bot User options should look like for most people.
+
+7. Copy the token using the "Copy" button.
+
+    - **This is not the Client Secret at the General Information page**
+
+    .. warning::
+
+        Do not share your token as it is like your password.
+        If you shared your token you can regenerate it.
+
+And that's it. You now have a bot account and you use that token with Red.
+
+.. _discord_invite_bot:
+
+
+-------------------------------
+Enabling Privileged Intents
+-------------------------------
+.. warning::
+    Due to Discord API changes, Red Bot requires all intents.
+    \This section is required.
+
+1. Make sure you're logged on to the `Discord website <https://discord.com>`_.
+2. Navigate to the `application page <https://discord.com/developers/applications>`_
+3. Click on the bot you want to enable privileged intents for.
+4. Navigate to the bot tab on the left side of the screen.
+
+    .. image:: /.resources/bot-guide/discord_bot_tab.png
+        :alt: The bot tab in the application page.
+
+5. Scroll down to the "Privileged Gateway Intents" section and both privileged intents.
+
+    .. image:: /.resources/bot-guide/discord_privileged_intents.png
+        :alt: The privileged gateway intents selector.
+
+.. warning::
+
+    Red bots with over 100 servers require `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_ and is not covered in this guide.
+
+.. note::
+    Parts of this guide has been adapted from `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ and `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
