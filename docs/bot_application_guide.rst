@@ -30,7 +30,7 @@ Creating a Bot account is a pretty straightforward process.
 
     .. image::  /.resources/bot-guide/discord_create_bot_user.png
         :alt: The Add Bot button.
-6. Make sure that **Public Bot** is ticked if you want others to invite your bot.
+6. If you want your bot to be invitable by others tick the **Public Bot**, keeping it unticked will only allow you to add your bot to servers that you have permissions in.
 
     - Make sure **Require OAuth2 Code Grant** is unchecked.
 
