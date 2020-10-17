@@ -315,3 +315,40 @@ If you want to do it, follow these steps.
   and enjoy Red!
 
   For that, just follow :ref:`this guide <systemd-service-guide>`.
+
+.. _getting-started-userdocs:
+
+------------------
+User documentation
+------------------
+
+You will soon start using the Red core cogs. A detailed documentation is
+available for every core cog, under the :ref:`How to use <main>` section.
+
+The cog guides are formatted the same. They're divided into 3 sections:
+
+* **Guide**
+
+  This will introduce you to the cog and explain you how it works.
+
+* **Commands**
+
+  A list of the available commands, with details and arguments.
+  Each command guide will be formatted like this:
+
+  * **Syntax**
+
+    A line that will show how the command must be invoked, with the arguments.
+
+    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
+        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
+        called an alias.
+
+  * **Description**
+
+    A detailed description of what the command does, with details about how
+    it must be used.
+
+  * **Arguments**
+
+    A list of all arguments needed (or not) for the command, with more details.
