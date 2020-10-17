@@ -42,6 +42,7 @@ from discord.ext.commands import (
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
+from ..utils.chat_formatting import escape
 
 if TYPE_CHECKING:
     # circular import avoidance
@@ -133,7 +134,7 @@ class CogCommandMixin:
             if s == "[p]":
                 return ctx.clean_prefix
             if s == "[botname]":
-                return ctx.me.display_name
+                return escape(ctx.me.display_name)
             # We shouldnt get here:
             return s
 
