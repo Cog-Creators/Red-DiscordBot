@@ -3,7 +3,7 @@ commands.requires
 =================
 This module manages the logic of resolving command permissions and
 requirements. This includes rules which override those requirements,
-as well as custom checks which can be overriden, and some special
+as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
 import asyncio
