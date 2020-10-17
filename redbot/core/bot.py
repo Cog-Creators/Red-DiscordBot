@@ -171,6 +171,10 @@ class RedBase(
         if "owner_id" in kwargs:
             raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
 
+        if "intents" not in kwargs:
+            intents = discord.Intents.all()
+            kwargs["intents"] = intents
+
         self._owner_id_overwrite = cli_flags.owner
 
         if "owner_ids" in kwargs:
