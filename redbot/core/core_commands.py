@@ -1936,19 +1936,42 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username."""
         try:
+            if self.bot.user.public_flags.verified_bot:
+                await ctx.send(
+                    _(
+                        "The username of a verified bot cannot be manually changed."
+                        " Please contact Discord support to change it."
+                    )
+                )
+                return
             if len(username) > 32:
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
-            await self._name(name=username)
-        except discord.HTTPException:
+            async with ctx.typing():
+                await asyncio.wait_for(self._name(name=username), timeout=30)
+        except asyncio.TimeoutError:
             await ctx.send(
                 _(
-                    "Failed to change name. Remember that you can "
-                    "only do it up to 2 times an hour. Use "
-                    "nicknames if you need frequent changes. "
-                    "`{}set nickname`"
-                ).format(ctx.clean_prefix)
+                    "Changing the username timed out. "
+                    "Remember that you can only do it up to 2 times an hour."
+                    " Use nicknames if you need frequent changes: {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}set nickname"))
             )
+        except discord.HTTPException as e:
+            if e.code == 50035:
+                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+                await ctx.send(
+                    _(
+                        "Failed to change the username. "
+                        "Discord returned the following error:\n"
+                        "{error_message}"
+                    ).format(error_message=inline(error_string))
+                )
+            else:
+                log.error(
+                    "Unexpected error occurred when trying to change the username.", exc_info=e
+                )
+                await ctx.send(_("Unexpected error occurred when trying to change the username."))
         else:
             await ctx.send(_("Done."))
 
