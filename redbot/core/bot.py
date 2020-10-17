@@ -1217,7 +1217,7 @@ class RedBase(
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 
@@ -1227,7 +1227,7 @@ class RedBase(
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
 
         Returns
         -------
