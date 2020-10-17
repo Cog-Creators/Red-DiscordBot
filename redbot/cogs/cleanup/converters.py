@@ -40,4 +40,5 @@ def check_self_permissions():
         ):
             return True
         return False
+
     return check(predicate)
