@@ -462,7 +462,6 @@ class AudioAPIInterface:
                 return track_list
             database_entries = []
             time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
             async for track_count, track in AsyncIter(tracks_from_spotify).enumerate(start=1):
@@ -632,16 +631,6 @@ class AudioAPIInterface:
 
                     if not player.current:
                         await player.play()
-            if not track_list and not has_not_allowed:
-                raise SpotifyFetchError(
-                    message=_(
-                        "Nothing found.\nThe YouTube API key may be invalid "
-                        "or you may be rate limited on YouTube's search service.\n"
-                        "Check the YouTube API key again and follow the instructions "
-                        "at `{prefix}audioset youtubeapi`."
-                    )
-                )
-            player.maybe_shuffle()
             if enqueue and tracks_from_spotify:
                 if total_tracks > enqueued_tracks:
                     maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(
@@ -668,6 +657,16 @@ class AudioAPIInterface:
                 if notifier is not None:
                     await notifier.update_embed(embed)
             lock(ctx, False)
+            if not track_list and not has_not_allowed:
+                raise SpotifyFetchError(
+                    message=_(
+                        "Nothing found.\nThe YouTube API key may be invalid "
+                        "or you may be rate limited on YouTube's search service.\n"
+                        "Check the YouTube API key again and follow the instructions "
+                        "at `{prefix}audioset youtubeapi`."
+                    )
+                )
+            player.maybe_shuffle()
 
             if spotify_cache:
                 task = ("insert", ("spotify", database_entries))

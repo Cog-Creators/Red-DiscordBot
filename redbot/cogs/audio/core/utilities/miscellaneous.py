@@ -206,11 +206,8 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
-        duration = []
-        async for i in AsyncIter(range(len(player.queue))):
-            if not player.queue[i].is_stream:
-                duration.append(player.queue[i].length)
-        queue_dur = sum(duration)
+        dur = [i.length async for i in AsyncIter(player.queue, steps=50)]
+        queue_dur = sum(dur)
         if not player.queue:
             queue_dur = 0
         try:

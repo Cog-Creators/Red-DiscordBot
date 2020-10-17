@@ -393,7 +393,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def draw_time(self, ctx) -> str:
         player = lavalink.get_player(ctx.guild.id)
         paused = player.paused
-        pos = player.position
+        pos = player.position or 1
         dur = getattr(player.current, "length", player.position or 1)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
