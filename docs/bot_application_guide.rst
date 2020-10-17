@@ -46,9 +46,7 @@ Creating a Bot account is a pretty straightforward process.
         Do not share your token as it is like your password.
         If you shared your token you can regenerate it.
 
-And that's it. You now have a bot account and you use that token with Red.
-
-.. _discord_invite_bot:
+Continue to the next section to enable privileged intents.
 
 
 -------------------------------
@@ -75,4 +73,4 @@ Enabling Privileged Intents
 
     Red bots with over 100 servers require `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_ and is not covered in this guide.
 
-*Parts of this guide has been adapted from `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ and `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.*
+*Parts of this guide has been adapted from* `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ *and* `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
