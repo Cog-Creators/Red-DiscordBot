@@ -112,6 +112,7 @@ class RedBase(
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            help__use_tick=False,
             description="Red V3",
             invite_public=False,
             invite_perm=0,

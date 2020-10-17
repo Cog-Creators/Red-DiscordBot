@@ -2173,6 +2173,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will filter hidden commands."))
 
+    @helpset.command(name="usetick")
+    async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
+        """
+        This allows the help command message to be ticked if help is sent in a DM.
+
+        Defaults to False.
+        Using this without a setting will toggle.
+        """
+        if use_tick is None:
+            use_tick = not await ctx.bot._config.help.use_tick()
+        await ctx.bot._config.help.use_tick.set(use_tick)
+        if use_tick:
+            await ctx.send(_("Help will now tick the command when sent in a DM."))
+        else:
+            await ctx.send(_("Help will not tick the command when sent in a DM."))
+
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
