@@ -268,7 +268,7 @@ class Command(CogCommandMixin, DPYCommand):
 
         None of your methods should start with ``red_`` or
         be dunder names which start with red (eg. ``__red_test_thing__``)
-        unless to override behavior in a method designed to be overriden,
+        unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
 
@@ -877,8 +877,8 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         Raises
         ------
         RedUnhandledAPI
-            If the method was not overriden,
-            or an overriden implementation is not handling this
+            If the method was not overridden,
+            or an overridden implementation is not handling this
 
         """
         raise RedUnhandledAPI()

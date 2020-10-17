@@ -246,12 +246,12 @@ class RedBase(
                 "and implement the required interfaces."
             )
 
-        # do not switch to isinstance, we want to know that this has not been overriden,
+        # do not switch to isinstance, we want to know that this has not been overridden,
         # even with a subclass.
         if type(self._help_formatter) is commands.help.RedHelpFormatter:
             self._help_formatter = formatter
         else:
-            raise RuntimeError("The formatter has already been overriden.")
+            raise RuntimeError("The formatter has already been overridden.")
 
     def reset_help_formatter(self):
         """
