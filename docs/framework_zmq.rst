@@ -15,6 +15,10 @@ binds to port 6133, but this can be changed using a flag at launch.
     For security reasons, the internal ZMQ server binds to localhost, and this cannot be changed.  This ensures that outside applications cannot
     interact with your bot and take control.
 
+.. important::
+
+    Due to certain methods that are not implemented for Windows in ProactorEventLoop, ZMQ will fail to start on Windows machine.  As a result, Windows is unsupported for ZMQ communication.  Unix systems must be used instead.
+
 In this tutorial, we will guide you through setting up your own ZMQ methods and and client to interact with Red, but for simplicity reasons,
 we will incorporate the client into the cog.  However, be aware that the client can be implemented in other languages as well.
 
