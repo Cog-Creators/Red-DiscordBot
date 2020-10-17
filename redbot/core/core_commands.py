@@ -2560,6 +2560,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
         driver = storage_type()
+        disabled_intents = (
+            ", ".join(
+                intent_name.replace("_", " ").title()
+                for intent_name, enabled in self.bot.intents
+                if not enabled
+            )
+            or "None"
+        )
         if await ctx.embed_requested():
             e = discord.Embed(color=await ctx.embed_colour())
             e.title = "Debug Info for Red"
@@ -2576,6 +2584,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 inline=False,
             )
             e.add_field(name="Storage type", value=driver, inline=False)
+            e.add_field(name="Disabled intents", value=disabled_intents, inline=False)
             await ctx.send(embed=e)
         else:
             info = (
