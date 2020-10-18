@@ -36,6 +36,7 @@ Audio
 - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
 - Added Spotify search locale per user (:issue:`4446`)
 - Added ``[p]llsetup java``, allowing for custom Java executable path (:issue:`4446`)
+- Updated Lavalink Jar build to 1115 (:issue:`4504`)
 
 Cleanup
 *******
