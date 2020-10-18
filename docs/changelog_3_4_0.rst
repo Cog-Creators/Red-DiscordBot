@@ -131,10 +131,11 @@ Miscellaneous
 -------------
 
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
-- Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
+- Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
 - Commands that inherit `commands.commands._RuleDropper` no longer are protected on removal (:issue:`4449`)
+- Replaced a few instances of Red with bot name in command docstrings (:issue:`4470`)
 
 
 Redbot 3.4.0 (2020-08-17)
