@@ -131,6 +131,7 @@ Miscellaneous
 - Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
+- Commands that inherit `commands.commands._RuleDropper` no longer are protected on removal (:issue:`4449`)
 
 
 Redbot 3.4.0 (2020-08-17)
