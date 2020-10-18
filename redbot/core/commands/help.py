@@ -76,6 +76,7 @@ class HelpSettings:
     verify_exists: bool = False
     tagline: str = ""
     delete_delay: int = 0
+    use_tick: bool = False
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
@@ -127,6 +128,7 @@ class HelpSettings:
             "\nHelp only shows commands which can be used: {verify_checks}"
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
+            "\nReact with a checkmark when help is sent via DM: {use_tick}"
             "{tagline_info}"
         ).format_map(data)
 
@@ -778,7 +780,8 @@ class RedHelpFormatter(HelpFormatterABC):
                     )
                 else:
                     messages.append(msg)
-
+            if use_DMs and help_settings.use_tick:
+                await ctx.tick()
             # The if statement takes into account that 'destination' will be
             # the context channel in non-DM context, reusing 'channel_permissions' to avoid
             # computing the permissions twice.
