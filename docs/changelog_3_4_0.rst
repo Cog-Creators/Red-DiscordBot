@@ -63,6 +63,7 @@ General
 
 - Fixed issues with text not being properly URL encoded (:issue:`4024`)
 - Fixed ungraceful error occuring when title was longer than 256 characters in ``[p]urban`` (:issue:`4474`)
+- Changed "boosters" to "boosts" in ``[p]serverinfo`` to clarify what the number represents (:issue:`4507`)
 
 Mod
 ***
