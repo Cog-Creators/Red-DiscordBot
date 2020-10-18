@@ -51,8 +51,8 @@ Mod
 - Fixed nicknames not being properly stored and logged (:issue:`4131`)
 - Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count to mention spam cap (:issue:`4359`)
 - Fixed plural typos in ``[p]userinfo`` (:issue:`4397`, :issue:`4379`)
-- Added option to ban users not in the guild to ``[p]ban``, and added ``[p]hackban`` as an alias (:issue:`4422`, :issue:`4419`)
-- Renamed ``[p]hackban`` to ``[p]massban``, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
+- Added option to ban users not in the guild to ``[p]ban`` (:issue:`4422`, :issue:`4419`)
+- Renamed ``[p]hackban`` to ``[p]massban``, keeping ``[p]hackban`` as an alias, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
 
 Modlog
 ******
