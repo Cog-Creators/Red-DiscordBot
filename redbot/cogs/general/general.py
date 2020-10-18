@@ -455,7 +455,7 @@ class General(commands.Cog):
                 data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
             if guild.premium_tier != 0:
                 nitro_boost = _(
-                    "Tier {boostlevel} with {nitroboosters} boosters\n"
+                    "Tier {boostlevel} with {nitroboosters} boosts\n"
                     "File size limit: {filelimit}\n"
                     "Emoji limit: {emojis_limit}\n"
                     "VCs max bitrate: {bitrate}"
