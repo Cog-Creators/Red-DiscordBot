@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from typing import Callable, List, Optional, Set, Union
 import re
-
 import discord
 
 from redbot.core import checks, commands
@@ -17,7 +16,6 @@ from .converters import PositiveInt, RawMessageIds, positive_int
 _ = Translator("Cleanup", __file__)
 
 log = logging.getLogger("red.cleanup")
-
 
 LINKS = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
 EMOJIS = re.compile(
@@ -139,7 +137,11 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def text(
-        self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        text: str,
+        number: positive_int = PositiveInt(20),
+        delete_pinned: bool = False,
     ):
         """Delete the last X messages matching the specified text.
 
@@ -194,7 +196,11 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def user(
-        self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        user: str,
+        number: positive_int = PositiveInt(20),
+        delete_pinned: bool = False,
     ):
         """Delete the last X messages from a specified user.
 
@@ -308,7 +314,7 @@ class Cleanup(commands.Cog):
         self,
         ctx: commands.Context,
         message_id: RawMessageIds,
-        number: positive_int,
+        number: positive_int = PositiveInt(20),
         delete_pinned: bool = False,
     ):
         """Deletes X messages before the specified message.
@@ -404,7 +410,10 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def messages(
-        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        number: positive_int = PositiveInt(20),
+        delete_pinned: bool = False,
     ):
         """Delete the last X messages.
 
@@ -442,7 +451,10 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(
-        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        number: positive_int = PositiveInt(20),
+        delete_pinned: bool = False,
     ):
         """Clean up command messages and messages from the bot.
 
@@ -528,7 +540,7 @@ class Cleanup(commands.Cog):
     async def cleanup_self(
         self,
         ctx: commands.Context,
-        number: positive_int,
+        number: positive_int = PositiveInt(20),
         match_pattern: str = None,
         delete_pinned: bool = False,
     ):
@@ -659,7 +671,8 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="emoji")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_emoji(
         self,
         ctx: commands.Context,
@@ -709,7 +722,8 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="links")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_links(
         self,
         ctx: commands.Context,
