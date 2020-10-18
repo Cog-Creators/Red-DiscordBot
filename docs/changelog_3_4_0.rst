@@ -22,6 +22,7 @@ Core Bot
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
+- Added default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
 
 Audio
 *****
