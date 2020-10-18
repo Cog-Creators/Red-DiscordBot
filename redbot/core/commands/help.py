@@ -428,17 +428,17 @@ class RedHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["description"])
         offset += len(embed_dict["embed"]["title"])
 
-        # In order to only change the size of embeds when neccessary for this rather
+        # In order to only change the size of embeds when necessary for this rather
         # than change the existing behavior for people uneffected by this
         # we're only modifying the page char limit should they be impacted.
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
         # I'd rather not stick a major visual behavior change in at the last moment.
         if page_char_limit + offset > 5500:
-            # This is still neccessary with the max interaction above
+            # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when neccessary, by the exact neccessary amount
+            # *only* when necessary, by the exact neccessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
@@ -803,7 +803,7 @@ class RedHelpFormatter(HelpFormatterABC):
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a messsage
+            # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
 
 

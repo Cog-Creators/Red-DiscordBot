@@ -246,12 +246,12 @@ class RedBase(
                 "and implement the required interfaces."
             )
 
-        # do not switch to isinstance, we want to know that this has not been overriden,
+        # do not switch to isinstance, we want to know that this has not been overridden,
         # even with a subclass.
         if type(self._help_formatter) is commands.help.RedHelpFormatter:
             self._help_formatter = formatter
         else:
-            raise RuntimeError("The formatter has already been overriden.")
+            raise RuntimeError("The formatter has already been overridden.")
 
     def reset_help_formatter(self):
         """
@@ -1217,7 +1217,7 @@ class RedBase(
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 
@@ -1227,7 +1227,7 @@ class RedBase(
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
 
         Returns
         -------

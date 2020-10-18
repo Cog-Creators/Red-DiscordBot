@@ -3219,7 +3219,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunty settings here.")
+            output = _("No immunity settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
