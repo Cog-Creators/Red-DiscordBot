@@ -137,11 +137,7 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def text(
-        self,
-        ctx: commands.Context,
-        text: str,
-        number: positive_int = PositiveInt(20),
-        delete_pinned: bool = False,
+        self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages matching the specified text.
 
@@ -196,11 +192,7 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def user(
-        self,
-        ctx: commands.Context,
-        user: str,
-        number: positive_int = PositiveInt(20),
-        delete_pinned: bool = False,
+        self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages from a specified user.
 
@@ -314,7 +306,7 @@ class Cleanup(commands.Cog):
         self,
         ctx: commands.Context,
         message_id: RawMessageIds,
-        number: positive_int = PositiveInt(20),
+        number: positive_int,
         delete_pinned: bool = False,
     ):
         """Deletes X messages before the specified message.
@@ -410,10 +402,7 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def messages(
-        self,
-        ctx: commands.Context,
-        number: positive_int = PositiveInt(20),
-        delete_pinned: bool = False,
+        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages.
 
@@ -451,10 +440,7 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(
-        self,
-        ctx: commands.Context,
-        number: positive_int = PositiveInt(20),
-        delete_pinned: bool = False,
+        self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
         """Clean up command messages and messages from the bot.
 
@@ -540,7 +526,7 @@ class Cleanup(commands.Cog):
     async def cleanup_self(
         self,
         ctx: commands.Context,
-        number: positive_int = PositiveInt(20),
+        number: positive_int,
         match_pattern: str = None,
         delete_pinned: bool = False,
     ):
@@ -668,7 +654,7 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
-
+        
     @cleanup.command(name="emoji")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
