@@ -4,7 +4,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PredaaA`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -51,6 +51,8 @@ Mod
 - Fixed nicknames not being properly stored and logged (:issue:`4131`)
 - Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count to mention spam cap (:issue:`4359`)
 - Fixed plural typos in ``[p]userinfo`` (:issue:`4397`, :issue:`4379`)
+- Added option to ban users not in the guild to ``[p]ban``, and added ``[p]hackban`` as an alias (:issue:`4422`, :issue:`4419`)
+- Renamed ``[p]hackban`` to ``[p]massban``, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
 
 Modlog
 ******
