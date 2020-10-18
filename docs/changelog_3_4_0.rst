@@ -136,6 +136,11 @@ Modlog
 
 - Clarified that naive ``datetime`` objects will be treated as local times for parameters ``created_at`` and ``until`` in `modlog.create_case()` (:issue:`4389`)
 
+Other
+*****
+
+- Added guide to creating a Bot Application in Discord Developer Portal, with enabling intents (:issue:`4502`)
+
 Miscellaneous
 -------------
 
