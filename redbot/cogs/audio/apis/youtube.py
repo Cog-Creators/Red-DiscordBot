@@ -56,11 +56,28 @@ class YouTubeWrapper:
             "type": "video",
         }
         async with self.session.request("GET", SEARCH_ENDPOINT, params=params) as r:
-            if r.status in [400, 404]:
+            if r.status == 400:
+                if r.reason == "Bad Request":
+                    raise YouTubeApiError(
+                        _(
+                            "Your YouTube Data API token is invalid.\n"
+                            "Check the YouTube API key again and follow the instructions "
+                            "at `{prefix}audioset youtubeapi`."
+                        )
+                    )
                 return None
-            elif r.status in [403, 429]:
-                if r.reason == "quotaExceeded":
-                    raise YouTubeApiError(_("Your YouTube Data API quota has been reached."))
+            elif r.status == 404:
+                return None
+            elif r.status == 403:
+                if r.reason in ["Forbidden", "quotaExceeded"]:
+                    raise YouTubeApiError(
+                        _(
+                            "YouTube API error code: 403\nYour YouTube API key may have "
+                            "reached the account's query limit for today. Please check "
+                            "<https://developers.google.com/youtube/v3/getting-started#quota> "
+                            "for more information."
+                        )
+                    )
                 return None
             else:
                 search_response = await r.json(loads=json.loads)

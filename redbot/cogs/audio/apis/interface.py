@@ -24,7 +24,7 @@ from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
-from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError
+from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from ..utils import CacheLevel, Notifier
 from .api_utils import LavalinkCacheFetchForGlobalResult
 from .global_db import GlobalCacheWrapper
@@ -210,6 +210,7 @@ class AudioAPIInterface:
         track_count = 0
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
+        youtube_api_error = None
         async for track in AsyncIter(tracks):
             if isinstance(track, str):
                 break
@@ -249,9 +250,13 @@ class AudioAPIInterface:
                         debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
 
                 if val is None:
-                    val = await self.fetch_youtube_query(
-                        ctx, track_info, current_cache_level=current_cache_level
-                    )
+                    try:
+                        val = await self.fetch_youtube_query(
+                            ctx, track_info, current_cache_level=current_cache_level
+                        )
+                    except YouTubeApiError as err:
+                        val = None
+                        youtube_api_error = err.message
                 if youtube_cache and val:
                     task = ("update", ("youtube", {"track": track_info}))
                     self.append_task(ctx, *task)
@@ -262,6 +267,13 @@ class AudioAPIInterface:
             track_count += 1
             if notifier is not None and ((track_count % 2 == 0) or (track_count == total_tracks)):
                 await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
+            if notifier is not None and youtube_api_error:
+                error_embed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Failing to get tracks, skipping remaining."),
+                )
+                await notifier.update_embed(error_embed)
+                break
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             task = ("insert", ("spotify", database_entries))
             self.append_task(ctx, *task)
@@ -439,6 +451,7 @@ class AudioAPIInterface:
         global_entry = globaldb_toggle and query_global
         track_list: List = []
         has_not_allowed = False
+        youtube_api_error = None
         try:
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
@@ -506,52 +519,61 @@ class AudioAPIInterface:
                         llresponse = LoadResult(llresponse)
                     val = llresponse or None
                 if val is None:
-                    val = await self.fetch_youtube_query(
-                        ctx, track_info, current_cache_level=current_cache_level
-                    )
-                if youtube_cache and val and llresponse is None:
-                    task = ("update", ("youtube", {"track": track_info}))
-                    self.append_task(ctx, *task)
+                    try:
+                        val = await self.fetch_youtube_query(
+                            ctx, track_info, current_cache_level=current_cache_level
+                        )
+                    except YouTubeApiError as err:
+                        val = None
+                        youtube_api_error = err.message
+                if not youtube_api_error:
+                    if youtube_cache and val and llresponse is None:
+                        task = ("update", ("youtube", {"track": track_info}))
+                        self.append_task(ctx, *task)
 
-                if isinstance(llresponse, LoadResult):
-                    track_object = llresponse.tracks
-                elif val:
-                    result = None
-                    if should_query_global:
-                        llresponse = await self.global_cache_api.get_call(val)
-                        if llresponse:
-                            if llresponse.get("loadType") == "V2_COMPACT":
-                                llresponse["loadType"] = "V2_COMPAT"
-                            llresponse = LoadResult(llresponse)
-                        result = llresponse or None
-                    if not result:
-                        try:
-                            (result, called_api) = await self.fetch_track(
-                                ctx,
-                                player,
-                                Query.process_input(val, self.cog.local_folder_current_path),
-                                forced=forced,
-                                should_query_global=not should_query_global,
-                            )
-                        except (RuntimeError, aiohttp.ServerDisconnectedError):
-                            lock(ctx, False)
-                            error_embed = discord.Embed(
-                                colour=await ctx.embed_colour(),
-                                title=_("The connection was reset while loading the playlist."),
-                            )
-                            if notifier is not None:
-                                await notifier.update_embed(error_embed)
-                            break
-                        except asyncio.TimeoutError:
-                            lock(ctx, False)
-                            error_embed = discord.Embed(
-                                colour=await ctx.embed_colour(),
-                                title=_("Player timeout, skipping remaining tracks."),
-                            )
-                            if notifier is not None:
-                                await notifier.update_embed(error_embed)
-                            break
-                    track_object = result.tracks
+                    if isinstance(llresponse, LoadResult):
+                        track_object = llresponse.tracks
+                    elif val:
+                        result = None
+                        if should_query_global:
+                            llresponse = await self.global_cache_api.get_call(val)
+                            if llresponse:
+                                if llresponse.get("loadType") == "V2_COMPACT":
+                                    llresponse["loadType"] = "V2_COMPAT"
+                                llresponse = LoadResult(llresponse)
+                            result = llresponse or None
+                        if not result:
+                            try:
+                                (result, called_api) = await self.fetch_track(
+                                    ctx,
+                                    player,
+                                    Query.process_input(val, self.cog.local_folder_current_path),
+                                    forced=forced,
+                                    should_query_global=not should_query_global,
+                                )
+                            except (RuntimeError, aiohttp.ServerDisconnectedError):
+                                lock(ctx, False)
+                                error_embed = discord.Embed(
+                                    colour=await ctx.embed_colour(),
+                                    title=_(
+                                        "The connection was reset while loading the playlist."
+                                    ),
+                                )
+                                if notifier is not None:
+                                    await notifier.update_embed(error_embed)
+                                break
+                            except asyncio.TimeoutError:
+                                lock(ctx, False)
+                                error_embed = discord.Embed(
+                                    colour=await ctx.embed_colour(),
+                                    title=_("Player timeout, skipping remaining tracks."),
+                                )
+                                if notifier is not None:
+                                    await notifier.update_embed(error_embed)
+                                break
+                        track_object = result.tracks
+                    else:
+                        track_object = []
                 else:
                     track_object = []
                 if (track_count % 2 == 0) or (track_count == total_tracks):
@@ -567,13 +589,16 @@ class AudioAPIInterface:
                             seconds=seconds,
                         )
 
-                if consecutive_fails >= (100 if global_entry else 10):
+                if youtube_api_error or consecutive_fails >= (20 if global_entry else 10):
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Failing to get tracks, skipping remaining."),
                     )
                     if notifier is not None:
                         await notifier.update_embed(error_embed)
+                    if youtube_api_error:
+                        lock(ctx, False)
+                        raise SpotifyFetchError(message=youtube_api_error)
                     break
                 if not track_object:
                     consecutive_fails += 1
@@ -718,9 +743,12 @@ class AudioAPIInterface:
             except Exception as exc:
                 debug_exc_log(log, exc, f"Failed to fetch {track_info} from YouTube table")
         if val is None:
-            youtube_url = await self.fetch_youtube_query(
-                ctx, track_info, current_cache_level=current_cache_level
-            )
+            try:
+                youtube_url = await self.fetch_youtube_query(
+                    ctx, track_info, current_cache_level=current_cache_level
+                )
+            except YouTubeApiError as err:
+                youtube_url = None
         else:
             if cache_enabled:
                 task = ("update", ("youtube", {"track": track_info}))
