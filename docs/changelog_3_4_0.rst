@@ -17,6 +17,7 @@ Core Bot
 - Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
 - Fixed errors that could arise from invalid URLs in ``[p]set avatar`` (:issue:`4437`)
 - Fixed error being raised with ``[p]set nickname`` when no nickname was provided (:issue:`4451`)
+- Fixed and clarified errors being raised with ``[p]set username`` (:issue:`4463`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 
