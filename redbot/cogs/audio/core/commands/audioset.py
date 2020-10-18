@@ -1,9 +1,6 @@
 import asyncio
 import contextlib
 import logging
-import os
-import tarfile
-from pathlib import Path
 
 from typing import Union
 
@@ -1425,7 +1422,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
         """Toggle the server settings.
 
-        Default is OFF
+        Default is ON
         """
         state = await self.config.global_db_enabled()
         await self.config.global_db_enabled.set(not state)
@@ -1472,12 +1469,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
+            lavalink.unregister_event_listener(self.lavalink_event_handler)
             await lavalink.close()
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
 
             self.lavalink_restart_connect()
-
+            lavalink.register_event_listener(self.lavalink_event_handler)
+            await self.restore_players()
             await self.send_embed_msg(
                 ctx,
                 title=_("Restarting Lavalink"),

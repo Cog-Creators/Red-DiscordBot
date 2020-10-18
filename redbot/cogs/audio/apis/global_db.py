@@ -4,7 +4,6 @@ import json
 import logging
 
 from copy import copy
-from pathlib import Path
 from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
@@ -22,7 +21,6 @@ if TYPE_CHECKING:
     from .. import Audio
 
 _API_URL = "https://api.redbot.app/"
-_ = Translator("Audio", Path(__file__))
 log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
 
 
@@ -42,7 +40,6 @@ class GlobalCacheWrapper:
 
     async def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token
-        await self.get_perms()
 
     async def _get_api_key(
         self,
@@ -168,6 +165,7 @@ class GlobalCacheWrapper:
         global_api_user = copy(self.cog.global_api_user)
         await self._get_api_key()
         is_enabled = await self.config.global_db_enabled()
+        await self._get_api_key()
         if (not is_enabled) or self.api_key is None:
             return global_api_user
         with contextlib.suppress(Exception):

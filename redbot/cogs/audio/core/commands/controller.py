@@ -3,7 +3,6 @@ import contextlib
 import datetime
 import logging
 import time
-from pathlib import Path
 
 from typing import Optional, Union
 
@@ -11,7 +10,6 @@ import discord
 import lavalink
 
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.menus import start_adding_reactions
@@ -72,7 +70,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
-            self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
     @commands.command(name="now")
@@ -102,8 +99,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.get_track_description(player.current, self.local_folder_current_path)
                 or ""
             )
-            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
-            song += "\n\n{arrow}`{pos}`/`{dur}`".format(arrow=arrow, pos=pos, dur=dur)
+            song += _("\n Requested by: **{track.requester}**")
+            song += "\n\n{arrow}`{pos}`/`{dur}`"
+            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
         else:
             song = _("Nothing.")
 

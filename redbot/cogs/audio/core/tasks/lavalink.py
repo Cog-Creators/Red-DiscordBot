@@ -80,6 +80,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 host = configs["host"]
                 password = configs["password"]
+                rest_port = configs["rest_port"]
                 ws_port = configs["ws_port"]
                 break
         else:

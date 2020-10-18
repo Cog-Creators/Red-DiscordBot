@@ -22,7 +22,6 @@ from urllib.parse import urlparse
 
 import lavalink
 
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 _ = Translator("Audio", Path(__file__))

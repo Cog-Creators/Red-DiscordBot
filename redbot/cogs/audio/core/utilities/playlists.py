@@ -4,7 +4,6 @@ import datetime
 import json
 import logging
 import math
-from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Tuple, Union
 
@@ -13,7 +12,6 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions

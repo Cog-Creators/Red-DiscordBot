@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
@@ -468,13 +468,21 @@ class KickBanMixin(MixinMeta):
                 if success:
                     banned.append(user_id)
                 else:
-                    errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                        user_id=user_id, reason=reason
-                    )
-            except Exception as e:
-                errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                    user_id=user_id, reason=e
-                )
+                    # Instead of replicating all that handling... gets attr from decorator
+                    try:
+                        success, reason = await self.ban_user(
+                            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+                        )
+                        if success:
+                            banned.append(user_id)
+                        else:
+                            errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                                user_id=user_id, reason=reason
+                            )
+                    except Exception as e:
+                        errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
+                            user_id=user_id, reason=e
+                        )
 
         user_ids = remove_processed(user_ids)
 

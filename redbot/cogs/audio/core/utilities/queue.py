@@ -1,6 +1,5 @@
 import logging
 import math
-from pathlib import Path
 
 from typing import List, Tuple
 
@@ -9,7 +8,6 @@ import lavalink
 
 from fuzzywuzzy import process
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 

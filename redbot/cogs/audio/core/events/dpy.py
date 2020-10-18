@@ -13,13 +13,12 @@ import lavalink
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_list
 
 from ...audio_logging import debug_exc_log
 from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
+from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass, _
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))

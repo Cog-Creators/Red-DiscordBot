@@ -1,13 +1,11 @@
 import asyncio
 import logging
 import time
-from pathlib import Path
 
 from typing import Dict
 
 import lavalink
 
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 from ...audio_logging import debug_exc_log

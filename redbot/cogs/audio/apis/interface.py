@@ -7,7 +7,6 @@ import random
 import time
 
 from collections import namedtuple
-from pathlib import Path
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union, cast
 
 import aiohttp
@@ -519,61 +518,52 @@ class AudioAPIInterface:
                         llresponse = LoadResult(llresponse)
                     val = llresponse or None
                 if val is None:
-                    try:
-                        val = await self.fetch_youtube_query(
-                            ctx, track_info, current_cache_level=current_cache_level
-                        )
-                    except YouTubeApiError as err:
-                        val = None
-                        youtube_api_error = err.message
-                if not youtube_api_error:
-                    if youtube_cache and val and llresponse is None:
-                        task = ("update", ("youtube", {"track": track_info}))
-                        self.append_task(ctx, *task)
+                    val = await self.fetch_youtube_query(
+                        ctx, track_info, current_cache_level=current_cache_level
+                    )
+                if youtube_cache and val and llresponse is None:
+                    task = ("update", ("youtube", {"track": track_info}))
+                    self.append_task(ctx, *task)
 
-                    if isinstance(llresponse, LoadResult):
-                        track_object = llresponse.tracks
-                    elif val:
-                        result = None
-                        if should_query_global:
-                            llresponse = await self.global_cache_api.get_call(val)
-                            if llresponse:
-                                if llresponse.get("loadType") == "V2_COMPACT":
-                                    llresponse["loadType"] = "V2_COMPAT"
-                                llresponse = LoadResult(llresponse)
-                            result = llresponse or None
-                        if not result:
-                            try:
-                                (result, called_api) = await self.fetch_track(
-                                    ctx,
-                                    player,
-                                    Query.process_input(val, self.cog.local_folder_current_path),
-                                    forced=forced,
-                                    should_query_global=not should_query_global,
-                                )
-                            except (RuntimeError, aiohttp.ServerDisconnectedError):
-                                lock(ctx, False)
-                                error_embed = discord.Embed(
-                                    colour=await ctx.embed_colour(),
-                                    title=_(
-                                        "The connection was reset while loading the playlist."
-                                    ),
-                                )
-                                if notifier is not None:
-                                    await notifier.update_embed(error_embed)
-                                break
-                            except asyncio.TimeoutError:
-                                lock(ctx, False)
-                                error_embed = discord.Embed(
-                                    colour=await ctx.embed_colour(),
-                                    title=_("Player timeout, skipping remaining tracks."),
-                                )
-                                if notifier is not None:
-                                    await notifier.update_embed(error_embed)
-                                break
-                        track_object = result.tracks
-                    else:
-                        track_object = []
+                if isinstance(llresponse, LoadResult):
+                    track_object = llresponse.tracks
+                elif val:
+                    result = None
+                    if should_query_global:
+                        llresponse = await self.global_cache_api.get_call(val)
+                        if llresponse:
+                            if llresponse.get("loadType") == "V2_COMPACT":
+                                llresponse["loadType"] = "V2_COMPAT"
+                            llresponse = LoadResult(llresponse)
+                        result = llresponse or None
+                    if not result:
+                        try:
+                            (result, called_api) = await self.fetch_track(
+                                ctx,
+                                player,
+                                Query.process_input(val, self.cog.local_folder_current_path),
+                                forced=forced,
+                                should_query_global=not should_query_global,
+                            )
+                        except (RuntimeError, aiohttp.ServerDisconnectedError):
+                            lock(ctx, False)
+                            error_embed = discord.Embed(
+                                colour=await ctx.embed_colour(),
+                                title=_("The connection was reset while loading the playlist."),
+                            )
+                            if notifier is not None:
+                                await notifier.update_embed(error_embed)
+                            break
+                        except asyncio.TimeoutError:
+                            lock(ctx, False)
+                            error_embed = discord.Embed(
+                                colour=await ctx.embed_colour(),
+                                title=_("Player timeout, skipping remaining tracks."),
+                            )
+                            if notifier is not None:
+                                await notifier.update_embed(error_embed)
+                            break
+                    track_object = result.tracks
                 else:
                     track_object = []
                 if (track_count % 2 == 0) or (track_count == total_tracks):
@@ -589,7 +579,7 @@ class AudioAPIInterface:
                             seconds=seconds,
                         )
 
-                if youtube_api_error or consecutive_fails >= (20 if global_entry else 10):
+                if consecutive_fails >= (100 if global_entry else 10):
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Failing to get tracks, skipping remaining."),

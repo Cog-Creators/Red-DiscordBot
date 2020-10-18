@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-import datetime
 
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -65,9 +64,6 @@ class MixinMeta(ABC):
 
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
-
-    _last_ll_update: datetime.datetime
-    _ll_guild_updates: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):

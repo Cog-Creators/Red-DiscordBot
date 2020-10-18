@@ -3,7 +3,6 @@ import datetime
 import logging
 import math
 import time
-from pathlib import Path
 
 from typing import MutableMapping
 
@@ -13,7 +12,6 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
@@ -278,7 +276,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{single_track.title} {single_track.author} {single_track.uri} {str(query)}",
+            f"{single_track.title} {single_track.author} {single_track.uri} " f"{str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:
@@ -643,9 +641,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         <search term>` to search on SoundCloud instead of YouTube.
         """
 
-        if not isinstance(query, (str, list, Query)):
+        if not isinstance(query, (str, Query)):
             raise RuntimeError(
-                f"Expected 'query' to be a string, list or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
+                f"Expected 'query' to be a string or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
             )
 
         async def _search_menu(

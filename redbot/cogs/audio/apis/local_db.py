@@ -4,7 +4,6 @@ import datetime
 import logging
 import random
 import time
-from pathlib import Path
 
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union
@@ -12,7 +11,6 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 

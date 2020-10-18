@@ -6,10 +6,11 @@ from pathlib import Path
 
 from typing import Optional
 
+from typing import Optional
+
 import lavalink
 
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -18,7 +19,7 @@ from ...apis.playlist_wrapper import PlaylistWrapper
 from ...audio_logging import debug_exc_log
 from ...utils import task_callback
 from ..abc import MixinMeta
-from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
+from ..cog_utils import _, _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
@@ -57,6 +58,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 self.player_automated_timer()
             )
             self.player_automated_timer_task.add_done_callback(task_callback)
+            lavalink.register_event_listener(self.lavalink_event_handler)
+            await self.restore_players()
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
             raise err
@@ -66,7 +69,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     async def restore_players(self):
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
-        await asyncio.sleep(10)
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
             await asyncio.sleep(0)
             try:
@@ -94,12 +96,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     while tries < 25 and vc is not None:
                         try:
                             vc = guild.get_channel(track_data[-1].room_id)
-                            if not vc:
-                                break
-                            perms = vc.permissions_for(guild.me)
-                            if not (perms.connect and perms.speak):
-                                vc = None
-                                break
                             await lavalink.connect(vc)
                             player = lavalink.get_player(guild.id)
                             player.store("connect", datetime.datetime.utcnow())
@@ -131,8 +127,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
                 player.maybe_shuffle()
-                if not player.is_playing:
-                    await player.play()
+
+                await player.play()
             except Exception as err:
                 debug_exc_log(log, err, f"Error restoring player in {guild_id}")
                 await self.api_interface.persistent_queue_api.drop(guild_id)
@@ -144,7 +140,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         if current_notification < 1 <= _OWNER_NOTIFICATION:
             msg = _(
                 """Hello, this message brings you an important update regarding the core Audio cog:
-                
+
 Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
 See `[p]help audioset globalapi` for more information.
 Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.

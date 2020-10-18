@@ -1,6 +1,5 @@
 import logging
 import time
-from pathlib import Path
 
 from typing import List, Optional, Tuple, Union
 
@@ -10,7 +9,6 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import bold, escape
 
@@ -595,9 +593,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=title, description=desc)
-            except Exception as e:
-                self.update_player_lock(ctx, False)
-                raise e
             description = await self.get_track_description(
                 single_track, self.local_folder_current_path
             )

@@ -7,7 +7,6 @@ import tarfile
 import time
 
 from io import BytesIO
-from pathlib import Path
 from typing import cast
 
 import discord
@@ -16,7 +15,6 @@ import lavalink
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
@@ -1382,13 +1380,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
                 playlist = await create_playlist(
                     ctx,
-                    self.playlist_api,
-                    scope,
-                    playlist_name,
-                    playlist_url,
-                    tracklist,
-                    author,
-                    guild,
+                    title=_("Playlist Couldn't be created"),
+                    description=_("Unable to create your playlist."),
                 )
                 if playlist is not None:
                     return await self.send_embed_msg(
@@ -1482,98 +1475,68 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to start playing playlists."),
             )
             return False
-        async with ctx.typing():
-            try:
-                playlist, playlist_arg, scope = await self.get_playlist_match(
-                    ctx, playlist_matches, scope, author, guild, specified_user
-                )
-            except TooManyMatches as e:
-                ctx.command.reset_cooldown(ctx)
-                return await self.send_embed_msg(ctx, title=str(e))
-            if playlist is None:
-                ctx.command.reset_cooldown(ctx)
-                return await self.send_embed_msg(
+
+        try:
+            playlist, playlist_arg, scope = await self.get_playlist_match(
+                ctx, playlist_matches, scope, author, guild, specified_user
+            )
+        except TooManyMatches as e:
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(ctx, title=str(e))
+        if playlist is None:
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Playlist Not Found"),
+                description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
+            )
+
+        if not await self._playlist_check(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+        if not await self.maybe_charge_requester(ctx, jukebox_price):
+            ctx.command.reset_cooldown(ctx)
+            return
+        maxlength = await self.config.guild(ctx.guild).maxlength()
+        author_obj = self.bot.get_user(ctx.author.id)
+        track_len = 0
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+            tracks = playlist.tracks_obj
+            empty_queue = not player.queue
+            async for track in AsyncIter(tracks):
+                if len(player.queue) >= 10000:
+                    continue
+                query = Query.process_input(track, self.local_folder_current_path)
+                if not await self.is_query_allowed(
+                    self.config,
                     ctx,
-                    title=_("Playlist Not Found"),
-                    description=_("Could not match '{arg}' to a playlist").format(
-                        arg=playlist_arg
-                    ),
+                    f"{track.title} {track.author} {track.uri} " f"{str(query)}",
+                    query_obj=query,
+                ):
+                    if IS_DEBUG:
+                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                    continue
+                query = Query.process_input(track.uri, self.local_folder_current_path)
+                if query.is_local:
+                    local_path = LocalPath(track.uri, self.local_folder_current_path)
+                    if not await self.localtracks_folder_exists(ctx):
+                        pass
+                    if not local_path.exists() and not local_path.is_file():
+                        continue
+                if maxlength > 0 and not self.is_track_length_allowed(track, maxlength):
+                    continue
+                track.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
                 )
-
-            if not await self._playlist_check(ctx):
-                ctx.command.reset_cooldown(ctx)
-                return
-            jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-            if not await self.maybe_charge_requester(ctx, jukebox_price):
-                ctx.command.reset_cooldown(ctx)
-                return
-            maxlength = await self.config.guild(ctx.guild).maxlength()
-            author_obj = self.bot.get_user(ctx.author.id)
-            track_len = 0
-            try:
-                player = lavalink.get_player(ctx.guild.id)
-                tracks = playlist.tracks_obj
-                empty_queue = not player.queue
-                async for track in AsyncIter(tracks):
-                    if len(player.queue) >= 10000:
-                        continue
-                    query = Query.process_input(track, self.local_folder_current_path)
-                    if not await self.is_query_allowed(
-                        self.config,
-                        ctx,
-                        f"{track.title} {track.author} {track.uri} " f"{str(query)}",
-                        query_obj=query,
-                    ):
-                        if IS_DEBUG:
-                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
-                        continue
-                    query = Query.process_input(track.uri, self.local_folder_current_path)
-                    if query.is_local:
-                        local_path = LocalPath(track.uri, self.local_folder_current_path)
-                        if not await self.localtracks_folder_exists(ctx):
-                            pass
-                        if not local_path.exists() and not local_path.is_file():
-                            continue
-                    if maxlength > 0 and not self.is_track_length_allowed(track, maxlength):
-                        continue
-                    track.extras.update(
-                        {
-                            "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
-                            "requester": ctx.author.id,
-                        }
-                    )
-                    player.add(author_obj, track)
-                    self.bot.dispatch(
-                        "red_audio_track_enqueue", player.channel.guild, track, ctx.author
-                    )
-                    track_len += 1
-                player.maybe_shuffle(0 if empty_queue else 1)
-                if len(tracks) > track_len:
-                    maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(
-                        bad_tracks=(len(tracks) - track_len)
-                    )
-                else:
-                    maxlength_msg = ""
-                if scope == PlaylistScope.GUILD.value:
-                    scope_name = f"{guild.name}"
-                elif scope == PlaylistScope.USER.value:
-                    scope_name = f"{author}"
-                else:
-                    scope_name = "Global"
-
-                embed = discord.Embed(
-                    title=_("Playlist Enqueued"),
-                    description=_(
-                        "{name} - (`{id}`) [**{scope}**]\nAdded {num} "
-                        "tracks to the queue.{maxlength_msg}"
-                    ).format(
-                        num=track_len,
-                        maxlength_msg=maxlength_msg,
-                        name=playlist.name,
-                        id=playlist.id,
-                        scope=scope_name,
-                    ),
+                player.add(author_obj, track)
+                self.bot.dispatch(
+                    "red_audio_track_enqueue", player.channel.guild, track, ctx.author
                 )
                 await self.send_embed_msg(ctx, embed=embed)
                 if not player.current:
@@ -1879,31 +1842,34 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             uploaded_playlist_name = uploaded_playlist.get(
                 "name", (file_url.split("/")[6]).split(".")[0]
             )
-            try:
-                if self.api_interface is not None and (
-                    not uploaded_playlist_url
-                    or not self.match_yt_playlist(uploaded_playlist_url)
-                    or not (
-                        await self.api_interface.fetch_track(
-                            ctx,
-                            player,
-                            Query.process_input(
-                                uploaded_playlist_url, self.local_folder_current_path
-                            ),
-                        )
-                    )[0].tracks
-                ):
-                    if version == "v3":
-                        return await self._load_v3_playlist(
-                            ctx,
-                            scope,
-                            uploaded_playlist_name,
-                            uploaded_playlist_url,
-                            track_list,
-                            author,
-                            guild,
-                        )
-                    return await self._load_v2_playlist(
+        try:
+            async with self.session.request("GET", file_url) as r:
+                uploaded_playlist = await r.json(
+                    content_type="text/plain", encoding="utf-8", loads=json.loads
+                )
+        except UnicodeDecodeError:
+            return await self.send_embed_msg(ctx, title=_("Not a valid playlist file."))
+
+        new_schema = uploaded_playlist.get("schema", 1) >= 2
+        version = uploaded_playlist.get("version", "v2")
+
+        if new_schema and version == "v3":
+            uploaded_playlist_url = uploaded_playlist.get("playlist_url", None)
+            track_list = uploaded_playlist.get("tracks", [])
+        else:
+            uploaded_playlist_url = uploaded_playlist.get("link", None)
+            track_list = uploaded_playlist.get("playlist", [])
+        if len(track_list) > 10000:
+            return await self.send_embed_msg(ctx, title=_("This playlist is too large."))
+        uploaded_playlist_name = uploaded_playlist.get(
+            "name", (file_url.split("/")[6]).split(".")[0]
+        )
+        try:
+            if self.api_interface is not None and (
+                not uploaded_playlist_url
+                or not self.match_yt_playlist(uploaded_playlist_url)
+                or not (
+                    await self.api_interface.fetch_track(
                         ctx,
                         track_list,
                         player,
@@ -1929,9 +1895,22 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
-            except Exception as e:
-                self.update_player_lock(ctx, False)
-                raise e
+            return await ctx.invoke(
+                self.command_playlist_save,
+                playlist_name=uploaded_playlist_name,
+                playlist_url=uploaded_playlist_url,
+                scope_data=(scope, author, guild, specified_user),
+            )
+        except TrackEnqueueError:
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable to Get Track"),
+                description=_(
+                    "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                    "minutes."
+                ),
+            )
 
     @commands.cooldown(1, 60, commands.BucketType.member)
     @command_playlist.command(

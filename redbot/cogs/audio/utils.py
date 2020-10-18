@@ -15,6 +15,8 @@ from redbot.core.i18n import Translator
 log = logging.getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
+log = logging.getLogger("red.cogs.Audio.task.callback")
+
 
 class CacheLevel:
     __slots__ = ("value",)
@@ -220,11 +222,3 @@ def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
             log.exception(f"{task.get_name()} raised an Exception", exc_info=exc)
-
-
-def has_internal_server():
-    async def pred(ctx: commands.Context):
-        external = await ctx.cog.config.use_external_lavalink()
-        return not external
-
-    return commands.check(pred)

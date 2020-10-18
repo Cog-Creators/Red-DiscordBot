@@ -3,7 +3,6 @@ import logging
 import math
 import re
 import time
-from pathlib import Path
 
 from typing import List, Optional
 
@@ -12,7 +11,6 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
-from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
@@ -159,7 +157,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
+            f"{search_choice.title} {search_choice.author} {search_choice.uri} " f"{str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:
@@ -393,7 +391,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def draw_time(self, ctx) -> str:
         player = lavalink.get_player(ctx.guild.id)
         paused = player.paused
-        pos = player.position or 1
+        pos = player.position
         dur = getattr(player.current, "length", player.position or 1)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)

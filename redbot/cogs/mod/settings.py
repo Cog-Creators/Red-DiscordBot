@@ -84,7 +84,7 @@ class ModSettings(MixinMeta):
         else:
             msg += _("Default message history delete on ban: Don't delete any\n")
         msg += _("Default tempban duration: {duration}").format(
-            duration=humanize_timedelta(seconds=default_tempban_duration)
+            humanize_timedelta(seconds=default_tempban_duration)
         )
         await ctx.send(box(msg))
 
@@ -377,20 +377,9 @@ class ModSettings(MixinMeta):
     async def defaultduration(
         self,
         ctx: commands.Context,
-        *,
-        duration: commands.TimedeltaConverter(
-            minimum=timedelta(seconds=1), default_unit="seconds"
-        ),
+        duration: Optional[commands.TimedeltaConverter] = timedelta(days=0),
     ):
-        """Set the default time to be used when a user is tempbanned.
-
-        Accepts: seconds, minutes, hours, days, weeks
-        `duration` must be greater than zero.
-
-        Examples:
-            `[p]modset defaultduration 7d12h10m`
-            `[p]modset defaultduration 7 days 12 hours 10 minutes`
-        """
+        """Set the default time to be used when a user is tempbanned."""
         guild = ctx.guild
         await self.config.guild(guild).default_tempban_duration.set(duration.total_seconds())
         await ctx.send(
