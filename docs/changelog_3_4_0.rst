@@ -144,6 +144,7 @@ Miscellaneous
 - Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
 - Replaced a few instances of Red with bot name in command docstrings (:issue:`4470`)
+- Fixed grammar in places scattered throughout bot (:issue:`4500`)
 
 
 Redbot 3.4.0 (2020-08-17)
