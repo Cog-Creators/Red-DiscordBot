@@ -4,7 +4,7 @@ Redbot 3.4.1 (Unreleased)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PredaaA`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`PredaaA`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
@@ -120,6 +120,7 @@ Miscellaneous
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
 - Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
+- Improved documentation about arguments in command syntax (:issue:`4058`)
 
 
 Redbot 3.4.0 (2020-08-17)
