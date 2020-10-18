@@ -1235,7 +1235,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 log.debug(_("Leaving guild '{}'").format(ctx.guild.name))
                 await ctx.guild.leave()
             else:
-                await ctx.send(_("Alright, I'll stay then :)"))
+                await ctx.send(_("Alright, I'll stay then. :)"))
 
     @commands.command()
     @checks.is_owner()
@@ -1646,7 +1646,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "This description is too long to properly display. "
-                    "Please try again with below 250 characters"
+                    "Please try again with below 250 characters."
                 )
             )
         else:
@@ -2166,7 +2166,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
-        """ Show the current help settings """
+        """ Show the current help settings. """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
 
@@ -2174,7 +2174,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             message = help_settings.pretty
         else:
             message = _(
-                "Warning: The default formatter is not in use, these settings may not apply"
+                "Warning: The default formatter is not in use, these settings may not apply."
             )
             message += f"\n\n{help_settings.pretty}"
 
@@ -2183,7 +2183,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
-        """ This resets [botname]'s help formatter to the default formatter """
+        """ This resets [botname]'s help formatter to the default formatter. """
 
         ctx.bot.reset_help_formatter()
         await ctx.send(
@@ -3259,9 +3259,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
-            await ctx.send(_("They are immune"))
+            await ctx.send(_("They are immune."))
         else:
-            await ctx.send(_("They are not Immune"))
+            await ctx.send(_("They are not immune."))
 
     @checks.is_owner()
     @_set.group()
@@ -3389,7 +3389,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @ignore.command(name="list")
     async def ignore_list(self, ctx: commands.Context):
         """
-        List the currently ignored servers and channels
+        List the currently ignored servers and channels.
         """
         for page in pagify(await self.count_ignored(ctx)):
             await ctx.maybe_send_embed(page)
