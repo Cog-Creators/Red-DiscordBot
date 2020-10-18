@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from typing import Optional, List, Dict, Callable
+from typing import Optional, List, Dict, Callable, Any
 import functools
 import inspect
 
@@ -118,7 +118,7 @@ class ZMQRequest:
         except Exception as e:
             raise HandlerError(e)
 
-    async def send_message(self, content: Dict, status: int = 200):
+    async def send_message(self, content: Optional[Any] = "", status: int = 200):
         try:
             _id = self.message["id"]
         except:
