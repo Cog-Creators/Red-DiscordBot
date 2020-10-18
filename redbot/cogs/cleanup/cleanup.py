@@ -10,7 +10,8 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
-from .converters import PositiveInt, RawMessageIds, positive_int, check_self_permissions
+from .checks import check_self_permissions
+from .converters import PositiveInt, RawMessageIds, positive_int
 
 _ = Translator("Cleanup", __file__)
 
