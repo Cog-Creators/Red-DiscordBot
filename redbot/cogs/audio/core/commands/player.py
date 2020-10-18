@@ -323,7 +323,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         footer = None
         if not play_now and not guild_data["shuffle"] and queue_dur > 0:
-            footer = _("{time} until track playback: #1 in queue").format(
+            footer = _("{time} until track playback, #1 in queue.").format(
                 time=self.format_time(queue_dur)
             )
         await self.send_embed_msg(

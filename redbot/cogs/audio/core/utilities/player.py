@@ -587,7 +587,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             embed = discord.Embed(title=_("Track Enqueued"), description=description)
             if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
-                    text=_("{time} until track playback: #{position} in queue").format(
+                    text=_("{time} until track playback, #{position} in queue.").format(
                         time=queue_total_duration, position=before_queue_length + 1
                     )
                 )
