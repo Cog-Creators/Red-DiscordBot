@@ -1,8 +1,5 @@
 .. 3.4.x Changelogs
 
-<<<<<<< HEAD
-Redbot 3.4.0 (2020-08-18)
-=======
 Redbot 3.4.1 (Unreleased)
 =========================
 
@@ -18,7 +15,7 @@ Core Bot
 - Fixed incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
-- Fixed errors that could arise from invalid URLs (:issue:`4437`)
+- Fixed errors that could arise from invalid URLs in ``[p]set avatar`` (:issue:`4437`)
 - Fixed error being raised with ``[p]set nickname`` when no nickname was provided (:issue:`4451`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
@@ -55,6 +52,11 @@ Mod
 - Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count to mention spam cap (:issue:`4359`)
 - Fixed plural typos in ``[p]userinfo`` (:issue:`4397`, :issue:`4379`)
 
+Modlog
+******
+
+- Fixed error being raised when running ``[p]casesfor`` and ``[p]case`` (:issue:`4415`)
+
 Trivia Lists
 ************
 
@@ -73,8 +75,8 @@ Developer changelog
 Core
 ****
 
-- Added ``bot.remove_shared_api_services`` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- Added option to return all tokens for an API service if ``service_name`` is not specified in ``bot.get_shared_api_tokens`` (:issue:`4370`)
+- Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- Added option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
 
 Bank
 ****
@@ -90,14 +92,14 @@ Modlog
 ******
 
 - Added option to accept a ``discord.Object`` in case creation (:issue:`4326`)
-- Added ``last_known_username`` parameter to ``create_case`` function (:issue:`4326`)
-- Fixed error being raised with a deleted channel in ``case.message_content`` (:issue:`4415`)
+- Added ``last_known_username`` parameter to `modlog.create_case()` function (:issue:`4326`)
+- Fixed error being raised with a deleted channel in `Case.message_content()` (:issue:`4415`)
 
 Utility
 *******
 
-- Added ``redbot.core.utils.get_end_user_statement`` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
-- Added ``redbot.core.utils.chat_formatting.quote`` to quote text in a message (:issue:`4425`)
+- Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
+- Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
 
 Documentation changes
 ---------------------
@@ -110,18 +112,17 @@ Config
 Modlog
 ******
 
-- Clarified that naive ``datetime`` objects will be treated as local times for paramaters ``created_at`` and ``until`` in ``create_case`` (:issue:`4389`)
+- Clarified that naive ``datetime`` objects will be treated as local times for parameters ``created_at`` and ``until`` in `modlog.create_case()` (:issue:`4389`)
 
 Miscellaneous
 -------------
 
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
-- Replaced ``cogs.red`` with new Red Index (:issue:`4439`)
+- Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
 
 
 Redbot 3.4.0 (2020-08-17)
->>>>>>> e1ee7db1... Add 3.4.1 section
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
