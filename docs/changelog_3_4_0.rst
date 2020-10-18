@@ -21,7 +21,7 @@ Core Bot
 - Fixed ungraceful error raising when ``[p]unload`` output is larger than 2k characters (:issue:`4469`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
-- Added option to tick command message when help is sent to DM (:issue:`4467`, :issue:`4075`)
+- Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
 
 Audio
 *****
