@@ -214,8 +214,12 @@ class CommandObj:
 
 @cog_i18n(_)
 class CustomCommands(commands.Cog):
-    """Creates commands used to display text."""
+    """This cog contains commands for creating and managing custom commands that display text.
 
+    These are useful for storing information members might need, like FAQ answers or invite links.
+    Custom commands can be used by anyone by default, so be careful with pings.
+    Commands can only be lowercase, and will not respond to any uppercase letters.
+    """
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
@@ -239,14 +243,18 @@ class CustomCommands(commands.Cog):
     @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
-        """Custom commands management."""
+        """Base command for Custom Commands management."""
         pass
 
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
         """Get the raw response of a custom command, to get the proper markdown.
 
-        This is helpful for copy and pasting."""
+        This is helpful for copy and pasting.
+
+        **Arguments:**
+
+        - ``<command>`` The custom command of interest."""
         commands = await self.config.guild(ctx.guild).commands()
         if command not in commands:
             return await ctx.send("That command doesn't exist.")
