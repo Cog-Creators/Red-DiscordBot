@@ -645,7 +645,7 @@ class Downloader(commands.Cog):
         Examples:
             - `[p]repo update`
             - `[p]repo update 26-Cogs`
-            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs
+            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`
 
         **Arguments**
 
