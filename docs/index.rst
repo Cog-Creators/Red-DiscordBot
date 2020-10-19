@@ -34,6 +34,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/admin
     cog_guides/alias
     cog_guides/bank
+    cog_guides/downloader
     red_core_data_statement
 
 .. toctree::
