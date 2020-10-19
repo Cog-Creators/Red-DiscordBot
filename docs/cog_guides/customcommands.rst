@@ -19,7 +19,11 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Creates commands used to display text.
+This cog contains commands for creating and managing custom commands that display text.
+
+These are useful for storing information members might need, like FAQ answers or invite links.
+Custom commands can be used by anyone by default, so be careful with pings.
+Commands can only be lowercase, and will not respond to any uppercase letters.
 
 
 .. _customcommands-commands:
@@ -40,9 +44,31 @@ customcom
 
     [p]customcom 
 
+.. tip:: Alias: cc
+
 **Description**
 
-Custom commands management.
+Base command for Custom Commands management.
+
+.. _customcommands-command-customcom-show:
+
+""""""""""""""
+customcom show
+""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]customcom show <command_name>
+
+**Description**
+
+Shows a custom command's responses and its settings.
+
+**Arguments:**
+
+- ``<command>`` The custom command to show.
 
 .. _customcommands-command-customcom-create:
 
@@ -58,13 +84,41 @@ customcom create
 
     [p]customcom create <command> <text>
 
+.. tip:: Alias: add
+
 **Description**
 
 Create custom commands.
 
 If a type is not specified, a simple CC will be created.
 CCs can be enhanced with arguments, see the guide
-:ref:`here <cog_customcom>`.
+here: https://docs.discord.red/en/stable/cog_customcom.html.
+
+.. _customcommands-command-customcom-create-simple:
+
+"""""""""""""""""""""""
+customcom create simple
+"""""""""""""""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]customcom create simple <command> <text>
+
+**Description**
+
+Add a simple custom command.
+
+Example:
+    - ``[p]customcom create simple yourcommand Text you want``
+
+**Arguments:**
+
+- ``<command>`` The command executed to return the text. Cast to lowercase.
+- ``<text>`` The text to return when executing the command. See guide for enhanced usage.
 
 .. _customcommands-command-customcom-create-random:
 
@@ -86,26 +140,31 @@ Create a CC where it will randomly choose a response!
 
 Note: This command is interactive.
 
-.. _customcommands-command-customcom-create-simple:
+**Arguments:**
 
-"""""""""""""""""""""""
-customcom create simple
-"""""""""""""""""""""""
+- ``<command>`` The command executed to return the text. Cast to lowercase.
 
-.. note:: |mod-lock|
+.. _customcommands-command-customcom-search:
+
+""""""""""""""""
+customcom search
+""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]customcom create simple <command> <text>
+    [p]customcom search <query>
 
 **Description**
 
-Add a simple custom command.
+Searches through custom commands, according to the query.
 
-Example:
-- ``[p]customcom create simple yourcommand Text you want``
+Uses fuzzywuzzy searching to find close matches.
+
+**Arguments:**
+
+- ``<query>`` The query to search for. Can be multiple words.
 
 .. _customcommands-command-customcom-cooldown:
 
@@ -129,80 +188,16 @@ You may set cooldowns per member, channel, or guild. Multiple
 cooldowns may be set. All cooldowns must be cooled to call the
 custom command.
 
-Example:
-- ``[p]customcom cooldown yourcommand 30``
+Examples:
+    - ``[p]customcom cooldown pingrole``
+    - ``[p]customcom cooldown yourcommand 30``
+    - ``[p]cc cooldown mycommand 30 guild``
 
-.. _customcommands-command-customcom-list:
+**Arguments:**
 
-""""""""""""""
-customcom list
-""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]customcom list 
-
-**Description**
-
-List all available custom commands.
-
-The list displays a preview of each command's response, with
-markdown escaped and newlines replaced with spaces.
-
-.. _customcommands-command-customcom-show:
-
-""""""""""""""
-customcom show
-""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]customcom show <command_name>
-
-**Description**
-
-Shows a custom command's responses and its settings.
-
-.. _customcommands-command-customcom-search:
-
-""""""""""""""""
-customcom search
-""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]customcom search <query>
-
-**Description**
-
-Searches through custom commands, according to the query.
-
-.. _customcommands-command-customcom-delete:
-
-""""""""""""""""
-customcom delete
-""""""""""""""""
-
-.. note:: |mod-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]customcom delete <command>
-
-**Description**
-
-Delete a custom command.
-
-Example:
-- ``[p]customcom delete yourcommand``
+- ``<command>`` The custom command to check or set the cooldown.
+- ``<cooldown>`` The number of seconds to wait before allowing the command to be invoked again. If ommited, will instead return the current cooldown settings.
+- ``<per>`` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.
 
 .. _customcommands-command-customcom-raw:
 
@@ -221,6 +216,10 @@ customcom raw
 Get the raw response of a custom command, to get the proper markdown.
 
 This is helpful for copy and pasting.
+
+**Arguments:**
+
+- ``<command>`` The custom command to get the raw response of.
 
 .. _customcommands-command-customcom-edit:
 
@@ -241,4 +240,55 @@ customcom edit
 Edit a custom command.
 
 Example:
-- ``[p]customcom edit yourcommand Text you want``
+    - ``[p]customcom edit yourcommand Text you want``
+
+**Arguments:**
+
+- ``<command>`` The custom command to edit.
+- ``<text>`` The new text to return when executing the command.
+
+.. _customcommands-command-customcom-delete:
+
+""""""""""""""""
+customcom delete
+""""""""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]customcom delete <command>
+
+.. tip:: Aliases: del, remove
+
+**Description**
+
+Delete a custom command.
+
+Example:
+    - ``[p]customcom delete yourcommand``
+
+**Arguments:**
+
+- ``<command>`` The custom command to delete.
+
+.. _customcommands-command-customcom-list:
+
+""""""""""""""
+customcom list
+""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]customcom list 
+
+**Description**
+
+List all available custom commands.
+
+The list displays a preview of each command's response, with
+markdown escaped and newlines replaced with spaces.
