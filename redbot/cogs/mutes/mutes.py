@@ -784,7 +784,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[time_and_reason]` is the time to mute for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
-        is provided the mute will be indefinite.
+        is provided the mute will use the set default time or indefinite if not set.
 
         Examples:
         `[p]mutechannel @member1 @member2 spam 5 hours`
