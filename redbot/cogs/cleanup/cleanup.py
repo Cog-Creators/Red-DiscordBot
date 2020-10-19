@@ -136,7 +136,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages matching the specified text.
 
         Example:
-            `[p]cleanup text "test" 5`
+            - `[p]cleanup text "test" 5`
 
         Remember to use double quotes.
 
@@ -190,8 +190,8 @@ class Cleanup(commands.Cog):
         """Delete the last X messages from a specified user.
 
         Examples:
-            `[p]cleanup user @Twentysix 2`
-            `[p]cleanup user Red 6`
+            - `[p]cleanup user @Twentysix 2`
+            - `[p]cleanup user Red 6`
 
         **Arguments:**
 
@@ -351,7 +351,7 @@ class Cleanup(commands.Cog):
         The first message ID should be the older message and the second one the newer.
 
         Example:
-            `[p]cleanup between 123456789123456789 987654321987654321`
+            - `[p]cleanup between 123456789123456789 987654321987654321`
 
         **Arguments:**
 
@@ -396,7 +396,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages.
 
         Example:
-            `[p]cleanup messages 26`
+            - `[p]cleanup messages 26`
 
         **Arguments:**
 
@@ -523,9 +523,9 @@ class Cleanup(commands.Cog):
         it is used for pattern matching - only messages containing the given text will be deleted.
 
         Examples:
-            `[p]cleanup self 6`
-            `[p]cleanup self 10 Pong`
-            `[p]cleanup self 7 "" True`
+            - `[p]cleanup self 6`
+            - `[p]cleanup self 10 Pong`
+            - `[p]cleanup self 7 "" True`
 
         **Arguments:**
 

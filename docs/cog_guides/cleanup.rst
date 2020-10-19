@@ -52,6 +52,29 @@ cleanup
 
 Base command for deleting messages.
 
+.. _cleanup-command-cleanup-bot:
+
+"""""""""""
+cleanup bot
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup bot <number> [delete_pinned=False]
+
+**Description**
+
+Clean up command messages and messages from the bot.
+
+Can only cleanup custom commands and alias commands if those cogs are loaded.
+
+**Arguments:**
+
+- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
 .. _cleanup-command-cleanup-before:
 
 """"""""""""""
@@ -98,9 +121,9 @@ By default, all messages are cleaned. If a second argument is specified,
 it is used for pattern matching - only messages containing the given text will be deleted.
 
 Examples:
-    ``[p]cleanup self 6``
-    ``[p]cleanup self 10 Pong``
-    ``[p]cleanup self 7 "" True``
+    - ``[p]cleanup self 6``
+    - ``[p]cleanup self 10 Pong``
+    - ``[p]cleanup self 7 "" True``
 
 **Arguments:**
 
@@ -256,27 +279,4 @@ and copy its id.
 **Arguments:**
 
 - ``<message_id>`` The id of the message to cleanup after. This message won't be deleted.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
-.. _cleanup-command-cleanup-bot:
-
-"""""""""""
-cleanup bot
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup bot <number> [delete_pinned=False]
-
-**Description**
-
-Clean up command messages and messages from the bot.
-
-Can only cleanup custom commands and alias commands if those cogs are loaded.
-
-**Arguments:**
-
-- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
