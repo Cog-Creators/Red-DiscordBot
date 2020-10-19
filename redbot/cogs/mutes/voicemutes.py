@@ -184,7 +184,7 @@ class VoiceMutes(MixinMeta):
                     )
                 )
         else:
-            await ctx.send(issuee)
+            await ctx.send(issue)
 
     @commands.command(name="voiceunmute")
     @commands.guild_only()
