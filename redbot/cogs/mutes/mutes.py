@@ -5,7 +5,7 @@ import logging
 
 from abc import ABC
 from copy import copy
-from typing import cast, Optional, Dict, List, Tuple, Literal, Coroutine, Union
+from typing import cast, Optional, Dict, List, Tuple, Literal, Union
 from datetime import datetime, timedelta, timezone
 
 from .converters import MuteTime
@@ -18,7 +18,7 @@ from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-_ = i18n.Translator("Mutes", __file__)
+T_ = i18n.Translator("Mutes", __file__)
 
 _ = lambda s: s
 
@@ -38,6 +38,7 @@ MUTE_UNMUTE_ISSUES = {
     "unknown_channel": _("The channel I tried to mute the user in isn't found."),
     "role_missing": _("The mute role no longer exists."),
 }
+_ = T_
 
 log = logging.getLogger("red.cogs.mutes")
 
