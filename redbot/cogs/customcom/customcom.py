@@ -254,7 +254,7 @@ class CustomCommands(commands.Cog):
 
         **Arguments:**
 
-        - ``<command>`` The custom command of interest."""
+        - `<command>` The custom command of interest."""
         commands = await self.config.guild(ctx.guild).commands()
         if command not in commands:
             return await ctx.send("That command doesn't exist.")
@@ -294,7 +294,15 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):
-        """Searches through custom commands, according to the query."""
+        """
+        Searches through custom commands, according to the query.
+
+        Uses fuzzywuzzy searching to find close matches.
+
+        **Arguments:**
+
+        - `<query>` The query to search for. Can be multiple words.
+        """
         cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
         extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
@@ -335,6 +343,11 @@ class CustomCommands(commands.Cog):
         """Create a CC where it will randomly choose a response!
 
         Note: This command is interactive.
+
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -364,6 +377,12 @@ class CustomCommands(commands.Cog):
 
         Example:
         - `[p]customcom create simple yourcommand Text you want`
+
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
+        - `<text>` The text to return when executing the command. See guide for enhanced usage.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -395,8 +414,18 @@ class CustomCommands(commands.Cog):
         cooldowns may be set. All cooldowns must be cooled to call the
         custom command.
 
-        Example:
+        Examples:
+        -
         - `[p]customcom cooldown yourcommand 30`
+
+
+        **Arguments:**
+
+        - `<command>` The custom command of interest.
+        - `<cooldown>` The number of seconds to wait before allowing the command
+         to be invoked again. If ommited, will instead return the current cooldown settings.
+        - `<per>` The group to apply the cooldown on. Defaults to per member.
+        Valid choices are server, guild, user, and member.
         """
         if cooldown is None:
             try:
