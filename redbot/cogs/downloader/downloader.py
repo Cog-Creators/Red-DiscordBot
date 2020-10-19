@@ -481,7 +481,19 @@ class Downloader(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def pipinstall(self, ctx: commands.Context, *deps: str) -> None:
-        """Install a group of dependencies using pip."""
+        """
+        Install a group of dependencies using pip.
+
+        Examples:
+            - `[p]pipinstall bs4`
+            - `[p]pipinstall py-cpuinfo psutil`
+
+        Improper usage of this command can break your bot, be careful.
+
+        **Arguments**
+
+        - `<deps>` The package or packages you wish to install.
+        """
         if not deps:
             await ctx.send_help()
             return
@@ -502,7 +514,7 @@ class Downloader(commands.Cog):
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
-        """Repo management commands."""
+        """Base command for repository management."""
         pass
 
     @repo.command(name="add")
@@ -511,8 +523,18 @@ class Downloader(commands.Cog):
     ) -> None:
         """Add a new repo.
 
+        Examples:
+            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`
+            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`
+
         Repo names can only contain characters A-z, numbers, underscores, and hyphens.
         The branch will be the default branch if not specified.
+
+        **Arguments**
+
+        - `<name>` The name given to the repo.
+        - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.
+        - `<branch>` Optional branch to install cogs from.
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
@@ -562,7 +584,16 @@ class Downloader(commands.Cog):
 
     @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
-        """Remove a repo and its files."""
+        """
+        Remove a repo and its files.
+
+        Example:
+            - `[p]repo delete 26-Cogs`
+
+        **Arguments**
+
+        - `<repo_name>` The name of an already added repo
+        """
         await self._repo_manager.delete_repo(repo.name)
 
         await ctx.send(
@@ -583,7 +614,15 @@ class Downloader(commands.Cog):
 
     @repo.command(name="info", usage="<repo_name>")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
-        """Show information about a repo."""
+        """Show information about a repo.
+
+        Example:
+            - `[p]repo info 26-Cogs`
+
+        **Arguments**
+
+        - `<repo_name>` The name of the repo to show info about.
+        """
         made_by = ", ".join(repo.author) or _("Missing from info.json")
 
         information = _("Repo url: {repo_url}\n").format(repo_url=repo.clean_url)
@@ -601,7 +640,17 @@ class Downloader(commands.Cog):
 
     @repo.command(name="update")
     async def _repo_update(self, ctx: commands.Context, *repos: Repo) -> None:
-        """Update all repos, or ones of your choosing."""
+        """Update all repos, or ones of your choosing.
+
+        Examples:
+            - `[p]repo update`
+            - `[p]repo update 26-Cogs`
+            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs
+
+        **Arguments**
+
+        - `<repos>` The name or names of repos to update. If omitted, all repos are updated.
+        """
         async with ctx.typing():
             updated: Set[str]
 
@@ -627,7 +676,7 @@ class Downloader(commands.Cog):
     @commands.group()
     @checks.is_owner()
     async def cog(self, ctx: commands.Context) -> None:
-        """Cog installation management commands."""
+        """Base command for cog installation management commands."""
         pass
 
     @cog.command(name="reinstallreqs")
@@ -686,14 +735,34 @@ class Downloader(commands.Cog):
 
     @cog.command(name="install", usage="<repo_name> <cogs>")
     async def _cog_install(self, ctx: commands.Context, repo: Repo, *cog_names: str) -> None:
-        """Install a cog from the given repo."""
+        """Install a cog from the given repo.
+
+        Examples:
+            - `[p]cog install 26-Cogs defender`
+            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`
+
+        **Arguments**
+
+        - `<repo_name>` The name of the repo to install cogs from.
+        - `<cogs>` The cog or cogs to install.
+        """
         await self._cog_installrev(ctx, repo, None, cog_names)
 
     @cog.command(name="installversion", usage="<repo_name> <revision> <cogs>")
     async def _cog_installversion(
         self, ctx: commands.Context, repo: Repo, rev: str, *cog_names: str
     ) -> None:
-        """Install a cog from the specified revision of given repo."""
+        """Install a cog from the specified revision of given repo.
+
+        Example:
+            - `[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`
+
+        **Arguments**
+
+        - `<repo_name>` The name of the repo to install cogs from.
+        - `<revision>` The specific revision to install from.
+        - `<cogs>` The cog or cogs to install.
+        """
         await self._cog_installrev(ctx, repo, rev, cog_names)
 
     async def _cog_installrev(
@@ -798,6 +867,14 @@ class Downloader(commands.Cog):
 
         You may only uninstall cogs which were previously installed
         by Downloader.
+
+        Examples:
+            - `[p]cog uninstall 26-Cogs defender`
+            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`
+
+        **Arguments**
+
+        - `<cogs>` The cog or cogs to uninstall.
         """
         if not cogs:
             await ctx.send_help()
@@ -839,7 +916,16 @@ class Downloader(commands.Cog):
 
     @cog.command(name="pin", usage="<cogs>")
     async def _cog_pin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
-        """Pin cogs - this will lock cogs on their current version."""
+        """Pin cogs - this will lock cogs on their current version.
+
+        Examples:
+            - `[p]cog pin defender`
+            - `[p]cog pin outdated_cog1 outdated_cog2`
+
+        **Arguments**
+
+        - `<cogs>` The cog or cogs to pin. Must already be installed.
+        """
         if not cogs:
             await ctx.send_help()
             return
@@ -862,7 +948,15 @@ class Downloader(commands.Cog):
 
     @cog.command(name="unpin", usage="<cogs>")
     async def _cog_unpin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
-        """Unpin cogs - this will remove update lock from cogs."""
+        """Unpin cogs - this will remove update lock from cogs.
+
+        Examples:
+            - `[p]cog unpin defender`
+            - `[p]cog unpin updated_cog1 updated_cog2`
+
+        **Arguments**
+
+        - `<cogs>` The cog or cogs to unpin. Must already be installed and pinned."""
         if not cogs:
             await ctx.send_help()
             return
@@ -947,12 +1041,30 @@ class Downloader(commands.Cog):
 
     @cog.command(name="update")
     async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
-        """Update all cogs, or ones of your choosing."""
+        """Update all cogs, or ones of your choosing.
+
+        Examples:
+            - `[p]cog update`
+            - `[p]cog update defender`
+
+        **Arguments**
+
+        - `<cogs>` The cog or cogs to update. If omitted, all cogs are updated.
+        """
         await self._cog_update_logic(ctx, cogs=cogs)
 
     @cog.command(name="updateallfromrepos", usage="<repos>")
     async def _cog_updateallfromrepos(self, ctx: commands.Context, *repos: Repo) -> None:
-        """Update all cogs from repos of your choosing."""
+        """Update all cogs from repos of your choosing.
+
+        Examples:
+            - `[p]cog updateallfromrepos 26-Cogs`
+            - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`
+
+        **Arguments**
+
+        - `<repos>` The repo or repos to update all cogs from.
+        """
         if not repos:
             await ctx.send_help()
             return
