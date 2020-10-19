@@ -534,7 +534,7 @@ class Downloader(commands.Cog):
 
         - `<name>` The name given to the repo.
         - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.
-        - `<branch>` Optional branch to install cogs from.
+        - `[branch]` Optional branch to install cogs from.
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
@@ -760,7 +760,7 @@ class Downloader(commands.Cog):
         **Arguments**
 
         - `<repo_name>` The name of the repo to install cogs from.
-        - `<revision>` The specific revision to install from.
+        - `<revision>` The revision to install from.
         - `<cogs>` The cog or cogs to install.
         """
         await self._cog_installrev(ctx, repo, rev, cog_names)
@@ -1079,6 +1079,15 @@ class Downloader(commands.Cog):
         Note that update doesn't mean downgrade and therefore revision
         has to be newer than the one that cog currently has. If you want to
         downgrade the cog, uninstall and install it again.
+
+        Example:
+            - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`
+
+        **Arguments**
+
+        - `<repo_name>` The repo or repos to update all cogs from.
+        - `<revision>` The revision to update to.
+        - `[cogs]` The cog or cogs to update.
         """
         await self._cog_update_logic(ctx, repo=repo, rev=rev, cogs=cogs)
 
@@ -1201,7 +1210,15 @@ class Downloader(commands.Cog):
 
     @cog.command(name="list", usage="<repo_name>")
     async def _cog_list(self, ctx: commands.Context, repo: Repo) -> None:
-        """List all available cogs from a single repo."""
+        """List all available cogs from a single repo.
+
+        Example:
+            - `[p]cog list 26-Cogs`
+
+        **Arguments**
+
+        - `<repo_name>` The repo to list cogs from.
+        """
         installed = await self.installed_cogs()
         installed_str = ""
         if installed:
@@ -1225,7 +1242,16 @@ class Downloader(commands.Cog):
 
     @cog.command(name="info", usage="<repo_name> <cog_name>")
     async def _cog_info(self, ctx: commands.Context, repo: Repo, cog_name: str) -> None:
-        """List information about a single cog."""
+        """List information about a single cog.
+
+        Example:
+            - `[p]cog info 26-Cogs defender`
+
+        **Arguments**
+
+        - `<repo_name>` The repo to get cog info from..
+        - `<cog_name>` The cog to get info on.
+        """
         cog = discord.utils.get(repo.available_cogs, name=cog_name)
         if cog is None:
             await ctx.send(
@@ -1536,6 +1562,13 @@ class Downloader(commands.Cog):
         """Find which cog a command comes from.
 
         This will only work with loaded cogs.
+
+        Example:
+            - `[p]findcog ping`
+
+        **Arguments**
+
+        - `<command_name>` The command to search for.
         """
         command = ctx.bot.all_commands.get(command_name)
 
