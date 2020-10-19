@@ -26,7 +26,7 @@ in the default Red install.
 
 Community cogs come in repositories. Repos are a group of cogs
 you can install. You always need to add the creator's repository
-using the `[p]repo` command before you can install one or more
+using the ``[p]repo`` command before you can install one or more
 cogs from the creator.
 
 
@@ -72,22 +72,6 @@ repo
 
 Repo management commands.
 
-.. _downloader-command-repo-info:
-
-"""""""""
-repo info
-"""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo info <repo_name>
-
-**Description**
-
-Show information about a repo.
-
 .. _downloader-command-repo-add:
 
 """"""""
@@ -107,22 +91,6 @@ Add a new repo.
 Repo names can only contain characters A-z, numbers, underscores, and hyphens.
 The branch will be the default branch if not specified.
 
-.. _downloader-command-repo-update:
-
-"""""""""""
-repo update
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo update [repos...]
-
-**Description**
-
-Update all repos, or ones of your choosing.
-
 .. _downloader-command-repo-list:
 
 """""""""
@@ -138,6 +106,38 @@ repo list
 **Description**
 
 List all installed repos.
+
+.. _downloader-command-repo-info:
+
+"""""""""
+repo info
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo info <repo_name>
+
+**Description**
+
+Show information about a repo.
+
+.. _downloader-command-repo-update:
+
+"""""""""""
+repo update
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo update [repos...]
+
+**Description**
+
+Update all repos, or ones of your choosing.
 
 .. _downloader-command-repo-delete:
 
@@ -175,21 +175,21 @@ cog
 
 Cog installation management commands.
 
-.. _downloader-command-cog-unpin:
+.. _downloader-command-cog-install:
 
-"""""""""
-cog unpin
-"""""""""
+"""""""""""
+cog install
+"""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog unpin <cogs>
+    [p]cog install <repo_name> <cogs>
 
 **Description**
 
-Unpin cogs - this will remove update lock from cogs.
+Install a cog from the given repo.
 
 .. _downloader-command-cog-pin:
 
@@ -206,42 +206,6 @@ cog pin
 **Description**
 
 Pin cogs - this will lock cogs on their current version.
-
-.. _downloader-command-cog-updatetoversion:
-
-"""""""""""""""""""
-cog updatetoversion
-"""""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog updatetoversion <repo_name> <revision> [cogs]
-
-**Description**
-
-Update all cogs, or ones of your choosing to chosen revision of one repo.
-
-Note that update doesn't mean downgrade and therefore revision
-has to be newer than the one that cog currently has. If you want to
-downgrade the cog, uninstall and install it again.
-
-.. _downloader-command-cog-info:
-
-""""""""
-cog info
-""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog info <repo_name> <cog_name>
-
-**Description**
-
-List information about a single cog.
 
 .. _downloader-command-cog-listpinned:
 
@@ -310,24 +274,73 @@ Uninstall cogs.
 You may only uninstall cogs which were previously installed
 by Downloader.
 
-.. _downloader-command-cog-checkforupdates:
+.. _downloader-command-cog-updateallfromrepos:
+
+""""""""""""""""""""""
+cog updateallfromrepos
+""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog updateallfromrepos <repos>
+
+**Description**
+
+Update all cogs from repos of your choosing.
+
+.. _downloader-command-cog-info:
+
+""""""""
+cog info
+""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog info <repo_name> <cog_name>
+
+**Description**
+
+List information about a single cog.
+
+.. _downloader-command-cog-unpin:
+
+"""""""""
+cog unpin
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog unpin <cogs>
+
+**Description**
+
+Unpin cogs - this will remove update lock from cogs.
+
+.. _downloader-command-cog-updatetoversion:
 
 """""""""""""""""""
-cog checkforupdates
+cog updatetoversion
 """""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog checkforupdates 
+    [p]cog updatetoversion <repo_name> <revision> [cogs]
 
 **Description**
 
-Check for available cog updates (including pinned cogs).
+Update all cogs, or ones of your choosing to chosen revision of one repo.
 
-This command doesn't update cogs, it only checks for updates.
-Use ``[p]cog update`` to update cogs.
+Note that update doesn't mean downgrade and therefore revision
+has to be newer than the one that cog currently has. If you want to
+downgrade the cog, uninstall and install it again.
 
 .. _downloader-command-cog-reinstallreqs:
 
@@ -364,37 +377,24 @@ cog installversion
 
 Install a cog from the specified revision of given repo.
 
-.. _downloader-command-cog-install:
+.. _downloader-command-cog-checkforupdates:
 
-"""""""""""
-cog install
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog install <repo_name> <cogs>
-
-**Description**
-
-Install a cog from the given repo.
-
-.. _downloader-command-cog-updateallfromrepos:
-
-""""""""""""""""""""""
-cog updateallfromrepos
-""""""""""""""""""""""
+"""""""""""""""""""
+cog checkforupdates
+"""""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog updateallfromrepos <repos>
+    [p]cog checkforupdates 
 
 **Description**
 
-Update all cogs from repos of your choosing.
+Check for available cog updates (including pinned cogs).
+
+This command doesn't update cogs, it only checks for updates.
+Use ``[p]cog update`` to update cogs.
 
 .. _downloader-command-findcog:
 
