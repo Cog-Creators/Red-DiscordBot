@@ -17,3 +17,10 @@ class MixinMeta(ABC):
         self.config: Config
         self.bot: Red
         self.cache: dict
+
+    @staticmethod
+    @abstractmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        raise NotImplementedError()

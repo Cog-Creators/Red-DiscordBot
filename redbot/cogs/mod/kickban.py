@@ -8,7 +8,13 @@ import discord
 from redbot.core import commands, i18n, checks, modlog
 from redbot.core.commands import UserInputOptional
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, humanize_number, bold, humanize_list
+from redbot.core.utils.chat_formatting import (
+    pagify,
+    humanize_number,
+    bold,
+    humanize_list,
+    format_perms_list,
+)
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
 from .converters import RawUserIds
@@ -59,6 +65,48 @@ class KickBanMixin(MixinMeta):
                 return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
+
+    @staticmethod
+    async def _voice_perm_check(
+        ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
+    ) -> bool:
+        """Check if the bot and user have sufficient permissions for voicebans.
+
+        This also verifies that the user's voice state and connected
+        channel are not ``None``.
+
+        Returns
+        -------
+        bool
+            ``True`` if the permissions are sufficient and the user has
+            a valid voice state.
+
+        """
+        if user_voice_state is None or user_voice_state.channel is None:
+            await ctx.send(_("That user is not in a voice channel."))
+            return False
+        voice_channel: discord.VoiceChannel = user_voice_state.channel
+        required_perms = discord.Permissions()
+        required_perms.update(**perms)
+        if not voice_channel.permissions_for(ctx.me) >= required_perms:
+            await ctx.send(
+                _("I require the {perms} permission(s) in that user's channel to do that.").format(
+                    perms=format_perms_list(required_perms)
+                )
+            )
+            return False
+        if (
+            ctx.permission_state is commands.PermState.NORMAL
+            and not voice_channel.permissions_for(ctx.author) >= required_perms
+        ):
+            await ctx.send(
+                _(
+                    "You must have the {perms} permission(s) in that user's channel to use this "
+                    "command."
+                ).format(perms=format_perms_list(required_perms))
+            )
+            return False
+        return True
 
     async def ban_user(
         self,

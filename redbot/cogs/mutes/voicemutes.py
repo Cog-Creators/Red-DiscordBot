@@ -6,10 +6,7 @@ from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils.chat_formatting import format_perms_list
 from redbot.core.utils.mod import get_audit_reason
 
-T_ = i18n.Translator("Mutes", __file__)
-
-_ = lambda s: s
-_ = T_
+_ = i18n.Translator("Mutes", __file__)
 
 
 class VoiceMutes(MixinMeta):
@@ -87,20 +84,17 @@ class VoiceMutes(MixinMeta):
 
         guild = ctx.guild
         author = ctx.author
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "voiceunban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot,
+            guild,
+            ctx.message.created_at,
+            "voiceunban",
+            user,
+            author,
+            reason,
+            until=None,
+            channel=None,
+        )
         await ctx.send(_("User is now allowed to speak and listen in voice channels."))
 
     @commands.command()
@@ -131,20 +125,17 @@ class VoiceMutes(MixinMeta):
             await ctx.send(_("That user is already muted and deafened server-wide."))
             return
 
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "voiceban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        await modlog.create_case(
+            self.bot,
+            guild,
+            ctx.message.created_at,
+            "voiceban",
+            user,
+            author,
+            reason,
+            until=None,
+            channel=None,
+        )
         await ctx.send(_("User has been banned from speaking or listening in voice channels."))
 
     @commands.command(name="voicemute")
@@ -164,28 +155,36 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, issue = await self.channel_mute_user(guild, channel, author, user, audit_reason)
+        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
-        if success:
-            try:
-                await modlog.create_case(
-                    self.bot,
-                    guild,
-                    ctx.message.created_at,
-                    "vmute",
-                    user,
-                    author,
-                    reason,
-                    until=None,
-                    channel=channel,
-                )
-            except RuntimeError as e:
-                await ctx.send(e)
-            await ctx.send(
-                _("Muted {user} in channel {channel.name}.").format(user=user, channel=channel)
+        if success["success"]:
+            await modlog.create_case(
+                self.bot,
+                guild,
+                ctx.message.created_at,
+                "vmute",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=channel,
             )
+            await ctx.send(
+                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
+            )
+            try:
+                if channel.permissions_for(ctx.me).move_members:
+                    await user.move_to(channel)
+                else:
+                    raise RuntimeError
+            except (discord.Forbidden, RuntimeError):
+                await ctx.send(
+                    _(
+                        "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
+                    )
+                )
         else:
-            await ctx.send(issue)
+            await ctx.send(issuee)
 
     @commands.command(name="voiceunmute")
     @commands.guild_only()
@@ -206,11 +205,9 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.channel_unmute_user(
-            guild, channel, author, user, audit_reason
-        )
+        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
-        try:
+        if success:
             await modlog.create_case(
                 self.bot,
                 guild,
@@ -222,8 +219,19 @@ class VoiceMutes(MixinMeta):
                 until=None,
                 channel=channel,
             )
-        except RuntimeError as e:
-            await ctx.send(e)
-        await ctx.send(
-            _("Unmuted {user} in channel {channel.name}.").format(user=user, channel=channel)
-        )
+            await ctx.send(
+                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
+            )
+            try:
+                if channel.permissions_for(ctx.me).move_members:
+                    await user.move_to(channel)
+                else:
+                    raise RuntimeError
+            except (discord.Forbidden, RuntimeError):
+                await ctx.send(
+                    _(
+                        "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
+                    )
+                )
+        else:
+            await ctx.send(_("Unmute failed. Reason: {}").format(message))

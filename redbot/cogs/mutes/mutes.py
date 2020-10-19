@@ -18,10 +18,9 @@ from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-T_ = i18n.Translator("Mutes", __file__)
+_ = i18n.Translator("Mutes", __file__)
 
-_ = lambda s: s
-mute_unmute_issues = {
+MUTE_UNMUTE_ISSUES = {
     "already_muted": _("That user is already muted in this channel."),
     "already_unmuted": _("That user is not muted in this channel."),
     "hierarchy_problem": _(
@@ -37,7 +36,6 @@ mute_unmute_issues = {
     "unknown_channel": _("The channel I tried to mute the user in isn't found."),
     "role_missing": _("The mute role no longer exists."),
 }
-_ = T_
 
 log = logging.getLogger("red.cogs.mutes")
 
@@ -55,7 +53,7 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
 
 class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     """
-    Stuff for mutes goes here
+    Mute users temporarily or indefinitely
     """
 
     def __init__(self, bot: Red):
@@ -64,10 +62,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         default_guild = {
             "sent_instructions": False,
             "mute_role": None,
-            "respect_hierarchy": True,
+            "notification_channel": None,
             "muted_users": {},
             "default_time": {},
-            "removed_users": {},
         }
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
@@ -75,11 +72,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._server_mutes: Dict[int, Dict[int, dict]] = {}
         self._channel_mutes: Dict[int, Dict[int, dict]] = {}
         self._ready = asyncio.Event()
-        self.bot.loop.create_task(self.initialize())
-        self._unmute_tasks: Dict[str, Coroutine] = {}
-        self._unmute_task = asyncio.create_task(self._handle_automatic_unmute())
-        # dict of guild id, member id and time to be unmuted
-        self.mute_role_cache = {}
+        self._unmute_tasks: Dict[str, asyncio.Task] = {}
+        self._unmute_task = None
+        self.mute_role_cache: Dict[int, int] = {}
 
     async def red_delete_data_for_user(
         self,
@@ -92,9 +87,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         await self._ready.wait()
         all_members = await self.config.all_members()
-        for g_id, m_id in all_members.items():
-            if m_id == user_id:
-                await self.config.member_from_ids(g_id, m_id).clear()
+        for g_id, data in all_members.items():
+            for m_id, mutes in data.items():
+                if m_id == user_id:
+                    await self.config.member_from_ids(g_id, m_id).clear()
 
     async def initialize(self):
         guild_data = await self.config.all_guilds()
@@ -109,6 +105,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             self._channel_mutes[c_id] = {}
             for user_id, mute in mutes["muted_users"].items():
                 self._channel_mutes[c_id][int(user_id)] = mute
+        self._unmute_task = asyncio.create_task(self._handle_automatic_unmute())
         self._ready.set()
 
     async def cog_before_invoke(self, ctx: commands.Context):
@@ -161,28 +158,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     async def _handle_server_unmutes(self):
         log.debug("Checking server unmutes")
-        to_clear = []
-        for g_id, mutes in self._server_mutes.items():
-            to_remove = []
+        for g_id in self._server_mutes:
             guild = self.bot.get_guild(g_id)
-            if guild is None:
+            if guild is None or await self.bot.cog_disabled_in_guild(self, guild):
                 continue
-            for u_id, data in mutes.items():
-                if data["until"] is None:
+            for u_id in self._server_mutes[guild.id]:
+                if self._server_mutes[guild.id][u_id]["until"] is None:
                     continue
-                time_to_unmute = data["until"] - datetime.now(timezone.utc).timestamp()
+                time_to_unmute = (
+                    self._server_mutes[guild.id][u_id]["until"]
+                    - datetime.now(timezone.utc).timestamp()
+                )
                 if time_to_unmute < 60:
                     self._unmute_tasks[f"{g_id}{u_id}"] = asyncio.create_task(
-                        self._auto_unmute_user(guild, data)
+                        self._auto_unmute_user(guild, self._server_mutes[guild.id][u_id])
                     )
-                    to_remove.append(u_id)
-            for u_id in to_remove:
-                del self._server_mutes[g_id][u_id]
-            if self._server_mutes[g_id] == {}:
-                to_clear.append(g_id)
-            await self.config.guild(guild).muted_users.set(self._server_mutes[g_id])
-        for g_id in to_clear:
-            await self.config.guild_from_id(g_id).muted_users.clear()
 
     async def _auto_unmute_user(self, guild: discord.Guild, data: dict):
         delay = data["until"] - datetime.now(timezone.utc).timestamp()
@@ -196,45 +186,54 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return
             success, message = await self.unmute_user(guild, author, member, _("Automatic unmute"))
             if success:
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        datetime.now(timezone.utc),
-                        "sunmute",
-                        member,
-                        author,
-                        _("Automatic unmute"),
-                        until=None,
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    datetime.now(timezone.utc),
+                    "sunmute",
+                    member,
+                    author,
+                    _("Automatic unmute"),
+                    until=None,
+                )
+                async with self.config.guild(guild).muted_users() as muted_users:
+                    if str(member.id) in muted_users:
+                        del muted_users[str(member.id)]
+            else:
+                chan_id = await self.config.guild(guild).notification_channel()
+                notification_channel = guild.get_channel(chan_id)
+                if not notification_channel:
+                    return
+                await notification_channel.send(
+                    _("I am unable to unmute {user} for the following reason:\n{reason}").format(
+                        user=member, reason=message
                     )
-                except RuntimeError as e:
-                    log.error(_("Error creating modlog case"), exc_info=e)
+                )
         except discord.errors.Forbidden:
             return
 
     async def _handle_channel_unmutes(self):
         log.debug("Checking channel unmutes")
-        to_clear = []
-        for c_id, mutes in self._channel_mutes.items():
-            to_remove = []
+        for c_id in self._channel_mutes:
             channel = self.bot.get_channel(c_id)
-            if channel is None:
+            if channel is None or await self.bot.cog_disabled_in_guild(self, channel.guild):
                 continue
-            for u_id, data in mutes.items():
-                if not data or not data["until"]:
+            for u_id in self._channel_mutes[channel.id]:
+                if (
+                    not self._channel_mutes[channel.id][u_id]
+                    or not self._channel_mutes[channel.id][u_id]["until"]
+                ):
                     continue
-                time_to_unmute = data["until"] - datetime.now(timezone.utc).timestamp()
+                time_to_unmute = (
+                    self._channel_mutes[channel.id][u_id]["until"]
+                    - datetime.now(timezone.utc).timestamp()
+                )
                 if time_to_unmute < 120.0:
                     self._unmute_tasks[f"{c_id}{u_id}"] = asyncio.create_task(
-                        self._auto_channel_unmute_user(channel, data)
+                        self._auto_channel_unmute_user(
+                            channel, self._channel_mutes[channel.id][u_id]
+                        )
                     )
-            for u_id in to_remove:
-                del self._channel_mutes[c_id][u_id]
-            if self._channel_mutes[c_id] == {}:
-                to_clear.append(c_id)
-            await self.config.channel(channel).muted_users.set(self._channel_mutes[c_id])
-        for c_id in to_clear:
-            await self.config.channel_from_id(c_id).muted_users.clear()
 
     async def _auto_channel_unmute_user(self, channel: discord.TextChannel, data: dict):
         delay = data["until"] - datetime.now(timezone.utc).timestamp()
@@ -244,25 +243,35 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         try:
             member = channel.guild.get_member(data["member"])
             author = channel.guild.get_member(data["author"])
-            if not member or not author:
+            if not member:
                 return
             success = await self.channel_unmute_user(
                 channel.guild, channel, author, member, _("Automatic unmute")
             )
             if success["success"]:
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        channel.guild,
-                        datetime.now(timezone.utc),
-                        "cunmute",
-                        member,
-                        author,
-                        _("Automatic unmute"),
-                        until=None,
-                    )
-                except RuntimeError as e:
-                    log.error(_("Error creating modlog case"), exc_info=e)
+                await modlog.create_case(
+                    self.bot,
+                    channel.guild,
+                    datetime.now(timezone.utc),
+                    "cunmute",
+                    member,
+                    author,
+                    _("Automatic unmute"),
+                    until=None,
+                )
+                async with self.config.channel(channel).muted_users() as muted_users:
+                    if str(member.id) in muted_users:
+                        del muted_users[str(member.id)]
+            else:
+                chan_id = await self.config.guild(channel.guild).notification_channel()
+                notification_channel = channel.guild.get_channel(chan_id)
+                if not notification_channel:
+                    return
+                await notification_channel.send(
+                    _(
+                        "I am unable to mute {user} in {channel} for the following reason:\n{reason}"
+                    ).format(user=member, channel=channel.mention, reason=success["reason"])
+                )
         except discord.errors.Forbidden:
             return
 
@@ -272,8 +281,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         Used to handle the cache if a member manually has the muted role removed
         """
         guild = before.guild
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            return
         if guild.id not in self.mute_role_cache:
             return
+        should_save = False
         mute_role_id = self.mute_role_cache[guild.id]
         mute_role = guild.get_role(mute_role_id)
         if not mute_role:
@@ -288,43 +300,39 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # they weren't a tracked mute so we can return early
                 return
             if after.id in self._server_mutes[guild.id]:
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        datetime.utcnow(),
-                        "sunmute",
-                        after,
-                        None,
-                        _("Manually removed mute role"),
-                    )
-                except RuntimeError as e:
-                    log.error(_("Error creating modlog case"), exc_info=e)
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    datetime.now(timezone.utc),
+                    "sunmute",
+                    after,
+                    None,
+                    _("Manually removed mute role"),
+                )
                 del self._server_mutes[guild.id][after.id]
-        if mute_role in roles_added:
+                should_save = True
+        elif mute_role in roles_added:
             # send modlog case for mute and add to cache
             if guild.id not in self._server_mutes:
                 # initialize the guild in the cache to prevent keyerrors
                 self._server_mutes[guild.id] = {}
             if after.id not in self._server_mutes[guild.id]:
-                try:
-                    await modlog.create_case(
-                        self.bot,
-                        guild,
-                        datetime.utcnow(),
-                        "smute",
-                        after,
-                        None,
-                        _("Manually applied mute role"),
-                    )
-                except RuntimeError as e:
-                    log.error(_("Error creating modlog case"), exc_info=e)
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    datetime.now(timezone.utc),
+                    "smute",
+                    after,
+                    None,
+                    _("Manually applied mute role"),
+                )
                 self._server_mutes[guild.id][after.id] = {
                     "author": None,
                     "member": after.id,
                     "until": None,
                 }
-        if guild.id in self._server_mutes:
+                should_save = True
+        if should_save:
             await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
 
     @commands.Cog.listener()
@@ -344,51 +352,31 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             to_del: List[int] = []
             for user_id in self._channel_mutes[after.id].keys():
                 if user_id in before_perms and (
-                    user_id not in after_perms or after_perms[user_id]["send_messages"]
+                    user_id not in after_perms
+                    or any((after_perms[user_id]["send_messages"], after_perms[user_id]["speak"]))
                 ):
                     user = after.guild.get_member(user_id)
                     if not user:
                         user = discord.Object(id=user_id)
                     log.debug(f"{user} - {type(user)}")
                     to_del.append(user_id)
-                    try:
-                        log.debug("creating case")
-                        await modlog.create_case(
-                            self.bot,
-                            after.guild,
-                            datetime.utcnow(),
-                            "cunmute",
-                            user,
-                            None,
-                            _("Manually removed channel overwrites"),
-                            until=None,
-                            channel=after,
-                        )
-                        log.debug("created case")
-                    except RuntimeError as e:
-                        log.error(_("Error creating modlog case"), exc_info=e)
-            for u_id in to_del:
-                del self._channel_mutes[after.id][u_id]
-            await self.config.channel(after).muted_users.set(self._channel_mutes[after.id])
-
-    @commands.Cog.listener()
-    async def on_member_remove(self, member: discord.Member):
-        guild = member.guild
-        until = None
-        if guild.id in self._server_mutes:
-            if member.id in self._server_mutes[guild.id]:
-                until = self._server_mutes[guild.id][member.id]["until"]
-                del self._server_mutes[guild.id][member.id]
-        for channel in guild.channels:
-            if channel.id in self._channel_mutes:
-                if member.id in self._channel_mutes[channel.id]:
-                    del self._channel_mutes[channel.id][member.id]
-        mute_role = await self.config.guild(guild).mute_role()
-        if not mute_role:
-            return
-        if mute_role in [r.id for r in member.roles]:
-            async with self.config.guild(guild).removed_users() as removed_users:
-                removed_users[str(member.id)] = int(until) if until else None
+                    log.debug("creating case")
+                    await modlog.create_case(
+                        self.bot,
+                        after.guild,
+                        datetime.now(timezone.utc),
+                        "cunmute",
+                        user,
+                        None,
+                        _("Manually removed channel overwrites"),
+                        until=None,
+                        channel=after,
+                    )
+                    log.debug("created case")
+            if to_del:
+                for u_id in to_del:
+                    del self._channel_mutes[after.id][u_id]
+                await self.config.channel(after).muted_users.set(self._channel_mutes[after.id])
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -396,29 +384,33 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = await self.config.guild(guild).mute_role()
         if not mute_role:
             return
-        async with self.config.guild(guild).removed_users() as removed_users:
-            if str(member.id) in removed_users:
-                until_ts = removed_users[str(member.id)]
-                until = datetime.fromtimestamp(until_ts, tz=timezone.utc) if until_ts else None
-                # datetime is required to utilize the mutes method
-                if until and until < datetime.now(tz=timezone.utc):
-                    return
-                removed_users.pop(str(member.id))
+        if guild.id in self._server_mutes:
+            if member.id in self._server_mutes[guild.id]:
                 role = guild.get_role(mute_role)
                 if not role:
                     return
+                until = self._server_mutes[guild.id][member.id]["until"]
                 await self.mute_user(
                     guild, guild.me, member, until, _("Previously muted in this server.")
                 )
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
     async def muteset(self, ctx: commands.Context):
         """Mute settings."""
         pass
 
+    @muteset.command(name="notification")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def notification_channel_set(self, ctx: commands.Context, channel: discord.TextChannel):
+        """Set The notification channel for automatic unmute issues."""
+        await self.config.guild(ctx.guild).notification_channel.set(channel.id)
+        await ctx.send(
+            _("I will post unmute issues in {channel}.").format(channel=channel.mention)
+        )
+
     @muteset.command(name="role")
+    @checks.admin_or_permissions(manage_roles=True)
     @checks.bot_has_permissions(manage_roles=True)
     async def mute_role(self, ctx: commands.Context, *, role: discord.Role = None):
         """Sets the role to be applied when muting a user.
@@ -437,8 +429,17 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(ctx.guild).mute_role.set(role.id)
             self.mute_role_cache[ctx.guild.id] = role.id
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
+        if not await self.config.guild(ctx.guild).notification_channel():
+            command_1 = f"`{ctx.clean_prefix}muteset notification`"
+            await ctx.send(
+                _(
+                    "No notification channel has been setup, "
+                    "use {command_1} to be updated when there's an issue in automatic unmutes."
+                ).format(command_1=command_1)
+            )
 
     @muteset.command(name="makerole")
+    @checks.admin_or_permissions(manage_roles=True)
     @checks.bot_has_permissions(manage_roles=True)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
         """Create a Muted role.
@@ -467,10 +468,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 msg = _(
                     "I could not set overwrites for the following channels: {channels}"
                 ).format(channels=humanize_list([i for i in errors if i]))
-                for page in pagify(msg):
+                for page in pagify(msg, delims=[" "]):
                     await ctx.send(page)
             await self.config.guild(ctx.guild).mute_role.set(role.id)
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
+        if not await self.config.guild(ctx.guild).notification_channel():
+            command_1 = f"`{ctx.clean_prefix}muteset notification`"
+            await ctx.send(
+                _(
+                    "No notification channel has been setup, "
+                    "use {command_1} to be updated when there's an issue in automatic unmutes."
+                ).format(command_1=command_1)
+            )
 
     async def _set_mute_role_overwrites(
         self, role: discord.Role, channel: discord.abc.GuildChannel
@@ -480,30 +489,34 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         by default for a mute role
         """
         overs = discord.PermissionOverwrite()
-        if isinstance(channel, discord.TextChannel):
-            overs.send_messages = False
-            overs.add_reactions = False
-        if isinstance(channel, discord.VoiceChannel):
-            overs.speak = False
+        overs.send_messages = False
+        overs.add_reactions = False
+        overs.speak = False
         try:
             await channel.set_permissions(role, overwrite=overs, reason=_("Mute role setup"))
             return
         except discord.errors.Forbidden:
             return channel.mention
 
-    @muteset.command(name="time")
-    async def default_mute_time(self, ctx: commands.Context, *, time: MuteTime):
+    @muteset.command(name="defaulttime", aliases=["time"])
+    @checks.mod_or_permissions(manage_messages=True)
+    async def default_mute_time(self, ctx: commands.Context, *, time: Optional[MuteTime] = None):
         """
         Set the default mute time for the mute command.
+
+        If no time interval is provided this will be cleared.
         """
-        data = time.get("duration", {})
-        if not data:
-            await self.config.guild(ctx.guild).default_time.set(data)
+
+        if not time:
+            await self.config.guild(ctx.guild).default_time.clear()
             await ctx.send(_("Default mute time removed."))
         else:
+            data = time.get("duration", {})
+            if not data:
+                return await ctx.send(_("Please provide a valid time format."))
             await self.config.guild(ctx.guild).default_time.set(data)
             await ctx.send(
-                _("Default mute time set to {time}").format(
+                _("Default mute time set to {time}.").format(
                     time=humanize_timedelta(timedelta=timedelta(**data))
                 )
             )
@@ -519,13 +532,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if mute_role or sent_instructions:
             return True
         else:
+            command_1 = f"{ctx.clean_prefix}muteset role"
+            command_2 = f"{ctx.clean_prefix}muteset makerole"
             msg = _(
                 "This server does not have a mute role setup, "
                 "are you sure you want to continue with channel "
-                "overwrites? (Note: Overwrites will not be automatically unmuted."
-                " You can setup a mute role with `{prefix}muteset role` or "
-                "`{prefix}muteset makerole` if you just want a basic setup.)\n\n"
-            ).format(prefix=ctx.clean_prefix)
+                "overwrites? You can setup a mute role with `{command_1}` or"
+                "`{command_2}` if you just want a basic role created setup.)\n\n"
+            ).format(command_1=command_1, command_2=command_2)
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if can_react:
                 msg += _(
@@ -577,16 +591,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
 
         msg = ""
-        to_del = []
         if ctx.guild.id in self._server_mutes:
             mutes_data = self._server_mutes[ctx.guild.id]
-            to_rem = []
             if mutes_data:
 
                 msg += _("__Server Mutes__\n")
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
-                        to_rem.append(user_id)
                         continue
                     user = ctx.guild.get_member(user_id)
                     if not user:
@@ -600,21 +611,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         time_str = humanize_timedelta(timedelta=time_left)
                     else:
                         time_str = ""
-                    msg += _("{member}").format(member=user_str)
+                    msg += f"{user_str} "
                     if time_str:
                         msg += _("__Remaining__: {time_left}\n").format(time_left=time_str)
                     else:
                         msg += "\n"
-            for _id in to_rem:
-                try:
-                    del self._server_mutes[ctx.guild.id][_id]
-                except KeyError:
-                    pass
         for channel_id, mutes_data in self._channel_mutes.items():
             if not mutes_data:
-                to_del.append(channel_id)
                 continue
-            if channel_id in [c.id for c in ctx.guild.channels]:
+            if ctx.guild.get_channel(channel_id):
                 msg += _("__<#{channel_id}> Mutes__\n").format(channel_id=channel_id)
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
@@ -631,20 +636,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         time_str = humanize_timedelta(timedelta=time_left)
                     else:
                         time_str = ""
-                    msg += _("{member} ").format(member=user_str)
+                    msg += f"{user_str} "
                     if time_str:
                         msg += _("__Remaining__: {time_left}\n").format(time_left=time_str)
                     else:
                         msg += "\n"
-        for c in to_del:
-            del self._channel_mutes[c]
         if msg:
             for page in pagify(msg):
                 await ctx.maybe_send_embed(page)
             return
         await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
 
-    @commands.command(usage="[users...] [time_and_reason]")
+    @commands.command(usage="<users...> [time_and_reason]")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def mute(
@@ -656,10 +659,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Mute users.
 
-        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[time_and_reason]` is the time to mute for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
-        is provided the mute will be indefinite.
+        is provided the mute will use the set default time or indefinite if not set.
 
         Examples:
         `[p]mute @member1 @member2 spam 5 hours`
@@ -681,56 +684,53 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + timedelta(**duration)
-                time = _(" for ") + humanize_timedelta(timedelta=timedelta(**duration))
+                time = _(" for {duration}").format(
+                    duration=humanize_timedelta(timedelta=timedelta(**duration))
+                )
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(**default_duration)
-                    time = _(" for ") + humanize_timedelta(timedelta=timedelta(**default_duration))
+                    time = _(" for {duration}").format(
+                        duration=humanize_timedelta(timedelta=timedelta(**default_duration))
+                    )
             author = ctx.message.author
             guild = ctx.guild
             audit_reason = get_audit_reason(author, reason)
             success_list = []
+            issue_list = []
             for user in users:
                 success, issue = await self.mute_user(guild, author, user, until, audit_reason)
+                if issue:
+                    issue_list.append((user, issue))
                 if success:
                     success_list.append(user)
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at.replace(tzinfo=timezone.utc),
-                            "smute",
-                            user,
-                            author,
-                            reason,
-                            until=until,
-                            channel=None,
-                        )
-                    except RuntimeError as e:
-                        log.error(_("Error creating modlog case"), exc_info=e)
-            if not success_list and issue:
-                message = _(
-                    "{users} could not be muted in some channels. "
-                    "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
-                return await self.handle_issues(ctx, message, issue)
-            if ctx.guild.id not in self._server_mutes:
-                self._server_mutes[ctx.guild.id] = {}
-            verb = _("has")
-            if len(success_list) > 1:
-                verb = _("have")
-            await ctx.send(
-                _("{users} {verb} been muted in this server{time}.").format(
-                    users=humanize_list([f"{u}" for u in success_list]), verb=verb, time=time
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        "smute",
+                        user,
+                        author,
+                        reason,
+                        until=until,
+                        channel=None,
+                    )
+            if success_list:
+                if ctx.guild.id not in self._server_mutes:
+                    self._server_mutes[ctx.guild.id] = {}
+                msg = _("{users} has been muted in this server{time}.")
+                if len(success_list) > 1:
+                    msg = _("{users} have been muted in this server{time}.")
+                await ctx.send(
+                    msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
                 )
-            )
-            if issue:
+            if issue_list:
                 message = _(
                     "{users} could not be muted in some channels. "
                     "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
-                await self.handle_issues(ctx, message, issue)
+                ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
+                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
 
     async def handle_issues(self, ctx: commands.Context, message: str, issue: str) -> None:
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
@@ -765,7 +765,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await ctx.send_interactive(resp)
 
     @commands.command(
-        name="mutechannel", aliases=["channelmute"], usage="[users...] [time_and_reason]"
+        name="mutechannel", aliases=["channelmute"], usage="<users...> [time_and_reason]"
     )
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
@@ -778,7 +778,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Mute a user in the current text channel.
 
-        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[time_and_reason]` is the time to mute for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
         is provided the mute will be indefinite.
@@ -793,8 +793,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return await ctx.send(_("You cannot mute me."))
         if ctx.author in users:
             return await ctx.send(_("You cannot mute yourself."))
-        if not await self._check_for_mute_role(ctx):
-            return
         async with ctx.typing():
             duration = time_and_reason.get("duration", {})
             reason = time_and_reason.get("reason", None)
@@ -802,16 +800,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             time = ""
             if duration:
                 until = datetime.now(timezone.utc) + timedelta(**duration)
-                time = _(" for ") + humanize_timedelta(timedelta=timedelta(**duration))
+                time = _(" for {duration}").format(
+                    duration=humanize_timedelta(timedelta=timedelta(**duration))
+                )
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(**default_duration)
-                    time = _(" for ") + humanize_timedelta(timedelta=timedelta(**default_duration))
+                    time = _(" for {duration}").format(
+                        duration=humanize_timedelta(timedelta=timedelta(**default_duration))
+                    )
             author = ctx.message.author
             channel = ctx.message.channel
             guild = ctx.guild
             audit_reason = get_audit_reason(author, reason)
+            issue_list = []
             success_list = []
             for user in users:
                 success = await self.channel_mute_user(
@@ -820,33 +823,36 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if success["success"]:
                     success_list.append(user)
 
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at.replace(tzinfo=timezone.utc),
-                            "cmute",
-                            user,
-                            author,
-                            reason,
-                            until=until,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        log.error(_("Error creating modlog case"), exc_info=e)
-                else:
-                    return await ctx.send(success["reason"])
-            if success_list:
-                verb = _("has")
-                if len(success_list) > 1:
-                    verb = _("have")
-                await channel.send(
-                    _("{users} {verb} been muted in this channel{time}.").format(
-                        users=humanize_list([f"{u}" for u in success_list]), verb=verb, time=time
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        "cmute",
+                        user,
+                        author,
+                        reason,
+                        until=until,
+                        channel=channel,
                     )
-                )
+                    async with self.config.member(user).perms_cache() as cache:
+                        cache[channel.id] = success["old_overs"]
+                else:
+                    issue_list.append((user, success["reason"]))
 
-    @commands.command(usage="[users...] [reason]")
+            if success_list:
+                msg = _("{users} has been muted in this channel{time}.")
+                if len(success_list) > 1:
+                    msg = _("{users} have been muted in this channel{time}.")
+                await channel.send(
+                    msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+                )
+            if issue_list:
+                msg = _("The following users could not be muted\n")
+                for user, issue in issue_list:
+                    msg += f"{user}: {issue}\n"
+                await ctx.send_interactive(pagify(msg))
+
+    @commands.command(usage="<users...> [reason]")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
     async def unmute(
@@ -858,7 +864,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Unmute users.
 
-        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[reason]` is the reason for the unmute.
         """
         if not users:
@@ -873,51 +879,46 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             guild = ctx.guild
             author = ctx.author
             audit_reason = get_audit_reason(author, reason)
+            issue_list = []
             success_list = []
             for user in users:
                 success, issue = await self.unmute_user(guild, author, user, audit_reason)
+
                 if success:
                     success_list.append(user)
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at.replace(tzinfo=timezone.utc),
-                            "sunmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                        )
-                    except RuntimeError as e:
-                        log.error(_("Error creating modlog case"), exc_info=e)
-            if not success_list and issue:
-                message = _(
-                    "{users} could not be muted in some channels. "
-                    "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
-                return await self.handle_issues(ctx, message, issue)
-
-            if ctx.guild.id in self._server_mutes and self._server_mutes[ctx.guild.id]:
-                await self.config.guild(ctx.guild).muted_users.set(
-                    self._server_mutes[ctx.guild.id]
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        "sunmute",
+                        user,
+                        author,
+                        reason,
+                        until=None,
+                    )
+                else:
+                    issue_list.append((user, issue))
+            if success_list:
+                if ctx.guild.id in self._server_mutes and self._server_mutes[ctx.guild.id]:
+                    await self.config.guild(ctx.guild).muted_users.set(
+                        self._server_mutes[ctx.guild.id]
+                    )
+                else:
+                    await self.config.guild(ctx.guild).muted_users.clear()
+                await ctx.send(
+                    _("{users} unmuted in this server.").format(
+                        users=humanize_list([f"{u}" for u in success_list])
+                    )
                 )
-            else:
-                await self.config.guild(ctx.guild).muted_users.clear()
-            await ctx.send(
-                _("{users} unmuted in this server.").format(
-                    users=humanize_list([f"{u}" for u in success_list])
-                )
-            )
-            if issue:
+            if issue_list:
                 message = _(
                     "{users} could not be unmuted in some channels. "
                     "Would you like to see which channels and why?"
-                ).format(users=humanize_list([f"{u}" for u in users]))
-                await self.handle_issues(ctx, message, issue)
+                ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
+                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
 
     @checks.mod_or_permissions(manage_roles=True)
-    @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="[users...] [reason]")
+    @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="<users...> [reason]")
     @commands.guild_only()
     async def unmute_channel(
         self,
@@ -928,7 +929,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         """Unmute a user in this channel.
 
-        `[users...]` is a space separated list of usernames, ID's, or mentions.
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[reason]` is the reason for the unmute.
         """
         if not users:
@@ -937,8 +938,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return await ctx.send(_("You cannot unmute me."))
         if ctx.author in users:
             return await ctx.send(_("You cannot unmute yourself."))
-        if not await self._check_for_mute_role(ctx):
-            return
         async with ctx.typing():
             channel = ctx.channel
             author = ctx.author
@@ -952,25 +951,24 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
                 if success["success"]:
                     success_list.append(user)
-                    try:
-                        await modlog.create_case(
-                            self.bot,
-                            guild,
-                            ctx.message.created_at.replace(tzinfo=timezone.utc),
-                            "cunmute",
-                            user,
-                            author,
-                            reason,
-                            until=None,
-                            channel=channel,
-                        )
-                    except RuntimeError as e:
-                        log.error(_("Error creating modlog case"), exc_info=e)
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        "cunmute",
+                        user,
+                        author,
+                        reason,
+                        until=None,
+                        channel=channel,
+                    )
                 else:
                     return await ctx.send(success["reason"])
             if success_list:
                 if self._channel_mutes[channel.id]:
-                    await self.config.channel(channel).set(self._channel_mutes[channel.id])
+                    await self.config.channel(channel).muted_users.set(
+                        self._channel_mutes[channel.id]
+                    )
                 else:
                     await self.config.channel(channel).muted_users.clear()
                 await ctx.send(
@@ -993,30 +991,30 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = await self.config.guild(guild).mute_role()
 
         if mute_role:
+            if not await self.is_allowed_by_hierarchy(guild, author, user):
+                return False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
+            role = guild.get_role(mute_role)
+            if not role:
+                return False, MUTE_UNMUTE_ISSUES["role_missing"]
+
+            # This is here to prevent the modlog case from happening on role updates
+            # we need to update the cache early so it's there before we receive the member_update event
+            if guild.id not in self._server_mutes:
+                self._server_mutes[guild.id] = {}
+
+            self._server_mutes[guild.id][user.id] = {
+                "author": author.id,
+                "member": user.id,
+                "until": until.timestamp() if until else None,
+            }
             try:
-                if not await self.is_allowed_by_hierarchy(guild, author, user):
-                    return False, _(mute_unmute_issues["hierarchy_problem"])
-                role = guild.get_role(mute_role)
-                if not role:
-                    return False, mute_unmute_issues["role_missing"]
-
-                # This is here to prevent the modlog case from happening on role updates
-                # we need to update the cache early so it's there before we receive the member_update event
-                if guild.id not in self._server_mutes:
-                    self._server_mutes[guild.id] = {}
-
-                self._server_mutes[guild.id][user.id] = {
-                    "author": author.id,
-                    "member": user.id,
-                    "until": until.timestamp() if until else None,
-                }
                 await user.add_roles(role, reason=reason)
                 await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
             except discord.errors.Forbidden:
                 del self._server_mutes[guild.id][
                     user.id
                 ]  # this is here so we don't have a bad cache
-                return False, mute_unmute_issues["permissions_issue"]
+                return False, MUTE_UNMUTE_ISSUES["permissions_issue"]
             return True, None
         else:
             mute_success = []
@@ -1055,21 +1053,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = await self.config.guild(guild).mute_role()
         _temp = None  # used to keep the cache incase of permissions errors
         if mute_role:
+            if not await self.is_allowed_by_hierarchy(guild, author, user):
+                return False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
+            role = guild.get_role(mute_role)
+            if not role:
+                return False, MUTE_UNMUTE_ISSUES["role_missing"]
+            if guild.id in self._server_mutes:
+                if user.id in self._server_mutes[guild.id]:
+                    _temp = copy(self._server_mutes[guild.id][user.id])
+                    del self._server_mutes[guild.id][user.id]
             try:
-                if not await self.is_allowed_by_hierarchy(guild, author, user):
-                    return False, _(mute_unmute_issues["hierarchy_problem"])
-                role = guild.get_role(mute_role)
-                if not role:
-                    return False, mute_unmute_issues["role_missing"]
-                if guild.id in self._server_mutes:
-                    if user.id in self._server_mutes[guild.id]:
-                        _temp = copy(self._server_mutes[guild.id][user.id])
-                        del self._server_mutes[guild.id][user.id]
                 await user.remove_roles(role, reason=reason)
             except discord.errors.Forbidden:
                 if _temp:
                     self._server_mutes[guild.id][user.id] = _temp
-                return False, mute_unmute_issues["permissions_issue"]
+                return False, MUTE_UNMUTE_ISSUES["permissions_issue"]
             return True, None
         else:
             mute_success = []
@@ -1105,7 +1103,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return {
                 "success": False,
                 "channel": channel,
-                "reason": _(mute_unmute_issues["is_admin"]),
+                "reason": _(MUTE_UNMUTE_ISSUES["is_admin"]),
             }
 
         new_overs: dict = {}
@@ -1118,7 +1116,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return {
                 "success": False,
                 "channel": channel,
-                "reason": _(mute_unmute_issues["hierarchy_problem"]),
+                "reason": _(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
             }
 
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
@@ -1137,7 +1135,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return {
                 "success": False,
                 "channel": channel,
-                "reason": _(mute_unmute_issues["permissions_issue"]),
+                "reason": _(MUTE_UNMUTE_ISSUES["permissions_issue"]),
             }
         except discord.NotFound as e:
             if e.code == 10003:
@@ -1145,14 +1143,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return {
                     "success": False,
                     "channel": channel,
-                    "reason": _(mute_unmute_issues["unknown_channel"]),
+                    "reason": _(MUTE_UNMUTE_ISSUES["unknown_channel"]),
                 }
             elif e.code == 10009:
                 del self._channel_mutes[channel.id][user.id]
                 return {
                     "success": False,
                     "channel": channel,
-                    "reason": _(mute_unmute_issues["left_guild"]),
+                    "reason": _(MUTE_UNMUTE_ISSUES["left_guild"]),
                 }
         return {"success": True, "channel": channel, "old_overs": old_overs}
 
@@ -1164,6 +1162,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         user: discord.Member,
         reason: Optional[str] = None,
     ) -> Dict[str, Optional[Union[discord.abc.GuildChannel, str, bool]]]:
+        """Unmutes the specified user in a specified channel"""
         overwrites = channel.overwrites_for(user)
         perms_cache = await self.config.member(user).perms_cache()
 
@@ -1177,10 +1176,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return {
                 "success": False,
                 "channel": channel,
-                "reason": _(mute_unmute_issues["hierarchy_problem"]),
+                "reason": _(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
             }
 
         overwrites.update(**old_values)
+        if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
+            _temp = copy(self._channel_mutes[channel.id][user.id])
+            del self._channel_mutes[channel.id][user.id]
         try:
             if overwrites.is_empty():
                 await channel.set_permissions(
@@ -1188,16 +1190,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
             else:
                 await channel.set_permissions(user, overwrite=overwrites, reason=reason)
-            if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
-                _temp = copy(self._channel_mutes[channel.id][user.id])
-                del self._channel_mutes[channel.id][user.id]
         except discord.Forbidden:
             if channel.id in self._channel_mutes and _temp:
                 self._channel_mutes[channel.id][user.id] = _temp
             return {
                 "success": False,
                 "channel": channel,
-                "reason": _(mute_unmute_issues["permissions_issue"]),
+                "reason": _(MUTE_UNMUTE_ISSUES["permissions_issue"]),
             }
         except discord.NotFound as e:
             if e.code == 10003:
@@ -1206,7 +1205,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return {
                     "success": False,
                     "channel": channel,
-                    "reason": _(mute_unmute_issues["unknown_channel"]),
+                    "reason": _(MUTE_UNMUTE_ISSUES["unknown_channel"]),
                 }
             elif e.code == 10009:
                 if channel.id in self._channel_mutes and _temp:
@@ -1214,6 +1213,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return {
                     "success": False,
                     "channel": channel,
-                    "reason": _(mute_unmute_issues["left_guild"]),
+                    "reason": _(MUTE_UNMUTE_ISSUES["left_guild"]),
                 }
         return {"success": True, "channel": channel, "reason": None}
