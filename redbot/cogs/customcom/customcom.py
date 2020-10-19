@@ -220,6 +220,7 @@ class CustomCommands(commands.Cog):
     Custom commands can be used by anyone by default, so be careful with pings.
     Commands can only be lowercase, and will not respond to any uppercase letters.
     """
+
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
