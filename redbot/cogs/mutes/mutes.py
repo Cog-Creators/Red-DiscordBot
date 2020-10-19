@@ -20,6 +20,8 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 _ = i18n.Translator("Mutes", __file__)
 
+_ = lambda s: s
+
 MUTE_UNMUTE_ISSUES = {
     "already_muted": _("That user is already muted in this channel."),
     "already_unmuted": _("That user is not muted in this channel."),
@@ -995,7 +997,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             role = guild.get_role(mute_role)
             if not role:
-                return False, MUTE_UNMUTE_ISSUES["role_missing"]
+                return False, _(MUTE_UNMUTE_ISSUES["role_missing"])
 
             # This is here to prevent the modlog case from happening on role updates
             # we need to update the cache early so it's there before we receive the member_update event
@@ -1014,7 +1016,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 del self._server_mutes[guild.id][
                     user.id
                 ]  # this is here so we don't have a bad cache
-                return False, MUTE_UNMUTE_ISSUES["permissions_issue"]
+                return False, _(MUTE_UNMUTE_ISSUES["permissions_issue"])
             return True, None
         else:
             mute_success = []
@@ -1057,7 +1059,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             role = guild.get_role(mute_role)
             if not role:
-                return False, MUTE_UNMUTE_ISSUES["role_missing"]
+                return False, _(MUTE_UNMUTE_ISSUES["role_missing"])
             if guild.id in self._server_mutes:
                 if user.id in self._server_mutes[guild.id]:
                     _temp = copy(self._server_mutes[guild.id][user.id])
@@ -1067,7 +1069,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             except discord.errors.Forbidden:
                 if _temp:
                     self._server_mutes[guild.id][user.id] = _temp
-                return False, MUTE_UNMUTE_ISSUES["permissions_issue"]
+                return False, _(MUTE_UNMUTE_ISSUES["permissions_issue"])
             return True, None
         else:
             mute_success = []
