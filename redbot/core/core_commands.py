@@ -1601,7 +1601,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "Prefixes: {prefixes}\n"
             "{guild_settings}"
             "Global locale: {locale}\n"
-            "Global regional format: {regional_format}"
+            "Global regional format: {regional_format}\n"
             "Default embed colour: {colour}"
         ).format(
             bot_name=ctx.bot.user.name,
