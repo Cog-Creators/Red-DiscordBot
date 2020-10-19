@@ -1,16 +1,17 @@
 import contextlib
 import logging
+
 from pathlib import Path
 from typing import List, Union
 
 import lavalink
+
 from fuzzywuzzy import process
-
-from redbot.core.utils import AsyncIter
 from redbot.core import commands
+from redbot.core.utils import AsyncIter
 
-from ...errors import TrackEnqueueError
 from ...audio_dataclasses import LocalPath, Query
+from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, _
 
@@ -32,7 +33,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def get_localtrack_folder_list(self, ctx: commands.Context, query: Query) -> List[Query]:
-        """Return a list of folders per the provided query"""
+        """Return a list of folders per the provided query."""
         if not await self.localtracks_folder_exists(ctx):
             return []
         query = Query.process_input(query, self.local_folder_current_path)
@@ -49,7 +50,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def get_localtrack_folder_tracks(
         self, ctx, player: lavalink.player_manager.Player, query: Query
     ) -> List[lavalink.rest_api.Track]:
-        """Return a list of tracks per the provided query"""
+        """Return a list of tracks per the provided query."""
         if not await self.localtracks_folder_exists(ctx) or self.api_interface is None:
             return []
 

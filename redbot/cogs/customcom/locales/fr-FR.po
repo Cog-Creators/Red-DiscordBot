@@ -53,7 +53,7 @@ msgstr "Gestion des commandes personnalisées."
 #: redbot/cogs/customcom/customcom.py:247
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n\\n        This is helpful for copy and pasting."
-msgstr ""
+msgstr "Obtenir la réponse brute d'une commande personnalisée, pour obtenir le markdown approprié.\\n\\n        Ceci est utile pour copier et coller."
 
 #: redbot/cogs/customcom/customcom.py:268
 msgid "Response #{num}/{total}"
@@ -196,7 +196,7 @@ msgstr "Je n'ai pas pu trouver cette commande personnalisée."
 
 #: redbot/cogs/customcom/customcom.py:516
 msgid "Deleted User"
-msgstr ""
+msgstr "Utilisateur supprimé"
 
 #: redbot/cogs/customcom/customcom.py:522
 msgid "Random"

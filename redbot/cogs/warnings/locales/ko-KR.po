@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-24 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -60,254 +60,262 @@ msgstr "사용자 지정 이유가 비활성화되었어요."
 
 #: redbot/cogs/warnings/warnings.py:130
 #, docstring
-msgid "Toggle whether warnings should be sent to users in DMs."
-msgstr "DM의 사용자들에게 경고를 보낼지 여부를 전환하세요."
+msgid "Set whether warnings should be sent to users in DMs."
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:135
+#: redbot/cogs/warnings/warnings.py:133
 msgid "I will now try to send warnings to users DMs."
 msgstr "이제부터 DM 사용자들에게 경고를 보내도록 할게요."
 
-#: redbot/cogs/warnings/warnings.py:137
+#: redbot/cogs/warnings/warnings.py:135
 msgid "Warnings will no longer be sent to users DMs."
 msgstr "더 이상 DM 사용자들에게 경고가 전송되지 않아요."
 
-#: redbot/cogs/warnings/warnings.py:142
+#: redbot/cogs/warnings/warnings.py:140
 #, docstring
 msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:146
+#: redbot/cogs/warnings/warnings.py:144
 msgid "I will include the name of the moderator who issued the warning when sending a DM to a user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:152
+#: redbot/cogs/warnings/warnings.py:150
 msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:160
+#: redbot/cogs/warnings/warnings.py:158
 #, docstring
 msgid "Set the channel where warnings should be sent to.\\n\\n        Leave empty to use the channel `[p]warn` command was called in.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:168
+#: redbot/cogs/warnings/warnings.py:166
 msgid "The warn channel has been set to {channel}."
 msgstr "경고 채널이 {channel}로 설정되었어요."
 
-#: redbot/cogs/warnings/warnings.py:172 redbot/cogs/warnings/warnings.py:190
+#: redbot/cogs/warnings/warnings.py:170 redbot/cogs/warnings/warnings.py:186
 msgid "Warnings will now be sent in the channel command was used in."
 msgstr "이제 경고가 사용된 채널 명령어로 전송될거에요."
 
-#: redbot/cogs/warnings/warnings.py:177
+#: redbot/cogs/warnings/warnings.py:175
 #, docstring
-msgid "\\n        Toggle if warnings should be sent to a channel set with `[p]warningset warnchannel`.\\n        "
+msgid "\\n        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:187
+#: redbot/cogs/warnings/warnings.py:183
 msgid "Warnings will now be sent to {channel}."
 msgstr "이제 경고가 {channel}로 전송될거에요."
 
-#: redbot/cogs/warnings/warnings.py:192
+#: redbot/cogs/warnings/warnings.py:188
 msgid "Toggle channel has been disabled."
 msgstr "토글 채널이 비활성화되었어요."
 
-#: redbot/cogs/warnings/warnings.py:198
+#: redbot/cogs/warnings/warnings.py:194
 #, docstring
 msgid "Manage automated actions for Warnings.\\n\\n        Actions are essentially command macros. Any command can be run\\n        when the action is initially triggered, and/or when the action\\n        is lifted.\\n\\n        Actions must be given a name and a points threshold. When a\\n        user is warned enough so that their points go over this\\n        threshold, the action will be executed.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:213
+#: redbot/cogs/warnings/warnings.py:209
 #, docstring
 msgid "Create an automated action.\\n\\n        Duplicate action names are not allowed.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:234
+#: redbot/cogs/warnings/warnings.py:230
 msgid "Duplicate action name found!"
 msgstr "중복된 동작 이름이 발견되었어요!"
 
-#: redbot/cogs/warnings/warnings.py:241
+#: redbot/cogs/warnings/warnings.py:237
 msgid "Action {name} has been added."
 msgstr "동작 {name}가 추가되었어요."
 
-#: redbot/cogs/warnings/warnings.py:246
+#: redbot/cogs/warnings/warnings.py:242
 #, docstring
 msgid "Delete the action with the specified name."
 msgstr "지정된 이름의 작동을 삭제하세요."
 
-#: redbot/cogs/warnings/warnings.py:259
+#: redbot/cogs/warnings/warnings.py:255
 msgid "No action named {name} exists!"
 msgstr "이름이 {name}인 동작이 존재하지 않아요!"
 
-#: redbot/cogs/warnings/warnings.py:265
+#: redbot/cogs/warnings/warnings.py:261
 #, docstring
 msgid "Manage warning reasons.\\n\\n        Reasons must be given a name, description and points value. The\\n        name of the reason must be given when a user is warned.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:277
+#: redbot/cogs/warnings/warnings.py:273
 #, docstring
 msgid "Create a warning reason."
 msgstr "경고 이유를 생성하세요."
 
-#: redbot/cogs/warnings/warnings.py:281
+#: redbot/cogs/warnings/warnings.py:277
 msgid "*Custom* cannot be used as a reason name!"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:291
+#: redbot/cogs/warnings/warnings.py:287
 msgid "The new reason has been registered."
 msgstr "새로운 이유가 등록되었어요."
 
-#: redbot/cogs/warnings/warnings.py:296
+#: redbot/cogs/warnings/warnings.py:292
 #, docstring
 msgid "Delete a warning reason."
 msgstr "경고 이유를 삭제하세요."
 
-#: redbot/cogs/warnings/warnings.py:303
+#: redbot/cogs/warnings/warnings.py:299
 msgid "That is not a registered reason name."
 msgstr "해당 이름은 등록되지 않은 이유의 이름이에요."
 
-#: redbot/cogs/warnings/warnings.py:309
+#: redbot/cogs/warnings/warnings.py:305
 #, docstring
 msgid "List all configured reasons for Warnings."
 msgstr "경고에 대한 설정된 이유들을 나열하세요."
 
-#: redbot/cogs/warnings/warnings.py:317
+#: redbot/cogs/warnings/warnings.py:313
 msgid "Reason: {name}"
 msgstr "이유: {name}"
 
-#: redbot/cogs/warnings/warnings.py:319 redbot/cogs/warnings/warnings.py:344
-#: redbot/cogs/warnings/warnings.py:440 redbot/cogs/warnings/warnings.py:466
+#: redbot/cogs/warnings/warnings.py:316 redbot/cogs/warnings/warnings.py:341
+#: redbot/cogs/warnings/warnings.py:447 redbot/cogs/warnings/warnings.py:476
 msgid "Points"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:323
+#: redbot/cogs/warnings/warnings.py:320
 msgid "Name: {reason_name}\\nPoints: {points}\\nDescription: {description}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:330
+#: redbot/cogs/warnings/warnings.py:327
 msgid "There are no reasons configured!"
 msgstr "설정된 이유가 없어요!"
 
-#: redbot/cogs/warnings/warnings.py:336
+#: redbot/cogs/warnings/warnings.py:333
 #, docstring
 msgid "List all configured automated actions for Warnings."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:343
+#: redbot/cogs/warnings/warnings.py:340
 msgid "Action: {name}"
 msgstr "동작: {name}"
 
-#: redbot/cogs/warnings/warnings.py:346
+#: redbot/cogs/warnings/warnings.py:343
 msgid "Exceed command"
 msgstr "명령어 초과"
 
-#: redbot/cogs/warnings/warnings.py:348
+#: redbot/cogs/warnings/warnings.py:347
 msgid "Drop command"
 msgstr "명령어 드롭"
 
-#: redbot/cogs/warnings/warnings.py:352
+#: redbot/cogs/warnings/warnings.py:351
 msgid "Name: {action_name}\\nPoints: {points}\\nExceed command: {exceed_command}\\nDrop command: {drop_command}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:360
+#: redbot/cogs/warnings/warnings.py:359
 msgid "There are no actions configured!"
 msgstr "설정된 동작이 없어요!"
 
-#: redbot/cogs/warnings/warnings.py:373
+#: redbot/cogs/warnings/warnings.py:372
 #, docstring
 msgid "Warn the user for the specified reason.\\n\\n        `<points>` number of points the warning should be for. If no number is supplied\\n        1 point will be given. Pre-set warnings disregard this.\\n        `<reason>` can be a registered reason if it exists or a custom one\\n        is created by default.\\n        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:383
+#: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn yourself."
 msgstr "본인 스스로에게 경고를 할 수 없어요."
 
-#: redbot/cogs/warnings/warnings.py:386
+#: redbot/cogs/warnings/warnings.py:383
 msgid "You cannot warn other bots."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:394
+#: redbot/cogs/warnings/warnings.py:385
+msgid "You cannot warn the server owner."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:388
+msgid "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
+msgstr ""
+
+#: redbot/cogs/warnings/warnings.py:398
 msgid "That is not a registered reason!"
 msgstr "그것은 등록된 이유가 아니에요!"
 
-#: redbot/cogs/warnings/warnings.py:409
+#: redbot/cogs/warnings/warnings.py:413
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:436 redbot/cogs/warnings/warnings.py:462
+#: redbot/cogs/warnings/warnings.py:440 redbot/cogs/warnings/warnings.py:469
 msgid "Warning from {user}"
 msgstr "{user}으로부터의 경고"
 
-#: redbot/cogs/warnings/warnings.py:438 redbot/cogs/warnings/warnings.py:464
+#: redbot/cogs/warnings/warnings.py:442 redbot/cogs/warnings/warnings.py:471
 msgid "Warning"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:443
+#: redbot/cogs/warnings/warnings.py:450
 msgid "You have received a warning in {guild_name}."
 msgstr "{guild_name}에게 경고를 받았아요."
 
-#: redbot/cogs/warnings/warnings.py:453
+#: redbot/cogs/warnings/warnings.py:460
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:472 redbot/cogs/warnings/warnings.py:480
+#: redbot/cogs/warnings/warnings.py:482 redbot/cogs/warnings/warnings.py:491
 msgid "{user} has been warned."
 msgstr "{user}가 경고를 받았어요."
 
-#: redbot/cogs/warnings/warnings.py:485
+#: redbot/cogs/warnings/warnings.py:496
 msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:488
+#: redbot/cogs/warnings/warnings.py:499
 msgid "{description}\\nPoints: {points}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:511
+#: redbot/cogs/warnings/warnings.py:522
 #, docstring
 msgid "List the warnings for the specified user."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:524
+#: redbot/cogs/warnings/warnings.py:535
 msgid "That user has no warnings!"
 msgstr "해당 사용자는 경고가 없어요!"
 
-#: redbot/cogs/warnings/warnings.py:529 redbot/cogs/warnings/warnings.py:563
+#: redbot/cogs/warnings/warnings.py:540 redbot/cogs/warnings/warnings.py:574
 msgid "Deleted Moderator"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:532 redbot/cogs/warnings/warnings.py:566
+#: redbot/cogs/warnings/warnings.py:543 redbot/cogs/warnings/warnings.py:577
 msgid "Unknown Moderator ({})"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:533
+#: redbot/cogs/warnings/warnings.py:544
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:544 redbot/cogs/warnings/warnings.py:578
+#: redbot/cogs/warnings/warnings.py:555 redbot/cogs/warnings/warnings.py:589
 msgid "Warnings for {user}"
 msgstr "경고 대상 {user}"
 
-#: redbot/cogs/warnings/warnings.py:550
+#: redbot/cogs/warnings/warnings.py:561
 #, docstring
 msgid "List warnings for yourself."
 msgstr "본인의 경고를 나열합니다."
 
-#: redbot/cogs/warnings/warnings.py:558
+#: redbot/cogs/warnings/warnings.py:569
 msgid "You have no warnings!"
 msgstr "경고가 없어요!"
 
-#: redbot/cogs/warnings/warnings.py:567
+#: redbot/cogs/warnings/warnings.py:578
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:592
+#: redbot/cogs/warnings/warnings.py:603
 #, docstring
 msgid "Remove a warning from a user."
 msgstr "사용자의 경고를 제거합니다."
 
-#: redbot/cogs/warnings/warnings.py:605
+#: redbot/cogs/warnings/warnings.py:616
 msgid "You cannot remove warnings from yourself."
 msgstr "본인이 본인에 대한 경고를 제거할 수 없어요."
 
-#: redbot/cogs/warnings/warnings.py:612
+#: redbot/cogs/warnings/warnings.py:623
 msgid "That warning doesn't exist!"
 msgstr "경고가 존재하지 않아요."
 

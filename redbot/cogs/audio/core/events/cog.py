@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import time
+
 from typing import Optional
 
 import discord
@@ -130,6 +131,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except Exception as err:
                 debug_exc_log(log, err, f"Failed to delete global daily playlist ID: {too_old_id}")
+        persist_cache = self._persist_queue_cache.setdefault(
+            guild.id, await self.config.guild(guild).persist_queue()
+        )
+        if persist_cache:
+            await self.api_interface.persistent_queue_api.played(
+                guild_id=guild.id, track_id=track_identifier
+            )
 
     @commands.Cog.listener()
     async def on_red_audio_queue_end(
@@ -141,6 +149,21 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
             await asyncio.sleep(5)
             await self.playlist_api.delete_scheduled()
+            await self.api_interface.persistent_queue_api.drop(guild.id)
+            await asyncio.sleep(5)
+            await self.api_interface.persistent_queue_api.delete_scheduled()
+
+    @commands.Cog.listener()
+    async def on_red_audio_track_enqueue(self, guild: discord.Guild, track, requester):
+        if not (track and guild):
+            return
+        persist_cache = self._persist_queue_cache.setdefault(
+            guild.id, await self.config.guild(guild).persist_queue()
+        )
+        if persist_cache:
+            await self.api_interface.persistent_queue_api.enqueued(
+                guild_id=guild.id, room_id=track.extras["vc"], track=track
+            )
 
     @commands.Cog.listener()
     async def on_red_audio_track_end(
@@ -152,3 +175,6 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
             await asyncio.sleep(5)
             await self.playlist_api.delete_scheduled()
+            await self.api_interface.persistent_queue_api.drop(guild.id)
+            await asyncio.sleep(5)
+            await self.api_interface.persistent_queue_api.delete_scheduled()

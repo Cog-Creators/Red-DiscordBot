@@ -45,7 +45,7 @@ msgstr "Je n'ai pas les permissions d'envoyer des messages dans {channel} !"
 
 #: redbot/cogs/modlog/modlog.py:65
 msgid "Mod log is already disabled."
-msgstr ""
+msgstr "Le journal des mods est déjà désactivé."
 
 #: redbot/cogs/modlog/modlog.py:68
 msgid "Mod log deactivated."
@@ -96,7 +96,7 @@ msgstr "Ce cas n'existe pas pour ce serveur."
 
 #: redbot/cogs/modlog/modlog.py:120
 msgid "{case}\\n**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\\n**Horodatage :** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
@@ -117,7 +117,7 @@ msgstr "Cet utilisateur n'a aucun cas."
 
 #: redbot/cogs/modlog/modlog.py:157
 msgid "{case}\\n**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\\n**Horodatage :** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:170
 #, docstring

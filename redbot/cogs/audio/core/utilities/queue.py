@@ -1,13 +1,14 @@
 import logging
 import math
+
 from typing import List, Tuple
 
 import discord
 import lavalink
-from fuzzywuzzy import process
-from redbot.core.utils import AsyncIter
 
+from fuzzywuzzy import process
 from redbot.core import commands
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ...audio_dataclasses import LocalPath, Query
@@ -46,7 +47,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             dur = self.format_time(player.current.length)
 
         query = Query.process_input(player.current, self.local_folder_current_path)
-        current_track_description = self.get_track_description(
+        current_track_description = await self.get_track_description(
             player.current, self.local_folder_current_path
         )
         if query.is_stream:
@@ -65,7 +66,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         ):
             req_user = track.requester
             track_idx = i + 1
-            track_description = self.get_track_description(
+            track_description = await self.get_track_description(
                 track, self.local_folder_current_path, shorten=True
             )
             queue_list += f"`{track_idx}.` {track_description}, "
@@ -76,6 +77,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             title=_("Queue for __{guild_name}__").format(guild_name=ctx.guild.name),
             description=queue_list,
         )
+
         if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
         queue_dur = await self.queue_duration(ctx)
