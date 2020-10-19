@@ -52,6 +52,31 @@ cleanup
 
 Base command for deleting messages.
 
+.. _cleanup-command-cleanup-after:
+
+"""""""""""""
+cleanup after
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup after <message_id> [delete_pinned=False]
+
+**Description**
+
+Delete all messages after a specified message.
+
+To get a message id, enable developer mode in Discord's
+settings, 'appearance' tab. Then right click a message
+and copy its id.
+
+**Arguments:**
+
+- ``<message_id>`` The id of the message to cleanup after. This message won't be deleted.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
 .. _cleanup-command-cleanup-bot:
 
 """""""""""
@@ -101,6 +126,56 @@ and copy its id.
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
+.. _cleanup-command-cleanup-text:
+
+""""""""""""
+cleanup text
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup text <text> <number> [delete_pinned=False]
+
+**Description**
+
+Delete the last X messages matching the specified text.
+
+Example:
+    - ``[p]cleanup text "test" 5``
+
+Remember to use double quotes.
+
+**Arguments:**
+
+- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
+.. _cleanup-command-cleanup-messages:
+
+""""""""""""""""
+cleanup messages
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup messages <number> [delete_pinned=False]
+
+**Description**
+
+Delete the last X messages.
+
+Example:
+    - ``[p]cleanup messages 26``
+
+**Arguments:**
+
+- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
 .. _cleanup-command-cleanup-self:
 
 """"""""""""
@@ -131,32 +206,6 @@ Examples:
 - ``<match_pattern>`` The text that messages must contain to be deleted. Use "" to skip this.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
-.. _cleanup-command-cleanup-text:
-
-""""""""""""
-cleanup text
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup text <text> <number> [delete_pinned=False]
-
-**Description**
-
-Delete the last X messages matching the specified text.
-
-Example:
-    ``[p]cleanup text "test" 5``
-
-Remember to use double quotes.
-
-**Arguments:**
-
-- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
 .. _cleanup-command-cleanup-between:
 
 """""""""""""""
@@ -176,7 +225,7 @@ Delete the messages between Messsage One and Message Two, providing the messages
 The first message ID should be the older message and the second one the newer.
 
 Example:
-    ``[p]cleanup between 123456789123456789 987654321987654321``
+    - ``[p]cleanup between 123456789123456789 987654321987654321``
 
 **Arguments:**
 
@@ -223,60 +272,11 @@ cleanup user
 Delete the last X messages from a specified user.
 
 Examples:
-    ``[p]cleanup user @Twentysix 2``
-    ``[p]cleanup user Red 6``
+    - ``[p]cleanup user @Twentysix 2``
+    - ``[p]cleanup user Red 6``
 
 **Arguments:**
 
 - ``<user>`` The user whose messages are to be cleaned up.
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
-.. _cleanup-command-cleanup-messages:
-
-""""""""""""""""
-cleanup messages
-""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup messages <number> [delete_pinned=False]
-
-**Description**
-
-Delete the last X messages.
-
-Example:
-    ``[p]cleanup messages 26``
-
-**Arguments:**
-
-- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
-.. _cleanup-command-cleanup-after:
-
-"""""""""""""
-cleanup after
-"""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup after <message_id> [delete_pinned=False]
-
-**Description**
-
-Delete all messages after a specified message.
-
-To get a message id, enable developer mode in Discord's
-settings, 'appearance' tab. Then right click a message
-and copy its id.
-
-**Arguments:**
-
-- ``<message_id>`` The id of the message to cleanup after. This message won't be deleted.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
