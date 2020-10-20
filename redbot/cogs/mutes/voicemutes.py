@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import timezone
 from .abc import MixinMeta
 
 import discord
@@ -73,13 +74,13 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
+        success = await self.channel_mute_user(guild, channel, author, user, audit_reason)
 
         if success["success"]:
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "vmute",
                 user,
                 author,
@@ -88,7 +89,7 @@ class VoiceMutes(MixinMeta):
                 channel=channel,
             )
             await ctx.send(
-                _("Muted {user} in channel {channel.name}").format(user=user, channel=channel)
+                _("Muted {user} in channel {channel.name}.").format(user=user, channel=channel)
             )
             try:
                 if channel.permissions_for(ctx.me).move_members:
@@ -102,7 +103,7 @@ class VoiceMutes(MixinMeta):
                     )
                 )
         else:
-            await ctx.send(issue)
+            await ctx.send(success["reason"])
 
     @commands.command(name="voiceunmute")
     @commands.guild_only()
@@ -123,13 +124,13 @@ class VoiceMutes(MixinMeta):
         channel = user_voice_state.channel
         audit_reason = get_audit_reason(author, reason)
 
-        success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
+        success = await self.channel_unmute_user(guild, channel, author, user, audit_reason)
 
-        if success:
+        if success["success"]:
             await modlog.create_case(
                 self.bot,
                 guild,
-                ctx.message.created_at,
+                ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "vunmute",
                 user,
                 author,
@@ -138,7 +139,7 @@ class VoiceMutes(MixinMeta):
                 channel=channel,
             )
             await ctx.send(
-                _("Unmuted {user} in channel {channel.name}").format(user=user, channel=channel)
+                _("Unmuted {user} in channel {channel.name}.").format(user=user, channel=channel)
             )
             try:
                 if channel.permissions_for(ctx.me).move_members:
@@ -152,4 +153,4 @@ class VoiceMutes(MixinMeta):
                     )
                 )
         else:
-            await ctx.send(_("Unmute failed. Reason: {}").format(message))
+            await ctx.send(_("Unmute failed. Reason: {}").format(success["reason"]))

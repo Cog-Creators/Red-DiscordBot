@@ -56,7 +56,7 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
 
 class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     """
-    Mute users temporarily or indefinitely
+    Mute users temporarily or indefinitely.
     """
 
     def __init__(self, bot: Red):
@@ -345,6 +345,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         This handles manually removing overwrites for a user that has been muted
         """
+        if await self.bot.cog_disabled_in_guild(self, after.guild):
+            return
         if after.id in self._channel_mutes:
             before_perms: Dict[int, Dict[str, Optional[bool]]] = {
                 o.id: {name: attr for name, attr in p} for o, p in before.overwrites.items()
@@ -404,13 +406,24 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         pass
 
     @muteset.command(name="notification")
-    @checks.mod_or_permissions(manage_messages=True)
-    async def notification_channel_set(self, ctx: commands.Context, channel: discord.TextChannel):
-        """Set The notification channel for automatic unmute issues."""
-        await self.config.guild(ctx.guild).notification_channel.set(channel.id)
-        await ctx.send(
-            _("I will post unmute issues in {channel}.").format(channel=channel.mention)
-        )
+    @checks.admin_or_permissions(manage_channels=True)
+    async def notification_channel_set(
+        self, ctx: commands.Context, channel: Optional[discord.TextChannel] = None
+    ):
+        """
+        Set the notification channel for automatic unmute issues.
+
+        If no channel is provided this will be cleared and notifications
+        about issues when unmuting users will not be sent anywhere.
+        """
+        if channel is None:
+            await self.config.guild(ctx.guild).notification_channel.clear()
+            await ctx.send(_("Notification channel for unmute issues has been cleard."))
+        else:
+            await self.config.guild(ctx.guild).notification_channel.set(channel.id)
+            await ctx.send(
+                _("I will post unmute issues in {channel}.").format(channel=channel.mention)
+            )
 
     @muteset.command(name="role")
     @checks.admin_or_permissions(manage_roles=True)
