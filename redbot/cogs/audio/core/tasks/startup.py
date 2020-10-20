@@ -2,12 +2,14 @@ import asyncio
 import datetime
 import itertools
 import logging
+from pathlib import Path
 
 from typing import Optional
 
 import lavalink
 
 from redbot.core.data_manager import cog_data_path
+from redbot.core.i18n import Translator
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -16,9 +18,10 @@ from ...apis.playlist_wrapper import PlaylistWrapper
 from ...audio_logging import debug_exc_log
 from ...utils import task_callback
 from ..abc import MixinMeta
-from ..cog_utils import _, _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
+from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
+_ = Translator("Audio", Path(__file__))
 
 
 class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
