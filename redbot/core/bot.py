@@ -26,6 +26,7 @@ from typing import (
     Any,
     Literal,
     MutableMapping,
+    overload,
 )
 from types import MappingProxyType
 
@@ -112,6 +113,7 @@ class RedBase(
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            help__use_tick=False,
             description="Red V3",
             invite_public=False,
             invite_perm=0,
@@ -245,12 +247,12 @@ class RedBase(
                 "and implement the required interfaces."
             )
 
-        # do not switch to isinstance, we want to know that this has not been overriden,
+        # do not switch to isinstance, we want to know that this has not been overridden,
         # even with a subclass.
         if type(self._help_formatter) is commands.help.RedHelpFormatter:
             self._help_formatter = formatter
         else:
-            raise RuntimeError("The formatter has already been overriden.")
+            raise RuntimeError("The formatter has already been overridden.")
 
     def reset_help_formatter(self):
         """
@@ -986,22 +988,37 @@ class RedBase(
         """
         return await self._config.guild(discord.Object(id=guild_id)).mod_role()
 
-    async def get_shared_api_tokens(self, service_name: str) -> Dict[str, str]:
+    @overload
+    async def get_shared_api_tokens(self, service_name: str = ...) -> Dict[str, str]:
+        ...
+
+    @overload
+    async def get_shared_api_tokens(self, service_name: None = ...) -> Dict[str, Dict[str, str]]:
+        ...
+
+    async def get_shared_api_tokens(
+        self, service_name: Optional[str] = None
+    ) -> Union[Dict[str, Dict[str, str]], Dict[str, str]]:
         """
-        Gets the shared API tokens for a service
+        Gets the shared API tokens for a service, or all of them if no argument specified.
 
         Parameters
         ----------
-        service_name: str
-            The service to get tokens for.
+        service_name: str, optional
+            The service to get tokens for. Leave empty to get tokens for all services.
 
         Returns
         -------
-        Dict[str, str]
+        Dict[str, Dict[str, str]] or Dict[str, str]
             A Mapping of token names to tokens.
             This mapping exists because some services have multiple tokens.
+            If ``service_name`` is `None`, this method will return
+            a mapping with mappings for all services.
         """
-        return await self._config.custom(SHARED_API_TOKENS, service_name).all()
+        if service_name is None:
+            return await self._config.custom(SHARED_API_TOKENS).all()
+        else:
+            return await self._config.custom(SHARED_API_TOKENS, service_name).all()
 
     async def set_shared_api_tokens(self, service_name: str, **tokens: str):
         """
@@ -1050,6 +1067,25 @@ class RedBase(
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             for name in token_names:
                 group.pop(name, None)
+
+    async def remove_shared_api_services(self, *service_names: str):
+        """
+        Removes shared API services, as well as keys and tokens associated with them.
+
+        Parameters
+        ----------
+        *service_names: str
+            The services to remove.
+
+        Examples
+        ----------
+        Removing the youtube service
+
+        >>> await ctx.bot.remove_shared_api_services("youtube")
+        """
+        async with self._config.custom(SHARED_API_TOKENS).all() as group:
+            for service in service_names:
+                group.pop(service, None)
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
@@ -1113,7 +1149,7 @@ class RedBase(
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
-        if cog is None or isinstance(cog, commands.commands._RuleDropper):
+        if cog is None:
             return
 
         for cls in inspect.getmro(cog.__class__):
@@ -1182,7 +1218,7 @@ class RedBase(
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 
@@ -1192,7 +1228,7 @@ class RedBase(
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
 
         Returns
         -------
@@ -1270,9 +1306,6 @@ class RedBase(
                     subcommand.requires.ready_event.set()
 
     def remove_command(self, name: str) -> None:
-        command = self.get_command(name)
-        if isinstance(command, commands.commands._RuleDropper):
-            return
         command = super().remove_command(name)
         if not command:
             return

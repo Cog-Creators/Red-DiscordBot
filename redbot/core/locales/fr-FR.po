@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-24 12:25+0000\n"
+"POT-Creation-Date: 2020-10-01 12:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -1960,6 +1960,10 @@ msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
 #: redbot/core/events.py:301
+msgid "Too many people using this command. It can only be used {number} time(s) concurrently."
+msgstr ""
+
+#: redbot/core/events.py:306
 msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
 msgstr ""
 

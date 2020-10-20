@@ -798,7 +798,7 @@ msgstr "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch
 
 #: redbot/cogs/audio/core/commands/audioset.py:1093
 msgid "Localtracks path:       [{localpath}]\\n"
-msgstr ""
+msgstr "Yerel müzik klasörü:  [{localpath}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 #, docstring
@@ -856,7 +856,7 @@ msgstr "Geçersiz Ülke Kodu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1201
 msgid "Please use an official [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
-msgstr ""
+msgstr "Lütfen geçerli bir [ISO 3166-1 alpha-2](https://tr.wikipedia.org/wiki/ISO_3166) kodu kullanın."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1210
 msgid "Country Code set to {country}."
@@ -1048,7 +1048,7 @@ msgstr "Şarkıyı geçebilmek için kanal da olmanız gerekli."
 
 #: redbot/cogs/audio/core/commands/controller.py:253
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
-msgstr ""
+msgstr "Önceki şarkıları sıralayabilmeniz için şarkı isteyen kişi olmanız ya da DJ rolünüzün olması gerekir."
 
 #: redbot/cogs/audio/core/commands/controller.py:261
 #: redbot/cogs/audio/core/commands/player.py:39
@@ -1104,7 +1104,7 @@ msgstr "Şarkı tekrar oynatılıyor"
 #: redbot/cogs/audio/core/commands/controller.py:282
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\\n        "
-msgstr ""
+msgstr "Belirli bir süreye veya ileri-geri sarar.\\n\\n        Belirtilen süre formatları kabul edilir 00:00:00 (`hh:mm:ss`) veya 00:00 (`mm:ss`).\\n        "
 
 #: redbot/cogs/audio/core/commands/controller.py:300
 #: redbot/cogs/audio/core/commands/controller.py:307
@@ -1112,7 +1112,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:321
 #: redbot/cogs/audio/core/commands/controller.py:333
 msgid "Unable To Seek Tracks"
-msgstr ""
+msgstr "Şarkılar Taranamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:301
 msgid "You must be in the voice channel to use seek."
@@ -1120,7 +1120,7 @@ msgstr "İleri sarmayı kullanabilmek için kanal da olmanız gerekmektedir."
 
 #: redbot/cogs/audio/core/commands/controller.py:315
 msgid "You need the DJ role or be the track requester to use seek."
-msgstr ""
+msgstr "Şarkıyı ileri-geri sarabilmek için şarkıyı talep eden kişi ya da DJ rolünde olmalısınız."
 
 #: redbot/cogs/audio/core/commands/controller.py:321
 msgid "Can't seek on a stream."
@@ -1152,7 +1152,7 @@ msgstr "Karıştırmayı aç/kapat"
 #: redbot/cogs/audio/core/commands/controller.py:419
 #: redbot/cogs/audio/core/commands/controller.py:430
 msgid "Unable To Toggle Shuffle"
-msgstr ""
+msgstr "Karışık Çalma Modu Açılamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:377
 #: redbot/cogs/audio/core/commands/controller.py:420
@@ -1171,11 +1171,11 @@ msgstr "Şarkıları tekrarla: {true_or_false}."
 #: redbot/cogs/audio/core/commands/controller.py:407
 #, docstring
 msgid "Toggle bumped track shuffle.\\n\\n        Set this to disabled if you wish to avoid bumped songs being shuffled.\\n        This takes priority over `[p]shuffle`.\\n        "
-msgstr ""
+msgstr "Öne alınan şarkıları karıştır.\\n\\n        Öne alınan şarkıların karıştırılmasını istemiyorsanız bu özelliği kapatınız.\\n        Bu ayar `[p]shuffle` ayarından önceliklidir.\\n        "
 
 #: redbot/cogs/audio/core/commands/controller.py:439
 msgid "Shuffle bumped tracks: {true_or_false}."
-msgstr ""
+msgstr "Öne çıkan şarkıları karıştır: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/controller.py:450
 #, docstring
@@ -1188,7 +1188,7 @@ msgstr "Şarkıyı geçebilmek için kanal da olmanız gerekli."
 
 #: redbot/cogs/audio/core/commands/controller.py:474
 msgid "You need the DJ role or be the track requester to skip tracks."
-msgstr ""
+msgstr "Şarkıyı atlayabilmek için şarkıyı talep eden kişi ya da DJ rolünde olmalısınız."
 
 #: redbot/cogs/audio/core/commands/controller.py:487
 msgid "You can only skip the current track."
@@ -1252,7 +1252,7 @@ msgstr "Ses Kanalına Bağlanılamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:603
 msgid "There are other people listening."
-msgstr ""
+msgstr "Şarkı dinleyen başka kullanıcılar mevcut."
 
 #: redbot/cogs/audio/core/commands/controller.py:610
 msgid "You need the DJ role to summon the bot."
@@ -1322,7 +1322,7 @@ msgstr "Tekrarlamayı aç/kapa"
 #: redbot/cogs/audio/core/commands/controller.py:709
 #: redbot/cogs/audio/core/commands/controller.py:720
 msgid "Unable To Toggle Repeat"
-msgstr ""
+msgstr "Tekrar Modu Kullanılamıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:710
 msgid "You need the DJ role to toggle repeat."
@@ -1354,7 +1354,7 @@ msgstr "Hiçbir şey bulunamadı."
 #: redbot/cogs/audio/core/commands/controller.py:770
 #: redbot/cogs/audio/core/commands/controller.py:795
 msgid "Unable To Modify Queue"
-msgstr ""
+msgstr "Sıradaki Şarkılar Değiştirilemiyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:758
 msgid "You need the DJ role to remove tracks."
@@ -1372,7 +1372,7 @@ msgstr "Şarkı sıra numarası 1'den daha büyük ve sıradaki toplam şarkı s
 #: redbot/cogs/audio/core/commands/controller.py:780
 #: redbot/cogs/audio/core/commands/controller.py:801
 msgid "Removed track from queue"
-msgstr ""
+msgstr "Şarkı sıradan kaldırıldı"
 
 #: redbot/cogs/audio/core/commands/controller.py:781
 msgid "Removed {track} from the queue."
@@ -1380,11 +1380,11 @@ msgstr "{track} şarkısı sıradan çıkarıldı."
 
 #: redbot/cogs/audio/core/commands/controller.py:796
 msgid "Removed 0 tracks, nothing matches the URL provided."
-msgstr ""
+msgstr "0 şarkı silindi, talep ettiğiniz URL ile uyuşan yok."
 
 #: redbot/cogs/audio/core/commands/controller.py:802
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
-msgstr ""
+msgstr "URL ile uyuşan {removed_tracks} şarkı sıradan silindi."
 
 #: redbot/cogs/audio/core/commands/controller.py:812
 #, docstring
@@ -1523,7 +1523,7 @@ msgstr "Kaydedilmiyor"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:284
 msgid "Current equalizer saved to the {preset_name} preset."
-msgstr ""
+msgstr "Geçerli ekolayzer ayarı {preset_name} olarak ayarlandı."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:298
 #, docstring
@@ -1552,7 +1552,7 @@ msgstr "Ön Ayar Değiştirildi"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:380
 msgid "The {band_name}Hz band has been set to {band_value}."
-msgstr ""
+msgstr "{band_name}Hz band {band_value} olarak ayarlandı."
 
 #: redbot/cogs/audio/core/commands/llset.py:19
 #, docstring
@@ -1562,12 +1562,12 @@ msgstr "Lavalink sunucu ayarlamaları"
 #: redbot/cogs/audio/core/commands/llset.py:23
 #, docstring
 msgid "Toggle using external Lavalink servers."
-msgstr ""
+msgstr "Lavalink dış sunucularını kullan/kullanma."
 
 #: redbot/cogs/audio/core/commands/llset.py:30
 #: redbot/cogs/audio/core/commands/llset.py:56
 msgid "External Lavalink server: {true_or_false}."
-msgstr ""
+msgstr "Harici Lavalink sunucusu: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:42
 #: redbot/cogs/audio/core/commands/llset.py:65
@@ -1576,11 +1576,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:139
 #: redbot/cogs/audio/core/commands/llset.py:164
 msgid "Failed To Shutdown Lavalink"
-msgstr ""
+msgstr "Lavalink kapatılamadı"
 
 #: redbot/cogs/audio/core/commands/llset.py:43
 msgid "External Lavalink server: {true_or_false}\\nFor it to take effect please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Harici Lavalink sunucusu: {true_or_false}\\nAyarın kullanılabilmesi için Audio'yu yeniden başlatın (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:66
 #: redbot/cogs/audio/core/commands/llset.py:90
@@ -1588,19 +1588,19 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:140
 #: redbot/cogs/audio/core/commands/llset.py:165
 msgid "Please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Lütfen Audio'yu yeniden başlatın (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:73
 #, docstring
 msgid "Set the Lavalink server host."
-msgstr ""
+msgstr "Lavalink sunucu hostunu ayarla."
 
 #: redbot/cogs/audio/core/commands/llset.py:77
 #: redbot/cogs/audio/core/commands/llset.py:101
 #: redbot/cogs/audio/core/commands/llset.py:126
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Harici Lavalink sunucu ayarı açıldı."
 
 #: redbot/cogs/audio/core/commands/llset.py:81
 msgid "Host set to {host}."
@@ -1609,7 +1609,7 @@ msgstr "{host} host olarak ayarlandı."
 #: redbot/cogs/audio/core/commands/llset.py:97
 #, docstring
 msgid "Set the Lavalink server password."
-msgstr ""
+msgstr "Lavalink sunucu şifresini ayarla."
 
 #: redbot/cogs/audio/core/commands/llset.py:105
 msgid "Server password set to {password}."
@@ -1618,7 +1618,7 @@ msgstr "{password} sunucu şifresi olarak ayarlandı."
 #: redbot/cogs/audio/core/commands/llset.py:122
 #, docstring
 msgid "Set the Lavalink REST server port."
-msgstr ""
+msgstr "Lavalink REST sunucu portunu ayarla."
 
 #: redbot/cogs/audio/core/commands/llset.py:130
 msgid "REST port set to {port}."
@@ -1627,7 +1627,7 @@ msgstr "{port} REST port olarak ayarlandı"
 #: redbot/cogs/audio/core/commands/llset.py:147
 #, docstring
 msgid "Set the Lavalink websocket server port."
-msgstr ""
+msgstr "Lavalink websocket sunucu portunu ayarla."
 
 #: redbot/cogs/audio/core/commands/llset.py:155
 msgid "Websocket port set to {port}."
@@ -1792,7 +1792,7 @@ msgstr "**{suffix}** tamamen desteklenen bir format değil ve bazı parçalar ç
 
 #: redbot/cogs/audio/core/commands/player.py:275
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Bu şarkının sunucuda çalınmasına izin verilmiyor."
 
 #: redbot/cogs/audio/core/commands/player.py:290
 msgid "Track exceeds maximum length."
@@ -1800,7 +1800,7 @@ msgstr "Şarkı izin verilen uzunluğu aşıyor."
 
 #: redbot/cogs/audio/core/commands/player.py:304
 msgid "{time} until track playback: #1 in queue"
-msgstr ""
+msgstr "Şarkının başlamasına {time} kadar süre var: sıralamada 1. sırada"
 
 #: redbot/cogs/audio/core/commands/player.py:308
 msgid "Track Enqueued"
@@ -1809,19 +1809,19 @@ msgstr "Şarkı sıraya eklendi"
 #: redbot/cogs/audio/core/commands/player.py:322
 #, docstring
 msgid "Pick a Spotify playlist from a list of categories to start playing."
-msgstr ""
+msgstr "Çalmak için listeden bir Spotify şarkı listesi seçiniz."
 
 #: redbot/cogs/audio/core/commands/player.py:382
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi Spotify kullanıcı ID ve Spotify client secret ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset spotifyapi` komutunu kullanınız."
 
 #: redbot/cogs/audio/core/commands/player.py:392
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi YouTube API anahtarı ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset youtubeapi` komutunu kullanınız."
 
 #: redbot/cogs/audio/core/commands/player.py:449
 msgid "You must be in the voice channel to use the genre command."
-msgstr ""
+msgstr "Tür komutunu kullanabilmeniz için bir sesli kanala girmelisiniz."
 
 #: redbot/cogs/audio/core/commands/player.py:456
 msgid "No categories found"
@@ -1838,11 +1838,11 @@ msgstr "Kategoriler"
 
 #: redbot/cogs/audio/core/commands/player.py:471
 msgid "No categories selected, try again later."
-msgstr ""
+msgstr "Seçilen kategori yok, daha sonra deneyiniz."
 
 #: redbot/cogs/audio/core/commands/player.py:486
 msgid "Playlists for {friendly_name}"
-msgstr ""
+msgstr "{friendly_name} için çalma listeleri"
 
 #: redbot/cogs/audio/core/commands/player.py:493
 msgid "No tracks to play."
@@ -1850,16 +1850,16 @@ msgstr "Başlatılabilecek şarkı bulunamadı."
 
 #: redbot/cogs/audio/core/commands/player.py:503
 msgid "Couldn't find tracks for the selected playlist."
-msgstr ""
+msgstr "Seçilen çalma listesi için şarkılar bulunamıyor."
 
 #: redbot/cogs/audio/core/commands/player.py:511
 #, docstring
 msgid "Starts auto play."
-msgstr ""
+msgstr "Otomatik çalmayı başlatır."
 
 #: redbot/cogs/audio/core/commands/player.py:564
 msgid "You must be in the voice channel to use the autoplay command."
-msgstr ""
+msgstr "Otomatik çalma komutunu kullanabilmeniz için bir sesli kanala girmelisiniz."
 
 #: redbot/cogs/audio/core/commands/player.py:578
 msgid "Couldn't get a valid track."
@@ -1891,14 +1891,14 @@ msgstr "Parça sıraya ekleniyor."
 #: redbot/cogs/audio/core/commands/player.py:604
 #, docstring
 msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube.\\n        Use `[p]search sc <search term>` will search SoundCloud instead of YouTube.\\n        "
-msgstr ""
+msgstr "Arama ile bir şarkı seçin.\\n\\n         `[p]search list <search term>` komutunu YouTube sırasında arama yapmak için kullanın\\n         `[p]search sc <search term>` komutu sadece SoundCloud'ı arayacaktır        "
 
 #: redbot/cogs/audio/core/commands/player.py:651
 #: redbot/cogs/audio/core/commands/player.py:660
 #: redbot/cogs/audio/core/commands/player.py:666
 #: redbot/cogs/audio/core/commands/player.py:677
 msgid "Unable To Search For Tracks"
-msgstr ""
+msgstr "Şarkılar İçin Arama Yapılamıyor"
 
 #: redbot/cogs/audio/core/commands/player.py:678
 msgid "You must be in the voice channel to enqueue tracks."
@@ -1916,7 +1916,7 @@ msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktı
 #: redbot/cogs/audio/core/commands/player.py:793
 #: redbot/cogs/audio/core/commands/playlists.py:1503
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} şarkıları sıraya alınamaz."
 
 #: redbot/cogs/audio/core/commands/player.py:799
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -1932,11 +1932,11 @@ msgstr "ara"
 
 #: redbot/cogs/audio/core/commands/player.py:810
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{type} çalınması için kalan süre {time}: #{position}. sırada"
 
 #: redbot/cogs/audio/core/commands/player.py:834
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
+msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika sonra tekrar deneyin."
 
 #: redbot/cogs/audio/core/commands/player.py:843
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
@@ -2033,7 +2033,7 @@ msgstr "{arg} bir çalma listesi ile eşleşmiyor."
 #: redbot/cogs/audio/core/commands/playlists.py:316
 #: redbot/cogs/audio/core/commands/playlists.py:323
 msgid "the Global"
-msgstr ""
+msgstr "Evrensel"
 
 #: redbot/cogs/audio/core/commands/playlists.py:331
 msgid "Playlist Copied"
@@ -2041,7 +2041,7 @@ msgstr "Çalma Listesi Kopyalandı"
 
 #: redbot/cogs/audio/core/commands/playlists.py:332
 msgid "Playlist {name} (`{from_id}`) copied from {from_scope} to {to_scope} (`{to_id}`)."
-msgstr ""
+msgstr "{name} (`{from_id}`) çalma listesi {from_scope}'den {to_scope} (`{to_id}`) olarak kopyalandı."
 
 #: redbot/cogs/audio/core/commands/playlists.py:347
 #, docstring

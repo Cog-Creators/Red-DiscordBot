@@ -503,7 +503,7 @@ def main():
         exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
         # We actually can't (just) use asyncio.run here
-        # We probably could if we didnt support windows, but we might run into
+        # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future
         fut = loop.create_task(run_bot(red, cli_flags))
         r_exc_handler = functools.partial(red_exception_handler, red)
@@ -528,7 +528,7 @@ def main():
             loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
-        # Transports may still not be closed correcly on windows, see below
+        # Transports may still not be closed correctly on windows, see below
         loop.run_until_complete(loop.shutdown_asyncgens())
         # *we* aren't cleaning up more here, but it prevents
         # a runtime error at the event loop on windows

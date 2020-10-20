@@ -3,7 +3,7 @@ commands.requires
 =================
 This module manages the logic of resolving command permissions and
 requirements. This includes rules which override those requirements,
-as well as custom checks which can be overriden, and some special
+as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
 import asyncio
@@ -385,7 +385,7 @@ class Requires:
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
             If a global rule is set for a model,
-            it will be prefered over the guild rule.
+            it will be preferred over the guild rule.
 
         Returns
         -------
@@ -473,7 +473,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -486,7 +486,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
@@ -524,7 +524,7 @@ class Requires:
         cur_state = self._get_rule_from_ctx(ctx)
         should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
         if should_invoke is None:
-            # NORMAL invokation, we simply follow standard procedure
+            # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
