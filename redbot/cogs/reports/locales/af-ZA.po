@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/reports/reports.py:26
 #, docstring
-msgid "Create user reports that server staff can respond to.\\n\\n    Users can open reports using `[p]report`. These are then sent\\n    to a channel in the server for staff, and the report creator\\n    gets a DM. Both can be used to communicate. \\n    "
+msgid "Create user reports that server staff can respond to.\\n\\n    Users can open reports using `[p]report`. These are then sent\\n    to a channel in the server for staff, and the report creator\\n    gets a DM. Both can be used to communicate.\\n    "
 msgstr ""
 
 #: redbot/cogs/reports/reports.py:104

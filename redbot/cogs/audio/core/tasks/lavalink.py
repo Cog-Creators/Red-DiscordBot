@@ -1,14 +1,17 @@
 import asyncio
 import logging
+from pathlib import Path
 
 import lavalink
 
+from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
@@ -23,7 +26,9 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         max_retries = 5
         retry_count = 0
         while retry_count < max_retries:
-            external = await self.config.use_external_lavalink()
+            configs = await self.config.all()
+            external = configs["use_external_lavalink"]
+            java_exec = configs["java_exc_path"]
             if external is False:
                 settings = self._default_lavalink_settings
                 host = settings["host"]
@@ -34,7 +39,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.player_manager.shutdown()
                 self.player_manager = ServerManager()
                 try:
-                    await self.player_manager.start()
+                    await self.player_manager.start(java_exec)
                 except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
                     if exc.should_retry:
@@ -66,11 +71,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     break
             else:
-                config_data = await self.config.all()
-                host = config_data["host"]
-                password = config_data["password"]
-                rest_port = config_data["rest_port"]
-                ws_port = config_data["ws_port"]
+                host = configs["host"]
+                password = configs["password"]
+                rest_port = configs["rest_port"]
+                ws_port = configs["ws_port"]
                 break
         else:
             log.critical(

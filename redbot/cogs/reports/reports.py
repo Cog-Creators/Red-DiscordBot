@@ -90,7 +90,7 @@ class Reports(commands.Cog):
                 r["user_id"] = 0xDE1
                 # this might include EUD, and a report of a deleted user
                 # that's been unhandled for long enough for the
-                # user to be deleted and the bot recieve a request like this...
+                # user to be deleted and the bot receive a request like this...
                 r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
@@ -422,8 +422,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
-            "Any message succesfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
+            "Any message successfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )
