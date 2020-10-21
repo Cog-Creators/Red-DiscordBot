@@ -751,7 +751,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "{users} could not be muted in some channels. "
                     "Would you like to see which channels and why?"
                 ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
-                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
+                await self.handle_issues(ctx, message, humanize_list([x for u, x in issue_list]))
 
     async def handle_issues(self, ctx: commands.Context, message: str, issue: str) -> None:
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
@@ -936,7 +936,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "{users} could not be unmuted in some channels. "
                     "Would you like to see which channels and why?"
                 ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
-                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
+                await self.handle_issues(ctx, message, humanize_list([x for u, x in issue_list]))
 
     @checks.mod_or_permissions(manage_roles=True)
     @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="<users...> [reason]")
@@ -1002,7 +1002,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 message = _(
                     "{users} could not be unmuted in this channels. " "Would you like to see why?"
                 ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
-                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
+                await self.handle_issues(ctx, message, humanize_list([x for u, x in issue_list]))
 
     async def mute_user(
         self,
