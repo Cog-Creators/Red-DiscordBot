@@ -27,7 +27,7 @@ from typing import (
 
 import discord
 
-from . import check
+from discord.ext.commands import check
 from .converter import GuildConverter
 from .errors import BotMissingPermissions
 
