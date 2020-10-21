@@ -677,6 +677,9 @@ class RedBase(
            Invalid Channel ID.
         discord.Forbidden
            You do not have permission to fetch this channel.
+        Others
+            Please refer to Discord.py `fetch_channel docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_channel#discord.ext.commands.Bot.fetch_channel>`_
+
 
         Returns
         --------
@@ -694,6 +697,7 @@ class RedBase(
         with the user to get this information, however many operations
         do require that you do.
 
+
         .. warning::
 
             This method maybe make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
@@ -709,6 +713,9 @@ class RedBase(
             A user with this ID does not exist.
         discord.HTTPException
             Fetching the user failed.
+        Others
+            Please refer to Discord.py `fetch_user docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_user#discord.ext.commands.Bot.fetch_user>`_
+
 
         Returns
         --------
