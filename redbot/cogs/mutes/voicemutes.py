@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
@@ -25,7 +25,7 @@ class VoiceMutes(MixinMeta):
     @staticmethod
     async def _voice_perm_check(
         ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
-    ) -> bool:
+    ) -> Tuple[bool, Optional[str]]:
         """Check if the bot and user have sufficient permissions for voicebans.
 
         This also verifies that the user's voice state and connected
@@ -40,29 +40,30 @@ class VoiceMutes(MixinMeta):
         """
         if user_voice_state is None or user_voice_state.channel is None:
             await ctx.send(_("That user is not in a voice channel."))
-            return False
+            return False, None
         voice_channel: discord.VoiceChannel = user_voice_state.channel
         required_perms = discord.Permissions()
         required_perms.update(**perms)
         if not voice_channel.permissions_for(ctx.me) >= required_perms:
-            await ctx.send(
+            return (
+                False,
                 _("I require the {perms} permission(s) in that user's channel to do that.").format(
                     perms=format_perms_list(required_perms)
-                )
+                ),
             )
-            return False
         if (
             ctx.permission_state is commands.PermState.NORMAL
             and not voice_channel.permissions_for(ctx.author) >= required_perms
         ):
-            await ctx.send(
+
+            return (
+                False,
                 _(
                     "You must have the {perms} permission(s) in that user's channel to use this "
                     "command."
-                ).format(perms=format_perms_list(required_perms))
+                ).format(perms=format_perms_list(required_perms)),
             )
-            return False
-        return True
+        return True, None
 
     @commands.command(name="voicemute")
     @commands.guild_only()
@@ -94,13 +95,11 @@ class VoiceMutes(MixinMeta):
             issue_list = []
             for user in users:
                 user_voice_state = user.voice
-
-                if (
-                    await self._voice_perm_check(
-                        ctx, user_voice_state, mute_members=True, manage_channels=True
-                    )
-                    is False
-                ):
+                can_move, perm_reason = await self._voice_perm_check(
+                    ctx, user_voice_state, mute_members=True, manage_channels=True
+                )
+                if not can_move:
+                    issue_list.append((user, perm_reason))
                     continue
                 duration = time_and_reason.get("duration", {})
                 reason = time_and_reason.get("reason", None)
@@ -185,12 +184,11 @@ class VoiceMutes(MixinMeta):
             success_list = []
             for user in users:
                 user_voice_state = user.voice
-                if (
-                    await self._voice_perm_check(
-                        ctx, user_voice_state, mute_members=True, manage_channels=True
-                    )
-                    is False
-                ):
+                can_move, perm_reason = await self._voice_perm_check(
+                    ctx, user_voice_state, mute_members=True, manage_channels=True
+                )
+                if not can_move:
+                    issue_list.append((user, perm_reason))
                     continue
                 guild = ctx.guild
                 author = ctx.author
