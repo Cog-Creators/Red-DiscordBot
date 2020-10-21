@@ -52,6 +52,7 @@ from .requires import (
     Requires as Requires,
     permissions_check as permissions_check,
     bot_has_permissions as bot_has_permissions,
+    bot_in_a_guild as bot_in_a_guild,
     has_permissions as has_permissions,
     has_guild_permissions as has_guild_permissions,
     is_owner as is_owner,
