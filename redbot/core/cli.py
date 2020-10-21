@@ -4,6 +4,7 @@ import logging
 import sys
 from typing import Optional
 
+import discord
 from discord import __version__ as discord_version
 
 
@@ -235,6 +236,18 @@ def parse_cli_flags(args):
     )
     parser.add_argument(
         "--no-message-cache", action="store_true", help="Disable the internal message cache."
+    )
+    parser.add_argument(
+        "--disable-intent",
+        action="append",
+        choices=list(discord.Intents.VALID_FLAGS),  # DEP-WARN
+        default=[],
+        help="Unsupported flag that allows disabling the given intent."
+        " Currently NOT SUPPORTED (and not covered by our version guarantees)"
+        " as Red is not prepared to work without all intents.\n"
+        f"Go to https://discordpy.readthedocs.io/en/v{discord_version}/api.html#discord.Intents"
+        " to see what each intent does.\n"
+        "This flag can be used multiple times to specify multiple intents.",
     )
 
     args = parser.parse_args(args)
