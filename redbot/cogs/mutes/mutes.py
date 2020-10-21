@@ -35,7 +35,7 @@ MUTE_UNMUTE_ISSUES = {
         "lower than myself in the role hierarchy."
     ),
     "left_guild": _("The user has left the server while applying an overwrite."),
-    "unknown_channel": _("The channel I tried to mute the user in isn't found."),
+    "unknown_channel": _("The channel I tried to mute or unmute the user in isn't found."),
     "role_missing": _("The mute role no longer exists."),
     "voice_mute_permission": _(
         "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
@@ -1154,11 +1154,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overwrites.update(**new_overs)
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-            self._channel_mutes[channel.id][user.id] = {
-                "author": author.id,
-                "member": user.id,
-                "until": until.timestamp() if until else None,
-            }
+        self._channel_mutes[channel.id][user.id] = {
+            "author": author.id,
+            "member": user.id,
+            "until": until.timestamp() if until else None,
+        }
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
