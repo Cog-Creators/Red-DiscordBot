@@ -243,7 +243,8 @@ def parse_cli_flags(args):
         choices=list(discord.Intents.VALID_FLAGS),  # DEP-WARN
         default=[],
         help="Unsupported flag that allows disabling the given intent."
-        " Currently NOT SUPPORTED as Red is not prepared to work without all intents.\n"
+        " Currently NOT SUPPORTED (and not covered by our version guarantees)"
+        " as Red is not prepared to work without all intents.\n"
         f"Go to https://discordpy.readthedocs.io/en/v{discord_version}/api.html#discord.Intents"
         " to see what each intent does.\n"
         "This flag can be used multiple times to specify multiple intents.",
