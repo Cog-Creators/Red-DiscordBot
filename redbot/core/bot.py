@@ -670,8 +670,7 @@ class RedBase(
         Raises
         -------
         Errors
-            Please refer to Discord.py `fetch_channel docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_channel#discord.ext.commands.Bot.fetch_channel>`_
-
+            Please refer to `discord.Client.fetch_channel()`.
 
         Returns
         --------
@@ -701,7 +700,7 @@ class RedBase(
         Raises
         -------
         Errors
-            Please refer to Discord.py `fetch_user docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_user#discord.ext.commands.Bot.fetch_user>`_
+            Please refer to `discord.Client.fetch_user()`.
 
 
         Returns
