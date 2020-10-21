@@ -73,7 +73,16 @@ class VoiceMutes(MixinMeta):
         *,
         time_and_reason: MuteTime = {},
     ):
-        """Mute a user in their current voice channel."""
+        """Mute a user in their current voice channel.
+
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason]` is the time to mute for and reason. Time is
+        any valid time length such as `30 minutes` or `2 days`. If nothing
+        is provided the mute will use the set default time or indefinite if not set.
+
+        Examples:
+        `[p]voicemute @member1 @member2 spam 5 hours`
+        `[p]voicemute @member1 3 days`"""
         if not users:
             return await ctx.send_help()
         if ctx.me in users:
@@ -161,7 +170,10 @@ class VoiceMutes(MixinMeta):
         *,
         reason: Optional[str] = None,
     ):
-        """Unmute a user in their current voice channel."""
+        """Unmute a user in their current voice channel.
+
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
+        `[reason]` is the reason for the unmute."""
         if not users:
             return await ctx.send_help()
         if ctx.me in users:
