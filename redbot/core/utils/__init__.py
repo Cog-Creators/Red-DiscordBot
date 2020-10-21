@@ -608,3 +608,19 @@ def get_end_user_data_statement_or_raise(file: Union[Path, str]) -> str:
     info_json = file / "info.json"
     with info_json.open(encoding="utf-8") as fp:
         return json.load(fp)["end_user_data_statement"]
+
+
+def is_safe_for_strict_config(value: Any) -> bool:
+    """Checks ``value`` against a stricter ruleset which will be enforced in a future iteration on ``Config``.
+
+    Parameters
+    ----------
+    value: Any
+        The object to be checked.
+
+    Returns
+    -------
+    bool
+        Whether or not ``value`` respect the stricter data boundaries.
+    """
+    return not _is_unsafe_on_strict_config(value)
