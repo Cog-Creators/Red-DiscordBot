@@ -595,7 +595,7 @@ def get_end_user_data_statement_or_raise(file: Union[Path, str]) -> str:
 
 
 def is_safe_for_strict_config(value: Any) -> bool:
-    """Checks ``value`` agaisn't a stricter ruleset which will be enforced in a future iteration on ``Config``.
+    """Checks ``value`` against a stricter ruleset which will be enforced in a future iteration on ``Config``.
 
     Parameters
     ----------
