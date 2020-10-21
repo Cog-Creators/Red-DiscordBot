@@ -670,7 +670,7 @@ class RedBase(
         Raises
         -------
         Errors
-            Please refer to `discord.Client.fetch_channel()`.
+            Please refer to `discord.Client.fetch_channel`.
 
         Returns
         --------
@@ -700,7 +700,7 @@ class RedBase(
         Raises
         -------
         Errors
-            Please refer to `discord.Client.fetch_user()`.
+            Please refer to `discord.Client.fetch_user`.
 
 
         Returns
