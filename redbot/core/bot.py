@@ -697,7 +697,6 @@ class RedBase(
         with the user to get this information, however many operations
         do require that you do.
 
-
         .. warning::
 
             This method maybe make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
