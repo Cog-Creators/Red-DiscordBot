@@ -665,7 +665,7 @@ class RedBase(
 
         .. warning::
 
-           This method maybe make an API call if the channel is not found in the bot cache. For general usage, consider ``bot.get_channel`` instead.
+           This method may make an API call if the channel is not found in the bot cache. For general usage, consider ``bot.get_channel`` instead.
 
         Raises
         -------
@@ -690,7 +690,7 @@ class RedBase(
 
         .. warning::
 
-            This method maybe make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
 
         Parameters
         -----------
