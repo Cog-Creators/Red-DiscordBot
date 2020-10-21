@@ -669,15 +669,7 @@ class RedBase(
 
         Raises
         -------
-        discord.InvalidData
-           An unknown channel type was received from Discord.
-        discord.HTTPException
-           Retrieving the channel failed.
-        discord.NotFound
-           Invalid Channel ID.
-        discord.Forbidden
-           You do not have permission to fetch this channel.
-        Others
+        Errors
             Please refer to Discord.py `fetch_channel docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_channel#discord.ext.commands.Bot.fetch_channel>`_
 
 
@@ -708,11 +700,7 @@ class RedBase(
 
         Raises
         -------
-        discord.NotFound
-            A user with this ID does not exist.
-        discord.HTTPException
-            Fetching the user failed.
-        Others
+        Errors
             Please refer to Discord.py `fetch_user docs <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=fetch_user#discord.ext.commands.Bot.fetch_user>`_
 
 
