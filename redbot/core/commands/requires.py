@@ -11,22 +11,23 @@ import enum
 import inspect
 from collections import ChainMap
 from typing import (
-    Union,
-    Optional,
-    List,
-    Callable,
-    Awaitable,
-    Dict,
-    Any,
     TYPE_CHECKING,
-    TypeVar,
-    Tuple,
+    Any,
+    Awaitable,
+    Callable,
     ClassVar,
+    Dict,
+    List,
     Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
 )
 
 import discord
 
+from . import check
 from .converter import GuildConverter
 from .errors import BotMissingPermissions
 
@@ -703,6 +704,15 @@ def bot_has_permissions(**perms: bool):
         return func
 
     return decorator
+
+
+def bot_in_a_guild():
+    """Deny the command if the bot is not in a guild."""
+
+    async def predicate(ctx):
+        return len(ctx.bot.guilds) > 0
+
+    return check(predicate)
 
 
 def has_permissions(**perms: bool):
