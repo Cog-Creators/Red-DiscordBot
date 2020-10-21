@@ -155,7 +155,11 @@ class VoiceMutes(MixinMeta):
     @commands.command(name="voiceunmute")
     @commands.guild_only()
     async def unmute_voice(
-        self, ctx: commands.Context, users: commands.Greedy[discord.Member], *, reason: Optional[str] = None
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        reason: Optional[str] = None,
     ):
         """Unmute a user in their current voice channel."""
         if not users:
@@ -217,7 +221,6 @@ class VoiceMutes(MixinMeta):
                 )
             if issue_list:
                 message = _(
-                    "{users} could not be unmuted in this channels. "
-                    "Would you like to see why?"
+                    "{users} could not be unmuted in this channels. " "Would you like to see why?"
                 ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
                 await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
