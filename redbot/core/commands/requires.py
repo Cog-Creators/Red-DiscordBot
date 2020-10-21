@@ -48,6 +48,7 @@ __all__ = [
     "Requires",
     "permissions_check",
     "bot_has_permissions",
+    "bot_in_a_guild",
     "has_permissions",
     "has_guild_permissions",
     "is_owner",
