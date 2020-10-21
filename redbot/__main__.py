@@ -300,7 +300,7 @@ def handle_edit(cli_flags: Namespace):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
+    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
@@ -494,9 +494,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(
-            cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
-        )
+        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
 
         if os.name != "nt":
             # None of this works on windows.
