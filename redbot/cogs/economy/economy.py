@@ -167,14 +167,21 @@ class Economy(commands.Cog):
     @guild_only_check()
     @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
-        """Manage the bank."""
+        """Base command to manage the bank."""
         pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
         """Show the user's account balance.
 
-        Defaults to yours."""
+        Example:
+        - `[p]bank balance`
+        - `[p]bank balance @Twentysix`
+
+        **Arguments**
+
+        - `<user>` The user to check the balance of. If omitted, defaults to your own balance.
+        """
         if user is None:
             user = ctx.author
 
@@ -192,7 +199,17 @@ class Economy(commands.Cog):
 
     @_bank.command()
     async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
-        """Transfer currency to other users."""
+        """Transfer currency to other users.
+
+        This will come out of your balance, so make sure you have enough.
+
+        Example:
+        - `[p]bank transfer @Twentysix 500`
+
+        **Arguments**
+
+        - `<user>` The user to give currency to.
+        """
         from_ = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
 
