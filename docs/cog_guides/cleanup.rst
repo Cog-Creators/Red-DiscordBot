@@ -40,8 +40,6 @@ Commands
 cleanup
 ^^^^^^^
 
-.. note:: |mod-lock|
-
 **Syntax**
 
 .. code-block:: none
@@ -57,6 +55,8 @@ Base command for deleting messages.
 """""""""""""
 cleanup after
 """""""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -77,34 +77,13 @@ and copy its id.
 - ``<message_id>`` The id of the message to cleanup after. This message won't be deleted.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
-.. _cleanup-command-cleanup-bot:
-
-"""""""""""
-cleanup bot
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup bot <number> [delete_pinned=False]
-
-**Description**
-
-Clean up command messages and messages from the bot.
-
-Can only cleanup custom commands and alias commands if those cogs are loaded.
-
-**Arguments:**
-
-- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
 .. _cleanup-command-cleanup-before:
 
 """"""""""""""
 cleanup before
 """"""""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -126,26 +105,54 @@ and copy its id.
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
-.. _cleanup-command-cleanup-text:
+.. _cleanup-command-cleanup-between:
 
-""""""""""""
-cleanup text
-""""""""""""
+"""""""""""""""
+cleanup between
+"""""""""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cleanup text <text> <number> [delete_pinned=False]
+    [p]cleanup between <one> <two> [delete_pinned=False]
 
 **Description**
 
-Delete the last X messages matching the specified text.
+Delete the messages between Message One and Message Two, providing the messages IDs.
+
+The first message ID should be the older message and the second one the newer.
 
 Example:
-    - ``[p]cleanup text "test" 5``
+    - ``[p]cleanup between 123456789123456789 987654321987654321``
 
-Remember to use double quotes.
+**Arguments:**
+
+- ``<one>`` The id of the message to cleanup after. This message won't be deleted.
+- ``<two>`` The id of the message to cleanup before. This message won't be deleted.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
+.. _cleanup-command-cleanup-bot:
+
+"""""""""""
+cleanup bot
+"""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup bot <number> [delete_pinned=False]
+
+**Description**
+
+Clean up command messages and messages from the bot.
+
+Can only cleanup custom commands and alias commands if those cogs are loaded.
 
 **Arguments:**
 
@@ -157,6 +164,8 @@ Remember to use double quotes.
 """"""""""""""""
 cleanup messages
 """"""""""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -206,38 +215,13 @@ Examples:
 - ``<match_pattern>`` The text that messages must contain to be deleted. Use "" to skip this.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
-.. _cleanup-command-cleanup-between:
-
-"""""""""""""""
-cleanup between
-"""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cleanup between <one> <two> [delete_pinned=False]
-
-**Description**
-
-Delete the messages between Messsage One and Message Two, providing the messages IDs.
-
-The first message ID should be the older message and the second one the newer.
-
-Example:
-    - ``[p]cleanup between 123456789123456789 987654321987654321``
-
-**Arguments:**
-
-- ``<one>`` The id of the message to cleanup after. This message won't be deleted.
-- ``<two>`` The id of the message to cleanup before. This message won't be deleted.
-- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
-
 .. _cleanup-command-cleanup-spam:
 
 """"""""""""
 cleanup spam
 """"""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -255,11 +239,41 @@ Defaults to 50.
 
 - ``<number>`` The number of messages to check for duplicates. Must be a positive integer.
 
+.. _cleanup-command-cleanup-text:
+
+""""""""""""
+cleanup text
+""""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanup text <text> <number> [delete_pinned=False]
+
+**Description**
+
+Delete the last X messages matching the specified text.
+
+Example:
+    - ``[p]cleanup text "test" 5``
+
+Remember to use double quotes.
+
+**Arguments:**
+
+- ``<number>`` The max number of messages to cleanup. Must be a positive integer.
+- ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
 .. _cleanup-command-cleanup-user:
 
 """"""""""""
 cleanup user
 """"""""""""
+
+.. note:: |mod-lock|
 
 **Syntax**
 
