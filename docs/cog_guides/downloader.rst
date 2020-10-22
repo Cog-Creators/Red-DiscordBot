@@ -469,7 +469,7 @@ repo delete
 
     [p]repo delete <repo_name>
 
-.. tip:: Aliases: remove, del
+.. tip:: Aliases: ``repo remove``, ``repo del``
 
 **Description**
 
