@@ -83,7 +83,7 @@ class ModSettings(MixinMeta):
             )
         else:
             msg += _("Default message history delete on ban: Don't delete any\n")
-        msg += _("Default tempban duration: {duration}").format(
+        msg += _("Default tempban duration: {seconds}").format(
             humanize_timedelta(seconds=default_tempban_duration)
         )
         await ctx.send(box(msg))
