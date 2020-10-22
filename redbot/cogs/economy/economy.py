@@ -175,8 +175,8 @@ class Economy(commands.Cog):
         """Show the user's account balance.
 
         Example:
-        - `[p]bank balance`
-        - `[p]bank balance @Twentysix`
+            - `[p]bank balance`
+            - `[p]bank balance @Twentysix`
 
         **Arguments**
 
@@ -204,11 +204,12 @@ class Economy(commands.Cog):
         This will come out of your balance, so make sure you have enough.
 
         Example:
-        - `[p]bank transfer @Twentysix 500`
+            - `[p]bank transfer @Twentysix 500`
 
         **Arguments**
 
-        - `<user>` The user to give currency to.
+        - `<to>` The user to give currency to.
+        - `<amount>` The amount of currency to give.
         """
         from_ = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
@@ -236,9 +237,9 @@ class Economy(commands.Cog):
         Passing positive and negative values will add/remove currency instead.
 
         Examples:
-        - `[p]bank set @Twentysix 26` - Sets balance to 26
-        - `[p]bank set @Twentysix +2` - Increases balance by 2
-        - `[p]bank set @Twentysix -6` - Decreases balance by 6
+            - `[p]bank set @Twentysix 26` - Sets balance to 26
+            - `[p]bank set @Twentysix +2` - Increases balance by 2
+            - `[p]bank set @Twentysix -6` - Decreases balance by 6
         """
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
@@ -300,7 +301,7 @@ class Economy(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.group(name="prune")
     async def _prune(self, ctx):
-        """Prune bank accounts."""
+        """Base command for pruning bank accounts."""
         pass
 
     @_prune.command(name="server", aliases=["guild", "local"])
