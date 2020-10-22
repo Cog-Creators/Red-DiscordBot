@@ -61,8 +61,8 @@ bank balance
 Show the user's account balance.
 
 Example:
-- ``[p]bank balance``
-- ``[p]bank balance @Twentysix``
+    - ``[p]bank balance``
+    - ``[p]bank balance @Twentysix``
 
 **Arguments**
 
@@ -84,7 +84,7 @@ bank prune
 
 **Description**
 
-Prune bank accounts.
+Base command for pruning bank accounts.
 
 .. _economy-command-bank-prune-global:
 
@@ -118,7 +118,7 @@ bank prune server
 
     [p]bank prune server [confirmation=False]
 
-.. tip:: Aliases: guild, local
+.. tip:: Aliases: ``bank prune guild``, ``bank prune local``
 
 **Description**
 
@@ -179,9 +179,9 @@ Set the balance of user's bank account.
 Passing positive and negative values will add/remove currency instead.
 
 Examples:
-- ``[p]bank set @Twentysix 26`` - Sets balance to 26
-- ``[p]bank set @Twentysix +2`` - Increases balance by 2
-- ``[p]bank set @Twentysix -6`` - Decreases balance by 6
+    - ``[p]bank set @Twentysix 26`` - Sets balance to 26
+    - ``[p]bank set @Twentysix +2`` - Increases balance by 2
+    - ``[p]bank set @Twentysix -6`` - Decreases balance by 6
 
 .. _economy-command-bank-transfer:
 
@@ -202,11 +202,12 @@ Transfer currency to other users.
 This will come out of your balance, so make sure you have enough.
 
 Example:
-- ``[p]bank transfer @Twentysix 500``
+    - ``[p]bank transfer @Twentysix 500``
 
 **Arguments**
 
-- ``<user>`` The user to give currency to.
+- ``<to>`` The user to give currency to.
+- ``<amount>`` The amount of currency to give.
 
 .. _economy-command-economyset:
 
