@@ -220,6 +220,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     async def _handle_channel_unmutes(self):
         log.debug("Checking channel unmutes")
+        multiple_mutes = {}
         for c_id in self._channel_mutes:
             channel = self.bot.get_channel(c_id)
             if channel is None or await self.bot.cog_disabled_in_guild(self, channel.guild):
@@ -235,13 +236,81 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     - datetime.now(timezone.utc).timestamp()
                 )
                 if time_to_unmute < 120.0:
-                    self._unmute_tasks[f"{c_id}{u_id}"] = asyncio.create_task(
-                        self._auto_channel_unmute_user(
-                            channel, self._channel_mutes[channel.id][u_id]
-                        )
-                    )
+                    if channel.guild.id not in multiple_mutes:
+                        multiple_mutes[channel.guild.id] = {}
+                    if u_id not in multiple_mutes[channel.guild.id]:
+                        multiple_mutes[channel.guild.id][u_id] = {
+                            channel.id: self._channel_mutes[channel.id][u_id]
+                        }
+                    else:
+                        multiple_mutes[channel.guild.id][u_id][channel.id] = self._channel_mutes[
+                            channel.id
+                        ][u_id]
 
-    async def _auto_channel_unmute_user(self, channel: discord.TextChannel, data: dict):
+        for guild_id, users in multiple_mutes.items():
+            guild = self.bot.get_guild(guild_id)
+            for user, channels in users.items():
+                if len(channels) > 1:
+                    member = guild.get_member(user)
+
+                    for channel, mute_data in channels.items():
+                        author = guild.get_member(mute_data["author"])
+                        self._unmute_tasks[f"{channel}{user}"] = asyncio.create_task(
+                            self._auto_channel_unmute_user_silent(
+                                guild.get_channel(channel), mute_data
+                            )
+                        )
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        datetime.now(timezone.utc),
+                        "sunmute",
+                        member,
+                        author,
+                        _("Automatic unmute"),
+                        until=None,
+                    )
+                else:
+                    for channel, mute_data in channels.items():
+                        self._unmute_tasks[f"{channel}{user}"] = asyncio.create_task(
+                            self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
+                        )
+
+    async def _auto_channel_unmute_user_silent(
+        self, channel: discord.abc.GuildChannel, data: dict
+    ):
+        """This is meant for mass channel unmute without sending the modlog case"""
+        delay = data["until"] - datetime.now(timezone.utc).timestamp()
+        if delay < 1:
+            delay = 0
+        await asyncio.sleep(delay)
+        try:
+            member = channel.guild.get_member(data["member"])
+            author = channel.guild.get_member(data["author"])
+            if not member:
+                return
+            success = await self.channel_unmute_user(
+                channel.guild, channel, author, member, _("Automatic unmute")
+            )
+            if success["success"]:
+                async with self.config.channel(channel).muted_users() as muted_users:
+                    if str(member.id) in muted_users:
+                        del muted_users[str(member.id)]
+            else:
+                chan_id = await self.config.guild(channel.guild).notification_channel()
+                notification_channel = channel.guild.get_channel(chan_id)
+                if not notification_channel:
+                    return
+                await notification_channel.send(
+                    _(
+                        "I am unable to mute {user} in {channel} for the following reason:\n{reason}"
+                    ).format(user=member, channel=channel.mention, reason=success["reason"])
+                )
+        except discord.errors.Forbidden:
+            return
+
+    async def _auto_channel_unmute_user(self, channel: discord.abc.GuildChannel, data: dict):
+        """This is meant to unmute a user in individual channels"""
         delay = data["until"] - datetime.now(timezone.utc).timestamp()
         if delay < 1:
             delay = 0
@@ -261,7 +330,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     datetime.now(timezone.utc),
                     "cunmute",
                     member,
-                    author,
+                    channel.guild.me,
                     _("Automatic unmute"),
                     until=None,
                 )
@@ -409,6 +478,29 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def muteset(self, ctx: commands.Context):
         """Mute settings."""
         pass
+
+    @muteset.command(name="settings", aliases=["showsettings"])
+    @checks.mod_or_permissions(manage_channels=True)
+    async def show_mutes_settings(self, ctx: commands.Context):
+        """
+        Shows the current mute settings for this guild.
+        """
+        data = await self.config.guild(ctx.guild).all()
+
+        mute_role = ctx.guild.get_role(data["mute_role"])
+        notification_channel = ctx.guild.get_channel(data["notification_channel"])
+        sent_instructions = str(data["sent_instructions"])
+        default_time = timedelta(**data["default_time"])
+        msg = _(
+            "Mute Role: {role}\nNotificaiton Channel: {channel}\n"
+            "Sent Instructions: {instructions}\nDefault Time: {time}"
+        ).format(
+            role=mute_role.mention if mute_role else _("None"),
+            channel=notification_channel.mention if notification_channel else _("None"),
+            instructions=sent_instructions,
+            time=humanize_timedelta(default_time) if default_time else _("None"),
+        )
+        await ctx.maybe_send_embed(msg)
 
     @muteset.command(name="notification")
     @checks.admin_or_permissions(manage_channels=True)
