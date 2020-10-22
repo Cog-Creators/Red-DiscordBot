@@ -36,170 +36,6 @@ cogs from the creator.
 Commands
 --------
 
-.. _downloader-command-pipinstall:
-
-^^^^^^^^^^
-pipinstall
-^^^^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]pipinstall [deps...]
-
-**Description**
-
-Install a group of dependencies using pip.
-
-Examples:
-    - ``[p]pipinstall bs4``
-    - ``[p]pipinstall py-cpuinfo psutil``
-
-Improper usage of this command can break your bot, be careful.
-
-**Arguments**
-
-- ``<deps>`` The package or packages you wish to install.
-
-.. _downloader-command-repo:
-
-^^^^
-repo
-^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo 
-
-**Description**
-
-Base command for repository management.
-
-.. _downloader-command-repo-list:
-
-"""""""""
-repo list
-"""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo list 
-
-**Description**
-
-List all installed repos.
-
-.. _downloader-command-repo-info:
-
-"""""""""
-repo info
-"""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo info <repo_name>
-
-**Description**
-
-Show information about a repo.
-
-Example:
-    - ``[p]repo info 26-Cogs``
-
-**Arguments**
-
-- ``<repo_name>`` The name of the repo to show info about.
-
-.. _downloader-command-repo-delete:
-
-"""""""""""
-repo delete
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo delete <repo_name>
-
-.. tip:: Aliases: remove, del
-
-**Description**
-
-Remove a repo and its files.
-
-Example:
-    - ``[p]repo delete 26-Cogs``
-
-**Arguments**
-
-- ``<repo_name>`` The name of an already added repo
-
-.. _downloader-command-repo-add:
-
-""""""""
-repo add
-""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo add <name> <repo_url> [branch]
-
-**Description**
-
-Add a new repo.
-
-Examples:
-    - ``[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs``
-    - ``[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3``
-
-Repo names can only contain characters A-z, numbers, underscores, and hyphens.
-The branch will be the default branch if not specified.
-
-**Arguments**
-
-- ``<name>`` The name given to the repo.
-- ``<repo_url>`` URL to the cog branch. Usually GitHub or GitLab.
-- ``[branch]`` Optional branch to install cogs from.
-
-.. _downloader-command-repo-update:
-
-"""""""""""
-repo update
-"""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]repo update [repos...]
-
-**Description**
-
-Update all repos, or ones of your choosing.
-
-Examples:
-    - ``[p]repo update``
-    - ``[p]repo update 26-Cogs``
-    - ``[p]repo update 26-Cogs Laggrons-Dumb-Cogs``
-
-**Arguments**
-
-- ``<repos>`` The name or names of repos to update. If omitted, all repos are updated.
-
 .. _downloader-command-cog:
 
 ^^^
@@ -217,6 +53,49 @@ cog
 **Description**
 
 Base command for cog installation management commands.
+
+.. _downloader-command-cog-checkforupdates:
+
+"""""""""""""""""""
+cog checkforupdates
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog checkforupdates 
+
+**Description**
+
+Check for available cog updates (including pinned cogs).
+
+This command doesn't update cogs, it only checks for updates.
+Use ``[p]cog update`` to update cogs.
+
+.. _downloader-command-cog-info:
+
+""""""""
+cog info
+""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog info <repo_name> <cog_name>
+
+**Description**
+
+List information about a single cog.
+
+Example:
+    - ``[p]cog info 26-Cogs defender``
+
+**Arguments**
+
+- ``<repo_name>`` The repo to get cog info from..
+- ``<cog_name>`` The cog to get info on.
 
 .. _downloader-command-cog-install:
 
@@ -243,106 +122,53 @@ Examples:
 - ``<repo_name>`` The name of the repo to install cogs from.
 - ``<cogs>`` The cog or cogs to install.
 
-.. _downloader-command-cog-updateallfromrepos:
+.. _downloader-command-cog-installversion:
 
-""""""""""""""""""""""
-cog updateallfromrepos
-""""""""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog updateallfromrepos <repos>
-
-**Description**
-
-Update all cogs from repos of your choosing.
-
-Examples:
-    - ``[p]cog updateallfromrepos 26-Cogs``
-    - ``[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs``
-
-**Arguments**
-
-- ``<repos>`` The repo or repos to update all cogs from.
-
-.. _downloader-command-cog-info:
-
-""""""""
-cog info
-""""""""
+""""""""""""""""""
+cog installversion
+""""""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog info <repo_name> <cog_name>
+    [p]cog installversion <repo_name> <revision> <cogs>
 
 **Description**
 
-List information about a single cog.
+Install a cog from the specified revision of given repo.
 
 Example:
-    - ``[p]cog info 26-Cogs defender``
+    - ``[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
 
 **Arguments**
 
-- ``<repo_name>`` The repo to get cog info from..
-- ``<cog_name>`` The cog to get info on.
+- ``<repo_name>`` The name of the repo to install cogs from.
+- ``<revision>`` The revision to install from.
+- ``<cogs>`` The cog or cogs to install.
 
-.. _downloader-command-cog-unpin:
+.. _downloader-command-cog-list:
 
-"""""""""
-cog unpin
-"""""""""
+""""""""
+cog list
+""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog unpin <cogs>
+    [p]cog list <repo_name>
 
 **Description**
 
-Unpin cogs - this will remove update lock from cogs.
-
-Examples:
-    - ``[p]cog unpin defender``
-    - ``[p]cog unpin updated_cog1 updated_cog2``
-
-**Arguments**
-
-- ``<cogs>`` The cog or cogs to unpin. Must already be installed and pinned.
-
-.. _downloader-command-cog-updatetoversion:
-
-"""""""""""""""""""
-cog updatetoversion
-"""""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog updatetoversion <repo_name> <revision> [cogs]
-
-**Description**
-
-Update all cogs, or ones of your choosing to chosen revision of one repo.
-
-Note that update doesn't mean downgrade and therefore revision
-has to be newer than the one that cog currently has. If you want to
-downgrade the cog, uninstall and install it again.
+List all available cogs from a single repo.
 
 Example:
-    - ``[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
+    - ``[p]cog list 26-Cogs``
 
 **Arguments**
 
-- ``<repo_name>`` The repo or repos to update all cogs from.
-- ``<revision>`` The revision to update to.
-- ``[cogs]`` The cog or cogs to update.
+- ``<repo_name>`` The repo to list cogs from.
 
 .. _downloader-command-cog-listpinned:
 
@@ -360,29 +186,29 @@ cog listpinned
 
 List currently pinned cogs.
 
-.. _downloader-command-cog-update:
+.. _downloader-command-cog-pin:
 
-""""""""""
-cog update
-""""""""""
+"""""""
+cog pin
+"""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog update [cogs...]
+    [p]cog pin <cogs>
 
 **Description**
 
-Update all cogs, or ones of your choosing.
+Pin cogs - this will lock cogs on their current version.
 
 Examples:
-    - ``[p]cog update``
-    - ``[p]cog update defender``
+    - ``[p]cog pin defender``
+    - ``[p]cog pin outdated_cog1 outdated_cog2``
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to update. If omitted, all cogs are updated.
+- ``<cogs>`` The cog or cogs to pin. Must already be installed.
 
 .. _downloader-command-cog-reinstallreqs:
 
@@ -430,96 +256,106 @@ Examples:
 
 - ``<cogs>`` The cog or cogs to uninstall.
 
-.. _downloader-command-cog-installversion:
+.. _downloader-command-cog-unpin:
 
-""""""""""""""""""
-cog installversion
-""""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog installversion <repo_name> <revision> <cogs>
-
-**Description**
-
-Install a cog from the specified revision of given repo.
-
-Example:
-    - ``[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
-
-**Arguments**
-
-- ``<repo_name>`` The name of the repo to install cogs from.
-- ``<revision>`` The revision to install from.
-- ``<cogs>`` The cog or cogs to install.
-
-.. _downloader-command-cog-checkforupdates:
-
-"""""""""""""""""""
-cog checkforupdates
-"""""""""""""""""""
+"""""""""
+cog unpin
+"""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]cog checkforupdates 
+    [p]cog unpin <cogs>
 
 **Description**
 
-Check for available cog updates (including pinned cogs).
-
-This command doesn't update cogs, it only checks for updates.
-Use ``[p]cog update`` to update cogs.
-
-.. _downloader-command-cog-list:
-
-""""""""
-cog list
-""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog list <repo_name>
-
-**Description**
-
-List all available cogs from a single repo.
-
-Example:
-    - ``[p]cog list 26-Cogs``
-
-**Arguments**
-
-- ``<repo_name>`` The repo to list cogs from.
-
-.. _downloader-command-cog-pin:
-
-"""""""
-cog pin
-"""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog pin <cogs>
-
-**Description**
-
-Pin cogs - this will lock cogs on their current version.
+Unpin cogs - this will remove update lock from cogs.
 
 Examples:
-    - ``[p]cog pin defender``
-    - ``[p]cog pin outdated_cog1 outdated_cog2``
+    - ``[p]cog unpin defender``
+    - ``[p]cog unpin updated_cog1 updated_cog2``
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to pin. Must already be installed.
+- ``<cogs>`` The cog or cogs to unpin. Must already be installed and pinned.
+
+.. _downloader-command-cog-update:
+
+""""""""""
+cog update
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog update [cogs...]
+
+**Description**
+
+Update all cogs, or ones of your choosing.
+
+Examples:
+    - ``[p]cog update``
+    - ``[p]cog update defender``
+
+**Arguments**
+
+- ``<cogs>`` The cog or cogs to update. If omitted, all cogs are updated.
+
+.. _downloader-command-cog-updateallfromrepos:
+
+""""""""""""""""""""""
+cog updateallfromrepos
+""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog updateallfromrepos <repos>
+
+**Description**
+
+Update all cogs from repos of your choosing.
+
+Examples:
+    - ``[p]cog updateallfromrepos 26-Cogs``
+    - ``[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs``
+
+**Arguments**
+
+- ``<repos>`` The repo or repos to update all cogs from.
+
+.. _downloader-command-cog-updatetoversion:
+
+"""""""""""""""""""
+cog updatetoversion
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cog updatetoversion <repo_name> <revision> [cogs]
+
+**Description**
+
+Update all cogs, or ones of your choosing to chosen revision of one repo.
+
+Note that update doesn't mean downgrade and therefore revision
+has to be newer than the one that cog currently has. If you want to
+downgrade the cog, uninstall and install it again.
+
+Example:
+    - ``[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
+
+**Arguments**
+
+- ``<repo_name>`` The repo or repos to update all cogs from.
+- ``<revision>`` The revision to update to.
+- ``[cogs]`` The cog or cogs to update.
 
 .. _downloader-command-findcog:
 
@@ -545,3 +381,167 @@ Example:
 **Arguments**
 
 - ``<command_name>`` The command to search for.
+
+.. _downloader-command-pipinstall:
+
+^^^^^^^^^^
+pipinstall
+^^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]pipinstall [deps...]
+
+**Description**
+
+Install a group of dependencies using pip.
+
+Examples:
+    - ``[p]pipinstall bs4``
+    - ``[p]pipinstall py-cpuinfo psutil``
+
+Improper usage of this command can break your bot, be careful.
+
+**Arguments**
+
+- ``<deps>`` The package or packages you wish to install.
+
+.. _downloader-command-repo:
+
+^^^^
+repo
+^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo 
+
+**Description**
+
+Base command for repository management.
+
+.. _downloader-command-repo-add:
+
+""""""""
+repo add
+""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo add <name> <repo_url> [branch]
+
+**Description**
+
+Add a new repo.
+
+Examples:
+    - ``[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs``
+    - ``[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3``
+
+Repo names can only contain characters A-z, numbers, underscores, and hyphens.
+The branch will be the default branch if not specified.
+
+**Arguments**
+
+- ``<name>`` The name given to the repo.
+- ``<repo_url>`` URL to the cog branch. Usually GitHub or GitLab.
+- ``[branch]`` Optional branch to install cogs from.
+
+.. _downloader-command-repo-delete:
+
+"""""""""""
+repo delete
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo delete <repo_name>
+
+.. tip:: Aliases: remove, del
+
+**Description**
+
+Remove a repo and its files.
+
+Example:
+    - ``[p]repo delete 26-Cogs``
+
+**Arguments**
+
+- ``<repo_name>`` The name of an already added repo
+
+.. _downloader-command-repo-info:
+
+"""""""""
+repo info
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo info <repo_name>
+
+**Description**
+
+Show information about a repo.
+
+Example:
+    - ``[p]repo info 26-Cogs``
+
+**Arguments**
+
+- ``<repo_name>`` The name of the repo to show info about.
+
+.. _downloader-command-repo-list:
+
+"""""""""
+repo list
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo list 
+
+**Description**
+
+List all installed repos.
+
+.. _downloader-command-repo-update:
+
+"""""""""""
+repo update
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo update [repos...]
+
+**Description**
+
+Update all repos, or ones of your choosing.
+
+Examples:
+    - ``[p]repo update``
+    - ``[p]repo update 26-Cogs``
+    - ``[p]repo update 26-Cogs Laggrons-Dumb-Cogs``
+
+**Arguments**
+
+- ``<repos>`` The name or names of repos to update. If omitted, all repos are updated.
