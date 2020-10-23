@@ -94,6 +94,8 @@ async def menu(
             timeout=timeout,
         )
     except asyncio.TimeoutError:
+        if not ctx.me:
+            return
         try:
             if message.channel.permissions_for(ctx.me).manage_messages:
                 await message.clear_reactions()
@@ -169,7 +171,7 @@ async def close_menu(
 
 
 def start_adding_reactions(
-    message: discord.Message, emojis: Iterable[_ReactableEmoji],
+    message: discord.Message, emojis: Iterable[_ReactableEmoji]
 ) -> asyncio.Task:
     """Start adding reactions to a message.
 

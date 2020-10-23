@@ -242,7 +242,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:264
 msgid "Invalid syntax: "
-msgstr ""
+msgstr "Nieprawidłowa składnia: "
 
 #: redbot/cogs/trivia/trivia.py:267
 msgid "There was an error parsing the trivia list. See logs for more info."

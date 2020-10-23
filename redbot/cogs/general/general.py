@@ -3,6 +3,7 @@ import time
 from enum import Enum
 from random import randint, choice
 from typing import Final
+import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
@@ -86,7 +87,7 @@ class General(commands.Cog):
         To denote options which include whitespace, you should use
         double quotes.
         """
-        choices = [escape(c, mass_mentions=True) for c in choices]
+        choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
             await ctx.send(_("Not enough options to pick from."))
         else:
@@ -214,9 +215,7 @@ class General(commands.Cog):
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
-        search_terms = escape(
-            search_terms.replace("+", "%2B").replace(" ", "+"), mass_mentions=True
-        )
+        search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
@@ -248,14 +247,15 @@ class General(commands.Cog):
     async def serverinfo(self, ctx, details: bool = False):
         """
         Show server information.
-    
+
         `details`: Shows more information when set to `True`.
         Default to False.
         """
         guild = ctx.guild
         passed = (ctx.message.created_at - guild.created_at).days
         created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=humanize_number(passed),
+            date=guild.created_at.strftime("%d %b %Y %H:%M"),
+            num=humanize_number(passed),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
@@ -455,7 +455,7 @@ class General(commands.Cog):
                 data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
             if guild.premium_tier != 0:
                 nitro_boost = _(
-                    "Tier {boostlevel} with {nitroboosters} boosters\n"
+                    "Tier {boostlevel} with {nitroboosters} boosts\n"
                     "File size limit: {filelimit}\n"
                     "Emoji limit: {emojis_limit}\n"
                     "VCs max bitrate: {bitrate}"
@@ -481,12 +481,14 @@ class General(commands.Cog):
         """
 
         try:
-            url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
+            url = "https://api.urbandictionary.com/v0/define"
+
+            params = {"term": str(word).lower()}
 
             headers = {"content-type": "application/json"}
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as response:
+                async with session.get(url, headers=headers, params=params) as response:
                     data = await response.json()
 
         except aiohttp.ClientError:
@@ -503,9 +505,12 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{word} by {author}").format(
+                    title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
+                    if len(title) > 256:
+                        title = "{}...".format(title[:253])
+                    embed.title = title
                     embed.url = ud["permalink"]
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)

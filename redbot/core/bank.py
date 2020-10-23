@@ -47,7 +47,10 @@ __all__ = [
 
 _MAX_BALANCE = 2 ** 63 - 1
 
+_SCHEMA_VERSION = 1
+
 _DEFAULT_GLOBAL = {
+    "schema_version": 0,
     "is_global": False,
     "bank_name": "Twentysix bank",
     "currency": "credits",
@@ -73,13 +76,48 @@ log = logging.getLogger("red.core.bank")
 _data_deletion_lock = asyncio.Lock()
 
 
-def _init():
+async def _init():
     global _config
     _config = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _config.register_global(**_DEFAULT_GLOBAL)
     _config.register_guild(**_DEFAULT_GUILD)
     _config.register_member(**_DEFAULT_MEMBER)
     _config.register_user(**_DEFAULT_USER)
+    await _migrate_config()
+
+
+async def _migrate_config():
+    schema_version = await _config.schema_version()
+
+    if schema_version == _SCHEMA_VERSION:
+        return
+
+    if schema_version == 0:
+        await _schema_0_to_1()
+        schema_version += 1
+        await _config.schema_version.set(schema_version)
+
+
+async def _schema_0_to_1():
+    # convert floats in bank balances to ints
+
+    # don't use anything seen below in extensions, it's optimized and controlled for here,
+    # but can't be safe in 3rd party use
+
+    # this CANNOT use ctx manager, because ctx managers compare before and after,
+    # and floats can be equal to ints: (1.0 == 1) is True
+    group = _config._get_base_group(_config.USER)
+    bank_user_data = await group.all()
+    for user_config in bank_user_data.values():
+        user_config["balance"] = int(user_config["balance"])
+    await group.set(bank_user_data)
+
+    group = _config._get_base_group(_config.MEMBER)
+    bank_member_data = await group.all()
+    for guild_data in bank_member_data.values():
+        for member_config in guild_data.values():
+            member_config["balance"] = int(member_config["balance"])
+    await group.set(bank_member_data)
 
 
 async def _process_data_deletion(
@@ -191,6 +229,11 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     amount : int
         The amount the member wants to spend.
 
+    Raises
+    ------
+    TypeError
+        If the amount is not an `int`.
+
     Returns
     -------
     bool
@@ -198,6 +241,8 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
         amount, else :code:`False`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         return False
     return await get_balance(member) >= amount
@@ -212,7 +257,6 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         The member whose balance to set.
     amount : int
         The amount to set the balance to.
-
     Returns
     -------
     int
@@ -227,8 +271,12 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
     BalanceTooHigh
         If attempting to set the balance to a value greater than
         ``bank._MAX_BALANCE``.
+    TypeError
+        If the amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     guild = getattr(member, "guild", None)
@@ -452,7 +500,8 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
         group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
     if user_id is None:
-        await bot.request_offline_members(*_guilds)
+        for _guild in _guilds:
+            await _guild.chunk()
         accounts = await group.all()
         tmp = accounts.copy()
         members = bot.get_all_members() if global_bank else guild.members
@@ -799,7 +848,12 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
         If the bank is guild-specific and guild was not provided.
     ValueError
         If the amount is less than 0 or higher than 2 ** 63 - 1.
+    TypeError
+        If the amount is not an `int`.
+
     """
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if not (0 < amount <= _MAX_BALANCE):
         raise ValueError(
             "Amount must be greater than zero and less than {max}.".format(
@@ -868,9 +922,12 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
         If the bank is guild-specific and guild was not provided.
     ValueError
         If the amount is less than 0 or higher than the max allowed balance.
+    TypeError
+        If the amount is not an `int`.
 
     """
-    amount = int(amount)
+    if not isinstance(amount, int):
+        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     max_bal = await get_max_balance(guild)
 
     if not (0 <= amount <= max_bal):
@@ -905,7 +962,9 @@ def cost(amount: int):
 
     Other exceptions will propagate and will be handled by Red's (and/or
     any other configured) error handling.
+
     """
+    # TODO: Add documentation for input/output/exceptions
     if not isinstance(amount, int) or amount < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 

@@ -10,6 +10,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
+from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
 
 _ = Translator("Cleanup", __file__)
@@ -115,13 +116,13 @@ class Cleanup(commands.Cog):
         return collected
 
     @commands.group()
-    @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
         """Delete messages."""
         pass
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def text(
         self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
@@ -171,6 +172,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def user(
         self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
@@ -234,6 +236,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def after(
         self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
@@ -269,6 +272,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def before(
         self,
@@ -309,6 +313,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def between(
         self,
@@ -317,7 +322,7 @@ class Cleanup(commands.Cog):
         two: RawMessageIds,
         delete_pinned: bool = False,
     ):
-        """Delete the messages between Messsage One and Message Two, providing the messages IDs.
+        """Delete the messages between Message One and Message Two, providing the messages IDs.
 
         The first message ID should be the older message and the second one the newer.
 
@@ -354,6 +359,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def messages(
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
@@ -386,6 +392,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="bot")
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
@@ -416,10 +423,9 @@ class Cleanup(commands.Cog):
             is_cc = lambda name: False
         alias_cog = self.bot.get_cog("Alias")
         if alias_cog is not None:
-            alias_names: Set[str] = (
-                set((a.name for a in await alias_cog._aliases.get_global_aliases()))
-                | set(a.name for a in await alias_cog._aliases.get_guild_aliases(ctx.guild))
-            )
+            alias_names: Set[str] = set(
+                a.name for a in await alias_cog._aliases.get_global_aliases()
+            ) | set(a.name for a in await alias_cog._aliases.get_guild_aliases(ctx.guild))
             is_alias = lambda name: name in alias_names
         else:
             is_alias = lambda name: False
@@ -463,6 +469,7 @@ class Cleanup(commands.Cog):
         await mass_purge(to_delete, channel)
 
     @cleanup.command(name="self")
+    @check_self_permissions()
     async def cleanup_self(
         self,
         ctx: commands.Context,
@@ -538,6 +545,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="spam")
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: positive_int = PositiveInt(50)):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
@@ -559,7 +567,7 @@ class Cleanup(commands.Cog):
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel=ctx.channel, limit=number, check=check, before=ctx.message,
+            channel=ctx.channel, limit=number, check=check, before=ctx.message
         )
 
         if len(to_delete) > 100:

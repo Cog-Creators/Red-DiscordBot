@@ -3,7 +3,7 @@ commands.converter
 ==================
 This module contains useful functions and classes for command argument conversion.
 
-Some of the converters within are included provisionaly and are marked as such.
+Some of the converters within are included provisionally and are marked as such.
 """
 import functools
 import re
@@ -75,7 +75,7 @@ def parse_timedelta(
     """
     This converts a user provided string into a timedelta
 
-    The units should be in order from largest to smallest. 
+    The units should be in order from largest to smallest.
     This works with or without whitespace.
 
     Parameters
@@ -165,7 +165,7 @@ else:
 
     class DictConverter(dpy_commands.Converter):
         """
-        Converts pairs of space seperated values to a dict
+        Converts pairs of space separated values to a dict
         """
 
         def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):

@@ -24,7 +24,7 @@ class AliasEntry:
     uses: int
 
     def __init__(
-        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int],
+        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int]
     ):
         super().__init__()
         self.name = name
@@ -106,7 +106,7 @@ class AliasCache:
                     break
             else:
                 continue
-            # basically, don't build a context manager wihout a need.
+            # basically, don't build a context manager without a need.
             async with self.config.guild_from_id(guild_id).entries() as entry_list:
                 for a in entry_list:
                     if a.get("creator", 0) == user_id:
@@ -161,7 +161,7 @@ class AliasCache:
         return aliases
 
     async def get_alias(
-        self, guild: Optional[discord.Guild], alias_name: str,
+        self, guild: Optional[discord.Guild], alias_name: str
     ) -> Optional[AliasEntry]:
         """Returns an AliasEntry object if the provided alias_name is a registered alias"""
         server_aliases: List[AliasEntry] = []
