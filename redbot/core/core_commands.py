@@ -2579,6 +2579,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
         driver = storage_type()
+
+        from redbot.core.data_manager import basic_config
+
+        data_path = Path(basic_config["DATA_PATH"])
         disabled_intents = (
             ", ".join(
                 intent_name.replace("_", " ").title()
@@ -2603,6 +2607,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 inline=False,
             )
             e.add_field(name="Storage type", value=driver, inline=False)
+            e.add_field(name="Data path", value=data_path, inline=False)
             e.add_field(name="Disabled intents", value=disabled_intents, inline=False)
             await ctx.send(embed=e)
         else:
@@ -2617,6 +2622,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
                 + "Storage type: {}\n".format(driver)
+                + "Data path: {}\n".format(data_path)
+                + "Disabled intents: {}\n".format(disabled_intents)
             )
             await ctx.send(box(info))
 
