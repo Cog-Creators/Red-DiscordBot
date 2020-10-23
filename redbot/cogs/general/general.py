@@ -87,7 +87,7 @@ class General(commands.Cog):
         To denote options which include whitespace, you should use
         double quotes.
         """
-        choices = [escape(c, mass_mentions=True) for c in choices]
+        choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
             await ctx.send(_("Not enough options to pick from."))
         else:
@@ -455,7 +455,7 @@ class General(commands.Cog):
                 data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
             if guild.premium_tier != 0:
                 nitro_boost = _(
-                    "Tier {boostlevel} with {nitroboosters} boosters\n"
+                    "Tier {boostlevel} with {nitroboosters} boosts\n"
                     "File size limit: {filelimit}\n"
                     "Emoji limit: {emojis_limit}\n"
                     "VCs max bitrate: {bitrate}"
@@ -505,9 +505,12 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{word} by {author}").format(
+                    title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
+                    if len(title) > 256:
+                        title = "{}...".format(title[:253])
+                    embed.title = title
                     embed.url = ud["permalink"]
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)

@@ -49,7 +49,7 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:232
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
-msgstr ""
+msgstr "Você tentou criar um novo alias com o nome {} mas o alias já existe no servidor."
 
 #: redbot/cogs/alias/alias.py:243
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."

@@ -62,8 +62,7 @@ class LRUDict(MutableMapping[_KT, _VT]):
     def pop(self, key: _KT) -> _VT:
         return self._dict.pop(key)
 
-    # all of the below access all of the items, and therefore shouldnt modify the ordering for
-    # eviction
+    # all of the below access all of the items, and therefore shouldn't modify the ordering for eviction
     def keys(self) -> KeysView[_KT]:
         return self._dict.keys()
 
