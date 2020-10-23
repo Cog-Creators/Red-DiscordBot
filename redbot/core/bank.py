@@ -111,8 +111,6 @@ async def _schema_0_to_1():
     for user_config in bank_user_data.values():
         if "balance" in user_config:
             user_config["balance"] = int(user_config["balance"])
-        else:
-            user_config["balance"] = 0
     await group.set(bank_user_data)
 
     group = _config._get_base_group(_config.MEMBER)
