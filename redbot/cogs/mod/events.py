@@ -45,7 +45,11 @@ class Events(MixinMeta):
         guild, author = message.guild, message.author
         mention_spam = await self.config.guild(guild).mention_spam.all()
 
-        mentions = set(message.mentions)
+        if mention_spam["strict"]:  # if strict is enabled
+            mentions = message.raw_mentions
+        else:  # if not enabled
+            mentions = set(message.mentions)
+
         if mention_spam["ban"]:
             if len(mentions) >= mention_spam["ban"]:
                 try:
@@ -157,10 +161,10 @@ class Events(MixinMeta):
             async with self.config.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
-                if after.name in name_list:
+                if before.name in name_list:
                     # Ensure order is maintained without duplicates occurring
-                    name_list.remove(after.name)
-                name_list.append(after.name)
+                    name_list.remove(before.name)
+                name_list.append(before.name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 
@@ -173,8 +177,8 @@ class Events(MixinMeta):
             async with self.config.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
                     nick_list.remove(None)
-                if after.nick in nick_list:
-                    nick_list.remove(after.nick)
-                nick_list.append(after.nick)
+                if before.nick in nick_list:
+                    nick_list.remove(before.nick)
+                nick_list.append(before.nick)
                 while len(nick_list) > 20:
                     nick_list.pop(0)

@@ -46,7 +46,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:115
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Conexão com a Lavalink foi perdida."
 
 #: redbot/cogs/audio/core/events/dpy.py:123
 msgid "No Player Available"

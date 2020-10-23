@@ -21,11 +21,11 @@ msgstr "API ключ Spotify или секрет клиента были уст�
 
 #: redbot/cogs/audio/apis/interface.py:324
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr "Не является правильным Spotify плейлистом/альбомом URL или кодом."
+msgstr "Это не похоже на действительный адрес или код Spotify."
 
 #: redbot/cogs/audio/apis/interface.py:445
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr "Это не похоже на поддерживаемый Spotify URL или код."
+msgstr "Возможно, этот формат файла не поддерживается."
 
 #: redbot/cogs/audio/apis/interface.py:511
 msgid "The connection was reset while loading the playlist."

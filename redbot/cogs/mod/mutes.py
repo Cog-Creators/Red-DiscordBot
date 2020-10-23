@@ -6,8 +6,9 @@ import discord
 from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import format_perms_list
-from redbot.core.utils.mod import get_audit_reason, is_allowed_by_hierarchy
+from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
+from .utils import is_allowed_by_hierarchy
 
 T_ = i18n.Translator("Mod", __file__)
 
