@@ -500,7 +500,8 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
         group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
     if user_id is None:
-        await bot.request_offline_members(*_guilds)
+        for _guild in _guilds:
+            await _guild.chunk()
         accounts = await group.all()
         tmp = accounts.copy()
         members = bot.get_all_members() if global_bank else guild.members
