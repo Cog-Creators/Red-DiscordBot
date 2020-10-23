@@ -220,3 +220,16 @@ def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
             log.exception(f"{task.get_name()} raised an Exception", exc_info=exc)
+
+
+def has_internal_server():
+    async def pred(ctx: commands.Context):
+        manager = getattr(ctx.cog, "player_manager", None)
+        if manager is not None:
+            return not (
+                getattr(ctx.cog, "_shutdown", True) is True
+                or getattr(ctx.cog, "_proc", None) is None
+            )
+        return manager is not None
+
+    return commands.check(pred)

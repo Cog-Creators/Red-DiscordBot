@@ -1,6 +1,8 @@
 import asyncio
 import contextlib
 import logging
+import os
+import tarfile
 from pathlib import Path
 
 from typing import Union
@@ -18,7 +20,7 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
-from ...utils import CacheLevel, PlaylistScope
+from ...utils import CacheLevel, PlaylistScope, has_internal_server
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
 
@@ -1128,6 +1130,43 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
 
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+
+    @command_audioset.command(name="logs")
+    @commands.is_owner()
+    @has_internal_server()
+    @commands.guild_only()
+    async def command_audioset_logs(self, ctx: commands.Context):
+        """Sends the Lavalink server logs to your DMs."""
+        datapath = cog_data_path(raw_name="Audio")
+        logs = datapath / "logs" / "spring.log"
+        zip_name = None
+        try:
+            try:
+                if not (logs.exists() and logs.is_file()):
+                    return await ctx.send(_("No logs found in your data folder."))
+            except OSError:
+                return await ctx.send(_("No logs found in your data folder."))
+
+            def check(path):
+                return os.path.getsize(str(path)) > (8388608 - 1000)
+
+            if check(logs):
+                zip_name = logs.with_suffix(".tar.gz")
+                with tarfile.open(zip_name, "w:gz") as tar:
+                    tar.add(str(logs), arcname=zip_name.relative_to(logs), recursive=False)
+                if check(zip_name):
+                    await ctx.send(
+                        _("Logs are too large, you can find them in {path}").format(
+                            path=zip_name.absolute()
+                        )
+                    )
+                else:
+                    await ctx.author.send(file=discord.File(str(zip_name)))
+            else:
+                await ctx.author.send(file=discord.File(str(logs)))
+        finally:
+            if zip_name is not None:
+                zip_name.unlink(missing_ok=True)
 
     @command_audioset.command(name="status")
     @commands.is_owner()
