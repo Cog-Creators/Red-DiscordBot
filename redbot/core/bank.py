@@ -119,8 +119,6 @@ async def _schema_0_to_1():
         for member_config in guild_data.values():
             if "balance" in member_config:
                 member_config["balance"] = int(member_config["balance"])
-            else:
-                member_config["balance"] = 0
     await group.set(bank_member_data)
 
 
