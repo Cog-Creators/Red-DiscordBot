@@ -34,11 +34,11 @@ Audio
 - Fixed YouTube searching issues (:issue:`4504`)
 - Fixed YouTube age restricted track playback (:issue:`4504`)
 - Removed lavalink logs from being added to backup (:issue:`4453`, :issue:`4452`)
-- Added Global Audio API, to cut down on Youtube 429 errors (:issue:`4446`)
-- Added persistent queues, allowing for queues to ne restored after being closed (:issue:`4446`)
+- Added Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past users quota. (:issue:`4446`)
+- Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
 - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
-- Added Spotify search locale per user (:issue:`4446`)
+- Added ``[p]audioset mycountrycode``, allowing Spotify search locale per user (:issue:`4446`)
 - Added ``[p]llsetup java``, allowing for custom Java executable path (:issue:`4446`)
 
 Cleanup
