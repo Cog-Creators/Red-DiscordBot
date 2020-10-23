@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -72,12 +72,12 @@ msgstr "X sayı da son mesajları siler.\\n\\n        Örneğin:\\n            `
 msgid "Clean up command messages and messages from the bot."
 msgstr "Komut mesajlarını ve mesajları bottan temizleyin."
 
-#: redbot/cogs/cleanup/cleanup.py:473
+#: redbot/cogs/cleanup/cleanup.py:472
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
 msgstr "Botun sahip olduğu mesajları temizleyin. Varsayılan olarak, tüm iletiler temizlenir.\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:543
+#: redbot/cogs/cleanup/cleanup.py:542
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
 msgstr "Kanaldaki yinelenen mesajları son X mesajından siler ve yalnızca bir kopyasını tutar.\\n\\n Varsayılan değeri 50.\\n        "
@@ -88,9 +88,9 @@ msgstr "{} geçersiz mesaj ID'si."
 
 #: redbot/cogs/cleanup/converters.py:27
 msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{arg} tamsayı değil."
 
 #: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} pozitif bir tamsayı değil."
 

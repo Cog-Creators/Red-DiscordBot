@@ -289,7 +289,7 @@ msgstr "Désactivé"
 
 #: redbot/cogs/audio/core/commands/audioset.py:438
 msgid "\\nRepeat has been disabled."
-msgstr "\\nLa répétition a été désactivé."
+msgstr "\\nLa répétition a été désactivée."
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 msgid "\\nAuto-disconnecting at queue end has been disabled."
@@ -408,11 +408,11 @@ msgstr "Impossible de faire correspondre '{arg}' à une playlist"
 
 #: redbot/cogs/audio/core/commands/audioset.py:517
 msgid "No Tracks Found"
-msgstr "Aucunes pistes trouvées"
+msgstr "Aucune piste trouvée"
 
 #: redbot/cogs/audio/core/commands/audioset.py:518
 msgid "Playlist {name} has no tracks."
-msgstr "La playlist {name} n'a pas de pistes."
+msgstr "La liste de lecture {name} n'a pas de pistes."
 
 #: redbot/cogs/audio/core/commands/audioset.py:526
 #: redbot/cogs/audio/core/commands/playlists.py:1537
@@ -514,7 +514,7 @@ msgstr "Temps invalide"
 #: redbot/cogs/audio/core/commands/audioset.py:707
 #: redbot/cogs/audio/core/commands/audioset.py:1134
 msgid "Seconds can't be less than zero."
-msgstr "Les secondes ne peut être inférieure à zéro."
+msgstr "Les secondes ne peuvent être inférieures à zéro."
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 msgid "Empty disconnect disabled."
@@ -553,7 +553,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:750
 msgid "Invalid Price"
-msgstr "Prix invalid"
+msgstr "Prix invalide"
 
 #: redbot/cogs/audio/core/commands/audioset.py:750
 msgid "Price can't be less than zero."
@@ -730,11 +730,11 @@ msgstr "Caché"
 #: redbot/cogs/audio/core/commands/audioset.py:1033
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "US Top 100"
-msgstr ""
+msgstr "Top 100 des États-Unis"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1037
 msgid "Auto-play Settings"
-msgstr ""
+msgstr "Paramètres de lecture automatique"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1039
 msgid "Playlist name:    [{pname}]\\n"
@@ -746,7 +746,7 @@ msgstr "ID de la playlist : [{pid}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1041
 msgid "Playlist scope:   [{pscope}]\\n"
-msgstr ""
+msgstr "Portée de la playlist : [{pscope}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1047
 #: redbot/cogs/audio/core/commands/audioset.py:1251
@@ -756,19 +756,19 @@ msgstr "Paramètres du cache"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1049
 msgid "Max age:                [{max_age}]\\n"
-msgstr ""
+msgstr "Âge max : [{max_age}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1050
 msgid "Local Spotify cache:    [{spotify_status}]\\n"
-msgstr ""
+msgstr "Cache Spotify local : [{spotify_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1051
 msgid "Local Youtube cache:    [{youtube_status}]\\n"
-msgstr ""
+msgstr "Cache Youtube local : [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1052
 msgid "Local Lavalink cache:   [{lavalink_status}]\\n"
-msgstr ""
+msgstr "Cache locale Lavalink : [{lavalink_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1056
 #: redbot/cogs/audio/core/commands/audioset.py:1245
@@ -778,19 +778,19 @@ msgstr "jours"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1066
 msgid "Lavalink Settings"
-msgstr ""
+msgstr "Paramètres de Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgstr "Version Cog : [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr ""
+msgstr "Red-Lavalink: [{lavalink_version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr ""
+msgstr "Serveur externe : [{use_external_lavalink}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\n"
@@ -860,7 +860,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1210
 msgid "Country Code set to {country}."
-msgstr ""
+msgstr "Code pays défini à {country}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1218
 #, docstring
@@ -946,7 +946,7 @@ msgstr "Aucune lecture en cours."
 #: redbot/cogs/audio/core/commands/controller.py:44
 #: redbot/cogs/audio/core/commands/controller.py:50
 msgid "Unable To Disconnect"
-msgstr ""
+msgstr "Impossible de se déconnecter"
 
 #: redbot/cogs/audio/core/commands/controller.py:45
 #: redbot/cogs/audio/core/commands/controller.py:247
@@ -975,7 +975,7 @@ msgstr "Lecture en cours."
 
 #: redbot/cogs/audio/core/commands/controller.py:95
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n Demandé par : **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:99
 msgid "Nothing."
@@ -1600,7 +1600,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:126
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Serveur externe Lavalink défini à Vrai."
 
 #: redbot/cogs/audio/core/commands/llset.py:81
 msgid "Host set to {host}."
@@ -2276,7 +2276,7 @@ msgstr "Les playlists personnalisées ne peuvent pas être mises à jour."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1676
 msgid "Tracks removed"
-msgstr ""
+msgstr "Pistes retirées"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1678
 #: redbot/cogs/audio/core/commands/playlists.py:1698
@@ -2285,7 +2285,7 @@ msgstr "Page {page_num}/{total_pages}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1696
 msgid "Tracks added"
-msgstr ""
+msgstr "Pistes ajoutées"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1710
 msgid "No changes for {name} (`{id}`) [**{scope}**]."

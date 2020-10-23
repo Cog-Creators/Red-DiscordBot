@@ -1,65 +1,22 @@
-# Core
-redbot/core/bank.py                      @palmtree5
-redbot/core/checks.py                    @tekulvw
-redbot/core/cli.py                       @tekulvw
-redbot/core/config.py                    @tekulvw
-redbot/core/cog_manager.py               @tekulvw
-redbot/core/core_commands.py             @tekulvw
-redbot/core/context.py                   @Tobotimus
-redbot/core/commands/*                   @mikeshardmind
-redbot/core/data_manager.py              @tekulvw
-redbot/core/dev_commands.py              @tekulvw
-redbot/core/drivers/*                    @tekulvw
-redbot/core/events.py                    @tekulvw
-redbot/core/global_checks.py             @tekulvw
-redbot/core/i18n.py                      @tekulvw
-redbot/core/modlog.py                    @palmtree5
-redbot/core/rpc.py                       @tekulvw
-redbot/core/utils/chat_formatting.py     @tekulvw
-redbot/core/utils/mod.py                 @palmtree5
-redbot/core/utils/data_converter.py      @mikeshardmind
-redbot/core/utils/antispam.py            @mikeshardmind
-redbot/core/utils/tunnel.py              @mikeshardmind
-redbot/core/utils/caching.py             @mikeshardmind
-redbot/core/utils/common_filters.py      @mikeshardmind
-redbot/core/utils/dbtools.py             @mikeshardmind
-
 # Cogs
-redbot/cogs/admin/*                 @tekulvw
-redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/**                @aikaterna @Drapersniper
-redbot/cogs/bank/*                  @tekulvw
-redbot/cogs/cleanup/*               @palmtree5
-redbot/cogs/customcom/*             @palmtree5
-redbot/cogs/downloader/*            @tekulvw @jack1142
-redbot/cogs/economy/*               @palmtree5
-redbot/cogs/filter/*                @palmtree5
-redbot/cogs/general/*               @palmtree5
-redbot/cogs/image/*                 @palmtree5
-redbot/cogs/mod/*                   @palmtree5
-redbot/cogs/modlog/*                @palmtree5
-redbot/cogs/streams/*               @Twentysix26 @palmtree5
-redbot/cogs/trivia/*                @Tobotimus
-redbot/cogs/reports/*               @mikeshardmind
-redbot/cogs/permissions/*           @mikeshardmind
-redbot/cogs/warnings/*              @palmtree5
+/redbot/cogs/audio/** @aikaterna @Drapersniper
+/redbot/cogs/downloader/* @jack1142
+/redbot/cogs/streams/* @palmtree5
 
-# Docs
-docs/*                              @tekulvw @palmtree5
+# Trivia Lists
+/redbot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna
 
 # Tests
-tests/cogs/downloader/*             @jack1142
+/redbot/pytest/downloader* @jack1142
+/tests/cogs/downloader/* @jack1142
 
-# Setup, instance setup, and running the bot
-setup.py                            @tekulvw
-redbot/__init__.py                  @tekulvw
-redbot/__main__.py                  @tekulvw @mikeshardmind
-redbot/setup.py                     @tekulvw
+# Schemas
+/schema/* @jack1142
 
-# Others
-.travis.yml                         @Kowlin
-crowdin.yml                         @Kowlin
-.github/workflows/*                 @Kowlin
+# CI
+/.travis.yml @Kowlin
+/crowdin.yml @Kowlin
+/.github/workflows/* @Kowlin
 
 # Excludes
-**/locales/*                        @ghost
+**/locales/* @ghost

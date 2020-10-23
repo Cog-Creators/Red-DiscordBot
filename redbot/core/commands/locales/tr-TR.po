@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -17,39 +17,35 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:525
 msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+msgstr "\\\"{argument}\\\" bir sayı değil."
 
-#: redbot/core/commands/converter.py:113
+#: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr ""
 
-#: redbot/core/commands/converter.py:119
+#: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:125
+#: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:153
+#: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
-msgstr ""
+msgstr "Sunucu \\\"{name}\\\" bulunamadı."
 
-#: redbot/core/commands/converter.py:183 redbot/core/commands/converter.py:185
-msgid "The provided tokens are not in a valid format."
-msgstr ""
-
-#: redbot/core/commands/converter.py:239
+#: redbot/core/commands/converter.py:187
 msgid "Unexpected key {key}"
 msgstr ""
 
-#: redbot/core/commands/converter.py:441
+#: redbot/core/commands/converter.py:389
 msgid "Expected one of: {}"
 msgstr ""
 
 #: redbot/core/commands/help.py:103
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: redbot/core/commands/help.py:105
 msgid "Yes"
@@ -69,11 +65,11 @@ msgstr ""
 
 #: redbot/core/commands/help.py:270
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr ""
+msgstr "{ctx.clean_prefix}help <command> yazarak bir komut hakkında daha fazla bilgi alabilirsiniz. Bu komutu kullanarak {ctx.clean_prefix}help <category> kategori hakkında bilgi alabilirsiniz."
 
 #: redbot/core/commands/help.py:300
 msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr ""
+msgstr "`Komut: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
 
 #: redbot/core/commands/help.py:341
 msgid "**__Subcommands:__**"
@@ -87,8 +83,8 @@ msgstr "**__Diğer komutlar:__** (devamı)"
 msgid "Subcommands:"
 msgstr "Diğer komutlar:"
 
-#: redbot/core/commands/help.py:418 redbot/core/commands/help.py:670
-#: redbot/core/commands/help.py:683 redbot/core/commands/help.py:702
+#: redbot/core/commands/help.py:418 redbot/core/commands/help.py:673
+#: redbot/core/commands/help.py:686 redbot/core/commands/help.py:705
 msgid "{ctx.me.display_name} Help Menu"
 msgstr ""
 
@@ -98,41 +94,41 @@ msgstr ""
 
 #: redbot/core/commands/help.py:516
 msgid "**__Commands:__**"
-msgstr ""
+msgstr "**__Komutlar:__**"
 
 #: redbot/core/commands/help.py:518
 msgid "**__Commands:__** (continued)"
-msgstr ""
+msgstr "**__Komutlar:__** (devamı)"
 
 #: redbot/core/commands/help.py:528
 msgid "Commands:"
-msgstr ""
+msgstr "Komutlar:"
 
 #: redbot/core/commands/help.py:570
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Kategori Yok:__**"
 
 #: redbot/core/commands/help.py:583
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (devamı)"
 
 #: redbot/core/commands/help.py:599 redbot/core/commands/help.py:613
 msgid "No Category:"
-msgstr ""
+msgstr "Kategori Yok:"
 
-#: redbot/core/commands/help.py:679
+#: redbot/core/commands/help.py:682
 msgid "Help topic for *{command_name}* not found."
 msgstr ""
 
-#: redbot/core/commands/help.py:696
+#: redbot/core/commands/help.py:699
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
 msgstr ""
 
-#: redbot/core/commands/help.py:771
+#: redbot/core/commands/help.py:774
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr "Size DM'den yardım mesajı gönderemedim. Ya beni engelledin ya da bu sunucuda Dm'leri devre dışı bıraktın."
 
-#: redbot/core/commands/help.py:809
+#: redbot/core/commands/help.py:812
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "

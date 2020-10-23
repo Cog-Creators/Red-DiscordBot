@@ -1,9 +1,13 @@
 import asyncio
 import logging
 import time
+from pathlib import Path
+
 from typing import Dict
 
 import lavalink
+
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 from ...audio_logging import debug_exc_log
@@ -11,6 +15,7 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
@@ -48,6 +53,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         stop_times.pop(sid)
                         try:
                             player = lavalink.get_player(sid)
+                            await self.api_interface.persistent_queue_api.drop(sid)
                             await player.stop()
                             await player.disconnect()
                         except Exception as err:

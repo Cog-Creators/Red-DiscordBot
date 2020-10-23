@@ -730,7 +730,7 @@ msgstr "Umieszczone w pamięci podręcznej"
 #: redbot/cogs/audio/core/commands/audioset.py:1033
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "US Top 100"
-msgstr ""
+msgstr "Hot 100"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1037
 msgid "Auto-play Settings"
@@ -782,7 +782,7 @@ msgstr "Ustawienia Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgstr "Wersja Cog'a:            [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
@@ -794,7 +794,8 @@ msgstr "Serwer zewnętrzny:        [{use_external_lavalink}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\n"
-msgstr ""
+msgstr "Kompilacja Lavalink:         [{llbuild}]\\nGałąź Lavalink:        [{llbranch}]\\nData wydania:\n"
+"[{build_time}]\\nWersja Lavaplayer:     [{lavaplayer}]\\nWersja Java:           [{jvm}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1093
 msgid "Localtracks path:       [{localpath}]\\n"
@@ -1772,7 +1773,7 @@ msgstr "Wymuś odtwarzanie adresu URL lub wyszukiwanie utworu."
 
 #: redbot/cogs/audio/core/commands/player.py:134
 msgid "Only single tracks work with bump play."
-msgstr ""
+msgstr "Tylko pojedyncze utwory działają z funkcją bump play."
 
 #: redbot/cogs/audio/core/commands/player.py:234
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
@@ -1788,7 +1789,7 @@ msgstr "Utwór nie jest odtwarzalny."
 #: redbot/cogs/audio/core/commands/player.py:747
 #: redbot/cogs/audio/core/commands/player.py:851
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "** {suffix} ** nie jest w pełni obsługiwanym formatem, przez co niektóre utwory mogą nie być odtwarzane."
 
 #: redbot/cogs/audio/core/commands/player.py:275
 msgid "This track is not allowed in this server."
@@ -1932,7 +1933,7 @@ msgstr "szukaj"
 
 #: redbot/cogs/audio/core/commands/player.py:810
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} do rozpoczęcia {type} odtwarzania: zaczyna się o #{position} w kolejce"
 
 #: redbot/cogs/audio/core/commands/player.py:834
 msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
@@ -1950,7 +1951,7 @@ msgstr "Opcje konfiguracji listy odtwarzania.\\n\\n        Informacje na temat z
 #: redbot/cogs/audio/core/commands/playlists.py:65
 #, docstring
 msgid "Add a track URL, playlist link, or quick search to a playlist.\\n\\n        The track(s) will be appended to the end of the playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\\n        "
-msgstr ""
+msgstr "Dodaj adres URL utworu, link do listy odtwarzania lub szybkie wyszukiwanie do listy odtwarzania.\\n\\n        Utwór(ory) zostanie(ną) dołączony(e) na końcu listy odtwarzania.\\n\\n        **Użycie**:\\n        ​ ​ ​ ​ `[p]playlist append nazwa_playlisty_LUB_id nazwa_utworu_LUB_url [args]`\\n\\n        **Argumenty**:\\n        ​ ​ ​ ​ Poniższe są opcjonalne:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Tylko właściciel bota może z tego korzystać**\\n\\n        **Scope(Zakres)** jest jednym z następujących:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ Użytkownik\\n\\n        **Autor** może być jednym z następujących:\\n        ​ ​ ​ ​ ID Użytkownika\\n        ​ ​ ​ ​ Wzmianka użytkownika\\n        ​ ​ ​ ​ Nazwa Użytkownika#123\\n\\n        **Gildia** może być jednym z następujących:\\n        ​ ​ ​ ​ ID Gildii\\n        ​ ​ ​ ​ Dokładna nazwa gildii\\n\\n        Przykładowe użycie:\\n        ​ ​ ​ ​ `[p]playlist append PlaylistaGildiowa Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append PlaylistaGildiowa Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append PlaylistaGildiowa Hello by Adele --scope Global --Author Draper#6666`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:118
 #: redbot/cogs/audio/core/commands/playlists.py:296
@@ -2046,7 +2047,7 @@ msgstr "Lista odtwarzania {name} (`{from_id}`) została skopiowana z {from_scope
 #: redbot/cogs/audio/core/commands/playlists.py:347
 #, docstring
 msgid "Create an empty playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\\n        "
-msgstr ""
+msgstr "Tworzy pustą listę odtwarzania.\\n\\n        **Użycie **:\\n        ​ ​ ​ ​ `[p]playlist create nazwa_playlisty [args]`\\n\\n        **Args(Argumenty)**:\\n        ​ ​ ​ ​ Poniższe są opcjonalne:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Tylko właściciel bota może z tego korzystać**\\n\\n        **Scope(Zakres)** jest jednym z poniższych:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Gildia\\n        ​ ​ ​ ​ Użytkownik\\n\\n        **Author(Autor)** może być jednym z następujących:\\n        ​ ​ ​ ID Użytkownika\\n        ​ ​ ​ ​ Wzmianka użytkownika\\n        ​ ​ ​ ​ Nazwa Użytkownika#123\\n\\n        **Guild** może być jednym z następujących:\\n        ​ ​ ​ ​ ID Gildii \\n        ​ ​ ​ ​ Dokładna nazwa gildii\\n\\n        Przykładowe zastosowanie:\\n        ​ ​ ​ ​ `[p]playlist create PlaylistaGildiowa`\\n        ​ ​ ​ ​ `[p]playlist create PlaylistaGildiowa --scope Global`\\n        ​ ​ ​ ​ `[p]playlist create PlaylistaGildiowa --scope Użytkownik`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:400
 #: redbot/cogs/audio/core/commands/playlists.py:1105
@@ -2075,7 +2076,7 @@ msgstr "Utworzono pustą listę odtwarzania {name} (`{id}`) [**{scope}**]."
 #: redbot/cogs/audio/core/commands/playlists.py:425
 #, docstring
 msgid "Delete a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\\n        "
-msgstr ""
+msgstr "Usuwa zapisaną playlistę.\\n\\n        **Użycie **:\\n        ​ ​ ​ ​  `[p]playlist delete nazwa_playlisty_LUB_id [args]`\\n\\n        **Args(Argumenty)**:\\n        ​ ​ ​ ​ Poniższe są opcjonalne:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Tylko właściciel bota może z tego korzystać**\\n\\n        **Scope(Zakres)** jest jednym z poniższych:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Gildia\\n        ​ ​ ​ ​ Użytkownik\\n\\n        **Author(Autor)** może być jednym z następujących:\\n        ​ ​ ​ ID Użytkownika\\n        ​ ​ ​ ​ Wzmianka użytkownika\\n        ​ ​ ​ ​ Nazwa Użytkownika#123\\n\\n        **Guild** może być jednym z następujących:\\n        ​ ​ ​ ​ ID Gildii \\n        ​ ​ ​ ​ Dokładna nazwa gildii\\n\\n        Przykładowe zastosowanie:\\n        ​ ​ ​ ​ `[p]playlist delete Playlista Gildiowa`\\n        ​ ​ ​ ​ `[p]playlist delete MojaPlaylistaGildiowa --scope Global`\\n        ​ ​ ​ ​ `[p]playlist delete Moja prywatnaPlaylista --scope User`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:496
 msgid "Playlist Deleted"
@@ -2088,7 +2089,7 @@ msgstr "Usunięto listę odtwarzania {name} (`{id}`) [**{scope}**]."
 #: redbot/cogs/audio/core/commands/playlists.py:513
 #, docstring
 msgid "Remove duplicate tracks from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
-msgstr ""
+msgstr "Usuwa duplikaty piosenek z zapisanej listy odtwarzania.\\n\\n        **Użycie**:\\n        ​ ​ ​ ​ `[p]playlist dedupe nazwa_listy_lub_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ Następujące są opcjonalne:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Tylko właściciel bota może tego użyć**\\n\\n        **Scope** jest jednym z następujących:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** może być jednym z:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild**może być jednym z:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Dokładna nazwa Gildii\\n\\n        Przykładowe użycie:\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:609
 msgid "Removed {track_diff} duplicated tracks from {name} (`{id}`) [**{scope}**] playlist."

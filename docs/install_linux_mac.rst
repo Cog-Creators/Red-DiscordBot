@@ -17,7 +17,7 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.8.1 or greater
+ - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -370,7 +370,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.5 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.6 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -382,7 +382,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.5
+    pyenv global 3.8.6
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
@@ -520,8 +520,7 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-:dpy_docs:`this guide <discord.html#creating-a-bot-account>`,
-section "Creating a Bot Account".
+`this guide <bot_application_guide>`.
 
 .. tip::
    If it's the first time you're using Red, you should check our `getting-started` guide

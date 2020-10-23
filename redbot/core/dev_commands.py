@@ -13,6 +13,7 @@ from copy import copy
 import discord
 
 from . import checks, commands
+from .commands import NoParseOptional as Optional
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
 from .utils.predicates import MessagePredicate
@@ -43,7 +44,7 @@ class Dev(commands.Cog):
     def __init__(self):
         super().__init__()
         self._last_result = None
-        self.sessions = set()
+        self.sessions = {}
 
     @staticmethod
     def async_compile(source, filename, mode):
@@ -105,7 +106,7 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -159,7 +160,7 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -214,7 +215,7 @@ class Dev(commands.Cog):
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def repl(self, ctx):
         """Open an interactive REPL.
@@ -237,22 +238,36 @@ class Dev(commands.Cog):
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send(
-                _("Already running a REPL session in this channel. Exit it with `quit`.")
-            )
+            if self.sessions[ctx.channel.id]:
+                await ctx.send(
+                    _("Already running a REPL session in this channel. Exit it with `quit`.")
+                )
+            else:
+                await ctx.send(
+                    _(
+                        "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
+                    ).format(ctx.prefix)
+                )
             return
 
-        self.sessions.add(ctx.channel.id)
-        await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
+        self.sessions[ctx.channel.id] = True
+        await ctx.send(
+            _(
+                "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
+            ).format(ctx.prefix)
+        )
 
         while True:
             response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
+
+            if not self.sessions[ctx.channel.id]:
+                continue
 
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
-                self.sessions.remove(ctx.channel.id)
+                del self.sessions[ctx.channel.id]
                 return
 
             executor = None
@@ -304,6 +319,22 @@ class Dev(commands.Cog):
                 pass
             except discord.HTTPException as e:
                 await ctx.send(_("Unexpected error: `{}`").format(e))
+
+    @repl.command(aliases=["resume"])
+    async def pause(self, ctx, toggle: Optional[bool] = None):
+        """Pauses/resumes the REPL running in the current channel"""
+        if ctx.channel.id not in self.sessions:
+            await ctx.send(_("There is no currently running REPL session in this channel."))
+            return
+
+        if toggle is None:
+            toggle = not self.sessions[ctx.channel.id]
+        self.sessions[ctx.channel.id] = toggle
+
+        if toggle:
+            await ctx.send(_("The REPL session in this channel has been resumed."))
+        else:
+            await ctx.send(_("The REPL session in this channel is now paused."))
 
     @commands.command()
     @checks.is_owner()

@@ -1,0 +1,110 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: Serbian (Latin)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
+"X-Crowdin-Language: sr-CS\n"
+"X-Crowdin-File-ID: 11\n"
+"Language: sr_CS\n"
+
+#: redbot/cogs/image/image.py:15
+#, docstring
+msgid "Image related commands."
+msgstr ""
+
+#: redbot/cogs/image/image.py:44
+#, docstring
+msgid "Retrieve pictures from Imgur.\\n\\n        Make sure to set the Client ID using `[p]imgurcreds`.\\n        "
+msgstr ""
+
+#: redbot/cogs/image/image.py:52
+#, docstring
+msgid "Search Imgur for the specified term.\\n\\n        Use `count` to choose how many images should be returned.\\n        Command can return up to 5 images.\\n        "
+msgstr ""
+
+#: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
+msgid "Image count has to be between 1 and 5."
+msgstr ""
+
+#: redbot/cogs/image/image.py:65 redbot/cogs/image/image.py:127
+msgid "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
+msgstr ""
+
+#: redbot/cogs/image/image.py:77
+msgid "Your search returned no results."
+msgstr ""
+
+#: redbot/cogs/image/image.py:80
+msgid "Search results...\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
+msgid "Something went wrong. Error code is {code}."
+msgstr ""
+
+#: redbot/cogs/image/image.py:99
+#, docstring
+msgid "Get images from a subreddit.\\n\\n        You can customize the search with the following options:\\n        - `<count>`: number of images to return (up to 5)\\n        - `<sort_type>`: new, top\\n        - `<window>`: day, week, month, year, all\\n        "
+msgstr ""
+
+#: redbot/cogs/image/image.py:117
+msgid "Only 'new' and 'top' are a valid sort type."
+msgstr ""
+
+#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:206
+#: redbot/cogs/image/image.py:239
+msgid "No results found."
+msgstr ""
+
+#: redbot/cogs/image/image.py:159
+#, docstring
+msgid "Explain how to set imgur API tokens."
+msgstr ""
+
+#: redbot/cogs/image/image.py:161
+msgid "To get an Imgur Client ID:\\n1. Login to an Imgur account.\\n2. Visit this page https://api.imgur.com/oauth2/addclient.\\n3. Enter a name for your application.\\n4. Select *Anonymous usage without user authorization* for the auth type.\\n5. Set the authorization callback URL to `https://localhost`.\\n6. Leave the app website blank.\\n7. Enter a valid email address and a description.\\n8. Check the captcha box and click next.\\n9. Your Client ID will be on the next page.\\n10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:180
+#, docstring
+msgid "Retrieve the first search result from Giphy."
+msgstr ""
+
+#: redbot/cogs/image/image.py:190 redbot/cogs/image/image.py:223
+msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
+msgstr ""
+
+#: redbot/cogs/image/image.py:208
+msgid "Error contacting the Giphy API."
+msgstr ""
+
+#: redbot/cogs/image/image.py:213
+#, docstring
+msgid "Retrieve a random GIF from a Giphy search."
+msgstr ""
+
+#: redbot/cogs/image/image.py:241
+msgid "Error contacting the API."
+msgstr ""
+
+#: redbot/cogs/image/image.py:246
+#, docstring
+msgid "Explains how to set GIPHY API tokens."
+msgstr ""
+
+#: redbot/cogs/image/image.py:248
+msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
+msgstr ""
+
+#: redbot/cogs/image/image.py:261
+msgid "<your_api_key_here>"
+msgstr ""
+
