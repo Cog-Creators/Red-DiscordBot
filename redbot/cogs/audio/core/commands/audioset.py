@@ -1152,14 +1152,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             if check(logs):
                 zip_name = logs.with_suffix(".tar.gz")
+                zip_name.unlink(missing_ok=True)
                 with tarfile.open(zip_name, "w:gz") as tar:
-                    tar.add(str(logs), arcname=zip_name.relative_to(logs), recursive=False)
+                    tar.add(str(logs), arcname="spring.log", recursive=False)
                 if check(zip_name):
                     await ctx.send(
                         _("Logs are too large, you can find them in {path}").format(
                             path=zip_name.absolute()
                         )
                     )
+                    zip_name = None
                 else:
                     await ctx.author.send(file=discord.File(str(zip_name)))
             else:
