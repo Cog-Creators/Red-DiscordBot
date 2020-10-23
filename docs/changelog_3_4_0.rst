@@ -36,6 +36,7 @@ Audio
 - Fixed YouTube age restricted track playback (:issue:`4504`)
 - Fixed Audio cog not being translated when setting locale (:issue:`4492`, :issue:`4495`)
 - Removed lavalink logs from being added to backup (:issue:`4453`, :issue:`4452`)
+- Remove stream durations from being in queue duration (:issue:`4513`)
 - Added Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past users quota. (:issue:`4446`)
 - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
