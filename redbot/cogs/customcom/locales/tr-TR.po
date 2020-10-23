@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-08-27 12:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -15,222 +15,222 @@ msgstr ""
 "X-Crowdin-File-ID: 41\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/customcom/customcom.py:74
+#: redbot/cogs/customcom/customcom.py:78
 msgid "Welcome to the interactive random {cc} maker!\\nEvery message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
 msgstr "Interaktif rastgele {cc} oluşturucuya hoşgeldiniz. \\nGönderdiğiniz her mesaj {cc} kullanıldığında rastgele cevap olarak gönderilecek. Bu menü den çıkmak için `{quit}` yazın."
 
-#: redbot/cogs/customcom/customcom.py:85
+#: redbot/cogs/customcom/customcom.py:89
 msgid "Add a random response:"
 msgstr "Rastgele yanıt ekle"
 
-#: redbot/cogs/customcom/customcom.py:97
+#: redbot/cogs/customcom/customcom.py:101
 msgid "Random responses must take the same arguments!"
 msgstr "Rastgele yanıtlar aynı argümanları almalı."
 
-#: redbot/cogs/customcom/customcom.py:162
+#: redbot/cogs/customcom/customcom.py:166
 msgid "Do you want to create a 'randomized' custom command? (y/n)"
 msgstr "Rastgeleleştirilmiş özel komut oluşturmak ister misiniz? (y/n)"
 
-#: redbot/cogs/customcom/customcom.py:168
-#: redbot/cogs/customcom/customcom.py:179
+#: redbot/cogs/customcom/customcom.py:172
+#: redbot/cogs/customcom/customcom.py:183
 msgid "Response timed out, please try again later."
 msgstr "İstek zaman aşımına uğradı, lütfen daha sonra tekrar deneyin"
 
-#: redbot/cogs/customcom/customcom.py:173
+#: redbot/cogs/customcom/customcom.py:177
 msgid "What response do you want?"
 msgstr "İstediğin yanıt nedir?"
 
-#: redbot/cogs/customcom/customcom.py:213
+#: redbot/cogs/customcom/customcom.py:217
 #, docstring
 msgid "Creates commands used to display text."
 msgstr "Yazı gösterecek komutlar oluşturur"
 
-#: redbot/cogs/customcom/customcom.py:238
+#: redbot/cogs/customcom/customcom.py:242
 #, docstring
 msgid "Custom commands management."
 msgstr "Özel komut yönetimi"
 
-#: redbot/cogs/customcom/customcom.py:243
+#: redbot/cogs/customcom/customcom.py:247
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n\\n        This is helpful for copy and pasting."
-msgstr ""
+msgstr "Bir komutun Markdown özelliklerini almanıza yarar.\\n\\n        Bu, kopyala yapıştır yapmanız için kolay bir yöntemdir."
 
-#: redbot/cogs/customcom/customcom.py:264
+#: redbot/cogs/customcom/customcom.py:268
 msgid "Response #{num}/{total}"
 msgstr "Yanıt #{num}/{total}"
 
-#: redbot/cogs/customcom/customcom.py:274
+#: redbot/cogs/customcom/customcom.py:278
 msgid "Response #{num}/{total}:\\n{raw}"
 msgstr "Yanıt #{num}/{total}:\\n{raw}"
 
-#: redbot/cogs/customcom/customcom.py:285
+#: redbot/cogs/customcom/customcom.py:289
 #, docstring
 msgid "Searches through custom commands, according to the query."
 msgstr "Sorguya göre özel komutlar aracılığıyla arama yapar."
 
-#: redbot/cogs/customcom/customcom.py:297
+#: redbot/cogs/customcom/customcom.py:301
 msgid "No close matches were found."
 msgstr "Eşleşmeler bulunamadı."
 
-#: redbot/cogs/customcom/customcom.py:302
+#: redbot/cogs/customcom/customcom.py:306
 msgid "Search results"
 msgstr "Arama sonuçları"
 
-#: redbot/cogs/customcom/customcom.py:307
+#: redbot/cogs/customcom/customcom.py:311
 msgid "The following matches have been found:"
 msgstr "Aşağıdaki eşleşmeler bulundu:"
 
-#: redbot/cogs/customcom/customcom.py:312
+#: redbot/cogs/customcom/customcom.py:316
 #, docstring
 msgid "Create custom commands.\\n\\n        If a type is not specified, a simple CC will be created.\\n        CCs can be enhanced with arguments, see the guide\\n        [here](https://docs.discord.red/en/stable/cog_customcom.html).\\n        "
 msgstr "Özel komut oluşturun.\\n\\n        Eğer komut uzun geliyorsa sadece cc komutunu kullanarak komut oluştrabilirsiniz.\\n      Buradan kılavuza bakabilirsiniz \\n        [bura](https://docs.discord.red/en/stable/cog_customcom.html).\\n        "
 
-#: redbot/cogs/customcom/customcom.py:323
+#: redbot/cogs/customcom/customcom.py:327
 #, docstring
 msgid "Create a CC where it will randomly choose a response!\\n\\n        Note: This command is interactive.\\n        "
 msgstr "Rastgele cevap verecek özel komut oluşturur.\\n\\n        Not: Bu komut interaktiftir..\\n        "
 
-#: redbot/cogs/customcom/customcom.py:329
-#: redbot/cogs/customcom/customcom.py:358
+#: redbot/cogs/customcom/customcom.py:333
+#: redbot/cogs/customcom/customcom.py:362
 msgid "Custom command names cannot have spaces in them."
 msgstr "Özel komut adlarında boşluk olamaz."
 
-#: redbot/cogs/customcom/customcom.py:332
-#: redbot/cogs/customcom/customcom.py:361
+#: redbot/cogs/customcom/customcom.py:336
+#: redbot/cogs/customcom/customcom.py:365
 msgid "There already exists a bot command with the same name."
 msgstr "Bu isimle bir komut zaten bulunmakta."
 
-#: redbot/cogs/customcom/customcom.py:336
+#: redbot/cogs/customcom/customcom.py:340
 msgid "Custom command process cancelled."
 msgstr "Özel komut işlemi iptal edildi."
 
-#: redbot/cogs/customcom/customcom.py:340
-#: redbot/cogs/customcom/customcom.py:365
+#: redbot/cogs/customcom/customcom.py:344
+#: redbot/cogs/customcom/customcom.py:369
 msgid "Custom command successfully added."
 msgstr "Özel komut başarıyla eklendi."
 
-#: redbot/cogs/customcom/customcom.py:343
-#: redbot/cogs/customcom/customcom.py:368
+#: redbot/cogs/customcom/customcom.py:347
+#: redbot/cogs/customcom/customcom.py:372
 msgid "This command already exists. Use `{command}` to edit it."
 msgstr "Bu komut zaten bulunuyor. Değiştirmek için `{command}` yazın."
 
-#: redbot/cogs/customcom/customcom.py:351
+#: redbot/cogs/customcom/customcom.py:355
 #, docstring
 msgid "Add a simple custom command.\\n\\n        Example:\\n        - `[p]customcom create simple yourcommand Text you want`\\n        "
 msgstr "Basit özel komut ekler.\\n\\n        Örneğin:\\n        - `[p]customcom create simple senin_komutun İstediğiniz yazı`\\n        "
 
-#: redbot/cogs/customcom/customcom.py:380
+#: redbot/cogs/customcom/customcom.py:384
 #, docstring
 msgid "Set, edit, or view the cooldown for a custom command.\\n\\n        You may set cooldowns per member, channel, or guild. Multiple\\n        cooldowns may be set. All cooldowns must be cooled to call the\\n        custom command.\\n\\n        Example:\\n        - `[p]customcom cooldown yourcommand 30`\\n        "
 msgstr "Bu komut için bekleme süresini görün, düzenleyin.\\n\\n        Bu bekleme sürelerini kullanıcı, kanal veya sunucu bazında ayarlayabilirsiniz. Birden çok\\n        bekleme süresi ayarlanabilir. Bekleme süreleri\\n        özel komut başına ayarlanmalıdır.\\n\\n        örneğin:\\n        - `[p]customcom cooldown senin_komutun 30`\\n        "
 
-#: redbot/cogs/customcom/customcom.py:393
-#: redbot/cogs/customcom/customcom.py:430
+#: redbot/cogs/customcom/customcom.py:397
+#: redbot/cogs/customcom/customcom.py:434
 msgid "That command doesn't exist."
 msgstr "Bu komut var gibi görünmüyor."
 
-#: redbot/cogs/customcom/customcom.py:398
+#: redbot/cogs/customcom/customcom.py:402
 msgid "A {} may call this command every {} seconds"
 msgstr "{} kişisi bu komutu {} saniye de bir çalıştırabilir."
 
-#: redbot/cogs/customcom/customcom.py:402
+#: redbot/cogs/customcom/customcom.py:406
 msgid "This command has no cooldown."
 msgstr "Bu komutun bekleme süresi bulunmuyor."
 
-#: redbot/cogs/customcom/customcom.py:406
+#: redbot/cogs/customcom/customcom.py:410
 msgid "{} must be one of {}"
 msgstr "{} 'dan biri {} olmalı."
 
-#: redbot/cogs/customcom/customcom.py:410
+#: redbot/cogs/customcom/customcom.py:414
 msgid "Custom command cooldown successfully edited."
 msgstr "Özel komut bekleme süresi başarılı bir şekilde düzenlendi."
 
-#: redbot/cogs/customcom/customcom.py:413
-#: redbot/cogs/customcom/customcom.py:445
+#: redbot/cogs/customcom/customcom.py:417
+#: redbot/cogs/customcom/customcom.py:449
 msgid "That command doesn't exist. Use `{command}` to add it."
 msgstr "Bu komut bulunmuyor. Eklemek için `{command}` yazın."
 
-#: redbot/cogs/customcom/customcom.py:421
+#: redbot/cogs/customcom/customcom.py:425
 #, docstring
 msgid "Delete a custom command.\\n\\n        Example:\\n        - `[p]customcom delete yourcommand`\\n        "
 msgstr "Özel komut kaldırır.\\n\\n        Örneğin:\\n        - `[p]customcom delete senin_komutun`\\n        "
 
-#: redbot/cogs/customcom/customcom.py:428
+#: redbot/cogs/customcom/customcom.py:432
 msgid "Custom command successfully deleted."
 msgstr "Özel komut başarıyla kaldırıldı."
 
-#: redbot/cogs/customcom/customcom.py:435
+#: redbot/cogs/customcom/customcom.py:439
 #, docstring
 msgid "Edit a custom command.\\n\\n        Example:\\n        - `[p]customcom edit yourcommand Text you want`\\n        "
 msgstr "Özel komutu düzenler.\\n\\n        Örneğin:\\n        - `[p]customcom edit senin_komutun Senin yazdığın yazı`\\n        "
 
-#: redbot/cogs/customcom/customcom.py:442
+#: redbot/cogs/customcom/customcom.py:446
 msgid "Custom command successfully edited."
 msgstr "Özel komut başarıyla düzenlendi."
 
-#: redbot/cogs/customcom/customcom.py:455
+#: redbot/cogs/customcom/customcom.py:461
 #, docstring
 msgid "List all available custom commands.\\n\\n        The list displays a preview of each command's response, with\\n        markdown escaped and newlines replaced with spaces.\\n        "
 msgstr "Kullanılabilir özel komutları listeler.\\n\\n        Liste, her komutun yanıtının bir önizlemesini görüntüler, işaretlemesiz ve yeni satırlar boşluklarla değiştirilir.\\n        "
 
-#: redbot/cogs/customcom/customcom.py:464
+#: redbot/cogs/customcom/customcom.py:470
 msgid "There are no custom commands in this server. Use `{command}` to start adding some."
 msgstr "Bu sunucu da özel komut bulunmuyor. Eklemek için `{command}` yazın."
 
-#: redbot/cogs/customcom/customcom.py:480
+#: redbot/cogs/customcom/customcom.py:486
 msgid "Custom Command List"
 msgstr "Özel komut listesi"
 
-#: redbot/cogs/customcom/customcom.py:484
+#: redbot/cogs/customcom/customcom.py:490
 msgid "Page {num}/{total}"
 msgstr "{num}/{total} sayfa"
 
-#: redbot/cogs/customcom/customcom.py:494
+#: redbot/cogs/customcom/customcom.py:500
 #, docstring
 msgid "Shows a custom command's responses and its settings."
 msgstr "Özel bir komutun yanıtlarını ve ayarlarını gösterir."
 
-#: redbot/cogs/customcom/customcom.py:499
+#: redbot/cogs/customcom/customcom.py:505
 msgid "I could not not find that custom command."
 msgstr "Bu özel komutu bulamadım."
 
-#: redbot/cogs/customcom/customcom.py:510
-msgid "Deleted User"
-msgstr ""
-
 #: redbot/cogs/customcom/customcom.py:516
+msgid "Deleted User"
+msgstr "Silinmiş Kullanıcı"
+
+#: redbot/cogs/customcom/customcom.py:522
 msgid "Random"
 msgstr "Rastgele"
 
-#: redbot/cogs/customcom/customcom.py:516
+#: redbot/cogs/customcom/customcom.py:522
 msgid "Normal"
 msgstr "Normal"
 
-#: redbot/cogs/customcom/customcom.py:518
+#: redbot/cogs/customcom/customcom.py:524
 msgid "Command: {command_name}\\nAuthor: {author}\\nCreated: {created_at}\\nType: {type}\\n"
 msgstr "Komut: {command_name}\\nSahip: {author}\\nOluşturulma Tarihi: {created_at}\\nTipi: {type}\\n"
 
-#: redbot/cogs/customcom/customcom.py:530
+#: redbot/cogs/customcom/customcom.py:536
 msgid "Cooldowns:\\n"
 msgstr "Bekleme süresi:\\n"
 
-#: redbot/cogs/customcom/customcom.py:532
+#: redbot/cogs/customcom/customcom.py:538
 msgid "{num} seconds per {period}\\n"
 msgstr "{num} saniye her {period} başına\\n"
 
-#: redbot/cogs/customcom/customcom.py:535
+#: redbot/cogs/customcom/customcom.py:541
 msgid "Responses:\\n"
 msgstr "Yanıtlar"
 
-#: redbot/cogs/customcom/customcom.py:633
+#: redbot/cogs/customcom/customcom.py:639
 msgid "Too many arguments!"
 msgstr "Çok fazla argüman"
 
-#: redbot/cogs/customcom/customcom.py:637
+#: redbot/cogs/customcom/customcom.py:643
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Girdiler sırayla olmalıdır. Eksik girdiler:"
 
-#: redbot/cogs/customcom/customcom.py:663
+#: redbot/cogs/customcom/customcom.py:669
 msgid "Conflicting colon notation for argument {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
 msgstr "Bağımsız değişken için çakışan kolon gösterimi {index}: \\\"{name1}\\\" ve \\\"{name2}\\\"."
 

@@ -1,10 +1,19 @@
+import asyncio
+import contextlib
+import logging
 import time
+
 from enum import Enum, unique
+from pathlib import Path
 from typing import MutableMapping
 
 import discord
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
+
+log = logging.getLogger("red.cogs.Audio.task.callback")
+_ = Translator("Audio", Path(__file__))
 
 
 class CacheLevel:
@@ -205,3 +214,9 @@ class PlaylistScope(Enum):
     @staticmethod
     def list():
         return list(map(lambda c: c.value, PlaylistScope))
+
+
+def task_callback(task: asyncio.Task) -> None:
+    with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
+        if exc := task.exception():
+            log.exception(f"{task.get_name()} raised an Exception", exc_info=exc)

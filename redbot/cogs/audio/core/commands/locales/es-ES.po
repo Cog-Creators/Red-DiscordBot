@@ -418,7 +418,7 @@ msgstr "La lista {name} no tiene canciones."
 #: redbot/cogs/audio/core/commands/playlists.py:1537
 #: redbot/cogs/audio/core/commands/playlists.py:1642
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "La lista de reproducción {id} no existe en {scope}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:989

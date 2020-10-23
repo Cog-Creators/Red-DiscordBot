@@ -3,6 +3,7 @@ import logging
 import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
+from math import ceil
 from typing import cast, Iterable, Union, Literal
 
 import discord
@@ -13,7 +14,7 @@ from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 
@@ -482,14 +483,22 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         author = ctx.author
+        embed_requested = await ctx.embed_requested()
+        footer_message = _("Page {page_num}/{page_len}.")
         max_bal = await bank.get_max_balance(ctx.guild)
+
         if top < 1:
             top = 10
+
+        base_embed = discord.Embed(title=_("Economy Leaderboard"))
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+            base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
             bal_len_max = len(humanize_number(max_bal))
@@ -536,15 +545,43 @@ class Economy(commands.Cog):
                     f"<<{author.display_name}>>\n"
                 )
             if pos % 10 == 0:
-                highscores.append(box(temp_msg, lang="md"))
+                if embed_requested:
+                    embed = base_embed.copy()
+                    embed.description = box(temp_msg, lang="md")
+                    embed.set_footer(
+                        text=footer_message.format(
+                            page_num=len(highscores) + 1,
+                            page_len=ceil(len(bank_sorted) / 10),
+                        )
+                    )
+                    highscores.append(embed)
+                else:
+                    highscores.append(box(temp_msg, lang="md"))
                 temp_msg = header
             pos += 1
 
         if temp_msg != header:
-            highscores.append(box(temp_msg, lang="md"))
+            if embed_requested:
+                embed = base_embed.copy()
+                embed.description = box(temp_msg, lang="md")
+                embed.set_footer(
+                    text=footer_message.format(
+                        page_num=len(highscores) + 1,
+                        page_len=ceil(len(bank_sorted) / 10),
+                    )
+                )
+                highscores.append(embed)
+            else:
+                highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
-            await menu(ctx, highscores, DEFAULT_CONTROLS)
+            await menu(
+                ctx,
+                highscores,
+                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
+            )
+        else:
+            await ctx.send(_("No balances found."))
 
     @commands.command()
     @guild_only_check()

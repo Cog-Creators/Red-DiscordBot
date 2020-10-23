@@ -2,21 +2,26 @@ import asyncio
 import contextlib
 import datetime
 import logging
-from typing import Optional, Tuple, Union
+import time
+from pathlib import Path
+
+from typing import Optional, Union
 
 import discord
 import lavalink
-from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player_controller")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -67,6 +72,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
+            await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
     @commands.command(name="now")
     @commands.guild_only()
@@ -91,10 +97,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 dur = "LIVE"
             else:
                 dur = self.format_time(player.current.length)
-            song = self.get_track_description(player.current, self.local_folder_current_path) or ""
-            song += _("\n Requested by: **{track.requester}**")
-            song += "\n\n{arrow}`{pos}`/`{dur}`"
-            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
+            song = (
+                await self.get_track_description(player.current, self.local_folder_current_path)
+                or ""
+            )
+            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += "\n\n{arrow}`{pos}`/`{dur}`".format(arrow=arrow, pos=pos, dur=dur)
         else:
             song = _("Nothing.")
 
@@ -206,7 +214,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not player.current:
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        description = self.get_track_description(player.current, self.local_folder_current_path)
+        description = await self.get_track_description(
+            player.current, self.local_folder_current_path
+        )
 
         if player.current and not player.paused:
             await player.pause()
@@ -262,6 +272,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         else:
             track = player.fetch("prev_song")
+            track.extras.update(
+                {
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": ctx.author.id,
+                }
+            )
             player.add(player.fetch("prev_requester"), track)
             self.bot.dispatch("red_audio_track_enqueue", player.channel.guild, track, ctx.author)
             queue_len = len(player.queue)
@@ -269,7 +286,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.queue.insert(0, bump_song)
             player.queue.pop(queue_len)
             await player.skip()
-            description = self.get_track_description(
+            description = await self.get_track_description(
                 player.current, self.local_folder_current_path
             )
             embed = discord.Embed(title=_("Replaying Track"), description=description)
@@ -406,8 +423,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_shuffle_bumpped(self, ctx: commands.Context):
         """Toggle bumped track shuffle.
 
-        Set this to disabled if you wish to avoid bumped songs being shuffled.
-        This takes priority over `[p]shuffle`.
+        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority
+        over `[p]shuffle`.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -581,6 +598,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("requester", None)
             await player.stop()
             await self.send_embed_msg(ctx, title=_("Stopping..."))
+            await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
     @commands.command(name="summon")
     @commands.guild_only()
@@ -626,12 +644,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                await self.self_deafen(player)
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 if ctx.author.voice.channel == player.channel:
                     ctx.command.reset_cooldown(ctx)
                     return
                 await player.move_to(ctx.author.voice.channel)
+                await self.self_deafen(player)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
@@ -774,7 +794,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             index_or_url -= 1
             removed = player.queue.pop(index_or_url)
-            removed_title = self.get_track_description(removed, self.local_folder_current_path)
+            await self.api_interface.persistent_queue_api.played(
+                ctx.guild.id, removed.extras.get("enqueue_time")
+            )
+            removed_title = await self.get_track_description(
+                removed, self.local_folder_current_path
+            )
             await self.send_embed_msg(
                 ctx,
                 title=_("Removed track from queue"),
@@ -787,6 +812,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if track.uri != index_or_url:
                     clean_tracks.append(track)
                 else:
+                    await self.api_interface.persistent_queue_api.played(
+                        ctx.guild.id, track.extras.get("enqueue_time")
+                    )
                     removed_tracks += 1
             player.queue = clean_tracks
             if removed_tracks == 0:
@@ -841,7 +869,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         bump_song.extras["bumped"] = True
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
-        description = self.get_track_description(removed, self.local_folder_current_path)
+        description = await self.get_track_description(removed, self.local_folder_current_path)
         await self.send_embed_msg(
             ctx, title=_("Moved track to the top of the queue."), description=description
         )

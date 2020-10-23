@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -43,97 +43,97 @@ msgstr ""
 msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\", or \\\"clear\\\" to remove the rule"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:47
-#: redbot/cogs/permissions/permissions.py:62
+#: redbot/cogs/permissions/permissions.py:46
+#: redbot/cogs/permissions/permissions.py:61
 msgid "Rules must be either `true` or `false`."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:51
+#: redbot/cogs/permissions/permissions.py:50
 msgid "Keys under command names must be IDs (numbers) or `default`."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:55
+#: redbot/cogs/permissions/permissions.py:54
 msgid "Keys under `COMMAND` must be command names (strings)."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:66
+#: redbot/cogs/permissions/permissions.py:65
 msgid "Keys under cog names must be IDs or `default`."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:70
+#: redbot/cogs/permissions/permissions.py:69
 msgid "Keys under `COG` must be cog names (strings)."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:74
+#: redbot/cogs/permissions/permissions.py:73
 msgid "Top-level keys must be either `COG` or `COMMAND`."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:84
+#: redbot/cogs/permissions/permissions.py:83
 #, docstring
 msgid "Customise permissions for commands and cogs."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:208
+#: redbot/cogs/permissions/permissions.py:207
 #, docstring
 msgid "Command permission management tools."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:213
+#: redbot/cogs/permissions/permissions.py:212
 #, docstring
 msgid "Explain how permissions works."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:216
+#: redbot/cogs/permissions/permissions.py:215
 msgid "This cog extends the default permission model of the bot. By default, many commands are restricted based on what the command can do.\\nThis cog allows you to refine some of those restrictions. You can allow wider or narrower access to most commands using it. You cannot, however, change the restrictions on owner-only commands.\\n\\nWhen additional rules are set using this cog, those rules will be checked prior to checking for the default restrictions of the command.\\nGlobal rules (set by the owner) are checked first, then rules set for servers. If multiple global or server rules apply to the case, the order they are checked is:\\n  1. Rules about a user.\\n  2. Rules about the voice channel a user is in.\\n  3. Rules about the text channel a command was issued in.\\n  4. Rules about a role the user has (The highest role they have with a rule will be used).\\n  5. Rules about the server a user is in (Global rules only).\\n\\nFor more details, please read the [official documentation](https://docs.discord.red/en/stable/cog_permissions.html)."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:242
+#: redbot/cogs/permissions/permissions.py:241
 #, docstring
 msgid "Check if a user can run a command.\\n\\n        This will take the current context into account, such as the\\n        server and text channel.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:257
+#: redbot/cogs/permissions/permissions.py:256
 msgid "No such command"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:268
+#: redbot/cogs/permissions/permissions.py:267
 msgid "That user can run the specified command."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:270
+#: redbot/cogs/permissions/permissions.py:269
 msgid "That user can not run the specified command."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:277
+#: redbot/cogs/permissions/permissions.py:276
 #, docstring
 msgid "Manage permissions with YAML files."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:281
+#: redbot/cogs/permissions/permissions.py:280
 #, docstring
 msgid "Sends an example of the yaml layout for permissions"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:283
+#: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\\n"
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:305
+#: redbot/cogs/permissions/permissions.py:304
 #, docstring
 msgid "Set global rules with a YAML file.\\n\\n        **WARNING**: This will override reset *all* global rules\\n        to the rules specified in the uploaded file.\\n\\n        This does not validate the names of commands and cogs before\\n        setting the new rules.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:319
+#: redbot/cogs/permissions/permissions.py:318
 #, docstring
 msgid "Set rules for this server with a YAML file.\\n\\n        **WARNING**: This will override reset *all* rules in this\\n        server to the rules specified in the uploaded file.\\n        "
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:329
+#: redbot/cogs/permissions/permissions.py:328
 #, docstring
 msgid "Get a YAML file detailing all global rules."
 msgstr ""
 
-#: redbot/cogs/permissions/permissions.py:334
+#: redbot/cogs/permissions/permissions.py:333
 #: redbot/cogs/permissions/permissions.py:349
 msgid "I'm not allowed to DM you."
 msgstr ""
@@ -175,7 +175,7 @@ msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:451
 #, docstring
-msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n       `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
+msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what>` is one or more users, channels or roles the rule is for.\\n        "
 msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:463

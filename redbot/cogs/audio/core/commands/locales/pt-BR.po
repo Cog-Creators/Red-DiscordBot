@@ -734,7 +734,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1037
 msgid "Auto-play Settings"
-msgstr ""
+msgstr "Configurações de reprodução automática"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1039
 msgid "Playlist name:    [{pname}]\\n"
@@ -742,7 +742,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1040
 msgid "Playlist ID:      [{pid}]\\n"
-msgstr ""
+msgstr "ID da Playlist: [{pid}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1041
 msgid "Playlist scope:   [{pscope}]\\n"

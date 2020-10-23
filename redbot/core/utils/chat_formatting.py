@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import textwrap
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 
@@ -324,6 +325,23 @@ def underline(text: str, escape_formatting: bool = True) -> str:
     """
     text = escape(text, formatting=escape_formatting)
     return "__{}__".format(text)
+
+
+def quote(text: str) -> str:
+    """Quotes the given text.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
+    return textwrap.indent(text, "> ", lambda l: True)
 
 
 def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) -> str:

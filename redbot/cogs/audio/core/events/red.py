@@ -1,12 +1,15 @@
 import asyncio
 import logging
+from pathlib import Path
 from typing import Literal, Mapping
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.red")
+_ = Translator("Audio", Path(__file__))
 
 
 class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -15,11 +18,11 @@ class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
         self, service_name: str, api_tokens: Mapping[str, str]
     ) -> None:
         if service_name == "youtube":
-            self.api_interface.youtube_api.update_token(api_tokens)
+            await self.api_interface.youtube_api.update_token(api_tokens)
         elif service_name == "spotify":
-            self.api_interface.spotify_api.update_token(api_tokens)
+            await self.api_interface.spotify_api.update_token(api_tokens)
         elif service_name == "audiodb":
-            self.api_interface.global_cache_api.update_token(api_tokens)
+            await self.api_interface.global_cache_api.update_token(api_tokens)
 
     async def red_delete_data_for_user(
         self,

@@ -39,6 +39,10 @@ class OnCooldown(CCError):
     pass
 
 
+class CommandNotEdited(CCError):
+    pass
+
+
 class CommandObj:
     def __init__(self, **kwargs):
         self.config = kwargs.get("config")
@@ -164,9 +168,9 @@ class CommandObj:
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await self.bot.wait_for("message", check=pred, timeout=30)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 await ctx.send(_("Response timed out, please try again later."))
-                return
+                raise CommandNotEdited()
             if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
@@ -175,9 +179,9 @@ class CommandObj:
                     resp = await self.bot.wait_for(
                         "message", check=MessagePredicate.same_context(ctx), timeout=180
                     )
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     await ctx.send(_("Response timed out, please try again later."))
-                    return
+                    raise CommandNotEdited()
                 response = resp.content
 
         if response:
@@ -201,7 +205,7 @@ class CommandObj:
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
     async def delete(self, ctx: commands.Context, command: str):
-        """Delete an already exisiting custom command"""
+        """Delete an already existing custom command"""
         # Check if this command is registered
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
@@ -448,6 +452,8 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
+        except CommandNotEdited:
+            pass
 
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
