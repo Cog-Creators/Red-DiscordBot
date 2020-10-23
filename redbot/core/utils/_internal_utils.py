@@ -405,7 +405,12 @@ class ProxyCounter:
         return self.get_raw(cog.qualified_name, counter)
 
     def get_raw(self, cog_qualified_name: str, counter: str) -> int:
-        return self.__getitem__((cog_qualified_name, counter,))
+        return self.__getitem__(
+            (
+                cog_qualified_name,
+                counter,
+            )
+        )
 
     def inc(self, cog: Cog, counter: str, by: int = 1) -> int:
         return self.inc_raw(cog.qualified_name, counter, by=by)
@@ -466,7 +471,12 @@ class ProxyCounter:
         return self.contains_raw(cog.qualified_name, counter)
 
     def contains_raw(self, cog_qualified_name: str, counter: str) -> bool:
-        return self.__contains__((cog_qualified_name, counter,))
+        return self.__contains__(
+            (
+                cog_qualified_name,
+                counter,
+            )
+        )
 
     def get_all(self) -> Dict[str, Dict[str, int]]:
         return copy.deepcopy(self.__counters)
