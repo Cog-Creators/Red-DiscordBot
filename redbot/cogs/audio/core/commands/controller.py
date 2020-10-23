@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import logging
 import time
+from pathlib import Path
 
 from typing import Optional, Union
 
@@ -10,15 +11,17 @@ import discord
 import lavalink
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player_controller")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -98,9 +101,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.get_track_description(player.current, self.local_folder_current_path)
                 or ""
             )
-            song += _("\n Requested by: **{track.requester}**")
-            song += "\n\n{arrow}`{pos}`/`{dur}`"
-            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
+            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += "\n\n{arrow}`{pos}`/`{dur}`".format(arrow=arrow, pos=pos, dur=dur)
         else:
             song = _("Nothing.")
 

@@ -4,11 +4,13 @@ from pathlib import Path
 import discord
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):

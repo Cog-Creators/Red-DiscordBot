@@ -113,6 +113,7 @@ class RedBase(
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
+            help__use_tick=False,
             description="Red V3",
             invite_public=False,
             invite_perm=0,
@@ -170,6 +171,12 @@ class RedBase(
 
         if "owner_id" in kwargs:
             raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+
+        if "intents" not in kwargs:
+            intents = discord.Intents.all()
+            for intent_name in cli_flags.disable_intent:
+                setattr(intents, intent_name, False)
+            kwargs["intents"] = intents
 
         self._owner_id_overwrite = cli_flags.owner
 
@@ -246,12 +253,12 @@ class RedBase(
                 "and implement the required interfaces."
             )
 
-        # do not switch to isinstance, we want to know that this has not been overriden,
+        # do not switch to isinstance, we want to know that this has not been overridden,
         # even with a subclass.
         if type(self._help_formatter) is commands.help.RedHelpFormatter:
             self._help_formatter = formatter
         else:
-            raise RuntimeError("The formatter has already been overriden.")
+            raise RuntimeError("The formatter has already been overridden.")
 
     def reset_help_formatter(self):
         """
@@ -1148,7 +1155,7 @@ class RedBase(
 
     def remove_cog(self, cogname: str):
         cog = self.get_cog(cogname)
-        if cog is None or isinstance(cog, commands.commands._RuleDropper):
+        if cog is None:
             return
 
         for cls in inspect.getmro(cog.__class__):
@@ -1217,7 +1224,7 @@ class RedBase(
         **kwargs,
     ):
         """
-        This is a convienience wrapper around
+        This is a convenience wrapper around
 
         discord.abc.Messageable.send
 
@@ -1227,7 +1234,7 @@ class RedBase(
 
         This should realistically only be used for responding using user provided
         input. (unfortunately, including usernames)
-        Manually crafted messages which dont take any user input have no need of this
+        Manually crafted messages which don't take any user input have no need of this
 
         Returns
         -------
@@ -1305,9 +1312,6 @@ class RedBase(
                     subcommand.requires.ready_event.set()
 
     def remove_command(self, name: str) -> None:
-        command = self.get_command(name)
-        if isinstance(command, commands.commands._RuleDropper):
-            return
         command = super().remove_command(name)
         if not command:
             return

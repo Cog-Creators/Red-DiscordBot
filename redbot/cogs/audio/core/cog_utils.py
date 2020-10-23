@@ -1,10 +1,8 @@
 from abc import ABC
-from pathlib import Path
 from typing import Final
 
 from redbot import VersionInfo
 from redbot.core import commands
-from redbot.core.i18n import Translator
 
 from ..converters import get_lazy_converter, get_playlist_converter
 
@@ -12,7 +10,6 @@ __version__ = VersionInfo.from_json({"major": 2, "minor": 3, "micro": 0, "releas
 
 __author__ = ["aikaterna", "Draper"]
 
-_ = Translator("Audio", Path(__file__).parent)
 _SCHEMA_VERSION: Final[int] = 3
 _OWNER_NOTIFICATION: Final[int] = 1
 

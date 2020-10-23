@@ -1,14 +1,17 @@
 import asyncio
 import logging
+from pathlib import Path
 
 import lavalink
 
+from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):

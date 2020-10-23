@@ -3,6 +3,7 @@ import logging
 import math
 import re
 import time
+from pathlib import Path
 
 from typing import List, Optional
 
@@ -11,16 +12,17 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
-
+_ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
 
@@ -157,7 +159,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{search_choice.title} {search_choice.author} {search_choice.uri} " f"{str(query)}",
+            f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:
@@ -295,7 +297,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.author} - {track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = (
@@ -306,7 +308,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = f'**{escape(f"{track.title}", formatting=True)}**' + escape(
@@ -315,7 +317,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     string = query.to_string_user()
                     if shorten and len(string) > 40:
-                        string = "{}...".format((string[:40]).rstrip(" "))
+                        string = f"{(string[:40]).rstrip(' ')}..."
                     string = f'**{escape(f"{string}", formatting=True)}**'
             else:
                 if track.is_stream:
@@ -330,13 +332,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     title = track.title
                 string = f"{title}"
                 if shorten and len(string) > 40:
-                    string = "{}...".format((string[:40]).rstrip(" "))
+                    string = f"{(string[:40]).rstrip(' ')}..."
                     string = re.sub(RE_SQUARE, "", string)
                 string = f"**[{escape(string, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
             string = track.to_string_user() + " "
             if shorten and len(string) > 40:
-                string = "{}...".format((string[:40]).rstrip(" "))
+                string = f"{(string[:40]).rstrip(' ')}..."
             string = f'**{escape(f"{string}", formatting=True)}**'
         return string
 
@@ -391,7 +393,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def draw_time(self, ctx) -> str:
         player = lavalink.get_player(ctx.guild.id)
         paused = player.paused
-        pos = player.position
+        pos = player.position or 1
         dur = getattr(player.current, "length", player.position or 1)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
