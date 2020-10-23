@@ -2600,9 +2600,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e.add_field(name="Pip version", value=pipver, inline=True)
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
-            e.add_field(name="OS version", value=osver, inline=False)
             e.add_field(name="Storage type", value=driver, inline=True)
             e.add_field(name="Disabled intents", value=disabled_intents, inline=True)
+            e.add_field(name="OS version", value=osver, inline=False)
             e.add_field(
                 name="Python executable",
                 value=escape(sys.executable, formatting=True),
