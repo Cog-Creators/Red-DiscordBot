@@ -2580,7 +2580,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         user_who_ran = getpass.getuser()
         driver = storage_type()
 
-        from redbot.core.data_manager import basic_config
+        from redbot.core.data_manager import basic_config, config_file
 
         data_path = Path(basic_config["DATA_PATH"])
         disabled_intents = (
@@ -2601,29 +2601,39 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
             e.add_field(name="OS version", value=osver, inline=False)
+            e.add_field(name="Storage type", value=driver, inline=True)
+            e.add_field(name="Disabled intents", value=disabled_intents, inline=True)
             e.add_field(
                 name="Python executable",
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
-            e.add_field(name="Storage type", value=driver, inline=False)
-            e.add_field(name="Data path", value=data_path, inline=False)
-            e.add_field(name="Disabled intents", value=disabled_intents, inline=False)
+            e.add_field(
+                name="Data path",
+                value=escape(data_path, formatting=True),
+                inline=False,
+            )
+            e.add_field(
+                name="Metadata file",
+                value=escape(config_file, formatting=True),
+                inline=False,
+            )
             await ctx.send(embed=e)
         else:
             info = (
                 "Debug Info for Red\n\n"
                 + "Red version: {}\n".format(redver)
                 + "Python version: {}\n".format(pyver)
-                + "Python executable: {}\n".format(sys.executable)
                 + "Discord.py version: {}\n".format(dpy_version)
                 + "Pip version: {}\n".format(pipver)
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
                 + "Storage type: {}\n".format(driver)
-                + "Data path: {}\n".format(data_path)
                 + "Disabled intents: {}\n".format(disabled_intents)
+                + "Python executable: {}\n".format(sys.executable)
+                + "Data path: {}\n".format(data_path)
+                + "Metadata file: {}\n".format(config_file)
             )
             await ctx.send(box(info))
 
