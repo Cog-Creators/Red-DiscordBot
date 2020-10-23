@@ -107,6 +107,7 @@ Core
 
 - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - Added option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
+- Moved `redbot.core.checks.bot_in_a_guild()` to `redbot.core.commands.bot_in_a_guild()` (:issue:`4515`, :issue:`4510`)
 
 Bank
 ****
