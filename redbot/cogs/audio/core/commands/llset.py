@@ -9,7 +9,6 @@ from redbot.core.utils.chat_formatting import box
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-from ...utils import has_external_server
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
@@ -252,4 +251,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
         msg += _("WS Port:          [{port}]\n").format(port=ws_port)
         msg += _("Password:         [{password}]\n").format(password=password)
-        await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))
+        try:
+            await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))
+        except discord.HTTPException:
+            await ctx.send(_("I need to be able to DM you to send you this info."))

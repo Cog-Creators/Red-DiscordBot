@@ -1164,6 +1164,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     await ctx.author.send(file=discord.File(str(zip_name)))
             else:
                 await ctx.author.send(file=discord.File(str(logs)))
+        except discord.HTTPException:
+            await ctx.send(_("I need to be able to DM you to send you the logs."))
         finally:
             if zip_name is not None:
                 zip_name.unlink(missing_ok=True)

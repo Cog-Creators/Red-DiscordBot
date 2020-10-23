@@ -224,12 +224,7 @@ def task_callback(task: asyncio.Task) -> None:
 
 def has_internal_server():
     async def pred(ctx: commands.Context):
-        manager = getattr(ctx.cog, "player_manager", None)
-        if manager is not None:
-            return not (
-                getattr(ctx.cog, "_shutdown", True) is True
-                or getattr(ctx.cog, "_proc", None) is None
-            )
-        return manager is not None
+        external = await ctx.cog.config.use_external_lavalink()
+        return not external
 
     return commands.check(pred)
