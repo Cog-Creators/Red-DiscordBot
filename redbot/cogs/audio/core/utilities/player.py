@@ -1,5 +1,6 @@
 import logging
 import time
+from pathlib import Path
 
 from typing import List, Optional, Tuple, Union
 
@@ -9,6 +10,7 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import bold, escape
 
@@ -17,9 +19,10 @@ from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
 from ...utils import Notifier
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -279,6 +282,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=error.message.format(prefix=ctx.prefix)
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
             self.update_player_lock(ctx, False)
             try:
                 if enqueue_tracks:
@@ -327,16 +333,21 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "\nUse `{prefix}audioset spotifyapi` for instructions."
                     ).format(prefix=ctx.prefix),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
         elif query.is_album or query.is_playlist:
-            self.update_player_lock(ctx, True)
-            track_list = await self.fetch_spotify_playlist(
-                ctx,
-                "album" if query.is_album else "playlist",
-                query,
-                enqueue_tracks,
-                forced=forced,
-            )
-            self.update_player_lock(ctx, False)
+            try:
+                self.update_player_lock(ctx, True)
+                track_list = await self.fetch_spotify_playlist(
+                    ctx,
+                    "album" if query.is_album else "playlist",
+                    query,
+                    enqueue_tracks,
+                    forced=forced,
+                )
+            finally:
+                self.update_player_lock(ctx, False)
             return track_list
         else:
             return await self.send_embed_msg(
@@ -387,6 +398,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "try again in a few minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
             tracks = result.tracks
             playlist_data = result.playlist_info
             if not enqueue:
@@ -581,6 +595,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=title, description=desc)
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
             description = await self.get_track_description(
                 single_track, self.local_folder_current_path
             )
@@ -659,7 +676,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except Exception as e:
             self.update_player_lock(ctx, False)
             raise e
-        self.update_player_lock(ctx, False)
+        finally:
+            self.update_player_lock(ctx, False)
         return track_list
 
     async def set_player_settings(self, ctx: commands.Context) -> None:

@@ -300,7 +300,7 @@ def handle_edit(cli_flags: Namespace):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
+    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
@@ -390,6 +390,13 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 await red._config.token.set("")
                 print("Token has been reset.")
                 sys.exit(0)
+        sys.exit(1)
+    except discord.PrivilegedIntentsRequired:
+        print(
+            "Red requires all Privileged Intents to be enabled.\n"
+            "You can find out how to enable Privileged Intents with this guide:\n"
+            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents"
+        )
         sys.exit(1)
 
     return None
@@ -487,9 +494,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(
-            cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
-        )
+        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
 
         if os.name != "nt":
             # None of this works on windows.

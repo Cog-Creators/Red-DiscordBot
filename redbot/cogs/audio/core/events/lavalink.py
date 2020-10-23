@@ -1,17 +1,18 @@
 import asyncio
 import contextlib
 import logging
+from pathlib import Path
 
 import discord
 import lavalink
 
-from redbot.core.i18n import set_contextual_locales_from_guild
-
+from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -31,7 +32,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
         await set_contextual_locales_from_guild(self.bot, guild)
-
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)
         current_length = self.rgetattr(current_track, "length", None)
@@ -178,6 +178,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.current = None
             if not guild_id:
                 return
+            guild_id = int(guild_id)
             self._error_counter.setdefault(guild_id, 0)
             if guild_id not in self._error_counter:
                 self._error_counter[guild_id] = 0

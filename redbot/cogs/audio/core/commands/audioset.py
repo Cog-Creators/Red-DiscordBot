@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import logging
+from pathlib import Path
 
 from typing import Union
 
@@ -9,6 +10,7 @@ import lavalink
 
 from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -18,9 +20,11 @@ from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
 from ...utils import CacheLevel, PlaylistScope
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, PlaylistConverter, _, __version__
+from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
+
+_ = Translator("Audio", Path(__file__))
 
 
 class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -1378,7 +1382,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
         """Toggle the server settings.
 
-        Default is ON
+        Default is OFF
         """
         state = await self.config.global_db_enabled()
         await self.config.global_db_enabled.set(not state)

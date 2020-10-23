@@ -3,6 +3,7 @@ import datetime
 import logging
 import math
 import time
+from pathlib import Path
 
 from typing import MutableMapping
 
@@ -12,6 +13,7 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
@@ -24,9 +26,10 @@ from ...errors import (
     TrackEnqueueError,
 )
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -125,6 +128,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
     @commands.command(name="bumpplay")
     @commands.guild_only()
@@ -230,6 +236,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=err.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
         if isinstance(tracks, discord.Message):
             return
         elif not tracks:
@@ -248,7 +257,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
                 embed.description = _(
-                    "**{suffix}** is not a fully supported format and some " "tracks may not play."
+                    "**{suffix}** is not a fully supported format and some tracks may not play."
                 ).format(suffix=query.suffix)
             return await self.send_embed_msg(ctx, embed=embed)
         queue_dur = await self.track_remaining_duration(ctx)
@@ -611,6 +620,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "minutes."
                 ),
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
@@ -745,6 +757,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
 
                     tracks = result.tracks
                 else:
@@ -761,6 +776,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if await self.config.use_external_lavalink() and query.is_local:
@@ -877,6 +895,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "try again in a few minutes."
                         ),
                     )
+                except Exception as e:
+                    self.update_player_lock(ctx, False)
+                    raise e
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
