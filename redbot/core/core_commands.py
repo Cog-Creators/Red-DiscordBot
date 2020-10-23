@@ -2610,12 +2610,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             e.add_field(
                 name="Data path",
-                value=escape(data_path, formatting=True),
+                value=escape(str(data_path), formatting=True),
                 inline=False,
             )
             e.add_field(
                 name="Metadata file",
-                value=escape(config_file, formatting=True),
+                value=escape(str(config_file), formatting=True),
                 inline=False,
             )
             await ctx.send(embed=e)
