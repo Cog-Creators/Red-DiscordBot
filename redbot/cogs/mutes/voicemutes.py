@@ -65,7 +65,7 @@ class VoiceMutes(MixinMeta):
             )
         return True, None
 
-    @commands.command(name="voicemute")
+    @commands.command(name="voicemute", usage="<users...> [reason]")
     @commands.guild_only()
     async def voice_mute(
         self,
@@ -160,7 +160,7 @@ class VoiceMutes(MixinMeta):
                     msg += f"{user}: {issue}\n"
                 await ctx.send_interactive(pagify(msg))
 
-    @commands.command(name="voiceunmute")
+    @commands.command(name="voiceunmute", usage="<users...> [reason]")
     @commands.guild_only()
     async def unmute_voice(
         self,
