@@ -1,6 +1,7 @@
 import logging
 import re
 from typing import Union, Dict
+from datetime import timedelta
 
 from discord.ext.commands.converter import Converter
 from redbot.core import commands
@@ -32,9 +33,11 @@ class MuteTime(Converter):
     to be used in multiple reponses
     """
 
-    async def convert(self, ctx: commands.Context, argument: str) -> Dict[str, Union[dict, str]]:
+    async def convert(
+        self, ctx: commands.Context, argument: str
+    ) -> Dict[str, Union[timedelta, str, None]]:
         time_split = TIME_SPLIT.split(argument)
-        result: Dict[str, Union[dict, str]] = {}
+        result: Dict[str, Union[timedelta, str, None]] = {}
         if time_split:
             maybe_time = time_split[-1]
         else:
@@ -47,6 +50,6 @@ class MuteTime(Converter):
                 if v:
                     time_data[k] = int(v)
         if time_data:
-            result["duration"] = time_data
+            result["duration"] = timedelta(**time_data)
         result["reason"] = argument
         return result

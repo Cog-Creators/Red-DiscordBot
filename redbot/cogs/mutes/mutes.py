@@ -527,7 +527,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         mute_role = ctx.guild.get_role(data["mute_role"])
         notification_channel = ctx.guild.get_channel(data["notification_channel"])
-        default_time = timedelta(**data["default_time"])
+        default_time = timedelta(seconds=data["default_time"])
         msg = _(
             "Mute Role: {role}\nNotification Channel: {channel}\n" "Default Time: {time}"
         ).format(
@@ -662,10 +662,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             data = time.get("duration", {})
             if not data:
                 return await ctx.send(_("Please provide a valid time format."))
-            await self.config.guild(ctx.guild).default_time.set(data)
+            await self.config.guild(ctx.guild).default_time.set(data.total_seconds())
             await ctx.send(
                 _("Default mute time set to {time}.").format(
-                    time=humanize_timedelta(timedelta=timedelta(**data))
+                    time=humanize_timedelta(timedelta=data)
                 )
             )
 
@@ -831,21 +831,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
         mute_role = await self.config.guild(ctx.guild).mute_role()
         async with ctx.typing():
-            duration = time_and_reason.get("duration", {})
+            duration = time_and_reason.get("duration", None)
             reason = time_and_reason.get("reason", None)
             time = ""
             until = None
             if duration:
-                until = datetime.now(timezone.utc) + timedelta(**duration)
-                time = _(" for {duration}").format(
-                    duration=humanize_timedelta(timedelta=timedelta(**duration))
-                )
+                until = datetime.now(timezone.utc) + duration
+                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
-                    until = datetime.now(timezone.utc) + timedelta(**default_duration)
+                    until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
                     time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=timedelta(**default_duration))
+                        duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
                     )
             author = ctx.message.author
             guild = ctx.guild
@@ -954,21 +952,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.author in users:
             return await ctx.send(_("You cannot mute yourself."))
         async with ctx.typing():
-            duration = time_and_reason.get("duration", {})
+            duration = time_and_reason.get("duration", None)
             reason = time_and_reason.get("reason", None)
-            until = None
             time = ""
+            until = None
             if duration:
-                until = datetime.now(timezone.utc) + timedelta(**duration)
-                time = _(" for {duration}").format(
-                    duration=humanize_timedelta(timedelta=timedelta(**duration))
-                )
+                until = datetime.now(timezone.utc) + duration
+                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
-                    until = datetime.now(timezone.utc) + timedelta(**default_duration)
+                    until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
                     time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=timedelta(**default_duration))
+                        duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
                     )
             author = ctx.message.author
             channel = ctx.message.channel
