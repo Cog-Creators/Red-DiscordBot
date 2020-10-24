@@ -721,6 +721,36 @@ class RedBase(
             return user
         return await self.fetch_user(user_id)
 
+    async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> discord.Member:
+        """
+
+        .. warning::
+
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``discord.Guild.get_member`` instead.
+
+        Parameters
+        -----------
+        guild: `discord.Guild`
+            The guild to look into.
+        member_id: int
+            The user's ID to fetch from.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Guild.fetch_member`.
+
+
+        Returns
+        --------
+        discord.Member
+            The user you requested.
+        """
+
+        if (user := guild.get_user(member_id)) is not None:
+            return user
+        return await guild.fetch_user(member_id)
+
     get_embed_colour = get_embed_color
 
     # start config migrations
