@@ -30,7 +30,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
         ids = (
             "zGTkAVsrfg8",
             "cGMWL8cOeAU",
-            "vFrjMq4aL-g",
             "WROI5WYBU_A",
             "41tIUr_ex3g",
             "f9O2Rjn1azc",
