@@ -29,12 +29,12 @@ MUTE_UNMUTE_ISSUES = {
     ),
     "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
     "permissions_issue_role": _(
-        "Failed to mute or unmute user. I need the manage roles "
+        "Failed to mute or unmute user. I need the Manage Roles "
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
     "permissions_issue_channel": _(
-        "Failed to mute or unmute user. I need the manage permissions "
+        "Failed to mute or unmute user. I need the Manage Permissions "
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
