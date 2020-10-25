@@ -378,14 +378,16 @@ class ModSettings(MixinMeta):
         self,
         ctx: commands.Context,
         *,
-        duration: commands.TimedeltaConverter,
+        duration: commands.TimedeltaConverter(
+            minimum=timedelta(seconds=1), default_unit="seconds"
+        ),
     ):
         """Set the default time to be used when a user is tempbanned.
 
         Accepts: seconds, minutes, hours, days, weeks
-        Use `0` with a unit of measure to set the time to zero.
+        `duration` must be greater than zero.
+
         Examples:
-            `[p]modset defaultduration 0 minutes`
             `[p]modset defaultduration 7d12h10m`
             `[p]modset defaultduration 7 days 12 hours 10 minutes`
         """
@@ -393,6 +395,6 @@ class ModSettings(MixinMeta):
         await self.config.guild(guild).default_tempban_duration.set(duration.total_seconds())
         await ctx.send(
             _("The default duration for tempbanning a user is now {duration}.").format(
-                duration=(humanize_timedelta(timedelta=duration) or _("0 seconds"))
+                duration=(humanize_timedelta(timedelta=duration))
             )
         )
