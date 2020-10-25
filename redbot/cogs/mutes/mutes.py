@@ -4,7 +4,6 @@ import discord
 import logging
 
 from abc import ABC
-from copy import copy
 from typing import cast, Optional, Dict, List, Tuple, Literal, Union
 from datetime import datetime, timedelta, timezone
 
@@ -321,6 +320,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
             )
         results = await asyncio.gather(*tasks)
+        unmuted_channels = [guild.get_channel(c) for c in channels.keys()]
+        for result in results:
+            if not result:
+                continue
+            _mmeber, channel, reason = result
+            unmuted_channels.pop(channel)
+        modlog_reason = _("Automatic unmute") + "\n".join(
+            [c.mention for c in unmuted_channels if c is not None]
+        )
+
         await modlog.create_case(
             self.bot,
             guild,
@@ -328,7 +337,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "sunmute",
             member,
             author,
-            _("Automatic unmute"),
+            modlog_reason,
             until=None,
         )
         if any(results):
@@ -336,7 +345,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             for result in results:
                 if not result:
                     continue
-                member, channel, reason = result
+                _member, channel, reason = result
                 if reason not in reasons:
                     reasons[reason] = [channel]
                 else:
@@ -750,7 +759,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "Channel overwrites for muting users can get expensive on Discord's API "
                 "as such we recommend that you have an admin setup a mute role instead. "
                 "Channel overwrites will also not re-apply on guild join, so a user "
-                "who has been muted may leave and re-join and no longer be muted."
+                "who has been muted may leave and re-join and no longer be muted. "
                 "Role mutes do not have this issue.\n\n"
                 "Are you sure you want to continue with channel overwrites? "
             )
@@ -1254,7 +1263,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])
                 return ret
-            if not guild.me.guild_permissions.manage_roles:
+            if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue"])
                 return ret
             # This is here to prevent the modlog case from happening on role updates
@@ -1328,7 +1337,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if guild.id in self._server_mutes:
                 if user.id in self._server_mutes[guild.id]:
                     del self._server_mutes[guild.id][user.id]
-            if not guild.me.guild_permissions.manage_roles:
+            if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue"])
                 return ret
             try:
@@ -1339,7 +1348,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             ret["success"] = True
             return ret
         else:
-            mute_success = {}
             tasks = []
             for channel in guild.channels:
                 tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
