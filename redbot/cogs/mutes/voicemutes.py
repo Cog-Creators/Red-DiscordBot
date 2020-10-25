@@ -221,9 +221,7 @@ class VoiceMutes(MixinMeta):
                     issue_list.append((user, success["reason"]))
         if success_list:
             if channel.id in self._channel_mutes and self._channel_mutes[channel.id]:
-                await self.config.channel(channel).muted_users.set(
-                    self._channel_mutes[channel.id]
-                )
+                await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
             else:
                 await self.config.channel(channel).muted_users.clear()
             await ctx.send(
