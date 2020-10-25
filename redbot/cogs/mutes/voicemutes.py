@@ -149,18 +149,18 @@ class VoiceMutes(MixinMeta):
                 else:
                     issue_list.append((user, success["reason"]))
 
-            if success_list:
-                msg = _("{users} has been muted in this channel{time}.")
-                if len(success_list) > 1:
-                    msg = _("{users} have been muted in this channel{time}.")
-                await ctx.send(
-                    msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
-                )
-            if issue_list:
-                msg = _("The following users could not be muted\n")
-                for user, issue in issue_list:
-                    msg += f"{user}: {issue}\n"
-                await ctx.send_interactive(pagify(msg))
+        if success_list:
+            msg = _("{users} has been muted in this channel{time}.")
+            if len(success_list) > 1:
+                msg = _("{users} have been muted in this channel{time}.")
+            await ctx.send(
+                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+            )
+        if issue_list:
+            msg = _("The following users could not be muted\n")
+            for user, issue in issue_list:
+                msg += f"{user}: {issue}\n"
+            await ctx.send_interactive(pagify(msg))
 
     @commands.command(name="voiceunmute", usage="<users...> [reason]")
     @commands.guild_only()
@@ -219,20 +219,20 @@ class VoiceMutes(MixinMeta):
                     )
                 else:
                     issue_list.append((user, success["reason"]))
-            if success_list:
-                if channel.id in self._channel_mutes and self._channel_mutes[channel.id]:
-                    await self.config.channel(channel).muted_users.set(
-                        self._channel_mutes[channel.id]
-                    )
-                else:
-                    await self.config.channel(channel).muted_users.clear()
-                await ctx.send(
-                    _("{users} unmuted in this channel.").format(
-                        users=humanize_list([f"{u}" for u in success_list])
-                    )
+        if success_list:
+            if channel.id in self._channel_mutes and self._channel_mutes[channel.id]:
+                await self.config.channel(channel).muted_users.set(
+                    self._channel_mutes[channel.id]
                 )
-            if issue_list:
-                message = _(
-                    "{users} could not be unmuted in this channels. " "Would you like to see why?"
-                ).format(users=humanize_list([f"{u}" for u, x in issue_list]))
-                await self.handle_issues(ctx, message, humanize_list(x for u, x in issue_list))
+            else:
+                await self.config.channel(channel).muted_users.clear()
+            await ctx.send(
+                _("{users} unmuted in this channel.").format(
+                    users=humanize_list([f"{u}" for u in success_list])
+                )
+            )
+        if issue_list:
+            msg = _("The following users could not be unmuted\n")
+            for user, issue in issue_list:
+                msg += f"{user}: {issue}\n"
+            await ctx.send_interactive(pagify(msg))
