@@ -69,8 +69,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     async def restore_players(self):
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
+        await asyncio.sleep(10)
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
-            await asyncio.sleep(5)
+            await asyncio.sleep(0)
             try:
                 player: Optional[lavalink.Player]
                 track_data = list(track_data)
