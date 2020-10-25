@@ -966,7 +966,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     def parse_issues(self, issue_list: dict) -> str:
         reasons = {}
-        reason_msg = issue_list["reason"] + "\n"
+        reason_msg = issue_list["reason"] + "\n" if issue_list["reason"] else None
         channel_msg = ""
         error_msg = _("{member} could not be unmuted for the following reasons:\n").format(
             member=issue_list["user"]
