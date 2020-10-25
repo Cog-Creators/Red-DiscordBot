@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import datetime
 import logging
 from pathlib import Path
 
@@ -16,6 +17,12 @@ _ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+    ):
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
+        self._ll_guild_updates.add(int(extra.get("guildId", 0)))
+
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:

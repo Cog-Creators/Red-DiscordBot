@@ -240,6 +240,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self.cog_init_task.cancel()
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
+            lavalink.unregister_update_listener(self.lavalink_update_handler)
             self.bot.loop.create_task(lavalink.close())
             if self.player_manager is not None:
                 self.bot.loop.create_task(self.player_manager.shutdown())

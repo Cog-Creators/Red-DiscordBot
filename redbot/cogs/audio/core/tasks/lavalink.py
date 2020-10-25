@@ -94,6 +94,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     rest_port=rest_port,
                     ws_port=ws_port,
                     timeout=timeout,
+                    resume_key=f"Red-Core-Audio-{self.bot.user.id}",
                 )
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")

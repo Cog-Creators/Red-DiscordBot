@@ -58,6 +58,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             )
             self.player_automated_timer_task.add_done_callback(task_callback)
             lavalink.register_event_listener(self.lavalink_event_handler)
+            lavalink.register_update_listener(self.lavalink_update_handler)
             await self.restore_players()
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
@@ -69,7 +70,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
-            await asyncio.sleep(0)
+            await asyncio.sleep(5)
             try:
                 player: Optional[lavalink.Player]
                 track_data = list(track_data)
@@ -126,8 +127,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
                 player.maybe_shuffle()
-
-                await player.play()
+                if guild.id not in self._ll_guild_updates:
+                    await player.play()
             except Exception as err:
                 debug_exc_log(log, err, f"Error restoring player in {guild_id}")
                 await self.api_interface.persistent_queue_api.drop(guild_id)

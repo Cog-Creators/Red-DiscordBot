@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import datetime
 
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -64,6 +65,9 @@ class MixinMeta(ABC):
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
 
+    _last_ll_update: datetime.datetime
+    _ll_guild_updates: Set[int]
+
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):
         raise NotImplementedError()
@@ -119,6 +123,12 @@ class MixinMeta(ABC):
     @abstractmethod
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def lavalink_update_handler(
+            self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
     ) -> None:
         raise NotImplementedError()
 
