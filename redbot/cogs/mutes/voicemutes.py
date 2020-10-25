@@ -39,8 +39,7 @@ class VoiceMutes(MixinMeta):
 
         """
         if user_voice_state is None or user_voice_state.channel is None:
-            await ctx.send(_("That user is not in a voice channel."))
-            return False, None
+            return False, _("That user is not in a voice channel.")
         voice_channel: discord.VoiceChannel = user_voice_state.channel
         required_perms = discord.Permissions()
         required_perms.update(**perms)
