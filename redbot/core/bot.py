@@ -747,9 +747,9 @@ class RedBase(
             The user you requested.
         """
 
-        if (user := guild.get_user(member_id)) is not None:
-            return user
-        return await guild.fetch_user(member_id)
+        if (member := guild.get_member(member_id)) is not None:
+            return member
+        return await guild.fetch_member(member_id)
 
     get_embed_colour = get_embed_color
 
