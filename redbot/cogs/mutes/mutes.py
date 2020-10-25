@@ -326,9 +326,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 continue
             _mmeber, channel, reason = result
             unmuted_channels.pop(channel)
-        modlog_reason = _("Automatic unmute") + "\n".join(
-            [c.mention for c in unmuted_channels if c is not None]
-        )
+        modlog_reason = _("Automatic unmute")
+
+        channel_list = humanize_list([c.mention for c in unmuted_channels if c is not None])
+        if channel_list:
+            modlog_reason += _("\nUnmuted in channels: ") + channel_list
 
         await modlog.create_case(
             self.bot,
