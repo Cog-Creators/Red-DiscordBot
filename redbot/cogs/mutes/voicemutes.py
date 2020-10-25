@@ -141,7 +141,7 @@ class VoiceMutes(MixinMeta):
                         user,
                         author,
                         reason,
-                        until=None,
+                        until=until,
                         channel=channel,
                     )
                     async with self.config.member(user).perms_cache() as cache:
