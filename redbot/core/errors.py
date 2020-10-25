@@ -1,4 +1,5 @@
 import importlib.machinery
+from typing import Any
 
 import discord
 
@@ -87,3 +88,32 @@ class CannotSetSubfield(StoredTypeError):
         >>> asyncio.run(example())
 
     """
+
+
+class ZMQError(RedError):
+    """Base error class for ZMQ-related errors."""
+
+
+class InvalidRequest(ZMQError):
+    """Raised when the passed arguments to a ZMQ method are invalid.
+
+    This can occur due to invalid schema or ZMQ method not found"""
+
+    def __init__(self, arguments: Any, message: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.arguments = arguments
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Invalid ZMQ Request: {self.message}"
+
+
+class HandlerError(ZMQError):
+    """Raised when a ZMQ handler runs into an error."""
+
+    def __init__(self, exc: Exception, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.exc = exc
+
+    def __str__(self) -> str:
+        return f"ZMQ Handler Error: {type(self.exc)}: {self.exc}"

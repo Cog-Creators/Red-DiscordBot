@@ -49,7 +49,7 @@ from .settings_caches import (
     DisabledCogCache,
 )
 
-from .rpc import RPCMixin
+from .zmq import ZMQMixin
 from .utils import common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
@@ -77,7 +77,7 @@ def _is_submodule(parent, child):
 # all of our mixins should happen before,
 # and must include a call to super().__init__ unless they do not provide an init
 class RedBase(
-    commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
+    commands.GroupMixin, ZMQMixin, dpy_commands.bot.AutoShardedBot
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """
     The historical reasons for this mixin no longer apply
@@ -89,8 +89,8 @@ class RedBase(
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
-        self.rpc_enabled = cli_flags.rpc
-        self.rpc_port = cli_flags.rpc_port
+        self.zmq_enabled = cli_flags.zmq
+        self.zmq_port = cli_flags.zmq_port
         self._last_exception = None
         self._config.register_global(
             token=None,
@@ -840,8 +840,8 @@ class RedBase(
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
-        if self.rpc_enabled:
-            await self.rpc.initialize(self.rpc_port)
+        if self.zmq_enabled:
+            await self._zmq.initialize(self.zmq_port)
 
     async def start(self, *args, **kwargs):
         """
@@ -1170,8 +1170,8 @@ class RedBase(
 
         cog.requires.reset()
 
-        for meth in self.rpc_handlers.pop(cogname.upper(), ()):
-            self.unregister_rpc_handler(meth)
+        with contextlib.suppress(TypeError):
+            self._zmq.remove_cog(cog.__cog_name__)
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
@@ -1282,6 +1282,10 @@ class RedBase(
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
+            cog_methods = [m[1] for m in inspect.getmembers(cog, predicate=inspect.ismethod)]
+            for method in cog_methods:
+                if hasattr(method, "__red_zmq_method__"):
+                    self._zmq.add_method(cog.__cog_name__, method.__red_zmq_method__, method)
         except Exception:
             for hook in added_hooks:
                 try:
@@ -1487,8 +1491,8 @@ class RedBase(
         await super().logout()
         await drivers.get_driver_class().teardown()
         try:
-            if self.rpc_enabled:
-                await self.rpc.close()
+            if self.zmq_enabled:
+                await self._zmq.close()
         except AttributeError:
             pass
 
