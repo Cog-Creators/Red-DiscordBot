@@ -128,7 +128,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def lavalink_update_handler(
-            self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
     ) -> None:
         raise NotImplementedError()
 
