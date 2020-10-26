@@ -62,6 +62,7 @@ from .requires import (
     admin_or_permissions as admin_or_permissions,
     mod as mod,
     mod_or_permissions as mod_or_permissions,
+    not_scheduled as not_scheduled,
 )
 
 from ._dpy_reimplements import (

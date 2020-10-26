@@ -58,6 +58,7 @@ __all__ = [
     "admin_or_permissions",
     "mod",
     "mod_or_permissions",
+    "not_scheduled",
     "transition_permstate_to",
     "PermStateTransitions",
     "PermStateAllowedStates",
@@ -780,6 +781,13 @@ def mod():
     This check can be overridden by rules.
     """
     return mod_or_permissions()
+
+
+def not_scheduled():
+    def predicate(ctx):
+        return not ctx.assume_yes
+
+    return check(predicate)
 
 
 class _IntKeyDict(Dict[int, _T]):

@@ -14,6 +14,7 @@ from .commands import (
     admin_or_permissions,
     mod,
     mod_or_permissions,
+    not_scheduled,
 )
 from .utils.mod import (
     is_mod_or_superior as _is_mod_or_superior,
@@ -36,6 +37,7 @@ __all__ = [
     "admin_or_permissions",
     "mod",
     "mod_or_permissions",
+    "not_scheduled",
     "is_mod_or_superior",
     "is_admin_or_superior",
     "check_permissions",
