@@ -188,31 +188,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_llsetup.command(name="restport")
-    async def command_llsetup_restport(self, ctx: commands.Context, rest_port: int):
-        """Set the Lavalink REST server port."""
-        await self.config.rest_port.set(rest_port)
-        footer = None
-        if await self.update_external_status():
-            footer = _("External Lavalink server set to True.")
-        await self.send_embed_msg(
-            ctx,
-            title=_("Setting Changed"),
-            description=_("REST port set to {port}.").format(port=rest_port),
-            footer=footer,
-        )
-
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
-            )
-
     @command_llsetup.command(name="wsport")
     async def command_llsetup_wsport(self, ctx: commands.Context, ws_port: int):
         """Set the Lavalink websocket server port."""
