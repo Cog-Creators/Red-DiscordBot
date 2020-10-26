@@ -1512,7 +1512,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "success": False,
                     "channel": channel,
                     "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
-            }
+                }
         if not channel.permissions_for(guild.me).manage_permissions:
             return {
                 "success": False,
