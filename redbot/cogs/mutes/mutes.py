@@ -90,6 +90,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._unmute_tasks: Dict[str, asyncio.Task] = {}
         self._unmute_task = None
         self.mute_role_cache: Dict[int, int] = {}
+        self._channel_mute_events: Dict[int, asyncio.Event] = {}
+        # this is a dict of guild ID's and asyncio.Events
+        # to wait for a guild to finish channel unmutes before
+        # checking for manual overwrites
 
     async def red_delete_data_for_user(
         self,
@@ -295,6 +299,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         ][u_id]
 
         for guild_id, users in multiple_mutes.items():
+            if guild_id in self._channel_mute_events:
+                self._channel_mute_events[guild_id].clear()
+            else:
+                self._channel_mute_events[guild_id] = asyncio.Event()
             guild = self.bot.get_guild(guild_id)
             await i18n.set_contextual_locales_from_guild(self.bot, guild)
             for user, channels in users.items():
@@ -317,6 +325,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         self._unmute_tasks[task_name] = asyncio.create_task(
                             self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
                         )
+            self._channel_mute_events[guild_id].set()
 
     async def _auto_channel_unmute_user_multi(
         self, member: discord.Member, guild: discord.Guild, channels: Dict[int, dict]
@@ -515,6 +524,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if await self.bot.cog_disabled_in_guild(self, after.guild):
             return
         await i18n.set_contextual_locales_from_guild(self.bot, after.guild)
+        if after.guild.id in self._channel_mute_events:
+            await self._channel_mute_events[after.guild.id].wait()
         if after.id in self._channel_mutes:
             before_perms: Dict[int, Dict[str, Optional[bool]]] = {
                 o.id: {name: attr for name, attr in p} for o, p in before.overwrites.items()
@@ -1157,6 +1168,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             audit_reason = get_audit_reason(author, reason)
             issue_list = []
             success_list = []
+            if guild.id in self._channel_mute_events:
+                self._channel_mute_events[guild.id].clear()
+            else:
+                self._channel_mute_events[guild.id] = asyncio.Event()
             for user in users:
                 success = await self.unmute_user(guild, author, user, audit_reason)
 
@@ -1174,6 +1189,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
                 else:
                     issue_list.append(success)
+        self._channel_mute_events[guild.id].set()
         if success_list:
             if ctx.guild.id in self._server_mutes and self._server_mutes[ctx.guild.id]:
                 await self.config.guild(ctx.guild).muted_users.set(
