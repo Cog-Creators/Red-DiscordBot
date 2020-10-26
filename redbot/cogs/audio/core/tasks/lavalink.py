@@ -4,6 +4,7 @@ from pathlib import Path
 
 import lavalink
 
+from redbot.core import data_manager
 from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
@@ -94,7 +95,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     rest_port=rest_port,
                     ws_port=ws_port,
                     timeout=timeout,
-                    resume_key=f"Red-Core-Audio-{self.bot.user.id}",
+                    resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
