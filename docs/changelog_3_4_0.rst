@@ -5,6 +5,10 @@ Redbot 3.4.1 (Unreleased)
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+|
+| **Read before updating**:
+| 1. This Red update bumps discord.py to version 1.5.1, which enables Discord intents.  Red requires all Prvileged Intents to be enabled.  More information can be found at in :ref:`enabling-privileged-intents`.
+| 
 
 End-user changelog
 ------------------
@@ -27,6 +31,8 @@ Core Bot
 - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
 - Added default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
 - Added datapath and metadata file to ``[p]debuginfo`` (:issue:`4524`)
+- Added list of disabled intents to ``[p]debuginfo`` (:issue:`4423`)
+- Bumped discord.py dependency to version 1.5.1 (:issue:`4423`)
 
 Audio
 *****
