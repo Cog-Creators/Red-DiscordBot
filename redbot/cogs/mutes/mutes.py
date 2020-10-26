@@ -12,7 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
-from redbot.core.utils import bound_gather
+from redbot.core.utils import bounded_gather
 from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
@@ -329,7 +329,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks.append(
                 self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
             )
-        results = await bound_gather(*tasks)
+        results = await bounded_gather(*tasks)
         unmuted_channels = [guild.get_channel(c) for c in channels.keys()]
         for result in results:
             if not result:
@@ -701,7 +701,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks = []
             for channel in ctx.guild.channels:
                 tasks.append(self._set_mute_role_overwrites(role, channel))
-            errors = await bound_gather(*tasks)
+            errors = await bounded_gather(*tasks)
             if any(errors):
                 msg = _(
                     "I could not set overwrites for the following channels: {channels}"
@@ -1322,7 +1322,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks = []
             for channel in guild.channels:
                 tasks.append(self.channel_mute_user(guild, channel, author, user, until, reason))
-            task_result = await bound_gather(*tasks)
+            task_result = await bounded_gather(*tasks)
             for task in task_result:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
@@ -1383,7 +1383,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks = []
             for channel in guild.channels:
                 tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
-            results = await bound_gather(*tasks)
+            results = await bounded_gather(*tasks)
             for task in results:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
