@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-10-18 14:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "MIME-Version: 1.0\n"
@@ -172,7 +172,7 @@ msgid "Done. I'll now gain a point if users don't answer in time."
 msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:163
-msgid "Alright, I won't embarass you at trivia anymore."
+msgid "Alright, I won't embarrass you at trivia anymore."
 msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:167

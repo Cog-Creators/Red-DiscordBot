@@ -17,19 +17,19 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "我嘗試做了某些事情，但因權限不足而被 Discord 拒絕。您的指令無法完成。"
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我無法將 {role.name} 給予 {member.display_name}，因為在 Discord 架構中此身份組高於或等於我最高的身分組。"
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我無法從 {member.display_name} 移除 {role.name}，因為在 Discord 架構中此身份組高於或等於我最高的身分組。"
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我無法編輯 {role.name}，因為在 Discord 架構中此身份組高於或等於我最高的身分組。"
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -45,11 +45,11 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "我需要管理權限來完成。"
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "我已經發過公告。如果您想要發出不同的公告，請先執行`{prefix}announce cancel`。"
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
@@ -85,7 +85,7 @@ msgstr ""
 #: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "編輯身分組設定。"
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
@@ -94,7 +94,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
-msgstr ""
+msgstr "完成。"
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
@@ -182,7 +182,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:459
 msgid "Added."
-msgstr ""
+msgstr "已增加"
 
 #: redbot/cogs/admin/admin.py:462
 msgid "That role is already a selfrole."
@@ -199,7 +199,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Removed."
-msgstr ""
+msgstr "已移除。"
 
 #: redbot/cogs/admin/admin.py:486
 #, docstring
