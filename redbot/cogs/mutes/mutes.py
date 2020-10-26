@@ -34,9 +34,7 @@ MUTE_UNMUTE_ISSUES = {
         "lower than myself in the role hierarchy."
     ),
     "permissions_issue_channel": _(
-        "Failed to mute or unmute user. I need the Manage Permissions "
-        "permission and the user I'm muting must be "
-        "lower than myself in the role hierarchy."
+        "Failed to mute or unmute user. I need the Manage Permissions permission."
     ),
     "left_guild": _("The user has left the server while applying an overwrite."),
     "unknown_channel": _("The channel I tried to mute or unmute the user in isn't found."),
