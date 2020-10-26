@@ -1504,15 +1504,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             }
 
         overwrites.update(**old_values)
-        if channel.id in self._channel_mutes:
-            if user.id in self._channel_mutes[channel.id]:
-                del self._channel_mutes[channel.id][user.id]
-            else:
-                return {
-                    "success": False,
-                    "channel": channel,
-                    "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
-                }
+        if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
+            del self._channel_mutes[channel.id][user.id]
+        else:
+            return {
+                "success": False,
+                "channel": channel,
+                "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
+            }
         if not channel.permissions_for(guild.me).manage_permissions:
             return {
                 "success": False,
