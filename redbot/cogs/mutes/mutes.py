@@ -12,6 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
+from redbot.core.utils import bound_gather
 from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
@@ -322,12 +323,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self, member: discord.Member, guild: discord.Guild, channels: Dict[int, dict]
     ):
         """This is meant to handle multiple channels all being unmuted at once"""
-        results = []
+        tasks = []
         for channel, mute_data in channels.items():
             author = guild.get_member(mute_data["author"])
-            results.append(
-                await self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
+            tasks.append(
+                self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
             )
+        results = await bound_gather(*tasks)
         unmuted_channels = [guild.get_channel(c) for c in channels.keys()]
         for result in results:
             if not result:
@@ -696,9 +698,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             except discord.errors.Forbidden:
                 return await ctx.send(_("I could not create a muted role in this server."))
             errors = []
-
+            tasks = []
             for channel in ctx.guild.channels:
-                errors.append(await self._set_mute_role_overwrites(role, channel))
+                tasks.append(self._set_mute_role_overwrites(role, channel))
+            errors = await bound_gather(*tasks)
             if any(errors):
                 msg = _(
                     "I could not set overwrites for the following channels: {channels}"
@@ -1316,11 +1319,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return ret
         else:
             perms_cache = {}
-            task_result = []
+            tasks = []
             for channel in guild.channels:
-                task_result.append(
-                    await self.channel_mute_user(guild, channel, author, user, until, reason)
-                )
+                tasks.append(self.channel_mute_user(guild, channel, author, user, until, reason))
+            task_result = await bound_gather(*tasks)
             for task in task_result:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
@@ -1378,11 +1380,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             ret["success"] = True
             return ret
         else:
-            results = []
+            tasks = []
             for channel in guild.channels:
-                results.append(
-                    await self.channel_unmute_user(guild, channel, author, user, reason)
-                )
+                tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
+            results = await bound_gather(*tasks)
             for task in results:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
