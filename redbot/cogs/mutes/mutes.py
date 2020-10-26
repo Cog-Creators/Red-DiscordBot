@@ -364,7 +364,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             error_msg = _("{member} could not be unmuted for the following reasons:\n").format(
                 member=member
             )
-            for reason, channel_list in reasons:
+            for reason, channel_list in reasons.items():
                 error_msg += _("{reason} In the following channels: {channels}\n").format(
                     reason=reason,
                     channels=humanize_list([c.mention for c in channel_list]),
