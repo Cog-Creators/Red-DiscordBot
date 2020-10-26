@@ -393,7 +393,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             async with self.config.channel(channel).muted_users() as muted_users:
                 if str(data["member"]) in muted_users:
                     del muted_users[str(member.id)]
-            if channel.id in self._channel_mutes and data["member"] in self._channel_mutes[channel.id]:
+            if (
+                channel.id in self._channel_mutes
+                and data["member"] in self._channel_mutes[channel.id]
+            ):
                 del self._channel_mutes[channel.id][user.id]
             return None
         success = await self.channel_unmute_user(
