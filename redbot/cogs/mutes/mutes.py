@@ -679,6 +679,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="makerole")
     @checks.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
+    @commands.max_concurrency(1, commands.BucketType.guild)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
         """Create a Muted role.
 
@@ -688,6 +689,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         If you already have a muted role created on the server use
         `[p]muteset role ROLE_NAME_HERE`
         """
+        if await self.config.guild(ctx.guild).mute_role():
+            command = f"`{ctx.clean_prefix}muteset role`"
+            return await ctx.send(
+                _(
+                    "There is already a mute role setup in this server. "
+                    "Please remove it with {command} before trying to "
+                    "create a new one."
+                ).format(command=command)
+            )
         async with ctx.typing():
             perms = discord.Permissions()
             perms.update(send_messages=False, speak=False, add_reactions=False)
@@ -695,6 +705,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 role = await ctx.guild.create_role(
                     name=name, permissions=perms, reason=_("Mute role setup")
                 )
+                await self.config.guild(ctx.guild).mute_role.set(role.id)
+                # save the role early incase of issue later
             except discord.errors.Forbidden:
                 return await ctx.send(_("I could not create a muted role in this server."))
             errors = []
@@ -708,7 +720,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 ).format(channels=humanize_list([i for i in errors if i]))
                 for page in pagify(msg, delims=[" "]):
                     await ctx.send(page)
-            await self.config.guild(ctx.guild).mute_role.set(role.id)
+
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
         if not await self.config.guild(ctx.guild).notification_channel():
             command_1 = f"`{ctx.clean_prefix}muteset notification`"
