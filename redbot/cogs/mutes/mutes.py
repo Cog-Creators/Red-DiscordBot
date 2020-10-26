@@ -359,7 +359,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             modlog_reason,
             until=None,
         )
-        self._channel_mute_events[guild_id].set()
+        self._channel_mute_events[guild.id].set()
         if any(results):
             reasons = {}
             for result in results:
