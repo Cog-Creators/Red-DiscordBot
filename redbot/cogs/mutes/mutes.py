@@ -651,7 +651,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if not role:
             await self.config.guild(ctx.guild).mute_role.set(None)
-            del self.mute_role_cache[ctx.guild.id]
+            if ctx.guild.id in self.mute_role_cache:
+                del self.mute_role_cache[ctx.guild.id]
             await self.config.guild(ctx.guild).sent_instructions.set(False)
             # reset this to warn users next time they may have accidentally
             # removed the mute role
