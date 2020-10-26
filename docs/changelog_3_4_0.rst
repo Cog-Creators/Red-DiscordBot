@@ -80,6 +80,16 @@ Mod
 - Fixed nicknames not being properly stored and logged (:issue:`4131`)
 - Fixed plural typos in ``[p]userinfo`` (:issue:`4397`, :issue:`4379`)
 - Renamed ``[p]hackban`` to ``[p]massban``, keeping ``[p]hackban`` as an alias, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
+- Moved mutes to a separate, individual cog (:issue:`3634`)
+
+Mutes
+*****
+
+- Added ``[p]muteset forcerole`` to make mutes role based, instead of permission based (:issue:`3634`)
+- Added ``[p]mutechannel`` to mute a user in the current channel (:issue:`3634`)
+- Added an optional time argument to all mutes, to specify when the user should be unmuted (:issue:`3634`)
+- Mute commands can now take multiple user arguments, to mute multiple users at a time (:issue:`3634`)
+- Changed ``[p]mute`` to default to serverwide muting (:issue:`3634`)
 
 Modlog
 ******
