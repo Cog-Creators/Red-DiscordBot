@@ -29,7 +29,8 @@ import discord
 
 from discord.ext.commands import check
 from .converter import GuildConverter
-from .errors import BotMissingPermissions
+from .errors import BotMissingPermissions, UserFeedbackCheckFailure
+from .. import i18n
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -63,6 +64,8 @@ __all__ = [
     "PermStateTransitions",
     "PermStateAllowedStates",
 ]
+
+_ = i18n.Translator("requires", __file__)
 
 _T = TypeVar("_T")
 GlobalPermissionModel = Union[
@@ -785,7 +788,13 @@ def mod():
 
 def not_scheduled():
     def predicate(ctx):
-        return not ctx.assume_yes
+        if ctx.assume_yes:
+            raise UserFeedbackCheckFailure(
+                _("This command ({command}) does not support non-interactive usage.").format(
+                    command=ctx.command.qualified_name
+                )
+            )
+        return True
 
     return check(predicate)
 
