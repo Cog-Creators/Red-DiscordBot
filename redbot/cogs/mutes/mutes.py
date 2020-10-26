@@ -1505,7 +1505,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         overwrites.update(**old_values)
         if channel.id in self._channel_mutes:
-            if user.id in self._channel_mutes[channel.id]
+            if user.id in self._channel_mutes[channel.id]:
                 del self._channel_mutes[channel.id][user.id]
             else:
                 return {
