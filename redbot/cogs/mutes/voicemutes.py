@@ -95,7 +95,7 @@ class VoiceMutes(MixinMeta):
             for user in users:
                 user_voice_state = user.voice
                 can_move, perm_reason = await self._voice_perm_check(
-                    ctx, user_voice_state, mute_members=True, manage_channels=True
+                    ctx, user_voice_state, mute_members=True, manage_permissions=True
                 )
                 if not can_move:
                     issue_list.append((user, perm_reason))
@@ -186,7 +186,7 @@ class VoiceMutes(MixinMeta):
             for user in users:
                 user_voice_state = user.voice
                 can_move, perm_reason = await self._voice_perm_check(
-                    ctx, user_voice_state, mute_members=True, manage_channels=True
+                    ctx, user_voice_state, mute_members=True, manage_permissions=True
                 )
                 if not can_move:
                     issue_list.append((user, perm_reason))
