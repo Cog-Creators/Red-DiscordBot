@@ -15,7 +15,12 @@ from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
-from redbot.core.i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locale,
+    set_contextual_regional_format,
+    set_contextual_locales_from_guild,
+)
 from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
@@ -313,6 +318,8 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_message(message):
+        await set_contextual_locales_from_guild(bot, message.guild)
+
         await bot.process_commands(message)
         discord_now = message.created_at
         if (

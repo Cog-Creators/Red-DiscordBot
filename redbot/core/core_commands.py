@@ -1569,8 +1569,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_ids = guild_data["mod_role"]
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-            guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
-                admin=admin_roles_str, mod=mod_roles_str
+
+            guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
+            guild_regional_format = (
+                await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+            )
+
+            guild_settings = _(
+                "Admin roles: {admin}\n"
+                "Mod roles: {mod}\n"
+                "Locale: {guild_locale}\n"
+                "Regional format: {guild_regional_format}\n"
+            ).format(
+                admin=admin_roles_str,
+                mod=mod_roles_str,
+                guild_locale=guild_locale,
+                guild_regional_format=guild_regional_format,
             )
         else:
             guild_settings = ""
@@ -1578,7 +1592,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
-        regional_format = global_data["regional_format"] or _("Same as bot's locale")
+        regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
 
         prefix_string = " ".join(prefixes)
@@ -1586,8 +1600,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "{bot_name} Settings:\n\n"
             "Prefixes: {prefixes}\n"
             "{guild_settings}"
-            "Locale: {locale}\n"
-            "Regional format: {regional_format}\n"
+            "Global locale: {locale}\n"
+            "Global regional format: {regional_format}\n"
             "Default embed colour: {colour}"
         ).format(
             bot_name=ctx.bot.user.name,
@@ -2018,9 +2032,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, language_code: str):
+    async def globallocale(self, ctx: commands.Context, language_code: str):
         """
-        Changes bot's locale.
+        Changes the bot's default locale.
+        This will be used when a server has not set a locale, or in DMs.
 
         `<language_code>` can be any language code with country code included,
         e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
@@ -2042,12 +2057,51 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_locale(standardized_locale_name)
-        await ctx.bot._config.locale.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
+        await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
+        await ctx.send(_("Global locale has been set."))
+
+    @_set.command()
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def locale(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's locale in this server.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
+
+        Use "default" to return to the bot's default set language.
+        To reset to English, use "en-US".
+        """
+        if language_code.lower() == "default":
+            global_locale = await self.bot._config.locale()
+            i18n.set_contextual_locale(global_locale)
+            await self.bot._i18n_cache.set_locale(ctx.guild, None)
+            await ctx.send(_("Locale has been set to the default."))
+            return
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_locale(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
-    @_set.command(aliases=["region"])
+    @_set.command(aliases=["globalregion"])
+    @commands.guild_only()
     @checks.is_owner()
-    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+    async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
         Changes bot's regional format. This is used for formatting date, time and numbers.
 
@@ -2058,8 +2112,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if language_code is None:
             i18n.set_regional_format(None)
-            await ctx.bot._config.regional_format.set(None)
-            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            await self.bot._i18n_cache.set_regional_format(None, None)
+            await ctx.send(_("Global regional formatting will now be based on bot's locale."))
             return
 
         try:
@@ -2074,7 +2128,45 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_regional_format(standardized_locale_name)
-        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
+        await ctx.send(
+            _("Global regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
+
+    @_set.command(aliases=["region"])
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+        """
+        Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Leave `<language_code>` empty to base regional formatting on bot's locale in this server.
+        """
+        if language_code is None:
+            i18n.set_contextual_regional_format(None)
+            await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
+            await ctx.send(
+                _("Regional formatting will now be based on bot's locale in this server.")
+            )
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_regional_format(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(ctx.guild, standardized_locale_name)
         await ctx.send(
             _("Regional formatting will now be based on `{language_code}` locale.").format(
                 language_code=standardized_locale_name
