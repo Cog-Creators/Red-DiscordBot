@@ -392,12 +392,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not member:
             async with self.config.channel(channel).muted_users() as muted_users:
                 if str(data["member"]) in muted_users:
-                    del muted_users[str(member.id)]
+                    del muted_users[str(data["member"])]
             if (
                 channel.id in self._channel_mutes
                 and data["member"] in self._channel_mutes[channel.id]
             ):
-                del self._channel_mutes[channel.id][user.id]
+                del self._channel_mutes[channel.id][data["member"]]
             return None
         success = await self.channel_unmute_user(
             channel.guild, channel, author, member, _("Automatic unmute")
