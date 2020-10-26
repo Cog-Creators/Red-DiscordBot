@@ -21,10 +21,12 @@ Core Bot
 - Fixed ungraceful error raising when ``[p]unload`` output is larger than 2k characters (:issue:`4469`)
 - Fixed ungraceful error raising when providing ``[p]choose`` with empty options (:issue:`4499`)
 - Fixed ungraceful error raising when a bot left a guild while a menu was open (:issue:`3902`)
+- Fixed info missing on non-embed version of ``[p]debuginfo`` (:issue:`4524`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
 - Added default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
+- Added datapath and metadata file to ``[p]debuginfo`` (:issue:`4524`)
 
 Audio
 *****
