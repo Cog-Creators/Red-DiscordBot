@@ -404,6 +404,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         success = await self.channel_unmute_user(
             channel.guild, channel, author, member, _("Automatic unmute")
         )
+        async with self.config.channel(channel).muted_users() as muted_users:
+            if str(member.id) in muted_users:
+                del muted_users[str(member.id)]
         if success["success"]:
             if create_case:
                 if isinstance(channel, discord.VoiceChannel):
@@ -421,9 +424,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     until=None,
                     channel=channel,
                 )
-            async with self.config.channel(channel).muted_users() as muted_users:
-                if str(member.id) in muted_users:
-                    del muted_users[str(member.id)]
             return None
         else:
             error_msg = _(
