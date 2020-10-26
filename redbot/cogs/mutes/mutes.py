@@ -299,10 +299,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         ][u_id]
 
         for guild_id, users in multiple_mutes.items():
-            if guild_id in self._channel_mute_events:
-                self._channel_mute_events[guild_id].clear()
-            else:
-                self._channel_mute_events[guild_id] = asyncio.Event()
             guild = self.bot.get_guild(guild_id)
             await i18n.set_contextual_locales_from_guild(self.bot, guild)
             for user, channels in users.items():
@@ -325,12 +321,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         self._unmute_tasks[task_name] = asyncio.create_task(
                             self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
                         )
-            self._channel_mute_events[guild_id].set()
 
     async def _auto_channel_unmute_user_multi(
         self, member: discord.Member, guild: discord.Guild, channels: Dict[int, dict]
     ):
         """This is meant to handle multiple channels all being unmuted at once"""
+        if guild.id in self._channel_mute_events:
+            self._channel_mute_events[guild.id].clear()
+        else:
+            self._channel_mute_events[guild.id] = asyncio.Event()
         tasks = []
         for channel, mute_data in channels.items():
             author = guild.get_member(mute_data["author"])
@@ -360,6 +359,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             modlog_reason,
             until=None,
         )
+        self._channel_mute_events[guild_id].set()
         if any(results):
             reasons = {}
             for result in results:
