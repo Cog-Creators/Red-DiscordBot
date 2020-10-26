@@ -1318,7 +1318,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             perms_cache = {}
             task_result = []
             for channel in guild.channels:
-                task_result.append(await self.channel_mute_user(guild, channel, author, user, until, reason))
+                task_result.append(
+                    await self.channel_mute_user(guild, channel, author, user, until, reason)
+                )
             for task in task_result:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
