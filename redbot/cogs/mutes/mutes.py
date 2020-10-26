@@ -194,7 +194,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             guild = self.bot.get_guild(g_id)
             if guild is None or await self.bot.cog_disabled_in_guild(self, guild):
                 continue
-            await i18n.set_contextual_locale_from_guild(self.bot, guild)
+            await i18n.set_contextual_locales_from_guild(self.bot, guild)
             for u_id in self._server_mutes[guild.id]:
                 if self._server_mutes[guild.id][u_id]["until"] is None:
                     continue
@@ -296,7 +296,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         for guild_id, users in multiple_mutes.items():
             guild = self.bot.get_guild(guild_id)
-            await i18n.set_contextual_locale_from_guild(self.bot, guild)
+            await i18n.set_contextual_locales_from_guild(self.bot, guild)
             for user, channels in users.items():
                 if len(channels) > 1:
                     task_name = f"server-unmute-channels-{guild_id}-{user}"
@@ -463,7 +463,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         a = set(after.roles)
         roles_removed = list(b - a)
         roles_added = list(a - b)
-        await i18n.set_contextual_locale_from_guild(self.bot, guild)
+        await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if mute_role in roles_removed:
             # send modlog case for unmute and remove from cache
             if guild.id not in self._server_mutes:
@@ -514,7 +514,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         if await self.bot.cog_disabled_in_guild(self, after.guild):
             return
-        await i18n.set_contextual_locale_from_guild(self.bot, after.guild)
+        await i18n.set_contextual_locales_from_guild(self.bot, after.guild)
         if after.id in self._channel_mutes:
             before_perms: Dict[int, Dict[str, Optional[bool]]] = {
                 o.id: {name: attr for name, attr in p} for o, p in before.overwrites.items()
@@ -573,7 +573,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             # user to globally rate limit the bot therefore we are not
             # going to support re-muting users via channel overwrites
             return
-        await i18n.set_contextual_locale_from_guild(self.bot, guild)
+        await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if guild.id in self._server_mutes:
             if member.id in self._server_mutes[guild.id]:
                 role = guild.get_role(mute_role)
