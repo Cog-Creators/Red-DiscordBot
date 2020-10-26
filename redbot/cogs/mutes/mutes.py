@@ -1380,7 +1380,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             results = []
             for channel in guild.channels:
-                result.append(await self.channel_unmute_user(guild, channel, author, user, reason))
+                results.append(await self.channel_unmute_user(guild, channel, author, user, reason))
             for task in results:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
