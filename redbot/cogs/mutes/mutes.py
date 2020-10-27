@@ -370,7 +370,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if reason not in reasons:
                     reasons[reason] = [channel]
                 else:
-                    reason[reason].append(channel)
+                    reasons[reason].append(channel)
             error_msg = _("{member} could not be unmuted for the following reasons:\n").format(
                 member=member
             )
