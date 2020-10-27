@@ -14,6 +14,7 @@ from .errors import (
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     StreamNotFound,
+    YoutubeQuotaExceeded,
 )
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -180,12 +181,16 @@ class YoutubeStream(Stream):
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
 
-        if (
-            "error" in data
-            and data["error"]["code"] == 400
-            and data["error"]["errors"][0]["reason"] == "keyInvalid"
-        ):
-            raise InvalidYoutubeCredentials()
+        if "error" in data:
+            error_code = data["error"]["code"]
+            if error_code == 400 and data["error"]["errors"][0]["reason"] == "keyInvalid":
+                raise InvalidYoutubeCredentials()
+            elif error_code == 403 and data["error"]["errors"][0]["reason"] in (
+                "dailyLimitExceeded",
+                "quotaExceeded",
+                "rateLimitExceeded",
+            ):
+                raise YoutubeQuotaExceeded()
         elif "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
         elif "items" in data:

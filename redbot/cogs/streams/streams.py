@@ -19,6 +19,7 @@ from .errors import (
     OfflineStream,
     StreamNotFound,
     StreamsError,
+    YoutubeQuotaExceeded,
 )
 from . import streamtypes as _streamtypes
 
@@ -262,6 +263,13 @@ class Streams(commands.Cog):
                     "The YouTube API key is either invalid or has not been set. See {command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
+        except YoutubeQuotaExceeded:
+            await ctx.send(
+                _(
+                    "YouTube quota has been exceeded."
+                    " Try again later or contact the owner if this continues."
+                )
+            )
         except APIError as e:
             log.error(
                 "Something went wrong whilst trying to contact the stream service's API.\n"
@@ -417,6 +425,13 @@ class Streams(commands.Cog):
                     ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
                 )
                 return
+            except YoutubeQuotaExceeded:
+                await ctx.send(
+                    _(
+                        "YouTube quota has been exceeded."
+                        " Try again later or contact the owner if this continues."
+                    )
+                )
             except APIError as e:
                 log.error(
                     "Something went wrong whilst trying to contact the stream service's API.\n"
