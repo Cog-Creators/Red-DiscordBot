@@ -109,14 +109,16 @@ async def _schema_0_to_1():
     group = _config._get_base_group(_config.USER)
     bank_user_data = await group.all()
     for user_config in bank_user_data.values():
-        user_config["balance"] = int(user_config["balance"])
+        if "balance" in user_config:
+            user_config["balance"] = int(user_config["balance"])
     await group.set(bank_user_data)
 
     group = _config._get_base_group(_config.MEMBER)
     bank_member_data = await group.all()
     for guild_data in bank_member_data.values():
         for member_config in guild_data.values():
-            member_config["balance"] = int(member_config["balance"])
+            if "balance" in member_config:
+                member_config["balance"] = int(member_config["balance"])
     await group.set(bank_member_data)
 
 

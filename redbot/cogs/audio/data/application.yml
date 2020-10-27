@@ -1,6 +1,6 @@
 server:
   host: "localhost"
-  port: 2333 # REST server
+  port: 2333 # WS port
 lavalink:
   server:
     password: "youshallnotpass"
@@ -18,7 +18,7 @@ lavalink:
     youtubePlaylistLoadLimit: 10000
 logging:
   file:
-    max-history: 30
+    max-history: 7
     max-size: 1GB
   path: ./logs/
   level:
