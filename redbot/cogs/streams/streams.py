@@ -262,7 +262,12 @@ class Streams(commands.Cog):
                     "The YouTube API key is either invalid or has not been set. See {command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
-        except APIError:
+        except APIError as e:
+            log.error(
+                "Something went wrong whilst trying to contact the stream service's API.\n"
+                "Raw response data:\n%r",
+                e,
+            )
             await ctx.send(
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
@@ -412,7 +417,12 @@ class Streams(commands.Cog):
                     ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
                 )
                 return
-            except APIError:
+            except APIError as e:
+                log.error(
+                    "Something went wrong whilst trying to contact the stream service's API.\n"
+                    "Raw response data:\n%r",
+                    e,
+                )
                 await ctx.send(
                     _("Something went wrong whilst trying to contact the stream service's API.")
                 )

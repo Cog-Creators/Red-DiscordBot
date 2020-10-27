@@ -196,7 +196,7 @@ class YoutubeStream(Stream):
             and data["pageInfo"]["totalResults"] < 1
         ):
             raise StreamNotFound()
-        raise APIError()
+        raise APIError(data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
@@ -276,7 +276,7 @@ class TwitchStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError()
+            raise APIError(data)
 
     async def fetch_id(self):
         header = {"Client-ID": str(self._client_id)}
@@ -298,7 +298,7 @@ class TwitchStream(Stream):
         elif r.status == 401:
             raise InvalidTwitchCredentials()
         else:
-            raise APIError()
+            raise APIError(data)
 
     def make_embed(self, data):
         is_rerun = data["type"] == "rerun"
@@ -347,7 +347,7 @@ class HitboxStream(Stream):
             # self.already_online = True
             return self.make_embed(data)
 
-        raise APIError()
+        raise APIError(data)
 
     def make_embed(self, data):
         base_url = "https://edge.sf.hitbox.tv"
@@ -386,7 +386,7 @@ class PicartoStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError()
+            raise APIError(data)
 
     def make_embed(self, data):
         avatar = rnd(
