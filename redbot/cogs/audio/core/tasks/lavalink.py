@@ -17,6 +17,8 @@ _ = Translator("Audio", Path(__file__))
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
     def lavalink_restart_connect(self) -> None:
+        lavalink.unregister_event_listener(self.lavalink_event_handler)
+        lavalink.unregister_update_listener(self.lavalink_update_handler)
         if self.lavalink_connect_task:
             self.lavalink_connect_task.cancel()
         if self._restore_task:
