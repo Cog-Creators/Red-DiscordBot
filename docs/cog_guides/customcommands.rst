@@ -80,7 +80,7 @@ Examples:
 **Arguments:**
 
 - ``<command>`` The custom command to check or set the cooldown.
-- ``<cooldown>`` The number of seconds to wait before allowing the command to be invoked again. If ommited, will instead return the current cooldown settings.
+- ``<cooldown>`` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.
 - ``<per>`` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.
 
 .. _customcommands-command-customcom-create:
