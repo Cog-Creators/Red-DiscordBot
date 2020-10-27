@@ -1,14 +1,17 @@
 .. 3.4.x Changelogs
 
-Redbot 3.4.1 (Unreleased)
+Redbot 3.4.1 (2020-10-27)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`StoneDestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+| :ghuser:`absj30`, :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`Stonedestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 |
 | **Read before updating**:
-| 1. This Red update bumps discord.py to version 1.5.1, which enables Discord intents.  Red requires all Prvileged Intents to be enabled.  More information can be found at in :ref:`enabling-privileged-intents`.
-| 
+| 1. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Prvileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
+| 2. Mutes functionality has been moved from Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see full `Mutes changelog below <important-341-1>`.
+| 3. Information for Audio users that are using external Lavalink instance (if you don't know what that is, you should skip this point):
+| We've updated our ``application.yml`` file and you should update your instance's ``application.yml`` appropriately.
+  Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
 ------------------
@@ -33,6 +36,9 @@ Core Bot
 - Added datapath and metadata file to ``[p]debuginfo`` (:issue:`4524`)
 - Added list of disabled intents to ``[p]debuginfo`` (:issue:`4423`)
 - Bumped discord.py dependency to version 1.5.1 (:issue:`4423`)
+- Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
+
+    - Global locale and regional format setters have been renamed to ``[p]set globallocale`` and ``[p]set globalregionalformat``
 
 Audio
 *****
@@ -43,8 +49,9 @@ Audio
 - Fixed YouTube searching issues (:issue:`4504`)
 - Fixed YouTube age restricted track playback (:issue:`4504`)
 - Fixed Audio cog not being translated when setting locale (:issue:`4492`, :issue:`4495`)
+- Fixed tracks getting stuck at 0:00 after long player sessions (:issue:`4529`)
 - Removed lavalink logs from being added to backup (:issue:`4453`, :issue:`4452`)
-- Remove stream durations from being in queue duration (:issue:`4513`)
+- Removed stream durations from being in queue duration (:issue:`4513`)
 - Added Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past users quota. (:issue:`4446`)
 - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
@@ -92,6 +99,8 @@ Mod
 - Renamed ``[p]hackban`` to ``[p]massban``, keeping ``[p]hackban`` as an alias, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
 - Moved mutes to a separate, individual cog (:issue:`3634`)
 
+.. _important-341-1:
+
 Mutes
 *****
 
@@ -105,6 +114,7 @@ Modlog
 ******
 
 - Fixed error being raised when running ``[p]casesfor`` and ``[p]case`` (:issue:`4415`)
+- Long reasons in Modlog are now properly shortened in message content (:issue:`4541`)
 
 Trivia Lists
 ************
@@ -112,6 +122,7 @@ Trivia Lists
 - Fixed incorrect order of Machamp and Machoke questions (:issue:`4424`)
 - Added new MLB trivia list (:issue:`4455`)
 - Added new Who's That Pokémon - Gen. IV trivia list (:issue:`4434`)
+- Added new Hockey trivia list (:issue:`4384`)
 
 Warnings
 ********
@@ -122,17 +133,28 @@ Warnings
 Developer changelog
 -------------------
 
-Core
-****
+| **Important:**
+| 1. Red now allows to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Core Bot changelog below <important-dev-341-1>` for more information.
+
+.. _important-dev-341-1:
+
+Core Bot
+********
+
+- Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
+
+    - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
+    - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
 
 - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - Added option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
-- Moved `redbot.core.checks.bot_in_a_guild()` to `redbot.core.commands.bot_in_a_guild()` (:issue:`4515`, :issue:`4510`)
+- Added `bot.get_or_fetch_user() <RedBase.get_or_fetch_user()>` and `bot.get_or_fetch_member() <RedBase.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
 Bank
 ****
 
-- Bank API methods now throw TypeError if a non-integer amount is supplied (:issue:`4376`)
+- Bank API methods now consistently throw TypeError if a non-integer amount is supplied (:issue:`4376`)
 
 Mod
 ***
@@ -179,6 +201,7 @@ Miscellaneous
 - Improved documentation about arguments in command syntax (:issue:`4058`)
 - Replaced a few instances of Red with bot name in command docstrings (:issue:`4470`)
 - Fixed grammar in places scattered throughout bot (:issue:`4500`)
+- Properly define supported Python versions to be lower than 3.9 (:issue:`4538`)
 
 
 Redbot 3.4.0 (2020-08-17)
