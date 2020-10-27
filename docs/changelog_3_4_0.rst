@@ -10,8 +10,8 @@ Read before updating
 --------------------
 
 1. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Prvileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
-2. Mutes functionality has been moved from Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see full `Mutes changelog below <important-341-1>`.
-3. Information for Audio users that are using external Lavalink instance (if you don't know what that is, you should skip this point):
+2. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
+3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
    We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.0/redbot/cogs/audio/data/application.yml>`_ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
