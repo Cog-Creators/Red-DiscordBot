@@ -667,8 +667,8 @@ class RedBase(
 
     async def get_or_fetch_user(self, user_id: int) -> discord.User:
         """
-        Retrieves a discord.User based on their ID. This can only
-        be used by bot accounts. You do not have to share any guilds
+        Retrieves a `discord.User` based on their ID.
+        You do not have to share any guilds
         with the user to get this information, however many operations
         do require that you do.
 
@@ -686,7 +686,6 @@ class RedBase(
         Errors
             Please refer to `discord.Client.fetch_user`.
 
-
         Returns
         --------
         discord.User
@@ -699,6 +698,7 @@ class RedBase(
 
     async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> discord.Member:
         """
+        Retrieves a `discord.Member` from a guild and a member ID.
 
         .. warning::
 
@@ -706,7 +706,7 @@ class RedBase(
 
         Parameters
         -----------
-        guild: `discord.Guild`
+        guild: discord.Guild
             The guild to look into.
         member_id: int
             The user's ID to fetch from.
@@ -715,7 +715,6 @@ class RedBase(
         -------
         Errors
             Please refer to `discord.Guild.fetch_member`.
-
 
         Returns
         --------
