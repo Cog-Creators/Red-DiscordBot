@@ -9,15 +9,25 @@ Redbot 3.4.1 (2020-10-27)
 Read before updating
 --------------------
 
-1. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Prvileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
-2. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
-3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+1. This release fixes a security issue in Mod cog. See `Security changelog below <important-341-2>` for more information.
+2. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Prvileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
+3. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
+4. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
    We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`_ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
 ------------------
+
+.. _important-341-2:
+
+Security
+********
+
+**NOTE:** If you can't update immediately, we recommend globally disabling the affected command until you can.
+
+- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`_.
 
 Core Bot
 ********
