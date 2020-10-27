@@ -72,7 +72,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Failed To Shutdown Lavalink"),
                 description=_(
-                    "For it to take effect please reload " "Audio (`{prefix}reload audio`)."
+                    "For it to take effect please reload Audio (`{prefix}reload audio`)."
                 ).format(
                     prefix=ctx.prefix,
                 ),
@@ -223,8 +223,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         ws_port = configs["ws_port"]
         msg = "----" + _("Connection Settings") + "----        \n"
         msg += _("Host:             [{host}]\n").format(host=host)
-        msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
         msg += _("WS Port:          [{port}]\n").format(port=ws_port)
+        if ws_port != rest_port:
+            msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
         msg += _("Password:         [{password}]\n").format(password=password)
         try:
             await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))

@@ -34,7 +34,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 settings = self._default_lavalink_settings
                 host = settings["host"]
                 password = settings["password"]
-                rest_port = settings["rest_port"]
                 ws_port = settings["ws_port"]
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
@@ -74,7 +73,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 host = configs["host"]
                 password = configs["password"]
-                rest_port = configs["rest_port"]
                 ws_port = configs["ws_port"]
                 break
         else:
@@ -87,12 +85,14 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
 
         retry_count = 0
         while retry_count < max_retries:
+            if lavalink.node._nodes:
+                await lavalink.node.disconnect()
             try:
                 await lavalink.initialize(
                     bot=self.bot,
                     host=host,
                     password=password,
-                    rest_port=rest_port,
+                    rest_port=ws_port,
                     ws_port=ws_port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
