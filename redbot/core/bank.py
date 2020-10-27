@@ -109,14 +109,16 @@ async def _schema_0_to_1():
     group = _config._get_base_group(_config.USER)
     bank_user_data = await group.all()
     for user_config in bank_user_data.values():
-        user_config["balance"] = int(user_config["balance"])
+        if "balance" in user_config:
+            user_config["balance"] = int(user_config["balance"])
     await group.set(bank_user_data)
 
     group = _config._get_base_group(_config.MEMBER)
     bank_member_data = await group.all()
     for guild_data in bank_member_data.values():
         for member_config in guild_data.values():
-            member_config["balance"] = int(member_config["balance"])
+            if "balance" in member_config:
+                member_config["balance"] = int(member_config["balance"])
     await group.set(bank_member_data)
 
 
@@ -500,7 +502,8 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
         group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
     if user_id is None:
-        await bot.request_offline_members(*_guilds)
+        for _guild in _guilds:
+            await _guild.chunk()
         accounts = await group.all()
         tmp = accounts.copy()
         members = bot.get_all_members() if global_bank else guild.members

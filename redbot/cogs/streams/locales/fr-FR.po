@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2020-10-26 17:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -278,11 +278,11 @@ msgstr "Je vais maintenant envoyer une notification dans ce salon lorsque {strea
 msgid "I won't send notifications about {stream.name} in this channel anymore."
 msgstr "Je n'enverrai plus de notifications à propos de {stream.name} dans ce salon."
 
-#: redbot/cogs/streams/streams.py:733
+#: redbot/cogs/streams/streams.py:736
 msgid "{mention}, {stream} is live!"
 msgstr "{mention}, {stream} est en live !"
 
-#: redbot/cogs/streams/streams.py:750
+#: redbot/cogs/streams/streams.py:753
 msgid "{stream} is live!"
 msgstr "{stream} est en live !"
 
