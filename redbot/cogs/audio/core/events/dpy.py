@@ -239,6 +239,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             if self.cog_init_task:
                 self.cog_init_task.cancel()
 
+            if self._restore_task:
+                self._restore_task.cancel()
+
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
             self.bot.loop.create_task(lavalink.close())
