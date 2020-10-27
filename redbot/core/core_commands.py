@@ -418,7 +418,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "Red is backed by a passionate community who contributes and "
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
-                "(c) Cog Creators"
+                "© Cog Creators"
             ).format(red_repo, author_repo, org_repo, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
