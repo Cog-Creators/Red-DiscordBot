@@ -128,7 +128,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
                 player.maybe_shuffle()
-                if guild.id not in self._ll_guild_updates:
+                if not player.is_playing:
                     await player.play()
             except Exception as err:
                 debug_exc_log(log, err, f"Error restoring player in {guild_id}")
