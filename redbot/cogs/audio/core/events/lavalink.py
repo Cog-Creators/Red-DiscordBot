@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import datetime
 import logging
 from pathlib import Path
 
@@ -16,6 +17,12 @@ _ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+    ):
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
+        self._ll_guild_updates.add(int(extra.get("guildId", 0)))
+
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
@@ -160,6 +167,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await player.disconnect()
+                    self._ll_guild_updates.discard(guild.id)
             if status:
                 player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
@@ -193,6 +201,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
+                self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
