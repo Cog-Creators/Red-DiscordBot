@@ -240,6 +240,11 @@ class Economy(commands.Cog):
             - `[p]bank set @Twentysix 26` - Sets balance to 26
             - `[p]bank set @Twentysix +2` - Increases balance by 2
             - `[p]bank set @Twentysix -6` - Decreases balance by 6
+
+        **Arguments**
+
+        - `<to>` The user to set the currency of.
+        - `<creds>` The amount of currency to set their alance to.
         """
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
@@ -278,7 +283,16 @@ class Economy(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     @_bank.command()
     async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
+        """Delete all bank accounts.
+
+        Examples:
+            - `[p]bank reset` - Did not confirm. Shows the help message.
+            - `[p]bank reset yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         if confirmation is False:
             await ctx.send(
                 _(
