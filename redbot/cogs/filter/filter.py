@@ -5,7 +5,7 @@ from typing import Union, Set, Literal
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_list
 
@@ -396,6 +396,8 @@ class Filter(commands.Cog):
         if await self.bot.is_automod_immune(message):
             return
 
+        await set_contextual_locales_from_guild(self.bot, message.guild)
+
         await self.check_filter(message)
 
     @commands.Cog.listener()
@@ -428,6 +430,8 @@ class Filter(commands.Cog):
         guild_data = await self.config.guild(member.guild).all()
         if not guild_data["filter_names"]:
             return
+
+        await set_contextual_locales_from_guild(self.bot, guild)
 
         if await self.filter_hits(member.display_name, member.guild):
 

@@ -11,7 +11,7 @@ Installing the pre-requirements
 Please install the pre-requirements by following instructions from one of the following subsections.
 
 The pre-requirements are:
- - Python 3.8.1 or greater
+ - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -40,7 +40,7 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2019-workload-vctools -y
-    choco upgrade python3 -y
+    choco upgrade python3 -y --version 3.8.6
 
 For Audio support, you should also run the following command before exiting:
 
@@ -64,7 +64,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_; **Python 3.9 is currently not supported!**
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -172,8 +172,7 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-:dpy_docs:`this guide <discord.html#creating-a-bot-account>`,
-section "Creating a Bot Account".
+`this guide <bot_application_guide>`.
 
 .. tip::
    If it's the first time you're using Red, you should check our `getting-started` guide
