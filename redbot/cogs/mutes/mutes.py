@@ -545,11 +545,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.debug(f"{user} - {type(user)}")
                     to_del.append(user_id)
                     log.debug("creating case")
+                    if isinstance(after, discord.VoiceChannel):
+                        unmute_type = "vunmute"
+                    else:
+                        unmute_type = "cunmute"
                     await modlog.create_case(
                         self.bot,
                         after.guild,
                         datetime.now(timezone.utc),
-                        "cunmute",
+                        unmute_type,
                         user,
                         None,
                         _("Manually removed channel overwrites"),
