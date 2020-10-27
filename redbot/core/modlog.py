@@ -435,18 +435,19 @@ class Case:
             emb.timestamp = datetime.utcfromtimestamp(self.created_at)
             return emb
         else:
-            reason = _("**Reason:** {}").format(self.reason)
-            if len(reason) > 1000:
-                reason = (
-                    next(
-                        pagify(
-                            reason,
-                            delims=[" ", "\n"],
-                            page_length=1000,
+            if self.reason:
+                reason = _("**Reason:** {}").format(self.reason)
+                if len(reason) > 1000:
+                    reason = (
+                        next(
+                            pagify(
+                                reason,
+                                delims=[" ", "\n"],
+                                page_length=1000,
+                            )
                         )
+                        + "..."
                     )
-                    + "..."
-                )
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
