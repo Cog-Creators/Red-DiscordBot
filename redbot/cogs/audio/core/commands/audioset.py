@@ -1472,16 +1472,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
-            lavalink.unregister_event_listener(self.lavalink_event_handler)
-            lavalink.unregister_update_listener(self.lavalink_update_handler)
-
             await lavalink.close()
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
 
             self.lavalink_restart_connect()
-            lavalink.register_event_listener(self.lavalink_event_handler)
-            lavalink.register_update_listener(self.lavalink_update_handler)
+
             await self.send_embed_msg(
                 ctx,
                 title=_("Restarting Lavalink"),
