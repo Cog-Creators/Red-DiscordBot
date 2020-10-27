@@ -94,6 +94,12 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     while tries < 25 and vc is not None:
                         try:
                             vc = guild.get_channel(track_data[-1].room_id)
+                            if not vc:
+                                break
+                            perms = vc.permissions_for(guild.me)
+                            if not (perms.connect and perms.speak):
+                                vc = None
+                                break
                             await lavalink.connect(vc)
                             player = lavalink.get_player(guild.id)
                             player.store("connect", datetime.datetime.utcnow())
