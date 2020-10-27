@@ -2,6 +2,7 @@
 /redbot/cogs/audio/** @aikaterna @Drapersniper
 /redbot/cogs/downloader/* @jack1142
 /redbot/cogs/streams/* @palmtree5
+/redbot/cogs/mutes/* @TrustyJAID
 
 # Trivia Lists
 /redbot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna

@@ -139,7 +139,7 @@ class YoutubeStream(Stream):
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
         # This is technically redundant since we have the
-        # info from the RSS ... but incase you dont wanna deal with fully rewritting the
+        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
             params = {"key": self._token["api_key"], "id": self.livestreams[-1], "part": "snippet"}

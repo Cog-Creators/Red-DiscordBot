@@ -1,6 +1,11 @@
 # The equalizer class and some audio eq functions are derived from
 # 180093157554388993's work, with his permission
+from pathlib import Path
 from typing import Final
+
+from redbot.core.i18n import Translator
+
+_ = Translator("Audio", Path(__file__))
 
 
 class Equalizer:

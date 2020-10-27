@@ -14,7 +14,6 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from .events import Events
 from .kickban import KickBanMixin
-from .mutes import MuteMixin
 from .names import ModInfo
 from .slowmode import Slowmode
 from .settings import ModSettings
@@ -38,7 +37,6 @@ class Mod(
     ModSettings,
     Events,
     KickBanMixin,
-    MuteMixin,
     ModInfo,
     Slowmode,
     commands.Cog,
@@ -58,6 +56,7 @@ class Mod(
         "current_tempbans": [],
         "dm_on_kickban": False,
         "default_days": 0,
+        "default_tempban_duration": 60 * 60 * 24,
     }
 
     default_channel_settings = {"ignored": False}
