@@ -106,6 +106,7 @@ Mutes
 
 - Added ``[p]muteset forcerole`` to make mutes role based, instead of permission based (:issue:`3634`)
 - Added ``[p]mutechannel`` to mute a user in the current channel (:issue:`3634`)
+- Added ``[p]mutevoice`` to mute a user in the voice channel user is currently in (:issue:`3634`)
 - Added an optional time argument to all mutes, to specify when the user should be unmuted (:issue:`3634`)
 - Mute commands can now take multiple user arguments, to mute multiple users at a time (:issue:`3634`)
 - Changed ``[p]mute`` to default to serverwide muting (:issue:`3634`)
