@@ -304,7 +304,7 @@ class Cleanup(commands.Cog):
         number: positive_int,
         delete_pinned: bool = False,
     ):
-        """Deletes X messages before specified message.
+        """Deletes X messages before the specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
