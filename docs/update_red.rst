@@ -14,6 +14,10 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
     If you're developing for Red, you should also look for "Breaking changes" sections in release notes for each minor (X.Y.0) version that's been released since you last updated Red.
 
+.. important::
+
+    Make sure to read the **Read before updating** sections of the changelogs for all releases that were published since you last updated your instance. They contain important information and if you don't read them, you might run into some issues later.
+
 Updating differs depending on the version you currently have. Next sections will explain how to upgrade to latest version of Red (|version|) from the version that is in the header of the section.
 
 .. contents:: Choose the version you're currently on from the list below:
