@@ -679,7 +679,7 @@ class RedBase(
         Parameters
         -----------
         user_id: int
-            The user's ID to fetch from.
+            The ID of the user that should be retrieved.
 
         Raises
         -------
@@ -707,9 +707,9 @@ class RedBase(
         Parameters
         -----------
         guild: discord.Guild
-            The guild to look into.
+            The guild which the member should be retrieved from.
         member_id: int
-            The user's ID to fetch from.
+            The ID of the member that should be retrieved.
 
         Raises
         -------
