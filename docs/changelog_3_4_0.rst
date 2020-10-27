@@ -46,7 +46,7 @@ Core Bot
 Audio
 *****
 
-- Fixed scattered grammar and typo fixes (:issue:`4446`)
+- Scattered grammar and typo fixes (:issue:`4446`)
 - Fixed Bandcamp playback (:issue:`4504`)
 - Fixed YouTube playlist playback (:issue:`4504`)
 - Fixed YouTube searching issues (:issue:`4504`)
