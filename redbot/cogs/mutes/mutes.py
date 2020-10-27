@@ -12,6 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
+from redbot.core.utils import bounded_gather
 from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
@@ -336,7 +337,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks.append(
                 self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
             )
-        results = await asyncio.gather(*tasks)
+        results = await bounded_gather(*tasks)
         unmuted_channels = [guild.get_channel(c) for c in channels.keys()]
         for result in results:
             if not result:
@@ -693,6 +694,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="makerole")
     @checks.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
+    @commands.max_concurrency(1, commands.BucketType.guild)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
         """Create a Muted role.
 
@@ -702,6 +704,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         If you already have a muted role created on the server use
         `[p]muteset role ROLE_NAME_HERE`
         """
+        if await self.config.guild(ctx.guild).mute_role():
+            command = f"`{ctx.clean_prefix}muteset role`"
+            return await ctx.send(
+                _(
+                    "There is already a mute role setup in this server. "
+                    "Please remove it with {command} before trying to "
+                    "create a new one."
+                ).format(command=command)
+            )
         async with ctx.typing():
             perms = discord.Permissions()
             perms.update(send_messages=False, speak=False, add_reactions=False)
@@ -709,20 +720,22 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 role = await ctx.guild.create_role(
                     name=name, permissions=perms, reason=_("Mute role setup")
                 )
+                await self.config.guild(ctx.guild).mute_role.set(role.id)
+                # save the role early incase of issue later
             except discord.errors.Forbidden:
                 return await ctx.send(_("I could not create a muted role in this server."))
             errors = []
             tasks = []
             for channel in ctx.guild.channels:
                 tasks.append(self._set_mute_role_overwrites(role, channel))
-            errors = await asyncio.gather(*tasks)
+            errors = await bounded_gather(*tasks)
             if any(errors):
                 msg = _(
                     "I could not set overwrites for the following channels: {channels}"
                 ).format(channels=humanize_list([i for i in errors if i]))
                 for page in pagify(msg, delims=[" "]):
                     await ctx.send(page)
-            await self.config.guild(ctx.guild).mute_role.set(role.id)
+
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
         if not await self.config.guild(ctx.guild).notification_channel():
             command_1 = f"`{ctx.clean_prefix}muteset notification`"
@@ -1341,7 +1354,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks = []
             for channel in guild.channels:
                 tasks.append(self.channel_mute_user(guild, channel, author, user, until, reason))
-            task_result = await asyncio.gather(*tasks)
+            task_result = await bounded_gather(*tasks)
             for task in task_result:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
@@ -1402,7 +1415,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             tasks = []
             for channel in guild.channels:
                 tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
-            results = await asyncio.gather(*tasks)
+            results = await bounded_gather(*tasks)
             for task in results:
                 if not task["success"]:
                     ret["channels"].append((task["channel"], task["reason"]))
