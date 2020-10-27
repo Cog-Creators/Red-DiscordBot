@@ -22,22 +22,22 @@ End-user changelog
 Core Bot
 ********
 
-- Fixed incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
+- Fixed an incorrect error being reported on ``[p]set name`` when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed ``[p]set nickname`` erroring when the passed name was longer than 32 characters (:issue:`4364`, :issue:`4363`)
 - Fixed an ungraceful error being raised when running ``[p]traceback`` with closed DMs (:issue:`4329`)
 - Fixed errors that could arise from invalid URLs in ``[p]set avatar`` (:issue:`4437`)
-- Fixed error being raised with ``[p]set nickname`` when no nickname was provided (:issue:`4451`)
+- Fixed an error being raised with ``[p]set nickname`` when no nickname was provided (:issue:`4451`)
 - Fixed and clarified errors being raised with ``[p]set username`` (:issue:`4463`)
-- Fixed ungraceful error raising when ``[p]unload`` output is larger than 2k characters (:issue:`4469`)
-- Fixed ungraceful error raising when providing ``[p]choose`` with empty options (:issue:`4499`)
-- Fixed ungraceful error raising when a bot left a guild while a menu was open (:issue:`3902`)
-- Fixed info missing on non-embed version of ``[p]debuginfo`` (:issue:`4524`)
+- Fixed an ungraceful error being raised when the output of ``[p]unload`` is larger than 2k characters (:issue:`4469`)
+- Fixed an ungraceful error being raised when running ``[p]choose`` with empty options (:issue:`4499`)
+- Fixed an ungraceful error being raised when a bot left a guild while a menu was open (:issue:`3902`)
+- Fixed info missing on the non-embed version of ``[p]debuginfo`` (:issue:`4524`)
 - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
-- Added default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
-- Added datapath and metadata file to ``[p]debuginfo`` (:issue:`4524`)
-- Added list of disabled intents to ``[p]debuginfo`` (:issue:`4423`)
+- Added a default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
+- Added the datapath and metadata file to ``[p]debuginfo`` (:issue:`4524`)
+- Added a list of disabled intents to ``[p]debuginfo`` (:issue:`4423`)
 - Bumped discord.py dependency to version 1.5.1 (:issue:`4423`)
 - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
 
@@ -51,18 +51,18 @@ Audio
 - Fixed YouTube playlist playback (:issue:`4504`)
 - Fixed YouTube searching issues (:issue:`4504`)
 - Fixed YouTube age restricted track playback (:issue:`4504`)
-- Fixed Audio cog not being translated when setting locale (:issue:`4492`, :issue:`4495`)
+- Fixed the Audio cog not being translated when setting locale (:issue:`4492`, :issue:`4495`)
 - Fixed tracks getting stuck at 0:00 after long player sessions (:issue:`4529`)
 - Removed lavalink logs from being added to backup (:issue:`4453`, :issue:`4452`)
 - Removed stream durations from being in queue duration (:issue:`4513`)
-- Added Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past users quota. (:issue:`4446`)
+- Added the Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past user's quota. (:issue:`4446`)
 - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
 - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
 - Added ``[p]audioset mycountrycode``, allowing Spotify search locale per user (:issue:`4446`)
-- Added ``[p]llsetup java``, allowing for custom Java executable path (:issue:`4446`)
+- Added ``[p]llsetup java``, allowing for a custom Java executable path (:issue:`4446`)
 - Added ``[p]llset info`` to show Lavalink settings (:issue:`4527`)
-- Added ``[p]audioset logs`` to download Lavalink logs if Lavalink server is set to internal (:issue:`4527`)
+- Added ``[p]audioset logs`` to download Lavalink logs if the Lavalink server is set to internal (:issue:`4527`)
 
 Cleanup
 *******
@@ -72,7 +72,7 @@ Cleanup
 Custom Commands
 ***************
 
-- Fixed ungraceful error being thrown on ``[p]cc edit`` (:issue:`4325`)
+- Fixed an ungraceful error being thrown on ``[p]cc edit`` (:issue:`4325`)
 
 Dev
 ***
@@ -82,21 +82,21 @@ Dev
 Economy
 *******
 
-- Added embed option for ``[p]leaderboard`` (:issue:`4184`, :issue:`4104`)
+- Added an embed option for ``[p]leaderboard`` (:issue:`4184`, :issue:`4104`)
 
 General
 *******
 
 - Fixed issues with text not being properly URL encoded (:issue:`4024`)
-- Fixed ungraceful error occuring when title was longer than 256 characters in ``[p]urban`` (:issue:`4474`)
+- Fixed an ungraceful error occurring when a title is longer than 256 characters in ``[p]urban`` (:issue:`4474`)
 - Changed "boosters" to "boosts" in ``[p]serverinfo`` to clarify what the number represents (:issue:`4507`)
 
 Mod
 ***
 
-- Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count to mention spam cap (:issue:`4359`)
-- Added option to ban users not in the guild to ``[p]ban`` (:issue:`4422`, :issue:`4419`)
-- Added default tempban duration for ``[p]tempban`` (:issue:`4473`, :issue:`3992`)
+- Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count towards the mention spam cap (:issue:`4359`)
+- Added an option to ban users not in the guild to ``[p]ban`` (:issue:`4422`, :issue:`4419`)
+- Added a default tempban duration for ``[p]tempban`` (:issue:`4473`, :issue:`3992`)
 - Fixed nicknames not being properly stored and logged (:issue:`4131`)
 - Fixed plural typos in ``[p]userinfo`` (:issue:`4397`, :issue:`4379`)
 - Renamed ``[p]hackban`` to ``[p]massban``, keeping ``[p]hackban`` as an alias, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
@@ -117,7 +117,7 @@ Mutes
 Modlog
 ******
 
-- Fixed error being raised when running ``[p]casesfor`` and ``[p]case`` (:issue:`4415`)
+- Fixed an error being raised when running ``[p]casesfor`` and ``[p]case`` (:issue:`4415`)
 - Long reasons in Modlog are now properly shortened in message content (:issue:`4541`)
 
 Trivia Lists
@@ -138,7 +138,7 @@ Developer changelog
 -------------------
 
 | **Important:**
-| 1. Red now allows to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Core Bot changelog below <important-dev-341-1>` for more information.
+| 1. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Core Bot changelog below <important-dev-341-1>` for more information.
 
 .. _important-dev-341-1:
 
@@ -151,7 +151,7 @@ Core Bot
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
 
 - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- Added option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
+- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
 - Added `bot.get_or_fetch_user() <RedBase.get_or_fetch_user()>` and `bot.get_or_fetch_member() <RedBase.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
 - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
@@ -168,9 +168,9 @@ Mod
 Modlog
 ******
 
-- Added option to accept a ``discord.Object`` in case creation (:issue:`4326`)
+- Added an option to accept a ``discord.Object`` in case creation (:issue:`4326`)
 - Added ``last_known_username`` parameter to `modlog.create_case()` function (:issue:`4326`)
-- Fixed error being raised with a deleted channel in `Case.message_content()` (:issue:`4415`)
+- Fixed an error being raised with a deleted channel in `Case.message_content()` (:issue:`4415`)
 
 Utility
 *******
@@ -201,9 +201,9 @@ Miscellaneous
 
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
-- Replaced link to approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
+- Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
-- Replaced a few instances of Red with bot name in command docstrings (:issue:`4470`)
+- Replaced a few instances of Red with the bot name in command docstrings (:issue:`4470`)
 - Fixed grammar in places scattered throughout bot (:issue:`4500`)
 - Properly define supported Python versions to be lower than 3.9 (:issue:`4538`)
 
