@@ -59,7 +59,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             self.player_automated_timer_task.add_done_callback(task_callback)
             lavalink.register_event_listener(self.lavalink_event_handler)
             lavalink.register_update_listener(self.lavalink_update_handler)
-            await self.restore_players()
+            self._restore_task = asyncio.create_task(self.restore_players())
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
             raise err

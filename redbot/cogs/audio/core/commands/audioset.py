@@ -1482,7 +1482,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             self.lavalink_restart_connect()
             lavalink.register_event_listener(self.lavalink_event_handler)
             lavalink.register_update_listener(self.lavalink_update_handler)
-            await self.restore_players()
             await self.send_embed_msg(
                 ctx,
                 title=_("Restarting Lavalink"),

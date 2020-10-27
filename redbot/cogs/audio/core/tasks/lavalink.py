@@ -19,7 +19,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
     def lavalink_restart_connect(self) -> None:
         if self.lavalink_connect_task:
             self.lavalink_connect_task.cancel()
+        if self._restore_task:
+            self._restore_task.cancel()
 
+        self._restore_task = None
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
 
     async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
@@ -118,4 +121,4 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "See above tracebacks for details."
             )
             return
-        asyncio.create_task(self.restore_players())
+        self._restore_task = asyncio.create_task(self.restore_players())

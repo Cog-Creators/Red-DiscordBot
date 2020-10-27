@@ -58,6 +58,7 @@ class MixinMeta(ABC):
     _error_counter: Counter
 
     lavalink_connect_task: Optional[asyncio.Task]
+    _restore_task: Optional[asyncio.Task]
     player_automated_timer_task: Optional[asyncio.Task]
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
