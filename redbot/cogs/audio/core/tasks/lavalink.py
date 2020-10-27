@@ -117,3 +117,5 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "Connecting to the Lavalink server failed after multiple attempts. "
                 "See above tracebacks for details."
             )
+            return
+        asyncio.create_task(self.restore_players())
