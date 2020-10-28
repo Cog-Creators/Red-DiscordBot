@@ -258,3 +258,8 @@ Not all of these are strict requirements (some are) but are all generally advisa
     variable ``__red_end_user_data_statement__``.
     This should be a string containing a user friendly explanation of what data
     your cog stores and why.
+
+18. Set contextual locales in events and other background tasks that use i18n APIs
+
+  - See `redbot.core.i18n.set_contextual_locales_from_guild()`
+  - Usage of i18n APIs within commands automatically has proper contextual locales set.
