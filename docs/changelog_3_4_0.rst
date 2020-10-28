@@ -4,7 +4,7 @@ Redbot 3.4.2 (2020-10-28)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
 
 Read before updating
 --------------------
