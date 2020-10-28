@@ -16,12 +16,13 @@ Read before updating
 End-user changelog
 ------------------
 
-- Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
-- Fixed the ``[p]local search`` command (:issue:`4553`)
-- Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
-- Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
-- Added error messages when exceeding the YouTube quota in the Streams cog (:issue:`4552`)
-- Improved logging for unexpected errors in the Streams cog (:issue:`4552`)
+- **Core Bot** - Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
+- **Audio** - Fixed the ``[p]local search`` command (:issue:`4553`)
+- **Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
+- **Audio** - Commands in ``[p]llset`` group can now be used (:issue:`4562`)
+- **Mod** - Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
+- **Streams** - Added error messages when exceeding the YouTube quota in the Streams cog (:issue:`4552`)
+- **Streams** - Improved logging for unexpected errors in the Streams cog (:issue:`4552`)
 
 Documentation changes
 ---------------------
