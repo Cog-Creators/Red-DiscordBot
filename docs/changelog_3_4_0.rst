@@ -17,11 +17,11 @@ End-user changelog
 ------------------
 
 - Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
-- Fixed ``[p]local search`` command (:issue:`4553`)
+- Fixed the ``[p]local search`` command (:issue:`4553`)
 - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
-- Added info about metadata file to ``redbot --debuginfo`` (:issue:`4557`)
-- Added error messages for exceeded YouTube quota in Streams cog (:issue:`4552`)
-- Improved logging for unexpected errors in Streams cog (:issue:`4552`)
+- Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
+- Added error messages when exceeding the YouTube quota in the Streams cog (:issue:`4552`)
+- Improved logging for unexpected errors in the Streams cog (:issue:`4552`)
 
 Documentation changes
 ---------------------
