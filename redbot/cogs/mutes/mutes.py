@@ -244,7 +244,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
         if success["success"]:
-            await modlog.create_case(
+            modlog_case = await modlog.create_case(
                 self.bot,
                 guild,
                 datetime.now(timezone.utc),
@@ -254,6 +254,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 _("Automatic unmute"),
                 until=None,
             )
+            if await self.config.guild(member.guild).dm():
+                await self._send_dm_notification(modlog_case)
         else:
             chan_id = await self.config.guild(guild).notification_channel()
             notification_channel = guild.get_channel(chan_id)
@@ -351,7 +353,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if channel_list:
             modlog_reason += _("\nUnmuted in channels: ") + channel_list
 
-        await modlog.create_case(
+        modlog_case = await modlog.create_case(
             self.bot,
             guild,
             datetime.now(timezone.utc),
@@ -361,6 +363,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             modlog_reason,
             until=None,
         )
+        if await self.config.guild(member.guild).dm():
+            await self._send_dm_notification(modlog_case)
         self._channel_mute_events[guild.id].set()
         if any(results):
             reasons = {}
@@ -424,7 +428,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     unmute_type = "vunmute"
                 else:
                     unmute_type = "cunmute"
-                await modlog.create_case(
+                modlog_case = await modlog.create_case(
                     self.bot,
                     channel.guild,
                     datetime.now(timezone.utc),
@@ -435,6 +439,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     until=None,
                     channel=channel,
                 )
+                if await self.config.guild(member.guild).dm():
+                    await self._send_dm_notification(modlog_case)
             return None
         else:
             error_msg = _(
@@ -454,6 +460,40 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     return None
             else:
                 return (member, channel, success["reason"])
+
+    async def _send_dm_notification(self, case: modlog.Case):
+        user = case.user
+        title = modlog.get_casetype(case.action_type).case_str
+        duration = None
+        if case.until:
+            # This was stolen from core modlog.py
+            start = datetime.utcfromtimestamp(case.created_at)
+            end = datetime.utcfromtimestamp(case.until)
+            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
+            duration = end - start
+            dur_fmt = _strfdelta(duration)
+            until = end_fmt
+            duration = dur_fmt
+            # The stolen code ends here
+        if not user.dm_channel:
+            await user.create_dm()
+        if await self.bot.embed_requested(user.dm_channel, user):
+            em = discord.Embed(
+                title=title,
+                description=case.reason,
+                color=await self.bot.get_embed_color(user),
+            )
+            em.timestamp = datetime.now()
+            if duration:
+                em.add_field(name=_("**Until**"), value=until)
+                em.add_field(name=_("**Duration**"), value=duration)
+            em.add_field(name=_("**Guild**"), value=case.guild.name)
+            if self.config.guild(case.guild).show_mod():
+                em.add_field(name=_("**Moderator**"), value=case.moderator)
+            try:
+                await user.send(embed=em)
+            except discord.Forbidden:
+                pass
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -566,7 +606,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         unmute_type = "vunmute"
                     else:
                         unmute_type = "cunmute"
-                    await modlog.create_case(
+                    modlog_case = await modlog.create_case(
                         self.bot,
                         after.guild,
                         datetime.now(timezone.utc),
@@ -578,6 +618,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         channel=after,
                     )
                     log.debug("created case")
+                    if await self.config.guild(after.guild).dm():
+                        await self._send_dm_notification(modlog_case)
             if to_del:
                 for u_id in to_del:
                     del self._channel_mutes[after.id][u_id]
@@ -988,7 +1030,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     if success["channels"]:
                         # incase we only muted a user in 1 channel not all
                         issue_list.append(success)
-                    await modlog.create_case(
+                    modlog_case = await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -999,6 +1041,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=until,
                         channel=None,
                     )
+                    if await self.config.guild(user.guild).dm():
+                        await self._send_dm_notification(modlog_case)
                 else:
                     issue_list.append(success)
         if success_list:
@@ -1132,7 +1176,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if success["success"]:
                     success_list.append(user)
 
-                    await modlog.create_case(
+                    modlog_case = await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1143,6 +1187,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=until,
                         channel=channel,
                     )
+                    if await self.config.guild(user.guild).dm():
+                        await self._send_dm_notification(modlog_case)
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
                 else:
@@ -1199,7 +1245,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
                 if success["success"]:
                     success_list.append(user)
-                    await modlog.create_case(
+                    modlog_case = await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1209,6 +1255,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         reason,
                         until=None,
                     )
+                    if await self.config.guild(user.guild).dm():
+                        await self._send_dm_notification(modlog_case)
                 else:
                     issue_list.append(success)
         self._channel_mute_events[guild.id].set()
@@ -1262,7 +1310,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
                 if success["success"]:
                     success_list.append(user)
-                    await modlog.create_case(
+                    modlog_case = await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1273,6 +1321,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=None,
                         channel=channel,
                     )
+                    if await self.config.guild(user.guild).dm():
+                        await self._send_dm_notification(modlog_case)
                 else:
                     issue_list.append((user, success["reason"]))
         if success_list:
@@ -1609,3 +1659,25 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "reason": _(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
                 }
         return {"success": True, "channel": channel, "reason": None}
+
+
+def _strfdelta(delta):
+    # This is stolen from core modlog.py
+    s = []
+    if delta.days:
+        ds = "%i day" % delta.days
+        if delta.days > 1:
+            ds += "s"
+        s.append(ds)
+    hrs, rem = divmod(delta.seconds, 60 * 60)
+    if hrs:
+        hs = "%i hr" % hrs
+        if hrs > 1:
+            hs += "s"
+        s.append(hs)
+    mins, secs = divmod(rem, 60)
+    if mins:
+        s.append("%i min" % mins)
+    if secs:
+        s.append("%i sec" % secs)
+    return " ".join(s)
