@@ -74,6 +74,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "notification_channel": None,
             "muted_users": {},
             "default_time": 0,
+            "dm": False,
         }
         self.config.register_global(force_role_mutes=True)
         # Tbh I would rather force everyone to use role mutes.
@@ -480,7 +481,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # they weren't a tracked mute so we can return early
                 return
             if after.id in self._server_mutes[guild.id]:
-                await modlog.create_case(
+                modlog_case = await modlog.create_case(
                     self.bot,
                     guild,
                     datetime.now(timezone.utc),
@@ -491,13 +492,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
                 del self._server_mutes[guild.id][after.id]
                 should_save = True
+                if await self.config.guild(after.guild).dm():
+                    await self._send_dm_notification(modlog_case)
         elif mute_role in roles_added:
             # send modlog case for mute and add to cache
             if guild.id not in self._server_mutes:
                 # initialize the guild in the cache to prevent keyerrors
                 self._server_mutes[guild.id] = {}
             if after.id not in self._server_mutes[guild.id]:
-                await modlog.create_case(
+                modlog_case = await modlog.create_case(
                     self.bot,
                     guild,
                     datetime.now(timezone.utc),
@@ -512,6 +515,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "until": None,
                 }
                 should_save = True
+                if await self.config.guild(after.guild).dm():
+                    await self._send_dm_notification(modlog_case)
         if should_save:
             await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
 
