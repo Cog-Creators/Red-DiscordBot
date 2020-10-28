@@ -303,15 +303,27 @@ def init_events(bot, cli_flags):
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
-                msg = _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) concurrently."
-                ).format(number=error.number)
+                if error.per > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times concurrently."
+                    ).format(number=error.number)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time concurrently."
+                    ).format(number=error.number)
             else:
-                msg = _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) per {type} concurrently."
-                ).format(number=error.number, type=error.per.name)
+                if error.per > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
             await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
