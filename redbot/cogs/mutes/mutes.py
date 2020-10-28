@@ -75,6 +75,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "muted_users": {},
             "default_time": 0,
             "dm": False,
+            "show_mod": False,
         }
         self.config.register_global(force_role_mutes=True)
         # Tbh I would rather force everyone to use role mutes.
@@ -672,6 +673,34 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """Mute settings."""
         pass
 
+    @muteset.command()
+    @commands.guild_only()
+    async def senddm(self, ctx: commands.Context, true_or_false: bool):
+        """Set whether mute notifications should be sent to users in DMs."""
+        await self.config.guild(ctx.guild).dm.set(true_or_false)
+        if true_or_false:
+            await ctx.send(_("I will now try to send mute notifications to users DMs."))
+        else:
+            await ctx.send(_("Mute notifications will no longer be sent to users DMs."))
+
+    @muteset.command()
+    @commands.guild_only()
+    async def showmoderator(self, ctx, true_or_false: bool):
+        """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
+        await self.config.guild(ctx.guild).show_mod.set(true_or_false)
+        if true_or_false:
+            await ctx.send(
+                _(
+                    "I will include the name of the moderator who issued the mute when sending a DM to a user."
+                )
+            )
+        else:
+            await ctx.send(
+                _(
+                    "I will not include the name of the moderator who issued the mute when sending a DM to a user."
+                )
+            )
+
     @muteset.command(name="forcerole")
     @commands.is_owner()
     async def force_role_mutes(self, ctx: commands.Context, force_role_mutes: bool):
@@ -696,11 +725,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         notification_channel = ctx.guild.get_channel(data["notification_channel"])
         default_time = timedelta(seconds=data["default_time"])
         msg = _(
-            "Mute Role: {role}\nNotification Channel: {channel}\n" "Default Time: {time}"
+            "Mute Role: {role}\nNotification Channel: {channel}\nDefault Time: {time}\nSend DM: {dm}\nShow moderator: {show_mod}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),
             channel=notification_channel.mention if notification_channel else _("None"),
             time=humanize_timedelta(timedelta=default_time) if default_time else _("None"),
+            dm=data["dm"],
+            show_mod=data["show_mod"],
         )
         await ctx.maybe_send_embed(msg)
 
