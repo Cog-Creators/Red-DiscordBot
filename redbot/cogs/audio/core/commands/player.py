@@ -278,7 +278,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{single_track.title} {single_track.author} {single_track.uri} " f"{str(query)}",
+            f"{single_track.title} {single_track.author} {single_track.uri} {str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:

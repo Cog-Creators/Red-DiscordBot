@@ -97,6 +97,7 @@ def debug_info():
         + "OS version: {}\n".format(osver)
         + "System arch: {}\n".format(platform.machine())
         + "User: {}\n".format(user_who_ran)
+        + "Metadata file: {}\n".format(data_manager.config_file)
     )
     print(info)
     sys.exit(0)
