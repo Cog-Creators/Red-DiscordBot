@@ -463,7 +463,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     async def _send_dm_notification(self, case: modlog.Case):
         user = case.user
-        title = modlog.get_casetype(case.action_type).case_str
+        show_mod = await self.config.guild(case.guild).show_mod()
+        title = f"**{modlog.get_casetype(case.action_type).case_str}**"
         duration = None
         if case.until:
             # This was stolen from core modlog.py
@@ -488,10 +489,28 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 em.add_field(name=_("**Until**"), value=until)
                 em.add_field(name=_("**Duration**"), value=duration)
             em.add_field(name=_("**Guild**"), value=case.guild.name)
-            if self.config.guild(case.guild).show_mod():
+            if show_mod:
                 em.add_field(name=_("**Moderator**"), value=case.moderator)
             try:
                 await user.send(embed=em)
+            except discord.Forbidden:
+                pass
+        else:
+            maybe_mod = (
+                _("**Moderator**: {moderator}\n\n").format(moderator=case.moderator)
+                if show_mod
+                else ""
+            )
+            maybe_duration = (
+                _("**Until**: {until} | **Duration**: {duration}\n\n").format(
+                    until=until, duration=duration
+                )
+                if duration
+                else ""
+            )
+            message = f"{title}\n\n{case.reason}\n\n{maybe_mod}{maybe_duration}**Guild**: {case.guild.name}"
+            try:
+                await user.send(message)
             except discord.Forbidden:
                 pass
 
