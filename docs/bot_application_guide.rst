@@ -4,6 +4,8 @@ Creating a bot account
 
 To use Red you will require a bot account and to enable privileged intents. Both these steps will be covered below.
 
+.. _creating-a-bot-account:
+
 -------------------------------
 Creating the bot application
 -------------------------------
@@ -48,6 +50,7 @@ Creating a Bot account is a pretty straightforward process.
 
 Continue to the next section to enable privileged intents.
 
+.. _enabling-privileged-intents:
 
 -------------------------------
 Enabling Privileged Intents
