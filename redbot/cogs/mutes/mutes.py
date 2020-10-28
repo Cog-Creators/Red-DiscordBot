@@ -465,7 +465,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def _send_dm_notification(self, case: modlog.Case):
         user = case.user
         show_mod = await self.config.guild(case.guild).show_mod()
-        title = f"**{modlog.get_casetype(case.action_type).case_str}**"
+        title = f"**{(await modlog.get_casetype(case.action_type)).case_str}**"
         duration = None
         if case.until:
             # This was stolen from core modlog.py
@@ -485,11 +485,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 description=case.reason,
                 color=await self.bot.get_embed_color(user),
             )
-            em.timestamp = datetime.now()
+            em.timestamp = datetime.utcnow()
             if duration:
                 em.add_field(name=_("**Until**"), value=until)
                 em.add_field(name=_("**Duration**"), value=duration)
-            em.add_field(name=_("**Guild**"), value=case.guild.name)
+            em.add_field(name=_("**Guild**"), value=case.guild.name, inline=False)
             if show_mod:
                 em.add_field(name=_("**Moderator**"), value=case.moderator)
             try:
@@ -498,18 +498,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 pass
         else:
             maybe_mod = (
-                _("**Moderator**: {moderator}\n\n").format(moderator=case.moderator)
+                _("**Moderator**: {moderator}\n").format(moderator=case.moderator)
                 if show_mod
                 else ""
             )
             maybe_duration = (
-                _("**Until**: {until} | **Duration**: {duration}\n\n").format(
+                _("**Until**: {until}\n**Duration**: {duration}\n").format(
                     until=until, duration=duration
                 )
                 if duration
                 else ""
             )
-            message = f"{title}\n\n{case.reason}\n\n{maybe_mod}{maybe_duration}**Guild**: {case.guild.name}"
+            message = f"{title}\n------------------\n{case.reason if case.reason else 'No reason provided.'}\n{maybe_mod}{maybe_duration}**Guild**: {case.guild.name}"
             try:
                 await user.send(message)
             except discord.Forbidden:
