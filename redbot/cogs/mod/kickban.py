@@ -460,7 +460,7 @@ class KickBanMixin(MixinMeta):
             to_query = to_query[100:]
 
         # Call `ban_user()` method for all users that turned out to be guild members.
-        for member in members:
+        for user_id, member in members.items():
             try:
                 success, reason = await self.ban_user(
                     user=member, ctx=ctx, days=days, reason=reason, create_modlog_case=True
