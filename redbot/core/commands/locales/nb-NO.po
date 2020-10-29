@@ -17,35 +17,35 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:525
 msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+msgstr "\\\"{argument}\\\" er ikke et tall."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` er ikke en gyldig tidsenhet for denne kommandoen"
 
 #: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "Denne tidsperioden er for stor for denne kommandoen (Maks: {maximum})"
 
 #: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "Det er for lite tid for denne kommandoen. (Minimum: {minimum})"
 
 #: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
-msgstr ""
+msgstr "Server \\\"{name}\\\" ble ikke funnet."
 
 #: redbot/core/commands/converter.py:187
 msgid "Unexpected key {key}"
-msgstr ""
+msgstr "Uventet nøkkel {key}"
 
 #: redbot/core/commands/converter.py:389
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Forventet én av: {}"
 
 #: redbot/core/commands/help.py:104
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: redbot/core/commands/help.py:106
 msgid "Yes"
@@ -53,83 +53,83 @@ msgstr "Ja"
 
 #: redbot/core/commands/help.py:112
 msgid "Disabled"
-msgstr ""
+msgstr "Deaktivert"
 
 #: redbot/core/commands/help.py:117
 msgid "\\nCustom Tagline: {tag}"
-msgstr ""
+msgstr "\\nCustom Tagline: {tag}"
 
 #: redbot/core/commands/help.py:123
 msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}\\nReact with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Maksimalt antall tegn per side: {page_char_limit}\\nMaksimalt antall sider per server (bare brukt dersom menyer ikke er brukt): {max_pages_in_guild}\\nHjelp er et meny: {use_menus}\\nHjelp viser skjulte kommandoer: {show_hidden}\\nHjelpe viser bare kommandoer som kan brukes: {verify_checks}\\nHjelp viser ubrukelige kommandoer når du spør direkte: {verify_exists}\\nSletteforsinkelse: {delete_delay}\\nReact med et sjekkmerke når hjelp sendes via DM: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:272
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr ""
+msgstr "Skriv {ctx.clean_prefix}help <command> for mer informasjon om en kommando. Du kan også skrive {ctx.clean_prefix}help <category> for mer informasjon om en kategori."
 
 #: redbot/core/commands/help.py:302
 msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr ""
+msgstr "`Syntaks: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
 
 #: redbot/core/commands/help.py:343
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Underkommandoer__**"
 
 #: redbot/core/commands/help.py:345
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Subcommands:__** (fortsatt)"
 
 #: redbot/core/commands/help.py:356
 msgid "Subcommands:"
-msgstr ""
+msgstr "Underkommandoer:"
 
 #: redbot/core/commands/help.py:420 redbot/core/commands/help.py:675
 #: redbot/core/commands/help.py:688 redbot/core/commands/help.py:707
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Hjelpemeny"
 
 #: redbot/core/commands/help.py:467
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+msgstr "*Side {page_num} av {page_count}*\\n{content_description}"
 
 #: redbot/core/commands/help.py:518
 msgid "**__Commands:__**"
-msgstr ""
+msgstr "**__Kommando:__**"
 
 #: redbot/core/commands/help.py:520
 msgid "**__Commands:__** (continued)"
-msgstr ""
+msgstr "**__Kommando:__** (fortsatt)"
 
 #: redbot/core/commands/help.py:530
 msgid "Commands:"
-msgstr ""
+msgstr "Kommandoer:"
 
 #: redbot/core/commands/help.py:572
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Ingen kategori:__**"
 
 #: redbot/core/commands/help.py:585
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (fortsatt)"
 
 #: redbot/core/commands/help.py:601 redbot/core/commands/help.py:615
 msgid "No Category:"
-msgstr ""
+msgstr "Ingen kategori:"
 
 #: redbot/core/commands/help.py:684
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Hjelpeemnet for *{command_name}* ikke funnet."
 
 #: redbot/core/commands/help.py:701
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Kommandoen *{command_name}* har ingen underkommando som heter *{not_found}*."
 
 #: redbot/core/commands/help.py:776
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "Jeg kunne ikke sende meldingen til deg i DM. Enten har du blokkert meg eller du deaktivert DMs i denne serveren."
 
 #: redbot/core/commands/help.py:815
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr ""
+msgstr "\\n    Jeg trenger noen\\n    (Hjelp) ikke bare noen\\n    (Hjelp) du vet at jeg trenger noen\\n    (Hjelp!)\\n    "
 

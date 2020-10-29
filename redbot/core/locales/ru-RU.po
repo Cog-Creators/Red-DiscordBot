@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-26 17:01+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -2044,93 +2044,101 @@ msgstr ""
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:306
-msgid "Too many people using this command. It can only be used {number} time(s) concurrently."
+#: redbot/core/events.py:307
+msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr ""
 
-#: redbot/core/events.py:311
-msgid "Too many people using this command. It can only be used {number} time(s) per {type} concurrently."
+#: redbot/core/events.py:312
+msgid "Too many people using this command. It can only be used {number} time concurrently."
 msgstr ""
 
-#: redbot/core/modlog.py:343
+#: redbot/core/events.py:318
+msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
+msgstr ""
+
+#: redbot/core/events.py:323
+msgid "Too many people using this command. It can only be used {number} time per {type} concurrently."
+msgstr ""
+
+#: redbot/core/modlog.py:344
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:347
-msgid "**Reason:** {}"
-msgstr ""
-
-#: redbot/core/modlog.py:349
+#: redbot/core/modlog.py:346
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:352
+#: redbot/core/modlog.py:349
 msgid "Unknown"
 msgstr ""
 
-#: redbot/core/modlog.py:356 redbot/core/modlog.py:378
-#: redbot/core/modlog.py:393
+#: redbot/core/modlog.py:353 redbot/core/modlog.py:375
+#: redbot/core/modlog.py:390
 msgid "Deleted User."
 msgstr ""
 
-#: redbot/core/modlog.py:358 redbot/core/modlog.py:380
-#: redbot/core/modlog.py:396
+#: redbot/core/modlog.py:355 redbot/core/modlog.py:377
+#: redbot/core/modlog.py:393
 msgid "Unknown or Deleted User"
 msgstr ""
 
-#: redbot/core/modlog.py:408
+#: redbot/core/modlog.py:404 redbot/core/modlog.py:439
+msgid "**Reason:** {}"
+msgstr ""
+
+#: redbot/core/modlog.py:418
 msgid "Moderator"
 msgstr "Модератор"
 
-#: redbot/core/modlog.py:410
+#: redbot/core/modlog.py:420
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:411
+#: redbot/core/modlog.py:421
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:415 redbot/core/modlog.py:420
+#: redbot/core/modlog.py:425 redbot/core/modlog.py:430
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:416
+#: redbot/core/modlog.py:426
 msgid "{channel} (deleted)"
 msgstr ""
 
-#: redbot/core/modlog.py:422
+#: redbot/core/modlog.py:432
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:424
+#: redbot/core/modlog.py:434
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:431
+#: redbot/core/modlog.py:454
 msgid "**User:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:432
+#: redbot/core/modlog.py:455
 msgid "**Moderator:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:435
+#: redbot/core/modlog.py:458
 msgid "**Until:** {}\\n**Duration:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:438
+#: redbot/core/modlog.py:461
 msgid "**Channel**: {} (Deleted)\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:440
+#: redbot/core/modlog.py:463
 msgid "**Channel**: {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:442
+#: redbot/core/modlog.py:465
 msgid "**Amended by:** {}\\n"
 msgstr ""
 
-#: redbot/core/modlog.py:444
+#: redbot/core/modlog.py:467
 msgid "**Last modified at:** {}\\n"
 msgstr ""
 

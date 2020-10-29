@@ -17,23 +17,23 @@ msgstr ""
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "year"
-msgstr ""
+msgstr "år"
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "years"
-msgstr ""
+msgstr "år"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "month"
-msgstr ""
+msgstr "måned"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "months"
-msgstr ""
+msgstr "måneder"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "day"
-msgstr ""
+msgstr "dag"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "days"
@@ -41,7 +41,7 @@ msgstr "dager"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hour"
-msgstr ""
+msgstr "time"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hours"
@@ -49,7 +49,7 @@ msgstr "timer"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minute"
-msgstr ""
+msgstr "minutter"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minutes"
@@ -57,7 +57,7 @@ msgstr "minutter"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "second"
-msgstr ""
+msgstr "sekunder"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "seconds"
