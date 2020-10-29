@@ -23,6 +23,10 @@ jobs:
             python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
       # - name: Check version number
       #   run: make checkdebian
+      - name: Install requirements
+        run: |
+          mkdir debian/pypi
+          python3 setup.py --requires | pip3 install --download debian/pypi
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -F
       - name: Move packages
