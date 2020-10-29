@@ -158,6 +158,14 @@ bank reset
 
 Delete all bank accounts.
 
+Examples:
+    - ``[p]bank reset`` - Did not confirm. Shows the help message.
+    - ``[p]bank reset yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
 .. _economy-command-bank-set:
 
 """"""""
@@ -182,6 +190,11 @@ Examples:
     - ``[p]bank set @Twentysix 26`` - Sets balance to 26
     - ``[p]bank set @Twentysix +2`` - Increases balance by 2
     - ``[p]bank set @Twentysix -6`` - Decreases balance by 6
+
+**Arguments**
+
+- ``<to>`` The user to set the currency of.
+- ``<creds>`` The amount of currency to set their alance to.
 
 .. _economy-command-bank-transfer:
 
