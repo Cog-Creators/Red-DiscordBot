@@ -411,3 +411,4 @@ Stops an ongoing trivia session.
 Creating your own list
 ----------------------
 
+WIP, probably need screenshots here too
