@@ -643,9 +643,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         <search term>` to search on SoundCloud instead of YouTube.
         """
 
-        if not isinstance(query, (str, Query)):
+        if not isinstance(query, (str, list, Query)):
             raise RuntimeError(
-                f"Expected 'query' to be a string or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
+                f"Expected 'query' to be a string, list or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
             )
 
         async def _search_menu(

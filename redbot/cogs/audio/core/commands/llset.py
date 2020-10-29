@@ -17,7 +17,6 @@ _ = Translator("Audio", Path(__file__))
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="llsetup", aliases=["llset"])
     @commands.is_owner()
-    @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""

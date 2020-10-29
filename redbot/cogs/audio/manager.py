@@ -24,7 +24,7 @@ from .utils import task_callback
 _ = Translator("Audio", pathlib.Path(__file__))
 log = logging.getLogger("red.audio.manager")
 JAR_VERSION: Final[str] = "3.3.1.4"
-JAR_BUILD: Final[int] = 1115
+JAR_BUILD: Final[int] = 1128
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"

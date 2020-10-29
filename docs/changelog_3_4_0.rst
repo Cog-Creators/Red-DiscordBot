@@ -1,5 +1,36 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.2 (2020-10-28)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`_.
+
+End-user changelog
+------------------
+
+- **Core Bot** - Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
+- **Audio** - Fixed the ``[p]local search`` command (:issue:`4553`)
+- **Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
+- **Audio** - Commands in ``[p]llset`` group can now be used in DMs (:issue:`4562`)
+- **Mod** - Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
+- **Streams** - Added error messages when exceeding the YouTube quota in the Streams cog (:issue:`4552`)
+- **Streams** - Improved logging for unexpected errors in the Streams cog (:issue:`4552`)
+
+Documentation changes
+---------------------
+
+- Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
+- Removed multi-line commands from `install_linux_mac` to avoid confusing readers (:issue:`4550`)
+
+
 Redbot 3.4.1 (2020-10-27)
 =========================
 
