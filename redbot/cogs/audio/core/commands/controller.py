@@ -642,15 +642,24 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("I don't have permission to connect to your channel."),
                 )
             if not self._player_check(ctx):
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             else:
                 player = lavalink.get_player(ctx.guild.id)
-                if ctx.author.voice.channel == player.channel and ctx.guild.me in ctx.author.voice.channel.members:
+                if (
+                    ctx.author.voice.channel == player.channel
+                    and ctx.guild.me in ctx.author.voice.channel.members
+                ):
                     ctx.command.reset_cooldown(ctx)
                     return
-                await player.move_to(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await player.move_to(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(

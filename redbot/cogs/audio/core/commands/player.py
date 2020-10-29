@@ -78,7 +78,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
@@ -184,7 +187,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
@@ -448,7 +454,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
@@ -563,7 +572,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:
@@ -688,7 +700,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Search For Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:

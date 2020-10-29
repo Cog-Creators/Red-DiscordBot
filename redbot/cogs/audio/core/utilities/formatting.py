@@ -99,7 +99,10 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
-                await lavalink.connect(ctx.author.voice.channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
             except AttributeError:

@@ -46,12 +46,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             if event.is_set():
                 return
             event.set()
-            code = extra.get('code')
+            code = extra.get("code")
             node = player.node
             voice_ws = node.get_voice_ws(guild_id)
 
             if voice_ws.socket._closing or voice_ws.socket.closed:
-                log.warning(f"YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - Voice websocket closed for guild {guild_id}.  Code: {code} -- {extra.get('reason', '').strip()}")
+                log.warning(
+                    f"YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - Voice websocket closed for guild {guild_id}.  Code: {code} -- {extra.get('reason', '').strip()}"
+                )
 
                 if player.current and code in {4014, 4015, 4009, 4006, 4005}:
                     if code == 4014:

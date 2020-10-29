@@ -100,7 +100,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            await lavalink.connect(vc, deafen=await self.config.guild_from_id(guild.id).auto_deafen())
+                            await lavalink.connect(
+                                vc, deafen=await self.config.guild_from_id(guild.id).auto_deafen()
+                            )
                             player = lavalink.get_player(guild.id)
                             player.store("connect", datetime.datetime.utcnow())
                             player.store("guild", guild_id)
