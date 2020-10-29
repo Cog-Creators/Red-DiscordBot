@@ -2008,7 +2008,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
         sudotime = (
-            humanize_timedelta(seconds=global_data["sudotime"]) if ctx.bot._sudo_enabled else ""
+            _("Sudo Timeout: {delay}\n").format(
+                delay=humanize_timedelta(seconds=global_data["sudotime"])
+            )
+            if ctx.bot._sudo_enabled
+            else ""
         )
 
         prefix_string = " ".join(prefixes)
@@ -4810,7 +4814,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def sudo(self, ctx: commands.Context):
         """Enable your bot owner privileges.
 
-        Sudo permission is auto removed after interval set with `[p]sudotimer` (Default to 15 minutes).
+        Sudo permission is auto removed after interval set with `[p]set sudotimeout` (Default to 15 minutes).
         """
         if ctx.author.id not in self.bot.owner_ids:
             self.bot.owner_ids.add(ctx.author.id)
