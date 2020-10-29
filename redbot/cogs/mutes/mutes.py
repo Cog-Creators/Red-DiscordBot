@@ -596,7 +596,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if not role:
                     return
                 if self._server_mutes[guild.id][member.id]["until"]:
-                    until = datetime.fromtimestamp(self._server_mutes[guild.id][member.id]["until"])
+                    until = datetime.fromtimestamp(
+                        self._server_mutes[guild.id][member.id]["until"]
+                    )
                 else:
                     until = None
                 await self.mute_user(
