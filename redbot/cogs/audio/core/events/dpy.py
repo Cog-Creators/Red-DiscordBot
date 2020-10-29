@@ -264,7 +264,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 pass
         channel = self.rgetattr(member, "voice.channel", None)
         bot_voice_state = self.rgetattr(member, "guild.me.voice.self_deaf", None)
-        if channel and bot_voice_state is False:
+        if channel and bot_voice_state is False and await self.config.guild(member.guild).auto_deafen():
             try:
                 player = lavalink.get_player(channel.guild.id)
             except (KeyError, AttributeError):
@@ -272,3 +272,16 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 if player.channel.id == channel.id:
                     await self.self_deafen(player)
+
+    @commands.Cog.listener()
+    async def on_shard_disconnect(self, shard_id):
+        self._diconnected_shard.add(shard_id)
+
+    @commands.Cog.listener()
+    async def on_shard_ready(self, shard_id):
+        self._diconnected_shard.discard(shard_id)
+
+    @commands.Cog.listener()
+    async def on_shard_resumed(self, shard_id):
+        self._diconnected_shard.discard(shard_id)
+

@@ -38,6 +38,45 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
+        guild_data = await self.config.guild(guild).all()
+        disconnect = guild_data["disconnect"]
+
+        if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
+            event = self._ws_resume[guild_id]
+            if event.is_set():
+                return
+            event.set()
+            code = extra.get('code')
+            node = player.node
+            voice_ws = node.get_voice_ws(guild_id)
+
+            if voice_ws.socket._closing or voice_ws.socket.closed:
+                log.warning(f"YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - Voice websocket closed for guild {guild_id}.  Code: {code} -- {extra.get('reason', '').strip()}")
+
+                if player.current and code in {4014, 4015, 4009, 4006, 4005}:
+                    if code == 4014:
+                        while guild.shard_id in self._diconnected_shard:
+                            await asyncio.sleep(0.1)
+                        await asyncio.sleep(1)
+                    await player.connect(deafen=guild_data["auto_deafen"])
+                    await player.resume(player.current, start=player.position)
+                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
+                elif player.paused and player.current:
+                    await player.connect(deafen=guild_data["auto_deafen"])
+                    await player.pause(pause=True)
+                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
+                elif not disconnect and not player.is_playing:
+                    await player.connect(deafen=guild_data["auto_deafen"])
+                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
+                    self._ll_guild_updates.discard(guild.id)
+                else:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    log.info(f"Voice websocket disconnected from channel {player.channel.id}.")
+                    await player.stop()
+                    await player.disconnect()
+            event.clear()
+            return
+
         await set_contextual_locales_from_guild(self.bot, guild)
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)
@@ -45,10 +84,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
         current_extras = self.rgetattr(current_track, "extras", {})
         current_id = self.rgetattr(current_track, "_info", {}).get("identifier")
-        guild_data = await self.config.guild(guild).all()
+
         repeat = guild_data["repeat"]
         notify = guild_data["notify"]
-        disconnect = guild_data["disconnect"]
         autoplay = guild_data["auto_play"]
         description = await self.get_track_description(
             current_track, self.local_folder_current_path
@@ -79,7 +117,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
             if guild_id:
                 await self.api_interface.persistent_queue_api.drop(guild_id)
-            if (
+            if player.is_auto_playing or (
                 autoplay
                 and not player.queue
                 and player.fetch("playing_song") is not None
@@ -119,6 +157,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
                 if (
                     autoplay
+                    and not player._auto_play_sent
                     and current_extras.get("autoplay")
                     and (
                         prev_song is None
@@ -126,6 +165,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 ):
                     await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
+                    player._auto_play_sent = True
 
                 if not description:
                     return

@@ -4,7 +4,7 @@ import asyncio
 import datetime
 
 from abc import ABC, abstractmethod
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
@@ -62,12 +62,13 @@ class MixinMeta(ABC):
     player_automated_timer_task: Optional[asyncio.Task]
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
-
+    _ws_resume: defaultdict[Any, asyncio.Event]
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
 
     _last_ll_update: datetime.datetime
     _ll_guild_updates: Set[int]
+    _diconnected_shard: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):

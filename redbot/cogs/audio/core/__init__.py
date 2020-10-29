@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import json
 
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Mapping
 
@@ -77,6 +77,8 @@ class Audio(
 
         self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.cog_ready_event = asyncio.Event()
+        self._ws_resume = defaultdict(asyncio.Event)
+
         self.cog_init_task = None
         self.global_api_user = {
             "fetched": False,
@@ -85,6 +87,7 @@ class Audio(
             "can_delete": False,
         }
         self._ll_guild_updates = set()
+        self._diconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
         default_global = dict(

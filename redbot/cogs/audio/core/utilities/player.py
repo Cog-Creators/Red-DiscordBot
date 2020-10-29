@@ -716,8 +716,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 and player.position == 0
                 and len(player.queue) == 0
             ):
-                await player.move_to(user_channel)
-                await self.self_deafen(player)
+                await player.move_to(user_channel, deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen())
                 return True
         else:
             return False

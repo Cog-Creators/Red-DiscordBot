@@ -1001,6 +1001,7 @@ class AudioAPIInterface:
             )
             if not player.current:
                 await player.play()
+        player._is_autoplaying = True
 
     async def fetch_all_contribute(self) -> List[LavalinkCacheFetchForGlobalResult]:
         return await self.local_cache_api.lavalink.fetch_all_for_global()
