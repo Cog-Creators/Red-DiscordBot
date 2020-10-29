@@ -24,7 +24,7 @@ jobs:
       - name: Install requirements
         run: |
           mkdir debian/pypi
-          python3 setup.py --requires | pip3 install --download debian/pypi
+          python3 setup.py --requires | pip3 download debian/pypi
       - name: Build Debian package
         run: dpkg-buildpackage -us -uc -S
       - name: Move packages
