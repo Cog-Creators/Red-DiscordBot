@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Callable, List, Optional, Set, Union
 import re
+
 import discord
 
 from redbot.core import checks, commands
@@ -12,23 +13,18 @@ from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
 from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
-from redbot.core.utils.common_filters import URL_RE as LINKS
+from redbot.core.utils.common_filters import URL_RE as LINKS, DISCORD_EMOJI_RE as EMOJIS
+
 _ = Translator("Cleanup", __file__)
 
 log = logging.getLogger("red.cleanup")
-
-EMOJIS = re.compile(
-    r"(<(a)?:[a-zA-Z0-9\_]+:([0-9]+)>)"
-)  # TrusyJaid NotSoBot converter https://github.com/TrustyJAID/Trusty-cogs
 
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
     """This cog contains commands used for "cleaning up" (deleting) messages.
-
     This is designed as a moderator tool and offers many convenient use cases.
     All cleanup commands only apply to the channel the command is executed in.
-
     Messages older than two weeks cannot be mass deleted.
     This is a limitation of the API.
     """
@@ -45,9 +41,7 @@ class Cleanup(commands.Cog):
     async def check_100_plus(ctx: commands.Context, number: int) -> bool:
         """
         Called when trying to delete more than 100 messages at once.
-
         Prompts the user to choose whether they want to continue or not.
-
         Tries its best to cleanup after itself if the response is positive.
         """
 
@@ -91,7 +85,6 @@ class Cleanup(commands.Cog):
           this is automatically true)
         - The message is less than 14 days old
         - The message is not pinned
-
         Warning: Due to the way the API hands messages back in chunks,
         passing after and a number together is not advisable.
         If you need to accomplish this, you should filter messages on
@@ -139,14 +132,10 @@ class Cleanup(commands.Cog):
         self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages matching the specified text.
-
         Example:
             - `[p]cleanup text "test" 5`
-
         Remember to use double quotes.
-
         **Arguments:**
-
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
@@ -194,13 +183,10 @@ class Cleanup(commands.Cog):
         self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages from a specified user.
-
         Examples:
             - `[p]cleanup user @Twentysix 2`
             - `[p]cleanup user Red 6`
-
         **Arguments:**
-
         - `<user>` The user whose messages are to be cleaned up.
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
@@ -264,13 +250,10 @@ class Cleanup(commands.Cog):
         self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
     ):
         """Delete all messages after a specified message.
-
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
         **Arguments:**
-
         - `<message_id>` The id of the message to cleanup after. This message won't be deleted.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
@@ -309,13 +292,10 @@ class Cleanup(commands.Cog):
         delete_pinned: bool = False,
     ):
         """Deletes X messages before the specified message.
-
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
         **Arguments:**
-
         - `<message_id>` The id of the message to cleanup before. This message won't be deleted.
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
@@ -356,14 +336,10 @@ class Cleanup(commands.Cog):
         delete_pinned: bool = False,
     ):
         """Delete the messages between Message One and Message Two, providing the messages IDs.
-
         The first message ID should be the older message and the second one the newer.
-
         Example:
             - `[p]cleanup between 123456789123456789 987654321987654321`
-
         **Arguments:**
-
         - `<one>` The id of the message to cleanup after. This message won't be deleted.
         - `<two>` The id of the message to cleanup before. This message won't be deleted.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
@@ -404,12 +380,9 @@ class Cleanup(commands.Cog):
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
         """Delete the last X messages.
-
         Example:
             - `[p]cleanup messages 26`
-
         **Arguments:**
-
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
@@ -442,11 +415,8 @@ class Cleanup(commands.Cog):
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
         """Clean up command messages and messages from the bot.
-
         Can only cleanup custom commands and alias commands if those cogs are loaded.
-
         **Arguments:**
-
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
@@ -530,17 +500,13 @@ class Cleanup(commands.Cog):
         delete_pinned: bool = False,
     ):
         """Clean up messages owned by the bot.
-
         By default, all messages are cleaned. If a second argument is specified,
         it is used for pattern matching - only messages containing the given text will be deleted.
-
         Examples:
             - `[p]cleanup self 6`
             - `[p]cleanup self 10 Pong`
             - `[p]cleanup self 7 "" True`
-
         **Arguments:**
-
         - `<number>` The max number of messages to cleanup. Must be a positive integer.
         - `<match_pattern>` The text that messages must contain to be deleted. Use "" to skip this.
         - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
@@ -612,11 +578,8 @@ class Cleanup(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_spam(self, ctx: commands.Context, number: positive_int = PositiveInt(50)):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
-
         Defaults to 50.
-
         **Arguments:**
-
         - `<number>` The number of messages to check for duplicates. Must be a positive integer.
         """
         msgs = []
