@@ -13,16 +13,12 @@ from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
 from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
+from redbot.core.utils.common_filters import URL_RE as LINKS, DISCORD_EMOJI_RE as EMOJIS
 
 _ = Translator("Cleanup", __file__)
 
 log = logging.getLogger("red.cleanup")
 
-
-LINKS = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
-EMOJIS = re.compile(
-    r"(<(a)?:[a-zA-Z0-9\_]+:([0-9]+)>)"
-)  # TrusyJaid NotSoBot converter https://github.com/TrustyJAID/Trusty-cogs
 
 
 @cog_i18n(_)
