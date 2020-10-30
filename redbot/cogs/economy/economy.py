@@ -497,7 +497,8 @@ class Economy(commands.Cog):
             base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-            base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+            if guild:
+                base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
 
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
