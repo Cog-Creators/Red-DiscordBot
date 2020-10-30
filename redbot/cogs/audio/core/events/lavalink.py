@@ -266,7 +266,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         voice_ws = node.get_voice_ws(guild_id)
         code = extra.get("code")
         if self._ws_resume[guild_id].is_set():
-            log.error(  # TODO: Change to Debug before merge, set to error for testing purpose
+            log.debug(
                 f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
                 f"Code: {code} -- {extra.get('reason', '').strip()}"
@@ -291,7 +291,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(0.1)
             await asyncio.sleep(1)
             if has_perm and player.current and player.is_playing:
-                await player.connect(deafen=deafen)
+                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
                 await player.resume(player.current, start=player.position)
                 log.info(
                     "Voice websocket reconnected "
@@ -299,15 +299,15 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Currently playing."
                 )
             elif has_perm and player.paused and player.current:
-                await player.connect(deafen=deafen)
+                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
                 await player.pause(pause=True)
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {player.channel.id} in Guild: {guild_id} | "
                     "Reason: Currently Paused."
                 )
-            elif has_perm and not disconnect and not player.is_playing:
-                await player.connect(deafen=deafen)
+            elif has_perm and (not disconnect) and (not player.is_playing):
+                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {player.channel.id} in Guild: {guild_id} | "
@@ -322,6 +322,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Missing permissions."
                 )
                 self._ll_guild_updates.discard(guild_id)
+                await voice_ws.voice_state(guild_id, None)
+
                 await player.stop()
                 await player.disconnect()
             else:
@@ -332,11 +334,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Unknown."
                 )
                 self._ll_guild_updates.discard(guild_id)
+                await voice_ws.voice_state(guild_id, None)
                 await player.stop()
                 await player.disconnect()
         else:
-            log.warning(  # TODO: Change to Debug before merge, set to warning for testing purpose
-                f"WS EVENT - IGNORED (Healthy Socket) | Voice websocket closed event for guild {guild_id} -> "
+            log.debug(
+                "WS EVENT - IGNORED (Healthy Socket) | "
+                f"Voice websocket closed event for guild {guild_id} -> "
                 f"Code: {code} -- {extra.get('reason', '').strip()}"
             )
         self._ws_resume[guild_id].clear()
