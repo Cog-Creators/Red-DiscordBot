@@ -4,6 +4,8 @@ __all__ = [
     "URL_RE",
     "INVITE_URL_RE",
     "MASS_MENTION_RE",
+    "DISCORD_EMOJI_RE",
+    "UNICODE_EMOJI_RE",
     "filter_urls",
     "filter_invites",
     "filter_mass_mentions",
