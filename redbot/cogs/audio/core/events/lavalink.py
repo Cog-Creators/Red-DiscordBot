@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import logging
 from pathlib import Path
+from typing import Dict
 
 import discord
 import lavalink
@@ -42,41 +43,10 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = guild_data["disconnect"]
 
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
-            event = self._ws_resume[guild_id]
-            if event.is_set():
-                return
-            event.set()
-            code = extra.get("code")
-            node = player.node
-            voice_ws = node.get_voice_ws(guild_id)
-
-            if voice_ws.socket._closing or voice_ws.socket.closed:
-                log.warning(
-                    f"YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - Voice websocket closed for guild {guild_id}.  Code: {code} -- {extra.get('reason', '').strip()}"
-                )
-
-                if player.current and code in {4014, 4015, 4009, 4006, 4005}:
-                    if code == 4014:
-                        while guild.shard_id in self._diconnected_shard:
-                            await asyncio.sleep(0.1)
-                        await asyncio.sleep(1)
-                    await player.connect(deafen=guild_data["auto_deafen"])
-                    await player.resume(player.current, start=player.position)
-                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
-                elif player.paused and player.current:
-                    await player.connect(deafen=guild_data["auto_deafen"])
-                    await player.pause(pause=True)
-                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
-                elif not disconnect and not player.is_playing:
-                    await player.connect(deafen=guild_data["auto_deafen"])
-                    log.info(f"Voice websocket reconnected to channel {player.channel.id}.")
-                    self._ll_guild_updates.discard(guild.id)
-                else:
-                    self.bot.dispatch("red_audio_audio_disconnect", guild)
-                    log.info(f"Voice websocket disconnected from channel {player.channel.id}.")
-                    await player.stop()
-                    await player.disconnect()
-            event.clear()
+            deafen = guild_data["auto_deafen"]
+            await self._websocket_closed_handler(
+                guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
+            )
             return
 
         await set_contextual_locales_from_guild(self.bot, guild)
@@ -282,3 +252,91 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             )
                     await message_channel.send(embed=embed)
             await player.skip()
+
+    async def _websocket_closed_handler(
+        self,
+        guild: discord.Guild,
+        player: lavalink.Player,
+        extra: Dict,
+        deafen: bool,
+        disconnect: bool,
+    ) -> None:
+        guild_id = guild.id
+        node = player.node
+        voice_ws = node.get_voice_ws(guild_id)
+        code = extra.get("code")
+        if self._ws_resume[guild_id].is_set():
+            log.error(  # TODO: Change to Debug before merge, set to error for testing purpose
+                f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
+                f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
+                f"Code: {code} -- {extra.get('reason', '').strip()}"
+            )
+            return
+        self._ws_resume[guild_id].set()
+        if player.channel:
+            current_perms = player.channel.permissions_for(player.channel.guild.me)
+            has_perm = current_perms.speak and current_perms.connect
+        else:
+            has_perm = False
+
+        if voice_ws.socket._closing or voice_ws.socket.closed:
+            log.warning(
+                "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
+                f"Voice websocket closed for guild {guild_id} -> "
+                f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
+                f"Code: {code} -- {extra.get('reason', '').strip()}"
+            )
+            while voice_ws.socket._closing or voice_ws.socket.closed:
+                voice_ws = node.get_voice_ws(guild_id)
+                await asyncio.sleep(0.1)
+            await asyncio.sleep(1)
+            if has_perm and player.current and player.is_playing:
+                await player.connect(deafen=deafen)
+                await player.resume(player.current, start=player.position)
+                log.info(
+                    "Voice websocket reconnected "
+                    f"to channel {player.channel.id} in Guild: {guild_id} | "
+                    "Reason: Currently playing."
+                )
+            elif has_perm and player.paused and player.current:
+                await player.connect(deafen=deafen)
+                await player.pause(pause=True)
+                log.info(
+                    "Voice websocket reconnected "
+                    f"to channel {player.channel.id} in Guild: {guild_id} | "
+                    "Reason: Currently Paused."
+                )
+            elif has_perm and not disconnect and not player.is_playing:
+                await player.connect(deafen=deafen)
+                log.info(
+                    "Voice websocket reconnected "
+                    f"to channel {player.channel.id} in Guild: {guild_id} | "
+                    "Reason: Not playing, but auto disconnect disabled."
+                )
+                self._ll_guild_updates.discard(guild_id)
+            elif not has_perm:
+                self.bot.dispatch("red_audio_audio_disconnect", guild)
+                log.info(
+                    "Voice websocket disconnected "
+                    f"from channel {player.channel.id} in Guild: {guild_id} | "
+                    "Reason: Missing permissions."
+                )
+                self._ll_guild_updates.discard(guild_id)
+                await player.stop()
+                await player.disconnect()
+            else:
+                self.bot.dispatch("red_audio_audio_disconnect", guild)
+                log.info(
+                    "Voice websocket disconnected "
+                    f"from channel {player.channel.id} in Guild: {guild_id} | "
+                    "Reason: Unknown."
+                )
+                self._ll_guild_updates.discard(guild_id)
+                await player.stop()
+                await player.disconnect()
+        else:
+            log.warning(  # TODO: Change to Debug before merge, set to warning for testing purpose
+                f"WS EVENT - IGNORED (Healthy Socket) | Voice websocket closed event for guild {guild_id} -> "
+                f"Code: {code} -- {extra.get('reason', '').strip()}"
+            )
+        self._ws_resume[guild_id].clear()
