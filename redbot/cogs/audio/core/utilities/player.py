@@ -646,7 +646,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 lock=self.update_player_lock,
                 notifier=notifier,
                 forced=forced,
-                query_global=await self.config.global_db_enabled(),
+                query_global=self.global_api_user.get("can_read"),
             )
         except SpotifyFetchError as error:
             self.update_player_lock(ctx, False)
