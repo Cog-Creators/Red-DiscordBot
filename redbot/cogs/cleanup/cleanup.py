@@ -13,7 +13,7 @@ from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.core.utils.predicates import MessagePredicate
 from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
-from redbot.core.utils.common_filters import URL_RE as LINKS, DISCORD_EMOJI_RE as EMOJIS
+from redbot.core.utils.common_filters import URL_RE, DISCORD_EMOJI_RE
 
 _ = Translator("Cleanup", __file__)
 
@@ -679,7 +679,7 @@ class Cleanup(commands.Cog):
                 return
 
         def check(m):
-            emojis = EMOJIS.finditer(m.content)
+            emojis = DISCORD_EMOJI_RE.finditer(m.content)
             for emoji in emojis:
                 return True
             return False
@@ -734,7 +734,7 @@ class Cleanup(commands.Cog):
                 return
 
         def check(m):
-            links = LINKS.finditer(m.content)
+            links = URL_RE.finditer(m.content)
             for link in links:
                 return True
             return False
