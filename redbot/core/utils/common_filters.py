@@ -35,7 +35,7 @@ SPOILER_CONTENT_RE = re.compile(
     r"(?s)(?<!\\)(?P<OPEN>\|{2})(?P<SPOILERED>.*?)(?<!\\)(?P<CLOSE>\|{2})"
 )
 
-DISCORD_EMOJIS_RE = re.compile(
+DISCORD_EMOJI_RE = re.compile(
     r"(<(a)?:[a-zA-Z0-9\_]+:([0-9]+)>)"
 )  # TrusyJaid NotSoBot converter https://github.com/TrustyJAID/Trusty-cogs
 
