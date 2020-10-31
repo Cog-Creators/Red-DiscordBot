@@ -10,12 +10,14 @@ import lavalink
 
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ...apis.interface import AudioAPIInterface
 from ...apis.playlist_wrapper import PlaylistWrapper
 from ...audio_logging import debug_exc_log
+from ...errors import DatabaseError, TrackEnqueueError
 from ...utils import task_callback
 from ..abc import MixinMeta
 from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
@@ -68,9 +70,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
         await asyncio.sleep(10)
         metadata = {}
-        async with self.config.all_guilds() as all_guild_data:
-            for guild_id, guild_data in all_guild_data.items():
-                if guild_data["auto_play"]:
+        all_guilds = await self.config.all_guilds()
+        async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
+            if guild_data["auto_play"]:
+                if guild_data["currently_auto_playing_in"]:
                     notify_channel, vc_id = guild_data["currently_auto_playing_in"]
                     metadata[guild_id] = (notify_channel, vc_id)
 
@@ -202,8 +205,30 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await player.set_volume(volume)
                 player.maybe_shuffle()
                 if not player.is_playing:
-                    await player.play()
+                    notify_channel = player.fetch("channel")
+                    try:
+                        await self.api_interface.autoplay(player, self.playlist_api)
+                    except DatabaseError:
+                        notify_channel = self.bot.get_channel(notify_channel)
+                        if notify_channel:
+                            await self.send_embed_msg(
+                                notify_channel, title=_("Couldn't get a valid track.")
+                            )
+                        return
+                    except TrackEnqueueError:
+                        notify_channel = self.bot.get_channel(notify_channel)
+                        if notify_channel:
+                            await self.send_embed_msg(
+                                notify_channel,
+                                title=_("Unable to Get Track"),
+                                description=_(
+                                    "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                                    "minutes."
+                                ),
+                            )
+                        return
         del metadata
+        del all_guilds
 
     async def maybe_message_all_owners(self):
         current_notification = await self.config.owner_notification()

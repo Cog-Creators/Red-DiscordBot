@@ -68,6 +68,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq = player.fetch("eq")
             player.queue = []
             player.store("playing_song", None)
+            player.store("autoplay_notified", False)
             if eq:
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
@@ -600,6 +601,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("prev_requester", None)
             player.store("prev_song", None)
             player.store("requester", None)
+            player.store("autoplay_notified", False)
             await player.stop()
             await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
                 []

@@ -195,6 +195,6 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         notify_channel = self.bot.get_channel(player.fetch("channel"))
 
-        if notify_channel and not player._auto_play_sent:
+        if notify_channel and not player.fetch("autoplay_notified", False):
             await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
-            player._auto_play_sent = True
+            player.store("autoplay_notified", True)

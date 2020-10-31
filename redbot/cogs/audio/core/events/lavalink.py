@@ -213,6 +213,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 eq = player.fetch("eq")
                 player.queue = []
                 player.store("playing_song", None)
+                player.store("autoplay_notified", False)
                 if eq:
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()

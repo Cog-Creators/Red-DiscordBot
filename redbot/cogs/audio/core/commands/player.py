@@ -634,9 +634,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
-        if not guild_data["notify"] and not player._auto_play_sent:
+        if not guild_data["notify"] and not player.fetch("autoplay_notified", False):
             await self.send_embed_msg(ctx, title=_("Auto play started."))
-            player._auto_play_sent = True
+            player.store("autoplay_notified", True)
         elif player.current:
             await self.send_embed_msg(ctx, title=_("Adding a track to queue."))
 
