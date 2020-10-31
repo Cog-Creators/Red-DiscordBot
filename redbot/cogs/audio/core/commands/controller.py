@@ -72,6 +72,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
+            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
+                []
+            )
             self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
@@ -598,6 +601,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("prev_song", None)
             player.store("requester", None)
             await player.stop()
+            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
+                []
+            )
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 

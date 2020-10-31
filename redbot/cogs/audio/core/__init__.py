@@ -110,6 +110,7 @@ class Audio(
 
         default_guild = dict(
             auto_play=False,
+            currently_auto_playing_in=None,
             auto_deafen=True,
             autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
             persist_queue=True,

@@ -34,6 +34,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(guild.id)
             await player.stop()
             await player.disconnect()
+            await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
             return
 
         track_identifier = track.track_identifier
@@ -157,7 +158,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
 
     @commands.Cog.listener()
-    async def on_red_audio_track_enqueue(self, guild: discord.Guild, track, requester):
+    async def on_red_audio_track_enqueue(
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
         if not (track and guild):
             return
         persist_cache = self._persist_queue_cache.setdefault(
@@ -181,3 +184,17 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.drop(guild.id)
             await asyncio.sleep(5)
             await self.api_interface.persistent_queue_api.delete_scheduled()
+
+    @commands.Cog.listener()
+    async def on_red_audio_track_auto_play(
+        self,
+        guild: discord.Guild,
+        track: lavalink.Track,
+        requester: discord.Member,
+        player: lavalink.Player,
+    ):
+        notify_channel = self.bot.get_channel(player.fetch("channel"))
+
+        if notify_channel and not player._auto_play_sent:
+            await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
+            player._auto_play_sent = True

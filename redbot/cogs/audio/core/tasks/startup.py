@@ -67,10 +67,17 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
         await asyncio.sleep(10)
+        metadata = {}
+        async with self.config.all_guilds() as all_guild_data:
+            for guild_id, guild_data in all_guild_data.items():
+                if guild_data["auto_play"]:
+                    notify_channel, vc_id = guild_data["currently_auto_playing_in"]
+                    metadata[guild_id] = (notify_channel, vc_id)
+
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
             await asyncio.sleep(0)
             try:
-                player: Optional[lavalink.Player]
+                player: Optional[lavalink.Player] = None
                 track_data = list(track_data)
                 guild = self.bot.get_guild(guild_id)
                 persist_cache = self._persist_queue_cache.setdefault(
@@ -93,7 +100,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if player is None:
                     while tries < 25 and vc is not None:
                         try:
-                            vc = guild.get_channel(track_data[-1].room_id)
+                            notify_channel_id, vc_id = metadata.pop(
+                                guild_id, (None, track_data[-1].room_id)
+                            )
+                            vc = guild.get_channel(vc_id)
                             if not vc:
                                 break
                             perms = vc.permissions_for(guild.me)
@@ -106,6 +116,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             player = lavalink.get_player(guild.id)
                             player.store("connect", datetime.datetime.utcnow())
                             player.store("guild", guild_id)
+                            player.store("channel", notify_channel_id)
                             break
                         except IndexError:
                             await asyncio.sleep(5)
@@ -115,7 +126,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if vc is None:
                                 break
 
-                if tries >= 25 or guild is None or vc is None:
+                if tries >= 25 or guild is None or vc is None or player is None:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
@@ -137,6 +148,62 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             except Exception as err:
                 debug_exc_log(log, err, f"Error restoring player in {guild_id}")
                 await self.api_interface.persistent_queue_api.drop(guild_id)
+
+        for guild_id, (notify_channel_id, vc_id) in metadata.items():
+            guild = self.bot.get_guild(guild_id)
+            player: Optional[lavalink.Player] = None
+            vc = 0
+            if not guild:
+                continue
+            if self.lavalink_connection_aborted:
+                player = None
+            else:
+                try:
+                    player = lavalink.get_player(guild_id)
+                except IndexError:
+                    player = None
+                except KeyError:
+                    player = None
+            if player is None:
+                while tries < 25 and vc is not None:
+                    try:
+                        vc = guild.get_channel(vc_id)
+                        if not vc:
+                            break
+                        perms = vc.permissions_for(guild.me)
+                        if not (perms.connect and perms.speak):
+                            vc = None
+                            break
+                        await lavalink.connect(
+                            vc, deafen=await self.config.guild_from_id(guild.id).auto_deafen()
+                        )
+                        player = lavalink.get_player(guild.id)
+                        player.store("connect", datetime.datetime.utcnow())
+                        player.store("guild", guild_id)
+                        player.store("channel", notify_channel_id)
+                        break
+                    except IndexError:
+                        await asyncio.sleep(5)
+                        tries += 1
+                    except Exception as exc:
+                        debug_exc_log(log, exc, "Failed to restore music voice channel")
+                        if vc is None:
+                            break
+                if tries >= 25 or guild is None or vc is None or player is None:
+                    continue
+                shuffle = await self.config.guild(guild).shuffle()
+                repeat = await self.config.guild(guild).repeat()
+                volume = await self.config.guild(guild).volume()
+                shuffle_bumped = await self.config.guild(guild).shuffle_bumped()
+                player.repeat = repeat
+                player.shuffle = shuffle
+                player.shuffle_bumped = shuffle_bumped
+                if player.volume != volume:
+                    await player.set_volume(volume)
+                player.maybe_shuffle()
+                if not player.is_playing:
+                    await player.play()
+        del metadata
 
     async def maybe_message_all_owners(self):
         current_notification = await self.config.owner_notification()

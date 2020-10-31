@@ -932,6 +932,7 @@ class AudioAPIInterface:
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
+        notify_channel_id = player.fetch("channel")
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:
@@ -980,7 +981,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                notify_channel = self.bot.get_channel(player.fetch("channel"))
+                notify_channel = self.bot.get_channel(notify_channel_id)
                 if not await self.cog.is_query_allowed(
                     self.config,
                     notify_channel,
@@ -1004,8 +1005,20 @@ class AudioAPIInterface:
             )
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
-                "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
+                "red_audio_track_auto_play",
+                player.channel.guild,
+                track,
+                player.channel.guild.me,
+                player,
             )
+            if notify_channel_id:
+                await self.config.guild_from_id(
+                    guild_id=player.channel.guild.id
+                ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
+            else:
+                await self.config.guild_from_id(
+                    guild_id=player.channel.guild.id
+                ).currently_auto_playing_in.set([])
             if not player.current:
                 await player.play()
         player._is_autoplaying = True

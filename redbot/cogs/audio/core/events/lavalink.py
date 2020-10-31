@@ -29,12 +29,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
     ) -> None:
         current_track = player.current
         current_channel = player.channel
-        if not current_channel:
-            return
         guild = self.rgetattr(current_channel, "guild", None)
+        if not (current_channel and guild):
+            await player.stop()
+            await player.disconnect()
+            return
         if await self.bot.cog_disabled_in_guild(self, guild):
             await player.stop()
             await player.disconnect()
+            if guild:
+                await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set(
+                    []
+                )
             return
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
@@ -81,6 +87,15 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
                 )
+            notify_channel = player.fetch("channel")
+            if notify_channel:
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    [notify_channel, player.channel.id]
+                )
+            else:
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
@@ -96,10 +111,10 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
+                notify_channel = player.fetch("channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
-                    notify_channel = player.fetch("channel")
                     notify_channel = self.bot.get_channel(notify_channel)
                     if notify_channel:
                         await self.send_embed_msg(
@@ -107,7 +122,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
                 except TrackEnqueueError:
-                    notify_channel = player.fetch("channel")
                     notify_channel = self.bot.get_channel(notify_channel)
                     if notify_channel:
                         await self.send_embed_msg(
@@ -126,19 +140,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
-
-                if (
-                    autoplay
-                    and not player._auto_play_sent
-                    and current_extras.get("autoplay")
-                    and (
-                        prev_song is None
-                        or (hasattr(prev_song, "extras") and not prev_song.extras.get("autoplay"))
-                    )
-                ):
-                    await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
-                    player._auto_play_sent = True
-
                 if not description:
                     return
                 if current_stream:
@@ -178,6 +179,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
@@ -213,6 +217,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
@@ -326,6 +333,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
                 await player.stop()
                 await player.disconnect()
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
             else:
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
                 log.info(
@@ -337,6 +347,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await voice_ws.voice_state(guild_id, None)
                 await player.stop()
                 await player.disconnect()
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
         else:
             log.debug(
                 "WS EVENT - IGNORED (Healthy Socket) | "

@@ -56,6 +56,9 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             await self.api_interface.persistent_queue_api.drop(sid)
                             await player.stop()
                             await player.disconnect()
+                            await self.config.guild_from_id(
+                                guild_id=sid
+                            ).currently_auto_playing_in.set([])
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)
