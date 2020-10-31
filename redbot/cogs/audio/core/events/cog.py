@@ -195,6 +195,11 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         player: lavalink.Player,
     ):
         notify_channel = self.bot.get_channel(player.fetch("channel"))
+        tries = 0
+        while not player._is_playing:
+            await asyncio.sleep(0.1)
+            if tries > 1000:
+                return
 
         if notify_channel and not player.fetch("autoplay_notified", False):
             await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
