@@ -31,6 +31,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_channel = player.channel
         guild = self.rgetattr(current_channel, "guild", None)
         if not (current_channel and guild):
+            player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
             return
@@ -331,7 +332,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 self._ll_guild_updates.discard(guild_id)
                 await voice_ws.voice_state(guild_id, None)
-
+                player.store("autoplay_notified", False)
                 await player.stop()
                 await player.disconnect()
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
@@ -346,6 +347,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 self._ll_guild_updates.discard(guild_id)
                 await voice_ws.voice_state(guild_id, None)
+                player.store("autoplay_notified", False)
                 await player.stop()
                 await player.disconnect()
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(

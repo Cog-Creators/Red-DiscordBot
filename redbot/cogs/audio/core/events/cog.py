@@ -32,6 +32,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if await self.bot.cog_disabled_in_guild(self, guild):
             player = lavalink.get_player(guild.id)
+            player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
             await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
