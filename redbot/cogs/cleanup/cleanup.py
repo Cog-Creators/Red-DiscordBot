@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime, timedelta
 from typing import Callable, List, Optional, Set, Union
-import re
 
 import discord
 
