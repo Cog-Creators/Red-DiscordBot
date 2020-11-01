@@ -32,7 +32,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_channel = player.channel
         guild = self.rgetattr(current_channel, "guild", None)
         if not (current_channel and guild):
-            print("lavalink_event_handler -> No channel and guild")
             player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
@@ -278,12 +277,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         code = extra.get("code")
         by_remote = extra.get('byRemote', '')
         reason = extra.get('reason', '').strip()
-        log.error(
-            f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
-            f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-            f"Code: {code} -- Remote: {by_remote} -- {reason}"
-        )
-        return
         if self._ws_resume[guild_id].is_set():
             log.debug(
                 f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
