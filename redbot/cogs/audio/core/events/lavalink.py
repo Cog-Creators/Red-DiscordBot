@@ -291,7 +291,12 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             has_perm = current_perms.speak and current_perms.connect
         else:
             has_perm = False
-        if code in (4015, 4014, 4009, 4006):
+        if (
+            code in (4015, 4014, 4009, 4006)
+            and voice_ws.socket._closing
+            or voice_ws.socket.closed
+            or not voice_ws.open
+        ):
             if player._con_delay:
                 delay = player._con_delay.delay()
             else:
@@ -302,7 +307,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
                 f"Voice websocket closed for guild {guild_id} -> "
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                f"Code: {code} -- Remote: {by_remote} -- {reason}")
+                f"Code: {code} -- Remote: {by_remote} -- {reason}"
+            )
             log.info(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s'")
             await asyncio.sleep(delay)
             while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
