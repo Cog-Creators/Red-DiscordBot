@@ -218,10 +218,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
-        channel_id = player.channel.id
-        node = player.manager.node
-        voice_ws = node.get_voice_ws(guild_id)
-        await voice_ws.voice_state(guild_id, channel_id, self_deaf=True)
+        await player.channel.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
     async def _get_spotify_tracks(
         self, ctx: commands.Context, query: Query, forced: bool = False

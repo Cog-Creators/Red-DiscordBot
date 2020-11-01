@@ -7,6 +7,7 @@ from typing import Dict
 
 import discord
 import lavalink
+from discord.gateway import DiscordWebSocket
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
@@ -31,6 +32,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_channel = player.channel
         guild = self.rgetattr(current_channel, "guild", None)
         if not (current_channel and guild):
+            print("lavalink_event_handler -> No channel and guild")
             player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
@@ -272,13 +274,21 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
     ) -> None:
         guild_id = guild.id
         node = player.node
-        voice_ws = node.get_voice_ws(guild_id)
+        voice_ws: DiscordWebSocket = node.get_voice_ws(guild_id)
         code = extra.get("code")
+        by_remote = extra.get('byRemote', '')
+        reason = extra.get('reason', '').strip()
+        log.error(
+            f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
+            f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
+            f"Code: {code} -- Remote: {by_remote} -- {reason}"
+        )
+        return
         if self._ws_resume[guild_id].is_set():
             log.debug(
                 f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                f"Code: {code} -- {extra.get('reason', '').strip()}"
+                f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
             return
         self._ws_resume[guild_id].set()
@@ -287,20 +297,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             has_perm = current_perms.speak and current_perms.connect
         else:
             has_perm = False
-
-        if voice_ws.socket._closing or voice_ws.socket.closed:
+        if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
             log.warning(
                 "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
                 f"Voice websocket closed for guild {guild_id} -> "
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                f"Code: {code} -- {extra.get('reason', '').strip()}"
+                f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
             while voice_ws.socket._closing or voice_ws.socket.closed:
                 voice_ws = node.get_voice_ws(guild_id)
                 await asyncio.sleep(0.1)
             await asyncio.sleep(1)
             if has_perm and player.current and player.is_playing:
-                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
+                await player.channel.guild.change_voice_state(channel=player.channel, self_mute=False, self_deaf=deafen)
                 await player.resume(player.current, start=player.position)
                 log.info(
                     "Voice websocket reconnected "
@@ -308,7 +317,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Currently playing."
                 )
             elif has_perm and player.paused and player.current:
-                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
+                await player.channel.guild.change_voice_state(channel=player.channel, self_mute=False, self_deaf=deafen)
                 await player.pause(pause=True)
                 log.info(
                     "Voice websocket reconnected "
@@ -316,7 +325,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Currently Paused."
                 )
             elif has_perm and (not disconnect) and (not player.is_playing):
-                await voice_ws.voice_state(guild_id, player.channel.id, self_deaf=deafen)
+                await player.channel.guild.change_voice_state(channel=player.channel, self_mute=False, self_deaf=deafen)
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {player.channel.id} in Guild: {guild_id} | "
@@ -331,7 +340,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Missing permissions."
                 )
                 self._ll_guild_updates.discard(guild_id)
-                await voice_ws.voice_state(guild_id, None)
+                await player.channel.guild.change_voice_state(channel=None)
                 player.store("autoplay_notified", False)
                 await player.stop()
                 await player.disconnect()
@@ -346,7 +355,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Reason: Unknown."
                 )
                 self._ll_guild_updates.discard(guild_id)
-                await voice_ws.voice_state(guild_id, None)
+                await player.channel.guild.change_voice_state(channel=None)
                 player.store("autoplay_notified", False)
                 await player.stop()
                 await player.disconnect()
@@ -354,9 +363,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     []
                 )
         else:
-            log.debug(
+            log.info(
                 "WS EVENT - IGNORED (Healthy Socket) | "
                 f"Voice websocket closed event for guild {guild_id} -> "
-                f"Code: {code} -- {extra.get('reason', '').strip()}"
+                f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
         self._ws_resume[guild_id].clear()
