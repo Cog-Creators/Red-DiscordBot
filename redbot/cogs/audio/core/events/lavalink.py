@@ -143,7 +143,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
-                if not description:
+                if not (description or notify_channel):
                     return
                 if current_stream:
                     dur = "LIVE"
@@ -291,22 +291,20 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             has_perm = current_perms.speak and current_perms.connect
         else:
             has_perm = False
-        if code in (4015, 4014, 4009, 4006) and (
-            voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open
-        ):
+        channel_id = player.channel.id
+        if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
             if player._con_delay:
                 delay = player._con_delay.delay()
             else:
                 player._con_delay = ExponentialBackoff(base=1)
                 delay = player._con_delay.delay()
-            channel_id = player.channel.id
             log.warning(
                 "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
                 f"Voice websocket closed for guild {guild_id} -> "
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
                 f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
-            log.info(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s'")
+            log.info(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s")
             await asyncio.sleep(delay)
             while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
                 voice_ws = node.get_voice_ws(guild_id)
@@ -318,7 +316,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
-                    "Reason: Currently playing."
+                    f"Reason: Error code {code} & Currently playing."
                 )
             elif has_perm and player.paused and player.current:
                 await player.connect(deafen=deafen)
@@ -326,14 +324,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
-                    "Reason: Currently Paused."
+                    f"Reason: Error code {code} & Currently Paused."
                 )
             elif has_perm and (not disconnect) and (not player.is_playing):
                 await player.connect(deafen=deafen)
                 log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
-                    "Reason: Not playing, but auto disconnect disabled."
+                    f"Reason: Error code {code} & Not playing, but auto disconnect disabled."
                 )
                 self._ll_guild_updates.discard(guild_id)
             elif not has_perm:
@@ -341,7 +339,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.info(
                     "Voice websocket disconnected "
                     f"from channel {channel_id} in guild: {guild_id} | "
-                    "Reason: Missing permissions."
+                    f"Reason: Error code {code} & Missing permissions."
                 )
                 self._ll_guild_updates.discard(guild_id)
                 player.store("autoplay_notified", False)
@@ -355,7 +353,46 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.info(
                     "Voice websocket disconnected "
                     f"from channel {channel_id} in guild: {guild_id} | "
-                    "Reason: Unknown."
+                    f"Reason: Error code {code} & Unknown."
+                )
+                self._ll_guild_updates.discard(guild_id)
+                player.store("autoplay_notified", False)
+                await player.stop()
+                await player.disconnect()
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
+        elif code in (4015, 4014, 4009, 4006):
+            if has_perm and player.current and player.is_playing:
+                await player.connect(deafen=deafen)
+                await player.resume(player.current, start=player.position)
+                log.error(
+                    "Voice websocket reconnected "
+                    f"to channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & Player is active."
+                )
+            elif has_perm and player.paused and player.current:
+                await player.connect(deafen=deafen)
+                await player.pause(pause=True)
+                log.error(
+                    "Voice websocket reconnected "
+                    f"to channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & Player is paused."
+                )
+            elif has_perm and (not disconnect) and (not player.is_playing):
+                await player.connect(deafen=deafen)
+                log.error(
+                    "Voice websocket reconnected "
+                    f"to channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & Not playing."
+                )
+                self._ll_guild_updates.discard(guild_id)
+            elif not has_perm:
+                self.bot.dispatch("red_audio_audio_disconnect", guild)
+                log.info(
+                    "Voice websocket disconnected "
+                    f"from channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & Missing permissions."
                 )
                 self._ll_guild_updates.discard(guild_id)
                 player.store("autoplay_notified", False)
