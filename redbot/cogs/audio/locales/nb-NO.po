@@ -17,35 +17,35 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:35
 msgid "\\nScope must be a valid version of one of the following:\\n​ ​ ​ ​ Global\\n​ ​ ​ ​ Guild\\n​ ​ ​ ​ User\\n"
-msgstr ""
+msgstr "\\nOmfang må være en gyldig versjon av et av følgende:\\n Global\\n Guild\\n User\\n"
 
 #: redbot/cogs/audio/converters.py:43
 msgid "\\nAuthor must be a valid version of one of the following:\\n​ ​ ​ ​ User ID\\n​ ​ ​ ​ User Mention\\n​ ​ ​ ​ User Name#123\\n"
-msgstr ""
+msgstr "\\nSkribent må være en gyldig versjon av en av følgende:\\n User ID\\n User Mention\\nlUser Name#123\\n"
 
 #: redbot/cogs/audio/converters.py:51
 msgid "\\nGuild must be a valid version of one of the following:\\n​ ​ ​ ​ Guild ID\\n​ ​ ​ ​ Exact guild name\\n"
-msgstr ""
+msgstr "\\nGuild må være en gyldig versjon av et av følgende:\\n⋅Guild ID\\n Exact guild name\\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\\\"{arg}\\\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" ble ikke funnet. Det må være ID-en til den serveren som boten kan se."
 
 #: redbot/cogs/audio/converters.py:96
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" refererer ikke til en unik server. Bruk ID'en til serveren du prøver å spesifisere."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\\\"{arg}\\\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" ble ikke funnet. Det må være ID-en eller navnet eller nevne en bruker som boten kan se."
 
 #: redbot/cogs/audio/converters.py:136
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" refererer ikke til en unik server. Bruk ID'en til serveren du prøver å spesifisere."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "Kan ikke koble til '{}' i en spilleliste."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368
@@ -53,17 +53,17 @@ msgstr ""
 #: redbot/cogs/audio/converters.py:431 redbot/cogs/audio/converters.py:453
 #: redbot/cogs/audio/converters.py:480
 msgid "Nothing"
-msgstr ""
+msgstr "Ingenting"
 
 #: redbot/cogs/audio/converters.py:261
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "Du kan ikke bruke `-guild`"
 
 #: redbot/cogs/audio/converters.py:402
 msgid "You cannot use `--to-server`"
-msgstr ""
+msgstr "Du kan ikke bruke `--to-server`"
 
 #: redbot/cogs/audio/converters.py:428
 msgid "You cannot use `--from-server`"
-msgstr ""
+msgstr "Du kan ikke bruke `--from-server`"
 
