@@ -406,7 +406,8 @@ class Trivia(commands.Cog):
             return
         guild = ctx.guild
         data = await self.config.all_members(guild)
-        data = {guild.get_member(u): d for u, d in data.items()}
+        # Possible optimisation here of using query, will re-evaluate later.
+        data = {await ctx.bot.get_or_fetch_member(guild, u): d for u, d in data.items()}
         data.pop(None, None)  # remove any members which aren't in the guild
         await self.send_leaderboard(ctx, data, key, top)
 
@@ -440,7 +441,7 @@ class Trivia(commands.Cog):
             if guild is None:
                 continue
             for member_id, member_data in guild_data.items():
-                member = guild.get_member(member_id)
+                member = await ctx.bot.get_or_fetch_member(guild, member_id)
                 if member is None:
                     continue
                 collated_member_data = collated_data.get(member, Counter())
