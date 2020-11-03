@@ -167,7 +167,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Load Preset"),
                 description=_("You need the DJ role to load equalizer presets."),
             )
-
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         await self._eq_check(ctx, player)
         eq = player.fetch("eq", Equalizer())
@@ -196,6 +197,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to reset the equalizer."),
             )
         player = lavalink.get_player(ctx.guild.id)
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
 
         for band in range(eq.band_count):
@@ -278,6 +281,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await eq_exists_msg.edit(embed=embed2)
 
         player = lavalink.get_player(ctx.guild.id)
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
         to_append = {eq_preset: {"author": ctx.author.id, "bands": eq.bands}}
         new_eq_presets = {**eq_presets, **to_append}
@@ -319,6 +324,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         player = lavalink.get_player(ctx.guild.id)
+        player.store("channel", ctx.channel.id)
+        player.store("guild", ctx.guild.id)
         band_names = [
             "25",
             "40",

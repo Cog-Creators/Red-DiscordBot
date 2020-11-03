@@ -523,6 +523,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except IndexError:
                 await self.send_embed_msg(
                     ctx,
