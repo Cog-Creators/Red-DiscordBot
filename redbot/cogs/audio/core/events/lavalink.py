@@ -145,7 +145,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
-                if not (description or notify_channel):
+                if not (description and notify_channel):
                     return
                 if current_stream:
                     dur = "LIVE"
