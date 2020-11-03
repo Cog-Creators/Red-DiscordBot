@@ -306,7 +306,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
                 f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
-            ws_audio_log.info(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s")
+            ws_audio_log.debug(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s")
             await asyncio.sleep(delay)
             while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
                 voice_ws = node.get_voice_ws(guild_id)
