@@ -446,6 +446,7 @@ class KickBanMixin(MixinMeta):
         to_query: List[int] = []
 
         for user_id in user_ids:
+            # This get_member is okay here due to the query below
             member = guild.get_member(user_id)
             if member is not None:
                 members[user_id] = member
