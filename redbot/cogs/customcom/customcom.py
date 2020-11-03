@@ -562,7 +562,7 @@ class CustomCommands(commands.Cog):
 
         if _aid == 0xDE1:
             author = _("Deleted User")
-        elif member := ctx.guild.get_member(_aid):
+        elif member := await self.bot.get_or_fetch_member(ctx.guild, _aid):
             author = f"{member} ({_aid})"
         else:
             author = f"{cmd['author']['name']} ({_aid})"
