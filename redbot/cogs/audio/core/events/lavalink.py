@@ -362,11 +362,11 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
                     []
                 )
-        elif code in (4015, 4014, 4009, 4006):
+        elif code in (4015, 4014, 4009, 4006, 1006):
             if has_perm and player.current and player.is_playing:
                 await player.connect(deafen=deafen)
                 await player.resume(player.current, start=player.position)
-                log.error(
+                log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
                     f"Reason: Error code {code} & Player is active."
@@ -374,14 +374,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             elif has_perm and player.paused and player.current:
                 await player.connect(deafen=deafen)
                 await player.pause(pause=True)
-                log.error(
+                log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
                     f"Reason: Error code {code} & Player is paused."
                 )
             elif has_perm and (not disconnect) and (not player.is_playing):
                 await player.connect(deafen=deafen)
-                log.error(
+                log.info(
                     "Voice websocket reconnected "
                     f"to channel {channel_id} in guild: {guild_id} | "
                     f"Reason: Error code {code} & Not playing."
