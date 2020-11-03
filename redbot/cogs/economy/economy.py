@@ -521,7 +521,8 @@ class Economy(commands.Cog):
         temp_msg = header
         for acc in bank_sorted:
             try:
-                name = guild.get_member(acc[0]).display_name
+                user_obj = await self.bot.get_or_fetch_member(ctx.guild, acc[0])
+                name = user_obj.display_name
             except AttributeError:
                 user_id = ""
                 if await ctx.bot.is_owner(ctx.author):
