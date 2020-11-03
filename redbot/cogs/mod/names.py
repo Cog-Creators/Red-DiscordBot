@@ -183,29 +183,39 @@ class ModInfo(MixinMeta):
             user_joined = _("Unknown")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         voice_state = user.voice
-        member_number = (
-            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(user)
-            + 1
-        )
 
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
-        if any(a.type is discord.ActivityType.streaming for a in user.activities):
-            statusemoji = "\N{LARGE PURPLE CIRCLE}"
-        elif user.status.name == "online":
-            statusemoji = "\N{LARGE GREEN CIRCLE}"
-        elif user.status.name == "offline":
-            statusemoji = "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}"
-        elif user.status.name == "dnd":
-            statusemoji = "\N{LARGE RED CIRCLE}"
-        elif user.status.name == "idle":
-            statusemoji = "\N{LARGE ORANGE CIRCLE}"
-        activity = _("Chilling in {} status").format(user.status)
-        status_string = self.get_status_string(user)
+        # INTENTS
+        # Member intent
+        if self.bot.intents.members:
+            member_number = (
+                sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(user)
+                + 1
+            )
+        else:
+            member_number = None
+
+        # Presences intent
+        presences_enabled = self.bot.intents.presences
+
+        if presences_enabled:
+            if any(a.type is discord.ActivityType.streaming for a in user.activities):
+                statusemoji = "\N{LARGE PURPLE CIRCLE}"
+            elif user.status.name == "online":
+                statusemoji = "\N{LARGE GREEN CIRCLE}"
+            elif user.status.name == "offline":
+                statusemoji = "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}"
+            elif user.status.name == "dnd":
+                statusemoji = "\N{LARGE RED CIRCLE}"
+            elif user.status.name == "idle":
+                statusemoji = "\N{LARGE ORANGE CIRCLE}"
+
+            activity = _("Chilling in {} status").format(user.status)
+            status_string = self.get_status_string(user)
 
         if roles:
-
             role_str = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.
@@ -240,7 +250,10 @@ class ModInfo(MixinMeta):
         else:
             role_str = None
 
-        data = discord.Embed(description=status_string or activity, colour=user.colour)
+        data = discord.Embed(colour=user.colour)
+
+        if presences_enabled:
+            data.description = status_string or activity
 
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
@@ -267,17 +280,24 @@ class ModInfo(MixinMeta):
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
-                value="{0.mention} ID: {0.id}".format(voice_state.channel),
+                value="{0.mention}\nID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
+        if member_number:
+            data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
+        else:
+            data.set_footer(text=_("User ID: {}").format(user.id))
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
         name = filter_invites(name)
-
         avatar = user.avatar_url_as(static_format="png")
-        data.set_author(name=f"{statusemoji} {name}", url=avatar)
+
+        if presences_enabled:
+            data.set_author(name=f"{statusemoji} {name}", url=avatar)
+        else:
+            data.set_author(name=f"{name}", url=avatar)
+
         data.set_thumbnail(url=avatar)
 
         await ctx.send(embed=data)
