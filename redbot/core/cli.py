@@ -252,7 +252,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--force-rich-logging",
         action="store_true",
-        help="Forcefully enables the Rich logging handlers, this is normally disabled on uninteractive consoles."
+        help="Forcefully enables the Rich logging handlers, this is normally disabled on uninteractive consoles.",
     )
 
     args = parser.parse_args(args)

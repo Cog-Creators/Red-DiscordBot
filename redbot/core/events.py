@@ -58,10 +58,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
         if bot._uptime is None:
-            bot._rich_console.print(
-                "Connected to Discord. Getting ready...",
-                markup=False
-            )
+            bot._rich_console.print("Connected to Discord. Getting ready...", markup=False)
 
     @bot.event
     async def on_ready():
@@ -169,24 +166,17 @@ def init_events(bot, cli_flags):
         if guilds:
             bot._rich_console.print(
                 Columns(
-                    [
-                        Panel(table_general_info, title=str(bot.user.name)),
-                        Panel(table_counts)
-                    ],
+                    [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
                     equal=True,
-                    align="center"
+                    align="center",
                 )
             )
         else:
-            bot._rich_console.print(
-                Columns(
-                    [
-                        Panel(table_general_info, title=str(bot.user.name))
-                    ]
-                )
-            )
+            bot._rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
-        bot._rich_console.print("Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
+        bot._rich_console.print(
+            "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
+        )
 
         if invite_url:
             bot._rich_console.print("\nInvite URL: [blue underline]{}".format(invite_url))

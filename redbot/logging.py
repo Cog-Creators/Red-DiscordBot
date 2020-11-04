@@ -111,6 +111,7 @@ class RedRichHandler(RichHandler):
 
     This allows for the traceback to be printed to console nicely, while also
     allowing for it to still be printed to the File log."""
+
     def emit(self, record: LogRecord) -> None:
         """Invoked by logging."""
         if record.exc_info:
@@ -166,7 +167,9 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
     )
 
-    if isatty(0) or force_rich_logging:  # Check if the bot thinks it has a active terminal. Or forcefully enable it
+    if (
+        isatty(0) or force_rich_logging
+    ):  # Check if the bot thinks it has a active terminal. Or forcefully enable it
         stdout_handler = RedRichHandler(show_path=False)
     else:
         stdout_handler = logging.StreamHandler(sys.stdout)
