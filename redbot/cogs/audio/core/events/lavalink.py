@@ -306,7 +306,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
                 f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
-            ws_audio_log.debug(f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s")
+            ws_audio_log.debug(
+                f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
+            )
             await asyncio.sleep(delay)
             while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
                 voice_ws = node.get_voice_ws(guild_id)
@@ -372,6 +374,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Reason: Error code {code} & {reason}."
             )
         elif code in (4015, 4014, 4009, 4006, 1006):
+            if (
+                code == 4006
+                and has_perm
+                and player._last_resume
+                and player._last_resume + datetime.timedelta(seconds=5)
+                > datetime.datetime.now(tz=datetime.timezone.utc)
+            ):
+                ws_audio_log.info(
+                    "Voice websocket reconnected skipped "
+                    f"for channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & Player resumed too recently."
+                )
+                return
             if has_perm and player.current and player.is_playing:
                 await player.connect(deafen=deafen)
                 await player.resume(player.current, start=player.position)
