@@ -33,10 +33,16 @@ from .utils._internal_utils import (
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
+from rich.table import Table
+from rich.columns import Columns
+from rich.console import Console
+from rich.panel import Panel
+from rich.rule import Rule
+
 log = logging.getLogger("red")
 init()
 
-INTRO = r"""
+INTRO = r"""[red]
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -83,7 +89,25 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        INFO = [
+        table_general_info = Table(show_edge=False, show_header=False)
+        table_general_info.add_row("Prefixes", ", ".join(prefixes))
+        table_general_info.add_row("Language", lang)
+        table_general_info.add_row("Red version", red_version)
+        table_general_info.add_row("Discord.py version", dpy_version)
+        table_general_info.add_row("Storage type", data_manager.storage_type())
+
+        if guilds:
+            table_counts = Table(show_edge=False, show_header=False)
+            # String conversion is needed as Rich doesn't deal with ints
+            table_counts.add_row("Shards", str(bot.shard_count))
+            table_counts.add_row("Servers", str(guilds))
+            table_counts.add_row("Total Members", str(users))
+
+        
+
+        INFO = []  # TODO Temp, nuke out of the floor once done
+
+        """        INFO = [
             str(bot.user),
             "Prefixes: {}".format(", ".join(prefixes)),
             "Language: {}".format(lang),
@@ -96,9 +120,8 @@ def init_events(bot, cli_flags):
         if guilds:
             INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
-            print("Ready. I'm not in any server yet!")
+            print("Ready. I'm not in any server yet!")"""
 
-        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
@@ -163,40 +186,35 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        INFO2 = []
+        bot._rich_console.print(INTRO)
+        if guilds:
+            bot._rich_console.print(
+                Columns(
+                    [
+                        Panel(table_general_info, title=str(bot.user.name)),
+                        Panel(table_counts)
+                    ],
+                    equal=True,
+                    align="center"
+                )
+            )
+        else:
+            bot._rich_console.print(
+                Columns(
+                    [
+                        Panel(table_general_info, title=str(bot.user.name))
+                    ]
+                )
+            )
 
-        reqs_installed = {"docs": None, "test": None}
-        for key in reqs_installed.keys():
-            reqs = [x.name for x in red_pkg._dep_map[key]]
-            try:
-                pkg_resources.require(reqs)
-            except DistributionNotFound:
-                reqs_installed[key] = False
-            else:
-                reqs_installed[key] = True
-
-        options = (
-            ("Voice", True),
-            ("Docs", reqs_installed["docs"]),
-            ("Tests", reqs_installed["test"]),
-        )
-
-        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
-
-        for option, enabled in options:
-            enabled = on_symbol if enabled else off_symbol
-            INFO2.append("{} {}".format(enabled, option))
-
-        print(Fore.RED + INTRO)
-        print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2, ascii_border=ascii_border))
+        bot._rich_console.print("Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         if invite_url:
-            print("\nInvite URL: {}\n".format(invite_url))
-
+            bot._rich_console.print("\nInvite URL: [blue underline]{}".format(invite_url))
+            # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
-            print(
-                "Looking for a quick guide on setting up Red? https://docs.discord.red/en/stable/getting_started.html\n"
+            bot._rich_console.print(
+                "Looking for a quick guide on setting up Red? Checkout [blue underline]https://start.discord.red"
             )
 
         if not bot.owner_ids:

@@ -2,7 +2,16 @@ import logging.handlers
 import pathlib
 import re
 import sys
+
 from typing import List, Tuple, Optional
+from logging import LogRecord
+from datetime import datetime  # This clearly never leads to confusion...
+from os import isatty
+
+from rich.logging import RichHandler
+from rich.text import Text
+from rich.traceback import Traceback
+
 
 MAX_OLD_LOGS = 8
 
@@ -97,6 +106,56 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         self.stream = self._open()
 
 
+class RedRichHandler(RichHandler):
+    """Adaptation of rich's RichHandler to work with Red's stdout and file log.
+
+    This allows for the traceback to be printed to console nicely, while also
+    allowing for it to still be printed to the File log."""
+    def emit(self, record: LogRecord) -> None:
+        """Invoked by logging."""
+        if record.exc_info:
+            premessage = record.getMessage()
+            message_text = Traceback.from_exception(*record.exc_info, theme="vim")
+        else:
+            message = self.format(record)
+            message_text = Text(message)
+            message_text.highlight_words(self.KEYWORDS, "logging.keyword")
+            message_text = self.highlighter(message_text)
+
+        path = pathlib.Path(record.pathname).name
+        log_style = f"logging.level.{record.levelname.lower()}"
+        time_format = None if self.formatter is None else self.formatter.datefmt
+        log_time = datetime.fromtimestamp(record.created)
+
+        level = Text()
+        level.append(record.levelname, log_style)
+
+        if record.exc_info:
+            self.console.print(
+                self._log_render(
+                    self.console,
+                    [premessage, message_text],
+                    log_time=log_time,
+                    time_format=time_format,
+                    level=level,
+                    path=path,
+                    line_no=record.lineno,
+                )
+            )
+        else:
+            self.console.print(
+                self._log_render(
+                    self.console,
+                    [message_text],
+                    log_time=log_time,
+                    time_format=time_format,
+                    level=level,
+                    path=path,
+                    line_no=record.lineno,
+                )
+            )
+
+
 def init_logging(level: int, location: pathlib.Path) -> None:
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
@@ -107,8 +166,12 @@ def init_logging(level: int, location: pathlib.Path) -> None:
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
     )
 
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(formatter)
+    if isatty(0) is True:  # Check if the bot thinks it has a active terminal.
+        stdout_handler = RedRichHandler(show_path=False)
+    else:
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setFormatter(formatter)
+
     base_logger.addHandler(stdout_handler)
     dpy_logger.addHandler(stdout_handler)
 
