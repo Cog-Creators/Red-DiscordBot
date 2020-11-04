@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-26 17:01+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -17,112 +17,112 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr ""
+msgstr "Du har forsøkt å kjøre Audios Lavalink server på en konstruksjon som ikke støttes. Bare relaterte kommandoer vil være tilgjengelig."
 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\\n\\nExpected Permissions:\\n"
-msgstr ""
+msgstr "Jeg mangler tillatelser i denne serveren, Vennligst adresse dette så snart som mulig.\\n\\nForventede tillatelser:\\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
-msgstr ""
+msgstr "Aktivert"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Disabled"
-msgstr ""
+msgstr "Deaktivert"
 
 #: redbot/cogs/audio/core/events/dpy.py:124
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "Ingen DJ rolle funnet. Deaktivering av DJ modus."
 
 #: redbot/cogs/audio/core/events/dpy.py:134
 msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+msgstr "`{user_input}` er ikke en gyldig verdi for `{command}`"
 
 #: redbot/cogs/audio/core/events/dpy.py:142
 msgid "Unable To Parse Argument"
-msgstr ""
+msgstr "Kan ikke analysere argument"
 
 #: redbot/cogs/audio/core/events/dpy.py:154
 #: redbot/cogs/audio/core/events/dpy.py:163
 msgid "Invalid Argument"
-msgstr ""
+msgstr "Ugyldig Argument"
 
 #: redbot/cogs/audio/core/events/dpy.py:155
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-msgstr ""
+msgstr "Argumentet du ga for `{}` er ikke gyldig: Jeg forventet en `{}`."
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
-msgstr ""
+msgstr "Ugyldig miljø"
 
 #: redbot/cogs/audio/core/events/dpy.py:176
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Forbindelsen til Lavalink har gått tapt."
 
 #: redbot/cogs/audio/core/events/dpy.py:184
 msgid "No Player Available"
-msgstr ""
+msgstr "Ingen spiller tilgjengelig"
 
 #: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
-msgstr ""
+msgstr "Botten er ikke koblet til en talekanal."
 
 #: redbot/cogs/audio/core/events/dpy.py:193
-#: redbot/cogs/audio/core/events/lavalink.py:98
+#: redbot/cogs/audio/core/events/lavalink.py:105
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Kunne ikke motta spor"
 
 #: redbot/cogs/audio/core/events/dpy.py:194
-#: redbot/cogs/audio/core/events/lavalink.py:99
+#: redbot/cogs/audio/core/events/lavalink.py:106
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Jeg klarer ikke å finne et spor fra Lavalink i øyeblikket, prøv igjen om noen minutter."
 
 #: redbot/cogs/audio/core/events/dpy.py:205
 msgid "There was an issue communicating with Discord."
-msgstr ""
+msgstr "Det var et problem som kommuniserte med Discord."
 
 #: redbot/cogs/audio/core/events/dpy.py:206
 msgid "This error has been reported to the bot owner."
-msgstr ""
+msgstr "Denne feilen er rapportert til bot eieren."
 
-#: redbot/cogs/audio/core/events/lavalink.py:89
+#: redbot/cogs/audio/core/events/lavalink.py:96
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Kunne ikke få et gyldig spor."
 
-#: redbot/cogs/audio/core/events/lavalink.py:121
+#: redbot/cogs/audio/core/events/lavalink.py:128
 msgid "Auto Play started."
-msgstr ""
+msgstr "Automatisk avspilling startet."
 
-#: redbot/cogs/audio/core/events/lavalink.py:136
+#: redbot/cogs/audio/core/events/lavalink.py:143
 msgid "Now Playing"
-msgstr ""
+msgstr "Spiller nå"
 
-#: redbot/cogs/audio/core/events/lavalink.py:138
+#: redbot/cogs/audio/core/events/lavalink.py:145
 msgid "Track length: {length} | Requested by: {user}"
-msgstr ""
+msgstr "Sporlengde: {length} | Forespurt av: {user}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:159
+#: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "Kø avsluttet."
 
-#: redbot/cogs/audio/core/events/lavalink.py:202
+#: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Flere feil oppdaget"
 
-#: redbot/cogs/audio/core/events/lavalink.py:203
+#: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "Hvis du lukker lydspilleren på grunn av flere feil blir oppdaget. Hvis dette vedvarer, må du informere bot eieren om at lydloggen kan være midlertidig utilgjengelig."
 
-#: redbot/cogs/audio/core/events/lavalink.py:217
+#: redbot/cogs/audio/core/events/lavalink.py:226
 msgid "Track Stuck"
-msgstr ""
+msgstr "Spor satt fast"
 
-#: redbot/cogs/audio/core/events/lavalink.py:218
+#: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
-msgstr ""
+msgstr "Avspilling av sangen har stoppet på grunn av uunnlatelig feil.\\n{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:224
+#: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"
-msgstr ""
+msgstr "Sporfeil"
 

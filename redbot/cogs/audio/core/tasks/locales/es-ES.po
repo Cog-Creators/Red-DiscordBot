@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 664\n"
 "Language: es_ES\n"
 
-#: redbot/cogs/audio/core/tasks/startup.py:140
+#: redbot/cogs/audio/core/tasks/startup.py:145
 msgid "Hello, this message brings you an important update regarding the core Audio cog:\\n                \\nStarting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.\\nSee `[p]help audioset globalapi` for more information.\\nAccess to this service is disabled by default and **requires you to explicitly opt-in** to start using it.\\n\\nAn access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.\\nNote: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.\\n\\nOn a related note, it is highly recommended that you enable your local cache if you haven't yet.\\nTo do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."
 msgstr ""
 

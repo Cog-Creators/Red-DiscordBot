@@ -18,42 +18,42 @@ msgstr ""
 #: redbot/cogs/image/image.py:15
 #, docstring
 msgid "Image related commands."
-msgstr ""
+msgstr "Bilderelaterte kommandoer."
 
 #: redbot/cogs/image/image.py:44
 #, docstring
 msgid "Retrieve pictures from Imgur.\\n\\n        Make sure to set the Client ID using `[p]imgurcreds`.\\n        "
-msgstr ""
+msgstr "Hent bilder fra Imgur.\\n\\n        Forsikre deg om at du angir klient-ID ved å bruke `[p]imgurcreds`.\\n        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring
 msgid "Search Imgur for the specified term.\\n\\n        Use `count` to choose how many images should be returned.\\n        Command can return up to 5 images.\\n        "
-msgstr ""
+msgstr "Søk etter Imgur for den angitte perioden.\\n\\n        Bruk `count` til å velge hvor mange bilder som skal returneres.\\n        Kommandoen kan returnere opptil 5 bilder.\\n        "
 
 #: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
 msgid "Image count has to be between 1 and 5."
-msgstr ""
+msgstr "Bildeantallet må være mellom 1 og 5."
 
 #: redbot/cogs/image/image.py:65 redbot/cogs/image/image.py:127
 msgid "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-msgstr ""
+msgstr "En klient-ID har ikke blitt satt! Vennligst sett en med `{prefix}imgurcreds`."
 
 #: redbot/cogs/image/image.py:77
 msgid "Your search returned no results."
-msgstr ""
+msgstr "Ditt søk returnerte ingen resultater."
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\\n"
-msgstr ""
+msgstr "Søkeresultater...\\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."
-msgstr ""
+msgstr "Noe gikk galt. Feilkoden er {code}."
 
 #: redbot/cogs/image/image.py:99
 #, docstring
 msgid "Get images from a subreddit.\\n\\n        You can customize the search with the following options:\\n        - `<count>`: number of images to return (up to 5)\\n        - `<sort_type>`: new, top\\n        - `<window>`: day, week, month, year, all\\n        "
-msgstr ""
+msgstr "Hent bilder fra en subreddit.\\n\\n        Du kan tilpasse søket med følgende alternativer:\\n        - `<count>`: antall bilder som returneres (opptil 5)\\n        - `<sort_type>`: ny, topp\\n        - `<window>`: dag, uke, måned, år, alle\\n        "
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."
@@ -67,44 +67,44 @@ msgstr "Ingen treff."
 #: redbot/cogs/image/image.py:159
 #, docstring
 msgid "Explain how to set imgur API tokens."
-msgstr ""
+msgstr "Forklar hvordan du setter imgur API tokens."
 
 #: redbot/cogs/image/image.py:161
 msgid "To get an Imgur Client ID:\\n1. Login to an Imgur account.\\n2. Visit this page https://api.imgur.com/oauth2/addclient.\\n3. Enter a name for your application.\\n4. Select *Anonymous usage without user authorization* for the auth type.\\n5. Set the authorization callback URL to `https://localhost`.\\n6. Leave the app website blank.\\n7. Enter a valid email address and a description.\\n8. Check the captcha box and click next.\\n9. Your Client ID will be on the next page.\\n10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\\n"
-msgstr ""
+msgstr "For å få en Imgur Client ID:\\n1. Logg inn til en Imgur konto.\\n. Besøk denne siden https://api.imgur.com/oauth2/addclient.\\n3. Skriv inn et navn for programmet ditt.\\n4. Velg *Anonym bruk uten brukerautorisasjon* for auth type.\\n5. Sett autorisasjon tilbakeringing til `https://localhost`.\\n6. La appnettsiden være blank.\\n7. Skriv en gyldig e-postadresse og en beskrivelse.\\n8. Sjekk captcha boksen og klikk neste.\\n9. Din klient-ID vil være på neste side.\\n10. Kjør kommandoen `{prefix}set api imgur client_id <your_client_id_here>`. \\n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring
 msgid "Retrieve the first search result from Giphy."
-msgstr ""
+msgstr "Hent det første søkeresultatet fra Giphy."
 
 #: redbot/cogs/image/image.py:190 redbot/cogs/image/image.py:223
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
-msgstr ""
+msgstr "En API-nøkkel er ikke satt! Vennligst angi en med `{prefix}giphycreds`."
 
 #: redbot/cogs/image/image.py:208
 msgid "Error contacting the Giphy API."
-msgstr ""
+msgstr "Feil under kontakt med Giphy API."
 
 #: redbot/cogs/image/image.py:213
 #, docstring
 msgid "Retrieve a random GIF from a Giphy search."
-msgstr ""
+msgstr "Hent et tilfeldig GIF fra et Giphy søk."
 
 #: redbot/cogs/image/image.py:241
 msgid "Error contacting the API."
-msgstr ""
+msgstr "Feil ved kontakt med API-et."
 
 #: redbot/cogs/image/image.py:246
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
-msgstr ""
+msgstr "Forklar hvordan du setter GIPHY API-token."
 
 #: redbot/cogs/image/image.py:248
 msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
-msgstr ""
+msgstr "For å få en GIPHY API-nøkkel:\\n1. Logg inn på (eller skaper) en GIPHY konto.\\n2. Besøk denne siden: https://developers.giphy.com/dashboard.\\n3. Trykk *Lag en App*.\\n4. Klikk *Velg API*, og *Neste trinn*.\\n5. Legg til et appnavn, for eksempel *Red*.\\n6. Legg til en appbeskrivelse, for eksempel *Brukt for Reds bildecog*.\\n7. Klikk *Lag app*. Du må godta GIPHY API-vilkårene.\\n8. Kopier API-nøkkelen.\\n9. I Discord, kjør kommandoen {command}.\\n"
 
 #: redbot/cogs/image/image.py:261
 msgid "<your_api_key_here>"
-msgstr ""
+msgstr "<your_api_key_here>"
 

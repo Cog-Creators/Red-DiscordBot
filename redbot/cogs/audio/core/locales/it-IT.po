@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 692\n"
 "Language: it_IT\n"
 
-#: redbot/cogs/audio/core/__init__.py:33
+#: redbot/cogs/audio/core/__init__.py:34
 #, docstring
 msgid "Play audio through voice channels."
 msgstr ""
