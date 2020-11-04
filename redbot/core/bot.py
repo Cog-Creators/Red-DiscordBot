@@ -304,6 +304,20 @@ class RedBase(
                 return_exceptions=return_exceptions,
             )
 
+    def has_intents(self, **intents: bool) -> bool:
+        """Check if the bot has the specified intents."""
+
+        invalid_keys = set(intents.keys()) - set(discord.Intents.VALID_FLAGS)
+        if invalid_keys:
+            raise TypeError(f"Invalid intent name(s): {', '.join(invalid_keys)}")
+        for perm, value in intents.items():
+            if value is not True:
+                # We reject any Intent not specified as 'True', since this is the only value which
+                # makes practical sense.
+                raise TypeError(f"Intent {perm} may only be specified as 'True', not {value}")
+        missing = set(intents) - set(self.intents)
+        return not missing
+
     async def cog_disabled_in_guild(
         self, cog: commands.Cog, guild: Optional[discord.Guild]
     ) -> bool:

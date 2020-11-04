@@ -191,7 +191,9 @@ class ModInfo(MixinMeta):
         # Member intent
         if self.bot.intents.members:
             member_number = (
-                sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(user)
+                sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
+                    user
+                )
                 + 1
             )
         else:
