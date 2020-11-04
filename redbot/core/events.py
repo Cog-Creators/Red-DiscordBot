@@ -106,25 +106,8 @@ def init_events(bot, cli_flags):
             table_counts.add_row("Servers", str(guilds))
             table_counts.add_row("Total Members", str(users))
 
-        
 
         INFO = []  # TODO Temp, nuke out of the floor once done
-
-        """        INFO = [
-            str(bot.user),
-            "Prefixes: {}".format(", ".join(prefixes)),
-            "Language: {}".format(lang),
-            "Red Bot Version: {}".format(red_version),
-            "Discord.py Version: {}".format(dpy_version),
-            "Shards: {}".format(bot.shard_count),
-            "Storage type: {}".format(data_manager.storage_type()),
-        ]
-
-        if guilds:
-            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
-        else:
-            print("Ready. I'm not in any server yet!")"""
-
 
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
