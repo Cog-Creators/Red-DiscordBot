@@ -335,10 +335,14 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     await driver_cls.initialize(**data_manager.storage_details())
 
     redbot.logging.init_logging(
-        level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
+        level=cli_flags.logging_level,
+        location=data_manager.core_data_path() / "logs",
+        force_rich_logging=cli_flags.force_rich_logging
     )
 
-    log.debug("====Basic Config====")
+    _rich_console = red._rich_console
+
+    log.debug("====Basic Config====")  # TODO
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
@@ -393,7 +397,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 sys.exit(0)
         sys.exit(1)
     except discord.PrivilegedIntentsRequired:
-        print(
+        _rich_console.print(
             "Red requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
             "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents"

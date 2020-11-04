@@ -58,7 +58,10 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
         if bot._uptime is None:
-            print("Connected to Discord. Getting ready...")
+            bot._rich_console.print(
+                "Connected to Discord. Getting ready...",
+                markup=False
+            )
 
     @bot.event
     async def on_ready():

@@ -156,7 +156,7 @@ class RedRichHandler(RichHandler):
             )
 
 
-def init_logging(level: int, location: pathlib.Path) -> None:
+def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -> None:
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
     base_logger = logging.getLogger("red")
@@ -166,7 +166,7 @@ def init_logging(level: int, location: pathlib.Path) -> None:
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
     )
 
-    if isatty(0) is True:  # Check if the bot thinks it has a active terminal.
+    if isatty(0) or force_rich_logging:  # Check if the bot thinks it has a active terminal. Or forcefully enable it
         stdout_handler = RedRichHandler(show_path=False)
     else:
         stdout_handler = logging.StreamHandler(sys.stdout)

@@ -882,7 +882,7 @@ class RedBase(
                 packages.insert(0, "permissions")
 
             to_remove = []
-            print("Loading packages...")
+            self._rich_console.print("[white]Loading packages...")
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
