@@ -99,25 +99,18 @@ def init_events(bot, cli_flags):
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        if guilds:
-            table_counts = Table(show_edge=False, show_header=False)
-            # String conversion is needed as Rich doesn't deal with ints
-            table_counts.add_row("Shards", str(bot.shard_count))
-            table_counts.add_row("Servers", str(guilds))
-            table_counts.add_row("Total Members", str(users))
-
-
-        INFO = []  # TODO Temp, nuke out of the floor once done
+        table_counts = Table(show_edge=False, show_header=False)
+        # String conversion is needed as Rich doesn't deal with ints
+        table_counts.add_row("Shards", str(bot.shard_count))
+        table_counts.add_row("Servers", str(guilds))
+        if bot.intents.members:  # Lets avoid 0 Unique Users
+            table_counts.add_row("Unique Users", str(users))
 
         outdated_red_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                INFO.append(
-                    "Outdated version! {} is available "
-                    "but you're using {}".format(pypi_version, red_version)
-                )
                 outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
