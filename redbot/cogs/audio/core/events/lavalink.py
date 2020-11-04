@@ -364,6 +364,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
                     []
                 )
+        elif code in (42069,):
+            await player.connect(deafen=deafen)
+            await player.resume(player.current, start=player.position)
+            ws_audio_log.info(
+                f"Player resumed in channel {channel_id} in guild: {guild_id} | "
+                f"Reason: Error code {code} & {reason}."
+            )
         elif code in (4015, 4014, 4009, 4006, 1006):
             if has_perm and player.current and player.is_playing:
                 await player.connect(deafen=deafen)
