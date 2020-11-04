@@ -104,6 +104,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
+            player.store("resume_attempts", 0)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
@@ -315,6 +316,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(0.1)
 
             if has_perm and player.current and player.is_playing:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
                 await player.resume(player.current, start=player.position)
                 ws_audio_log.info(
@@ -323,6 +325,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     f"Reason: Error code {code} & Currently playing."
                 )
             elif has_perm and player.paused and player.current:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
                 await player.pause(pause=True)
                 ws_audio_log.info(
@@ -331,6 +334,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     f"Reason: Error code {code} & Currently Paused."
                 )
             elif has_perm and (not disconnect) and (not player.is_playing):
+                player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
                 ws_audio_log.info(
                     "Voice websocket reconnected "
@@ -367,6 +371,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     []
                 )
         elif code in (42069,):
+            player.store("resumes", player.fetch("resumes", 0) + 1)
             await player.connect(deafen=deafen)
             await player.resume(player.current, start=player.position)
             ws_audio_log.info(
@@ -381,12 +386,28 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and player._last_resume + datetime.timedelta(seconds=5)
                 > datetime.datetime.now(tz=datetime.timezone.utc)
             ):
-                ws_audio_log.info(
-                    "Voice websocket reconnected skipped "
-                    f"for channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Player resumed too recently."
-                )
-                return
+                attempts = player.fetch("resume_attempts", 0)
+                player.store("resume_attempts", attempts + 1)
+                channel = self.bot.get_channel(player.channel.id)
+                should_skip = not channel.members or all(m.bot for m in channel.members)
+                if should_skip:
+                    ws_audio_log.info(
+                        "Voice websocket reconnected skipped "
+                        f"for channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & "
+                        "Player resumed too recently and no human members connected."
+                    )
+                    return
+
+            if player._con_delay:
+                delay = player._con_delay.delay()
+            else:
+                player._con_delay = ExponentialBackoff(base=1)
+                delay = player._con_delay.delay()
+            ws_audio_log.debug(
+                f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
+            )
+            await asyncio.sleep(delay)
             if has_perm and player.current and player.is_playing:
                 await player.connect(deafen=deafen)
                 await player.resume(player.current, start=player.position)
@@ -396,6 +417,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     f"Reason: Error code {code} & Player is active."
                 )
             elif has_perm and player.paused and player.current:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
                 await player.pause(pause=True)
                 ws_audio_log.info(
@@ -404,6 +426,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     f"Reason: Error code {code} & Player is paused."
                 )
             elif has_perm and (not disconnect) and (not player.is_playing):
+                player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
                 ws_audio_log.info(
                     "Voice websocket reconnected "
