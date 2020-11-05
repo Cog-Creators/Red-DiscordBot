@@ -2109,12 +2109,12 @@ msgstr "Lokale spor vil ikke fungere hvis `Lavalink.jar` ikke kan se sporet.\\nD
 #: redbot/cogs/audio/core/commands/playlists.py:44
 #, docstring
 msgid "Playlist configuration options.\\n\\n        Scope info:\\n        ​ ​ ​ ​ **Global**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\\n        ​ ​ ​ ​ **Guild**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\\n        ​ ​ ​ ​ **User**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\\n        "
-msgstr ""
+msgstr "Alternativer for spillelistekonfigurasjon.\\n\\nOmfangsinformasjon:\\n** Global **:\\nSynlig for alle brukere av denne bot.\\nBare redigerbar av boteeier.\\n** Guild **:\\nSynlig for alle brukere i dette lauget.\\nKan redigeres av bot eier, klanteier, klanadministratorer, klanmods, DJ-rolle og spillelisteoppretter.\\n ** User**:\\nSynlig for alle botbrukere, hvis --forfatter er bestått.\\n Kan redigeres av boteier og skaper.\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:69
 #, docstring
 msgid "Add a track URL, playlist link, or quick search to a playlist.\\n\\n        The track(s) will be appended to the end of the playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\\n        "
-msgstr "Lag en tom spilleliste.\\n\\n ** Bruk **:\\n [p]playlist create playlist_name [args]\\n\\n**Args**: \\nFølgende er alle valgfrie:\\n - omfang <omfang>\\n - forfatter [bruker]\\n - guild [laug]**Bare boteeieren kan bruke denne**\\n\\n**Omfang **er ett av følgende:\\nGlobal\\n Gilde\\n Bruker\\n\\n * * Forfatter ** kan være ett av følgende:\\n Bruker-ID\\n Brukeromtale\\n Brukernavn # 123\\n\\n ** Guild ** kan være en av følgende: \\n Guild ID \\n Nøyaktig guildnavn\\n\\nEksempelbruk:\\n[p]playlist append MyGuildPlaylist Hello by Adele\\n[p]playlist create MyGlobalPlaylist --scope Global\\n [P]playlist create MyPersonalPlaylist --scope User\\n        "
+msgstr "Oppdaterer alle sporene i en spilleliste.\\n\\n ** Bruk **:\\n[p]playlist append playlist_name_OR_id track_name_OR_url [args]\\n\\n** Args **: \\nFølgende er alle valgfritt:\\n​ ​ --scope <scope>\\n --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n** Scope** er ett av følgende:\\n Global\\n Guild\\n User\\n\\n **Author** kan være ett av følgende:\\n Bruker-ID\\n Brukeromtale\\nBrukernavn # 123\\n\\n **Guild ** kan være ett av følgende:\\n Guild ID\\n Nøyaktig guildnavn\\n\\nEksempelbruk: \\n[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\\n[p] spillelisteoppdatering MyGlobalPlaylist - Scope Global\\n[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:123
 #: redbot/cogs/audio/core/commands/playlists.py:307
@@ -2252,7 +2252,7 @@ msgstr "{name} (`{id}`) [**{scope}**] spilleliste slettet."
 #: redbot/cogs/audio/core/commands/playlists.py:531
 #, docstring
 msgid "Remove duplicate tracks from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
-msgstr ""
+msgstr "Fjern dupliserte spor fra en lagret spilleliste.\\n\\n** Bruk **:\\n[p]playlist dedupe playlist_name_OR_id [args]\\n\\n** Args **: \\nFølgende er alt valgfritt:\\n​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] ** Bare boteeieren kan bruke dette **\\n\\n ** Omfang ** er ett av følgende:\\nGlobal\\nGuild\\nUser\\n\\n ** Author ** kan være ett av følgende:\\nBruker-ID\\nBrukeromtale\\nBrukernavn # 123\\n\\n ** Guild ** kan være ett av følgende:\\nGuild ID\\nEksakt guild navn\\n\\nEksempelbruk:\\n`[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:627
 msgid "Removed {track_diff} duplicated tracks from {name} (`{id}`) [**{scope}**] playlist."
@@ -2270,7 +2270,7 @@ msgstr "{name} (`{id}`) [**{scope}**] spillelisten har ingen duplikate spor."
 #: redbot/cogs/audio/core/commands/playlists.py:662
 #, docstring
 msgid "Download a copy of a playlist.\\n\\n        These files can be used with the `[p]playlist upload` command.\\n        Red v2-compatible playlists can be generated by passing True\\n        for the v2 variable.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`\\n        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\\n        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\\n        "
-msgstr ""
+msgstr "Last ned en kopi av en spilleliste.\\n\\nDisse filene kan brukes med opplastningskommandoen for [p]playlist upload` command.\\nRøde v2-kompatible spillelister kan genereres ved å sende sant\\n for variabelen v2.\\n\\n* * Bruk **:\\n[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]\\n\\n ** Args **: \\nFølgende er alle valgfrie:\\n --scope <scope>\\n - author [user]\\n - guild [guild] ** Bare boteeieren kan bruk dette **\\n\\n ** Scope ** er ett av følgende:\\nGlobal\\nGuild\\nUser\\n\\n** Forfatter ** kan være ett av følgende: \\n Bruker-ID\\nBrukernavn\\n Brukernavn # 123\\n\\n** Guild ** kan være ett av følgende:\\n Guild ID\\n Eksakt guildnavn\\n\\nEksempelbruk:\\n ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\\n        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\\n        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:731
 msgid "That playlist has no tracks."
@@ -2402,7 +2402,7 @@ msgstr "Spilleliste {name} (`{id}`) [** {scope} **] lagret: {num} spor lagt til.
 
 #: redbot/cogs/audio/core/commands/playlists.py:1414
 msgid "Playlist Couldn't be created"
-msgstr ""
+msgstr "Spilleliste kunne ikke opprettes"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1415
 msgid "Unable to create your playlist."
@@ -2462,7 +2462,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1836
 msgid "Please upload the playlist file. Any other message will cancel this operation."
-msgstr ""
+msgstr "Vennligst last opp spillelistefilen. En annen melding vil avbryte denne operasjonen."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1847
 msgid "No file detected, try again later."

@@ -45,15 +45,15 @@ msgstr "Etiket spamı (Otomatik Uyarı)"
 
 #: redbot/cogs/mod/kickban.py:86
 msgid "That user is not in a voice channel."
-msgstr ""
+msgstr "O kullanıcı her hangi bir ses kanalında değil."
 
 #: redbot/cogs/mod/kickban.py:93
 msgid "I require the {perms} permission(s) in that user's channel to do that."
-msgstr ""
+msgstr "Bunu yapabilmek için o kullanıcının kanalında {perms} izinlerine ihtiyacım var."
 
 #: redbot/cogs/mod/kickban.py:103
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
-msgstr ""
+msgstr "Bu komutu kullanabilmek için o kullanıcının kanalında {perms} izinlerine ihtiyacınız var."
 
 #: redbot/cogs/mod/kickban.py:125 redbot/cogs/mod/kickban.py:417
 #: redbot/cogs/mod/kickban.py:572
@@ -73,7 +73,7 @@ msgstr "Bunu yapmana izin veremem. Rolün işlem yapmaya çalıştığın kişid
 #: redbot/cogs/mod/kickban.py:143 redbot/cogs/mod/kickban.py:293
 #: redbot/cogs/mod/kickban.py:561
 msgid "I cannot do that due to Discord hierarchy rules."
-msgstr ""
+msgstr "Discord hierarşi kuralları nedeniyle bunu yapamam."
 
 #: redbot/cogs/mod/kickban.py:149
 msgid "You have been banned from {guild}."
@@ -89,11 +89,11 @@ msgstr "Bir sebep verilmedi."
 
 #: redbot/cogs/mod/kickban.py:171 redbot/cogs/mod/kickban.py:433
 msgid "User with ID {user_id} is already banned."
-msgstr ""
+msgstr "{user_id} IDli kullanıcı zaten banlandı."
 
 #: redbot/cogs/mod/kickban.py:185
 msgid "User with ID {user_id} was upgraded from a temporary to a permanent ban."
-msgstr ""
+msgstr "{user_id} IDli kullanıcının banı geçiciden kalıcıya yükseltildi."
 
 #: redbot/cogs/mod/kickban.py:197 redbot/cogs/mod/kickban.py:331
 msgid "Done. That felt good."
@@ -105,7 +105,7 @@ msgstr "Bunu yapmama iznim yok."
 
 #: redbot/cogs/mod/kickban.py:201 redbot/cogs/mod/kickban.py:504
 msgid "User with ID {user_id} not found"
-msgstr ""
+msgstr "{user_id} IDli kullanıcı bulunamadı"
 
 #: redbot/cogs/mod/kickban.py:208
 msgid "An unexpected error occurred."
@@ -118,7 +118,7 @@ msgstr "Geçici ban bitti"
 #: redbot/cogs/mod/kickban.py:268
 #, docstring
 msgid "Kick a user.\\n\\n        If a reason is specified, it will be the reason that shows up\\n        in the audit log.\\n        "
-msgstr ""
+msgstr "Bir kullanıcıyı sunucudan atar.\\n\\n        Eğer bir neden belirtildiyse sunucunun\\n        denetim kayıtlarında o sebep gözükecektir.\\n        "
 
 #: redbot/cogs/mod/kickban.py:278 redbot/cogs/mod/kickban.py:623
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
@@ -131,24 +131,24 @@ msgstr "Bu sunucudan atıldınız {guild}."
 #: redbot/cogs/mod/kickban.py:345
 #, docstring
 msgid "Ban a user from this server and optionally delete days of messages.\\n\\n        A user ID should be provided if the user is not a member of this server.\\n\\n        If days is not a number, it's treated as the first word of the reason.\\n\\n        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."
-msgstr ""
+msgstr "Bir kullanıcıyı sunucudan banla ve isteğe bağlı olarak gün bazında attıkları mesajları sil.\\n\\n        Eğer kullanıcı bu sunucunun bir üyesi değilse bir kullanıcı IDsi belirtilmek zorundadır.\\n\\n        Eğer günler rakamsal olarak belirtilmediyse, sebepteki ilk kelime olarak kabul edilecektir.\\n\\n        En az 0 gün, en fazla 7. Eğer belirtilmediyse, bunun yerine defaultdays ayarı kullanılacaktır."
 
 #: redbot/cogs/mod/kickban.py:377
 #, docstring
 msgid "Mass bans user(s) from the server.\\n\\n        User IDs need to be provided in order to ban\\n        using this command."
-msgstr ""
+msgstr "Kullanıcıları sunucudan toplu olarak banlar.\\n\\n        Bu komutu kullanabilmek için\\n        kullanıcı IDlerinin belirtilmesi gerekir."
 
 #: redbot/cogs/mod/kickban.py:386
 msgid "Banned {num} users from the server."
-msgstr ""
+msgstr "{num} kullanıcı sunucudan banlandı."
 
 #: redbot/cogs/mod/kickban.py:390
 msgid "\\nErrors:\\n"
-msgstr ""
+msgstr "\\nHatalar:\\n"
 
 #: redbot/cogs/mod/kickban.py:393
 msgid "\\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\\n"
-msgstr ""
+msgstr "\\nBu kullanıcı IDlerinin banları geçiciden kalıcıya yükseltildi:\\n"
 
 #: redbot/cogs/mod/kickban.py:421
 msgid "I lack the permissions to do this."
@@ -156,11 +156,11 @@ msgstr "Bunu yapmak için izinlerim yok."
 
 #: redbot/cogs/mod/kickban.py:471 redbot/cogs/mod/kickban.py:475
 msgid "Failed to ban user {user_id}: {reason}"
-msgstr ""
+msgstr "{user_id}: {reason} banlaması başarısız oldu"
 
 #: redbot/cogs/mod/kickban.py:509
 msgid "Could not ban user with ID {user_id}: missing permissions."
-msgstr ""
+msgstr "{user_id} ID sine sahip kullanıcı banlanamadı: yetki eksik."
 
 #: redbot/cogs/mod/kickban.py:542
 #, docstring
@@ -173,7 +173,7 @@ msgstr "Bu sunucudan {server_name} geçici olarak yasaklandın. Şu zamana kadar
 
 #: redbot/cogs/mod/kickban.py:589
 msgid " Here is an invite for when your ban expires: {invite_link}"
-msgstr ""
+msgstr " Ban süreniz dolduğunda kullanabileceğiniz davet linki: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:596
 msgid "I can't do that for some reason."
@@ -181,7 +181,7 @@ msgstr "Bunu bazı sebeplerden dolayı yapamıyorum."
 
 #: redbot/cogs/mod/kickban.py:598
 msgid "Something went wrong while banning."
-msgstr ""
+msgstr "Ban sırasında bir şey ters gitti."
 
 #: redbot/cogs/mod/kickban.py:610
 msgid "Done. Enough chaos for now."
@@ -215,46 +215,46 @@ msgstr "Bu üyeyi ses kanalından atamıyorum."
 
 #: redbot/cogs/mod/kickban.py:727
 msgid "Something went wrong while attempting to kick that member."
-msgstr ""
+msgstr "O üye sunucudan atılırken bir şey ters gitti."
 
 #: redbot/cogs/mod/kickban.py:746
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
-msgstr ""
+msgstr "Bir kullanıcının sunucunun ses kanallarında konuşma ve dinleme yasağını kaldır."
 
 #: redbot/cogs/mod/kickban.py:765
 msgid "That user isn't muted or deafened by the server."
-msgstr ""
+msgstr "O kullanıcı sunucu tarafından susturulmamış ya da sağırlaştırılmamış."
 
 #: redbot/cogs/mod/kickban.py:781
 msgid "User is now allowed to speak and listen in voice channels."
-msgstr ""
+msgstr "Kullanıcının artık ses kanallarında konuşma ve dinleme izni var."
 
 #: redbot/cogs/mod/kickban.py:787
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
-msgstr ""
+msgstr "Bir kullanıcının sunucunun ses kanallarında konuşmasını ve dinlemesini yasakla."
 
 #: redbot/cogs/mod/kickban.py:808
 msgid "That user is already muted and deafened server-wide."
-msgstr ""
+msgstr "O kullanıcı zaten sunucu bazında susturulmuş ve sağırlaştırılmış."
 
 #: redbot/cogs/mod/kickban.py:822
 msgid "User has been banned from speaking or listening in voice channels."
-msgstr ""
+msgstr "Kullanıcının ses kanallarında konuşması ve dinlemesi yasaklandı."
 
 #: redbot/cogs/mod/kickban.py:829
 #, docstring
 msgid "Unban a user from this server.\\n\\n        Requires specifying the target user's ID. To find this, you may either:\\n         1. Copy it from the mod log case (if one was created), or\\n         2. enable developer mode, go to Bans in this server's settings, right-\\n        click the user and select 'Copy ID'."
-msgstr ""
+msgstr "Kullanıcının bu sunucudaki banını kaldır.\\n\\n        Kullanıcı IDsi belirtilmesini gerektirir. Bunu öğrenmek için:\\n         1. Mod kaydından kopyalayabilir (varsa), veya\\n         2. geliştirici modunu açıp, sunucunun ban ayarlarına gidip, kullanıcıya sağ-\\n        tıklayıp `IDyi kopyala` seçeneğine tıklayabilirsiniz."
 
 #: redbot/cogs/mod/kickban.py:842
 msgid "It seems that user isn't banned!"
-msgstr ""
+msgstr "Görünüşe bakılırsa o kullanıcı banlı değil."
 
 #: redbot/cogs/mod/kickban.py:848
 msgid "Something went wrong while attempting to unban that user."
-msgstr ""
+msgstr "Kullanıcının banı kaldırılırken bir şey ters gitti."
 
 #: redbot/cogs/mod/kickban.py:862
 msgid "Unbanned that user from this server."
@@ -262,19 +262,19 @@ msgstr "Bu kullanıcının yasağını bu sunucudan kaldırın."
 
 #: redbot/cogs/mod/kickban.py:868
 msgid "I don't share another server with this user. I can't reinvite them."
-msgstr ""
+msgstr "Bu kullanıcıyla ortak sunucum yok, onları yeniden davet edemem."
 
 #: redbot/cogs/mod/kickban.py:876
 msgid "You've been unbanned from {server}.\\nHere is an invite for that server: {invite_link}"
-msgstr ""
+msgstr "{server} sunucusundaki banınız kaldırıldı.\\nO sunucuya tekrar katılmak için davet linki: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:883
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\\nHere's the invite link: {invite_link}"
-msgstr ""
+msgstr "O kullanıcıya davet gönderemedim. Belki benim için siz gönderebilirsiniz?\\nDavet linki: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:891
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
-msgstr ""
+msgstr "O kullanıcıya bir davet linki gönderirken sorunla karşılaşıldı. Eğer siz denemek isterseniz davet linki: {invite_link}"
 
 #: redbot/cogs/mod/mod.py:45
 #, docstring
@@ -283,54 +283,54 @@ msgstr "Moderasyon Seçenekleri."
 
 #: redbot/cogs/mod/mod.py:138 redbot/cogs/mod/mod.py:148
 msgid "Ignored guilds and channels have been moved. Please use `[p]moveignoredchannels` to migrate the old settings."
-msgstr ""
+msgstr "Görmezden gelinen sunucular ve kanalların yeri değiştirildi. Eski ayarları aktarmak için lütfen `[p]moveignoredchannels` komutunu kullanın."
 
 #: redbot/cogs/mod/mod.py:160
 msgid "Delete delay settings have been moved. Please use `[p]movedeletedelay` to migrate the old settings."
-msgstr ""
+msgstr "Silme gecikmesi ayarlarını değişti. Lütfen eski ayarları aktarmak için `[p]movedeletedelay` kullanın."
 
 #: redbot/cogs/mod/mod.py:181
 #, docstring
 msgid "Move ignored channels and servers to core"
-msgstr ""
+msgstr "Görmezden gelinen kanal ve sunucuları çekirdeğe aktar."
 
 #: redbot/cogs/mod/mod.py:190
 msgid "Ignored channels and guilds restored."
-msgstr ""
+msgstr "Görmezden gelinen kanal ve sunucu ayarları geri getirildi."
 
 #: redbot/cogs/mod/mod.py:195
 #, docstring
 msgid "\\n        Move deletedelay settings to core\\n        "
-msgstr ""
+msgstr "\\n        deletedelay ayarlarını çekirdeğe taşı\\n        "
 
 #: redbot/cogs/mod/mod.py:204
 msgid "Delete delay settings restored."
-msgstr ""
+msgstr "Silme gecikmesi ayarları geri getirildi."
 
 #: redbot/cogs/mod/names.py:36
 #, docstring
 msgid "Change a user's nickname.\\n\\n        Leaving the nickname empty will remove it.\\n        "
-msgstr ""
+msgstr "Bir kullanıcının takma adını değiştir.\\n\\n        Boş bırakılırsa kullanıcının takma adı kaldırılır.\\n        "
 
 #: redbot/cogs/mod/names.py:45
 msgid "Nicknames must be between 2 and 32 characters long."
-msgstr ""
+msgstr "Takma adların uzunluğu 2 ile 32 arasında olmalıdır."
 
 #: redbot/cogs/mod/names.py:53
 msgid "I do not have permission to rename that member. They may be higher than or equal to me in the role hierarchy."
-msgstr ""
+msgstr "O üyenin adını değiştirme iznim yok. Bunun sebebi rol hiyerarşisinde benden yüksek yada bana eşit olmaları olabilir."
 
 #: redbot/cogs/mod/names.py:63
 msgid "I do not have permission to rename that member."
-msgstr ""
+msgstr "O üyenin adını değiştirmeye iznim yok."
 
 #: redbot/cogs/mod/names.py:66
 msgid "That nickname is invalid."
-msgstr ""
+msgstr "Ad geçerli değil."
 
 #: redbot/cogs/mod/names.py:68
 msgid "An unexpected error has occured."
-msgstr ""
+msgstr "Beklenmedik bir hata oluştu."
 
 #: redbot/cogs/mod/names.py:70
 msgid "Done."
@@ -338,48 +338,49 @@ msgstr "Tamamdır."
 
 #: redbot/cogs/mod/names.py:81
 msgid "Custom: {emoji} {name}"
-msgstr ""
+msgstr "Özel: {emoji} {name}"
 
 #: redbot/cogs/mod/names.py:83
 msgid "Custom: {emoji}"
-msgstr ""
+msgstr "Özel: {emoji}"
 
 #: redbot/cogs/mod/names.py:85
 msgid "Custom: {name}"
-msgstr ""
+msgstr "Özel: {name}"
 
 #: redbot/cogs/mod/names.py:93
 msgid "Playing: {name}"
-msgstr ""
+msgstr "Oynuyor: {name}"
 
 #: redbot/cogs/mod/names.py:102
 msgid "Streaming: [{name}{sep}{game}]({url})"
-msgstr ""
+msgstr "Yayınlıyor: [{name}{sep}{game}]({url})"
 
 #: redbot/cogs/mod/names.py:109
 msgid "Streaming: {name}"
-msgstr ""
+msgstr "Yayınlıyor: {name}"
 
 #: redbot/cogs/mod/names.py:118
 msgid "Listening: [{title}{sep}{artist}]({url})"
-msgstr ""
+msgstr "Dinliyor: [{title}{sep}{artist}]({url})"
 
 #: redbot/cogs/mod/names.py:125
 msgid "Listening: {title}"
-msgstr ""
+msgstr "Dinliyor: {title}"
 
 #: redbot/cogs/mod/names.py:133
 msgid "Watching: {name}"
-msgstr ""
+msgstr "İzliyor: {name}"
 
 #: redbot/cogs/mod/names.py:155
 #, docstring
 msgid "Show information about a user.\\n\\n        This includes fields for status, discord join date, server\\n        join date, voice state and previous names/nicknames.\\n\\n        If the user has no roles, previous names or previous nicknames,\\n        these fields will be omitted.\\n        "
-msgstr ""
+msgstr "Bir kullanıcı hakkında bilgi göster.\\n\\n        Buna kullanıcının durumu, discorda katılma tarihi, sunucuya\\n        katılma tarihi, ses durumu\n"
+" önceki adı/adları dahildir.\\n\\n        Eğer üyenin her hangi bir rolü, önceden kullandığı ad ya da takma ad yoksa,\\n        bu alanlar boş bırakılacaktır.\\n        "
 
 #: redbot/cogs/mod/names.py:183
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmiyor"
 
 #: redbot/cogs/mod/names.py:191
 msgid "{}\\n({} days ago)"
@@ -395,7 +396,7 @@ msgstr "{} durumda rahatına bakıyor"
 
 #: redbot/cogs/mod/names.py:218
 msgid "and {numeric_number} more roles not displayed due to embed limits."
-msgstr ""
+msgstr "Ve mesaj sınırlamaları yüzünden gösterilemeyen {numeric_number} rol."
 
 #: redbot/cogs/mod/names.py:245
 msgid "Joined Discord on"
@@ -411,7 +412,7 @@ msgstr "Roller"
 
 #: redbot/cogs/mod/names.py:249
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: redbot/cogs/mod/names.py:255
 msgid "Previous Names"
@@ -419,7 +420,7 @@ msgstr "Geçmiş İsimleri"
 
 #: redbot/cogs/mod/names.py:255
 msgid "Previous Name"
-msgstr ""
+msgstr "Önceki isim"
 
 #: redbot/cogs/mod/names.py:263
 msgid "Previous Nicknames"
@@ -427,57 +428,57 @@ msgstr "Geçmiş Kullanıcı adları"
 
 #: redbot/cogs/mod/names.py:263
 msgid "Previous Nickname"
-msgstr ""
+msgstr "Önceki Takma İsim"
 
 #: redbot/cogs/mod/names.py:269
 msgid "Current voice channel"
-msgstr ""
+msgstr "Şu anki ses kanalı"
 
 #: redbot/cogs/mod/names.py:273
 msgid "Member #{} | User ID: {}"
-msgstr ""
+msgstr "Üye #{} | Kullanıcı IDsi: {}"
 
 #: redbot/cogs/mod/names.py:287
 #, docstring
 msgid "Show previous names and nicknames of a user."
-msgstr ""
+msgstr "Bir kullanıcının önceki adlarını ve takma adlarını göster."
 
 #: redbot/cogs/mod/names.py:291
 msgid "**Past 20 names**:"
-msgstr ""
+msgstr "**Son 20 isim**:"
 
 #: redbot/cogs/mod/names.py:297
 msgid "**Past 20 nicknames**:"
-msgstr ""
+msgstr "**Son 20 takma isim**:"
 
 #: redbot/cogs/mod/names.py:304
 msgid "That user doesn't have any recorded name or nickname change."
-msgstr ""
+msgstr "O kullanıcının her hangi bir kaydedilmiş adı yada ad değişikliği bulunmamakta."
 
 #: redbot/cogs/mod/settings.py:22
 #, docstring
 msgid "Manage server administration settings."
-msgstr ""
+msgstr "Sunucu yönetim ayarlarını düzenle."
 
 #: redbot/cogs/mod/settings.py:26
 #, docstring
 msgid "Show the current server administration settings."
-msgstr ""
+msgstr "Şu anki sunucu yönetim ayarlarını gösterir."
 
 #: redbot/cogs/mod/settings.py:41
 msgid "Delete repeats: {num_repeats}\\n"
-msgstr ""
+msgstr "Tekrarları sil: {num_repeats}\\n"
 
 #: redbot/cogs/mod/settings.py:42
 msgid "after {num} repeats"
-msgstr ""
+msgstr "{num} tekrardan sonra"
 
 #: redbot/cogs/mod/settings.py:44 redbot/cogs/mod/settings.py:49
 #: redbot/cogs/mod/settings.py:54 redbot/cogs/mod/settings.py:59
 #: redbot/cogs/mod/settings.py:67 redbot/cogs/mod/settings.py:75
 #: redbot/cogs/mod/settings.py:78
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: redbot/cogs/mod/settings.py:46
 msgid "Warn mention spam: {num_mentions}\\n"
@@ -486,7 +487,7 @@ msgstr "Etiket uyarısı: {num_mentions}\\n"
 #: redbot/cogs/mod/settings.py:47 redbot/cogs/mod/settings.py:52
 #: redbot/cogs/mod/settings.py:57
 msgid "{num} mentions"
-msgstr ""
+msgstr "{num} ping"
 
 #: redbot/cogs/mod/settings.py:51
 msgid "Kick mention spam: {num_mentions}\\n"
@@ -494,19 +495,19 @@ msgstr "Etiket spamı kick: {num_mentions}\\n"
 
 #: redbot/cogs/mod/settings.py:56
 msgid "Ban mention spam: {num_mentions}\\n"
-msgstr ""
+msgstr "Ping spam durumunda banlama: {num_mentions}\\n"
 
 #: redbot/cogs/mod/settings.py:62
 msgid "Mention Spam Strict: All mentions will count including duplicates\\n"
-msgstr ""
+msgstr "Sıkı Ping Spam: Aynılar dahil tüm pingler sayılır\\n"
 
 #: redbot/cogs/mod/settings.py:64
 msgid "Mention Spam Strict: Only unique mentions will count\\n"
-msgstr ""
+msgstr "Sıkı Ping Spam: Yalnızca farklı pingler sayılır\\n"
 
 #: redbot/cogs/mod/settings.py:66
 msgid "Respects hierarchy: {yes_or_no}\\n"
-msgstr ""
+msgstr "Hiyerarşi saygı duyar: {yes_or_no}\\n"
 
 #: redbot/cogs/mod/settings.py:67 redbot/cogs/mod/settings.py:75
 #: redbot/cogs/mod/settings.py:78
@@ -515,7 +516,7 @@ msgstr "Evet"
 
 #: redbot/cogs/mod/settings.py:69
 msgid "Delete delay: {num_seconds}\\n"
-msgstr ""
+msgstr "Gecikmeyi sil: {num_seconds}\\n"
 
 #: redbot/cogs/mod/settings.py:70
 msgid "{num} seconds"
@@ -527,36 +528,36 @@ msgstr "None"
 
 #: redbot/cogs/mod/settings.py:74
 msgid "Reinvite on unban: {yes_or_no}\\n"
-msgstr ""
+msgstr "Ban kaldırıldığında geri davet etme: {yes_or_no}\\n"
 
 #: redbot/cogs/mod/settings.py:77
 msgid "Send message to users on kick/ban: {yes_or_no}\\n"
-msgstr ""
+msgstr "Üyelere atıldıklarında veya banlandıklarında mesaj gönder: {yes_or_no}\\n"
 
 #: redbot/cogs/mod/settings.py:81
 msgid "Default message history delete on ban: Previous {num_days} days\\n"
-msgstr ""
+msgstr "Varsayılan mesaj geçmişi silme ayarı: Son {num_days} gün\\n"
 
 #: redbot/cogs/mod/settings.py:85
 msgid "Default message history delete on ban: Don't delete any\\n"
-msgstr ""
+msgstr "Varsayılan mesaj geçmişi silme ayarı: Hiç silme\\n"
 
 #: redbot/cogs/mod/settings.py:86
 msgid "Default tempban duration: {duration}"
-msgstr ""
+msgstr "Varsayılan geçici ban süresi: {duration}"
 
 #: redbot/cogs/mod/settings.py:94
 #, docstring
 msgid "Toggle role hierarchy check for mods and admins.\\n\\n        **WARNING**: Disabling this setting will allow mods to take\\n        actions on users above them in the role hierarchy!\\n\\n        This is enabled by default.\\n        "
-msgstr ""
+msgstr "Moderatörler ve adminler için rol hierarşisi denetimi aç veya kapa.\\n\\n        **UYARI**: Bu ayarı açmak moderatörlerin hierarşik\\n        olarak kendilerinden yüksek kişilere müdahele etmesine olanak tanır!\\n\\n        Bu ayar varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/mod/settings.py:106
 msgid "Role hierarchy will be checked when moderation commands are issued."
-msgstr ""
+msgstr "Moderasyon komutları verildiğinde rol hiyerarşisi kontrol edilecek."
 
 #: redbot/cogs/mod/settings.py:111
 msgid "Role hierarchy will be ignored when moderation commands are issued."
-msgstr ""
+msgstr "Moderasyon komutları verildiğinde rol hiyerarşisi görmezden gelinecek."
 
 #: redbot/cogs/mod/settings.py:117
 #, docstring
@@ -566,23 +567,23 @@ msgstr "\\n        Etiket spamı için otomatik moderatör ayarlarını yönetin
 #: redbot/cogs/mod/settings.py:124
 #, docstring
 msgid "\\n        Setting to account for duplicate mentions.\\n\\n        If enabled all mentions will count including duplicated mentions.\\n        If disabled only unique mentions will count.\\n\\n        Use this command without any parameter to see current setting.\\n        "
-msgstr ""
+msgstr "\\n        Aynı pingleri de hesaba katmak için ayar.\\n\\n        Açılırsa aynı pingler dahil tüm pingler sayılacak.\\n        Kapatılırsa yalnızca birbirinden farklı pingler sayılacak.\\n\\n        Şu anki ayarı görmek için bu komutu her hangi bir seçenek sunmadan kullanın.\\n        "
 
 #: redbot/cogs/mod/settings.py:136
 msgid "Mention spam currently accounts for multiple mentions of the same user."
-msgstr ""
+msgstr "Şu anda aynı kullanıcıya birden çok kez ping atmak da ping spamlama sayılır."
 
 #: redbot/cogs/mod/settings.py:138
 msgid "Mention spam currently only accounts for mentions of different users."
-msgstr ""
+msgstr "Şu anda yalnızca farklı kullanıcılara atılan pingler spam sayılır."
 
 #: redbot/cogs/mod/settings.py:143
 msgid "Mention spam will now account for multiple mentions of the same user."
-msgstr ""
+msgstr "Artık aynı kullanıcıya birden çok kez ping atma da spam kabul edilecek."
 
 #: redbot/cogs/mod/settings.py:145
 msgid "Mention spam will only account for mentions of different users."
-msgstr ""
+msgstr "Yalnızca farklı kullanıcılara atılan pingler spam kabul edilecek."
 
 #: redbot/cogs/mod/settings.py:152
 #, docstring
@@ -603,15 +604,15 @@ msgstr "Otomatik uyarı sistemi için `<max_mentions>` sayısı 1 ya da daha faz
 
 #: redbot/cogs/mod/settings.py:174
 msgid "\\nAutowarn is equal to or higher than autokick."
-msgstr ""
+msgstr "\\nAutowarn autokick'e eşit ya da daha yüksekte."
 
 #: redbot/cogs/mod/settings.py:178
 msgid "\\nAutowarn is equal to or higher than autoban."
-msgstr ""
+msgstr "\\nAutowarn autoban'a eşit ya da daha yüksekte."
 
 #: redbot/cogs/mod/settings.py:182
 msgid "Autowarn for mention spam enabled. Anyone mentioning {max_mentions} or more people in a single message will be autowarned.\\n{mismatch_message}"
-msgstr ""
+msgstr "Ping spamlama durumunda autowarn etkin. Bir mesajda {max_mentions} veya daha fazla kişiye ping atan herkes otomatik olarak uyarı alacak.\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:192
 #, docstring
@@ -632,15 +633,15 @@ msgstr "Otomatik kick sistemi için `<max_mentions>` sayısı 1 ya da daha fazla
 
 #: redbot/cogs/mod/settings.py:214
 msgid "\\nAutokick is equal to or lower than autowarn."
-msgstr ""
+msgstr "\\nAutokick autowarn'a eşit ya da daha aşağıda."
 
 #: redbot/cogs/mod/settings.py:218
 msgid "\\nAutokick is equal to or higher than autoban."
-msgstr ""
+msgstr "\\nAutokick autoban'a eşit ya da daha yüksekte."
 
 #: redbot/cogs/mod/settings.py:222
 msgid "Autokick for mention spam enabled. Anyone mentioning {max_mentions} or more people in a single message will be autokicked.\\n{mismatch_message}"
-msgstr ""
+msgstr "Ping spamlama durumunda autokick. Bir mesajda {max_mentions} veya daha fazla kişiye ping atan herkes otomatik olarak sunucudan atılacak.\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:232
 #, docstring
@@ -649,11 +650,11 @@ msgstr "\\n        Etiket spamı için otomatik yasaklamaları ayarlayın.\\n\\n
 
 #: redbot/cogs/mod/settings.py:242
 msgid "Autoban for mention spam is already disabled."
-msgstr ""
+msgstr "Ping spamlama için otomatik banlama zaten kapalı."
 
 #: redbot/cogs/mod/settings.py:244
 msgid "Autoban for mention spam disabled."
-msgstr ""
+msgstr "Ping spamlama için otomatik banlama kapatıldı."
 
 #: redbot/cogs/mod/settings.py:247
 msgid "`<max_mentions>` must be 1 or higher to autoban."
@@ -661,97 +662,97 @@ msgstr "Otomatik yasaklama için `<max_mentions>` sayısı 1 ya da daha fazla ol
 
 #: redbot/cogs/mod/settings.py:253
 msgid "\\nAutoban is equal to or lower than autowarn."
-msgstr ""
+msgstr "\\nAutoban autowarn'a eşit ya da daha aşağıda."
 
 #: redbot/cogs/mod/settings.py:257
 msgid "\\nAutoban is equal to or lower than autokick."
-msgstr ""
+msgstr "\\nAutoban autokick'e eşit ya da daha aşağıda."
 
 #: redbot/cogs/mod/settings.py:261
 msgid "Autoban for mention spam enabled. Anyone mentioning {max_mentions} or more people in a single message will be autobanned.\\n{mismatch_message}"
-msgstr ""
+msgstr "Ping spamlama durumunda autoban etkin. Bir mesajda {max_mentions} veya daha fazla kişiye ping atan herkes otomatik olarak banlanacak.\\n{mismatch_message}"
 
 #: redbot/cogs/mod/settings.py:271
 #, docstring
 msgid "Enable auto-deletion of repeated messages.\\n\\n        Must be between 2 and 20.\\n\\n        Set to -1 to disable this feature.\\n        "
-msgstr ""
+msgstr "Tekrarlanmış mesajların otomatik silinmesini etkinleştir.\\n\\n        2 ila 20 arasında olmak zorundadır.\\n\\n        Bu özelliği kapamak için ayarı -1 yapın.\\n        "
 
 #: redbot/cogs/mod/settings.py:282 redbot/cogs/mod/settings.py:308
 msgid "Repeated messages will be ignored."
-msgstr ""
+msgstr "Tekrarlanmış mesajlar görmezden gelinecek."
 
 #: redbot/cogs/mod/settings.py:288
 msgid "Messages repeated up to {num} times will be deleted."
-msgstr ""
+msgstr "{num} kere tekrarlanmış mesajlar silinecek."
 
 #: redbot/cogs/mod/settings.py:292
 msgid "Number of repeats must be between 2 and 20 or equal to -1 if you want to disable this feature!"
-msgstr ""
+msgstr "Bu özelliği etkinleştirmek istiyorsanız tekrarlama sayısı 2 ile 20 arası, kapatmak istiyorsanız -1 olmalıdır."
 
 #: redbot/cogs/mod/settings.py:301
 msgid "Bot will delete repeated messages after {num} repeats. Set this value to -1 to ignore repeated messages"
-msgstr ""
+msgstr "Bot tekrarlanmış mesajları {num} kere tekrarlandıktan sonra silecek. Tekrarlanmış mesajları görmezden gelmek için bu değeri -1 yapın"
 
 #: redbot/cogs/mod/settings.py:313
 #, docstring
 msgid "Toggle whether an invite will be sent to a user when unbanned.\\n\\n        If this is True, the bot will attempt to create and send a single-use invite\\n        to the newly-unbanned user.\\n        "
-msgstr ""
+msgstr "Bir üyenin banı kaldırıldıktan sonra onlara davet linki gönderilmesini ayarla.\\n\\n        Eğer bu ayar etkinse bot banı yeni kaldırılmış üyeye\\n        tek kullanımlık bir davet linki atmaya çalışır.\\n        "
 
 #: redbot/cogs/mod/settings.py:323
 msgid "Users unbanned with `{command}` will be reinvited."
-msgstr ""
+msgstr "Banı `{command}` ile kaldırılmış üyeler tekrar davet edilecek."
 
 #: redbot/cogs/mod/settings.py:330
 msgid "Users unbanned with `{command}` will not be reinvited."
-msgstr ""
+msgstr "Banı `{command}` ile kaldırılmış üyeler tekrar davet edilmeyecek."
 
 #: redbot/cogs/mod/settings.py:338
 #, docstring
 msgid "Toggle whether a message should be sent to a user when they are kicked/banned.\\n\\n        If this option is enabled, the bot will attempt to DM the user with the guild name\\n        and reason as to why they were kicked/banned.\\n        "
-msgstr ""
+msgstr "Bir üye sunucudan atıldığında ya da banlandığında mesaj gönderilmesini ayarlar.\\n\\n        Bu ayar etkinleştirilirse bot kullanıcı sunucu adını ve\\n        neden atıldıklarının/banlandıklarının sebebini özel mesaj olarak yollamaya çalışır.\\n        "
 
 #: redbot/cogs/mod/settings.py:347
 msgid "DM when kicked/banned is currently set to: {setting}"
-msgstr ""
+msgstr "Atılma/Banlanma durumunda mesaj atma ayarı: {setting}"
 
 #: redbot/cogs/mod/settings.py:352
 msgid "Bot will now attempt to send a DM to user before kick and ban."
-msgstr ""
+msgstr "Bot artık kullanıcıya atılma ve banlanma öncesi mesaj atmaya çalışacak."
 
 #: redbot/cogs/mod/settings.py:355
 msgid "Bot will no longer attempt to send a DM to user before kick and ban."
-msgstr ""
+msgstr "Bot artık atılma ya da banlanma öncesinde kullanıcıya özel mesaj atmaya çalışmayacak."
 
 #: redbot/cogs/mod/settings.py:361
 #, docstring
 msgid "Set the default number of days worth of messages to be deleted when a user is banned.\\n\\n        The number of days must be between 0 and 7.\\n        "
-msgstr ""
+msgstr "Bir kullanıcı banlanınca en son kaç gün boyunca attıkları mesajların silineceğini ayarla.\\n\\n        Bu numara 0 ile 7 arasında olmak zorundadır.\\n        "
 
 #: redbot/cogs/mod/settings.py:367
 msgid "Invalid number of days. Must be between 0 and 7."
-msgstr ""
+msgstr "Geçersiz gün sayısı. 0 ile 7 arasında olmak zorundadır."
 
 #: redbot/cogs/mod/settings.py:370
 msgid "{days} days worth of messages will be deleted when a user is banned."
-msgstr ""
+msgstr "Kullanıcı ban yediğinde son {days} gün boyunca attıkları mesajlar silinecek."
 
 #: redbot/cogs/mod/settings.py:385
 #, docstring
 msgid "Set the default time to be used when a user is tempbanned.\\n\\n        Accepts: seconds, minutes, hours, days, weeks\\n        `duration` must be greater than zero.\\n\\n        Examples:\\n            `[p]modset defaultduration 7d12h10m`\\n            `[p]modset defaultduration 7 days 12 hours 10 minutes`\\n        "
-msgstr ""
+msgstr "Bir kullanıcı geçici ban (tempban) yediğinde kullanılacak varsayılan süreyi ayarla.\\n\\n        Saniyeler (seconds), dakikalar (minutes), saatler (hours), günler (days) veya haftalar (weeks) kullanılabilir\\n        `duration` (süre) sıfırdan yüksek olmak zorundadır .\\n\\n        Örnekler:\\n            `[p]modset defaultduration 7d12h10m`\\n            `[p]modset defaultduration 7 days 12 hours 10 minutes`\\n        "
 
 #: redbot/cogs/mod/settings.py:397
 msgid "The default duration for tempbanning a user is now {duration}."
-msgstr ""
+msgstr "Geçici banda varsayılan süre artık {duration}."
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring
 msgid "Changes channel's slowmode setting.\\n\\n        Interval can be anything from 0 seconds to 6 hours.\\n        Use without parameters to disable.\\n        "
-msgstr ""
+msgstr "Kanalın yavaş mod ayarını değiştirir.\\n\\n        Bu ayar 0 saniyeden 6 saate kadar değişebilir.\\n        Kapamak için komutu seçeneksiz kullanın.\\n        "
 
 #: redbot/cogs/mod/slowmode.py:36
 msgid "Slowmode interval is now {interval}."
-msgstr ""
+msgstr "Yavaş mod bekletme süresi artık {interval}."
 
 #: redbot/cogs/mod/slowmode.py:41
 msgid "Slowmode has been disabled."
