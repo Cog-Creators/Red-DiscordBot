@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/cleanup/cleanup.py:23
 #, docstring
 msgid "This cog contains commands used for \\\"cleaning up\\\" (deleting) messages.\\n\\n    This is designed as a moderator tool and offers many convenient use cases.\\n    All cleanup commands only apply to the channel the command is executed in.\\n\\n    Messages older than two weeks cannot be mass deleted.\\n    This is a limitation of the API.\\n    "
-msgstr ""
+msgstr "Bu modül mesajları \\\"temizlemek\\\" (silmek) için kullanılan komutlar içerir.\\n\\n    Bu bir moderatör aracı olarak tasarlanmıştır ve çok sayıda rahatlık sağlar.\\n    Temizlik komutlarının tamamı yalnızca çalıştırıldıkları kanal için etkilidir.\\n\\n    İki haftadan eski mesajlar topluca silinemez.\\n   Bu, Discord'un koyduğu bir sınırlamadır..\\n    "
 
 #: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
@@ -31,22 +31,22 @@ msgstr "İptal."
 #: redbot/cogs/cleanup/cleanup.py:127
 #, docstring
 msgid "Base command for deleting messages."
-msgstr ""
+msgstr "Mesajları silmek için kullanılan temel komut."
 
 #: redbot/cogs/cleanup/cleanup.py:137
 #, docstring
 msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            - `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Belirtilen yazıyla uyuşan son X mesajı siler.\\n\\n        Örnek:\\n            - `[p]cleanup text \\\"test\\\" 5`\\n\\n        Çift tırnak kullanmayı unutmayın.\\n\\n        **Seçenekler:**\\n\\n        - `<number>` En fazla kaç mesaj silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği. Varsayılan olarak kapalıdır\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:192
 #, docstring
 msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            - `[p]cleanup user @Twentysix 2`\\n            - `[p]cleanup user Red 6`\\n\\n        **Arguments:**\\n\\n        - `<user>` The user whose messages are to be cleaned up.\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Belirtilen kullanıcının attığı son X mesajı sil.\\n\\n        Örnekler:\\n            - `[p]cleanup user @Twentysix 2`\\n            - `[p]cleanup user Red 6`\\n\\n        **Seçenekler:**\\n\\n        - `<user>` Mesajları silinecek kullanıcı.\\n        - `<number>` En fazla kaç mesaj silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:262
 #, docstring
 msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Belirtilen mesajdan sonraki tüm mesajları siler.\\n\\n        Bir mesaj Idsi öğrenmek için, Discord'un ayarlarında 'görünüm' sekmesinde\\n        geliştirici modunu açın. Sonra bir mesaja sağ tıklayın\\n        ve Idsini kopyalayın.\\n\\n        **Seçenkler:**\\n\\n        - `<message_id>` Sonrası silinecek mesajın Idsi. Bu mesajın kendisi silinmeyecektir.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."
@@ -55,32 +55,32 @@ msgstr "Mesaj bulunamadı."
 #: redbot/cogs/cleanup/cleanup.py:307
 #, docstring
 msgid "Deletes X messages before the specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Belirtilen mesajdan önceki X mesajı sil.\\n\\n        Bir mesaj Idsi öğrenmek için, Discord'un ayarlarında 'görünüm' sekmesinde\\n        geliştirici modunu açın. Sonra bir mesaja sağ tıklayın\\n        ve Idsini kopyalayın.\\n\\n        **Seçenekler:**\\n\\n        - `<message_id>` Gerisi silinecek mesajın Idsi. Bu mesajın kendisi silinmeyecektir.\\n        - `<number>` En fazla kaç mesaj silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:354
 #, docstring
 msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            - `[p]cleanup between 123456789123456789 987654321987654321`\\n\\n        **Arguments:**\\n\\n        - `<one>` The id of the message to cleanup after. This message won't be deleted.\\n        - `<two>` The id of the message to cleanup before. This message won't be deleted.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "IDsi verilen iki mesaj arasındaki mesajları siler.\\n\\n        İlk mesaj IDsi önceki, ikinci mesaj IDsi sonraki mesajın IDsi olmalıdır.\\n\\n        Örnek:\\n            - `[p]cleanup between 123456789123456789 987654321987654321`\\n\\n        **Seçenekler:**\\n\\n        - `<one>` Sonrası silinecek mesajın IDsi. Bu mesajın kendisi silinmeyecektir.\\n        - `<two>` Öncesi silinecek mesajın IDsi. Bu mesajın kendisi silinmeyecektir.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:402
 #, docstring
 msgid "Delete the last X messages.\\n\\n        Example:\\n            - `[p]cleanup messages 26`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Son X mesajı siler.\\n\\n        Örnek:\\n            - `[p]cleanup messages 26`\\n\\n        **Seçenekler:**\\n\\n        - `<number>` En fazla kaç mesajın silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği. Varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:440
 #, docstring
 msgid "Clean up command messages and messages from the bot.\\n\\n        Can only cleanup custom commands and alias commands if those cogs are loaded.\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Komut içeren mesajları ve bot'un attığı mesajları temizler.\\n\\n        Eğer yüklülerse yalnızca özel komutlar ve takma ad modüllerinin komutları temizlenebilir.\\n\\n        **Seçenekler:**\\n\\n        - `<number>` En fazla kaç mesajın silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:528
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a second argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n\\n        Examples:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<match_pattern>` The text that messages must contain to be deleted. Use \\\"\\\" to skip this.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Bot'a ait mesajları temizle.\\n\\n        Varsayılan olarak, tüm mesajlar temizlenir. Eğer ikinci bir seçenek belirtilirse,\\n        eşleştirme için kullanılır - yanlızca belirtilmiş seçeneği içeren mesajlar silinir.\\n\\n        Örnekler:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Seçenekler:**\\n\\n        - `<number>` En fazla kaç mesaj silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<match_pattern>` Silinmek için bir mesajın ne içermesi gerektiği. Bunu atlamak için \\\"\\\" kullanın.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:610
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n\\n        **Arguments:**\\n\\n        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\\n        "
-msgstr ""
+msgstr "Son X mesajdan aynı olanları siler ve sadece bir tanesini bırakır.\\n\\n        Varsayılan olarak 50.\\n\\n        **Seçenekler:**\\n\\n        - `<number>` Aynıları için denetlenecek mesaj sayısı, pozitif tam sayı olmak zorundadır.\\n        "
 
 #: redbot/cogs/cleanup/converters.py:15
 msgid "{} doesn't look like a valid message ID."

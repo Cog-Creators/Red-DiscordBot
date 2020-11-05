@@ -17,35 +17,35 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:35
 msgid "\\nScope must be a valid version of one of the following:\\n​ ​ ​ ​ Global\\n​ ​ ​ ​ Guild\\n​ ​ ​ ​ User\\n"
-msgstr ""
+msgstr "\\nKapsam bunlardan biri olmalıdır:\\n​ ​ ​ ​ Global\\n​ ​ ​ ​ Guild\\n​ ​ ​ ​ User\\n"
 
 #: redbot/cogs/audio/converters.py:43
 msgid "\\nAuthor must be a valid version of one of the following:\\n​ ​ ​ ​ User ID\\n​ ​ ​ ​ User Mention\\n​ ​ ​ ​ User Name#123\\n"
-msgstr ""
+msgstr "\\nSahip bunlardan biri olmalıdır:\\n​ ​ ​ ​ Kullanıcı IDsi\\n​ ​ ​ ​ Kullanıcı pingi\\n​ ​ ​ ​ Kullanıcı Adı#123\\n"
 
 #: redbot/cogs/audio/converters.py:51
 msgid "\\nGuild must be a valid version of one of the following:\\n​ ​ ​ ​ Guild ID\\n​ ​ ​ ​ Exact guild name\\n"
-msgstr ""
+msgstr "\\nSunucu bunlardan biri olmalıdır:\\n​ ​ ​ ​ Sunucu IDsi\\n​ ​ ​ ​ Sunucu tam adı\\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\\\"{arg}\\\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" bulunamadı. Botun görebildiği bir sunucunun IDsi veya tam dı olmak zorundadır."
 
 #: redbot/cogs/audio/converters.py:96
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" kesin bir sunucuya denk gelmemekte. Lütfen belirtmeye çalıştığınız sunucunun ID sini kullanın."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\\\"{arg}\\\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" bulunamadı. Botun görebildiği bir kişiye atılan ping veya o kişinin IDsi olmak zorundadır."
 
 #: redbot/cogs/audio/converters.py:136
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" kesin bir sunucuya denk gelmemekte. Lütfen belirtmeye çalıştığınız sunucunun ID sini kullanın."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "'{}' bir çalma listesi ile eşleşmiyor."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368
@@ -53,17 +53,17 @@ msgstr ""
 #: redbot/cogs/audio/converters.py:431 redbot/cogs/audio/converters.py:453
 #: redbot/cogs/audio/converters.py:480
 msgid "Nothing"
-msgstr ""
+msgstr "Hiçbir şey"
 
 #: redbot/cogs/audio/converters.py:261
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "`--guild` kullanamazsınız"
 
 #: redbot/cogs/audio/converters.py:402
 msgid "You cannot use `--to-server`"
-msgstr ""
+msgstr "`--to-server` kullanamazsınız"
 
 #: redbot/cogs/audio/converters.py:428
 msgid "You cannot use `--from-server`"
-msgstr ""
+msgstr "`--from-server` kullanamazsınız"
 

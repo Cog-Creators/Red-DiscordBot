@@ -346,7 +346,7 @@ msgstr "\\n        Håndter en sletteforespørsel fra Discord.\\n        "
 
 #: redbot/core/core_commands.py:810
 msgid "This will cause the bot to get rid of or disassociate all data from the specified user ID. You should not use this unless Discord has specifically requested this with regard to a deleted user. This will remove the user from various anti-abuse measures. If you are processing a manual request from a user, you may want `{prefix}{command_name}` instead\\n\\nIf you are sure this is what you intend to do please respond with the following:"
-msgstr "Dette vil føre til at botten kvitter seg med eller frakter alle data fra den angitte bruker-IDen. Du bør ikke bruke dette med mindre Discord har bedt om dette spesielt med hensyn til en slettet bruker. Dette vil fjerne brukeren fra ulike antimisbruk tiltak. Hvis du behandler en manuell forespørsel fra en bruker, du kan ønske `{prefix}{command_name}` i stedet\\n\\nHvis du er sikker på at dette er hva du har tenkt å reagere med følgende:"
+msgstr "Dette vil føre til at botten kvitter seg med eller frakter alle data fra den angitte bruker-IDen. Du bør ikke bruke dette med mindre Discord har bedt om dette spesielt med hensyn til en slettet bruker. Dette vil fjerne brukeren fra ulike antimisbruk tiltak. Hvis du behandler en manuell forespørsel fra en bruker, du kan ønske `{prefix}{command_name}` i stedet\\n\\nHvis du er sikker på at dette er hva du ønsker, vennligst svar med følgende:"
 
 #: redbot/core/core_commands.py:828
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
@@ -375,7 +375,7 @@ msgstr " Slett data [botname] har om en bruker for en bruker. "
 
 #: redbot/core/core_commands.py:878
 msgid "This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user. Users have access to different command for this unless they can't interact with the bot at all. This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot. \\n\\nIf you are sure this is what you intend to do please respond with the following:"
-msgstr "Dette vil føre til at botten kvitter seg med eller nedknytter mange ikke-operasjonelle data fra den angitte brukeren. Brukere har tilgang til annen kommando for dette med mindre de kan ikke samhandle med boten i det hele tatt. Dette er en særlig trygg operasjon. men du bør ikke bruke den hvis ikke en forespørsel fra denne brukeren siden den kan påvirke bruken av boten. \\n\\nHvis du er sikker på at dette er hva du har til å reagere med følgende:"
+msgstr "Dette vil føre til at botten kvitter seg med eller nedknytter mange ikke-operasjonelle data fra den angitte brukeren. Brukere har tilgang til annen kommando for dette med mindre de kan ikke samhandle med boten i det hele tatt. Dette er en særlig trygg operasjon. men du bør ikke bruke den hvis ikke en forespørsel fra denne brukeren siden den kan påvirke bruken av boten. \\n\\nHvis du er sikker på at dette, vennligst svar med følgende:"
 
 #: redbot/core/core_commands.py:901
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
@@ -404,7 +404,7 @@ msgstr " Slett data [botname] har ca en bruker. "
 
 #: redbot/core/core_commands.py:956
 msgid "This will cause the bot to get rid of or disassociate a lot of data about the specified user. This may include more than just end user data, including anti abuse records.\\n\\nIf you are sure this is what you intend to do please respond with the following:"
-msgstr "Dette vil forårsake at botten kvitter seg med eller nedknytter en mengde data om den angitte brukeren. Dette kan omfatte mer enn bare sluttbrukerdata, inkludert anti-data i form av misbruk.\\n\\nHvis du er sikker på at dette er hva du har til å reagere med følgende:"
+msgstr "Dette vil forårsake at botten kvitter seg med eller nedknytter en mengde data om den angitte brukeren. Dette kan omfatte mer enn bare sluttbrukerdata, inkludert anti-data i form av misbruk.\\n\\nHvis du er sikker på at dette er hva du ønsker, vennligst svar med følgende:"
 
 #: redbot/core/core_commands.py:970
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\\nPlease check your logs and contact the creators of these cogs and modules.\\nNote: Outside of these failures, data should have been deleted."
@@ -2042,19 +2042,19 @@ msgstr "Denne kommandoen er på nedkjøling. Prøv igjen om 1 sekund."
 
 #: redbot/core/events.py:307
 msgid "Too many people using this command. It can only be used {number} times concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {number} ganger samtidig."
 
 #: redbot/core/events.py:312
 msgid "Too many people using this command. It can only be used {number} time concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {number} tid samtidig."
 
 #: redbot/core/events.py:318
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {number} ganger per {type} samtidig."
 
 #: redbot/core/events.py:323
 msgid "Too many people using this command. It can only be used {number} time per {type} concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {number} tid per {type} samtidig."
 
 #: redbot/core/modlog.py:344
 msgid "Case #{} | {} {}"

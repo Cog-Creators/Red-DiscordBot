@@ -43,17 +43,17 @@ msgstr "İstediğin yanıt nedir?"
 #: redbot/cogs/customcom/customcom.py:217
 #, docstring
 msgid "This cog contains commands for creating and managing custom commands that display text.\\n\\n    These are useful for storing information members might need, like FAQ answers or invite links.\\n    Custom commands can be used by anyone by default, so be careful with pings.\\n    Commands can only be lowercase, and will not respond to any uppercase letters.\\n    "
-msgstr ""
+msgstr "Bu modül yazı halinde çıktı veren özel komutlar oluşturmak ve yönetmek için komutlar içerir.\\n\\n    Bu özel komutlar, üyelere lazım olabilecek davet linkleri yada SSS yanıtları gibi bilgileri depolamak için kullanışlıdır..\\n    Varsayılan olarak özel komutlar herhangi biri tarafından kullanılabileceğinden pingler ile çalışırken dikkatli olun.\\n    Komutlar yalnızca küçük harflerle yazılabilirler ve her hangi bir büyük harfe cevap vermeyeceklerdir.\\n    "
 
 #: redbot/cogs/customcom/customcom.py:247
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Özel Komutların yönetimi için Temel Komut."
 
 #: redbot/cogs/customcom/customcom.py:252
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\\n\\n        This is helpful for copy and pasting.\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to get the raw response of."
-msgstr ""
+msgstr "Düzgün biçimlendirmeye ulaşabilmek için bir komutun ham çıktısını verir.\\n\\n        Bu, kopyala yapıştır yapmakta yardımcı olur.\\n\\n        **Seçenkler:**\\n\\n        - `<command>` Çıktısını almak istediğiniz komut."
 
 #: redbot/cogs/customcom/customcom.py:277
 msgid "Response #{num}/{total}"
@@ -66,7 +66,7 @@ msgstr "Yanıt #{num}/{total}:\\n{raw}"
 #: redbot/cogs/customcom/customcom.py:298
 #, docstring
 msgid "\\n        Searches through custom commands, according to the query.\\n\\n        Uses fuzzywuzzy searching to find close matches.\\n\\n        **Arguments:**\\n\\n        - `<query>` The query to search for. Can be multiple words.\\n        "
-msgstr ""
+msgstr "\\n        Verilen sorguya göre özel komutlarda arama yapar.\\n\\n        Arama yapmak için fuzzywuzzy adlı Python kütüphanesini kullanır.\\n\\n        **Seçenekler:**\\n\\n        - `<query>` Aramak istediğiniz sorgu, birden çok kelime içerebilir.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:318
 msgid "No close matches were found."
@@ -88,7 +88,7 @@ msgstr "Özel komut oluşturun.\\n\\n        Eğer komut uzun geliyorsa sadece c
 #: redbot/cogs/customcom/customcom.py:344
 #, docstring
 msgid "Create a CC where it will randomly choose a response!\\n\\n        Note: This command is interactive.\\n\\n        **Arguments:**\\n\\n        - `<command>` The command executed to return the text. Cast to lowercase.\\n        "
-msgstr ""
+msgstr "Verdiği cevabı rastgele seçecek bir özel komut oluşturur.\\n\\n        Not: Bu komut etkileşimlidir.\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Cevap almak için çalıştırılması gereken komut, küçük harfe çevrilir.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:354
 #: redbot/cogs/customcom/customcom.py:388
@@ -117,12 +117,12 @@ msgstr "Bu komut zaten bulunuyor. Değiştirmek için `{command}` yazın."
 #: redbot/cogs/customcom/customcom.py:376
 #, docstring
 msgid "Add a simple custom command.\\n\\n        Example:\\n            - `[p]customcom create simple yourcommand Text you want`\\n\\n        **Arguments:**\\n\\n        - `<command>` The command executed to return the text. Cast to lowercase.\\n        - `<text>` The text to return when executing the command. See guide for enhanced usage.\\n        "
-msgstr ""
+msgstr "Basit bir özel komut ekler.\\n\\n        Örnek:\\n            - `[p]customcom create simple komutunuz Vermesini istediğiniz çıktı`\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Cevap almak için çalıştırılan komut, küçük harfe çevrilir.\\n        - `<text>` Komutun vereceği cevap. Daha detaylı kullanım için kılavuza bakınız.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:410
 #, docstring
 msgid "Set, edit, or view the cooldown for a custom command.\\n\\n        You may set cooldowns per member, channel, or guild. Multiple\\n        cooldowns may be set. All cooldowns must be cooled to call the\\n        custom command.\\n\\n        Examples:\\n            - `[p]customcom cooldown pingrole`\\n            - `[p]customcom cooldown yourcommand 30`\\n            - `[p]cc cooldown mycommand 30 guild`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to check or set the cooldown.\\n        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\\n        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.\\n        "
-msgstr ""
+msgstr "Bir komutun bir kere çalıştırıldıktan sonra tekrar çalışıtırılabilmesi için ne kadar süre geçmesi gerektiğini (cooldown) ayarlar, değiştirir ya da düzenler.\\n\\n        Cooldown sürelerini üye (member), kanal (channel) ya da sunucu (guild) bazında ayarlayabilirsiniz. Birden çok\\n        cooldown süresi ayarlanabilir. Komutu tekrar çalıştırabilmek için hepsinin \\n        bitmiş olması gerekir.\\n\\n        Örnekler:\\n            - `[p]customcom cooldown pingrole`\\n            - `[p]customcom cooldown komutunuz 30`\\n            - `[p]cc cooldown komutum 30 guild`\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Cooldown süresi öğrenilecek ya da ayarlanacak komut.\\n        - `<cooldown>` Komut tekrar çalıştırılmadan önce kaç **saniye** geçmesi gerektiği. Boş bırakılırsa şu anki ayarı gösterir.\\n        - `<per>` Cooldown süresinden etkilenecek gurup, varsayılan olarak sunucudur. Geçerli seçenekler: server, guild, user, ve member.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:431
 #: redbot/cogs/customcom/customcom.py:472
@@ -153,7 +153,7 @@ msgstr "Bu komut bulunmuyor. Eklemek için `{command}` yazın."
 #: redbot/cogs/customcom/customcom.py:459
 #, docstring
 msgid "Delete a custom command.\\n\\n        Example:\\n            - `[p]customcom delete yourcommand`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to delete.\\n        "
-msgstr ""
+msgstr "Bir özel komutu siler.\\n\\n        Örnek:\\n            - `[p]customcom delete komutunuz`\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Silinecek komut.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:470
 msgid "Custom command successfully deleted."
@@ -162,7 +162,7 @@ msgstr "Özel komut başarıyla kaldırıldı."
 #: redbot/cogs/customcom/customcom.py:477
 #, docstring
 msgid "Edit a custom command.\\n\\n        Example:\\n            - `[p]customcom edit yourcommand Text you want`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to edit.\\n        - `<text>` The new text to return when executing the command.\\n        "
-msgstr ""
+msgstr "Bir özel komutu düzenler.\\n\\n        Örnek:\\n            - `[p]customcom edit komutunuz Vermesini istediğiniz çıktı`\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Düzenlenecek özel komut.\\n        - `<text>` Komut çalıştırılınca verilecek yeni çıktı.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:489
 msgid "Custom command successfully edited."
@@ -188,7 +188,7 @@ msgstr "{num}/{total} sayfa"
 #: redbot/cogs/customcom/customcom.py:543
 #, docstring
 msgid "Shows a custom command's responses and its settings.\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to show.\\n        "
-msgstr ""
+msgstr "Bir özel komutun cevaplarını ve ayarlarını gösterir.\\n\\n        **Seçenekler:**\\n\\n        - `<command>` Gösterilecek özel komut.\\n        "
 
 #: redbot/cogs/customcom/customcom.py:553
 msgid "I could not not find that custom command."

@@ -21,15 +21,15 @@ msgstr "\\\"{argument}\\\" bir sayı değil."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` bu komut için geçerli bir zaman birimi değil"
 
 #: redbot/core/commands/converter.py:118
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "Bu süre bu komut için çok fazla. (Maksimum: {maximum})"
 
 #: redbot/core/commands/converter.py:124
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "Bu komut için bu süre çok kısa. (Minimum: {minimum})"
 
 #: redbot/core/commands/converter.py:152
 msgid "Server \\\"{name}\\\" not found."
@@ -37,11 +37,11 @@ msgstr "Sunucu \\\"{name}\\\" bulunamadı."
 
 #: redbot/core/commands/converter.py:187
 msgid "Unexpected key {key}"
-msgstr ""
+msgstr "Beklenmedik anahtar {key}"
 
 #: redbot/core/commands/converter.py:389
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Arasından biri beklenenler: {}"
 
 #: redbot/core/commands/help.py:104
 msgid "No"
@@ -57,11 +57,11 @@ msgstr "Devre dışı bırakıldı"
 
 #: redbot/core/commands/help.py:117
 msgid "\\nCustom Tagline: {tag}"
-msgstr ""
+msgstr "\\nÖzel Kısa Açıklama: {tag}"
 
 #: redbot/core/commands/help.py:123
 msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}\\nReact with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Sayfa başına maksimum karakter: {page_char_limit}\\nSunucu başına maksimum sayfa (sadece menüler kullanılmıyorsa kullanılır): {max_pages_in_guild}\\nHelp bir menüdür: {use_menus}\\nHelp gizli komutları gösterir: {show_hidden}\\nHelp sadece kullanılabilen komutları gösterir {verify_checks}\\nHelp direk sorulduğunda kullanılamaz komutları gösterir: {verify_exists}\\nSilme gecikmesi: {delete_delay}\\nYardım özel mesaj olarak gönderildiğin tik ile tepki ver: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:272
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
@@ -86,11 +86,11 @@ msgstr "Diğer komutlar:"
 #: redbot/core/commands/help.py:420 redbot/core/commands/help.py:675
 #: redbot/core/commands/help.py:688 redbot/core/commands/help.py:707
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Yardım Menüsü"
 
 #: redbot/core/commands/help.py:467
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+msgstr "*{page_count} sayfadan {page_num}.*\\n{content_description}"
 
 #: redbot/core/commands/help.py:518
 msgid "**__Commands:__**"
@@ -118,11 +118,11 @@ msgstr "Kategori Yok:"
 
 #: redbot/core/commands/help.py:684
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "*{command_name}* için yardım konusu bulunamadı."
 
 #: redbot/core/commands/help.py:701
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "*{command_name}* komutunun *{not_found}* adında bir alt komutu bulunmamakta."
 
 #: redbot/core/commands/help.py:776
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
