@@ -104,6 +104,16 @@ bank prune global
 
 Prune bank accounts for users who no longer share a server with the bot.
 
+Cannot be used without a global bank. See ``[p]bank prune server``.
+
+Examples:
+    - ``[p]bank prune global`` - Did not confirm. Shows the help message.
+    - ``[p]bank prune global yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
 .. _economy-command-bank-prune-server:
 
 """""""""""""""""
@@ -124,6 +134,16 @@ bank prune server
 
 Prune bank accounts for users no longer in the server.
 
+Cannot be used with a global bank. See ``[p]bank prune global``.
+
+Examples:
+    - ``[p]bank prune server`` - Did not confirm. Shows the help message.
+    - ``[p]bank prune server yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
 .. _economy-command-bank-prune-user:
 
 """""""""""""""
@@ -139,6 +159,15 @@ bank prune user
 **Description**
 
 Delete the bank account of a specified user.
+
+Examples:
+    - ``[p]bank prune user @TwentySix`` - Did not confirm. Shows the help message.
+    - ``[p]bank prune user @TwentySix yes``
+
+**Arguments**
+
+- ``<user>`` The user to delete the bank of. Takes mentions, names, and user ids.
+- ``<confirmation>`` This will default to false unless specified.
 
 .. _economy-command-bank-reset:
 
@@ -238,7 +267,7 @@ economyset
 
 **Description**
 
-Manage Economy settings.
+Base command to manage Economy settings.
 
 .. _economy-command-economyset-paydayamount:
 
@@ -256,6 +285,13 @@ economyset paydayamount
 
 Set the amount earned each payday.
 
+Example:
+    - ``[p]economyset paydayamount 400``
+
+**Arguments**
+
+- ``<creds>`` The new amount to give when using the payday command. Default is 120.
+
 .. _economy-command-economyset-paydaytime:
 
 """""""""""""""""""""
@@ -270,7 +306,14 @@ economyset paydaytime
 
 **Description**
 
-Set the cooldown for payday.
+Set the cooldown for the payday command.
+
+Example:
+    - ``[p]economyset paydaytime 86400``
+
+**Arguments**
+
+- ``<seconds>`` The new number of seconds to wait in between uses of payday. Default is 300.
 
 .. _economy-command-economyset-registeramount:
 
@@ -288,6 +331,13 @@ economyset registeramount
 
 Set the initial balance for new bank accounts.
 
+Example:
+    - ``[p]economyset registeramount 5000``
+
+**Arguments**
+
+- ``<creds>`` The new initial balance amount. Default is 0.
+
 .. _economy-command-economyset-rolepaydayamount:
 
 """""""""""""""""""""""""""
@@ -303,6 +353,16 @@ economyset rolepaydayamount
 **Description**
 
 Set the amount earned each payday for a role.
+
+Only available when not using a global bank.
+
+Example:
+    - ``[p]economyset rolepaydayamount @Members 400``
+
+**Arguments**
+
+- ``<role>`` The role to assign a custom payday amount to.
+- ``<creds>`` The new amount to give when using the payday command.
 
 .. _economy-command-economyset-showsettings:
 
@@ -336,6 +396,13 @@ economyset slotmax
 
 Set the maximum slot machine bid.
 
+Example:
+    - ``[p]economyset slotmax 50``
+
+**Arguments**
+
+- ``<bid>`` The new maximum bid for using the slot machine. Default is 100.
+
 .. _economy-command-economyset-slotmin:
 
 """"""""""""""""""
@@ -352,6 +419,13 @@ economyset slotmin
 
 Set the minimum slot machine bid.
 
+Example:
+    - ``[p]economyset slotmin 10``
+
+**Arguments**
+
+- ``<bid>`` The new minimum bid for using the slot machine. Default is 5.
+
 .. _economy-command-economyset-slottime:
 
 """""""""""""""""""
@@ -367,6 +441,13 @@ economyset slottime
 **Description**
 
 Set the cooldown for the slot machine.
+
+Example:
+    - ``[p]economyset slottime 10``
+
+**Arguments**
+
+- ``<seconds>`` The new number of seconds to wait in between uses of the slot machine. Default is 5.
 
 .. _economy-command-leaderboard:
 
@@ -386,6 +467,16 @@ Print the leaderboard.
 
 Defaults to top 10.
 
+Examples:
+    - ``[p]leaderboard``
+    - ``[p]leaderboard 50`` - Shows the top 50 instead of top 10.
+    - ``[p]leaderboard 100 yes`` - Shows the top 100 from all servers.
+
+**Arguments**
+
+- ``<top>`` How many positions on the leaderboard to show. Defaults to 10 if omitted.
+- ``<show_global>`` Whether to include results from all servers. This will default to false unless specified.
+
 .. _economy-command-payday:
 
 ^^^^^^
@@ -401,6 +492,8 @@ payday
 **Description**
 
 Get some free currency.
+
+The amount awarded and frequency can be configured.
 
 .. _economy-command-payouts:
 
@@ -433,3 +526,10 @@ slot
 **Description**
 
 Use the slot machine.
+
+Example:
+    - ``[p]slot 50``
+
+**Arguments**
+
+- ``<bid>`` The amount to bet on the slot machine. Winning payouts are higher when you bet more.
