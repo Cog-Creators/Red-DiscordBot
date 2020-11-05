@@ -28,7 +28,7 @@ msgstr "Filtre ayarlarını yapın."
 #: redbot/cogs/filter/filter.py:74
 #, docstring
 msgid "Set the nickname for users with a filtered name.\\n\\n        Note that this has no effect if filtering names is disabled\\n        (to toggle, run `[p]filter names`).\\n\\n        The default name used is *John Doe*.\\n        "
-msgstr ""
+msgstr "İsim filtresine takılan üyelerin isminin neye değiştirileceğini ayarla.\\n\\n        Not: İsim filtresi kapalıysa bu etkisizdir\\n        (etkinleştirmek için `[p]filter names` komutunu kullanın).\\n\\n        Varsayılan olarak *John Doe* ismi kullanılır.\\n        "
 
 #: redbot/cogs/filter/filter.py:83
 msgid "The name to use on filtered names has been set."
@@ -37,11 +37,11 @@ msgstr "Filtrelenen adlarda kullanılacak ad belirlendi."
 #: redbot/cogs/filter/filter.py:87
 #, docstring
 msgid "Set the filter's autoban conditions.\\n\\n        Users will be banned if they send `<count>` filtered words in\\n        `<timeframe>` seconds.\\n\\n        Set both to zero to disable autoban.\\n        "
-msgstr ""
+msgstr "Filtrenin otomatik ban koşullarını ayarla.\\n\\n        Kullanıcılar `<timeframe>` saniye içinde\\n `<count>` yasaklanmış kelime gönderirse ban yerler.\\n\\n        Otomatik banlamayı kapamak için ikisini de sıfıra ayarlayın.\\n        "
 
 #: redbot/cogs/filter/filter.py:96
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
-msgstr ""
+msgstr "Sayı, süre, ya da ikisinin de ya sıfır olması ya da ikisinin de sıfırdan büyük olması gerekmektedir!"
 
 #: redbot/cogs/filter/filter.py:106
 msgid "Autoban disabled."
@@ -49,7 +49,7 @@ msgstr "Otomatik ban kapatıldı."
 
 #: redbot/cogs/filter/filter.py:111
 msgid "Count and time have been set."
-msgstr ""
+msgstr "Sayı ve süre sıfırlandı."
 
 #: redbot/cogs/filter/filter.py:117
 #, docstring
@@ -76,7 +76,7 @@ msgstr "Sana özelden mesaj atamıyorum."
 #: redbot/cogs/filter/filter.py:142
 #, docstring
 msgid "Add or remove words from channel filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Kanal filtresine sözcük ekle ya da kaldır.\\n\\n       Cümleler eklemek ya da kaldırmak için çift tırnak kullanın.\\n        "
 
 #: redbot/cogs/filter/filter.py:150
 #, docstring
@@ -85,7 +85,7 @@ msgstr "Kanalların filtrelenen kelimelerini gönder."
 
 #: redbot/cogs/filter/filter.py:155
 msgid "There is no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "Şu anda bu kanal için filtrelenmeye ayarlanmış sözcük bulunmamakta."
 
 #: redbot/cogs/filter/filter.py:158
 msgid "Filtered in this channel:"
@@ -94,7 +94,7 @@ msgstr "Bu kanaldaki filtreler:"
 #: redbot/cogs/filter/filter.py:167
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter channel add word1 word2 word3`\\n        - `[p]filter channel add \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Filtreye sözcük ekle.\\n\\n        Cümleler eklemek için çift tırnak kullanın.\\n\\n        Örnekler:\\n        - `[p]filter channel add sözcük1 sözcük2 sözcük3`\\n        - `[p]filter channel add \\\"Bu bir cümle\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:179
 msgid "Words added to filter."
@@ -107,7 +107,7 @@ msgstr "Bu kelime zaten filtrede var."
 #: redbot/cogs/filter/filter.py:185
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter channel remove word1 word2 word3`\\n        - `[p]filter channel remove \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Filtreden sözcük kaldır.\\n\\n        Cümleler kaldırmak için çift tırnak kullanın.\\n\\n        Örnekler:\\n        - `[p]filter channel remove sözcük1 sözcük2 sözcük3`\\n        - `[p]filter channel remove \\\"Bu bir cümle\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:196
 msgid "Words removed from filter."
@@ -120,7 +120,7 @@ msgstr "Bu kelimeler filtrede değil."
 #: redbot/cogs/filter/filter.py:203
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter add word1 word2 word3`\\n        - `[p]filter add \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Filtreye sözcükler ekle.\\n\\n        Cümleler eklemek için çift tırnak kullanın.\\n\\n        Örnekler:\\n        - `[p]filter add sözcük1 sözcük2 sözcük3`\\n        - `[p]filter add \\\"Bu bir cümle\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:215
 msgid "Words successfully added to filter."
@@ -133,7 +133,7 @@ msgstr "Bu kelimeler zaten filtrede var."
 #: redbot/cogs/filter/filter.py:221
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter remove word1 word2 word3`\\n        - `[p]filter remove \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Filtreden sözcük kaldır.\\n\\n        Cümleler kaldırmak için çift tırnak kullanın.\\n\\n        Örnekler:\\n        - `[p]filter remove sözcük1 sözcük2 sözcük3`\\n        - `[p]filter remove \\\"Bu bir cümle\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:233
 msgid "Words successfully removed from filter."
@@ -142,7 +142,7 @@ msgstr "Kelimeler filtreden başarıyla kaldırıldı."
 #: redbot/cogs/filter/filter.py:239
 #, docstring
 msgid "Toggle name and nickname filtering.\\n\\n        This is disabled by default.\\n        "
-msgstr ""
+msgstr "İsim ve takma ad filtrelemesini aç.\\n\\n        Varsayılan olarak kapalıdır.\\n        "
 
 #: redbot/cogs/filter/filter.py:249
 msgid "Names and nicknames will no longer be filtered."
@@ -154,7 +154,7 @@ msgstr "İsimler ve takma adlar artık filtrelenecek."
 
 #: redbot/cogs/filter/filter.py:367
 msgid "Autoban (too many filtered messages.)"
-msgstr ""
+msgstr "Otomatik banlama (çok fazla filtrelenmiş mesaj)"
 
 #: redbot/cogs/filter/filter.py:439
 msgid "Filtered nickname"

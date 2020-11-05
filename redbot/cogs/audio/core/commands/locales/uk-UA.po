@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-26 17:01+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -245,12 +245,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1392
 #: redbot/cogs/audio/core/commands/audioset.py:1393
 #: redbot/cogs/audio/core/commands/audioset.py:1466
-#: redbot/cogs/audio/core/commands/controller.py:414
-#: redbot/cogs/audio/core/commands/controller.py:457
-#: redbot/cogs/audio/core/commands/controller.py:748
-#: redbot/cogs/audio/core/commands/llset.py:102
-#: redbot/cogs/audio/core/commands/llset.py:119
-#: redbot/cogs/audio/core/commands/llset.py:128
+#: redbot/cogs/audio/core/commands/controller.py:415
+#: redbot/cogs/audio/core/commands/controller.py:458
+#: redbot/cogs/audio/core/commands/controller.py:749
+#: redbot/cogs/audio/core/commands/llset.py:101
+#: redbot/cogs/audio/core/commands/llset.py:118
+#: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Enabled"
 msgstr ""
 
@@ -288,12 +288,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1392
 #: redbot/cogs/audio/core/commands/audioset.py:1393
 #: redbot/cogs/audio/core/commands/audioset.py:1466
-#: redbot/cogs/audio/core/commands/controller.py:414
-#: redbot/cogs/audio/core/commands/controller.py:457
-#: redbot/cogs/audio/core/commands/controller.py:748
-#: redbot/cogs/audio/core/commands/llset.py:102
-#: redbot/cogs/audio/core/commands/llset.py:119
-#: redbot/cogs/audio/core/commands/llset.py:128
+#: redbot/cogs/audio/core/commands/controller.py:415
+#: redbot/cogs/audio/core/commands/controller.py:458
+#: redbot/cogs/audio/core/commands/controller.py:749
+#: redbot/cogs/audio/core/commands/llset.py:101
+#: redbot/cogs/audio/core/commands/llset.py:118
+#: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Disabled"
 msgstr ""
 
@@ -334,15 +334,14 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1309
 #: redbot/cogs/audio/core/commands/audioset.py:1417
 #: redbot/cogs/audio/core/commands/audioset.py:1464
-#: redbot/cogs/audio/core/commands/controller.py:412
-#: redbot/cogs/audio/core/commands/controller.py:455
-#: redbot/cogs/audio/core/commands/controller.py:755
-#: redbot/cogs/audio/core/commands/llset.py:100
-#: redbot/cogs/audio/core/commands/llset.py:126
-#: redbot/cogs/audio/core/commands/llset.py:151
-#: redbot/cogs/audio/core/commands/llset.py:175
-#: redbot/cogs/audio/core/commands/llset.py:200
-#: redbot/cogs/audio/core/commands/llset.py:225
+#: redbot/cogs/audio/core/commands/controller.py:413
+#: redbot/cogs/audio/core/commands/controller.py:456
+#: redbot/cogs/audio/core/commands/controller.py:756
+#: redbot/cogs/audio/core/commands/llset.py:99
+#: redbot/cogs/audio/core/commands/llset.py:125
+#: redbot/cogs/audio/core/commands/llset.py:150
+#: redbot/cogs/audio/core/commands/llset.py:174
+#: redbot/cogs/audio/core/commands/llset.py:199
 msgid "Setting Changed"
 msgstr ""
 
@@ -606,8 +605,8 @@ msgid "`{localtracks}` does not exist. The path will still be saved, but please 
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:842
-#: redbot/cogs/audio/core/commands/llset.py:35
-#: redbot/cogs/audio/core/commands/llset.py:54
+#: redbot/cogs/audio/core/commands/llset.py:34
+#: redbot/cogs/audio/core/commands/llset.py:53
 #: redbot/cogs/audio/core/commands/player.py:412
 #: redbot/cogs/audio/core/commands/player.py:422
 msgid "Invalid Environment"
@@ -1019,11 +1018,11 @@ msgstr ""
 msgid "Restarts the lavalink connection."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1485
+#: redbot/cogs/audio/core/commands/audioset.py:1483
 msgid "Restarting Lavalink"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1486
+#: redbot/cogs/audio/core/commands/audioset.py:1484
 msgid "It can take a couple of minutes for Lavalink to fully start up."
 msgstr ""
 
@@ -1033,20 +1032,20 @@ msgid "Disconnect from the voice channel."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:34
-#: redbot/cogs/audio/core/commands/controller.py:83
-#: redbot/cogs/audio/core/commands/controller.py:199
-#: redbot/cogs/audio/core/commands/controller.py:216
-#: redbot/cogs/audio/core/commands/controller.py:230
-#: redbot/cogs/audio/core/commands/controller.py:238
-#: redbot/cogs/audio/core/commands/controller.py:312
-#: redbot/cogs/audio/core/commands/controller.py:378
-#: redbot/cogs/audio/core/commands/controller.py:469
-#: redbot/cogs/audio/core/commands/controller.py:479
-#: redbot/cogs/audio/core/commands/controller.py:563
-#: redbot/cogs/audio/core/commands/controller.py:683
-#: redbot/cogs/audio/core/commands/controller.py:714
-#: redbot/cogs/audio/core/commands/controller.py:769
-#: redbot/cogs/audio/core/commands/controller.py:845
+#: redbot/cogs/audio/core/commands/controller.py:84
+#: redbot/cogs/audio/core/commands/controller.py:200
+#: redbot/cogs/audio/core/commands/controller.py:217
+#: redbot/cogs/audio/core/commands/controller.py:231
+#: redbot/cogs/audio/core/commands/controller.py:239
+#: redbot/cogs/audio/core/commands/controller.py:313
+#: redbot/cogs/audio/core/commands/controller.py:379
+#: redbot/cogs/audio/core/commands/controller.py:470
+#: redbot/cogs/audio/core/commands/controller.py:480
+#: redbot/cogs/audio/core/commands/controller.py:564
+#: redbot/cogs/audio/core/commands/controller.py:684
+#: redbot/cogs/audio/core/commands/controller.py:715
+#: redbot/cogs/audio/core/commands/controller.py:770
+#: redbot/cogs/audio/core/commands/controller.py:846
 #: redbot/cogs/audio/core/commands/equalizer.py:33
 #: redbot/cogs/audio/core/commands/equalizer.py:158
 #: redbot/cogs/audio/core/commands/equalizer.py:188
@@ -1064,9 +1063,9 @@ msgid "Unable To Disconnect"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:50
-#: redbot/cogs/audio/core/commands/controller.py:257
-#: redbot/cogs/audio/core/commands/controller.py:325
-#: redbot/cogs/audio/core/commands/controller.py:577
+#: redbot/cogs/audio/core/commands/controller.py:258
+#: redbot/cogs/audio/core/commands/controller.py:326
+#: redbot/cogs/audio/core/commands/controller.py:578
 msgid "There are other people listening - vote to skip instead."
 msgstr ""
 
@@ -1083,89 +1082,89 @@ msgstr ""
 msgid "Disconnecting..."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:81
+#: redbot/cogs/audio/core/commands/controller.py:82
 #, docstring
 msgid "Now playing."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:104
+#: redbot/cogs/audio/core/commands/controller.py:105
 msgid "\\n Requested by: **{track.requester}**"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:107
+#: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:112
+#: redbot/cogs/audio/core/commands/controller.py:113
 #: redbot/cogs/audio/core/commands/queue.py:79
 msgid "Now Playing"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:122
+#: redbot/cogs/audio/core/commands/controller.py:123
 #: redbot/cogs/audio/core/commands/queue.py:89
 msgid "Auto-Play"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:128
+#: redbot/cogs/audio/core/commands/controller.py:129
 #: redbot/cogs/audio/core/commands/queue.py:95
 msgid "Shuffle"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:134
+#: redbot/cogs/audio/core/commands/controller.py:135
 #: redbot/cogs/audio/core/commands/queue.py:101
 msgid "Repeat"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:194
+#: redbot/cogs/audio/core/commands/controller.py:195
 #, docstring
 msgid "Pause or resume a playing track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:205
-#: redbot/cogs/audio/core/commands/controller.py:211
+#: redbot/cogs/audio/core/commands/controller.py:206
+#: redbot/cogs/audio/core/commands/controller.py:212
 msgid "Unable To Manage Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:206
+#: redbot/cogs/audio/core/commands/controller.py:207
 msgid "You must be in the voice channel to pause or resume."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:212
+#: redbot/cogs/audio/core/commands/controller.py:213
 msgid "You need the DJ role to pause or resume tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:223
+#: redbot/cogs/audio/core/commands/controller.py:224
 msgid "Track Paused"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:227
+#: redbot/cogs/audio/core/commands/controller.py:228
 msgid "Track Resumed"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:236
+#: redbot/cogs/audio/core/commands/controller.py:237
 #, docstring
 msgid "Skip to the start of the previously played track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:250
-#: redbot/cogs/audio/core/commands/controller.py:256
-#: redbot/cogs/audio/core/commands/controller.py:262
-#: redbot/cogs/audio/core/commands/controller.py:475
-#: redbot/cogs/audio/core/commands/controller.py:490
-#: redbot/cogs/audio/core/commands/controller.py:503
-#: redbot/cogs/audio/core/commands/controller.py:512
+#: redbot/cogs/audio/core/commands/controller.py:251
+#: redbot/cogs/audio/core/commands/controller.py:257
+#: redbot/cogs/audio/core/commands/controller.py:263
+#: redbot/cogs/audio/core/commands/controller.py:476
+#: redbot/cogs/audio/core/commands/controller.py:491
+#: redbot/cogs/audio/core/commands/controller.py:504
+#: redbot/cogs/audio/core/commands/controller.py:513
 msgid "Unable To Skip Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:251
+#: redbot/cogs/audio/core/commands/controller.py:252
 msgid "You must be in the voice channel to skip the track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:263
+#: redbot/cogs/audio/core/commands/controller.py:264
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:271
+#: redbot/cogs/audio/core/commands/controller.py:272
 #: redbot/cogs/audio/core/commands/player.py:49
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:60
@@ -1208,172 +1207,172 @@ msgstr ""
 msgid "Unable To Play Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:271
+#: redbot/cogs/audio/core/commands/controller.py:272
 msgid "No previous track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:292
+#: redbot/cogs/audio/core/commands/controller.py:293
 msgid "Replaying Track"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:299
+#: redbot/cogs/audio/core/commands/controller.py:300
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\\n        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:317
-#: redbot/cogs/audio/core/commands/controller.py:324
-#: redbot/cogs/audio/core/commands/controller.py:331
-#: redbot/cogs/audio/core/commands/controller.py:338
-#: redbot/cogs/audio/core/commands/controller.py:350
+#: redbot/cogs/audio/core/commands/controller.py:318
+#: redbot/cogs/audio/core/commands/controller.py:325
+#: redbot/cogs/audio/core/commands/controller.py:332
+#: redbot/cogs/audio/core/commands/controller.py:339
+#: redbot/cogs/audio/core/commands/controller.py:351
 msgid "Unable To Seek Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:318
+#: redbot/cogs/audio/core/commands/controller.py:319
 msgid "You must be in the voice channel to use seek."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:332
+#: redbot/cogs/audio/core/commands/controller.py:333
 msgid "You need the DJ role or be the track requester to use seek."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:338
+#: redbot/cogs/audio/core/commands/controller.py:339
 msgid "Can't seek on a stream."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:351
+#: redbot/cogs/audio/core/commands/controller.py:352
 msgid "Invalid input for the time to seek."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:359
+#: redbot/cogs/audio/core/commands/controller.py:360
 msgid "Moved {num_seconds}s to 00:00:00"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:366
+#: redbot/cogs/audio/core/commands/controller.py:367
 msgid "Moved {num_seconds}s to {time}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:374
+#: redbot/cogs/audio/core/commands/controller.py:375
 msgid "Moved to {time}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:384
+#: redbot/cogs/audio/core/commands/controller.py:385
 #, docstring
 msgid "Toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:393
-#: redbot/cogs/audio/core/commands/controller.py:404
-#: redbot/cogs/audio/core/commands/controller.py:436
-#: redbot/cogs/audio/core/commands/controller.py:447
+#: redbot/cogs/audio/core/commands/controller.py:394
+#: redbot/cogs/audio/core/commands/controller.py:405
+#: redbot/cogs/audio/core/commands/controller.py:437
+#: redbot/cogs/audio/core/commands/controller.py:448
 msgid "Unable To Toggle Shuffle"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:394
-#: redbot/cogs/audio/core/commands/controller.py:437
+#: redbot/cogs/audio/core/commands/controller.py:395
+#: redbot/cogs/audio/core/commands/controller.py:438
 msgid "You need the DJ role to toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:405
-#: redbot/cogs/audio/core/commands/controller.py:448
+#: redbot/cogs/audio/core/commands/controller.py:406
+#: redbot/cogs/audio/core/commands/controller.py:449
 msgid "You must be in the voice channel to toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:413
+#: redbot/cogs/audio/core/commands/controller.py:414
 msgid "Shuffle tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:424
+#: redbot/cogs/audio/core/commands/controller.py:425
 #, docstring
 msgid "Toggle bumped track shuffle.\\n\\n        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\\n        over `[p]shuffle`.\\n        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:456
+#: redbot/cogs/audio/core/commands/controller.py:457
 msgid "Shuffle bumped tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:467
+#: redbot/cogs/audio/core/commands/controller.py:468
 #, docstring
 msgid "Skip to the next track, or to a given track number."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:476
+#: redbot/cogs/audio/core/commands/controller.py:477
 msgid "You must be in the voice channel to skip the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:491
+#: redbot/cogs/audio/core/commands/controller.py:492
 msgid "You need the DJ role or be the track requester to skip tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:504
+#: redbot/cogs/audio/core/commands/controller.py:505
 msgid "You can only skip the current track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:513
+#: redbot/cogs/audio/core/commands/controller.py:514
 msgid "Can't skip to a specific track in vote mode without the DJ role."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:519
+#: redbot/cogs/audio/core/commands/controller.py:520
 msgid "I removed your vote to skip."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:522
+#: redbot/cogs/audio/core/commands/controller.py:523
 msgid "You voted to skip."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:535
+#: redbot/cogs/audio/core/commands/controller.py:536
 msgid "Vote threshold met."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:538
+#: redbot/cogs/audio/core/commands/controller.py:539
 msgid " Votes: {num_votes}/{num_members} ({cur_percent}% out of {required_percent}% needed)"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:557
+#: redbot/cogs/audio/core/commands/controller.py:558
 #, docstring
 msgid "Stop playback and clear the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:570
-#: redbot/cogs/audio/core/commands/controller.py:576
-#: redbot/cogs/audio/core/commands/controller.py:582
+#: redbot/cogs/audio/core/commands/controller.py:571
+#: redbot/cogs/audio/core/commands/controller.py:577
+#: redbot/cogs/audio/core/commands/controller.py:583
 msgid "Unable To Stop Player"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:571
+#: redbot/cogs/audio/core/commands/controller.py:572
 msgid "You must be in the voice channel to stop the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:583
+#: redbot/cogs/audio/core/commands/controller.py:584
 msgid "You need the DJ role to stop the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:600
+#: redbot/cogs/audio/core/commands/controller.py:601
 msgid "Stopping..."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:608
+#: redbot/cogs/audio/core/commands/controller.py:609
 #, docstring
 msgid "Summon the bot to a voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:620
-#: redbot/cogs/audio/core/commands/controller.py:627
-#: redbot/cogs/audio/core/commands/controller.py:640
-#: redbot/cogs/audio/core/commands/controller.py:659
-#: redbot/cogs/audio/core/commands/controller.py:666
+#: redbot/cogs/audio/core/commands/controller.py:621
+#: redbot/cogs/audio/core/commands/controller.py:628
+#: redbot/cogs/audio/core/commands/controller.py:641
+#: redbot/cogs/audio/core/commands/controller.py:660
+#: redbot/cogs/audio/core/commands/controller.py:667
 msgid "Unable To Join Voice Channel"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:621
+#: redbot/cogs/audio/core/commands/controller.py:622
 msgid "There are other people listening."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:628
+#: redbot/cogs/audio/core/commands/controller.py:629
 msgid "You need the DJ role to summon the bot."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:641
+#: redbot/cogs/audio/core/commands/controller.py:642
 #: redbot/cogs/audio/core/commands/player.py:79
 #: redbot/cogs/audio/core/commands/player.py:186
 #: redbot/cogs/audio/core/commands/player.py:451
@@ -1383,7 +1382,7 @@ msgstr ""
 msgid "I don't have permission to connect to your channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:660
+#: redbot/cogs/audio/core/commands/controller.py:661
 #: redbot/cogs/audio/core/commands/player.py:89
 #: redbot/cogs/audio/core/commands/player.py:196
 #: redbot/cogs/audio/core/commands/player.py:461
@@ -1393,7 +1392,7 @@ msgstr ""
 msgid "Connect to a voice channel first."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:667
+#: redbot/cogs/audio/core/commands/controller.py:668
 #: redbot/cogs/audio/core/commands/player.py:95
 #: redbot/cogs/audio/core/commands/player.py:202
 #: redbot/cogs/audio/core/commands/player.py:467
@@ -1403,125 +1402,125 @@ msgstr ""
 msgid "Connection to Lavalink has not yet been established."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:674
+#: redbot/cogs/audio/core/commands/controller.py:675
 #, docstring
 msgid "Set the volume, 1% - 150%."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:681
+#: redbot/cogs/audio/core/commands/controller.py:682
 msgid "Current Volume:"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:692
-#: redbot/cogs/audio/core/commands/controller.py:698
+#: redbot/cogs/audio/core/commands/controller.py:693
+#: redbot/cogs/audio/core/commands/controller.py:699
 msgid "Unable To Change Volume"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:693
+#: redbot/cogs/audio/core/commands/controller.py:694
 msgid "You must be in the voice channel to change the volume."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:699
+#: redbot/cogs/audio/core/commands/controller.py:700
 msgid "You need the DJ role to change the volume."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:712
+#: redbot/cogs/audio/core/commands/controller.py:713
 msgid "Volume:"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:721
+#: redbot/cogs/audio/core/commands/controller.py:722
 #, docstring
 msgid "Toggle repeat."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:729
-#: redbot/cogs/audio/core/commands/controller.py:740
+#: redbot/cogs/audio/core/commands/controller.py:730
+#: redbot/cogs/audio/core/commands/controller.py:741
 msgid "Unable To Toggle Repeat"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:730
+#: redbot/cogs/audio/core/commands/controller.py:731
 msgid "You need the DJ role to toggle repeat."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:741
+#: redbot/cogs/audio/core/commands/controller.py:742
 msgid "You must be in the voice channel to toggle repeat."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:747
+#: redbot/cogs/audio/core/commands/controller.py:748
 msgid "Repeat tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:752
+#: redbot/cogs/audio/core/commands/controller.py:753
 msgid "\\nAuto-play has been disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:764
+#: redbot/cogs/audio/core/commands/controller.py:765
 #, docstring
 msgid "Remove a specific track number from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:773
+#: redbot/cogs/audio/core/commands/controller.py:774
 msgid "Nothing queued."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:777
-#: redbot/cogs/audio/core/commands/controller.py:783
-#: redbot/cogs/audio/core/commands/controller.py:790
-#: redbot/cogs/audio/core/commands/controller.py:823
+#: redbot/cogs/audio/core/commands/controller.py:778
+#: redbot/cogs/audio/core/commands/controller.py:784
+#: redbot/cogs/audio/core/commands/controller.py:791
+#: redbot/cogs/audio/core/commands/controller.py:824
 msgid "Unable To Modify Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:778
+#: redbot/cogs/audio/core/commands/controller.py:779
 msgid "You need the DJ role to remove tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:784
+#: redbot/cogs/audio/core/commands/controller.py:785
 msgid "You must be in the voice channel to manage the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:791
-#: redbot/cogs/audio/core/commands/controller.py:864
+#: redbot/cogs/audio/core/commands/controller.py:792
+#: redbot/cogs/audio/core/commands/controller.py:865
 msgid "Song number must be greater than 1 and within the queue limit."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:805
-#: redbot/cogs/audio/core/commands/controller.py:829
+#: redbot/cogs/audio/core/commands/controller.py:806
+#: redbot/cogs/audio/core/commands/controller.py:830
 msgid "Removed track from queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:806
+#: redbot/cogs/audio/core/commands/controller.py:807
 msgid "Removed {track} from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:824
+#: redbot/cogs/audio/core/commands/controller.py:825
 msgid "Removed 0 tracks, nothing matches the URL provided."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:830
+#: redbot/cogs/audio/core/commands/controller.py:831
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:840
+#: redbot/cogs/audio/core/commands/controller.py:841
 #, docstring
 msgid "Bump a track number to the top of the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:851
-#: redbot/cogs/audio/core/commands/controller.py:857
-#: redbot/cogs/audio/core/commands/controller.py:863
+#: redbot/cogs/audio/core/commands/controller.py:852
+#: redbot/cogs/audio/core/commands/controller.py:858
+#: redbot/cogs/audio/core/commands/controller.py:864
 #: redbot/cogs/audio/core/commands/player.py:146
 msgid "Unable To Bump Track"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:852
+#: redbot/cogs/audio/core/commands/controller.py:853
 msgid "You must be in the voice channel to bump a track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:858
+#: redbot/cogs/audio/core/commands/controller.py:859
 msgid "You need the DJ role to bump tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:874
+#: redbot/cogs/audio/core/commands/controller.py:875
 msgid "Moved track to the top of the queue."
 msgstr ""
 
@@ -1669,147 +1668,135 @@ msgstr ""
 msgid "The {band_name}Hz band has been set to {band_value}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:23
+#: redbot/cogs/audio/core/commands/llset.py:22
 #, docstring
 msgid "Lavalink server configuration options."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:27
+#: redbot/cogs/audio/core/commands/llset.py:26
 #, docstring
 msgid "Change your Java executable path\\n\\n        Enter nothing to reset to default.\\n        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:36
+#: redbot/cogs/audio/core/commands/llset.py:35
 msgid "You cannot changed the Java executable path of external Lavalink instances from the Audio Cog."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:45
+#: redbot/cogs/audio/core/commands/llset.py:44
 msgid "Java Executable Reset"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:46
+#: redbot/cogs/audio/core/commands/llset.py:45
 msgid "Audio will now use `java` to run your Lavalink.jar"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:55
+#: redbot/cogs/audio/core/commands/llset.py:54
 msgid "`{java_path}` is not a valid executable"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:62
+#: redbot/cogs/audio/core/commands/llset.py:61
 msgid "Java Executable Changed"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:63
+#: redbot/cogs/audio/core/commands/llset.py:62
 msgid "Audio will now use `{exc}` to run your Lavalink.jar"
 msgstr ""
 
+#: redbot/cogs/audio/core/commands/llset.py:72
+#: redbot/cogs/audio/core/commands/llset.py:85
+#: redbot/cogs/audio/core/commands/llset.py:112
+#: redbot/cogs/audio/core/commands/llset.py:135
+#: redbot/cogs/audio/core/commands/llset.py:159
+#: redbot/cogs/audio/core/commands/llset.py:184
+#: redbot/cogs/audio/core/commands/llset.py:209
+msgid "Failed To Shutdown Lavalink"
+msgstr ""
+
 #: redbot/cogs/audio/core/commands/llset.py:73
+msgid "For it to take effect please reload Audio (`{prefix}reload audio`)."
+msgstr ""
+
 #: redbot/cogs/audio/core/commands/llset.py:86
-#: redbot/cogs/audio/core/commands/llset.py:113
 #: redbot/cogs/audio/core/commands/llset.py:136
 #: redbot/cogs/audio/core/commands/llset.py:160
 #: redbot/cogs/audio/core/commands/llset.py:185
 #: redbot/cogs/audio/core/commands/llset.py:210
-#: redbot/cogs/audio/core/commands/llset.py:235
-msgid "Failed To Shutdown Lavalink"
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/llset.py:74
-msgid "For it to take effect please reload Audio (`{prefix}reload audio`)."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/llset.py:87
-#: redbot/cogs/audio/core/commands/llset.py:137
-#: redbot/cogs/audio/core/commands/llset.py:161
-#: redbot/cogs/audio/core/commands/llset.py:186
-#: redbot/cogs/audio/core/commands/llset.py:211
-#: redbot/cogs/audio/core/commands/llset.py:236
 msgid "Please reload Audio (`{prefix}reload audio`)."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:94
+#: redbot/cogs/audio/core/commands/llset.py:93
 #, docstring
 msgid "Toggle using external Lavalink servers."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:101
-#: redbot/cogs/audio/core/commands/llset.py:127
+#: redbot/cogs/audio/core/commands/llset.py:100
+#: redbot/cogs/audio/core/commands/llset.py:126
 msgid "External Lavalink server: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:114
+#: redbot/cogs/audio/core/commands/llset.py:113
 msgid "External Lavalink server: {true_or_false}\\nFor it to take effect please reload Audio (`{prefix}reload audio`)."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:144
+#: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
 msgid "Set the Lavalink server host."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:148
-#: redbot/cogs/audio/core/commands/llset.py:172
-#: redbot/cogs/audio/core/commands/llset.py:197
-#: redbot/cogs/audio/core/commands/llset.py:222
+#: redbot/cogs/audio/core/commands/llset.py:147
+#: redbot/cogs/audio/core/commands/llset.py:171
+#: redbot/cogs/audio/core/commands/llset.py:196
 msgid "External Lavalink server set to True."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:152
+#: redbot/cogs/audio/core/commands/llset.py:151
 msgid "Host set to {host}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:168
+#: redbot/cogs/audio/core/commands/llset.py:167
 #, docstring
 msgid "Set the Lavalink server password."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:176
+#: redbot/cogs/audio/core/commands/llset.py:175
 msgid "Server password set to {password}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:193
-#, docstring
-msgid "Set the Lavalink REST server port."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/llset.py:201
-msgid "REST port set to {port}."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/llset.py:218
+#: redbot/cogs/audio/core/commands/llset.py:192
 #, docstring
 msgid "Set the Lavalink websocket server port."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:226
+#: redbot/cogs/audio/core/commands/llset.py:200
 msgid "Websocket port set to {port}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:243
+#: redbot/cogs/audio/core/commands/llset.py:217
 #, docstring
 msgid "Display Lavalink connection settings."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:249
+#: redbot/cogs/audio/core/commands/llset.py:223
 msgid "Connection Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:250
+#: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:251
-msgid "Rest Port:        [{port}]\\n"
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/llset.py:252
+#: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:253
+#: redbot/cogs/audio/core/commands/llset.py:227
+msgid "Rest Port:        [{port}]\\n"
+msgstr ""
+
+#: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:257
+#: redbot/cogs/audio/core/commands/llset.py:232
 msgid "I need to be able to DM you to send you this info."
 msgstr ""
 

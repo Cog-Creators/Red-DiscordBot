@@ -595,7 +595,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 role = guild.get_role(mute_role)
                 if not role:
                     return
-                until = datetime.fromtimestamp(self._server_mutes[guild.id][member.id]["until"])
+                if self._server_mutes[guild.id][member.id]["until"]:
+                    until = datetime.fromtimestamp(
+                        self._server_mutes[guild.id][member.id]["until"]
+                    )
+                else:
+                    until = None
                 await self.mute_user(
                     guild, guild.me, member, until, _("Previously muted in this server.")
                 )

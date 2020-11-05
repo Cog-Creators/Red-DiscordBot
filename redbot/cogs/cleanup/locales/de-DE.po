@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-18 14:45+0000\n"
+"POT-Creation-Date: 2020-10-29 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -17,70 +17,70 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:23
 #, docstring
-msgid "Commands for cleaning up messages."
-msgstr "Befehle um mehrere Nachrichten zu löschen."
+msgid "This cog contains commands used for \\\"cleaning up\\\" (deleting) messages.\\n\\n    This is designed as a moderator tool and offers many convenient use cases.\\n    All cleanup commands only apply to the channel the command is executed in.\\n\\n    Messages older than two weeks cannot be mass deleted.\\n    This is a limitation of the API.\\n    "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:47
+#: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
 msgstr "Bist du dir sicher, dass du {number} Nachrichten löschen möchtest? (y/n)"
 
-#: redbot/cogs/cleanup/cleanup.py:61
+#: redbot/cogs/cleanup/cleanup.py:68
 msgid "Cancelled."
 msgstr "Abgebrochen."
 
-#: redbot/cogs/cleanup/cleanup.py:120
+#: redbot/cogs/cleanup/cleanup.py:127
 #, docstring
-msgid "Delete messages."
-msgstr "Nachrichten löschen."
+msgid "Base command for deleting messages."
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:130
+#: redbot/cogs/cleanup/cleanup.py:137
 #, docstring
-msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n        "
-msgstr "Löscht die letzten X Nachrichten, die einem bestimmten Text entsprechen.\\n\\n        Beispiel:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Bitte denke daran, amerikanische Anführungszeichen zu nutzen.\\n        \\n        "
+msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            - `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:180
+#: redbot/cogs/cleanup/cleanup.py:192
 #, docstring
-msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
-msgstr "Lösche die letzten X Nachrichten von einem bestimmten Mitglied.\\n\\n        Beispiele:\\n            `[p]cleanup user @Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
+msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            - `[p]cleanup user @Twentysix 2`\\n            - `[p]cleanup user Red 6`\\n\\n        **Arguments:**\\n\\n        - `<user>` The user whose messages are to be cleaned up.\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:244
+#: redbot/cogs/cleanup/cleanup.py:262
 #, docstring
-msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
-msgstr "Alle Nachrichten nach einer bestimmten Nachricht werden gelöscht.\\n\\n        Um die Nachrichten-ID zu bekommen, musst den Entwicklermodus in Discord aktivieren. Navigiere dazu in die Einstellungen zum „Aussehen“-Tab. Klicke danach mit der rechten Maustaste auf die gewünschte Nachricht und kopiere die ID.\\n        "
+msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:257 redbot/cogs/cleanup/cleanup.py:297
+#: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."
 msgstr "Nachricht nicht gefunden."
 
-#: redbot/cogs/cleanup/cleanup.py:284
+#: redbot/cogs/cleanup/cleanup.py:307
 #, docstring
-msgid "Deletes X messages before specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
-msgstr "Löscht X Nachrichten vor einer bestimmten Nachricht.\\n\\n       Um die Nachrichten-ID zu bekommen, musst den Entwicklermodus in Discord aktivieren. Navigiere dazu in die Einstellungen zum „Aussehen“-Tab. Klicke danach mit der rechten Maustaste auf die gewünschte Nachricht und kopiere die ID.\\n        "
-
-#: redbot/cogs/cleanup/cleanup.py:325
-#, docstring
-msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
+msgid "Deletes X messages before the specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:367
+#: redbot/cogs/cleanup/cleanup.py:354
 #, docstring
-msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
-msgstr "Lösche die letzten X Nachrichten.\\n\\n        Beispiel:\\n            `[p]cleanup messages 26`\\n        "
+msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            - `[p]cleanup between 123456789123456789 987654321987654321`\\n\\n        **Arguments:**\\n\\n        - `<one>` The id of the message to cleanup after. This message won't be deleted.\\n        - `<two>` The id of the message to cleanup before. This message won't be deleted.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:400
+#: redbot/cogs/cleanup/cleanup.py:402
 #, docstring
-msgid "Clean up command messages and messages from the bot."
-msgstr "Entfernt Nachrichten, welche von dem Bot stammen, oder Befehle sind."
+msgid "Delete the last X messages.\\n\\n        Example:\\n            - `[p]cleanup messages 26`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:480
+#: redbot/cogs/cleanup/cleanup.py:440
 #, docstring
-msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr "Nachrichten des Bots bereinigen.\\n\\n        Standardmäßig werden alle Nachrichten gelöscht. Wenn ein drittes Argument angegeben ist,\\n        wird es für Pattern-Matching verwendet - nur Nachrichten mit dem angegebenen Text werden gelöscht.\\n        "
+msgid "Clean up command messages and messages from the bot.\\n\\n        Can only cleanup custom commands and alias commands if those cogs are loaded.\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:551
+#: redbot/cogs/cleanup/cleanup.py:528
 #, docstring
-msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
-msgstr "Löscht doppelte Nachrichten im Kanal aus den letzten X-Nachrichten und behält nur eine Kopie. \\n \\n Der Standardwert ist 50. \\n        "
+msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a second argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n\\n        Examples:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<match_pattern>` The text that messages must contain to be deleted. Use \\\"\\\" to skip this.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
+msgstr ""
+
+#: redbot/cogs/cleanup/cleanup.py:610
+#, docstring
+msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n\\n        **Arguments:**\\n\\n        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\\n        "
+msgstr ""
 
 #: redbot/cogs/cleanup/converters.py:15
 msgid "{} doesn't look like a valid message ID."

@@ -103,7 +103,7 @@ msgstr "Oldukça süpheli"
 #: redbot/cogs/general/general.py:85
 #, docstring
 msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
-msgstr ""
+msgstr "Birden çok seçenekler arasında karak ver.\\n\\n        İçinde boşluk bulunduran seçenkler belirtmek için\\n        çift tırnaklar kullanmanız gerekir.\\n        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -112,7 +112,7 @@ msgstr "Seçim için yeterli seçenek yok."
 #: redbot/cogs/general/general.py:98
 #, docstring
 msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
-msgstr ""
+msgstr "Rastgele bir sayı seç.\\n\\n        Sonuç 1 ve `<number>` arasında olacaktır.\\n\\n        `<number>` varsayılan olarak 100 dür\\n        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -120,12 +120,12 @@ msgstr "{author.mention} belki 1'den daha yüksek?; P"
 
 #: redbot/cogs/general/general.py:116
 msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgstr "{author.mention} İzin verilen en yüksek sayı {maxamount}."
 
 #: redbot/cogs/general/general.py:123
 #, docstring
 msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
-msgstr ""
+msgstr "Bir bozuk para... ya da bir kullanıcı çevirme\\n\\n        Varsayılan olarak bozuk para.\\n        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
@@ -150,7 +150,7 @@ msgstr "Taş Kağıt Makas oyna."
 
 #: redbot/cogs/general/general.py:151
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
-msgstr ""
+msgstr "Bu geçerli bir seçenek değil. {r}, {p}, ya da {s} deneyin."
 
 #: redbot/cogs/general/general.py:172
 msgid "{choice} You win {author.mention}!"
@@ -167,7 +167,7 @@ msgstr "{choice} biz kare {author.mention}!"
 #: redbot/cogs/general/general.py:191
 #, docstring
 msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
-msgstr ""
+msgstr "8 topuna bir soru sor.\\n\\n        Soru, soru işareti ile bitmelidir.\\n        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -194,12 +194,12 @@ msgstr "Lmgtfy bağlantı oluşturun."
 #: redbot/cogs/general/general.py:224
 #, docstring
 msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
-msgstr ""
+msgstr "Çünkü sarılmayı herkes sever!\\n\\n        10 kuvvet düzeyine kadar.\\n        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
 msgid "\\n        Show server information.\\n\\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
-msgstr ""
+msgstr "\\n        Sunucu bilgilerini göster.\\n\\n        `details`: `True` değerine ayarlıysa daha çok bilgi gösterir.\\n        Varsayılan olarak `False` ayarındadır.\\n        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
@@ -239,7 +239,7 @@ msgstr "  •  Bu komutu kullanarak {command} sunucu hakkında daha fazla bilgi 
 
 #: redbot/cogs/general/general.py:303
 msgid "\\nShard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\\nParçacık IDsi: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
@@ -255,95 +255,95 @@ msgstr "Çevrimiçi üyeler: **{online}/{total_users}**\\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
-msgstr ""
+msgstr "__VIP__ ABD Doğu "
 
 #: redbot/cogs/general/general.py:343
 msgid "__VIP__ US West "
-msgstr ""
+msgstr "__VIP__ ABD Batı "
 
 #: redbot/cogs/general/general.py:344
 msgid "__VIP__ Amsterdam "
-msgstr ""
+msgstr "__VIP__ Amsterdam "
 
 #: redbot/cogs/general/general.py:345
 msgid "EU West "
-msgstr ""
+msgstr "AB Batı "
 
 #: redbot/cogs/general/general.py:346
 msgid "EU Central "
-msgstr ""
+msgstr "AB Merkez "
 
 #: redbot/cogs/general/general.py:347
 msgid "Europe "
-msgstr ""
+msgstr "Avrupa "
 
 #: redbot/cogs/general/general.py:348
 msgid "London "
-msgstr ""
+msgstr "Londra "
 
 #: redbot/cogs/general/general.py:349
 msgid "Frankfurt "
-msgstr ""
+msgstr "Frankfurt "
 
 #: redbot/cogs/general/general.py:350
 msgid "Amsterdam "
-msgstr ""
+msgstr "Amsterdam "
 
 #: redbot/cogs/general/general.py:351
 msgid "US West "
-msgstr ""
+msgstr "ABD Batı "
 
 #: redbot/cogs/general/general.py:352
 msgid "US East "
-msgstr ""
+msgstr "ABD Doğu "
 
 #: redbot/cogs/general/general.py:353
 msgid "US South "
-msgstr ""
+msgstr "ABD Güney "
 
 #: redbot/cogs/general/general.py:354
 msgid "US Central "
-msgstr ""
+msgstr "ABD Merkez "
 
 #: redbot/cogs/general/general.py:355
 msgid "Singapore "
-msgstr ""
+msgstr "Singapur "
 
 #: redbot/cogs/general/general.py:356
 msgid "Sydney "
-msgstr ""
+msgstr "Sidney "
 
 #: redbot/cogs/general/general.py:357
 msgid "Brazil "
-msgstr ""
+msgstr "Brezilya "
 
 #: redbot/cogs/general/general.py:358
 msgid "Hong Kong "
-msgstr ""
+msgstr "Hong Kong "
 
 #: redbot/cogs/general/general.py:359
 msgid "Russia "
-msgstr ""
+msgstr "Rusya "
 
 #: redbot/cogs/general/general.py:360
 msgid "Japan "
-msgstr ""
+msgstr "Japonya "
 
 #: redbot/cogs/general/general.py:361
 msgid "South Africa "
-msgstr ""
+msgstr "Güney Afrika "
 
 #: redbot/cogs/general/general.py:362
 msgid "India "
-msgstr ""
+msgstr "Hindistan "
 
 #: redbot/cogs/general/general.py:363
 msgid "Dubai "
-msgstr ""
+msgstr "Dubai "
 
 #: redbot/cogs/general/general.py:364
 msgid "South Korea "
-msgstr ""
+msgstr "Güney Kore "
 
 #: redbot/cogs/general/general.py:367
 msgid "0 - None"
@@ -467,7 +467,7 @@ msgstr "Sunucu Özellikleri:"
 
 #: redbot/cogs/general/general.py:457
 msgid "Tier {boostlevel} with {nitroboosters} boosts\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "{nitroboosters} boost ile boost seviyesi {boostlevel}\\nDosya boyutu sınırı: {filelimit}\\nEmoji sınırı: {emojis_limit}\\nEn yüksek ses kalitesi: {bitrate}"
 
 #: redbot/cogs/general/general.py:469
 msgid "Nitro Boost:"

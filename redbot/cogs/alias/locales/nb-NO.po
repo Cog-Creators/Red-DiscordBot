@@ -18,15 +18,15 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
-msgstr ""
+msgstr "Lag aliaser for kommandoer.\\n\\nAliaser er alternative navne-snarveier for kommandoer. De\\nkan fungere som både lambda (lagre argumenter for gjentatt bruk)\\neller bare som en snarvei for å si \\\"x y z\\\".\\n\\nNår startet, aliaser vil akseptere andre argumenter\\nog legge dem til de lagrede alias.\\n    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "Aliaser:\\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nSide {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring
@@ -49,7 +49,7 @@ msgstr "Du forsøkte å opprette et nytt alias med navnet {name} men navnet er a
 
 #: redbot/cogs/alias/alias.py:243
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
-msgstr ""
+msgstr "Du forsøkte å opprette et nytt alias med navnet {name} men aliaset finnes allerede på denne serveren."
 
 #: redbot/cogs/alias/alias.py:254
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
@@ -57,7 +57,7 @@ msgstr "Du forsøkte å opprette et nytt alias med navnet {name} men navnet er e
 
 #: redbot/cogs/alias/alias.py:266 redbot/cogs/alias/alias.py:325
 msgid "You attempted to create a new alias for a command that doesn't exist."
-msgstr ""
+msgstr "Du forsøkte å opprette et nytt alias for en kommando som ikke eksisterer."
 
 #: redbot/cogs/alias/alias.py:280
 msgid "A new alias with the trigger `{name}` has been created."
@@ -74,7 +74,7 @@ msgstr "Du forsøkte å opprette et nytt globalt alias med navnet {name} men nav
 
 #: redbot/cogs/alias/alias.py:302
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
-msgstr ""
+msgstr "Du forsøkte å opprette et nytt alias med navnet {name} men aliaset finnes allerede på denne serveren."
 
 #: redbot/cogs/alias/alias.py:313
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
@@ -87,7 +87,7 @@ msgstr "Et nytt globalt alias med utløseren '{name}' har blitt opprettet."
 #: redbot/cogs/alias/alias.py:343
 #, docstring
 msgid "Try to execute help for the base command of the alias."
-msgstr ""
+msgstr "Prøv å bruke hjelp på basis kommandoen aliaset bruker."
 
 #: redbot/cogs/alias/alias.py:348
 msgid "No such alias exists."
@@ -96,20 +96,20 @@ msgstr "Ingen slike alias finnes."
 #: redbot/cogs/alias/alias.py:352
 #, docstring
 msgid "Show what command the alias executes."
-msgstr ""
+msgstr "Vis hvilken kommando aliaset kjører."
 
 #: redbot/cogs/alias/alias.py:357
 msgid "The `{alias_name}` alias will execute the command `{command}`"
-msgstr ""
+msgstr "Aliaset `{alias_name}` vil kjøre kommandoen `{command}`"
 
 #: redbot/cogs/alias/alias.py:362
 msgid "There is no alias with the name `{name}`"
-msgstr ""
+msgstr "Det er ingen alias med navnet `{name}`"
 
 #: redbot/cogs/alias/alias.py:368
 #, docstring
 msgid "Delete an existing alias on this server."
-msgstr ""
+msgstr "Slett et eksisterende alias på denne serveren."
 
 #: redbot/cogs/alias/alias.py:370 redbot/cogs/alias/alias.py:402
 msgid "There are no aliases on this server."
@@ -117,34 +117,34 @@ msgstr "Det er ingen aliaser på denne serveren."
 
 #: redbot/cogs/alias/alias.py:375 redbot/cogs/alias/alias.py:390
 msgid "Alias with the name `{name}` was successfully deleted."
-msgstr ""
+msgstr "Alias ​​med navnet `{name}` ble slettet."
 
 #: redbot/cogs/alias/alias.py:378 redbot/cogs/alias/alias.py:393
 msgid "Alias with name `{name}` was not found."
-msgstr ""
+msgstr "Aliaset med navn `{name}` ble ikke funnet."
 
 #: redbot/cogs/alias/alias.py:383
 #, docstring
 msgid "Delete an existing global alias."
-msgstr ""
+msgstr "Slett et eksisterende globalt alias."
 
 #: redbot/cogs/alias/alias.py:385
 msgid "There are no global aliases on this bot."
-msgstr ""
+msgstr "Det er ingen globale aliaser på denne boten."
 
 #: redbot/cogs/alias/alias.py:399
 #, docstring
 msgid "List the available aliases on this server."
-msgstr ""
+msgstr "Liste over tilgjengelige aliaser på denne serveren."
 
 #: redbot/cogs/alias/alias.py:408
 #, docstring
 msgid "List the available global aliases on this bot."
-msgstr ""
+msgstr "Liste over tilgjengelige globale aliaser på denne botten."
 
 #: redbot/cogs/alias/alias.py:411
 msgid "There are no global aliases."
-msgstr ""
+msgstr "Det er ingen globale aliaser på denne boten."
 
 #: redbot/cogs/alias/alias_entry.py:198
 msgid "Arguments must be specified with a number."
@@ -152,5 +152,5 @@ msgstr "Argumenter må spesifiseres med et nummer."
 
 #: redbot/cogs/alias/alias_entry.py:205
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr ""
+msgstr "Argumenter må være sekvensielle. Manglende argumenter: "
 

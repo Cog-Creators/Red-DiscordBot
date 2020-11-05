@@ -18,125 +18,125 @@ msgstr ""
 #: redbot/cogs/modlog/modlog.py:18
 #, docstring
 msgid "Manage log channels for moderation actions."
-msgstr ""
+msgstr "Administrer loggkanaler for modereringshandlinger."
 
 #: redbot/cogs/modlog/modlog.py:31
 #, docstring
 msgid "Manage modlog settings."
-msgstr ""
+msgstr "Behandle modlog-innstillinger."
 
 #: redbot/cogs/modlog/modlog.py:37
 #, docstring
 msgid "Command to fix misbehaving casetypes."
-msgstr ""
+msgstr "Kommando for å fikse feilaktig i casetyper."
 
 #: redbot/cogs/modlog/modlog.py:44
 #, docstring
 msgid "Set a channel as the modlog.\\n\\n        Omit `<channel>` to disable the modlog.\\n        "
-msgstr ""
+msgstr "Velg en kanal som modlog.\\n\\n        Omit `<channel>` for å deaktivere modlog.\\n        "
 
 #: redbot/cogs/modlog/modlog.py:53
 msgid "Mod events will be sent to {channel}."
-msgstr ""
+msgstr "Mod hendelser vil bli sendt til {channel}."
 
 #: redbot/cogs/modlog/modlog.py:57
 msgid "I do not have permissions to send messages in {channel}!"
-msgstr ""
+msgstr "Jeg har ikke tillatelse til å sende meldinger i {channel}!"
 
 #: redbot/cogs/modlog/modlog.py:65
 msgid "Mod log is already disabled."
-msgstr ""
+msgstr "Mod loggen er allerede deaktivert."
 
 #: redbot/cogs/modlog/modlog.py:68
 msgid "Mod log deactivated."
-msgstr ""
+msgstr "Mod logg deaktivert."
 
 #: redbot/cogs/modlog/modlog.py:73
 #, docstring
 msgid "Enable or disable case creation for a mod action."
-msgstr ""
+msgstr "Aktivere eller deaktivere case creation for en mod handling."
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "enabled"
-msgstr "skrudd på"
+msgstr "aktivert"
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "disabled"
-msgstr "skrudd av"
+msgstr "deaktivert"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\\n"
-msgstr ""
+msgstr "Gjeldende innstillinger:\\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
-msgstr ""
+msgstr "Denne handlingen er ikke registrert."
 
 #: redbot/cogs/modlog/modlog.py:94
 msgid "Case creation for {action_name} actions is now {enabled}."
-msgstr ""
+msgstr "Saksopprettelse for {action_name} handlinger er nå {enabled}."
 
 #: redbot/cogs/modlog/modlog.py:102
 #, docstring
 msgid "Reset all modlog cases in this server."
-msgstr ""
+msgstr "Tilbakestill alle modlog tilfeller på denne serveren."
 
 #: redbot/cogs/modlog/modlog.py:105
 msgid "Cases have been reset."
-msgstr ""
+msgstr "Tilfeller er tilbakestilt."
 
 #: redbot/cogs/modlog/modlog.py:110
 #, docstring
 msgid "Show the specified case."
-msgstr ""
+msgstr "Vis den angitte saken."
 
 #: redbot/cogs/modlog/modlog.py:114
 msgid "That case does not exist for that server."
-msgstr ""
+msgstr "Det tilfellet eksisterer ikke for den serveren."
 
 #: redbot/cogs/modlog/modlog.py:120
 msgid "{case}\\n**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\\n**Tidsstempel:** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
 msgid "Display cases for the specified member."
-msgstr ""
+msgstr "Vis tilfeller for det angitte elementet."
 
 #: redbot/cogs/modlog/modlog.py:142
 msgid "That user does not exist."
-msgstr ""
+msgstr "Den brukeren eksisterer ikke."
 
 #: redbot/cogs/modlog/modlog.py:145
 msgid "Something unexpected went wrong while fetching that user by ID."
-msgstr ""
+msgstr "Noe uventet gikk galt under henting av brukeren ved ID."
 
 #: redbot/cogs/modlog/modlog.py:149
 msgid "That user does not have any cases."
-msgstr ""
+msgstr "Den brukeren har ikke noen saker."
 
 #: redbot/cogs/modlog/modlog.py:157
 msgid "{case}\\n**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\\n**Tidsstempel:** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:170
 #, docstring
 msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
-msgstr ""
+msgstr "Angi en årsak for en modlogg-sak.\\n\\n        Vær oppmerksom på at du bare kan redigere saker du er\\n        eieren av med mindre du er en mod, administrator eller server eier.\\n\\n        Hvis intet saksnummer er angitt, vil den nyeste saken bli brukt.\\n        "
 
 #: redbot/cogs/modlog/modlog.py:183
 msgid "There are no modlog cases in this server."
-msgstr ""
+msgstr "Det er ingen modlog tilfeller på denne serveren."
 
 #: redbot/cogs/modlog/modlog.py:189
 msgid "That case does not exist!"
-msgstr ""
+msgstr "Saken eksisterer ikke!"
 
 #: redbot/cogs/modlog/modlog.py:196
 msgid "You are not authorized to modify that case!"
-msgstr ""
+msgstr "Du har ikke autorisasjon til å endre denne saken!"
 
 #: redbot/cogs/modlog/modlog.py:204
 msgid "Reason for case #{num} has been updated."
-msgstr ""
+msgstr "Årsak til sak #{num} har blitt oppdatert."
 
