@@ -66,7 +66,7 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
-        """Manage filter settings."""
+        """Base command to manage filter settings."""
         pass
 
     @filterset.command(name="defaultname")
@@ -77,6 +77,15 @@ class Filter(commands.Cog):
         (to toggle, run `[p]filter names`).
 
         The default name used is *John Doe*.
+
+        Example:
+            - `[p]filterset defaultname pingrole`
+            - `[p]customcom cooldown yourcommand 30`
+            - `[p]cc cooldown mycommand 30 guild`
+
+        **Arguments:**
+
+        - `<name>` The custom command to check or set the cooldown.
         """
         guild = ctx.guild
         await self.config.guild(guild).filter_default_name.set(name)
@@ -169,8 +178,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-        - `[p]filter channel add word1 word2 word3`
-        - `[p]filter channel add "This is a sentence"`
+            - `[p]filter channel add word1 word2 word3`
+            - `[p]filter channel add "This is a sentence"`
         """
         channel = ctx.channel
         added = await self.add_to_filter(channel, words)
@@ -187,8 +196,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-        - `[p]filter channel remove word1 word2 word3`
-        - `[p]filter channel remove "This is a sentence"`
+            - `[p]filter channel remove word1 word2 word3`
+            - `[p]filter channel remove "This is a sentence"`
         """
         channel = ctx.channel
         removed = await self.remove_from_filter(channel, words)
@@ -205,8 +214,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-        - `[p]filter add word1 word2 word3`
-        - `[p]filter add "This is a sentence"`
+            - `[p]filter add word1 word2 word3`
+            - `[p]filter add "This is a sentence"`
         """
         server = ctx.guild
         added = await self.add_to_filter(server, words)
@@ -223,8 +232,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-        - `[p]filter remove word1 word2 word3`
-        - `[p]filter remove "This is a sentence"`
+            - `[p]filter remove word1 word2 word3`
+            - `[p]filter remove "This is a sentence"`
         """
         server = ctx.guild
         removed = await self.remove_from_filter(server, words)
