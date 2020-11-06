@@ -751,7 +751,8 @@ class Economy(commands.Cog):
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: int):
         """Set the minimum slot machine bid."""
-        if await bank.is_global():
+        is_global = await bank.is_global()
+        if is_global:
             slot_max = await self.config.SLOT_MAX()
         else:
             slot_max = await self.config.guild(ctx.guild).SLOT_MAX()
@@ -761,7 +762,7 @@ class Economy(commands.Cog):
             )
             return
         guild = ctx.guild
-        if await bank.is_global():
+        if is_global:
             await self.config.SLOT_MIN.set(bid)
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
@@ -775,7 +776,8 @@ class Economy(commands.Cog):
     @economyset.command()
     async def slotmax(self, ctx: commands.Context, bid: int):
         """Set the maximum slot machine bid."""
-        if await bank.is_global():
+        is_global = await bank.is_global()
+        if is_global:
             slot_min = await self.config.SLOT_MIN()
         else:
             slot_min = await self.config.guild(ctx.guild).SLOT_MIN()
@@ -788,7 +790,7 @@ class Economy(commands.Cog):
             return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
-        if await bank.is_global():
+        if is_global:
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
