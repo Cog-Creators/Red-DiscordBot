@@ -79,13 +79,11 @@ class Filter(commands.Cog):
         The default name used is *John Doe*.
 
         Example:
-            - `[p]filterset defaultname pingrole`
-            - `[p]customcom cooldown yourcommand 30`
-            - `[p]cc cooldown mycommand 30 guild`
+            - `[p]filterset defaultname Missingno`
 
         **Arguments:**
 
-        - `<name>` The custom command to check or set the cooldown.
+        - `<name>` The new nickname to assign.
         """
         guild = ctx.guild
         await self.config.guild(guild).filter_default_name.set(name)
@@ -99,6 +97,15 @@ class Filter(commands.Cog):
         `<timeframe>` seconds.
 
         Set both to zero to disable autoban.
+
+        Examples:
+            - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
+            - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
+
+        **Arguments:**
+
+        - `<count>` The amount of filtered words required to trigger a ban.
+        - `<timeframe>` The period of time in which too many filtered words will trigger a ban.
         """
         if (count <= 0) != (timeframe <= 0):
             await ctx.send(
@@ -123,7 +130,7 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Add or remove words from server filter.
+        """Base command to add or remove words from server filter.
 
         Use double quotes to add or remove sentences.
         """
@@ -131,7 +138,7 @@ class Filter(commands.Cog):
 
     @_filter.command(name="list")
     async def _global_list(self, ctx: commands.Context):
-        """Send a list of this servers filtered words."""
+        """Send a list of this server's filtered words."""
         server = ctx.guild
         author = ctx.author
         word_list = await self.config.guild(server).filter()
@@ -148,7 +155,7 @@ class Filter(commands.Cog):
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
-        """Add or remove words from channel filter.
+        """Base command to add or remove words from channel filter.
 
         Use double quotes to add or remove sentences.
         """
