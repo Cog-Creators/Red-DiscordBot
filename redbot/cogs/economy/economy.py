@@ -751,8 +751,14 @@ class Economy(commands.Cog):
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: int):
         """Set the minimum slot machine bid."""
-        if bid < 1:
-            await ctx.send(_("Invalid min bid amount."))
+        if await bank.is_global():
+            slot_max = await self.config.SLOT_MAX()
+        else:
+            slot_max = await self.config.guild(ctx.guild).SLOT_MAX()
+        if bid < 1 or bid > slot_max:
+            await ctx.send(
+                _("Invalid maximum bid amount. Must be less than or equal to the maximum amount.")
+            )
             return
         guild = ctx.guild
         if await bank.is_global():
@@ -769,10 +775,15 @@ class Economy(commands.Cog):
     @economyset.command()
     async def slotmax(self, ctx: commands.Context, bid: int):
         """Set the maximum slot machine bid."""
-        slot_min = await self.config.SLOT_MIN()
+        if await bank.is_global():
+            slot_min = await self.config.SLOT_MIN()
+        else:
+            slot_min = await self.config.guild(ctx.guild).SLOT_MIN()
         if bid < 1 or bid < slot_min:
             await ctx.send(
-                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
+                _(
+                    "Invalid maximum bid amount. Must be greater than or equal to the minimum amount."
+                )
             )
             return
         guild = ctx.guild
