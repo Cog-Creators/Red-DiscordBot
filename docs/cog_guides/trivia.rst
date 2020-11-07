@@ -66,7 +66,7 @@ Sets whether the bot gains a point if nobody guesses correctly.
 
 **Arguments**
 
-* ``<true_or_false>``: If ``true``, the bot will gain a point if nobody 
+- ``<true_or_false>`` If ``true``, the bot will gain a point if nobody
   guesses correctly, otherwise it will not.
 
 .. _trivia-command-triviaset-maxscore:
@@ -86,7 +86,8 @@ triviaset maxscore
 Sets the total points required to win.
 
 **Arguments**
-* ``<score>``: The amount of points required to win.
+
+- ``<score>`` The amount of points required to win.
 
 .. _trivia-command-triviaset-override:
 
@@ -106,7 +107,7 @@ Allow/disallow trivia lists to override the settings.
 
 **Arguments**
 
-* ``<enabled>``: Whether trivia lists should be able to override settings.
+- ``<enabled>`` Whether trivia lists should be able to override settings.
 
 .. _trivia-command-triviaset-payout:
 
@@ -129,7 +130,7 @@ the amount received is determined by multiplying their total score by this multi
 
 **Arguments**
 
-* ``<multiplier>``: The amount to multiply the winner's score by to determine payout. 
+- ``<multiplier>`` The amount to multiply the winner's score by to determine payout.
   This can be any positive decimal number. Setting this to 0 will disable.
 
 .. _trivia-command-triviaset-revealanswer:
@@ -150,7 +151,7 @@ Sets whether or not the answer is revealed if the time limit for answering runs 
 
 **Arguments**
 
-* ``<true_or_false>``: If ``true``, the bot will reveal the answer if there is no 
+- ``<true_or_false>`` If ``true``, the bot will reveal the answer if there is no
   correct guess within the time limit.
 
 .. _trivia-command-triviaset-showsettings:
@@ -188,7 +189,7 @@ session due to lack of response.
 
 **Arguments**
 
-* ``<seconds>``: The number of seconds to wait before stopping the session.
+- ``<seconds>`` The number of seconds to wait before stopping the session.
 
 .. _trivia-command-triviaset-timelimit:
 
@@ -208,7 +209,7 @@ Sets the maximum time permitted to answer a question.
 
 **Arguments**
 
-* ``<seconds>``: The number of seconds to wait for an answer.
+- ``<seconds>`` The number of seconds to wait for an answer.
 
 .. _trivia-command-triviaset-custom:
 
@@ -278,7 +279,7 @@ Delete a custom trivia list.
 
 **Arguments**
 
-* ``<name>``: The name of the custom list to be deleted.
+- ``<name>`` The name of the custom list to be deleted.
 
 .. _trivia-command-trivia:
 
@@ -301,7 +302,7 @@ will use all of the specified lists to select questions from.
 
 **Arguments**
 
-* ``[categories...]``: The category to play. Can be multiple.
+- ``[categories...]`` The category to play. Can be multiple.
 
 .. _trivia-command-trivia-leaderboard:
 
@@ -339,13 +340,13 @@ The global trivia leaderboard.
 
 **Arguments**
 
-* ``[sort_by=wins]``: The method by which to sort the leaderboard (defaults to wins). Can be one of: 
-  * ``wins``: total wins
-  * ``avg``: average score
-  * ``total``: total correct answers from all sessions
-  * ``games``: total games played.
+- ``[sort_by=wins]`` The method by which to sort the leaderboard (defaults to wins). Can be one of:
+    - ``wins`` Total wins
+    - ``avg`` Average score
+    - ``total`` Total correct answers from all sessions
+    - ``games`` Total games played.
 
-* ``[top=10]``: The number of ranks to show on the leaderboard. Defaults to 10
+- ``[top=10]`` The number of ranks to show on the leaderboard. Defaults to 10
 
 .. _trivia-command-trivia-leaderboard-server:
 
@@ -365,13 +366,13 @@ The trivia leaderboard for this server.
 
 **Arguments**
 
-* ``[sort_by=wins]``: The method by which to sort the leaderboard (defaults to wins). Can be one of: 
-  * ``wins``: total wins
-  * ``avg``: average score
-  * ``total``: total correct answers from all sessions
-  * ``games``: total games played.
+- ``[sort_by=wins]`` The method by which to sort the leaderboard (defaults to wins). Can be one of:
+    - ``wins`` Total wins
+    - ``avg`` Average score
+    - ``total`` Total correct answers from all sessions
+    - ``games`` Total games played.
 
-* ``[top=10]``: The number of ranks to show on the leaderboard. Defaults to 10
+- ``[top=10]`` The number of ranks to show on the leaderboard. Defaults to 10
 
 .. _trivia-command-trivia-list:
 
