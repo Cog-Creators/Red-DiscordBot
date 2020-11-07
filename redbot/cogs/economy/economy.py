@@ -394,7 +394,7 @@ class Economy(commands.Cog):
                 # Sets the current time as the latest payday
                 await self.config.user(author).next_payday.set(cur_time)
 
-                pos = await bank.get_leaderboard_position(author)
+                pos = await bank.get_leaderboard_position(self.bot, author)
                 await ctx.send(
                     _(
                         "{author.mention} Here, take some {currency}. "
@@ -451,7 +451,7 @@ class Economy(commands.Cog):
                 next_payday = cur_time
 
                 await self.config.member(author).next_payday.set(next_payday)
-                pos = await bank.get_leaderboard_position(author)
+                pos = await bank.get_leaderboard_position(self.bot, author)
                 await ctx.send(
                     _(
                         "{author.mention} Here, take some {currency}. "
@@ -493,10 +493,10 @@ class Economy(commands.Cog):
         base_embed = discord.Embed(title=_("Economy Leaderboard"))
         if await bank.is_global() and show_global:
             # show_global is only applicable if bank is global
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
+            bank_sorted = await bank.get_leaderboard(bot=self.bot, positions=top, guild=None)
             base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
-            bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
+            bank_sorted = await bank.get_leaderboard(bot=self.bot, positions=top, guild=guild)
             if guild:
                 base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
 

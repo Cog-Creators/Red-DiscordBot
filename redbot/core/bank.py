@@ -520,7 +520,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
                 del bank_data[user_id]
 
 
-async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
+async def get_leaderboard(bot: Red, positions: int = None, guild: discord.Guild = None) -> List[tuple]:
     """
     Gets the bank's leaderboard
 
@@ -548,7 +548,7 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
         if guild is not None:
             tmp = raw_accounts.copy()
             for acc in tmp:
-                if not guild.get_member(acc):
+                if not await bot.get_or_fetch_member(guild, acc):
                     del raw_accounts[acc]
     else:
         if guild is None:
@@ -562,6 +562,7 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
 
 
 async def get_leaderboard_position(
+    bot: Red,
     member: Union[discord.User, discord.Member]
 ) -> Union[int, None]:
     """
@@ -588,7 +589,7 @@ async def get_leaderboard_position(
     else:
         guild = member.guild if hasattr(member, "guild") else None
     try:
-        leaderboard = await get_leaderboard(None, guild)
+        leaderboard = await get_leaderboard(bot, None, guild)
     except TypeError:
         raise
     else:
