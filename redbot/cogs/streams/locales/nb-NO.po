@@ -70,7 +70,7 @@ msgstr "YouTube API-nøkkel er enten ugyldig eller har ikke blitt satt. Se {comm
 
 #: redbot/cogs/streams/streams.py:268 redbot/cogs/streams/streams.py:430
 msgid "YouTube quota has been exceeded. Try again later or contact the owner if this continues."
-msgstr ""
+msgstr "YouTube-kvote er overskredet. Prøv igjen senere eller kontakt eieren hvis dette fortsetter."
 
 #: redbot/cogs/streams/streams.py:280 redbot/cogs/streams/streams.py:442
 msgid "Something went wrong whilst trying to contact the stream service's API."

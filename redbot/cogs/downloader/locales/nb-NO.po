@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/checks.py:12
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\\n\\nBy typing '**I agree**' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\\n\\nYou have **30** seconds to reply to this message."
-msgstr "Du er i ferd med å legge til en tredjeparts kodelager. Skaperen av Røde og samfunnet har ikke ansvar for noen potensielle skader som innholdet i tredjeparts depoter kan medføre.\\n\\nVed å skrive '**I en**' erklærer du at du har lest og fullt ut forstår ovennevnte melding. Denne meldingen vil ikke vises igjen før neste reoppstart.\\n\\nDu har **30** sekunder til å svare på denne meldingen."
+msgstr "Du er i ferd med å legge til en tredjeparts kodelager. Skaperen av Røde og samfunnet har ikke ansvar for noen potensielle skader som innholdet i tredjeparts depoter kan medføre.\\n\\nVed å skrive '**I agree**' erklærer du at du har lest og fullt ut forstår ovennevnte melding. Denne meldingen vil ikke vises igjen før neste reoppstart.\\n\\nDu har **30** sekunder til å svare på denne meldingen."
 
 #: redbot/cogs/downloader/checks.py:36
 msgid "Your response has timed out, please try again."
@@ -96,7 +96,7 @@ msgstr "Repo `{repo.name}` har blitt slettet."
 #: redbot/cogs/downloader/downloader.py:574
 #, docstring
 msgid "List all installed repos."
-msgstr "List alle installerte kodelager."
+msgstr "Liste over alle installerte kodelager."
 
 #: redbot/cogs/downloader/downloader.py:577
 msgid "Installed Repos:\\n\\n"
@@ -367,7 +367,7 @@ msgstr "Vis alle tilgjengelige cogs fra et repo."
 
 #: redbot/cogs/downloader/downloader.py:1096
 msgid "Installed Cogs:\\n"
-msgstr "Installerte logger:\\n"
+msgstr "Installerte Cogs:\\n"
 
 #: redbot/cogs/downloader/downloader.py:1103
 msgid "Available Cogs:\\n"

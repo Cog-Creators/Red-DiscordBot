@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr "Audio's Lavalink sunucusunu desteklenmeyen bir mimaride çalıştırmayı denediniz. Yalnızca ayarlarla ilgili komutlar kullanılabilir."
+msgstr "Ses modülünün Lavalink sunucusunu desteklenmeyen bir mimaride çalıştırmayı denediniz. Yalnızca ayarlarla ilgili komutlar kullanılabilir."
 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\\n\\nExpected Permissions:\\n"
-msgstr ""
+msgstr "Bu sunucuda gerekli izinlere sahip değilim, lütfen bu sorunu en kısa zamanda çözün.\\n\\nBeklediğim İzinler:\\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -37,11 +37,11 @@ msgstr "DJ rolü bulunamadı. DJ modu kapatılıyor."
 
 #: redbot/cogs/audio/core/events/dpy.py:134
 msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+msgstr "`{user_input}` `{command}` için geçerli bir değer değil"
 
 #: redbot/cogs/audio/core/events/dpy.py:142
 msgid "Unable To Parse Argument"
-msgstr ""
+msgstr "Değişken işlenemedi"
 
 #: redbot/cogs/audio/core/events/dpy.py:154
 #: redbot/cogs/audio/core/events/dpy.py:163
@@ -50,7 +50,7 @@ msgstr "Geçersiz argüment"
 
 #: redbot/cogs/audio/core/events/dpy.py:155
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-msgstr ""
+msgstr "`{}` için sunduğunuz değişken geçersiz, ben bir `{}` bekliyordum."
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
@@ -62,11 +62,11 @@ msgstr "Lavalink'e bağlanırken bir bağlantı hatası oluştu."
 
 #: redbot/cogs/audio/core/events/dpy.py:184
 msgid "No Player Available"
-msgstr ""
+msgstr "Kullanılabilir müzik çalar yok"
 
 #: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
-msgstr ""
+msgstr "Bot her hangi bir ses kanalında değil."
 
 #: redbot/cogs/audio/core/events/dpy.py:193
 #: redbot/cogs/audio/core/events/lavalink.py:105
@@ -76,15 +76,15 @@ msgstr "Parça alınamıyor"
 #: redbot/cogs/audio/core/events/dpy.py:194
 #: redbot/cogs/audio/core/events/lavalink.py:106
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika sonra tekrar deneyin."
 
 #: redbot/cogs/audio/core/events/dpy.py:205
 msgid "There was an issue communicating with Discord."
-msgstr ""
+msgstr "Discord ile haberleşirken sorun oluştu."
 
 #: redbot/cogs/audio/core/events/dpy.py:206
 msgid "This error has been reported to the bot owner."
-msgstr ""
+msgstr "Hata bot sahibine bildirildi."
 
 #: redbot/cogs/audio/core/events/lavalink.py:96
 msgid "Couldn't get a valid track."
@@ -104,11 +104,11 @@ msgstr "Şarkı uzunluğu: {length} | Şarkıyı sıraya koyan: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "Sıra sonlandırıldı."
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Birden fazla hata tespit edildi"
 
 #: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
@@ -120,7 +120,7 @@ msgstr "Parça Takıldı"
 
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
-msgstr ""
+msgstr "Şarkının oynatımı beklenmedik bir hata sebebiyle durduruldu.\\n{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

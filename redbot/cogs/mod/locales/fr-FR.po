@@ -73,7 +73,7 @@ msgstr "Je ne peux pas vous laisser faire ça. Vous n'êtes pas supérieur à l'
 #: redbot/cogs/mod/kickban.py:143 redbot/cogs/mod/kickban.py:293
 #: redbot/cogs/mod/kickban.py:561
 msgid "I cannot do that due to Discord hierarchy rules."
-msgstr ""
+msgstr "Je ne peux pas faire ça à cause des règles de la hiérarchie Discord."
 
 #: redbot/cogs/mod/kickban.py:149
 msgid "You have been banned from {guild}."
@@ -89,11 +89,11 @@ msgstr "Aucune raison n'a été fournie."
 
 #: redbot/cogs/mod/kickban.py:171 redbot/cogs/mod/kickban.py:433
 msgid "User with ID {user_id} is already banned."
-msgstr ""
+msgstr "L'utilisateur avec l'ID {user_id} est déjà banni."
 
 #: redbot/cogs/mod/kickban.py:185
 msgid "User with ID {user_id} was upgraded from a temporary to a permanent ban."
-msgstr ""
+msgstr "L'utilisateur avec l'ID {user_id} vient de passer d'un bannissement temporaire vers un bannissement permanent."
 
 #: redbot/cogs/mod/kickban.py:197 redbot/cogs/mod/kickban.py:331
 msgid "Done. That felt good."
@@ -105,7 +105,7 @@ msgstr "Je ne suis pas autorisé à faire cela."
 
 #: redbot/cogs/mod/kickban.py:201 redbot/cogs/mod/kickban.py:504
 msgid "User with ID {user_id} not found"
-msgstr ""
+msgstr "L'utilisateur avec l'ID {user_id} est introuvable"
 
 #: redbot/cogs/mod/kickban.py:208
 msgid "An unexpected error occurred."
