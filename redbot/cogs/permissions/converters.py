@@ -90,7 +90,7 @@ class GuildUniqueObjectFinder(commands.Converter):
             if channel is not None:
                 return channel
 
-            member: discord.Member = guild.get_member(_id)
+            member: discord.Member = await ctx.bot.get_or_fetch_member(guild, _id)
             if member is not None:
                 return member
 
