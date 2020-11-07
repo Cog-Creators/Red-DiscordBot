@@ -525,7 +525,7 @@ class Warnings(commands.Cog):
             userid: int = user.id
         except AttributeError:
             userid: int = user
-            user = ctx.guild.get_member(userid)
+            user = await self.bot.get_or_fetch_member(ctx.guild, userid)
             user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
 
         msg = ""
@@ -609,7 +609,7 @@ class Warnings(commands.Cog):
             member = user
         except AttributeError:
             user_id = user
-            member = guild.get_member(user_id)
+            member = await self.bot.get_or_fetch_member(guild, user_id)
             member = member or namedtuple("Member", "guild id")(guild, user_id)
 
         if user_id == ctx.author.id:
