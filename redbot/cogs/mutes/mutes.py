@@ -230,8 +230,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             delay = 0
         await asyncio.sleep(delay)
 
-        member = guild.get_member(data["member"])
-        author = guild.get_member(data["author"])
+        member = await self.bot.get_or_fetch_member(guild, data["member"])
+        author = await self.bot.get_or_fetch_member(guild, data["author"])
         if not member:
             async with self.config.guild(guild).muted_users() as muted_users:
                 if str(data["member"]) in muted_users:
@@ -308,7 +308,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     if task_name in self._unmute_tasks:
                         continue
                     log.debug(f"Creating task: {task_name}")
-                    member = guild.get_member(user)
+                    member = await self.bot.get_or_fetch_member(guild ,user)
                     self._unmute_tasks[task_name] = asyncio.create_task(
                         self._auto_channel_unmute_user_multi(member, guild, channels)
                     )
@@ -333,7 +333,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             self._channel_mute_events[guild.id] = asyncio.Event()
         tasks = []
         for channel, mute_data in channels.items():
-            author = guild.get_member(mute_data["author"])
+            author = self.bot.get_or_fetch_member(guild, mute_data["author"])
             tasks.append(
                 self._auto_channel_unmute_user(guild.get_channel(channel), mute_data, False)
             )
@@ -399,8 +399,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if delay < 1:
             delay = 0
         await asyncio.sleep(delay)
-        member = channel.guild.get_member(data["member"])
-        author = channel.guild.get_member(data["author"])
+        member = await self.bot.get_or_fetch_member(channel.guild, data["member"])
+        author = await self.bot.get_or_fetch_member(channel.guild, data["author"])
         if not member:
             async with self.config.channel(channel).muted_users() as muted_users:
                 if str(data["member"]) in muted_users:
@@ -551,7 +551,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if user_id in before_perms and (
                     user_id not in after_perms or any((send_messages, speak))
                 ):
-                    user = after.guild.get_member(user_id)
+                    user = await self.bot.get_or_fetch_member(after.guild, user_id)
                     if not user:
                         user = discord.Object(id=user_id)
                     log.debug(f"{user} - {type(user)}")
@@ -882,7 +882,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
                         continue
-                    user = ctx.guild.get_member(user_id)
+                    user = await self.bot.get_or_fetch_member(ctx.guild, user_id)
                     if not user:
                         user_str = f"<@!{user_id}>"
                     else:
@@ -907,7 +907,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
                         continue
-                    user = ctx.guild.get_member(user_id)
+                    user = await self.bot.get_or_fetch_member(ctx.guild, user_id)
                     if not user:
                         user_str = f"<@!{user_id}>"
                     else:
