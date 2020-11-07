@@ -156,7 +156,7 @@ class Reports(commands.Cog):
             perms = discord.Permissions(**permissions)
 
         async for guild in AsyncIter(self.bot.guilds, steps=100):
-            x = guild.get_member(author.id)
+            x = await self.bot.get_or_fetch_member(guild, author.id)
             if x is not None:
                 if await self.internal_filter(x, mod, perms):
                     shared_guilds.append(guild)
@@ -194,7 +194,7 @@ class Reports(commands.Cog):
 
     async def send_report(self, msg: discord.Message, guild: discord.Guild):
 
-        author = guild.get_member(msg.author.id)
+        author = await self.bot.get_or_fetch_member(guild, msg.author.id)
         report = msg.clean_content
 
         channel_id = await self.config.guild(guild).output_channel()
@@ -404,7 +404,7 @@ class Reports(commands.Cog):
         rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
 
         try:
-            user = guild.get_member(rec.get("user_id"))
+            user = self.bot.get_or_fetch_member(guild, rec.get("user_id"))
         except KeyError:
             return await ctx.send(_("That ticket doesn't seem to exist"))
 
