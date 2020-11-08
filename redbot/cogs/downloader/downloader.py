@@ -40,7 +40,7 @@ class Downloader(commands.Cog):
 
     Community cogs, also called third party cogs, are not included
     in the default Red install.
-    
+
     Community cogs come in repositories. Repos are a group of cogs
     you can install. You always need to add the creator's repository
     using the `[p]repo` command before you can install one or more
@@ -545,7 +545,9 @@ class Downloader(commands.Cog):
             )
         except OSError:
             log.exception(
-                "Something went wrong trying to add repo %s under name %s", repo_url, name,
+                "Something went wrong trying to add repo %s under name %s",
+                repo_url,
+                name,
             )
             await ctx.send(
                 _(

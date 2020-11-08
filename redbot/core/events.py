@@ -15,7 +15,12 @@ from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
-from redbot.core.i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locale,
+    set_contextual_regional_format,
+    set_contextual_locales_from_guild,
+)
 from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
@@ -115,11 +120,11 @@ def init_events(bot, cli_flags):
                     "**we highly recommend you to read the update docs at <{docs}> and "
                     "make sure there is nothing else that "
                     "needs to be done during the update.**"
-                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
+                ).format(docs="https://docs.discord.red/en/stable/update_red.html")
                 if expected_version(current_python, py_version_req):
                     installed_extras = []
                     for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None:
+                        if extra is None or extra in {"dev", "all"}:
                             continue
                         try:
                             pkg_resources.require(req.name for req in reqs)
@@ -142,8 +147,10 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else _("Terminal")
                     )
-                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
-                        python=sys.executable, package_extras=package_extras
+                    extra_update += (
+                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                            python=sys.executable, package_extras=package_extras
+                        )
                     )
 
                 else:
@@ -222,7 +229,7 @@ def init_events(bot, cli_flags):
             await ctx.send_help()
         elif isinstance(error, commands.ArgParserFailure):
             msg = _("`{user_input}` is not a valid value for `{command}`").format(
-                user_input=error.user_input, command=error.cmd,
+                user_input=error.user_input, command=error.cmd
             )
             if error.custom_help_msg:
                 msg += f"\n{error.custom_help_msg}"
@@ -295,17 +302,36 @@ def init_events(bot, cli_flags):
                 msg = _("This command is on cooldown. Try again in 1 second.")
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
-            await ctx.send(
-                _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) per {type} concurrently."
-                ).format(number=error.number, type=error.per.name)
-            )
+            if error.per is commands.BucketType.default:
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times concurrently."
+                    ).format(number=error.number)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time concurrently."
+                    ).format(number=error.number)
+            else:
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+            await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
     async def on_message(message):
+        await set_contextual_locales_from_guild(bot, message.guild)
+
         await bot.process_commands(message)
         discord_now = message.created_at
         if (

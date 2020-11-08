@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterable, Tuple
+from typing import Dict, List, Optional, Union, Set, Iterable, Tuple, overload
 import asyncio
 from argparse import Namespace
 from collections import defaultdict
@@ -14,9 +14,9 @@ from .utils import AsyncIter
 class PrefixManager:
     def __init__(self, config: Config, cli_flags: Namespace):
         self._config: Config = config
-        self._global_prefix_overide: Optional[List[str]] = sorted(
-            cli_flags.prefix, reverse=True
-        ) or None
+        self._global_prefix_overide: Optional[List[str]] = (
+            sorted(cli_flags.prefix, reverse=True) or None
+        )
         self._cached: Dict[Optional[int], List[str]] = {}
 
     async def get_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
@@ -54,6 +54,93 @@ class PrefixManager:
         else:
             self._cached.pop(gid, None)
             await self._config.guild_from_id(gid).prefix.set(prefixes)
+
+
+class I18nManager:
+    def __init__(self, config: Config):
+        self._config: Config = config
+        self._guild_locale: Dict[Union[int, None], Union[str, None]] = {}
+        self._guild_regional_format: Dict[Union[int, None], Union[str, None]] = {}
+
+    async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
+        """Get the guild locale from the cache"""
+        # Ensure global locale is in the cache
+        if None not in self._guild_locale:
+            global_locale = await self._config.locale()
+            self._guild_locale[None] = global_locale
+
+        if guild is None:  # Not a guild so cannot support guild locale
+            # Return the bot's globally set locale if its None on a guild scope.
+            return self._guild_locale[None]
+        elif guild.id in self._guild_locale:  # Cached guild
+            if self._guild_locale[guild.id] is None:
+                return self._guild_locale[None]
+            else:
+                return self._guild_locale[guild.id]
+        else:  # Uncached guild
+            out = await self._config.guild(guild).locale()  # No locale set
+            if out is None:
+                self._guild_locale[guild.id] = None
+                return self._guild_locale[None]
+            else:
+                self._guild_locale[guild.id] = out
+                return out
+
+    @overload
+    async def set_locale(self, guild: None, locale: str):
+        ...
+
+    @overload
+    async def set_locale(self, guild: discord.Guild, locale: Union[str, None]):
+        ...
+
+    async def set_locale(
+        self, guild: Union[discord.Guild, None], locale: Union[str, None]
+    ) -> None:
+        """Set the locale in the config and cache"""
+        if guild is None:
+            if locale is None:
+                # this method should never be called like this
+                raise ValueError("Global locale can't be None!")
+            self._guild_locale[None] = locale
+            await self._config.locale.set(locale)
+            return
+        self._guild_locale[guild.id] = locale
+        await self._config.guild(guild).locale.set(locale)
+
+    async def get_regional_format(self, guild: Union[discord.Guild, None]) -> Optional[str]:
+        """Get the regional format from the cache"""
+        # Ensure global locale is in the cache
+        if None not in self._guild_regional_format:
+            global_regional_format = await self._config.regional_format()
+            self._guild_regional_format[None] = global_regional_format
+
+        if guild is None:  # Not a guild so cannot support guild locale
+            return self._guild_regional_format[None]
+        elif guild.id in self._guild_regional_format:  # Cached guild
+            if self._guild_regional_format[guild.id] is None:
+                return self._guild_regional_format[None]
+            else:
+                return self._guild_regional_format[guild.id]
+        else:  # Uncached guild
+            out = await self._config.guild(guild).regional_format()  # No locale set
+            if out is None:
+                self._guild_regional_format[guild.id] = None
+                return self._guild_regional_format[None]
+            else:  # Not cached, got a custom regional format.
+                self._guild_regional_format[guild.id] = out
+                return out
+
+    async def set_regional_format(
+        self, guild: Union[discord.Guild, None], regional_format: Union[str, None]
+    ) -> None:
+        """Set the regional format in the config and cache"""
+        if guild is None:
+            self._guild_regional_format[None] = regional_format
+            await self._config.regional_format.set(regional_format)
+            return
+        self._guild_regional_format[guild.id] = regional_format
+        await self._config.guild(guild).regional_format.set(regional_format)
 
 
 class IgnoreManager:
@@ -320,7 +407,7 @@ class DisabledCogCache:
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         guild_id: int
 
         Returns
@@ -347,7 +434,7 @@ class DisabledCogCache:
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.set(True)
         del self._disable_map[cog_name]
@@ -359,7 +446,7 @@ class DisabledCogCache:
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.clear()
         del self._disable_map[cog_name]
@@ -371,7 +458,7 @@ class DisabledCogCache:
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         guild_id: int
 
         Returns
@@ -395,7 +482,7 @@ class DisabledCogCache:
         Parameters
         ----------
         cog_name: str
-            This should be the cog's qualified name, not neccessarily the classname
+            This should be the cog's qualified name, not necessarily the classname
         guild_id: int
 
         Returns
