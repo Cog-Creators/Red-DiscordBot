@@ -415,7 +415,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             about = _(
                 "This bot is an instance of [Red, an open source Discord bot]({}) "
                 "created by [Twentysix]({}) and [improved by many]({}).\n\n"
-                "Red is backed by a passionate community who contributes and "
+                "Red is backed by a passionate community that contributes and "
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
@@ -450,7 +450,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             about = _(
                 "This bot is an instance of Red, an open source Discord bot (1) "
                 "created by Twentysix (2) and improved by many (3).\n\n"
-                "Red is backed by a passionate community who contributes and "
+                "Red is backed by a passionate community that contributes and "
                 "creates content for everyone to enjoy. Join us today (4) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
