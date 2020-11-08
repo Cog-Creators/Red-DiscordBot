@@ -24,6 +24,11 @@ V2, which had a ``cogs`` folder where everything was installed, you can
 install V3 cogs everywhere, and also make them cross-compatible with other
 instances!
 
+If you want to install your cogs using a Github repo (usually what you will
+always be looking for), you need to use the downloader cog. However, if you
+have the files of a cog or want to code one, this cog is what you should be
+looking for.
+
 The most basic command is :ref:`paths <cogmanagerui-command-paths>`, which
 will list you all of the currently set paths.
 
