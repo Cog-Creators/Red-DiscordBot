@@ -60,10 +60,10 @@ You can now use the command we talked about before: type ``[p]addpath
 <your_path>``.
 
 .. attention:: A path shouldn't have spaces in it. If it does, add quotation
-    marks, or a backslash before the space.
+    marks around the path, or a backslash before the space.
 
-In that ``MyCogs`` folder, you can drop your package. You should now have
-something like this:
+In that ``MyCogs`` folder, you can drop your cog folder. You should now have
+something that looks like this:
 
 .. image:: ../.resources/cog_manager_ui/cog-path.png
 
