@@ -758,7 +758,7 @@ class Economy(commands.Cog):
             slot_max = await self.config.guild(ctx.guild).SLOT_MAX()
         if bid < 1 or bid > slot_max:
             await ctx.send(
-                _("Invalid maximum bid amount. Must be less than or equal to the maximum amount.")
+                _("Invalid minimum bid amount. Must be less than or equal to the maximum amount.")
             )
             return
         guild = ctx.guild
