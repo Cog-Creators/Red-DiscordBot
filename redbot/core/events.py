@@ -15,7 +15,12 @@ from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
-from redbot.core.i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locale,
+    set_contextual_regional_format,
+    set_contextual_locales_from_guild,
+)
 from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
@@ -298,21 +303,35 @@ def init_events(bot, cli_flags):
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
-                msg = _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) concurrently."
-                ).format(number=error.number)
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times concurrently."
+                    ).format(number=error.number)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time concurrently."
+                    ).format(number=error.number)
             else:
-                msg = _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) per {type} concurrently."
-                ).format(number=error.number, type=error.per.name)
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} time per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
             await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
     async def on_message(message):
+        await set_contextual_locales_from_guild(bot, message.guild)
+
         await bot.process_commands(message)
         discord_now = message.created_at
         if (

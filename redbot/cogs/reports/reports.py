@@ -11,7 +11,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
@@ -346,8 +346,10 @@ class Reports(commands.Cog):
 
         if t is None:
             return
+        guild = t[0][0]
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
+            await set_contextual_locales_from_guild(self.bot, guild)
             await tun.react_close(
                 uid=payload.user_id, message=_("{closer} has closed the correspondence")
             )
@@ -365,6 +367,7 @@ class Reports(commands.Cog):
                 to_remove.append(k)
                 continue
 
+            await set_contextual_locales_from_guild(self.bot, guild)
             topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
@@ -376,6 +379,7 @@ class Reports(commands.Cog):
         for key in to_remove:
             if tun := self.tunnel_store.pop(key, None):
                 guild, ticket = key
+                await set_contextual_locales_from_guild(self.bot, guild)
                 await tun["tun"].close_because_disabled(
                     _(
                         "Correspondence about ticket# {ticket_number} in "

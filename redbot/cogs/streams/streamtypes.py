@@ -14,6 +14,7 @@ from .errors import (
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     StreamNotFound,
+    YoutubeQuotaExceeded,
 )
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -180,12 +181,16 @@ class YoutubeStream(Stream):
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
 
-        if (
-            "error" in data
-            and data["error"]["code"] == 400
-            and data["error"]["errors"][0]["reason"] == "keyInvalid"
-        ):
-            raise InvalidYoutubeCredentials()
+        if "error" in data:
+            error_code = data["error"]["code"]
+            if error_code == 400 and data["error"]["errors"][0]["reason"] == "keyInvalid":
+                raise InvalidYoutubeCredentials()
+            elif error_code == 403 and data["error"]["errors"][0]["reason"] in (
+                "dailyLimitExceeded",
+                "quotaExceeded",
+                "rateLimitExceeded",
+            ):
+                raise YoutubeQuotaExceeded()
         elif "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
         elif "items" in data:
@@ -196,7 +201,7 @@ class YoutubeStream(Stream):
             and data["pageInfo"]["totalResults"] < 1
         ):
             raise StreamNotFound()
-        raise APIError()
+        raise APIError(data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
@@ -276,7 +281,7 @@ class TwitchStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError()
+            raise APIError(data)
 
     async def fetch_id(self):
         header = {"Client-ID": str(self._client_id)}
@@ -298,7 +303,7 @@ class TwitchStream(Stream):
         elif r.status == 401:
             raise InvalidTwitchCredentials()
         else:
-            raise APIError()
+            raise APIError(data)
 
     def make_embed(self, data):
         is_rerun = data["type"] == "rerun"
@@ -347,7 +352,7 @@ class HitboxStream(Stream):
             # self.already_online = True
             return self.make_embed(data)
 
-        raise APIError()
+        raise APIError(data)
 
     def make_embed(self, data):
         base_url = "https://edge.sf.hitbox.tv"
@@ -386,7 +391,7 @@ class PicartoStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError()
+            raise APIError(data)
 
     def make_embed(self, data):
         avatar = rnd(

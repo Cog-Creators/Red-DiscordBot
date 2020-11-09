@@ -151,6 +151,9 @@ class Events(MixinMeta):
         # As are anyone configured to be
         if await self.bot.is_automod_immune(message):
             return
+
+        await i18n.set_contextual_locales_from_guild(self.bot, message.guild)
+
         deleted = await self.check_duplicates(message)
         if not deleted:
             await self.check_mention_spam(message)
