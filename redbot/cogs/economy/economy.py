@@ -232,9 +232,9 @@ class Economy(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
-        """Set the balance of user's bank account.
+        """Set the balance of a user's bank account.
 
-        Passing positive and negative values will add/remove currency instead.
+        Putting + or - signs before the amount will add/remove currency on the user's bank account instead.
 
         Examples:
             - `[p]bank set @Twentysix 26` - Sets balance to 26
@@ -244,7 +244,7 @@ class Economy(commands.Cog):
         **Arguments**
 
         - `<to>` The user to set the currency of.
-        - `<creds>` The amount of currency to set their alance to.
+        - `<creds>` The amount of currency to set their balance to.
         """
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
