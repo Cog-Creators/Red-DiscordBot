@@ -94,7 +94,7 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The repo to get cog info from..
+- ``<repo_name>`` The repo to get cog info from.
 - ``<cog_name>`` The cog to get info on.
 
 .. _downloader-command-cog-install:
@@ -137,6 +137,11 @@ cog installversion
 **Description**
 
 Install a cog from the specified revision of given repo.
+
+Revisions are "commit ids" that point to the point in the code when a specific change was made.
+The latest revision can be found in the URL bar for any GitHub repo by [pressing ``y`` on that repo](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).
+
+Older revisions can be found in the URL bar by viewing the commit history of any repo: https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png
 
 Example:
     - ``[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
@@ -209,25 +214,6 @@ Examples:
 **Arguments**
 
 - ``<cogs>`` The cog or cogs to pin. Must already be installed.
-
-.. _downloader-command-cog-reinstallreqs:
-
-"""""""""""""""""
-cog reinstallreqs
-"""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]cog reinstallreqs 
-
-**Description**
-
-This command will reinstall cog requirements and shared libraries for all installed cogs.
-
-Red might ask user to use this when it clears contents of lib folder
-because of change in minor version of Python.
 
 .. _downloader-command-cog-uninstall:
 
@@ -302,7 +288,7 @@ Examples:
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to update. If omitted, all cogs are updated.
+- ``[cogs...]`` The cog or cogs to update. If omitted, all cogs are updated.
 
 .. _downloader-command-cog-updateallfromrepos:
 
@@ -344,9 +330,11 @@ cog updatetoversion
 
 Update all cogs, or ones of your choosing to chosen revision of one repo.
 
-Note that update doesn't mean downgrade and therefore revision
-has to be newer than the one that cog currently has. If you want to
+Note that update doesn't mean downgrade and therefore ``revision``
+has to be newer than the version that cog currently has installed. If you want to
 downgrade the cog, uninstall and install it again.
+
+See ``[p]cog installversion`` for an explanation of ``revision``.
 
 Example:
     - ``[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
@@ -408,7 +396,7 @@ Improper usage of this command can break your bot, be careful.
 
 **Arguments**
 
-- ``<deps>`` The package or packages you wish to install.
+- ``[deps...]`` The package or packages you wish to install.
 
 .. _downloader-command-repo:
 
@@ -537,6 +525,8 @@ repo update
 
 Update all repos, or ones of your choosing.
 
+This will *not* update the cogs installed from those repos.
+
 Examples:
     - ``[p]repo update``
     - ``[p]repo update 26-Cogs``
@@ -544,4 +534,4 @@ Examples:
 
 **Arguments**
 
-- ``<repos>`` The name or names of repos to update. If omitted, all repos are updated.
+- ``[repos...]`` The name or names of repos to update. If omitted, all repos are updated.
