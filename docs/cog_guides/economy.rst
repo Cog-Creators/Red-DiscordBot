@@ -211,9 +211,9 @@ bank set
 
 **Description**
 
-Set the balance of user's bank account.
+Set the balance of a user's bank account.
 
-Passing positive and negative values will add/remove currency instead.
+Putting + or - signs before the amount will add/remove currency on the user's bank account instead.
 
 Examples:
     - ``[p]bank set @Twentysix 26`` - Sets balance to 26
@@ -223,7 +223,7 @@ Examples:
 **Arguments**
 
 - ``<to>`` The user to set the currency of.
-- ``<creds>`` The amount of currency to set their alance to.
+- ``<creds>`` The amount of currency to set their balance to.
 
 .. _economy-command-bank-transfer:
 
