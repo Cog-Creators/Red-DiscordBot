@@ -139,9 +139,9 @@ cog installversion
 Install a cog from the specified revision of given repo.
 
 Revisions are "commit ids" that point to the point in the code when a specific change was made.
-The latest revision can be found in the URL bar for any GitHub repo by [pressing ``y`` on that repo](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).
+The latest revision can be found in the URL bar for any GitHub repo by `pressing "y" on that repo <https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit>`_.
 
-Older revisions can be found in the URL bar by viewing the commit history of any repo: https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png
+Older revisions can be found in the URL bar by `viewing the commit history of any repo <https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png>`_
 
 Example:
     - ``[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name``
