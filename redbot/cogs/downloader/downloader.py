@@ -957,7 +957,7 @@ class Downloader(commands.Cog):
 
     @cog.command(name="unpin", usage="<cogs>")
     async def _cog_unpin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
-        """Unpin cogs - this will remove update lock from cogs.
+        """Unpin cogs - this will remove the update lock from those cogs.
 
         Examples:
             - `[p]cog unpin defender`
