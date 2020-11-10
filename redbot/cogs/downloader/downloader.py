@@ -630,7 +630,7 @@ class Downloader(commands.Cog):
         """Cog installation management commands."""
         pass
 
-    @cog.command(name="reinstallreqs")
+    @cog.command(name="reinstallreqs", hidden=True)
     async def _cog_reinstallreqs(self, ctx: commands.Context) -> None:
         """
         This command will reinstall cog requirements and shared libraries for all installed cogs.
