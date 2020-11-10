@@ -478,13 +478,10 @@ class Downloader(commands.Cog):
         for page in pagify(content):
             await target.send(page)
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def pipinstall(self, ctx: commands.Context, *deps: str) -> None:
         """Install a group of dependencies using pip."""
-        if not deps:
-            await ctx.send_help()
-            return
         repo = Repo("", "", "", "", Path.cwd())
         async with ctx.typing():
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
@@ -560,7 +557,7 @@ class Downloader(commands.Cog):
             if repo.install_msg:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
-    @repo.command(name="delete", aliases=["remove", "del"], usage="<repo_name>")
+    @repo.command(name="delete", aliases=["remove", "del"])
     async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
         """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo.name)
@@ -581,7 +578,7 @@ class Downloader(commands.Cog):
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
-    @repo.command(name="info", usage="<repo_name>")
+    @repo.command(name="info")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
         """Show information about a repo."""
         made_by = ", ".join(repo.author) or _("Missing from info.json")
@@ -684,12 +681,14 @@ class Downloader(commands.Cog):
                 )
             )
 
-    @cog.command(name="install", usage="<repo_name> <cogs>")
+    @cog.command(name="install", usage="<repo> <cogs...>", require_var_positional=True)
     async def _cog_install(self, ctx: commands.Context, repo: Repo, *cog_names: str) -> None:
         """Install a cog from the given repo."""
         await self._cog_installrev(ctx, repo, None, cog_names)
 
-    @cog.command(name="installversion", usage="<repo_name> <revision> <cogs>")
+    @cog.command(
+        name="installversion", usage="<repo> <revision> <cogs...>", require_var_positional=True
+    )
     async def _cog_installversion(
         self, ctx: commands.Context, repo: Repo, rev: str, *cog_names: str
     ) -> None:
@@ -699,9 +698,6 @@ class Downloader(commands.Cog):
     async def _cog_installrev(
         self, ctx: commands.Context, repo: Repo, rev: Optional[str], cog_names: Iterable[str]
     ) -> None:
-        if not cog_names:
-            await ctx.send_help()
-            return
         commit = None
         async with ctx.typing():
             if rev is not None:
@@ -781,8 +777,8 @@ class Downloader(commands.Cog):
                         "\nYou can load them using {command_1}."
                         " To see end user data statements, you can use {command_2}."
                     ).format(
-                        command_1=inline(f"{ctx.clean_prefix}load <cogs>"),
-                        command_2=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>"),
+                        command_1=inline(f"{ctx.clean_prefix}load <cogs...>"),
+                        command_2=inline(f"{ctx.clean_prefix}cog info <repo> <cog>"),
                     )
                     + message
                 )
@@ -792,16 +788,13 @@ class Downloader(commands.Cog):
             if cog.install_msg:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
 
-    @cog.command(name="uninstall", usage="<cogs>")
+    @cog.command(name="uninstall", require_var_positional=True)
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Uninstall cogs.
 
         You may only uninstall cogs which were previously installed
         by Downloader.
         """
-        if not cogs:
-            await ctx.send_help()
-            return
         async with ctx.typing():
             uninstalled_cogs = []
             failed_cogs = []
@@ -837,12 +830,9 @@ class Downloader(commands.Cog):
                 )
         await self.send_pagified(ctx, message)
 
-    @cog.command(name="pin", usage="<cogs>")
+    @cog.command(name="pin", require_var_positional=True)
     async def _cog_pin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Pin cogs - this will lock cogs on their current version."""
-        if not cogs:
-            await ctx.send_help()
-            return
         already_pinned = []
         pinned = []
         for cog in set(cogs):
@@ -860,12 +850,9 @@ class Downloader(commands.Cog):
             message += _("\nThese cogs were already pinned: ") + humanize_list(already_pinned)
         await self.send_pagified(ctx, message)
 
-    @cog.command(name="unpin", usage="<cogs>")
+    @cog.command(name="unpin", require_var_positional=True)
     async def _cog_unpin(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
         """Unpin cogs - this will remove update lock from cogs."""
-        if not cogs:
-            await ctx.send_help()
-            return
         not_pinned = []
         unpinned = []
         for cog in set(cogs):
@@ -950,15 +937,12 @@ class Downloader(commands.Cog):
         """Update all cogs, or ones of your choosing."""
         await self._cog_update_logic(ctx, cogs=cogs)
 
-    @cog.command(name="updateallfromrepos", usage="<repos>")
+    @cog.command(name="updateallfromrepos", require_var_positional=True)
     async def _cog_updateallfromrepos(self, ctx: commands.Context, *repos: Repo) -> None:
         """Update all cogs from repos of your choosing."""
-        if not repos:
-            await ctx.send_help()
-            return
         await self._cog_update_logic(ctx, repos=repos)
 
-    @cog.command(name="updatetoversion", usage="<repo_name> <revision> [cogs]")
+    @cog.command(name="updatetoversion")
     async def _cog_updatetoversion(
         self, ctx: commands.Context, repo: Repo, rev: str, *cogs: InstalledCog
     ) -> None:
@@ -1087,7 +1071,7 @@ class Downloader(commands.Cog):
         if updates_available and updated_cognames:
             await self._ask_for_cog_reload(ctx, updated_cognames)
 
-    @cog.command(name="list", usage="<repo_name>")
+    @cog.command(name="list")
     async def _cog_list(self, ctx: commands.Context, repo: Repo) -> None:
         """List all available cogs from a single repo."""
         installed = await self.installed_cogs()
@@ -1111,7 +1095,7 @@ class Downloader(commands.Cog):
         for page in pagify(cogs, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
-    @cog.command(name="info", usage="<repo_name> <cog_name>")
+    @cog.command(name="info", usage="<repo> <cog>")
     async def _cog_info(self, ctx: commands.Context, repo: Repo, cog_name: str) -> None:
         """List information about a single cog."""
         cog = discord.utils.get(repo.available_cogs, name=cog_name)
@@ -1341,7 +1325,7 @@ class Downloader(commands.Cog):
                     _("\nEnd user data statements of these cogs have changed: ")
                     + humanize_list(tuple(map(inline, cogs_with_changed_eud_statement)))
                     + _("\nYou can use {command} to see the updated statements.\n").format(
-                        command=inline(f"{ctx.clean_prefix}cog info <repo_name> <cog_name>")
+                        command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
                     )
                 )
         if failed_cogs:

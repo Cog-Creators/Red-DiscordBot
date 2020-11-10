@@ -374,9 +374,7 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
     @checks.is_owner()
-    @permissions.command(
-        name="addglobalrule", usage="<allow_or_deny> <cog_or_command> <who_or_what>..."
-    )
+    @permissions.command(name="addglobalrule", require_var_positional=True)
     async def permissions_addglobalrule(
         self,
         ctx: commands.Context,
@@ -393,9 +391,6 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -408,9 +403,7 @@ class Permissions(commands.Cog):
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(
-        name="addserverrule",
-        usage="<allow_or_deny> <cog_or_command> <who_or_what>...",
-        aliases=["addguildrule"],
+        name="addserverrule", aliases=["addguildrule"], require_var_positional=True
     )
     async def permissions_addguildrule(
         self,
@@ -428,9 +421,6 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -441,7 +431,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
-    @permissions.command(name="removeglobalrule", usage="<cog_or_command> <who_or_what>...")
+    @permissions.command(name="removeglobalrule", require_var_positional=True)
     async def permissions_removeglobalrule(
         self,
         ctx: commands.Context,
@@ -455,9 +445,6 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
@@ -465,9 +452,7 @@ class Permissions(commands.Cog):
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(
-        name="removeserverrule",
-        usage="<cog_or_command> <who_or_what>...",
-        aliases=["removeguildrule"],
+        name="removeserverrule", aliases=["removeguildrule"], require_var_positional=True
     )
     async def permissions_removeguildrule(
         self,
@@ -482,9 +467,6 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._remove_rule(
                 cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
