@@ -139,11 +139,10 @@ class Trivia(commands.Cog):
         """Allow/disallow ignoring special characters in answers."""
         settings = self.conf.guild(ctx.guild)
         await settings.ignore_special.set(enabled)
-        enabled = "now" if enabled else "no longer"
-        await ctx.send(
-            "Done. Trivia {} ignores special characters in answers"
-            " for this server.".format(enabled)
-        )
+        if enabled:
+            await ctx.send(_("Done. Trivia now ignores special characters in answers"))
+        else:
+            await ctx.send(_("Done. Trivia no longer ignores special characters in answers"))
 
     @triviaset.command(name="override")
     async def triviaset_allowoverride(self, ctx: commands.Context, enabled: bool):
