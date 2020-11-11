@@ -866,7 +866,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     Attributes
     ----------
     result : Any
-        The object which the message content matched with. This is
+        The object which the reaction matched with. This is
         dependent on the predicate used - see each predicate's
         documentation for details, not every method will assign this
         attribute. Defaults to ``None``.
