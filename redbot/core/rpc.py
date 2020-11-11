@@ -1,4 +1,6 @@
 import asyncio
+import sys
+from typing import Optional
 
 from aiohttp import web
 from aiohttp_json_rpc import JsonRpc
@@ -63,25 +65,42 @@ class RPC:
     def __init__(self):
         self.app = web.Application()
         self._rpc = RedRpc()
-        self.app.router.add_route("*", "/", self._rpc)
+        self.app.router.add_route("*", "/", self._rpc.handle_request)
 
-        self.app_handler = self.app.make_handler()
+        self._runner = web.AppRunner(self.app)
+        self._site: Optional[web.TCPSite] = None
+        self._started = False
 
-        self.server = None
-
-    async def initialize(self):
+    async def initialize(self, port: int):
         """
         Finalizes the initialization of the RPC server and allows it to begin
         accepting queries.
         """
-        self.server = await self.app.loop.create_server(self.app_handler, "127.0.0.1", 6133)
-        log.debug("Created RPC server listener.")
+        try:
+            # This ensures self._started can't be assigned
+            # except with both other functions
+            # and isn't subject to a really really stupid but complex
+            # issue on windows with catching specific
+            # exceptions related to shutdown conditions in asyncio applications.
+            self._started, _discard, self._site = (
+                True,
+                await self._runner.setup(),
+                web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0),
+            )
+        except Exception as exc:
+            log.exception("RPC setup failure", exc_info=exc)
+            sys.exit(1)
+        else:
+            await self._site.start()
+            log.debug("Created RPC server listener on port %s", port)
 
-    def close(self):
+    async def close(self):
         """
         Closes the RPC server.
         """
-        self.server.close()
+        if self._started:
+            await self.app.shutdown()
+            await self._runner.cleanup()
 
     def add_method(self, method, prefix: str = None):
         if prefix is None:
@@ -117,12 +136,16 @@ class RPCMixin:
         """
         Registers a method to act as an RPC handler if the internal RPC server is active.
 
-        When calling this method through the RPC server, use the naming scheme "cogname__methodname".
+        When calling this method through the RPC server, use the naming scheme
+        "cogname__methodname".
 
         .. important::
 
             All parameters to RPC handler methods must be JSON serializable objects.
             The return value of handler methods must also be JSON serializable.
+
+        .. important::
+            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------
@@ -144,6 +167,9 @@ class RPCMixin:
 
         This will be called automatically for you on cog unload and will pass silently if the
         method is not previously registered.
+
+        .. important::
+            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------

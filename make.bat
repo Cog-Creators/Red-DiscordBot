@@ -1,24 +1,31 @@
 @echo off
 
-if "%1"=="" goto help
+if [%1] == [] goto help
 
 REM This allows us to expand variables at execution
 setlocal ENABLEDELAYEDEXPANSION
 
-REM This will set PYFILES as a list of tracked .py files
-set PYFILES=
-for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
-    set PYFILES=!PYFILES! %%A
-)
-
 goto %1
 
 :reformat
-black -l 99 !PYFILES!
+black "%~dp0."
 exit /B %ERRORLEVEL%
 
 :stylecheck
-black -l 99 --check !PYFILES!
+black --check "%~dp0."
+exit /B %ERRORLEVEL%
+
+:stylediff
+black --check --diff "%~dp0."
+exit /B %ERRORLEVEL%
+
+:newenv
+py -3.8 -m venv --clear .venv
+.\.venv\Scripts\python -m pip install -U pip setuptools wheel
+goto syncenv
+
+:syncenv
+.\.venv\Scripts\python -m pip install -Ur .\tools\dev-requirements.txt
 exit /B %ERRORLEVEL%
 
 :help
@@ -28,3 +35,6 @@ echo.
 echo Commands:
 echo   reformat                   Reformat all .py files being tracked by git.
 echo   stylecheck                 Check which tracked .py files need reformatting.
+echo   newenv                     Create or replace this project's virtual environment.
+echo   syncenv                    Sync this project's virtual environment to Red's latest
+echo                              dependencies.

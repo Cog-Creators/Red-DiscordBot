@@ -1,10 +1,11 @@
 from copy import copy
 import asyncio
-import inspect
 import discord
 
 from redbot.core import Config, checks, commands
+from redbot.core.commands.requires import PrivilegeLevel
 from redbot.core.i18n import Translator
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Warnings", __file__)
 
@@ -18,9 +19,11 @@ async def warning_points_add_check(
     act = {}
     async with guild_settings.actions() as registered_actions:
         for a in registered_actions:
+            # Actions are sorted in decreasing order of points.
+            # The first action we find where the user is above the threshold will be the
+            # highest action we can take.
             if points >= a["points"]:
                 act = a
-            else:
                 break
     if act and act["exceed_command"] is not None:  # some action needs to be taken
         await create_and_invoke_context(ctx, act["exceed_command"], user)
@@ -51,7 +54,9 @@ async def create_and_invoke_context(
     try:
         await realctx.bot.invoke(fctx)
     except (commands.CheckFailure, commands.CommandOnCooldown):
-        await fctx.reinvoke()
+        # reinvoke bypasses checks and we don't want to run bot owner only commands here
+        if fctx.command.requires.privilege_level < PrivilegeLevel.BOT_OWNER:
+            await fctx.reinvoke()
 
 
 def get_command_from_input(bot, userinput: str):
@@ -66,9 +71,7 @@ def get_command_from_input(bot, userinput: str):
     if com is None:
         return None, _("I could not find a command from that input!")
 
-    check_str = inspect.getsource(checks.is_owner)
-    if any(inspect.getsource(x) in check_str for x in com.checks):
-        # command the user specified has the is_owner check
+    if com.requires.privilege_level >= PrivilegeLevel.BOT_OWNER:
         return (
             None,
             _("That command requires bot owner. I can't allow you to use that for an action"),
@@ -95,11 +98,10 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
 
     await ctx.send(_("You may enter your response now."))
 
-    def same_author_check(m):
-        return m.author == ctx.author
-
     try:
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for(
+            "message", check=MessagePredicate.same_context(ctx), timeout=30
+        )
     except asyncio.TimeoutError:
         return None
     else:
@@ -140,11 +142,10 @@ async def get_command_for_dropping_points(ctx: commands.Context):
 
     await ctx.send(_("You may enter your response now."))
 
-    def same_author_check(m):
-        return m.author == ctx.author
-
     try:
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for(
+            "message", check=MessagePredicate.same_context(ctx), timeout=30
+        )
     except asyncio.TimeoutError:
         return None
     else:

@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: For bugs that don't involve a command.
+title: ''
+labels: 'Type: Bug'
+assignees: ''
+
+---
+
 # Other bugs
 
 <!-- 

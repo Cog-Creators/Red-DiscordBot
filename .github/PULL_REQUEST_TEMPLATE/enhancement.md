@@ -1,6 +1,7 @@
 # Enhancement request
 
 <!--
+THIS TEMPLATE IS CURRENTLY UNUSED DUE TO GITHUB LIMITATIONS!
 To be used for PRs which enhance existing features
 -->
 

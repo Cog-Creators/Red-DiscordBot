@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import patch
 import pytest
 
@@ -222,6 +223,15 @@ async def test_set_dynamic_attr(config):
     await config.set_raw("foobar", value=True)
 
     assert await config.foobar() is True
+
+
+@pytest.mark.asyncio
+async def test_clear_dynamic_attr(config):
+    await config.foo.set(True)
+    await config.clear_raw("foo")
+
+    with pytest.raises(KeyError):
+        await config.get_raw("foo")
 
 
 @pytest.mark.asyncio
@@ -466,3 +476,187 @@ async def test_get_raw_mixes_defaults(config):
 
     subgroup = await config.get_raw("subgroup")
     assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_cast_str_raw(config):
+    await config.set_raw(123, 456, value=True)
+    assert await config.get_raw(123, 456) is True
+    assert await config.get_raw("123", "456") is True
+    await config.clear_raw("123", 456)
+
+
+@pytest.mark.asyncio
+async def test_cast_str_nested(config):
+    config.register_global(foo={})
+    await config.foo.set({123: True, 456: {789: False}})
+    assert await config.foo() == {"123": True, "456": {"789": False}}
+
+
+def test_config_custom_noinit(config):
+    with pytest.raises(ValueError):
+        config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_init(config):
+    config.init_custom("TEST", 3)
+    config.custom("TEST", 1, 2, 3)
+
+
+def test_config_custom_doubleinit(config):
+    config.init_custom("TEST", 3)
+    with pytest.raises(ValueError):
+        config.init_custom("TEST", 2)
+
+
+@pytest.mark.asyncio
+async def test_config_locks_cache(config, empty_guild):
+    lock1 = config.foo.get_lock()
+    assert lock1 is config.foo.get_lock()
+    lock2 = config.guild(empty_guild).foo.get_lock()
+    assert lock2 is config.guild(empty_guild).foo.get_lock()
+    assert lock1 is not lock2
+
+
+@pytest.mark.asyncio
+async def test_config_value_atomicity(config):
+    config.register_global(foo=[])
+    tasks = []
+    for _ in range(15):
+
+        async def func():
+            async with config.foo.get_lock():
+                foo = await config.foo()
+                foo.append(0)
+                await asyncio.sleep(0.1)
+                await config.foo.set(foo)
+
+        tasks.append(func())
+
+    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+
+    assert len(await config.foo()) == 15
+
+
+@pytest.mark.asyncio
+async def test_config_ctxmgr_atomicity(config):
+    config.register_global(foo=[])
+    tasks = []
+    for _ in range(15):
+
+        async def func():
+            async with config.foo() as foo:
+                foo.append(0)
+                await asyncio.sleep(0.1)
+
+        tasks.append(func())
+
+    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+
+    assert len(await config.foo()) == 15
+
+
+@pytest.mark.asyncio
+async def test_set_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 3)
+    await config.custom("CUSTOM", "1").set({"11": {"111": {"foo": "bar"}}})
+    assert await config.custom("CUSTOM", "1", "11", "111").foo() == "bar"
+
+    await config.custom("CUSTOM", "2").set(
+        {
+            "11": {"111": {"foo": "bad"}},
+            "22": {"111": {"foo": "baz"}},
+            "33": {"111": {"foo": "boo"}, "222": {"foo": "boz"}},
+        }
+    )
+    assert await config.custom("CUSTOM", "2", "11", "111").foo() == "bad"
+    assert await config.custom("CUSTOM", "2", "22", "111").foo() == "baz"
+    assert await config.custom("CUSTOM", "2", "33", "111").foo() == "boo"
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "boz"
+
+    await config.custom("CUSTOM", "2").set({"22": {}, "33": {"111": {}, "222": {"foo": "biz"}}})
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "11")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "22", "111")
+    with pytest.raises(KeyError):
+        await config.custom("CUSTOM").get_raw("2", "33", "111", "foo")
+    assert await config.custom("CUSTOM", "2", "33", "222").foo() == "biz"
+
+
+@pytest.mark.asyncio
+async def test_raw_with_partial_primary_keys(config):
+    config.init_custom("CUSTOM", 1)
+    await config.custom("CUSTOM").set_raw("primary_key", "identifier", value=True)
+    assert await config.custom("CUSTOM", "primary_key").identifier() is True
+    await config.custom("CUSTOM").set_raw(value={"primary_key": {"identifier": False}})
+    assert await config.custom("CUSTOM", "primary_key").identifier() is False
+
+
+"""
+Following PARAMS can be generated with:
+from functools import reduce
+from pprint import pprint
+def generate_test_args(print_args=True):
+    pkeys = ("1", "2", "3")
+    identifiers = ("foo",)
+    full_dict = {"1": {"2": {"3": {"foo": "bar"}}}}
+    argvalues = [
+        (
+            pkeys[:x],
+            (pkeys[x:] + identifiers)[:y],
+            reduce(lambda d, k: d[k], (pkeys + identifiers)[:x+y], full_dict),
+        )
+        for x in range(len(pkeys) + 1)
+        for y in range(len(pkeys) + len(identifiers) - x + 1)
+    ]
+    if print_args:
+        print("[")
+        for args in argvalues:
+            print(f"    {args!r},")
+        print("]")
+    else:
+        return argvalues
+generate_test_args()
+"""
+PARAMS = [
+    ((), (), {"1": {"2": {"3": {"foo": "bar"}}}}),
+    ((), (1,), {"2": {"3": {"foo": "bar"}}}),
+    ((), (1, 2), {"3": {"foo": "bar"}}),
+    ((), (1, 2, 3), {"foo": "bar"}),
+    ((), (1, 2, 3, "foo"), "bar"),
+    ((1,), (), {"2": {"3": {"foo": "bar"}}}),
+    ((1,), (2,), {"3": {"foo": "bar"}}),
+    ((1,), (2, 3), {"foo": "bar"}),
+    ((1,), (2, 3, "foo"), "bar"),
+    ((1, 2), (), {"3": {"foo": "bar"}}),
+    ((1, 2), (3,), {"foo": "bar"}),
+    ((1, 2), (3, "foo"), "bar"),
+    ((1, 2, 3), (), {"foo": "bar"}),
+    ((1, 2, 3), ("foo",), "bar"),
+]
+
+
+@pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
+@pytest.mark.asyncio
+async def test_config_custom_partial_pkeys_get(config, pkeys, raw_args, result):
+    # setup
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+    await config.custom("TEST", 1, 2, 3).set({"foo": "bar"})
+
+    group = config.custom("TEST", *pkeys)
+    assert await group.get_raw(*raw_args) == result
+
+
+@pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
+@pytest.mark.asyncio
+async def test_config_custom_partial_pkeys_set(config, pkeys, raw_args, result):
+    # setup
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+    await config.custom("TEST", 1, 2, 3).set({"foo": "blah"})
+
+    group = config.custom("TEST", *pkeys)
+    await group.set_raw(*raw_args, value=result)
+    assert await group.get_raw(*raw_args) == result

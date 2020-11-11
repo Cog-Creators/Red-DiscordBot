@@ -33,21 +33,17 @@ Tutorial
 
 After making your cog, generate a :code:`messages.pot` file
 
-The process of generating this will depend on the operating system
-you are using
+We recommend using redgettext - a modified version of pygettext for Red.
+You can install redgettext by running :code:`pip install redgettext` in a command prompt.
 
-In a command prompt in your cog's package (where yourcog.py is),
-create a directory called "locales".
-Then do one of the following:
-
-Windows: :code:`python <your python install path>\Tools\i18n\pygettext.py -D -n -p locales`
-
-Mac: ?
-
-Linux: :code:`pygettext3 -D -n -p locales`
-
-This will generate a messages.pot file with strings to be translated, including
+To generate the :code:`messages.pot` file, you will now need to run
+:code:`python -m redgettext -c [path_to_cog]`
+This file will contain all strings to be translated, including
 docstrings.
+(For advanced usage check :code:`python -m redgettext -h`)
+
+You can now use a tool like `poedit
+<https://poedit.net/>`_ to translate the strings in your messages.pot file.
 
 -------------
 API Reference

@@ -1,0 +1,23 @@
+[tool.black]
+    line-length = 99
+    target-version = ['py38']
+    include = '\.py$'
+    exclude = '''
+    /(
+          \.eggs
+        | \.git
+        | \.hg
+        | \.mypy_cache
+        | \.tox
+        | \.venv
+        | _build
+        | buck-out
+        | build
+        | dist
+        | redbot\/vendored
+    )/
+    '''
+
+[tool.pytest.ini_options]
+    minversion = "6.0"
+    addopts = "--import-mode=importlib"

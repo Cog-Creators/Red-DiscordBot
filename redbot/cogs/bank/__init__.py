@@ -1,4 +1,4 @@
-from .bank import Bank, check_global_setting_guildowner, check_global_setting_admin
+from .bank import Bank, is_owner_if_bank_global
 
 
 def setup(bot):

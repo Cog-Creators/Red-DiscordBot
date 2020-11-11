@@ -1,113 +1,159 @@
+import asyncio
+import logging
 from copy import copy
 from re import search
-from typing import Generator, Tuple, Iterable
+from string import Formatter
+from typing import Dict, List, Literal
 
 import discord
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
-from .alias_entry import AliasEntry
+from .alias_entry import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)
 
+log = logging.getLogger("red.cogs.alias")
+
+
+class _TrackingFormatter(Formatter):
+    def __init__(self):
+        super().__init__()
+        self.max = -1
+
+    def get_value(self, key, args, kwargs):
+        if isinstance(key, int):
+            self.max = max((key, self.max))
+        return super().get_value(key, args, kwargs)
+
 
 @cog_i18n(_)
-class Alias:
-    """
-    Alias
-    
-    Aliases are per server shortcuts for commands. They
-        can act as both a lambda (storing arguments for repeated use)
-        or as simply a shortcut to saying "x y z".
-    
+class Alias(commands.Cog):
+    """Create aliases for commands.
+
+    Aliases are alternative names shortcuts for commands. They
+    can act as both a lambda (storing arguments for repeated use)
+    or as simply a shortcut to saying "x y z".
+
     When run, aliases will accept any additional arguments
-        and append them to the stored alias
+    and append them to the stored alias.
     """
-
-    default_global_settings = {"entries": []}
-
-    default_guild_settings = {"enabled": False, "entries": []}  # Going to be a list of dicts
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
-        self._aliases = Config.get_conf(self, 8927348724)
+        self.config = Config.get_conf(self, 8927348724)
 
-        self._aliases.register_global(**self.default_global_settings)
-        self._aliases.register_guild(**self.default_guild_settings)
+        self.config.register_global(entries=[], handled_string_creator=False)
+        self.config.register_guild(entries=[])
+        self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
+        self._ready_event = asyncio.Event()
 
-    async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
 
-    async def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in (await self._aliases.entries()))
+        await self._ready_event.wait()
+        await self._aliases.anonymize_aliases(user_id)
 
-    async def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
-        return (
-            AliasEntry.from_json(d, bot=self.bot)
-            for d in (await self._aliases.guild(guild).entries())
-        )
+    async def cog_before_invoke(self, ctx):
+        await self._ready_event.wait()
 
-    async def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
+    async def _maybe_handle_string_keys(self):
+        # This isn't a normal schema migration because it's being added
+        # after the fact for GH-3788
+        if await self.config.handled_string_creator():
+            return
 
-    async def is_alias(
-        self, guild: discord.Guild, alias_name: str, server_aliases: Iterable[AliasEntry] = ()
-    ) -> (bool, AliasEntry):
+        async with self.config.entries() as alias_list:
+            bad_aliases = []
+            for a in alias_list:
+                for keyname in ("creator", "guild"):
+                    if isinstance((val := a.get(keyname)), str):
+                        try:
+                            a[keyname] = int(val)
+                        except ValueError:
+                            # Because migrations weren't created as changes were made,
+                            # and the prior form was a string of an ID,
+                            # if this fails, there's nothing to go back to
+                            bad_aliases.append(a)
+                            break
 
-        if not server_aliases:
-            server_aliases = await self.unloaded_aliases(guild)
+            for a in bad_aliases:
+                alias_list.remove(a)
 
-        global_aliases = await self.unloaded_global_aliases()
+        # if this was using a custom group of (guild_id, aliasname) it would be better but...
+        all_guild_aliases = await self.config.all_guilds()
 
-        for aliases in (server_aliases, global_aliases):
-            for alias in aliases:
-                if alias.name == alias_name:
-                    return True, alias
+        for guild_id, guild_data in all_guild_aliases.items():
 
-        return False, None
+            to_set = []
+            modified = False
+
+            for a in guild_data.get("entries", []):
+
+                for keyname in ("creator", "guild"):
+                    if isinstance((val := a.get(keyname)), str):
+                        try:
+                            a[keyname] = int(val)
+                        except ValueError:
+                            break
+                        finally:
+                            modified = True
+                else:
+                    to_set.append(a)
+
+            if modified:
+                await self.config.guild_from_id(guild_id).entries.set(to_set)
+
+            await asyncio.sleep(0)
+            # control yielded per loop since this is most likely to happen
+            # at bot startup, where this is most likely to have a performance
+            # hit.
+
+        await self.config.handled_string_creator.set(True)
+
+    def sync_init(self):
+        t = asyncio.create_task(self._initialize())
+
+        def done_callback(fut: asyncio.Future):
+            try:
+                t.result()
+            except Exception as exc:
+                log.exception("Failed to load alias cog", exc_info=exc)
+                # Maybe schedule extension unloading with message to owner in future
+
+        t.add_done_callback(done_callback)
+
+    async def _initialize(self):
+        """ Should only ever be a task """
+
+        await self._maybe_handle_string_keys()
+
+        if not self._aliases._loaded:
+            await self._aliases.load_aliases()
+
+        self._ready_event.set()
 
     def is_command(self, alias_name: str) -> bool:
+        """
+        The logic here is that if this returns true, the name should not be used for an alias
+        The function name can be changed when alias is reworked
+        """
         command = self.bot.get_command(alias_name)
-        return command is not None
+        return command is not None or alias_name in commands.RESERVED_COMMAND_NAMES
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
         return not bool(search(r"\s", alias_name)) and alias_name.isprintable()
-
-    async def add_alias(
-        self, ctx: commands.Context, alias_name: str, command: Tuple[str], global_: bool = False
-    ) -> AliasEntry:
-        alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
-
-        if global_:
-            settings = self._aliases
-        else:
-            settings = self._aliases.guild(ctx.guild)
-            await settings.enabled.set(True)
-
-        async with settings.entries() as curr_aliases:
-            curr_aliases.append(alias.to_json())
-
-        return alias
-
-    async def delete_alias(
-        self, ctx: commands.Context, alias_name: str, global_: bool = False
-    ) -> bool:
-        if global_:
-            settings = self._aliases
-        else:
-            settings = self._aliases.guild(ctx.guild)
-
-        async with settings.entries() as aliases:
-            for alias in aliases:
-                alias_obj = AliasEntry.from_json(alias)
-                if alias_obj.name == alias_name:
-                    aliases.remove(alias)
-                    return True
-
-        return False
 
     async def get_prefix(self, message: discord.Message) -> str:
         """
@@ -124,27 +170,256 @@ class Alias:
         for p in prefixes:
             if content.startswith(p):
                 return p
-        raise ValueError(_("No prefix found."))
+        raise ValueError("No prefix found.")
 
-    def get_extra_args_from_alias(
-        self, message: discord.Message, prefix: str, alias: AliasEntry
-    ) -> str:
-        """
-        When an alias is executed by a user in chat this function tries
-            to get any extra arguments passed in with the call.
-            Whitespace will be trimmed from both ends.
-        :param message: 
-        :param prefix: 
-        :param alias: 
-        :return: 
-        """
-        known_content_length = len(prefix) + len(alias.name)
-        extra = message.content[known_content_length:].strip()
-        return extra
+    async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
+        new_message = copy(message)
+        try:
+            args = alias.get_extra_args_from_alias(message, prefix)
+        except commands.BadArgument:
+            return
 
-    async def maybe_call_alias(
-        self, message: discord.Message, aliases: Iterable[AliasEntry] = None
-    ):
+        trackform = _TrackingFormatter()
+        command = trackform.format(alias.command, *args)
+
+        # noinspection PyDunderSlots
+        new_message.content = "{}{} {}".format(
+            prefix, command, " ".join(args[trackform.max + 1 :])
+        )
+        await self.bot.process_commands(new_message)
+
+    async def paginate_alias_list(
+        self, ctx: commands.Context, alias_list: List[AliasEntry]
+    ) -> None:
+        names = sorted(["+ " + a.name for a in alias_list])
+        message = "\n".join(names)
+        temp = list(pagify(message, delims=["\n"], page_length=1850))
+        alias_list = []
+        count = 0
+        for page in temp:
+            count += 1
+            page = page.lstrip("\n")
+            page = (
+                _("Aliases:\n")
+                + page
+                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
+            )
+            alias_list.append(box("".join(page), "diff"))
+        if len(alias_list) == 1:
+            await ctx.send(alias_list[0])
+            return
+        await menu(ctx, alias_list, DEFAULT_CONTROLS)
+
+    @commands.group()
+    async def alias(self, ctx: commands.Context):
+        """Manage command aliases."""
+        pass
+
+    @alias.group(name="global")
+    async def global_(self, ctx: commands.Context):
+        """Manage global aliases."""
+        pass
+
+    @checks.mod_or_permissions(manage_guild=True)
+    @alias.command(name="add")
+    @commands.guild_only()
+    async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
+        """Add an alias for a command."""
+        # region Alias Add Validity Checking
+        is_command = self.is_command(alias_name)
+        if is_command:
+            await ctx.send(
+                _(
+                    "You attempted to create a new alias"
+                    " with the name {name} but that"
+                    " name is already a command on this bot."
+                ).format(name=alias_name)
+            )
+            return
+
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if alias:
+            await ctx.send(
+                _(
+                    "You attempted to create a new alias"
+                    " with the name {name} but that"
+                    " alias already exists."
+                ).format(name=alias_name)
+            )
+            return
+
+        is_valid_name = self.is_valid_alias_name(alias_name)
+        if not is_valid_name:
+            await ctx.send(
+                _(
+                    "You attempted to create a new alias"
+                    " with the name {name} but that"
+                    " name is an invalid alias name. Alias"
+                    " names may not contain spaces."
+                ).format(name=alias_name)
+            )
+            return
+
+        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        if not given_command_exists:
+            await ctx.send(
+                _("You attempted to create a new alias for a command that doesn't exist.")
+            )
+            return
+        # endregion
+
+        # At this point we know we need to make a new alias
+        #   and that the alias name is valid.
+
+        try:
+            await self._aliases.add_alias(ctx, alias_name, command)
+        except ArgParseError as e:
+            return await ctx.send(" ".join(e.args))
+
+        await ctx.send(
+            _("A new alias with the trigger `{name}` has been created.").format(name=alias_name)
+        )
+
+    @checks.is_owner()
+    @global_.command(name="add")
+    async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
+        """Add a global alias for a command."""
+        # region Alias Add Validity Checking
+        is_command = self.is_command(alias_name)
+        if is_command:
+            await ctx.send(
+                _(
+                    "You attempted to create a new global alias"
+                    " with the name {name} but that"
+                    " name is already a command on this bot."
+                ).format(name=alias_name)
+            )
+            return
+
+        alias = await self._aliases.get_alias(None, alias_name)
+        if alias:
+            await ctx.send(
+                _(
+                    "You attempted to create a new global alias"
+                    " with the name {name} but that"
+                    " alias already exists."
+                ).format(name=alias_name)
+            )
+            return
+
+        is_valid_name = self.is_valid_alias_name(alias_name)
+        if not is_valid_name:
+            await ctx.send(
+                _(
+                    "You attempted to create a new global alias"
+                    " with the name {name} but that"
+                    " name is an invalid alias name. Alias"
+                    " names may not contain spaces."
+                ).format(name=alias_name)
+            )
+            return
+
+        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        if not given_command_exists:
+            await ctx.send(
+                _("You attempted to create a new alias for a command that doesn't exist.")
+            )
+            return
+        # endregion
+
+        try:
+            await self._aliases.add_alias(ctx, alias_name, command, global_=True)
+        except ArgParseError as e:
+            return await ctx.send(" ".join(e.args))
+
+        await ctx.send(
+            _("A new global alias with the trigger `{name}` has been created.").format(
+                name=alias_name
+            )
+        )
+
+    @alias.command(name="help")
+    async def _help_alias(self, ctx: commands.Context, alias_name: str):
+        """Try to execute help for the base command of the alias."""
+        alias = await self._aliases.get_alias(ctx.guild, alias_name=alias_name)
+        if alias:
+            await self.bot.send_help_for(ctx, alias.command)
+        else:
+            await ctx.send(_("No such alias exists."))
+
+    @alias.command(name="show")
+    async def _show_alias(self, ctx: commands.Context, alias_name: str):
+        """Show what command the alias executes."""
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+
+        if alias:
+            await ctx.send(
+                _("The `{alias_name}` alias will execute the command `{command}`").format(
+                    alias_name=alias_name, command=alias.command
+                )
+            )
+        else:
+            await ctx.send(_("There is no alias with the name `{name}`").format(name=alias_name))
+
+    @checks.mod_or_permissions(manage_guild=True)
+    @alias.command(name="delete", aliases=["del", "remove"])
+    @commands.guild_only()
+    async def _del_alias(self, ctx: commands.Context, alias_name: str):
+        """Delete an existing alias on this server."""
+        if not await self._aliases.get_guild_aliases(ctx.guild):
+            await ctx.send(_("There are no aliases on this server."))
+            return
+
+        if await self._aliases.delete_alias(ctx, alias_name):
+            await ctx.send(
+                _("Alias with the name `{name}` was successfully deleted.").format(name=alias_name)
+            )
+        else:
+            await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
+
+    @checks.is_owner()
+    @global_.command(name="delete", aliases=["del", "remove"])
+    async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
+        """Delete an existing global alias."""
+        if not await self._aliases.get_global_aliases():
+            await ctx.send(_("There are no global aliases on this bot."))
+            return
+
+        if await self._aliases.delete_alias(ctx, alias_name, global_=True):
+            await ctx.send(
+                _("Alias with the name `{name}` was successfully deleted.").format(name=alias_name)
+            )
+        else:
+            await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
+
+    @alias.command(name="list")
+    @commands.guild_only()
+    @checks.bot_has_permissions(add_reactions=True)
+    async def _list_alias(self, ctx: commands.Context):
+        """List the available aliases on this server."""
+        guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
+        if not guild_aliases:
+            return await ctx.send(_("There are no aliases on this server."))
+        await self.paginate_alias_list(ctx, guild_aliases)
+
+    @global_.command(name="list")
+    @checks.bot_has_permissions(add_reactions=True)
+    async def _list_global_alias(self, ctx: commands.Context):
+        """List the available global aliases on this bot."""
+        global_aliases = await self._aliases.get_global_aliases()
+        if not global_aliases:
+            return await ctx.send(_("There are no global aliases."))
+        await self.paginate_alias_list(ctx, global_aliases)
+
+    @commands.Cog.listener()
+    async def on_message_without_command(self, message: discord.Message):
+
+        await self._ready_event.wait()
+
+        if message.guild is not None:
+            if await self.bot.cog_disabled_in_guild(self, message.guild):
+                return
+
         try:
             prefix = await self.get_prefix(message)
         except ValueError:
@@ -153,235 +428,9 @@ class Alias:
         try:
             potential_alias = message.content[len(prefix) :].split(" ")[0]
         except IndexError:
-            return False
+            return
 
-        is_alias, alias = await self.is_alias(
-            message.guild, potential_alias, server_aliases=aliases
-        )
+        alias = await self._aliases.get_alias(message.guild, potential_alias)
 
-        if is_alias:
+        if alias:
             await self.call_alias(message, prefix, alias)
-
-    async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
-        new_message = copy(message)
-        args = self.get_extra_args_from_alias(message, prefix, alias)
-
-        # noinspection PyDunderSlots
-        new_message.content = "{}{} {}".format(prefix, alias.command, args)
-        await self.bot.process_commands(new_message)
-
-    @commands.group()
-    @commands.guild_only()
-    async def alias(self, ctx: commands.Context):
-        """Manage per-server aliases for commands"""
-        pass
-
-    @alias.group(name="global")
-    async def global_(self, ctx: commands.Context):
-        """
-        Manage global aliases.
-        """
-        pass
-
-    @checks.mod_or_permissions(manage_guild=True)
-    @alias.command(name="add")
-    @commands.guild_only()
-    async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
-        """
-        Add an alias for a command.
-        """
-        # region Alias Add Validity Checking
-        is_command = self.is_command(alias_name)
-        if is_command:
-            await ctx.send(
-                _(
-                    "You attempted to create a new alias"
-                    " with the name {} but that"
-                    " name is already a command on this bot."
-                ).format(alias_name)
-            )
-            return
-
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
-        if is_alias:
-            await ctx.send(
-                _(
-                    "You attempted to create a new alias"
-                    " with the name {} but that"
-                    " alias already exists on this server."
-                ).format(alias_name)
-            )
-            return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(
-                _(
-                    "You attempted to create a new alias"
-                    " with the name {} but that"
-                    " name is an invalid alias name. Alias"
-                    " names may not contain spaces."
-                ).format(alias_name)
-            )
-            return
-        # endregion
-
-        # At this point we know we need to make a new alias
-        #   and that the alias name is valid.
-
-        await self.add_alias(ctx, alias_name, command)
-
-        await ctx.send(_("A new alias with the trigger `{}` has been created.").format(alias_name))
-
-    @checks.is_owner()
-    @global_.command(name="add")
-    async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
-        """
-        Add a global alias for a command.
-        """
-        # region Alias Add Validity Checking
-        is_command = self.is_command(alias_name)
-        if is_command:
-            await ctx.send(
-                _(
-                    "You attempted to create a new global alias"
-                    " with the name {} but that"
-                    " name is already a command on this bot."
-                ).format(alias_name)
-            )
-            return
-
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
-        if is_alias:
-            await ctx.send(
-                _(
-                    "You attempted to create a new global alias"
-                    " with the name {} but that"
-                    " alias already exists on this server."
-                ).format(alias_name)
-            )
-            return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(
-                _(
-                    "You attempted to create a new global alias"
-                    " with the name {} but that"
-                    " name is an invalid alias name. Alias"
-                    " names may not contain spaces."
-                ).format(alias_name)
-            )
-            return
-        # endregion
-
-        await self.add_alias(ctx, alias_name, command, global_=True)
-
-        await ctx.send(
-            _("A new global alias with the trigger `{}` has been created.").format(alias_name)
-        )
-
-    @alias.command(name="help")
-    @commands.guild_only()
-    async def _help_alias(self, ctx: commands.Context, alias_name: str):
-        """Tries to execute help for the base command of the alias"""
-        is_alias, alias = await self.is_alias(ctx.guild, alias_name=alias_name)
-        if is_alias:
-            base_cmd = alias.command[0]
-
-            new_msg = copy(ctx.message)
-            new_msg.content = "{}help {}".format(ctx.prefix, base_cmd)
-            await self.bot.process_commands(new_msg)
-        else:
-            ctx.send(_("No such alias exists."))
-
-    @alias.command(name="show")
-    @commands.guild_only()
-    async def _show_alias(self, ctx: commands.Context, alias_name: str):
-        """Shows what command the alias executes."""
-        is_alias, alias = await self.is_alias(ctx.guild, alias_name)
-
-        if is_alias:
-            await ctx.send(
-                _("The `{}` alias will execute the command `{}`").format(alias_name, alias.command)
-            )
-        else:
-            await ctx.send(_("There is no alias with the name `{}`").format(alias_name))
-
-    @checks.mod_or_permissions(manage_guild=True)
-    @alias.command(name="del")
-    @commands.guild_only()
-    async def _del_alias(self, ctx: commands.Context, alias_name: str):
-        """
-        Deletes an existing alias on this server.
-        """
-        aliases = await self.unloaded_aliases(ctx.guild)
-        try:
-            next(aliases)
-        except StopIteration:
-            await ctx.send(_("There are no aliases on this guild."))
-            return
-
-        if await self.delete_alias(ctx, alias_name):
-            await ctx.send(
-                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
-            )
-        else:
-            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
-
-    @checks.is_owner()
-    @global_.command(name="del")
-    async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
-        """
-        Deletes an existing global alias.
-        """
-        aliases = await self.unloaded_global_aliases()
-        try:
-            next(aliases)
-        except StopIteration:
-            await ctx.send(_("There are no aliases on this bot."))
-            return
-
-        if await self.delete_alias(ctx, alias_name, global_=True):
-            await ctx.send(
-                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
-            )
-        else:
-            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
-
-    @alias.command(name="list")
-    @commands.guild_only()
-    async def _list_alias(self, ctx: commands.Context):
-        """
-        Lists the available aliases on this server.
-        """
-        names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in (await self.unloaded_aliases(ctx.guild))]
-        )
-        if len(names) == 0:
-            await ctx.send(_("There are no aliases on this server."))
-        else:
-            await ctx.send(box("\n".join(names), "diff"))
-
-    @global_.command(name="list")
-    async def _list_global_alias(self, ctx: commands.Context):
-        """
-        Lists the available global aliases on this bot.
-        """
-        names = [_("Aliases:")] + sorted(
-            ["+ " + a.name for a in await self.unloaded_global_aliases()]
-        )
-        if len(names) == 0:
-            await ctx.send(_("There are no aliases on this server."))
-        else:
-            await ctx.send(box("\n".join(names), "diff"))
-
-    async def on_message(self, message: discord.Message):
-        aliases = list(await self.unloaded_global_aliases())
-        if message.guild is not None:
-            aliases = aliases + list(await self.unloaded_aliases(message.guild))
-
-        if len(aliases) == 0:
-            return
-
-        await self.maybe_call_alias(message, aliases=aliases)

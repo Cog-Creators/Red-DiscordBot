@@ -6,10 +6,6 @@ class StreamNotFound(StreamsError):
     pass
 
 
-class CommunityNotFound(StreamsError):
-    pass
-
-
 class APIError(StreamsError):
     pass
 
@@ -22,9 +18,9 @@ class InvalidYoutubeCredentials(StreamsError):
     pass
 
 
-class OfflineStream(StreamsError):
+class YoutubeQuotaExceeded(StreamsError):
     pass
 
 
-class OfflineCommunity(StreamsError):
+class OfflineStream(StreamsError):
     pass

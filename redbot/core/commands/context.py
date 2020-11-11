@@ -1,24 +1,60 @@
+from __future__ import annotations
 
 import asyncio
-from typing import Iterable, List
+import contextlib
+import os
+import re
+from typing import Iterable, List, Union, Optional, TYPE_CHECKING
 import discord
-from discord.ext import commands
+from discord.ext.commands import Context as DPYContext
 
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils import common_filters
+from .requires import PermState
+from ..utils.chat_formatting import box
+from ..utils.predicates import MessagePredicate
+from ..utils import common_filters
+
+if TYPE_CHECKING:
+    from .commands import Command
+    from ..bot import Red
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
-__all__ = ["Context"]
+__all__ = ["Context", "GuildContext", "DMContext"]
 
 
-class Context(commands.Context):
+class Context(DPYContext):
     """Command invocation context for Red.
 
     All context passed into commands will be of this type.
 
     This class inherits from `discord.ext.commands.Context`.
+
+    Attributes
+    ----------
+    assume_yes: bool
+        Whether or not interactive checks should
+        be skipped and assumed to be confirmed.
+
+        This is intended for allowing automation of tasks.
+
+        An example of this would be scheduled commands
+        not requiring interaction if the cog developer
+        checks this value prior to confirming something interactively.
+
+        Depending on the potential impact of a command,
+        it may still be appropriate not to use this setting.
+    permission_state: PermState
+        The permission state the current context is in.
     """
+
+    command: "Command"
+    invoked_subcommand: "Optional[Command]"
+    bot: "Red"
+
+    def __init__(self, **attrs):
+        self.assume_yes = attrs.pop("assume_yes", False)
+        super().__init__(**attrs)
+        self.permission_state: PermState = PermState.NORMAL
 
     async def send(self, content=None, **kwargs):
         """Sends a message to the destination with the content given.
@@ -33,13 +69,13 @@ class Context(commands.Context):
 
         Other Parameters
         ----------------
-        filter : Callable[`str`] -> `str`
-            A function which is used to sanitize the ``content`` before
-            it is sent. Defaults to
-            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+        filter : callable (`str`) -> `str`, optional
+            A function which is used to filter the ``content`` before
+            it is sent.
             This must take a single `str` as an argument, and return
-            the sanitized `str`.
-        \*\*kwargs
+            the processed `str`. When `None` is passed, ``content`` won't be touched.
+            Defaults to `None`.
+        **kwargs
             See `discord.ext.commands.Context.send`.
 
         Returns
@@ -49,52 +85,19 @@ class Context(commands.Context):
 
         """
 
-        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+        _filter = kwargs.pop("filter", None)
 
         if _filter and content:
             content = _filter(str(content))
 
         return await super().send(content=content, **kwargs)
 
-    async def send_help(self) -> List[discord.Message]:
-        """Send the command help message.
-
-        Returns
-        -------
-        `list` of `discord.Message`
-            A list of help messages which were sent to the user.
-
-        """
-        command = self.invoked_subcommand or self.command
-        embed_wanted = await self.bot.embed_requested(
-            self.channel, self.author, command=self.bot.get_command("help")
-        )
-        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
-            embed_wanted = False
-
-        ret = []
-        destination = self
-        if embed_wanted:
-            embeds = await self.bot.formatter.format_help_for(self, command)
-            for embed in embeds:
-                try:
-                    m = await destination.send(embed=embed)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(embed=embed)
-                ret.append(m)
-        else:
-            f = commands.HelpFormatter()
-            msgs = await f.format_help_for(self, command)
-            for msg in msgs:
-                try:
-                    m = await destination.send(msg)
-                except discord.HTTPException:
-                    destination = self.author
-                    m = await destination.send(msg)
-                ret.append(m)
-
-        return ret
+    async def send_help(self, command=None):
+        """ Send the command help message. """
+        # This allows people to manually use this similarly
+        # to the upstream d.py version, while retaining our use.
+        command = command or self.command
+        await self.bot.send_help_for(self, command)
 
     async def tick(self) -> bool:
         """Add a tick reaction to the command message.
@@ -107,6 +110,23 @@ class Context(commands.Context):
         """
         try:
             await self.message.add_reaction(TICK)
+        except discord.HTTPException:
+            return False
+        else:
+            return True
+
+    async def react_quietly(
+        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+    ) -> bool:
+        """Adds a reaction to to the command message.
+
+        Returns
+        -------
+        bool
+            :code:`True` if adding the reaction succeeded.
+        """
+        try:
+            await self.message.add_reaction(reaction)
         except discord.HTTPException:
             return False
         else:
@@ -136,10 +156,6 @@ class Context(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (
-            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
-        )
-
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = await self.send(page)
@@ -160,9 +176,14 @@ class Context(commands.Context):
                     "".format(is_are, n_remaining, plural)
                 )
                 try:
-                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for(
+                        "message",
+                        check=MessagePredicate.lower_equal_to("more", self),
+                        timeout=timeout,
+                    )
                 except asyncio.TimeoutError:
-                    await query.delete()
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
                     break
                 else:
                     try:
@@ -170,8 +191,9 @@ class Context(commands.Context):
                     except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
-                        # or chanel is a DM
-                        await query.delete()
+                        # or channel is a DM
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
         return ret
 
     async def embed_colour(self):
@@ -183,10 +205,7 @@ class Context(commands.Context):
         discord.Colour:
             The colour to be used
         """
-        if self.guild and await self.bot.db.guild(self.guild).use_bot_color():
-            return self.guild.me.color
-        else:
-            return self.bot.color
+        return await self.bot.get_embed_color(self)
 
     @property
     def embed_color(self):
@@ -236,4 +255,89 @@ class Context(commands.Context):
                 embed=discord.Embed(description=message, color=(await self.embed_colour()))
             )
         else:
-            return await self.send(message)
+            return await self.send(
+                message,
+                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
+            )
+
+    @property
+    def clean_prefix(self) -> str:
+        """
+        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
+        This can be used in a context where discord user mentions might not render properly.
+        """
+        me = self.me
+        pattern = re.compile(rf"<@!?{me.id}>")
+        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
+
+    @property
+    def me(self) -> Union[discord.ClientUser, discord.Member]:
+        """
+        discord.abc.User: The bot member or user object.
+
+        If the context is DM, this will be a `discord.User` object.
+        """
+        if self.guild is not None:
+            return self.guild.me
+        else:
+            return self.bot.user
+
+
+if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
+
+    class DMContext(Context):
+        """
+        At runtime, this will still be a normal context object.
+
+        This lies about some type narrowing for type analysis in commands
+        using a dm_only decorator.
+
+        It is only correct to use when those types are already narrowed
+        """
+
+        @property
+        def author(self) -> discord.User:
+            ...
+
+        @property
+        def channel(self) -> discord.DMChannel:
+            ...
+
+        @property
+        def guild(self) -> None:
+            ...
+
+        @property
+        def me(self) -> discord.ClientUser:
+            ...
+
+    class GuildContext(Context):
+        """
+        At runtime, this will still be a normal context object.
+
+        This lies about some type narrowing for type analysis in commands
+        using a guild_only decorator.
+
+        It is only correct to use when those types are already narrowed
+        """
+
+        @property
+        def author(self) -> discord.Member:
+            ...
+
+        @property
+        def channel(self) -> discord.TextChannel:
+            ...
+
+        @property
+        def guild(self) -> discord.Guild:
+            ...
+
+        @property
+        def me(self) -> discord.Member:
+            ...
+
+
+else:
+    GuildContext = Context
+    DMContext = Context

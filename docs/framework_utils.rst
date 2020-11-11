@@ -8,7 +8,19 @@ General Utility
 ===============
 
 .. automodule:: redbot.core.utils
-    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter
+    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_data_statement, get_end_user_data_statement_or_raise
+
+.. autoclass:: AsyncIter
+    :members:
+    :special-members: __await__
+    :exclude-members: enumerate, filter
+
+    .. automethod:: enumerate
+        :async-for:
+
+    .. automethod:: filter
+        :async-for:
+
 
 Chat Formatting
 ===============
@@ -21,11 +33,27 @@ Embed Helpers
 
 .. automodule:: redbot.core.utils.embed
     :members:
+    :exclude-members: randomize_color
 
-Menu Helpers
-============
+Reaction Menus
+==============
 
 .. automodule:: redbot.core.utils.menus
+    :members:
+
+Event Predicates
+================
+
+MessagePredicate
+****************
+
+.. autoclass:: redbot.core.utils.predicates.MessagePredicate
+    :members:
+
+ReactionPredicate
+*****************
+
+.. autoclass:: redbot.core.utils.predicates.ReactionPredicate
     :members:
 
 Mod Helpers
@@ -33,12 +61,6 @@ Mod Helpers
 
 .. automodule:: redbot.core.utils.mod
     :members:
-
-V2 Data Conversion
-==================
-
-.. automodule:: redbot.core.utils.data_converter
-    :members: DataConverter
 
 Tunnel
 ======

@@ -1,7 +1,31 @@
+PYTHON ?= python3.8
+
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# Python Code Style
 reformat:
-	black -l 99 `git ls-files "*.py"`
+	$(PYTHON) -m black $(ROOT_DIR)
 stylecheck:
-	black --check -l 99 `git ls-files "*.py"`
+	$(PYTHON) -m black --check $(ROOT_DIR)
+stylediff:
+	$(PYTHON) -m black --check --diff $(ROOT_DIR)
+
+# Translations
 gettext:
-	redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
-	crowdin upload
+	$(PYTHON) -m redgettext --command-docstrings --verbose --recursive redbot --exclude-files "redbot/pytest/**/*"
+upload_translations:
+	crowdin upload sources
+download_translations:
+	crowdin download
+
+# Dependencies
+bumpdeps:
+	$(PYTHON) tools/bumpdeps.py
+
+# Development environment
+newenv:
+	$(PYTHON) -m venv --clear .venv
+	.venv/bin/pip install -U pip setuptools wheel
+	$(MAKE) syncenv
+syncenv:
+	.venv/bin/pip install -Ur ./tools/dev-requirements.txt

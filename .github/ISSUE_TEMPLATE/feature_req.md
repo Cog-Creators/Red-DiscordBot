@@ -1,3 +1,12 @@
+---
+name: Feature request
+about: For feature requests regarding Red itself.
+title: ''
+labels: 'Type: Feature'
+assignees: ''
+
+---
+
 # Feature request
 
 <!-- This template is for feature requests. Please fill out the following: -->

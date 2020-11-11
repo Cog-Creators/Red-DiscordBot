@@ -1,7 +1,16 @@
+from __future__ import annotations
+
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .repo_manager import Candidate
+
+
 __all__ = [
     "DownloaderException",
     "GitException",
     "InvalidRepoName",
+    "CopyingError",
     "ExistingGitRepo",
     "MissingGitRepo",
     "CloningError",
@@ -9,6 +18,9 @@ __all__ = [
     "HardResetError",
     "UpdateError",
     "GitDiffError",
+    "NoRemoteURL",
+    "UnknownRevision",
+    "AmbiguousRevision",
     "PipError",
 ]
 
@@ -26,11 +38,24 @@ class GitException(DownloaderException):
     Generic class for git exceptions.
     """
 
+    def __init__(self, message: str, git_command: str) -> None:
+        self.git_command = git_command
+        super().__init__(f"Git command failed: {git_command}\nError message: {message}")
+
 
 class InvalidRepoName(DownloaderException):
     """
     Throw when a repo name is invalid. Check
     the message for a more detailed reason.
+    """
+
+    pass
+
+
+class CopyingError(DownloaderException):
+    """
+    Throw when there was an issue
+    during copying of module's files.
     """
 
     pass
@@ -94,6 +119,32 @@ class GitDiffError(GitException):
     """
 
     pass
+
+
+class NoRemoteURL(GitException):
+    """
+    Thrown when no remote URL exists for a repo.
+    """
+
+    pass
+
+
+class UnknownRevision(GitException):
+    """
+    Thrown when specified revision cannot be found.
+    """
+
+    pass
+
+
+class AmbiguousRevision(GitException):
+    """
+    Thrown when specified revision is ambiguous.
+    """
+
+    def __init__(self, message: str, git_command: str, candidates: List[Candidate]) -> None:
+        super().__init__(message, git_command)
+        self.candidates = candidates
 
 
 class PipError(DownloaderException):

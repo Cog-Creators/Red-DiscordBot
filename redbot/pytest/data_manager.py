@@ -8,7 +8,6 @@ __all__ = ["cleanup_datamanager", "data_mgr_config", "cog_instance"]
 @pytest.fixture(autouse=True)
 def cleanup_datamanager():
     data_manager.basic_config = None
-    data_manager.jsonio = None
 
 
 @pytest.fixture()

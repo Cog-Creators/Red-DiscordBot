@@ -9,58 +9,59 @@ def test_is_valid_alias_name(alias):
 
 @pytest.mark.asyncio
 async def test_empty_guild_aliases(alias, empty_guild):
-    assert list(await alias.unloaded_aliases(empty_guild)) == []
+    assert list(await alias._aliases.get_guild_aliases(empty_guild)) == []
 
 
 @pytest.mark.asyncio
 async def test_empty_global_aliases(alias):
-    assert list(await alias.unloaded_global_aliases()) == []
+    assert list(await alias._aliases.get_global_aliases()) == []
 
 
 async def create_test_guild_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=False)
+    await alias._aliases.add_alias(ctx, "test", "ping", global_=False)
 
 
 async def create_test_global_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=True)
+    await alias._aliases.add_alias(ctx, "test_global", "ping", global_=True)
 
 
 @pytest.mark.asyncio
 async def test_add_guild_alias(alias, ctx):
     await create_test_guild_alias(alias, ctx)
 
-    is_alias, alias_obj = await alias.is_alias(ctx.guild, "test")
-    assert is_alias is True
-    assert alias_obj.global_ is False
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test")
+    assert alias_obj.name == "test"
 
 
 @pytest.mark.asyncio
 async def test_delete_guild_alias(alias, ctx):
     await create_test_guild_alias(alias, ctx)
-    is_alias, _ = await alias.is_alias(ctx.guild, "test")
-    assert is_alias is True
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test")
+    assert alias_obj.name == "test"
 
-    await alias.delete_alias(ctx, "test")
+    did_delete = await alias._aliases.delete_alias(ctx, "test")
+    assert did_delete is True
 
-    is_alias, _ = await alias.is_alias(ctx.guild, "test")
-    assert is_alias is False
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test")
+    assert alias_obj is None
 
 
 @pytest.mark.asyncio
 async def test_add_global_alias(alias, ctx):
     await create_test_global_alias(alias, ctx)
-    is_alias, alias_obj = await alias.is_alias(ctx.guild, "test")
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test_global")
 
-    assert is_alias is True
-    assert alias_obj.global_ is True
+    assert alias_obj.name == "test_global"
 
 
 @pytest.mark.asyncio
 async def test_delete_global_alias(alias, ctx):
     await create_test_global_alias(alias, ctx)
-    is_alias, alias_obj = await alias.is_alias(ctx.guild, "test")
-    assert is_alias is True
-    assert alias_obj.global_ is True
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test_global")
+    assert alias_obj.name == "test_global"
 
-    did_delete = await alias.delete_alias(ctx, alias_name="test", global_=True)
+    did_delete = await alias._aliases.delete_alias(ctx, alias_name="test_global", global_=True)
     assert did_delete is True
+
+    alias_obj = await alias._aliases.get_alias(None, "test_global")
+    assert alias_obj is None

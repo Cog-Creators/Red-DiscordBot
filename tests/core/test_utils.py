@@ -2,12 +2,12 @@ import asyncio
 import pytest
 import random
 import textwrap
-import warnings
 from redbot.core.utils import (
     chat_formatting,
     bounded_gather,
     bounded_gather_iter,
     deduplicate_iterables,
+    common_filters,
 )
 
 
@@ -55,11 +55,11 @@ def test_bordered_asymmetrical_2():
 def test_bordered_ascii():
     expected = textwrap.dedent(
         """\
-    ----------------    ---------------
+    +--------------+    +-------------+
     |one           |    |four         |
     |two           |    |five         |
     |three         |    |six          |
-    ----------------    ---------------"""
+    +--------------+    +-------------+"""
     )
     col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
     assert chat_formatting.bordered(col1, col2, ascii_border=True) == expected
@@ -101,7 +101,7 @@ async def test_bounded_gather():
         if isinstance(result, RuntimeError):
             num_failed += 1
         else:
-            assert result == i  # verify original orde
+            assert result == i  # verify_permissions original orde
             assert 0 <= result < num_tasks
 
     assert 0 < status[1] <= num_concurrent
@@ -191,3 +191,8 @@ async def test_bounded_gather_iter_cancel():
     assert 0 < status[1] <= num_concurrent
     assert quit_on <= status[2] <= quit_on + num_concurrent
     assert num_failed <= num_fail
+
+
+def test_normalize_smartquotes():
+    assert common_filters.normalize_smartquotes("Should\u2018 normalize") == "Should' normalize"
+    assert common_filters.normalize_smartquotes("Same String") == "Same String"

@@ -1,10 +1,10 @@
+import asyncio
 import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
-import sys
 import weakref
-from typing import List
+from typing import List, Optional
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -72,7 +72,7 @@ class Tunnel(metaclass=TunnelMeta):
         self.last_interaction = datetime.utcnow()
 
     async def react_close(self, *, uid: int, message: str = ""):
-        send_to = self.origin if uid == self.sender.id else self.sender
+        send_to = self.recipient if uid == self.sender.id else self.origin
         closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
         await send_to.send(filter_mass_mentions(message.format(closer=closer)))
 
@@ -86,7 +86,11 @@ class Tunnel(metaclass=TunnelMeta):
 
     @staticmethod
     async def message_forwarder(
-        *, destination: discord.abc.Messageable, content: str = None, embed=None, files=[]
+        *,
+        destination: discord.abc.Messageable,
+        content: str = None,
+        embed=None,
+        files: Optional[List[discord.File]] = None,
     ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
@@ -95,19 +99,19 @@ class Tunnel(metaclass=TunnelMeta):
 
         Parameters
         ----------
-        destination: `discord.abc.Messageable`
+        destination: discord.abc.Messageable
             Where to send
-        content: `str`
+        content: str
             The message content
-        embed: `discord.Embed`
+        embed: discord.Embed
             The embed to send
-        files: `list` of `discord.File`
+        files: Optional[List[discord.File]]
             A list of files to send.
 
         Returns
         -------
-        list of `discord.Message`
-            The `discord.Message`\ (s) sent as a result
+        List[discord.Message]
+            The messages sent as a result.
 
         Raises
         ------
@@ -117,7 +121,6 @@ class Tunnel(metaclass=TunnelMeta):
             see `discord.abc.Messageable.send`
         """
         rets = []
-        files = files if files else None
         if content:
             for page in pagify(content):
                 rets.append(await destination.send(page, files=files, embed=embed))
@@ -130,7 +133,9 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attatch(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(
+        m: discord.Message, *, use_cached: bool = False, images_only: bool = False
+    ) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -140,6 +145,10 @@ class Tunnel(metaclass=TunnelMeta):
         ---------
         m: `discord.Message`
             A message to get attachments from
+        use_cached: `bool`
+            Whether to use ``proxy_url`` rather than ``url`` when downloading the attachment
+        images_only: `bool`
+            Whether only image attachments should be added to returned list
 
         Returns
         -------
@@ -148,16 +157,37 @@ class Tunnel(metaclass=TunnelMeta):
 
         """
         files = []
-        size = 0
-        max_size = 8 * 1024 * 1024
-        for a in m.attachments:
-            _fp = io.BytesIO()
-            await a.save(_fp)
-            size += sys.getsizeof(_fp)
-            if size > max_size:
-                return []
-            files.append(discord.File(_fp, filename=a.filename))
+        max_size = 8 * 1000 * 1000
+        if m.attachments and sum(a.size for a in m.attachments) <= max_size:
+            for a in m.attachments:
+                if images_only and a.height is None:
+                    # if this is None, it's not an image
+                    continue
+                _fp = io.BytesIO()
+                try:
+                    await a.save(_fp, use_cached=use_cached)
+                except discord.HTTPException as e:
+                    # this is required, because animated webp files aren't cached
+                    if not (e.status == 415 and images_only and use_cached):
+                        raise
+                files.append(discord.File(_fp, filename=a.filename))
         return files
+
+    # Backwards-compatible typo fix (GH-2496)
+    files_from_attatch = files_from_attach
+
+    async def close_because_disabled(self, close_message: str):
+        """
+        Sends a mesage to both ends of the tunnel that the tunnel is now closed.
+
+        Parameters
+        ----------
+        close_message: str
+            The message to send to both ends of the tunnel.
+        """
+
+        tasks = [destination.send(close_message) for destination in (self.recipient, self.origin)]
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     async def communicate(
         self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False
@@ -202,10 +232,10 @@ class Tunnel(metaclass=TunnelMeta):
             content = topic
 
         if message.attachments:
-            attach = await self.files_from_attatch(message)
+            attach = await self.files_from_attach(message)
             if not attach:
                 await message.channel.send(
-                    "Could not forward attatchments. "
+                    "Could not forward attachments. "
                     "Total size of attachments in a single "
                     "message must be less than 8MB."
                 )
