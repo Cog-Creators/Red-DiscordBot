@@ -70,7 +70,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         channel: Optional[discord.TextChannel] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
-        """Match if the reaction fits the described context.
+        """Match if the message fits the described context.
 
         Parameters
         ----------
