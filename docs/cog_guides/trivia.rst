@@ -225,8 +225,7 @@ triviaset custom
 
 **Description**
 
-Manage custom trivia lists. See :ref:`creating custom trivia lists <trivia-list-creation>`
-for more information.
+Manage custom trivia lists.
 
 .. _trivia-command-triviaset-custom-upload:
 
@@ -368,6 +367,7 @@ The trivia leaderboard for this server.
 **Arguments**
 
 - ``[sort_by=wins]`` The method by which to sort the leaderboard (defaults to wins). Can be one of:
+
     - ``wins`` Total wins
     - ``avg`` Average score
     - ``total`` Total correct answers from all sessions
@@ -406,11 +406,3 @@ trivia stop
 **Description**
 
 Stops an ongoing trivia session.
-
-.. _trivia-list-creation:
-
-----------------------
-Creating your own list
-----------------------
-
-WIP, probably need screenshots here too
