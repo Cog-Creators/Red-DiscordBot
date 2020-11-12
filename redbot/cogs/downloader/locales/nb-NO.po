@@ -222,7 +222,7 @@ msgstr "\\nDisse cogene er nå festet og blir ikke oppdatert automatisk. For å 
 
 #: redbot/cogs/downloader/downloader.py:780
 msgid "\\nYou can load them using {command_1}. To see end user data statements, you can use {command_2}."
-msgstr "\\nDu kan laste dem ned ved hjelp av {command_1}. For å se Brukerdatautsagn, kan du bruke {command_2}."
+msgstr "\\nDu kan laste dem inn med {command_1}. For å se Brukerdatautsagn, kan du bruke {command_2}."
 
 #: redbot/cogs/downloader/downloader.py:797
 #, docstring

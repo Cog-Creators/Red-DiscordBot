@@ -434,7 +434,7 @@ msgstr "demandé par : **{user} **\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr "Liste pour __{guild_name}__"
+msgstr "File d'attente pour __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
