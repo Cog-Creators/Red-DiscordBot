@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 
 from collections import Counter
@@ -62,6 +63,7 @@ class Audio(
         self.play_lock = {}
 
         self.lavalink_connect_task = None
+        self._restore_task = None
         self.player_automated_timer_task = None
         self.cog_cleaned_up = False
         self.lavalink_connection_aborted = False
@@ -82,6 +84,8 @@ class Audio(
             "can_post": False,
             "can_delete": False,
         }
+        self._ll_guild_updates = set()
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
         default_global = dict(
             schema_version=1,

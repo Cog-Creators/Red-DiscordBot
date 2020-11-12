@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2020-10-18 14:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "MIME-Version: 1.0\n"
@@ -466,7 +466,7 @@ msgid "Server features:"
 msgstr ""
 
 #: redbot/cogs/general/general.py:457
-msgid "Tier {boostlevel} with {nitroboosters} boosters\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
+msgid "Tier {boostlevel} with {nitroboosters} boosts\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
 msgstr ""
 
 #: redbot/cogs/general/general.py:469
@@ -478,7 +478,7 @@ msgstr ""
 msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:496 redbot/cogs/general/general.py:562
+#: redbot/cogs/general/general.py:496 redbot/cogs/general/general.py:565
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
@@ -490,19 +490,19 @@ msgstr ""
 msgid "{word} by {author}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:513
+#: redbot/cogs/general/general.py:516
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:519
+#: redbot/cogs/general/general.py:522
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:538
+#: redbot/cogs/general/general.py:541
 msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:544
+#: redbot/cogs/general/general.py:547
 msgid "{definition}\\n\\n**Example:** {example}"
 msgstr ""
 

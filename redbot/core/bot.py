@@ -41,14 +41,13 @@ from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
-
 from .settings_caches import (
     PrefixManager,
     IgnoreManager,
     WhitelistBlacklistManager,
     DisabledCogCache,
+    I18nManager,
 )
-
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
@@ -142,6 +141,8 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
+            locale=None,
+            regional_format=None,
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -159,6 +160,7 @@ class RedBase(
         self._disabled_cog_cache = DisabledCogCache(self._config)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+        self._i18n_cache = I18nManager(self._config)
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -664,6 +666,67 @@ class RedBase(
             return guild.me.color
 
         return self._color
+
+    async def get_or_fetch_user(self, user_id: int) -> discord.User:
+        """
+        Retrieves a `discord.User` based on their ID.
+        You do not have to share any guilds
+        with the user to get this information, however many operations
+        do require that you do.
+
+        .. warning::
+
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
+
+        Parameters
+        -----------
+        user_id: int
+            The ID of the user that should be retrieved.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Client.fetch_user`.
+
+        Returns
+        --------
+        discord.User
+            The user you requested.
+        """
+
+        if (user := self.get_user(user_id)) is not None:
+            return user
+        return await self.fetch_user(user_id)
+
+    async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> discord.Member:
+        """
+        Retrieves a `discord.Member` from a guild and a member ID.
+
+        .. warning::
+
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``discord.Guild.get_member`` instead.
+
+        Parameters
+        -----------
+        guild: discord.Guild
+            The guild which the member should be retrieved from.
+        member_id: int
+            The ID of the member that should be retrieved.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Guild.fetch_member`.
+
+        Returns
+        --------
+        discord.Member
+            The user you requested.
+        """
+
+        if (member := guild.get_member(member_id)) is not None:
+            return member
+        return await guild.fetch_member(member_id)
 
     get_embed_colour = get_embed_color
 

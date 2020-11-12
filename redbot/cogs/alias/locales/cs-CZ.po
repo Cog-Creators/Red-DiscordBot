@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-10-26 17:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -19,10 +19,6 @@ msgstr ""
 #, docstring
 msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
 msgstr "Vytvořit aliasy pro příkazy n n Aliasy jsou alternativní zkratky pro příkazy. Mohou působit jako lambda (ukládání argumentů pro opakované použití) n nebo jednoduše jako zkratka pro vyslovení \"xyz\" n n Při spuštění budou aliasy přijímat další argumenty a připojovat je k uložený alias. \\ t    "
-
-#: redbot/cogs/alias/alias.py:173
-msgid "No prefix found."
-msgstr "Nebyl nalezen žádný prefix."
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\\n"
