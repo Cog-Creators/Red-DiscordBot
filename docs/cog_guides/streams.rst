@@ -179,7 +179,7 @@ streamset message
 
 **Description**
 
-Manage custom message for stream alerts.
+Manage custom messages for stream alerts.
 
 .. _streams-command-streamset-message-mention:
 
