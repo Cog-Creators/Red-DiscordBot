@@ -341,6 +341,7 @@ The global trivia leaderboard.
 **Arguments**
 
 - ``[sort_by=wins]`` The method by which to sort the leaderboard (defaults to wins). Can be one of:
+
     - ``wins`` Total wins
     - ``avg`` Average score
     - ``total`` Total correct answers from all sessions
