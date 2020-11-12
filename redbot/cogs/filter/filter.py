@@ -16,8 +16,7 @@ _ = Translator("Filter", __file__)
 class Filter(commands.Cog):
     """This cog is designed for "filtering" unwanted words and phrases from a guild.
 
-    It provides tools to manage a list of "bad" words, and to customize automatic actions to be taken against users
-    who use those bad words in channels or in their name/nickname.
+    It provides tools to manage a list of words or sentences, and to customize automatic actions to be taken against users who use those words in channels or in their name/nickname.
 
     This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.
     """
