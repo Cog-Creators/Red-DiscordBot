@@ -14,7 +14,13 @@ _ = Translator("Filter", __file__)
 
 @cog_i18n(_)
 class Filter(commands.Cog):
-    """Filter unwanted words and phrases from text channels."""
+    """This cog is designed for "filtering" unwanted words and phrases from a guild.
+
+    It provides tools to manage a list of "bad" words, and to customize automatic actions to be taken against users
+    who use those bad words in channels or in their name/nickname.
+
+    This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.
+    """
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -163,7 +169,7 @@ class Filter(commands.Cog):
 
     @_filter_channel.command(name="list")
     async def _channel_list(self, ctx: commands.Context):
-        """Send the list of the channel's filtered words."""
+        """Send a list of the channel's filtered words."""
         channel = ctx.channel
         author = ctx.author
         word_list = await self.config.channel(channel).filter()
@@ -187,6 +193,10 @@ class Filter(commands.Cog):
         Examples:
             - `[p]filter channel add word1 word2 word3`
             - `[p]filter channel add "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to filter.
         """
         channel = ctx.channel
         added = await self.add_to_filter(channel, words)
