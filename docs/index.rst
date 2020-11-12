@@ -38,6 +38,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/cleanup
     cog_guides/cog_manager_ui
     cog_guides/customcommands
+    cog_guides/dev
     red_core_data_statement
 
 .. toctree::
