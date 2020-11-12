@@ -19,7 +19,12 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Filter unwanted words and phrases from text channels.
+This cog is designed for "filtering" unwanted words and phrases from a guild.
+
+It provides tools to manage a list of "bad" words, and to customize automatic actions to be taken against users
+who use those bad words in channels or in their name/nickname.
+
+This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.
 
 
 .. _filter-commands:
@@ -44,7 +49,7 @@ filter
 
 **Description**
 
-Add or remove words from server filter.
+Base command to add or remove words from server filter.
 
 Use double quotes to add or remove sentences.
 
@@ -70,6 +75,10 @@ Examples:
     - ``[p]filter add word1 word2 word3``
     - ``[p]filter add "This is a sentence"``
 
+**Arguments:**
+
+- ``[words...]`` The words or sentences to filter.
+
 .. _filter-command-filter-channel:
 
 """"""""""""""
@@ -84,7 +93,7 @@ filter channel
 
 **Description**
 
-Add or remove words from channel filter.
+Base command to add or remove words from channel filter.
 
 Use double quotes to add or remove sentences.
 
@@ -110,6 +119,10 @@ Examples:
     - ``[p]filter channel add word1 word2 word3``
     - ``[p]filter channel add "This is a sentence"``
 
+**Arguments:**
+
+- ``[words...]`` The words or sentences to filter.
+
 .. _filter-command-filter-channel-list:
 
 """""""""""""""""""
@@ -124,7 +137,7 @@ filter channel list
 
 **Description**
 
-Send the list of the channel's filtered words.
+Send a list of the channel's filtered words.
 
 .. _filter-command-filter-channel-remove:
 
@@ -147,6 +160,10 @@ Use double quotes to remove sentences.
 Examples:
     - ``[p]filter channel remove word1 word2 word3``
     - ``[p]filter channel remove "This is a sentence"``
+
+**Arguments:**
+
+- ``[words...]`` The words or sentences to no longer filter.
 
 .. _filter-command-filter-delete:
 
@@ -172,6 +189,10 @@ Examples:
     - ``[p]filter remove word1 word2 word3``
     - ``[p]filter remove "This is a sentence"``
 
+**Arguments:**
+
+- ``[words...]`` The words or sentences to no longer filter.
+
 .. _filter-command-filter-list:
 
 """""""""""
@@ -186,7 +207,7 @@ filter list
 
 **Description**
 
-Send a list of this servers filtered words.
+Send a list of this server's filtered words.
 
 .. _filter-command-filter-names:
 
@@ -245,6 +266,15 @@ Users will be banned if they send ``<count>`` filtered words in
 
 Set both to zero to disable autoban.
 
+Examples:
+    - ``[p]filterset ban 5 5`` - Ban users who say 5 filtered words in 5 seconds.
+    - ``[p]filterset ban 2 20`` - Ban users who say 2 filtered words in 20 seconds.
+
+**Arguments:**
+
+- ``<count>`` The amount of filtered words required to trigger a ban.
+- ``<timeframe>`` The period of time in which too many filtered words will trigger a ban.
+
 .. _filter-command-filterset-defaultname:
 
 """""""""""""""""""""
@@ -265,3 +295,10 @@ Note that this has no effect if filtering names is disabled
 (to toggle, run ``[p]filter names``).
 
 The default name used is *John Doe*.
+
+Example:
+    - ``[p]filterset defaultname Missingno``
+
+**Arguments:**
+
+- ``<name>`` The new nickname to assign.
