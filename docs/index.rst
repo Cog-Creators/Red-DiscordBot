@@ -37,6 +37,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/bank
     cog_guides/cleanup
     cog_guides/cog_manager_ui
+    cog_guides/core
     cog_guides/customcommands
     red_core_data_statement
 
