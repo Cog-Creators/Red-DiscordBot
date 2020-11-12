@@ -215,6 +215,10 @@ class Filter(commands.Cog):
         Examples:
             - `[p]filter channel remove word1 word2 word3`
             - `[p]filter channel remove "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to no longer filter.
         """
         channel = ctx.channel
         removed = await self.remove_from_filter(channel, words)
@@ -233,6 +237,10 @@ class Filter(commands.Cog):
         Examples:
             - `[p]filter add word1 word2 word3`
             - `[p]filter add "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to filter.
         """
         server = ctx.guild
         added = await self.add_to_filter(server, words)
@@ -251,6 +259,10 @@ class Filter(commands.Cog):
         Examples:
             - `[p]filter remove word1 word2 word3`
             - `[p]filter remove "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to no longer filter.
         """
         server = ctx.guild
         removed = await self.remove_from_filter(server, words)
