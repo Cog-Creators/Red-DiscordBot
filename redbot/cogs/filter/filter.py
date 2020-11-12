@@ -162,7 +162,7 @@ class Filter(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I can't send direct messages to you."))
 
-    @_filter_channel.command("add", require_var_positional=True)
+    @_filter_channel.command(name="add", require_var_positional=True)
     async def filter_channel_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
@@ -180,7 +180,7 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Words already in the filter."))
 
-    @_filter_channel.command("remove", require_var_positional=True)
+    @_filter_channel.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
     async def filter_channel_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
