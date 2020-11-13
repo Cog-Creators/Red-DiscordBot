@@ -36,7 +36,7 @@ BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / 
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start. (.*)")
+_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 
 # Version regexes
