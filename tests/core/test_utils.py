@@ -3,12 +3,13 @@ import pytest
 import random
 import textwrap
 from redbot.core.utils import (
-    chat_formatting,
     bounded_gather,
     bounded_gather_iter,
-    deduplicate_iterables,
+    chat_formatting,
     common_filters,
+    deduplicate_iterables,
 )
+from discord import Embed
 
 
 def test_bordered_symmetrical():
@@ -196,3 +197,43 @@ async def test_bounded_gather_iter_cancel():
 def test_normalize_smartquotes():
     assert common_filters.normalize_smartquotes("Should\u2018 normalize") == "Should' normalize"
     assert common_filters.normalize_smartquotes("Same String") == "Same String"
+
+
+def test_embed_list():
+    base_embed = Embed(title="Test")
+    rows = list(str(i) for i in range(11))
+
+    embed_list = chat_formatting.rows_to_embeds(
+        rows, base_embed, embed_max_fields=2, field_max_rows=5, greedy_fill=False
+    )
+    expected_embed_count = 2
+    assert expected_embed_count == len(embed_list)
+    # Expected field structure: [0 1 2, 3 4 5], [6 7 8, 9 10].
+    expected = ((["0", "1", "2"], ["3", "4", "5"]), (["6", "7", "8"], ["9", "10"]))
+    for i, e in enumerate(embed_list):
+        for j, field in enumerate(getattr(e, "_fields", [])):
+            f_expected = "\n".join(expected[i][j])
+            f_actual = field["value"]
+            assert f_expected == f_actual
+        footer = getattr(e, "_footer", {})
+        assert footer["text"] == "{} of {}".format(i + 1, expected_embed_count)
+
+
+def test_embed_list_2():
+    base_embed = Embed(title="Test")
+    rows = list(str(i) for i in range(11))
+
+    embed_list = chat_formatting.rows_to_embeds(
+        rows, base_embed, embed_max_fields=2, field_max_rows=5, greedy_fill=True
+    )
+    expected_embed_count = 2
+    assert expected_embed_count == len(embed_list)
+    # Expected field structure: [0 1 2 3 4, 5 6 7 8 9], [10,].
+    expected = ((["0", "1", "2", "3", "4"], ["5", "6", "7", "8", "9"]), (["10"],))
+    for i, e in enumerate(embed_list):
+        for j, field in enumerate(getattr(e, "_fields", [])):
+            f_expected = "\n".join(expected[i][j])
+            f_actual = field["value"]
+            assert f_expected == f_actual
+        footer = getattr(e, "_footer", {})
+        assert footer["text"] == "{} of {}".format(i + 1, expected_embed_count)

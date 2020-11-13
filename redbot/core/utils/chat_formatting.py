@@ -1,6 +1,7 @@
 import datetime
 import itertools
 import textwrap
+from copy import deepcopy
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 
@@ -281,6 +282,101 @@ def pagify(
             yield escape(in_text, mass_mentions=True)
         else:
             yield in_text
+
+
+def rows_to_embeds(
+    rows: List[str],
+    base_embed: discord.Embed,
+    footer_static: str = None,
+    embed_max_fields: int = 2,
+    field_max_rows: int = 24,
+    greedy_fill: bool = False,
+    always_page_number: bool = False,
+) -> List[discord.Embed]:
+    """
+    Parameters
+    ----------
+    rows : list of str
+        The strings that form a row in the embed
+    base_embed : discord.Embed
+        The embed to use as a base for the list of embeds
+    embed_max_fields : int, optional
+        The amount of fields each embed should have.
+        If `greedy_fill` is True, the final embed may have fewer fields.
+    field_max_rows : int, optional
+        The maximum amount of rows per field.
+    footer_static : str, optional
+        The static text to add to the footer of each embed.
+        This text will appear after the page numbers.
+    greedy_fill : bool, optional
+        Whether to fill the fields greedily or not.
+        If True, each field up to the last one will contain `field_max rows`,
+        where the last row will contain the remainder of rows.
+        If False, all fields will contain an equal amount of rows,
+        with at most one additional remainder row.
+    always_page_number : bool, optional
+        Whether to always display page numbers in the footer, even with only one embed.
+        Defaults to False.
+    Returns
+    -------
+    embed_list : List of discord.Embed
+        A list of embeds, based on the base embed, with all rows spread across the embeds.
+    Raises
+    ------
+    ValueError
+        When either `embed_field_n` or `field_max` is not positive.
+    """
+    if embed_max_fields < 1:
+        raise ValueError("An embed must contain at least 1 field.")
+    if field_max_rows < 1:
+        raise ValueError("A field must contain at least 1 row.")
+    row_cnt = len(rows)
+    embed_cnt = 1 + ((row_cnt - 1) // (field_max_rows * embed_max_fields))
+    if greedy_fill:  # Fill as much to the max length as possible.
+        field_quot, row_remainder = divmod(row_cnt, field_max_rows)
+        field_sizes: List[int] = [field_max_rows] * field_quot
+        if row_remainder > 0:  # Check if remainder row necessary.
+            field_sizes.append(row_remainder)
+    else:  # Spread as equally as possible.
+        field_cnt = embed_cnt * embed_max_fields
+        # Check how many rows needed per field.
+        row_quot, row_remainder = divmod(row_cnt, field_cnt)
+        # Equally distribute rows over fields, with at most 1 extra row per field.
+        # The extra rows are filled from beginning to end.
+        field_sizes = [row_quot + int(i < row_remainder) for i in range(field_cnt)]
+    # Initialise footer format.
+    foot_str = None
+    if always_page_number or embed_cnt > 1:
+        foot_str = "{_page} of {_total}"  # _a and _z to be filled in the loop.
+        if footer_static:
+            foot_str += " — {}".format(footer_static)
+    elif footer_static:
+        foot_str = footer_static
+    # Initialise for nested loop.
+    embed_list: List[discord.Embed] = []
+    start = 0
+    f = 0
+    for x in range(embed_cnt):  # Create embeds.
+        embed = deepcopy(base_embed)
+        if foot_str:
+            embed.set_footer(text=foot_str.format(_page=x + 1, _total=embed_cnt))
+        for y in range(embed_max_fields):  # Create fields of embed.
+            try:  # Get rows for embed, if possible.
+                y_cnt = field_sizes[f]
+            # Greedy may not use all fields in the last embed.
+            except IndexError:  # Should only hold with greedy_fill + last embed.
+                break
+            end = start + y_cnt
+            # Format field value.
+            y_rows = rows[start:end]
+            field_value = "\n".join(y_rows)
+            # Add field.
+            embed.add_field(name="{}-{}".format(start + 1, end), value=field_value)
+            # Set values for next iter.
+            start = end
+            f += 1
+        embed_list.append(embed)
+    return embed_list
 
 
 def strikethrough(text: str, escape_formatting: bool = True) -> str:
