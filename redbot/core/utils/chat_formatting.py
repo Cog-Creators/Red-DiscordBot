@@ -296,35 +296,37 @@ def rows_to_embeds(
     """
     Parameters
     ----------
-    rows : list of str
+    rows : `list` of `str`
         The strings that form a row in the embed
-    base_embed : discord.Embed
+    base_embed : `discord.Embed`
         The embed to use as a base for the list of embeds
-    embed_max_fields : int, optional
+    embed_max_fields : `int`, optional
         The amount of fields each embed should have.
-        If `greedy_fill` is True, the final embed may have fewer fields.
-    field_max_rows : int, optional
+        If ``greedy_fill`` is :code:`True`, the final embed may have fewer fields.
+    field_max_rows : `int`, optional
         The maximum amount of rows per field.
-    footer_static : str, optional
+    footer_static : `str`, optional
         The static text to add to the footer of each embed.
         This text will appear after the page numbers.
-    greedy_fill : bool, optional
+    greedy_fill : `bool`, optional
         Whether to fill the fields greedily or not.
-        If True, each field up to the last one will contain `field_max rows`,
+        If :code:`True`, each field up to the last one will contain ``field_max_rows``,
         where the last row will contain the remainder of rows.
-        If False, all fields will contain an equal amount of rows,
+        If :code:`False`, all fields will contain an equal amount of rows,
         with at most one additional remainder row.
-    always_page_number : bool, optional
+    always_page_number : `bool`, optional
         Whether to always display page numbers in the footer, even with only one embed.
-        Defaults to False.
+        Defaults to :code:`False`.
+
     Returns
     -------
-    embed_list : List of discord.Embed
+    embed_list : `list` of `discord.Embed`
         A list of embeds, based on the base embed, with all rows spread across the embeds.
+
     Raises
     ------
     ValueError
-        When either `embed_field_n` or `field_max` is not positive.
+        When either ``embed_max_fields`` or ``field_max_rows`` is not positive.
     """
     if embed_max_fields < 1:
         raise ValueError("An embed must contain at least 1 field.")
