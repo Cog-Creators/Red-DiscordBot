@@ -203,7 +203,7 @@ def test_embed_list():
     base_embed = Embed(title="Test")
     rows = list(str(i) for i in range(11))
 
-    embed_list = chat_formatting.rows_to_embeds(
+    embed_list = chat_formatting.embeds_from_rows(
         rows, base_embed, embed_max_fields=2, field_max_rows=5, greedy_fill=False
     )
     expected_embed_count = 2
@@ -223,7 +223,7 @@ def test_embed_list_2():
     base_embed = Embed(title="Test")
     rows = list(str(i) for i in range(11))
 
-    embed_list = chat_formatting.rows_to_embeds(
+    embed_list = chat_formatting.embeds_from_rows(
         rows, base_embed, embed_max_fields=2, field_max_rows=5, greedy_fill=True
     )
     expected_embed_count = 2

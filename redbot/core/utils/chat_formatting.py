@@ -284,7 +284,7 @@ def pagify(
             yield in_text
 
 
-def rows_to_embeds(
+def embeds_from_rows(
     rows: List[str],
     base_embed: discord.Embed,
     footer_static: str = None,
@@ -294,27 +294,29 @@ def rows_to_embeds(
     always_page_number: bool = False,
 ) -> List[discord.Embed]:
     """
+    Convert a list of strings into a list of embeds, with the strings joined into fields
+
     Parameters
     ----------
     rows : `list` of `str`
-        The strings that form a row in the embed
+        The strings that form a row in the embed.
     base_embed : `discord.Embed`
-        The embed to use as a base for the list of embeds
-    embed_max_fields : `int`, optional
+        The embed to use as a base for the list of embeds.
+    embed_max_fields : Optional[`int`]
         The amount of fields each embed should have.
         If ``greedy_fill`` is :code:`True`, the final embed may have fewer fields.
-    field_max_rows : `int`, optional
-        The maximum amount of rows per field.
-    footer_static : `str`, optional
+    field_max_rows : Optional[`int`]
+        The maximum amount of rows per field (at most 25).
+    footer_static : Optional[`str`]
         The static text to add to the footer of each embed.
         This text will appear after the page numbers.
-    greedy_fill : `bool`, optional
+    greedy_fill : Optional[`bool`]
         Whether to fill the fields greedily or not.
         If :code:`True`, each field up to the last one will contain ``field_max_rows``,
         where the last row will contain the remainder of rows.
         If :code:`False`, all fields will contain an equal amount of rows,
         with at most one additional remainder row.
-    always_page_number : `bool`, optional
+    always_page_number : Optional[`bool`]
         Whether to always display page numbers in the footer, even with only one embed.
         Defaults to :code:`False`.
 
@@ -326,10 +328,13 @@ def rows_to_embeds(
     Raises
     ------
     ValueError
-        When either ``embed_max_fields`` or ``field_max_rows`` is not positive.
+        When either ``embed_max_fields`` or ``field_max_rows`` is not positive,
+        or when ``embed_max_fields`` exceeds the API embed field limit (25).
     """
     if embed_max_fields < 1:
         raise ValueError("An embed must contain at least 1 field.")
+    if embed_max_fields > 25:
+        raise ValueError("Discord embeds only allow 25 fields.")
     if field_max_rows < 1:
         raise ValueError("A field must contain at least 1 row.")
     row_cnt = len(rows)
