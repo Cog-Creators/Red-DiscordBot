@@ -654,11 +654,11 @@ msgstr "Descargando paquetes."
 
 #: redbot/core/core_commands.py:1409
 msgid "The following package was unloaded: {pack}."
-msgstr "El siguiente paquete ya está cargado: {pack}."
+msgstr "El siguiente paquete ya no está cargado: {pack}."
 
 #: redbot/core/core_commands.py:1413
 msgid "The following packages were unloaded: {packs}."
-msgstr "El siguiente paquete ya está descargado: {packs}."
+msgstr "Los siguientes paquetes ya no están cargados: {packs}."
 
 #: redbot/core/core_commands.py:1420
 msgid "The following package was not loaded: {pack}."
@@ -666,7 +666,7 @@ msgstr "El siguiente paquete no está cargado: {pack}."
 
 #: redbot/core/core_commands.py:1424
 msgid "The following packages were not loaded: {packs}."
-msgstr "El siguiente paquete no está descargado: {packs}."
+msgstr "Los siguientes paquetes no estaban cargados: {packs}."
 
 #: redbot/core/core_commands.py:1437
 #, docstring
