@@ -554,7 +554,7 @@ class Case:
                 if message is None:
                     try:
                         message = await mod_channel.fetch_message(message_id)
-                    except (discord.NotFound, AttributeError):
+                    except (discord.HTTPException, AttributeError):
                         message = None
             else:
                 message = None
