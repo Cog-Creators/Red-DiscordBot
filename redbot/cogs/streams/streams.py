@@ -58,6 +58,7 @@ class Streams(commands.Cog):
         "live_message_mention": False,
         "live_message_nomention": False,
         "ignore_reruns": False,
+        "ignore_schedule": False,
     }
 
     role_defaults = {"mention": False}
@@ -208,9 +209,7 @@ class Streams(commands.Cog):
         await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(
-            name=channel_name,
-            token=token,
-            bearer=self.ttv_bearer_cache.get("access_token", None),
+            name=channel_name, token=token, bearer=self.ttv_bearer_cache.get("access_token", None),
         )
         await self.check_online(ctx, stream)
 
@@ -223,9 +222,9 @@ class Streams(commands.Cog):
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(name=channel_id_or_name, token=apikey, config=self.config)
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(id=channel_id_or_name, token=apikey, config=self.config)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -398,7 +397,7 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token)
+                stream = _class(id=channel_name, token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
@@ -645,6 +644,19 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_reruns.set(True)
             await ctx.send(_("Streams of type 'rerun' will no longer send an alert."))
 
+    @streamset.command(name="ignoreschedule")
+    @commands.guild_only()
+    async def ignore_schedule(self, ctx: commands.Context):
+        """Toggle excluding YouTube streams schedules from alerts."""
+        guild = ctx.guild
+        current_setting = await self.config.guild(guild).ignore_schedule()
+        if current_setting:
+            await self.config.guild(guild).ignore_schedule.set(False)
+            await ctx.send(_("Streams schedules will be included in alerts."))
+        else:
+            await self.config.guild(guild).ignore_schedule.set(True)
+            await ctx.send(_("Streams schedules will no longer send an alert."))
+
     async def add_or_remove(self, ctx: commands.Context, stream):
         if ctx.channel.id not in stream.channels:
             stream.channels.append(ctx.channel.id)
@@ -712,9 +724,12 @@ class Streams(commands.Cog):
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
+                    elif stream.__class__.__name__ == "YoutubeStream":
+                        embed, is_schedule = await stream.is_online()
                     else:
                         embed = await stream.is_online()
                         is_rerun = False
+                        is_schedule = False
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue
@@ -738,6 +753,9 @@ class Streams(commands.Cog):
                             continue
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
+                            continue
+                        ignore_schedules = await self.config.guild(channel.guild).ignore_schedule()
+                        if ignore_schedules and is_schedule:
                             continue
 
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
@@ -855,6 +873,8 @@ class Streams(commands.Cog):
                     raw_stream["token"] = token.get("client_id")
                     raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
                 else:
+                    if _class.__name__ == "YoutubeStream":
+                        raw_stream["config"] = self.config
                     raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
