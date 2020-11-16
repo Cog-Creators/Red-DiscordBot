@@ -563,7 +563,7 @@ msgstr "Quitte le serveur ‘{}’"
 
 #: redbot/core/core_commands.py:1238
 msgid "Alright, I'll stay then. :)"
-msgstr ""
+msgstr "D'accord, je reste alors. :)"
 
 #: redbot/core/core_commands.py:1243
 #, docstring
@@ -888,7 +888,7 @@ msgstr "Définit l'avatar de [botname]\\n\\n        Prend en charge soit une pi�
 
 #: redbot/core/core_commands.py:1812
 msgid "That URL is invalid."
-msgstr ""
+msgstr "Cette URL est invalide."
 
 #: redbot/core/core_commands.py:1814
 msgid "Something went wrong while trying to get the image."
@@ -975,7 +975,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1965
 msgid "Failed to change name. Must be 32 characters or fewer."
-msgstr ""
+msgstr "Impossible de changer le nom. Doit être de 32 caractères ou moins."
 
 #: redbot/core/core_commands.py:1971
 msgid "Changing the username timed out. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes: {command}"
@@ -996,7 +996,7 @@ msgstr "Définit le surnom de [botname]."
 
 #: redbot/core/core_commands.py:2002
 msgid "Failed to change nickname. Must be 32 characters or fewer."
-msgstr ""
+msgstr "Impossible de changer le pseudo. Doit être de 32 caractères ou moins."
 
 #: redbot/core/core_commands.py:2006
 msgid "I lack the permissions to change my own nickname."
@@ -1037,7 +1037,7 @@ msgstr "Format invalide - le code de langue doit inclure le code du pays, par ex
 
 #: redbot/core/core_commands.py:2062
 msgid "Global locale has been set."
-msgstr ""
+msgstr "Le langage global a été définie."
 
 #: redbot/core/core_commands.py:2068
 #, docstring
@@ -1111,15 +1111,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2223
 msgid "No API services have been set yet."
-msgstr ""
+msgstr "Aucun service d'API n'a encore été défini."
 
 #: redbot/core/core_commands.py:2228
 msgid "Set API services:\\n"
-msgstr ""
+msgstr "Services d'API définis:\\n"
 
 #: redbot/core/core_commands.py:2228
 msgid "Set API service:\\n"
-msgstr ""
+msgstr "Service d'API défini:\\n"
 
 #: redbot/core/core_commands.py:2238
 #, docstring
@@ -1146,7 +1146,7 @@ msgstr "Gérer les paramètres de la commande d'aide."
 #: redbot/core/core_commands.py:2264
 #, docstring
 msgid " Show the current help settings. "
-msgstr ""
+msgstr " Affiche les paramètres actuels de l'aide. "
 
 #: redbot/core/core_commands.py:2271
 msgid "Warning: The default formatter is not in use, these settings may not apply."
@@ -1414,7 +1414,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2792
 msgid "Allowlist has been cleared."
-msgstr ""
+msgstr "La liste des autorisés a été effacée."
 
 #: redbot/core/core_commands.py:2797
 #, docstring
@@ -1432,7 +1432,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2823
 msgid "User added to blocklist."
-msgstr ""
+msgstr "Utilisateur ajouté à la liste des bloqués."
 
 #: redbot/core/core_commands.py:2827
 #, docstring
@@ -1441,7 +1441,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2836
 msgid "Users on blocklist:"
-msgstr ""
+msgstr "Utilisateurs sur la liste des bloqués :"
 
 #: redbot/core/core_commands.py:2845
 #, docstring
@@ -1459,7 +1459,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2863
 msgid "Blocklist has been cleared."
-msgstr ""
+msgstr "La liste des bloqués a été effacée."
 
 #: redbot/core/core_commands.py:2869
 #, docstring
@@ -1477,7 +1477,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2901
 msgid "{names} added to allowlist."
-msgstr ""
+msgstr "{names} ajoutés à la liste des autorisés."
 
 #: redbot/core/core_commands.py:2905
 #, docstring
@@ -1598,7 +1598,7 @@ msgstr ""
 #: redbot/core/core_commands.py:3074
 #, docstring
 msgid "Disable a cog in this guild."
-msgstr ""
+msgstr "Désactive un cog dans ce serveur."
 
 #: redbot/core/core_commands.py:3079
 msgid "You can't disable this cog as you would lock yourself out."
@@ -1615,7 +1615,7 @@ msgstr ""
 #: redbot/core/core_commands.py:3090
 #, docstring
 msgid "Enable a cog in this guild."
-msgstr ""
+msgstr "Active un cog dans ce serveur."
 
 #: redbot/core/core_commands.py:3092
 msgid "{cogname} has been enabled in this guild."
@@ -1636,7 +1636,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3121
 msgid "There are no disabled cogs in this guild."
-msgstr "Il n'y a pas de cogs désactivés dans cette guilde."
+msgstr "Il n'y a pas de cogs désactivés dans ce serveur."
 
 #: redbot/core/core_commands.py:3125
 #, docstring
@@ -1769,7 +1769,7 @@ msgstr "Membres immunisés contre les actions de modération automatisées :\\n"
 
 #: redbot/core/core_commands.py:3359
 msgid "No immunity settings here."
-msgstr ""
+msgstr "Aucun paramètre d'immunité ici."
 
 #: redbot/core/core_commands.py:3368
 #, docstring
@@ -1796,11 +1796,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3399
 msgid "They are immune."
-msgstr ""
+msgstr "Ils sont immunisés."
 
 #: redbot/core/core_commands.py:3401
 msgid "They are not immune."
-msgstr ""
+msgstr "Ils ne sont pas immunisés."
 
 #: redbot/core/core_commands.py:3406
 #, docstring
@@ -1874,7 +1874,7 @@ msgstr "Ce serveur a été ajouté à la liste des ignorés."
 
 #: redbot/core/core_commands.py:3561
 msgid "This server is already being ignored."
-msgstr ""
+msgstr "Ce serveur est déjà ignoré."
 
 #: redbot/core/core_commands.py:3567
 #, docstring
@@ -2032,7 +2032,7 @@ msgstr "Cette commande n'est pas disponible en Messages Privés (DMs)."
 
 #: redbot/core/events.py:295
 msgid "That command is only available in DMs."
-msgstr ""
+msgstr "Cette commande est disponible seulement en messages privés."
 
 #: redbot/core/events.py:300
 msgid "This command is on cooldown. Try again in {delay}."
@@ -2126,7 +2126,7 @@ msgstr "**Jusqu'à :** {}\\n**Durée :** {}\\n"
 
 #: redbot/core/modlog.py:461
 msgid "**Channel**: {} (Deleted)\\n"
-msgstr ""
+msgstr "**Salon**: {} (Deleted)\\n"
 
 #: redbot/core/modlog.py:463
 msgid "**Channel**: {}\\n"
