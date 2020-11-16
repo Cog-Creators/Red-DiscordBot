@@ -138,7 +138,7 @@ class ModInfo(MixinMeta):
         if not w_acts:
             return None, discord.ActivityType.competing
         w_act = w_acts[0]
-        act = _("Competing in {competing}").format(competing=w_act.name)
+        act = _("Competing: {competing}").format(competing=w_act.name)
         return act, discord.ActivityType.competing
 
     def get_status_string(self, user):
