@@ -1895,7 +1895,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
         else:
             await ctx.send(_("Watching cleared."))
-            
     @_set.command(name="competing")
     @checks.bot_in_a_guild()
     @checks.is_owner()
@@ -1913,7 +1912,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("Status set to ``competing in {competing}``.").format(competing=competing)
             )
         else:
-            await ctx.send(_("competing cleared."))
+            await ctx.send(_("Competing cleared."))
 
     @_set.command()
     @checks.bot_in_a_guild()
