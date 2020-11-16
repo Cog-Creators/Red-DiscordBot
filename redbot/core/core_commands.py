@@ -1909,7 +1909,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(_("Status set to ``competing in {competing}``.").format(competing=competing))
+            await ctx.send(
+                _("Status set to ``competing in {competing}``.").format(competing=competing)
+            )
         else:
             await ctx.send(_("competing cleared."))
 
