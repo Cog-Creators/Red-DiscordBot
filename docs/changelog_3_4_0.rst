@@ -1,5 +1,75 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.3 (2020-11-16)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`_.
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added ``[p]set competing`` command that allows users to set bot's competing status (:issue:`4607`, :issue:`4609`)
+
+Audio
+*****
+
+- Volume changes on ARM systems running a 64 bit OS will now work again (:issue:`4608`)
+- Fixed only 100 results being returned on a Youtube playlist (:issue:`4608`)
+- Fixed YouTube VOD duration set to unknown (:issue:`3885`, :issue:`4608`)
+- Fixed some YouTube livestreams getting stuck (:issue:`4608`)
+- Fixed internal Lavalink manager failing for Java with untypical version formats (:issue:`4608`)
+- Improved AAC audio handling (:issue:`4608`)
+- Added support for SoundCloud HLS streams (:issue:`4608`)
+
+Economy
+*******
+
+- ``[p]leaderboard`` command no longer fails in DMs when global bank is used (:issue:`4569`)
+
+Mod
+***
+
+- Ban reason is now properly set in audit log and modlog when using ``[p]massban`` command (:issue:`4575`)
+- ``[p]userinfo`` command now shows the new Competing activity (:issue:`4610`, :issue:`4611`)
+
+Modlog
+******
+
+- ``[p]case`` and ``[p]casesfor`` commands no longer fail when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+
+Mutes
+*****
+
+- Fixed automatic remuting on member join for indefinite mutes (:issue:`4568`)
+
+Trivia
+******
+
+- ``[p]triviaset custom upload`` now ensures that the filename is lowercase when uploading (:issue:`4594`)
+
+Developer changelog
+-------------------
+
+- ``modlog.get_case()`` and methods using it no longer raise when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+
+Documentation changes
+---------------------
+
+- Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
+- Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
+
+
 Redbot 3.4.2 (2020-10-28)
 =========================
 
