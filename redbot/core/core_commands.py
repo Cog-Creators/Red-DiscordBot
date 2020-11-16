@@ -1896,6 +1896,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Watching cleared."))
 
+    @_set.command(name="competing")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _competing(self, ctx: commands.Context, *, competing: str = None):
+        """Sets [botname]'s competing status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if competing:
+            activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to ``Competing in {competing}``.").format(competing=competing)
+            )
+        else:
+            await ctx.send(_("Competing cleared."))
+
     @_set.command()
     @checks.bot_in_a_guild()
     @checks.is_owner()
