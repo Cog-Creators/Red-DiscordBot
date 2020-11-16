@@ -11,7 +11,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`_.
+    Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`__.
 
 End-user changelog
 ------------------
@@ -81,7 +81,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`_.
+    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`__.
 
 End-user changelog
 ------------------
@@ -115,7 +115,7 @@ Read before updating
 3. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
 4. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`_ and you should update your instance's ``application.yml`` appropriately.
+   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
@@ -128,7 +128,7 @@ Security
 
 **NOTE:** If you can't update immediately, we recommend globally disabling the affected command until you can.
 
-- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`_.
+- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
 
 Core Bot
 ********
@@ -409,7 +409,7 @@ Breaking changes
 
 - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
 - The default value of the ``filter`` keyword argument has been changed to ``None`` (:issue:`3845`)
-- Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`_ (:issue:`3605`, :issue:`3679`)
+- Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 - Removed things past deprecation time: (:issue:`4163`)
