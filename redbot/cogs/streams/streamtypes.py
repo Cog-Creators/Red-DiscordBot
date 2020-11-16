@@ -3,7 +3,7 @@ import logging
 from random import choice
 from string import ascii_letters
 import xml.etree.ElementTree as ET
-from typing import ClassVar, Optional, List
+from typing import ClassVar, Optional, List, Tuple
 from datetime import datetime
 
 import aiohttp
@@ -129,10 +129,8 @@ class YoutubeStream(Stream):
                     if (
                         stream_data
                         and stream_data != "None"
-                        and (
-                            stream_data.get("actualStartTime", None) is not None
-                            and stream_data.get("actualEndTime", None) is None
-                        )
+                        and stream_data.get("actualStartTime", None) is not None
+                        and stream_data.get("actualEndTime", None) is None
                         or stream_data.get("scheduledStartTime", None) is not None
                     ):
                         if video_id not in self.livestreams:
@@ -161,14 +159,17 @@ class YoutubeStream(Stream):
         thumbnail = vid_data["snippet"]["thumbnails"]["medium"]["url"]
         channel_title = vid_data["snippet"]["channelTitle"]
         embed = discord.Embed(title=title, url=video_url)
-        if (
-            data["liveStreamingDetails"]["scheduledStartTime"] is not None
-            and data["liveStreamingDetails"]["actualStartTime"] is None
-        ):
-            start_time = datetime.fromisoformat(data["liveStreamingDetails"]["scheduledStartTime"])
-            embed.description = _("This stream will start on {m}/{d} at {time}!").format(
-                m=start_time.month, d=start_time.day, time=start_time.strftime("%M/%S")
-            )
+        if vid_data["liveStreamingDetails"]["scheduledStartTime"] is not None:
+            if vid_data["liveStreamingDetails"]["actualStartTime"] is None:
+                start_time = datetime.fromisoformat(
+                    vid_data["liveStreamingDetails"]["scheduledStartTime"]
+                )
+                embed.description = _("This stream will start on {m}/{d} at {time}!").format(
+                    m=start_time.month, d=start_time.day, time=start_time.strftime("%M/%S")
+                )
+            else:
+                # repost message
+                del self._messages_cache[-1]
         embed.set_author(name=channel_title)
         embed.set_image(url=rnd(thumbnail))
         embed.colour = 0x9255A5
