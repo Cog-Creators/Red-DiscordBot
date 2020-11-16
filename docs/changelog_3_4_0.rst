@@ -19,14 +19,14 @@ End-user changelog
 Core Bot
 ********
 
-- Added ``[p]set competing`` command that allows users to set bot's competing status (:issue:`4607`, :issue:`4609`)
+- Added ``[p]set competing`` command that allows users to set the bot's competing status (:issue:`4607`, :issue:`4609`)
 
 Audio
 *****
 
 - Volume changes on ARM systems running a 64 bit OS will now work again (:issue:`4608`)
 - Fixed only 100 results being returned on a Youtube playlist (:issue:`4608`)
-- Fixed YouTube VOD duration set to unknown (:issue:`3885`, :issue:`4608`)
+- Fixed YouTube VOD duration being set to unknown (:issue:`3885`, :issue:`4608`)
 - Fixed some YouTube livestreams getting stuck (:issue:`4608`)
 - Fixed internal Lavalink manager failing for Java with untypical version formats (:issue:`4608`)
 - Improved AAC audio handling (:issue:`4608`)
@@ -35,18 +35,18 @@ Audio
 Economy
 *******
 
-- ``[p]leaderboard`` command no longer fails in DMs when global bank is used (:issue:`4569`)
+- The ``[p]leaderboard`` command no longer fails in DMs when a global bank is used (:issue:`4569`)
 
 Mod
 ***
 
-- Ban reason is now properly set in audit log and modlog when using ``[p]massban`` command (:issue:`4575`)
-- ``[p]userinfo`` command now shows the new Competing activity (:issue:`4610`, :issue:`4611`)
+- The ban reason is now properly set in the audit log and modlog when using the ``[p]massban`` command (:issue:`4575`)
+- The ``[p]userinfo`` command now shows the new Competing activity (:issue:`4610`, :issue:`4611`)
 
 Modlog
 ******
 
-- ``[p]case`` and ``[p]casesfor`` commands no longer fail when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+- The ``[p]case`` and ``[p]casesfor`` commands no longer fail when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
 
 Mutes
 *****
