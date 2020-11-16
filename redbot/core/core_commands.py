@@ -1892,9 +1892,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
+            await ctx.send(
+                _("Status set to ``Watching {watching}``.").format(watching=watching)
+            )
         else:
             await ctx.send(_("Watching cleared."))
+
     @_set.command(name="competing")
     @checks.bot_in_a_guild()
     @checks.is_owner()
