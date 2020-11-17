@@ -2757,6 +2757,12 @@ Enhancements
 
 - Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
 
+3.1.1 (2019-05-15)
+==================
+
+This is a hotfix release fixing issues related to fuzzy command search that were happening with the new help formatter.
+
+
 3.1.0 (2019-05-15)
 ==================
 
