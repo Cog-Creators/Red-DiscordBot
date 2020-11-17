@@ -2885,7 +2885,7 @@ Utility Functions
 *****************
 
 - Fixed spelling of the `Tunnel`'s method from ``files_from_attatch()`` to `files_from_attach() <Tunnel.files_from_attach()>`; old name was left for backwards compatibility (:issue:`2496`)
-- Fixed behavior of `Tunnel.react_close()` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
+- Fixed behavior of ``Tunnel.react_close()`` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
 - Added `chat_formatting.humanize_timedelta()` (:issue:`2412`)
 - Improved error handling of empty lists in `chat_formatting.humanize_list()` (:issue:`2597`)
 
