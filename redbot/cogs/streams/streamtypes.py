@@ -6,7 +6,6 @@ from random import choice
 from string import ascii_letters
 import xml.etree.ElementTree as ET
 from typing import ClassVar, Optional, List, Tuple
-from datetime import datetime
 
 import aiohttp
 import discord
@@ -178,12 +177,16 @@ class YoutubeStream(Stream):
                 is_schedule = True
             else:
                 # repost message
+                to_remove = []
                 for message in self._messages_cache:
+                    if message.embeds[0].description is discord.Embed.Empty:
+                        continue
                     with contextlib.suppress(Exception):
                         autodelete = await self._config.guild(message.guild).autodelete()
                         if autodelete:
                             await message.delete()
-                self._messages_cache.clear()
+                    to_remove.append(message.id)
+                self._messages_cache = [x for x in self._messages_cache if x.id not in to_remove]
         embed.set_author(name=channel_title)
         embed.set_image(url=rnd(thumbnail))
         embed.colour = 0x9255A5
