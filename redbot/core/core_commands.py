@@ -385,7 +385,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about [botname]."""
+        """Shows info about [botname].
+
+        See `[p]custominfo` to customize.
+        """
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -520,14 +523,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(cls=commands.commands._AlwaysAvailableGroup)
     async def mydata(self, ctx: commands.Context):
-        """ Commands which interact with the data [botname] has about you. """
+        """Commands which interact with the data [botname] has about you.
+
+         More information can be found in the (End User Data Documentation)[https://docs.discord.red/en/stable/red_core_data_statement.html]
+         """
 
     # 1/10 minutes. It's a static response, but the inability to lock
     # will annoy people if it's spammable
     @commands.cooldown(1, 600, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="whatdata")
     async def mydata_whatdata(self, ctx: commands.Context):
-        """ Find out what type of data [botname] stores and why. """
+        """Find out what type of data [botname] stores and why."""
 
         ver = "latest" if red_version_info.dev_release else "stable"
         link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
