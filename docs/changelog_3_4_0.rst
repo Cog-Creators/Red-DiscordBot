@@ -1,5 +1,75 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.3 (2020-11-16)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`__.
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added ``[p]set competing`` command that allows users to set the bot's competing status (:issue:`4607`, :issue:`4609`)
+
+Audio
+*****
+
+- Volume changes on ARM systems running a 64 bit OS will now work again (:issue:`4608`)
+- Fixed only 100 results being returned on a Youtube playlist (:issue:`4608`)
+- Fixed YouTube VOD duration being set to unknown (:issue:`3885`, :issue:`4608`)
+- Fixed some YouTube livestreams getting stuck (:issue:`4608`)
+- Fixed internal Lavalink manager failing for Java with untypical version formats (:issue:`4608`)
+- Improved AAC audio handling (:issue:`4608`)
+- Added support for SoundCloud HLS streams (:issue:`4608`)
+
+Economy
+*******
+
+- The ``[p]leaderboard`` command no longer fails in DMs when a global bank is used (:issue:`4569`)
+
+Mod
+***
+
+- The ban reason is now properly set in the audit log and modlog when using the ``[p]massban`` command (:issue:`4575`)
+- The ``[p]userinfo`` command now shows the new Competing activity (:issue:`4610`, :issue:`4611`)
+
+Modlog
+******
+
+- The ``[p]case`` and ``[p]casesfor`` commands no longer fail when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+
+Mutes
+*****
+
+- Fixed automatic remuting on member join for indefinite mutes (:issue:`4568`)
+
+Trivia
+******
+
+- ``[p]triviaset custom upload`` now ensures that the filename is lowercase when uploading (:issue:`4594`)
+
+Developer changelog
+-------------------
+
+- ``modlog.get_case()`` and methods using it no longer raise when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+
+Documentation changes
+---------------------
+
+- Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
+- Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
+
+
 Redbot 3.4.2 (2020-10-28)
 =========================
 
@@ -11,7 +81,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`_.
+    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`__.
 
 End-user changelog
 ------------------
@@ -41,11 +111,11 @@ Read before updating
 --------------------
 
 1. This release fixes a security issue in Mod cog. See `Security changelog below <important-341-2>` for more information.
-2. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Prvileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
+2. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Privileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
 3. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
 4. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`_ and you should update your instance's ``application.yml`` appropriately.
+   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
@@ -58,7 +128,7 @@ Security
 
 **NOTE:** If you can't update immediately, we recommend globally disabling the affected command until you can.
 
-- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`_.
+- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
 
 Core Bot
 ********
@@ -339,7 +409,7 @@ Breaking changes
 
 - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
 - The default value of the ``filter`` keyword argument has been changed to ``None`` (:issue:`3845`)
-- Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`_ (:issue:`3605`, :issue:`3679`)
+- Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 - Removed things past deprecation time: (:issue:`4163`)
