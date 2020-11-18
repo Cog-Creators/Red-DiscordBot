@@ -4,6 +4,7 @@ import logging
 from dateutil.parser import parse as parse_time
 from random import choice
 from string import ascii_letters
+from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 from typing import ClassVar, Optional, List, Tuple
 
@@ -19,7 +20,7 @@ from .errors import (
     YoutubeQuotaExceeded,
 )
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import humanize_number
+from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
@@ -171,9 +172,13 @@ class YoutubeStream(Stream):
         if vid_data["liveStreamingDetails"]["scheduledStartTime"] is not None:
             if "actualStartTime" not in vid_data["liveStreamingDetails"]:
                 start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
-                embed.description = _("This stream will start on {m}/{d} at {time}!").format(
-                    m=start_time.month, d=start_time.day, time=start_time.strftime("%H:%M")
+                start_in = start_time.replace(tzinfo=None) - datetime.now()
+                embed.description = _("This stream will start in {time}").format(
+                    time=humanize_timedelta(
+                        timedelta=timedelta(minutes=start_in.total_seconds() // 60)
+                    )  # getting rid of seconds
                 )
+                embed.timestamp = start_time
                 is_schedule = True
             else:
                 # repost message
