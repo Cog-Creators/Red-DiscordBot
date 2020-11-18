@@ -719,6 +719,16 @@ class Streams(commands.Cog):
                 pass
             await asyncio.sleep(await self.config.refresh_timer())
 
+    async def _send_stream_alert(
+        self, stream, channel: discord.TextChannel, embed: discord.Embed, content: str = None
+    ):
+        m = await channel.send(
+            content,
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+        )
+        stream._messages_cache.append(m)
+
     async def check_streams(self):
         for stream in self.streams:
             with contextlib.suppress(Exception):
@@ -759,7 +769,11 @@ class Streams(commands.Cog):
                         ignore_schedules = await self.config.guild(channel.guild).ignore_schedule()
                         if ignore_schedules and is_schedule:
                             continue
-
+                        if is_schedule:
+                            # skip messages and mentions
+                            await self._send_stream_alert(stream, channel, embed)
+                            await self.save_streams()
+                            continue
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
 
                         mention_str, edited_roles = await self._get_mention_str(
@@ -800,13 +814,7 @@ class Streams(commands.Cog):
                                         str(stream.name), mass_mentions=True, formatting=True
                                     )
                                 )
-
-                        m = await channel.send(
-                            content,
-                            embed=embed,
-                            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
-                        )
-                        stream._messages_cache.append(m)
+                        await self._send_stream_alert(stream, channel, embed, content)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
