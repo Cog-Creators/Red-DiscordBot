@@ -174,18 +174,20 @@ class Alias(commands.Cog):
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)
+        print("Original message: " + new_message.content + "\n")
         try:
             args = alias.get_extra_args_from_alias(message, prefix)
         except commands.BadArgument:
             return
 
+        # Valid argument, now get it as a single string
+        arg_string = alias.get_args_as_single_string(message, prefix)
+
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
 
         # noinspection PyDunderSlots
-        new_message.content = "{}{} {}".format(
-            prefix, command, " ".join(args[trackform.max + 1 :])
-        )
+        new_message.content = "{}{} {}".format(prefix, command, arg_string)
         await self.bot.process_commands(new_message)
 
     async def paginate_alias_list(

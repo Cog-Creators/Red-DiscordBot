@@ -66,6 +66,22 @@ class AliasEntry:
             view.skip_ws()
         return extra
 
+    def get_args_as_single_string(self, message: discord.Message, prefix: str) -> str:
+        """
+        When an alias is executed by a user in chat this function tries
+            to get all arguments that follow the prefix and command,
+            as one single string.
+            Whitespace will be trimmed from both ends.
+        :param message:
+        :param prefix:
+        :param alias:
+        :return:
+        """
+        known_content_length = len(prefix) + len(self.name)
+        arg_string = message.content[known_content_length:]
+        arg_string.strip()
+        return arg_string
+
     def to_json(self) -> dict:
 
         return {
