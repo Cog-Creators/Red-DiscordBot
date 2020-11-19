@@ -408,7 +408,10 @@ class Streams(commands.Cog):
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
             else:
-                stream = _class(name=channel_name, token=token)
+                if is_yt:
+                    stream = _class(name=channel_name, token=token, config=self.config)
+                else:
+                    stream = _class(name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
