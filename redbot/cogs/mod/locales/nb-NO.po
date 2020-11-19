@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-12 12:20+0000\n"
+"POT-Creation-Date: 2020-11-19 12:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -372,85 +372,89 @@ msgstr "Lytter: {title}"
 msgid "Watching: {name}"
 msgstr "Overvåker: {name}"
 
-#: redbot/cogs/mod/names.py:155
+#: redbot/cogs/mod/names.py:141
+msgid "Competing in: {competing}"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:164
 #, docstring
 msgid "Show information about a user.\\n\\n        This includes fields for status, discord join date, server\\n        join date, voice state and previous names/nicknames.\\n\\n        If the user has no roles, previous names or previous nicknames,\\n        these fields will be omitted.\\n        "
 msgstr "Vis informasjon om en bruker.\\n\\n        Dette inkluderer felt for status, discord sammenkoblingsdato, server\\n        bli med dato, stemmetilstand og tidligere navn/kallenavn.\\n\\n        Hvis brukeren ikke har noen roller, tidligere navn eller tidligere kallenavn,\\n        vil disse feltene utelates.\\n        "
 
-#: redbot/cogs/mod/names.py:183
+#: redbot/cogs/mod/names.py:192
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: redbot/cogs/mod/names.py:191
+#: redbot/cogs/mod/names.py:200
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n({} dager siden)"
 
-#: redbot/cogs/mod/names.py:192
+#: redbot/cogs/mod/names.py:201
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n({} dager siden)"
 
-#: redbot/cogs/mod/names.py:204
+#: redbot/cogs/mod/names.py:213
 msgid "Chilling in {} status"
 msgstr "Slapper av i {} status"
 
-#: redbot/cogs/mod/names.py:218
+#: redbot/cogs/mod/names.py:227
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "og {numeric_number} flere roller vises ikke på grunn av grenseverdier for innebygging."
 
-#: redbot/cogs/mod/names.py:245
+#: redbot/cogs/mod/names.py:254
 msgid "Joined Discord on"
 msgstr "Ble med Discord den"
 
-#: redbot/cogs/mod/names.py:246
+#: redbot/cogs/mod/names.py:255
 msgid "Joined this server on"
 msgstr "Ble medlem på serveren"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Role"
 msgstr "Rolle"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Names"
 msgstr "Forrige navn"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Name"
 msgstr "Forrige navn"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nicknames"
 msgstr "Forrige kallenavn"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nickname"
 msgstr "Forrige kallenavn"
 
-#: redbot/cogs/mod/names.py:269
+#: redbot/cogs/mod/names.py:278
 msgid "Current voice channel"
 msgstr "Gjeldende talekanal"
 
-#: redbot/cogs/mod/names.py:273
+#: redbot/cogs/mod/names.py:282
 msgid "Member #{} | User ID: {}"
 msgstr "Medlem #{} | Bruker ID: {}"
 
-#: redbot/cogs/mod/names.py:287
+#: redbot/cogs/mod/names.py:296
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr "Vis tidligere navn og kallenavn på en bruker."
 
-#: redbot/cogs/mod/names.py:291
+#: redbot/cogs/mod/names.py:300
 msgid "**Past 20 names**:"
 msgstr "**Siste 20 navn**:"
 
-#: redbot/cogs/mod/names.py:297
+#: redbot/cogs/mod/names.py:306
 msgid "**Past 20 nicknames**:"
 msgstr "**Siste 20 kallenavn**:"
 
-#: redbot/cogs/mod/names.py:304
+#: redbot/cogs/mod/names.py:313
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr "Den brukeren har ikke registrert noe navn eller endring av kallenavn."
 

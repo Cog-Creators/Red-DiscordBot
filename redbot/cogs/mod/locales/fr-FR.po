@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-12 12:20+0000\n"
+"POT-Creation-Date: 2020-11-19 12:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -372,86 +372,90 @@ msgstr "Écoute : {title}"
 msgid "Watching: {name}"
 msgstr "Regarde : {name}"
 
-#: redbot/cogs/mod/names.py:155
+#: redbot/cogs/mod/names.py:141
+msgid "Competing in: {competing}"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:164
 #, docstring
 msgid "Show information about a user.\\n\\n        This includes fields for status, discord join date, server\\n        join date, voice state and previous names/nicknames.\\n\\n        If the user has no roles, previous names or previous nicknames,\\n        these fields will be omitted.\\n        "
 msgstr "Affiche les informations sur un utilisateur.\\n\\n        Ceci inclut les champs pour le statut, la date d'inscription sur Discord,\\n        la date à laquelle cet utilisateur à rejoint le serveur, l'état vocal \\n        et les noms/pseudos précédents.\\n\\n        Si l'utilisateur n'a pas de rôles, noms ou pseudos précédents,\\n        ces champs seront omis.\n"
 "        "
 
-#: redbot/cogs/mod/names.py:183
+#: redbot/cogs/mod/names.py:192
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: redbot/cogs/mod/names.py:191
+#: redbot/cogs/mod/names.py:200
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n(il y a {} jours)"
 
-#: redbot/cogs/mod/names.py:192
+#: redbot/cogs/mod/names.py:201
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n(il y a {} jours)"
 
-#: redbot/cogs/mod/names.py:204
+#: redbot/cogs/mod/names.py:213
 msgid "Chilling in {} status"
 msgstr "Statut : {}"
 
-#: redbot/cogs/mod/names.py:218
+#: redbot/cogs/mod/names.py:227
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "et {numeric_number} autres rôles non affichés en raison des limites de l'embed."
 
-#: redbot/cogs/mod/names.py:245
+#: redbot/cogs/mod/names.py:254
 msgid "Joined Discord on"
 msgstr "A rejoint Discord le"
 
-#: redbot/cogs/mod/names.py:246
+#: redbot/cogs/mod/names.py:255
 msgid "Joined this server on"
 msgstr "A rejoint ce serveur le"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Roles"
 msgstr "Rôles"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Role"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Names"
 msgstr "Noms précédents"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Name"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nicknames"
 msgstr "Pseudos précédents"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nickname"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:269
+#: redbot/cogs/mod/names.py:278
 msgid "Current voice channel"
 msgstr "Salon vocal actuel"
 
-#: redbot/cogs/mod/names.py:273
+#: redbot/cogs/mod/names.py:282
 msgid "Member #{} | User ID: {}"
 msgstr "Membre #{} | ID utilisateur: {}"
 
-#: redbot/cogs/mod/names.py:287
+#: redbot/cogs/mod/names.py:296
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr "Afficher les noms et pseudos précédents d'un utilisateur."
 
-#: redbot/cogs/mod/names.py:291
+#: redbot/cogs/mod/names.py:300
 msgid "**Past 20 names**:"
 msgstr "**20 derniers noms **:"
 
-#: redbot/cogs/mod/names.py:297
+#: redbot/cogs/mod/names.py:306
 msgid "**Past 20 nicknames**:"
 msgstr "**20 derniers pseudos ** :"
 
-#: redbot/cogs/mod/names.py:304
+#: redbot/cogs/mod/names.py:313
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr "Cet utilisateur n'a aucun nom ou pseudo enregistré."
 

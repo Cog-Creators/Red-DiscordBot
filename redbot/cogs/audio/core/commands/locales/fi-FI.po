@@ -18,34 +18,34 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:36
 #, docstring
 msgid "Music configuration options."
-msgstr ""
+msgstr "Musiikin konfirugointi asetukset."
 
 #: redbot/cogs/audio/core/commands/audioset.py:41
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Hallitse avainsana valkoista- ja mustaalistaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:46
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "Hallitse globaalin avainsana valkoista/mustaalistaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:50
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "Hallitse globaalin avainsanan valkoistalistaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:56
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Lisää avainsanan valkoiselle listalle.\\n\\n        Jos jotain lisätään valkoiselle listalle, se mustalla listalla kaikki muu.\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
 #: redbot/cogs/audio/core/commands/audioset.py:260
 #: redbot/cogs/audio/core/commands/audioset.py:325
 msgid "Keyword already in the whitelist."
-msgstr ""
+msgstr "Avainsanat ovat jo valkoisella listalla."
 
 #: redbot/cogs/audio/core/commands/audioset.py:74
 #: redbot/cogs/audio/core/commands/audioset.py:116
@@ -54,67 +54,67 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:306
 #: redbot/cogs/audio/core/commands/audioset.py:329
 msgid "Whitelist Modified"
-msgstr ""
+msgstr "Valkoista Listaa Muokattu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:75
 #: redbot/cogs/audio/core/commands/audioset.py:265
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Lisätty `{whitelisted}` valkoiselle listalle."
 
 #: redbot/cogs/audio/core/commands/audioset.py:83
 #: redbot/cogs/audio/core/commands/audioset.py:273
 #, docstring
 msgid "List all keywords added to the whitelist."
-msgstr ""
+msgstr "Listaa kaikki valkoiselle listalle lisätyt avainsanat."
 
 #: redbot/cogs/audio/core/commands/audioset.py:86
 #: redbot/cogs/audio/core/commands/audioset.py:112
 #: redbot/cogs/audio/core/commands/audioset.py:276
 #: redbot/cogs/audio/core/commands/audioset.py:302
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "Ei mitään valkoisella listalla."
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 msgid "Global Whitelist"
-msgstr ""
+msgstr "Globaali valkoinen lista"
 
 #: redbot/cogs/audio/core/commands/audioset.py:109
 #: redbot/cogs/audio/core/commands/audioset.py:299
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "Tyhjennä kaikki avainsanat valkoiselta listalta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:117
 #: redbot/cogs/audio/core/commands/audioset.py:307
 msgid "All entries have been removed from the whitelist."
-msgstr ""
+msgstr "Kaikki merkinnät on poistettu valkoiselta listalta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:124
 #: redbot/cogs/audio/core/commands/audioset.py:314
 #, docstring
 msgid "Removes a keyword from the whitelist."
-msgstr ""
+msgstr "Tyhjennä kaikki avainsanat valkoiselta listalta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:140
 #: redbot/cogs/audio/core/commands/audioset.py:330
 msgid "Removed `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "Lisätty `{whitelisted}` valkoiselle listalle."
 
 #: redbot/cogs/audio/core/commands/audioset.py:147
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "Hallitse globaalin avainsanan valkoistalistaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:153
 #: redbot/cogs/audio/core/commands/audioset.py:342
 #, docstring
 msgid "Adds a keyword to the blacklist."
-msgstr ""
+msgstr "Lisätty estettyjen luetteloon."
 
 #: redbot/cogs/audio/core/commands/audioset.py:164
 #: redbot/cogs/audio/core/commands/audioset.py:353
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "Avainsanat ovat jo valkoisella listalla."
 
 #: redbot/cogs/audio/core/commands/audioset.py:168
 #: redbot/cogs/audio/core/commands/audioset.py:210
@@ -123,93 +123,93 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:399
 #: redbot/cogs/audio/core/commands/audioset.py:422
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "Valkoista Listaa Muokattu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:169
 #: redbot/cogs/audio/core/commands/audioset.py:358
 msgid "Added `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "Lisätty `{blacklisted}` mustalle listalle."
 
 #: redbot/cogs/audio/core/commands/audioset.py:177
 #: redbot/cogs/audio/core/commands/audioset.py:366
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "Listaa kaikki valkoiselle listalle lisätyt avainsanat."
 
 #: redbot/cogs/audio/core/commands/audioset.py:180
 #: redbot/cogs/audio/core/commands/audioset.py:206
 #: redbot/cogs/audio/core/commands/audioset.py:369
 #: redbot/cogs/audio/core/commands/audioset.py:395
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "Ei mitään valkoisella listalla."
 
 #: redbot/cogs/audio/core/commands/audioset.py:196
 msgid "Global Blacklist"
-msgstr ""
+msgstr "Globaali Estolista"
 
 #: redbot/cogs/audio/core/commands/audioset.py:203
 #: redbot/cogs/audio/core/commands/audioset.py:392
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "Listaa kaikki valkoiselle listalle lisätyt avainsanat."
 
 #: redbot/cogs/audio/core/commands/audioset.py:211
 #: redbot/cogs/audio/core/commands/audioset.py:400
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "Kaikki merkinnät on poistettu valkoiselta listalta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:218
 #: redbot/cogs/audio/core/commands/audioset.py:407
 #, docstring
 msgid "Removes a keyword from the blacklist."
-msgstr ""
+msgstr "Tyhjennä kaikki avainsanat valkoiselta listalta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:229
 #: redbot/cogs/audio/core/commands/audioset.py:418
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "Avainsanat ovat jo valkoisella listalla."
 
 #: redbot/cogs/audio/core/commands/audioset.py:234
 #: redbot/cogs/audio/core/commands/audioset.py:423
 msgid "Removed `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "Lisätty `{blacklisted}` mustalle listalle."
 
 #: redbot/cogs/audio/core/commands/audioset.py:242
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "Hallitsee palvelimen valkoista listaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:246
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Lisää avainsanan valkoiselle listalle.\\n\\n        Jos jotain lisätään valkoiselle listalle, se mustalla listalla kaikki muu.\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
-msgstr ""
+msgstr "Valkoinen lista"
 
 #: redbot/cogs/audio/core/commands/audioset.py:338
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "Hallitsee palvelimen valkoista listaa."
 
 #: redbot/cogs/audio/core/commands/audioset.py:385
 msgid "Blacklist"
-msgstr ""
+msgstr "Musta lista"
 
 #: redbot/cogs/audio/core/commands/audioset.py:432
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Muuta automaattisen toiston asetusta."
 
 #: redbot/cogs/audio/core/commands/audioset.py:436
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "Vaihda automaattisen toiston tilaa, kun jonossa ei ole kappaleita."
 
 #: redbot/cogs/audio/core/commands/audioset.py:440
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "Toista automaattisesti, kun jono loppuu: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:585
@@ -252,7 +252,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Enabled"
-msgstr ""
+msgstr "Käytössä"
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:585
@@ -295,15 +295,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Disabled"
-msgstr ""
+msgstr "Ei käytössä"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\\nRepeat has been disabled."
-msgstr ""
+msgstr "Toistaminen on poistettu käytöstä."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\\nYhteyden katkaisu jonon lopussa on poistettu käytöstä."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -343,7 +343,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:174
 #: redbot/cogs/audio/core/commands/llset.py:199
 msgid "Setting Changed"
-msgstr ""
+msgstr "Asetukset muutettu"
 
 #: redbot/cogs/audio/core/commands/audioset.py:464
 #, docstring
@@ -367,7 +367,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1815
 #: redbot/cogs/audio/core/commands/playlists.py:1981
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "Soittolistat eivät ole saatavilla"
 
 #: redbot/cogs/audio/core/commands/audioset.py:498
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -386,7 +386,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1816
 #: redbot/cogs/audio/core/commands/playlists.py:1982
 msgid "The playlist section of Audio is currently unavailable"
-msgstr ""
+msgstr "Soittolistaosio Audio:ssa ei ole juuri nyt saatavilla"
 
 #: redbot/cogs/audio/core/commands/audioset.py:501
 #: redbot/cogs/audio/core/commands/playlists.py:106
@@ -405,32 +405,32 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1819
 #: redbot/cogs/audio/core/commands/playlists.py:1985
 msgid "Check your logs."
-msgstr ""
+msgstr "Tarkista logisi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:516
 #: redbot/cogs/audio/core/commands/audioset.py:532
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Soittolistoja ei löytynyt"
 
 #: redbot/cogs/audio/core/commands/audioset.py:517
 #: redbot/cogs/audio/core/commands/playlists.py:124
 #: redbot/cogs/audio/core/commands/playlists.py:1498
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "Ei voitu täsmätä '{arg}soittolistaan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:524
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Kappaleita ei löytynyt"
 
 #: redbot/cogs/audio/core/commands/audioset.py:525
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "Soittolistalla {name} ei ole kappaleita."
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:1587
 #: redbot/cogs/audio/core/commands/playlists.py:1698
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "Soittolistaa {id} ei löydy kanavalla {scope}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:540
 #: redbot/cogs/audio/core/commands/playlists.py:1016

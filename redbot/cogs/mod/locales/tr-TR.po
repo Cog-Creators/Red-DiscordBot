@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-12 12:20+0000\n"
+"POT-Creation-Date: 2020-11-19 12:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -372,86 +372,90 @@ msgstr "Dinliyor: {title}"
 msgid "Watching: {name}"
 msgstr "İzliyor: {name}"
 
-#: redbot/cogs/mod/names.py:155
+#: redbot/cogs/mod/names.py:141
+msgid "Competing in: {competing}"
+msgstr ""
+
+#: redbot/cogs/mod/names.py:164
 #, docstring
 msgid "Show information about a user.\\n\\n        This includes fields for status, discord join date, server\\n        join date, voice state and previous names/nicknames.\\n\\n        If the user has no roles, previous names or previous nicknames,\\n        these fields will be omitted.\\n        "
 msgstr "Bir kullanıcı hakkında bilgi göster.\\n\\n        Buna kullanıcının durumu, discorda katılma tarihi, sunucuya\\n        katılma tarihi, ses durumu\n"
 " önceki adı/adları dahildir.\\n\\n        Eğer üyenin her hangi bir rolü, önceden kullandığı ad ya da takma ad yoksa,\\n        bu alanlar boş bırakılacaktır.\\n        "
 
-#: redbot/cogs/mod/names.py:183
+#: redbot/cogs/mod/names.py:192
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: redbot/cogs/mod/names.py:191
+#: redbot/cogs/mod/names.py:200
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n({} gün önce)"
 
-#: redbot/cogs/mod/names.py:192
+#: redbot/cogs/mod/names.py:201
 msgid "{}\\n({} days ago)"
 msgstr "{}\\n({} gün önce)"
 
-#: redbot/cogs/mod/names.py:204
+#: redbot/cogs/mod/names.py:213
 msgid "Chilling in {} status"
 msgstr "{} durumda rahatına bakıyor"
 
-#: redbot/cogs/mod/names.py:218
+#: redbot/cogs/mod/names.py:227
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "Ve mesaj sınırlamaları yüzünden gösterilemeyen {numeric_number} rol."
 
-#: redbot/cogs/mod/names.py:245
+#: redbot/cogs/mod/names.py:254
 msgid "Joined Discord on"
 msgstr "Discord'a Katıldı"
 
-#: redbot/cogs/mod/names.py:246
+#: redbot/cogs/mod/names.py:255
 msgid "Joined this server on"
 msgstr "Bu sunucuya katıldı"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:249
+#: redbot/cogs/mod/names.py:258
 msgid "Role"
 msgstr "Rol"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Names"
 msgstr "Geçmiş İsimleri"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:264
 msgid "Previous Name"
 msgstr "Önceki isim"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nicknames"
 msgstr "Geçmiş Kullanıcı adları"
 
-#: redbot/cogs/mod/names.py:263
+#: redbot/cogs/mod/names.py:272
 msgid "Previous Nickname"
 msgstr "Önceki Takma İsim"
 
-#: redbot/cogs/mod/names.py:269
+#: redbot/cogs/mod/names.py:278
 msgid "Current voice channel"
 msgstr "Şu anki ses kanalı"
 
-#: redbot/cogs/mod/names.py:273
+#: redbot/cogs/mod/names.py:282
 msgid "Member #{} | User ID: {}"
 msgstr "Üye #{} | Kullanıcı IDsi: {}"
 
-#: redbot/cogs/mod/names.py:287
+#: redbot/cogs/mod/names.py:296
 #, docstring
 msgid "Show previous names and nicknames of a user."
 msgstr "Bir kullanıcının önceki adlarını ve takma adlarını göster."
 
-#: redbot/cogs/mod/names.py:291
+#: redbot/cogs/mod/names.py:300
 msgid "**Past 20 names**:"
 msgstr "**Son 20 isim**:"
 
-#: redbot/cogs/mod/names.py:297
+#: redbot/cogs/mod/names.py:306
 msgid "**Past 20 nicknames**:"
 msgstr "**Son 20 takma isim**:"
 
-#: redbot/cogs/mod/names.py:304
+#: redbot/cogs/mod/names.py:313
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr "O kullanıcının her hangi bir kaydedilmiş adı yada ad değişikliği bulunmamakta."
 
