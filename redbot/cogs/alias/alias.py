@@ -174,7 +174,6 @@ class Alias(commands.Cog):
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)
-        print("Original message: " + new_message.content + "\n")
         try:
             args = alias.get_extra_args_from_alias(message, prefix)
         except commands.BadArgument:
