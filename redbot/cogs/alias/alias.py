@@ -188,14 +188,12 @@ class Alias(commands.Cog):
         except commands.BadArgument:
             return
 
-        # Valid argument, now get it as a single string
-        arg_string = alias.get_args_as_single_string(message, prefix)
-
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
 
         # noinspection PyDunderSlots
-        new_message.content = "{}{} {}".format(prefix, command, arg_string)
+        new_message.content = "{}{} {}".format(prefix, command, "".join(args[trackform.max + 1 :]))
+
         return new_message
 
     async def paginate_alias_list(

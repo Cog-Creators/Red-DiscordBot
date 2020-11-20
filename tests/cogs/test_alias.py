@@ -40,9 +40,10 @@ async def test_translate_alias_message(alias, ctx, newline_message, prefix):
 
     translated_message = alias.translate_alias_message(newline_message, prefix, alias_obj)
 
-    new_arg_string = alias_obj.get_args_as_single_string(translated_message, prefix)
-    original_arg_string = alias_obj.get_args_as_single_string(newline_message, prefix)
-    assert new_arg_string == original_arg_string
+    original_content = newline_message.content.split(" ", 1)[1]
+    new_content = translated_message.content.split(" ", 1)[1]
+
+    assert new_content == original_content
 
 
 @pytest.mark.asyncio
