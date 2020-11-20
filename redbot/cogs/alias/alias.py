@@ -173,7 +173,7 @@ class Alias(commands.Cog):
         raise ValueError("No prefix found.")
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
-        new_message = translate_alias_message(message, prefix, alias)
+        new_message = self.translate_alias_message(message, prefix, alias)
         await self.bot.process_commands(new_message)
 
     def translate_alias_message(self, message: discord.Message, prefix: str, alias: AliasEntry):
