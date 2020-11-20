@@ -34,6 +34,18 @@ async def test_add_guild_alias(alias, ctx):
 
 
 @pytest.mark.asyncio
+async def test_translate_alias_message(alias, ctx, newline_message, prefix):
+    await create_test_guild_alias(alias, ctx)
+    alias_obj = await alias._aliases.get_alias(ctx.guild, "test")
+
+    translated_message = alias.translate_alias_message(newline_message, prefix, alias_obj)
+
+    new_arg_string = alias_obj.get_args_as_single_string(translated_message, prefix)
+    original_arg_string = alias_obj.get_args_as_single_string(newline_message, prefix)
+    assert new_arg_string == original_arg_string
+
+
+@pytest.mark.asyncio
 async def test_delete_guild_alias(alias, ctx):
     await create_test_guild_alias(alias, ctx)
     alias_obj = await alias._aliases.get_alias(ctx.guild, "test")

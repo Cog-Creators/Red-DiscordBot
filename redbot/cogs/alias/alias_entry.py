@@ -79,7 +79,7 @@ class AliasEntry:
         """
         known_content_length = len(prefix) + len(self.name)
         arg_string = message.content[known_content_length:]
-        arg_string.strip()
+        arg_string = arg_string.strip()
         return arg_string
 
     def to_json(self) -> dict:
