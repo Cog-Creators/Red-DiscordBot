@@ -63,8 +63,6 @@ class AliasEntry:
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word)
-            # view.skip_ws()
-        print("extra: " + str(extra))
         return extra
 
     def to_json(self) -> dict:
