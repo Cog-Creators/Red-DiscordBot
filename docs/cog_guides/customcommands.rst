@@ -105,7 +105,7 @@ Create custom commands.
 
 If a type is not specified, a simple CC will be created.
 CCs can be enhanced with arguments, see the guide
-here: https://docs.discord.red/en/stable/cog_customcom.html.
+:ref:`here <cog_customcom>`.
 
 .. _customcommands-command-customcom-create-random:
 

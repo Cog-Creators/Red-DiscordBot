@@ -17,228 +17,228 @@ msgstr ""
 
 #: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:344
 msgid "There is no ongoing trivia session in this channel."
-msgstr ""
+msgstr "Bu kanalda devam etmekte olan bilgi yarışması yok."
 
 #: redbot/cogs/trivia/converters.py:15
 msgid "`{arg}` is not a number."
-msgstr ""
+msgstr "`{arg}` bir sayı değil."
 
 #: redbot/cogs/trivia/converters.py:17
 msgid "`{arg}` is not a finite number."
-msgstr ""
+msgstr "`{arg}` sonu olan bir sayı değil."
 
 #: redbot/cogs/trivia/session.py:20
 msgid "I know this one! {answer}!"
-msgstr ""
+msgstr "Bunun cevabını biliyorum! {answer}!"
 
 #: redbot/cogs/trivia/session.py:21
 msgid "Easy: {answer}."
-msgstr ""
+msgstr "Basit: {answer}."
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr ""
+msgstr "Ciddenmi? Cevap tabikide {answer}."
 
 #: redbot/cogs/trivia/session.py:25
 msgid "To the next one I guess..."
-msgstr ""
+msgstr "Sanırım bir sonrakine..."
 
 #: redbot/cogs/trivia/session.py:26
 msgid "Moving on..."
-msgstr ""
+msgstr "Devam ediyoruz..."
 
 #: redbot/cogs/trivia/session.py:27
 msgid "I'm sure you'll know the answer of the next one."
-msgstr ""
+msgstr "Bir sonrakinin cevabını bileceğinden eminim."
 
 #: redbot/cogs/trivia/session.py:28
 msgid "😔 Next one."
-msgstr ""
+msgstr "😔 Sıradaki."
 
 #: redbot/cogs/trivia/session.py:114
 msgid "An unexpected error occurred in the trivia session.\\nCheck your console or logs for details."
-msgstr ""
+msgstr "Bilgi yarışması sırasında beklenmedik bir hata oluştu.\\nDetaylar için kayıtları veya konsolu kontrol edin."
 
 #: redbot/cogs/trivia/session.py:135
 msgid "Question number {num}!"
-msgstr ""
+msgstr "Soru numarası {num}!"
 
 #: redbot/cogs/trivia/session.py:144
 msgid "There are no more questions!"
-msgstr ""
+msgstr "Başka soru kalmadı!"
 
 #: redbot/cogs/trivia/session.py:152
 msgid "{trivia_list} (by {author})"
-msgstr ""
+msgstr "{trivia_list} (oluşturan: {author})"
 
 #: redbot/cogs/trivia/session.py:157
 msgid "Starting Trivia: {list_names}"
-msgstr ""
+msgstr "Bilgi Yarışması Başlatılıyor: {list_names}"
 
 #: redbot/cogs/trivia/session.py:203
 msgid "Guys...? Well, I guess I'll stop then."
-msgstr ""
+msgstr "Beyler...? Peki, öyleyse sanırım duracağım."
 
 #: redbot/cogs/trivia/session.py:211
 msgid " **+1** for me!"
-msgstr ""
+msgstr " **+1** bana!"
 
 #: redbot/cogs/trivia/session.py:216
 msgid "You got it {user}! **+1** to you!"
-msgstr ""
+msgstr "Doğru bildin {user}! **+1** sana!"
 
 #: redbot/cogs/trivia/session.py:311
 msgid "Congratulations, {user}, you have received {num} {currency} for coming first."
-msgstr ""
+msgstr "Tebrikler, {user}, ilk olduğun için {num} {currency} kazandın."
 
 #: redbot/cogs/trivia/trivia.py:41
 #, docstring
 msgid "Play trivia with friends!"
-msgstr ""
+msgstr "Arkadaşlarınla bilgi yarışması oyna!"
 
 #: redbot/cogs/trivia/trivia.py:79
 #, docstring
 msgid "Manage Trivia settings."
-msgstr ""
+msgstr "Bilgi Yarışması ayarlarını yönet."
 
 #: redbot/cogs/trivia/trivia.py:83
 #, docstring
 msgid "Show the current trivia settings."
-msgstr ""
+msgstr "Mevcut bilgi yarışması ayarlarını göster."
 
 #: redbot/cogs/trivia/trivia.py:87
 msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
-msgstr ""
+msgstr "Mevcut ayarlar\\nBotun kazandığı puanlar: {bot_plays}\\nCevap süre sınırı: {delay} saniye\\nCevap vermeme zaman aşımı: {timeout} saniye\\nKazanmak için gereken puan: {max_score}\\nZaman aşımında cevabı söyleme: {reveal_answer}\\nÖdül katlama: {payout_multiplier}\\nListelerin ayarları hükümsüzleştirme izni: {allow_override}"
 
 #: redbot/cogs/trivia/trivia.py:103
 #, docstring
 msgid "Set the total points required to win."
-msgstr ""
+msgstr "Kazanmak için gereken toplam puanı ayarla."
 
 #: redbot/cogs/trivia/trivia.py:105
 msgid "Score must be greater than 0."
-msgstr ""
+msgstr "Puan sıfırdan yüksek olmalıdır."
 
 #: redbot/cogs/trivia/trivia.py:109
 msgid "Done. Points required to win set to {num}."
-msgstr ""
+msgstr "Tamamdır. Artık kazanmak için gereken puan sayısı {num}."
 
 #: redbot/cogs/trivia/trivia.py:113
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
-msgstr ""
+msgstr "Bir soruyu cevaplamak için en fazla kaç saniye verileceğini ayarla."
 
 #: redbot/cogs/trivia/trivia.py:115
 msgid "Must be at least 4 seconds."
-msgstr ""
+msgstr "En az 4 saniye olmalıdır."
 
 #: redbot/cogs/trivia/trivia.py:119
 msgid "Done. Maximum seconds to answer set to {num}."
-msgstr ""
+msgstr "Tamamdır. Cevap vermek için verilen en fazla süre artık {num}."
 
 #: redbot/cogs/trivia/trivia.py:123
 #, docstring
 msgid "Set how long until trivia stops due to no response."
-msgstr ""
+msgstr "Bilgi yarışmasının cevap almamaktan dolayı durmadan önce ne kadar bekleyeceğini ayarla."
 
 #: redbot/cogs/trivia/trivia.py:126
 msgid "Must be larger than the answer time limit."
-msgstr ""
+msgstr "Cevap verme süre sınırından büyük olmalıdır."
 
 #: redbot/cogs/trivia/trivia.py:130
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
-msgstr ""
+msgstr "Tamamdır. Bilgi yarışmaları artık {num} saniye cevap almazlarsa zaman aşımına uğrayacak."
 
 #: redbot/cogs/trivia/trivia.py:137
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
-msgstr ""
+msgstr "Bilgi yarışması listelerinin ayarlara üstün gelmesine izin ver/verme."
 
 #: redbot/cogs/trivia/trivia.py:142
 msgid "Done. Trivia lists can now override the trivia settings for this server."
-msgstr ""
+msgstr "Tamamdır. Bilgi yarışması listeleri artık bu sunucunun bilgi yarışması ayarlarına üstün gelecek."
 
 #: redbot/cogs/trivia/trivia.py:146
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
-msgstr ""
+msgstr "Tamamdır. Bilgi yarışması listeleri artık bu sunucunun bilgi yarışması ayarlarına üstün gelmeyecek."
 
 #: redbot/cogs/trivia/trivia.py:154
 #, docstring
 msgid "Set whether or not the bot gains points.\\n\\n        If enabled, the bot will gain a point if no one guesses correctly.\\n        "
-msgstr ""
+msgstr "Bot puan kazanıp kazanmayacağını ayarla..\\n\\n        Bu ayar etkinleştirilirse kimse cevabı doğru bilemediğinde bot bir puan alır.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:161
 msgid "Done. I'll now gain a point if users don't answer in time."
-msgstr ""
+msgstr "Tamamdır. Artık kullanıcılar zamanında doğru cevap veremezlerse bir puan alacağım."
 
 #: redbot/cogs/trivia/trivia.py:163
 msgid "Alright, I won't embarrass you at trivia anymore."
-msgstr ""
+msgstr "Tamamdır, artık bilgi yarışmasında seni utandırmayacağım."
 
 #: redbot/cogs/trivia/trivia.py:167
 #, docstring
 msgid "Set whether or not the answer is revealed.\\n\\n        If enabled, the bot will reveal the answer if no one guesses correctly\\n        in time.\\n        "
-msgstr ""
+msgstr "Cevabın söylenip söylenmeyeceğini ayarla.\\n\\n       Bu ayar açılırsa kimse zamanında cevap vermezse bot doğru cevabı\\n        söyleyecektir.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:175
 msgid "Done. I'll reveal the answer if no one knows it."
-msgstr ""
+msgstr "Tamamdır. Artık cevabı kimse bilemezse ben söyleyeceğim."
 
 #: redbot/cogs/trivia/trivia.py:177
 msgid "Alright, I won't reveal the answer to the questions anymore."
-msgstr ""
+msgstr "Tamamdır, artık soruların cevaplarını söylemeyeceğim."
 
 #: redbot/cogs/trivia/trivia.py:183
 #, docstring
 msgid "Set the payout multiplier.\\n\\n        This can be any positive decimal number. If a user wins trivia when at\\n        least 3 members are playing, they will receive credits. Set to 0 to\\n        disable.\\n\\n        The number of credits is determined by multiplying their total score by\\n        this multiplier.\\n        "
-msgstr ""
+msgstr "Ödül katlanma oranını ayarla.\\n\\n        Bu herhangi bir pozitif ondalık sayı olabilir. Bir kullanıcı en az 3 üye de oynarken\\n        bilgi yarışmasını kazanırsa kredi alacak. Devre dışı bırakmak için ayarı\\n        0 yapın.\\n\\n        Kaç kredi verileceği üyenin toplam puanını\\n        katlanma oranı ile çarparak belirlenir.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:194
 msgid "Multiplier must be at least 0."
-msgstr ""
+msgstr "Katlanma oranı en az 0 olmalı."
 
 #: redbot/cogs/trivia/trivia.py:198
 msgid "Done. Payout multiplier set to {num}."
-msgstr ""
+msgstr "Tamamdır. Ödül katlanma oranı artık {num}."
 
 #: redbot/cogs/trivia/trivia.py:200
 msgid "Done. I will no longer reward the winner with a payout."
-msgstr ""
+msgstr "Tamamdır. Artık kazanana kredi ödülü vermiyeceğim."
 
 #: redbot/cogs/trivia/trivia.py:205
 #, docstring
 msgid "Manage Custom Trivia lists."
-msgstr ""
+msgstr "Özel Bilgi Yarışması listelerini yönet."
 
 #: redbot/cogs/trivia/trivia.py:210
 #, docstring
 msgid "List uploaded custom trivia."
-msgstr ""
+msgstr "Yüklenmiş özel bilgi yarışmalarını listele."
 
 #: redbot/cogs/trivia/trivia.py:212
 msgid "No custom Trivia lists uploaded."
-msgstr ""
+msgstr "Yüklenmiş özel bilgi yarışması listesi bulunmamakta."
 
 #: redbot/cogs/trivia/trivia.py:228 redbot/cogs/trivia/trivia.py:235
 msgid "Uploaded trivia lists"
-msgstr ""
+msgstr "Yüklenmiş bilgi yarışması listeleri"
 
 #: redbot/cogs/trivia/trivia.py:245
 #, docstring
 msgid "Upload a trivia file."
-msgstr ""
+msgstr "Bir bilgi yarışması dosyası yükle."
 
 #: redbot/cogs/trivia/trivia.py:247
 msgid "Supply a file with next message or type anything to cancel."
-msgstr ""
+msgstr "Bir sonraki mesajı içeren bir dosya sağlayın veya iptal etmek için herhangi bir şey yazın."
 
 #: redbot/cogs/trivia/trivia.py:253
 msgid "You took too long to upload a list."
-msgstr ""
+msgstr "Bir liste yüklemeniz çok uzun sürdü."
 
 #: redbot/cogs/trivia/trivia.py:256
 msgid "You have cancelled the upload process."
-msgstr ""
+msgstr "Yükleme işlemini iptal ettiniz."
 
 #: redbot/cogs/trivia/trivia.py:264
 msgid "Invalid syntax: "
@@ -246,124 +246,124 @@ msgstr "Geçersiz komut: "
 
 #: redbot/cogs/trivia/trivia.py:267
 msgid "There was an error parsing the trivia list. See logs for more info."
-msgstr ""
+msgstr "Liste ayrıştırılırken hata oluştu. Daha çok bilgi için kayıtları inceleyin."
 
 #: redbot/cogs/trivia/trivia.py:274
 #, docstring
 msgid "Delete a trivia file."
-msgstr ""
+msgstr "Bir bilgi yarışması dosyasını sil."
 
 #: redbot/cogs/trivia/trivia.py:278
 msgid "Trivia {filename} was deleted."
-msgstr ""
+msgstr "{filename} adlı bilgi yarışması silindi."
 
 #: redbot/cogs/trivia/trivia.py:280
 msgid "Trivia file was not found."
-msgstr ""
+msgstr "Bilgi yarışması dosyası bulunamadı."
 
 #: redbot/cogs/trivia/trivia.py:285
 #, docstring
 msgid "Start trivia session on the specified category.\\n\\n        You may list multiple categories, in which case the trivia will involve\\n        questions from all of them.\\n        "
-msgstr ""
+msgstr "Belirtilen kategoride bilgi yarışması başlat.\\n\\n        Birden çok kategori seçerseniz bilgi yarışmasında\\n        hepsinden sorular olacaktır.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:296
 msgid "There is already an ongoing trivia session in this channel."
-msgstr ""
+msgstr "Bu kanalda zaten devam etmekte olan bir bilgi yarışması mevcut."
 
 #: redbot/cogs/trivia/trivia.py:307
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
-msgstr ""
+msgstr "`{name}` geçersiz kategori. Bilgi yarışması kategorilerini görmek için `{prefix}trivia list` komutunu çalıştırın."
 
 #: redbot/cogs/trivia/trivia.py:314
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
-msgstr ""
+msgstr "`{name}` kategorisi için bilgi yarışması listesini ayrıştırırken hata oluştu. Düzgün biçimlendirilmemiş olabilir."
 
 #: redbot/cogs/trivia/trivia.py:326
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
-msgstr ""
+msgstr "Bilgi yarışması listesi başarıyla ayrıştırıldı, fakat boş gibi görünüyor!"
 
 #: redbot/cogs/trivia/trivia.py:341
 #, docstring
 msgid "Stop an ongoing trivia session."
-msgstr ""
+msgstr "Devam etmekte olan bir bilgi yarışmasını durdur."
 
 #: redbot/cogs/trivia/trivia.py:348
 msgid "Trivia stopped."
-msgstr ""
+msgstr "Bilgi yarışması durduruldu."
 
 #: redbot/cogs/trivia/trivia.py:352
 #, docstring
 msgid "List available trivia categories."
-msgstr ""
+msgstr "Mevcut bilgi yarışması kategorilerini listele."
 
 #: redbot/cogs/trivia/trivia.py:357 redbot/cogs/trivia/trivia.py:363
 msgid "Available trivia lists"
-msgstr ""
+msgstr "Mevcut bilgi yarışması kategorileri"
 
 #: redbot/cogs/trivia/trivia.py:373
 #, docstring
 msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
-msgstr ""
+msgstr "Bilgi yarışması için sıralama.\\n\\n        Varsayılan olarak bu sunucuda en çok kazanmış 10 kişiyi gösterir. Daha özelleştirilmiş\\n        bir sıralama için alt komutları kullanın.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:388
 #, docstring
 msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
-msgstr ""
+msgstr "Bu sunucu için sıralama.\\n\\n        `<sort_by>` şu alanlardan biri olabilir:\\n         - `wins`  : toplam kazanma sayısı\\n         - `avg`   : ortalama puan\\n         - `total` : toplam doğru cevap\\n         - `games` : kaç yarışmaya katıldığı\\n\\n        `<top>` sıralamada kaç kişi gösterileceğidir.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:401 redbot/cogs/trivia/trivia.py:430
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
-msgstr ""
+msgstr "Bilinmedik alan `{field_name}`, ayrım yapılabilecek geçerli alanları görmek için `{prefix}help trivia leaderboard server` kullanın."
 
 #: redbot/cogs/trivia/trivia.py:417
 #, docstring
 msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
-msgstr ""
+msgstr "Küresel bilgi yarışması sıralaması.\\n\\n        `<sort_by>` şu alanlardan biri olabilir:\\n         - `wins`  : toplam kazanma sayısı\\n         - `avg`   : ortalama puan\\n         - `total` : verilmiş toplam doğru cevap\\n         - `games` : toplam katılma sayısı\\n\\n        `<top>` sıralamada kaç kişi gösterileceğidir.\\n        "
 
 #: redbot/cogs/trivia/trivia.py:485
 msgid "There are no scores on record!"
-msgstr ""
+msgstr "Kayıtta hiç puan yok!"
 
 #: redbot/cogs/trivia/trivia.py:515
 msgid "Rank"
-msgstr ""
+msgstr "Rütbe"
 
 #: redbot/cogs/trivia/trivia.py:516
 msgid "Member"
-msgstr ""
+msgstr "Üye"
 
 #: redbot/cogs/trivia/trivia.py:517
 msgid "Wins"
-msgstr ""
+msgstr "Kazanmalar"
 
 #: redbot/cogs/trivia/trivia.py:518
 msgid "Games Played"
-msgstr ""
+msgstr "Oynanan Oyunlar"
 
 #: redbot/cogs/trivia/trivia.py:519
 msgid "Total Score"
-msgstr ""
+msgstr "Toplam Puan"
 
 #: redbot/cogs/trivia/trivia.py:520
 msgid "Average Score"
-msgstr ""
+msgstr "Ortalama Puan"
 
 #: redbot/cogs/trivia/trivia.py:635
 msgid "{filename} is a reserved trivia name and cannot be replaced.\\nChoose another name."
-msgstr ""
+msgstr "{filename} ayrılmış bir bilgi yarışması adıdır ve değiştirilemez.\\nBaşka bir ad seçin."
 
 #: redbot/cogs/trivia/trivia.py:644
 msgid "{filename} already exists. Do you wish to overwrite?"
-msgstr ""
+msgstr "{filename} zaten mevcut. Üzerine yazmak ister misiniz?"
 
 #: redbot/cogs/trivia/trivia.py:666
 msgid "You took too long answering."
-msgstr ""
+msgstr "Cevap vermeniz çok uzun sürdü."
 
 #: redbot/cogs/trivia/trivia.py:670
 msgid "I am not replacing the existing file."
-msgstr ""
+msgstr "Var olan dosyayı değiştirmiyorum."
 
 #: redbot/cogs/trivia/trivia.py:679
 msgid "Saved Trivia list as {filename}."
-msgstr ""
+msgstr "Bilgi yarışması listesi {filename} olarak kaydedildi."
 

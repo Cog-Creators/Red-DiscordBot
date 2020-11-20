@@ -625,7 +625,7 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = attachment.filename.rsplit(".", 1)[0]
+        filename = attachment.filename.rsplit(".", 1)[0].casefold()
 
         # Check if trivia filename exists in core files or if it is a command
         if filename in self.trivia.all_commands or any(
