@@ -1374,7 +1374,7 @@ class RedBase(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> None:
+    def remove_command(self, name: str) -> dpy_commands:
         command = super().remove_command(name)
         if not command:
             return
@@ -1382,6 +1382,7 @@ class RedBase(
         if isinstance(command, commands.Group):
             for subcommand in command.walk_commands():
                 subcommand.requires.reset()
+        return command
 
     def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
