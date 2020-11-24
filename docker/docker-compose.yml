@@ -1,0 +1,12 @@
+version: "3"
+services:
+  red:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    # optional extra args
+    command: --mentionable
+    env_file: .env
+    volumes:
+      - ./data:/data
