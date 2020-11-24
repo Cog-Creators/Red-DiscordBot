@@ -1374,7 +1374,7 @@ class RedBase(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> dpy_commands:
+    def remove_command(self, name: str):
         command = super().remove_command(name)
         if not command:
             return
