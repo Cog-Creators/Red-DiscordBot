@@ -191,11 +191,11 @@ Perks of being a Cog Creator
 Other Details
 -------------
 
-Once a QA member has conducted a final review, you will have up to 14 days to make the necessary changes.
-The reviewer of your application has the final word.
-Hidden cogs will not be explicitly reviewed, however they are not allowed to contain malicious or ToS breaking code.
-QA reserves the right to revoke these roles and all privileges if you are found to be in gross negligence, malicious intent, or reckless abandonment of your repository.
-If a Cog Creator's repository is not maintained and kept up to date, that repo will be removed from the approved repo listings until such issues are addressed.
-Only 1 person is allowed to be the Cog Creator for a particular repo. Multiple people are allowed to maintain the repo, however the "main" owner (and the Cog Creator) is responsible for any code on the repo.
-The Cog Creator status for a repo can be transferred to another user if the Cog Creator requests it.
-An approved Cog Creator can ask QA to add additional repos they have created to the approved pool.
+- Once a QA member has conducted a final review, you will have up to 14 days to make the necessary changes.
+- The reviewer of your application has the final word.
+- Hidden cogs will not be explicitly reviewed, however they are not allowed to contain malicious or ToS breaking code.
+- QA reserves the right to revoke these roles and all privileges if you are found to be in gross negligence, malicious intent, or reckless abandonment of your repository.
+- If a Cog Creator's repository is not maintained and kept up to date, that repo will be removed from the approved repo listings until such issues are addressed.
+- Only 1 person is allowed to be the Cog Creator for a particular repo. Multiple people are allowed to maintain the repo, however the "main" owner (and the Cog Creator) is responsible for any code on the repo.
+- The Cog Creator status for a repo can be transferred to another user if the Cog Creator requests it.
+- An approved Cog Creator can ask QA to add additional repos they have created to the approved pool.
