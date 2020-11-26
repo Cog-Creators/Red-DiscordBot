@@ -579,6 +579,7 @@ class Cleanup(commands.Cog):
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
+        to_delete.append(ctx.message)
 
         if ctx.guild:
             channel_name = "channel " + channel.name
