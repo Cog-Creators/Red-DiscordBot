@@ -257,7 +257,7 @@ Core Bot
 - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
-    - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
+    - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
@@ -425,13 +425,13 @@ Core Bot
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
     - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
-    - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
+    - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
     - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
-    - These methods and variables should be added by all cogs according to their documentation; see `guidelines-for-cog-creators` for more information
+    - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
