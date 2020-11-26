@@ -951,15 +951,15 @@ msgstr "İzleme temizlendi."
 #: redbot/core/core_commands.py:1903
 #, docstring
 msgid "Sets [botname]'s competing status."
-msgstr ""
+msgstr "[botname] botunun kapışma durumunu ayarlar."
 
 #: redbot/core/core_commands.py:1913
 msgid "Status set to ``Competing in {competing}``."
-msgstr ""
+msgstr "Durum ``{competing} içinde kapışıyor`` olarak ayarlandı."
 
 #: redbot/core/core_commands.py:1916
 msgid "Competing cleared."
-msgstr ""
+msgstr "Kapışma temizlendi."
 
 #: redbot/core/core_commands.py:1922
 #, docstring

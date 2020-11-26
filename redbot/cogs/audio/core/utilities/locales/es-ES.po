@@ -22,7 +22,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:85
 #: redbot/cogs/audio/core/utilities/formatting.py:274
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "Página {page_num}/{total_pages}"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:96
 msgid "Connection to Lavalink has failed."
@@ -32,17 +32,17 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:596
 #: redbot/cogs/audio/core/utilities/playlists.py:505
 msgid "Please check your console or logs for details."
-msgstr ""
+msgstr "Por favor, comprueba tu consola o registros para más detalles."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:107
 #: redbot/cogs/audio/core/utilities/playlists.py:535
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "Conéctate a un canal de voz primero."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:110
 #: redbot/cogs/audio/core/utilities/playlists.py:528
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "Aún no se ha establecido la conexión con Lavalink."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
 #: redbot/cogs/audio/core/utilities/player.py:444
@@ -52,22 +52,22 @@ msgstr "Límite de cola alcanzado."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "No se puede reproducir pistas"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
 #: redbot/cogs/audio/core/utilities/player.py:604
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Pista en cola"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:169
 #: redbot/cogs/audio/core/utilities/player.py:553
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Esta pista no está permitida en este servidor."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:187
 #: redbot/cogs/audio/core/utilities/player.py:575
 msgid "Track exceeds maximum length."
-msgstr ""
+msgstr "La pista excede la longitud máxima."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:204
 #: redbot/cogs/audio/core/utilities/player.py:607
@@ -113,7 +113,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:330
 #: redbot/cogs/audio/core/utilities/player.py:655
 msgid "Invalid Environment"
-msgstr ""
+msgstr "Entorno no válido"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 msgid "No localtracks folder."
@@ -135,7 +135,7 @@ msgstr "música en {} servidores"
 #: redbot/cogs/audio/core/utilities/player.py:140
 #: redbot/cogs/audio/core/utilities/player.py:145
 msgid "There's nothing in the queue."
-msgstr ""
+msgstr "No hay nada en la cola."
 
 #: redbot/cogs/audio/core/utilities/player.py:142
 msgid "Currently livestreaming {track}"
@@ -164,11 +164,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "El propietario necesita establecer el ID del cliente de Spotify y el secreto del cliente de Spotify, antes de que se puedan usar las URLs o códigos de Spotify. \\nVer `{prefix}audioset spotifyapi` para instrucciones."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "El propietario necesita establecer el ID del cliente de Spotify y el secreto del cliente de Spotify, antes de que se puedan usar las URLs o códigos de Spotify. \\nVer `{prefix}audioset spotifyapi` para instrucciones."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -196,7 +196,7 @@ msgstr "Nada encontrado."
 #: redbot/cogs/audio/core/utilities/playlists.py:583
 #: redbot/cogs/audio/core/utilities/playlists.py:616
 msgid "Track is not playable."
-msgstr ""
+msgstr "La pista no es reproducible."
 
 #: redbot/cogs/audio/core/utilities/player.py:274
 #: redbot/cogs/audio/core/utilities/player.py:315
@@ -204,7 +204,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:584
 #: redbot/cogs/audio/core/utilities/playlists.py:617
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "**{suffix}** no es un formato totalmente soportado y algunas pistas pueden no reproducirse."
 
 #: redbot/cogs/audio/core/utilities/player.py:304
 #: redbot/cogs/audio/core/utilities/player.py:395
@@ -213,7 +213,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:602
 #: redbot/cogs/audio/core/utilities/playlists.py:631
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "No se puede obtener la pista"
 
 #: redbot/cogs/audio/core/utilities/player.py:305
 #: redbot/cogs/audio/core/utilities/player.py:396
@@ -222,7 +222,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:603
 #: redbot/cogs/audio/core/utilities/playlists.py:632
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "No puedo obtener una pista de Lavalink en este momento, inténtalo de nuevo en unos minutos."
 
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
@@ -242,11 +242,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Las pistas locales no funcionarán si el `Lavalink.jar` no puede ver la pista.\\nEsto puede deberse a permisos o porque Lavalink.jar se está ejecutando en una máquina diferente a las pistas locales."
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} pistas no pueden ser puestas en cola."
 
 #: redbot/cogs/audio/core/utilities/player.py:497
 msgid "No Title"
@@ -254,7 +254,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Lista de reproducción en cola"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -351,7 +351,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:349
 #: redbot/cogs/audio/core/utilities/playlists.py:452
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
+msgstr "Lista de reproducción {name} vacía (`{id}`) [**{scope}**] creada."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:354
 #: redbot/cogs/audio/core/utilities/playlists.py:457
@@ -370,7 +370,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:502
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "La conexión a Lavalink ha fallado"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:516
 #: redbot/cogs/audio/core/utilities/playlists.py:527
@@ -381,7 +381,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:517
 msgid "I don't have permission to connect to your channel."
-msgstr ""
+msgstr "No tengo permiso para conectarse a tu canal."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:548
 msgid "You must be in the voice channel to use the playlist command."
@@ -389,7 +389,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "the Global"
-msgstr ""
+msgstr "el Global"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "Global"
@@ -442,7 +442,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr ""
+msgstr "Auto-Jugar"
 
 #: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"

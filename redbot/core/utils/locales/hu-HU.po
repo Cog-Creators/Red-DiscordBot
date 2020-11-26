@@ -17,49 +17,49 @@ msgstr ""
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "year"
-msgstr ""
+msgstr "év"
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "years"
-msgstr ""
+msgstr "év"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "month"
-msgstr ""
+msgstr "hónap"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "months"
-msgstr ""
+msgstr "hónap"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "day"
-msgstr ""
+msgstr "nap"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "days"
-msgstr ""
+msgstr "nap"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hour"
-msgstr ""
+msgstr "óra"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hours"
-msgstr ""
+msgstr "óra"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minute"
-msgstr ""
+msgstr "perc"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minutes"
-msgstr ""
+msgstr "perc"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "second"
-msgstr ""
+msgstr "másodperc"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "seconds"
-msgstr ""
+msgstr "másodperc"
 
