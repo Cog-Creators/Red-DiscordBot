@@ -1084,6 +1084,8 @@ info
 
 Shows info about Red.
 
+See ``[p]custominfo`` to customize.
+
 .. _core-command-invite:
 
 ^^^^^^
@@ -1393,7 +1395,9 @@ mydata
 
 **Description**
 
-Commands which interact with the data Red has about you. 
+Commands which interact with the data Red has about you.
+
+More information can be found in the :ref:`End User Data Documentation <red_core_data_statement>`
 
 .. _core-command-mydata-3rdparty:
 
@@ -1409,7 +1413,9 @@ mydata 3rdparty
 
 **Description**
 
-View the End User Data statements of each 3rd-party module. 
+View the End User Data statements of each 3rd-party module.
+
+This will send an attachment with the End User Data statements of all loaded 3rd party cog.
 
 .. _core-command-mydata-forgetme:
 
@@ -1446,7 +1452,7 @@ mydata getmydata
 
 **Description**
 
-[Coming Soon] Get what data Red has about you. 
+[Coming Soon] Get what data Red has about you.
 
 .. _core-command-mydata-ownermanagement:
 
@@ -1483,6 +1489,7 @@ mydata ownermanagement allowuserdeletions
 Set the bot to allow users to request a data deletion.
 
 This is on by default.
+Opposite of ``[p]mydata ownermanagement disallowuserdeletions``
 
 .. _core-command-mydata-ownermanagement-deleteforuser:
 
@@ -1532,6 +1539,8 @@ mydata ownermanagement disallowuserdeletions
 
 Set the bot to not allow users to request a data deletion.
 
+Opposite of ``[p]mydata ownermanagement allowuserdeletions``
+
 .. _core-command-mydata-ownermanagement-processdiscordrequest:
 
 """"""""""""""""""""""""""""""""""""""""""""
@@ -1565,8 +1574,8 @@ mydata ownermanagement setuserdeletionlevel
 Sets how user deletions are treated.
 
 Level:
-    0: What users can delete is left entirely up to each cog.
-    1: Cogs should delete anything the cog doesn't need about the user.
+    - ``0``: What users can delete is left entirely up to each cog.
+    - ``1``: Cogs should delete anything the cog doesn't need about the user.
 
 .. _core-command-mydata-whatdata:
 
@@ -1582,7 +1591,7 @@ mydata whatdata
 
 **Description**
 
-Find out what type of data Red stores and why. 
+Find out what type of data Red stores and why.
 
 .. _core-command-reload:
 
@@ -1817,6 +1826,24 @@ Sets a default colour to be used for the bot's embeds.
 Acceptable values for the colour parameter can be found at:
 
 https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
+
+.. _core-command-set-competing:
+
+"""""""""""""
+set competing
+"""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set competing [competing]
+
+**Description**
+
+Sets Red's competing status.
 
 .. _core-command-set-custominfo:
 
