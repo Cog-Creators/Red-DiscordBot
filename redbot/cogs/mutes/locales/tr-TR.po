@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:26
 msgid "That user is already muted in this channel."
-msgstr ""
+msgstr "O kullanıcı bu kanalda zaten susturulmuş."
 
 #: redbot/cogs/mutes/mutes.py:27
 msgid "That user is not muted in this channel."
-msgstr ""
+msgstr "O kullanıcı bu kanalda susturulmamış."
 
 #: redbot/cogs/mutes/mutes.py:28
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
@@ -29,100 +29,100 @@ msgstr "Bunu yapmana izin veremem. Rolün işlem yapmaya çalıştığın kişid
 
 #: redbot/cogs/mutes/mutes.py:31
 msgid "That user cannot be muted, as they have the Administrator permission."
-msgstr ""
+msgstr "Yönetici iznine sahip olduğundan dolayı o kullanıcı susturulamaz."
 
 #: redbot/cogs/mutes/mutes.py:32
 msgid "Failed to mute or unmute user. I need the Manage Roles permission and the user I'm muting must be lower than myself in the role hierarchy."
-msgstr ""
+msgstr "Kullanıcı susturulamadı veya geri açılamadı. Rolleri yönetme iznine sahip olmam ve susturduğum kullanıcının rol hiyerarşisinde benden aşağıda olması gerekmekte."
 
 #: redbot/cogs/mutes/mutes.py:37
 msgid "Failed to mute or unmute user. I need the Manage Permissions permission."
-msgstr ""
+msgstr "Kullanıcı susturulamadı veya geri açılamadı. İzinleri Yönetme iznine ihtiyacım var."
 
 #: redbot/cogs/mutes/mutes.py:40
 msgid "The user has left the server while applying an overwrite."
-msgstr ""
+msgstr "Hükümsüz kılma uygulanırken kullanıcı sunucudan ayrıldı."
 
 #: redbot/cogs/mutes/mutes.py:41
 msgid "The channel I tried to mute or unmute the user in isn't found."
-msgstr ""
+msgstr "Kullanıcıyı susturmaya ya da geri açmaya çalıştığım kanal bulunamadı."
 
 #: redbot/cogs/mutes/mutes.py:42
 msgid "The mute role no longer exists."
-msgstr ""
+msgstr "O susturulmuş rolü artık yok."
 
 #: redbot/cogs/mutes/mutes.py:43
 msgid "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
-msgstr ""
+msgstr "Üyelerin yerini değiştirme iznine sahip olmadığımdan, bu kullanıcı çıkıp girdiğinde etkili olacak."
 
 #: redbot/cogs/mutes/mutes.py:241 redbot/cogs/mutes/mutes.py:253
 #: redbot/cogs/mutes/mutes.py:347 redbot/cogs/mutes/mutes.py:415
 #: redbot/cogs/mutes/mutes.py:433
 msgid "Automatic unmute"
-msgstr ""
+msgstr "Otomatik geri açma"
 
 #: redbot/cogs/mutes/mutes.py:263
 msgid "I am unable to unmute {user} for the following reason:\\n{reason}"
-msgstr ""
+msgstr "{user} kullanıcısının susturmasını şu sebepten dolayı geri alamadım:\\n{reason}"
 
 #: redbot/cogs/mutes/mutes.py:351
 msgid "\\nUnmuted in channels: "
-msgstr ""
+msgstr "\\nŞu kanallarda susturması geri alındı: "
 
 #: redbot/cogs/mutes/mutes.py:374
 msgid "{member} could not be unmuted for the following reasons:\\n"
-msgstr ""
+msgstr "{member} üyesinin şu sebeplerden dolayı susturması geri alınamadı:\\n"
 
 #: redbot/cogs/mutes/mutes.py:378
 msgid "{reason} In the following channels: {channels}\\n"
-msgstr ""
+msgstr "{reason} Şu kanallarda: {channels}\\n"
 
 #: redbot/cogs/mutes/mutes.py:439
 msgid "I am unable to unmute {user} in {channel} for the following reason:\\n{reason}"
-msgstr ""
+msgstr "{user} kullanıcısının susturmasını {channel} kanalında şu sebepten dolayı geri alamadım:\\n{reason}"
 
 #: redbot/cogs/mutes/mutes.py:490
 msgid "Manually removed mute role"
-msgstr ""
+msgstr "Susturulmuş rolü elle kaldırıldı"
 
 #: redbot/cogs/mutes/mutes.py:507
 msgid "Manually applied mute role"
-msgstr ""
+msgstr "Susturulmuş rolü elle uygulandı"
 
 #: redbot/cogs/mutes/mutes.py:571
 msgid "Manually removed channel overwrites"
-msgstr ""
+msgstr "Kanal hükümsüzleştirmeleri elle kaldırıldı"
 
 #: redbot/cogs/mutes/mutes.py:605
 msgid "Previously muted in this server."
-msgstr ""
+msgstr "Bu sunucuda daha önce susturulmuş."
 
 #: redbot/cogs/mutes/mutes.py:611
 #, docstring
 msgid "Mute settings."
-msgstr ""
+msgstr "Susturma ayarları."
 
 #: redbot/cogs/mutes/mutes.py:617
 #, docstring
 msgid "\\n        Whether or not to force role only mutes on the bot\\n        "
-msgstr ""
+msgstr "\\n        Bot üzerinde role özgü susturmaların zorlanıp zorlanmayacağı\\n        "
 
 #: redbot/cogs/mutes/mutes.py:622
 msgid "Okay I will enforce role mutes before muting users."
-msgstr ""
+msgstr "Tamamdır, kullanıcıları susturmadan önce rol susturmalarını uygulayacağım."
 
 #: redbot/cogs/mutes/mutes.py:624
 msgid "Okay I will allow channel overwrites for muting users."
-msgstr ""
+msgstr "Tamamdır, kullanıcıları sustururken kanal hükümsüzleştirmelerine izin vereceğim."
 
 #: redbot/cogs/mutes/mutes.py:629
 #, docstring
 msgid "\\n        Shows the current mute settings for this guild.\\n        "
-msgstr ""
+msgstr "\\n        Bu sunucu için mevcut susturma ayarlarını gösterir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:637
 msgid "Mute Role: {role}\\nNotification Channel: {channel}\\nDefault Time: {time}"
-msgstr ""
+msgstr "Susturulmuş Rolü: {role}\\nBildirim Kanalı: {channel}\\nVarsayılan Zaman: {time}"
 
 #: redbot/cogs/mutes/mutes.py:640 redbot/cogs/mutes/mutes.py:641
 #: redbot/cogs/mutes/mutes.py:642
@@ -132,86 +132,86 @@ msgstr "None"
 #: redbot/cogs/mutes/mutes.py:651
 #, docstring
 msgid "\\n        Set the notification channel for automatic unmute issues.\\n\\n        If no channel is provided this will be cleared and notifications\\n        about issues when unmuting users will not be sent anywhere.\\n        "
-msgstr ""
+msgstr "\\n        Susturma otomatik geri alınırken oluşabilecek sorunlar için bildirim kanalını ayarla.\\n\\n        Eğer bir kanal verilmezse bu ayar temizlenecek ve \\n        susturma geri alınırken oluşabilecek sorunlar bir yere gönderilmeyecek.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:659
 msgid "Notification channel for unmute issues has been cleard."
-msgstr ""
+msgstr "Susturma geri alınırken oluşabilecek sorunlar için bildirim kullanılacak bildirim kanalının ayarı temizlendi."
 
 #: redbot/cogs/mutes/mutes.py:663
 msgid "I will post unmute issues in {channel}."
-msgstr ""
+msgstr "Susturma geri alma hatalarını {channel} kanalına yazacağım."
 
 #: redbot/cogs/mutes/mutes.py:670
 #, docstring
 msgid "Sets the role to be applied when muting a user.\\n\\n        If no role is setup the bot will attempt to mute a user by setting\\n        channel overwrites in all channels to prevent the user from sending messages.\\n\\n        Note: If no role is setup a user may be able to leave the server\\n        and rejoin no longer being muted.\\n        "
-msgstr ""
+msgstr "Bir kullanıcı susturulurken verilecek rolü ayarlar.\\n\\n        Eğer bir rol ayarlanmazsa bot kullanıcıyı konuşmasını\\n        engellemek için tüm kanallarda hükümsüzleştirme ayarlayarak susturmaya çalışır.\\n\\n        Not: Eğer bir rol ayarlanmazsa kullanıcı susturulmamak için\\n        sunucudan çıkıp girebilir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:685
 msgid "Channel overwrites will be used for mutes instead."
-msgstr ""
+msgstr "Susturmalar için kanal hükümsüzleştirmeleri kullanılacak."
 
 #: redbot/cogs/mutes/mutes.py:689 redbot/cogs/mutes/mutes.py:744
 msgid "Mute role set to {role}"
-msgstr ""
+msgstr "Susturulmuş rolü {role} olarak ayarlandı"
 
 #: redbot/cogs/mutes/mutes.py:693 redbot/cogs/mutes/mutes.py:748
 msgid "No notification channel has been setup, use {command_1} to be updated when there's an issue in automatic unmutes."
-msgstr ""
+msgstr "Herhangi bir bildirim kanalı ayarlanmamış, otomatik susturma geri almada bir sorun çıkarsa bilgi almak için {command_1} kullanın."
 
 #: redbot/cogs/mutes/mutes.py:704
 #, docstring
 msgid "Create a Muted role.\\n\\n        This will create a role and apply overwrites to all available channels\\n        to more easily setup muting a user.\\n\\n        If you already have a muted role created on the server use\\n        `[p]muteset role ROLE_NAME_HERE`\\n        "
-msgstr ""
+msgstr "Bir susuturulmuş rolü oluştur.\\n\\n        Bu bir kullanıcının susturulmasını daha kolay ayarlamak için bir rol oluşturur\\n        ve mevcut tüm kanallarda hükümsüzleştirmeleri ayarlar.\\n\\n        Eğer sunucuda ayarlanmış bir susturulmuş rolünüz varsa\\n        `[p]muteset role ROL_ADI` komutunu kullanın\\n        "
 
 #: redbot/cogs/mutes/mutes.py:715
 msgid "There is already a mute role setup in this server. Please remove it with {command} before trying to create a new one."
-msgstr ""
+msgstr "Bu sunucuda ayarlanmış bir susturulmuş rolü zaten var. Yeni bir tane oluşturmadan önce {command} ile var olanı kaldırın."
 
 #: redbot/cogs/mutes/mutes.py:726 redbot/cogs/mutes/mutes.py:768
 msgid "Mute role setup"
-msgstr ""
+msgstr "Susturulmuş rolü ayarlandı"
 
 #: redbot/cogs/mutes/mutes.py:731
 msgid "I could not create a muted role in this server."
-msgstr ""
+msgstr "Bu sunucuda susturulmuş rolü oluşturamadım."
 
 #: redbot/cogs/mutes/mutes.py:738
 msgid "I could not set overwrites for the following channels: {channels}"
-msgstr ""
+msgstr "Şu kanallar için hükümsüzleştirmeleri ayarlayamadım: {channels}"
 
 #: redbot/cogs/mutes/mutes.py:776
 #, docstring
 msgid "\\n        Set the default mute time for the mute command.\\n\\n        If no time interval is provided this will be cleared.\\n        "
-msgstr ""
+msgstr "\\n        mute komutu için varsayılan susturma süresini ayarla.\\n\\n        Bir zaman aralığı verilmezse bu ayar temizlenir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:784
 msgid "Default mute time removed."
-msgstr ""
+msgstr "Varsayılan susturma süresi kaldırıldı."
 
 #: redbot/cogs/mutes/mutes.py:788
 msgid "Please provide a valid time format."
-msgstr ""
+msgstr "Lütfen geçerli bir zaman biçimi sağlayın."
 
 #: redbot/cogs/mutes/mutes.py:791
 msgid "Default mute time set to {time}."
-msgstr ""
+msgstr "Varsayılan susturma süresi {time} olarak ayarlandı."
 
 #: redbot/cogs/mutes/mutes.py:803
 msgid "This server does not have a mute role setup.  You can setup a mute role with `{command_1}` or`{command_2}` if you just want a basic role created setup.\\n\\n"
-msgstr ""
+msgstr "Bu sunucunun susturulmuş rolü ayarlanmamış `{command_1}` ile bir susturulmuş rolü ayarlayabilir veya basit bir rolün oluşturulmasını istiyorsanız `{command_2}` kullanabilirsiniz.\\n\\n"
 
 #: redbot/cogs/mutes/mutes.py:819
 msgid "Channel overwrites for muting users can get expensive on Discord's API as such we recommend that you have an admin setup a mute role instead. Channel overwrites will also not re-apply on guild join, so a user who has been muted may leave and re-join and no longer be muted. Role mutes do not have this issue.\\n\\nAre you sure you want to continue with channel overwrites? "
-msgstr ""
+msgstr "Kullanıcıları sustururken kanal hükümsüzleştirmeleri kullanmak Discord API'a çok sayıda istekte bulunulmasını gerektirebileceğinden bir susturulmuş rolü ayarlanması tavsite edilir. Üstelik kanal hükümsüzleştirmeleri sunucuya katılırken tekrar uygulanmayacağından kullanıcılar çıkıp girerek susturulmaktan kurtulabilirler. Bir susturulmuş rolü kullanmak tüm bu sorunları çözer.\\n\\nSusturma için kanal hükümsüzleştirmeleri kullanmak istediğinizden emin misiniz? "
 
 #: redbot/cogs/mutes/mutes.py:829
 msgid "Reacting with ✅ will continue the mute with overwrites and stop this message from appearing again, Reacting with ❎ will end the mute attempt."
-msgstr ""
+msgstr "✅ ile tepki vermek kanal hükümsüzleştirmeleri kullanılmasını onaylar ve bu mesaj bir daha karşınıza gelmez. ❎ ile tepki vermek susturma denemesini iptal eder."
 
 #: redbot/cogs/mutes/mutes.py:835
 msgid "Saying `yes` will continue the mute with overwrites and stop this message from appearing again, saying `no` will end the mute attempt."
-msgstr ""
+msgstr "`yes` ile cevap vermek kanal hükümsüzleştirmeleri kullanılmasını onaylar ve bu mesaj bir daha karşınıza gelmez. `no` ile cevap vermek susturma denemesini iptal eder."
 
 #: redbot/cogs/mutes/mutes.py:859 redbot/cogs/mutes/mutes.py:1068
 msgid "OK then."
@@ -220,117 +220,117 @@ msgstr "Tamam o zaman."
 #: redbot/cogs/mutes/mutes.py:873
 #, docstring
 msgid "\\n        Displays active mutes on this server.\\n        "
-msgstr ""
+msgstr "\\n        Sunucuda devam eden susturmaları gösterir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:881
 msgid "__Server Mutes__\\n"
-msgstr ""
+msgstr "__Sunucudaki Susturmalar__\\n"
 
 #: redbot/cogs/mutes/mutes.py:899
 msgid "__Remaining__: {time_left}\\n"
-msgstr ""
+msgstr "__Remaining__: {time_left}\\n"
 
 #: redbot/cogs/mutes/mutes.py:906
 msgid "__<#{channel_id}> Mutes__\\n"
-msgstr ""
+msgstr "__<#{channel_id}> Susturmalar__\\n"
 
 #: redbot/cogs/mutes/mutes.py:924
 msgid "__Remaining__: {time_left}\\n"
-msgstr ""
+msgstr "__Remaining__: {time_left}\\n"
 
 #: redbot/cogs/mutes/mutes.py:931
 msgid "There are no mutes on this server right now."
-msgstr ""
+msgstr "Bu sunucuda şu anda susturulmuş kişi bulunmamakta."
 
 #: redbot/cogs/mutes/mutes.py:943
 #, docstring
 msgid "Mute users.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[time_and_reason]` is the time to mute for and reason. Time is\\n        any valid time length such as `30 minutes` or `2 days`. If nothing\\n        is provided the mute will use the set default time or indefinite if not set.\\n\\n        Examples:\\n        `[p]mute @member1 @member2 spam 5 hours`\\n        `[p]mute @member1 3 days`\\n\\n        "
-msgstr ""
+msgstr "Kullanıcıları sustur.\\n\\n        `<users...>` boşluk ile ayrılmış kullanıcı adları, IDleri ya da pinglerinden oluşan bir listedir.\\n        `[time_and_reason]` Susturmanın ne kadar süreceği ve hangi sebeple yapılacağıdır. Sür\\n       `30 minutes` veya `2 days` gibi geçerli her hangi bir zaman zarfı olabilir. Eğer belirtilmemişse\\n        Bot ayarlanmışsa varsayılan susturma süresini kullanır ve eğer ayarlanmamışsa kullanıcıyı sonsuza dek susturur.\\n\\n        Örnek:\\n        `[p]mute @üye1 @üye2 spam 5 hours`\\n        `[p]mute @üye1 3 days`\\n\\n        "
 
 #: redbot/cogs/mutes/mutes.py:958 redbot/cogs/mutes/mutes.py:1104
 #: redbot/cogs/mutes/voicemutes.py:89
 msgid "You cannot mute me."
-msgstr ""
+msgstr "Beni susturamazsın."
 
 #: redbot/cogs/mutes/mutes.py:960 redbot/cogs/mutes/mutes.py:1106
 #: redbot/cogs/mutes/voicemutes.py:91
 msgid "You cannot mute yourself."
-msgstr ""
+msgstr "Kendini susturamazsın."
 
 #: redbot/cogs/mutes/mutes.py:971 redbot/cogs/mutes/mutes.py:976
 #: redbot/cogs/mutes/mutes.py:1114 redbot/cogs/mutes/mutes.py:1119
 #: redbot/cogs/mutes/voicemutes.py:109 redbot/cogs/mutes/voicemutes.py:116
 msgid " for {duration}"
-msgstr ""
+msgstr " {duration} süreliğine"
 
 #: redbot/cogs/mutes/mutes.py:1007
 msgid "{users} has been muted in this server{time}."
-msgstr ""
+msgstr "{users} bu sunucuda susturuldu{time}."
 
 #: redbot/cogs/mutes/mutes.py:1009
 msgid "{users} have been muted in this server{time}."
-msgstr ""
+msgstr "{users} bu sunucuda susturuldu{time}."
 
 #: redbot/cogs/mutes/mutes.py:1020
 msgid "{member} could not be unmuted for the following reasons:\\n"
-msgstr ""
+msgstr "{member} üyesinin şu sebeplerden dolayı susturması geri alınamadı:\\n"
 
 #: redbot/cogs/mutes/mutes.py:1031
 msgid "- {reason} In the following channels: {channels}\\n"
-msgstr ""
+msgstr "- {reason} Şu kanallarda: {channels}\\n"
 
 #: redbot/cogs/mutes/mutes.py:1042
 msgid "Some users could not be properly muted. Would you like to see who, where, and why?"
-msgstr ""
+msgstr "Bazı kullanıcılar doğru düzgün susturulamadı. Kim, nerde, ve neden görmek ister misiniz?"
 
 #: redbot/cogs/mutes/mutes.py:1090
 #, docstring
 msgid "Mute a user in the current text channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[time_and_reason]` is the time to mute for and reason. Time is\\n        any valid time length such as `30 minutes` or `2 days`. If nothing\\n        is provided the mute will use the set default time or indefinite if not set.\\n\\n        Examples:\\n        `[p]mutechannel @member1 @member2 spam 5 hours`\\n        `[p]mutechannel @member1 3 days`\\n        "
-msgstr ""
+msgstr "Bir kullanıcıyı mevcut metin kanalında sustur.\\n\\n        `<users...>` boşluk ile ayrılmış kullanıcı adları, IDleri ya da pinglerinden oluşan bir listedir.\\n        `[time_and_reason]` Susturmanın ne kadar süreceği ve hangi sebeple yapılacağıdır. Sür\\n       `30 minutes` veya `2 days` gibi geçerli her hangi bir zaman zarfı olabilir. Eğer belirtilmemişse\\n        Bot ayarlanmışsa varsayılan susturma süresini kullanır ve eğer ayarlanmamışsa kullanıcıyı sonsuza dek susturur.\\n\\n        Örnek:\\n        `[p]mute @üye1 @üye2 spam 5 hours`\\n        `[p]mute @üye1 3 days`\\n        "
 
 #: redbot/cogs/mutes/mutes.py:1152 redbot/cogs/mutes/voicemutes.py:152
 msgid "{users} has been muted in this channel{time}."
-msgstr ""
+msgstr "{users} bu kanalda susturuldu{time}."
 
 #: redbot/cogs/mutes/mutes.py:1154 redbot/cogs/mutes/voicemutes.py:154
 msgid "{users} have been muted in this channel{time}."
-msgstr ""
+msgstr "{users} bu kanalda susturuldu{time}."
 
 #: redbot/cogs/mutes/mutes.py:1159
 msgid "The following users could not be muted\\n"
-msgstr ""
+msgstr "Şu kullanıcılar susturulamadı\\n"
 
 #: redbot/cogs/mutes/mutes.py:1174
 #, docstring
 msgid "Unmute users.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[reason]` is the reason for the unmute.\\n        "
-msgstr ""
+msgstr "Kullanıcıların susturmasını kaldır.\\n\\n        `<users...>` kullanıcı adları, IDleri veya pinglerinden oluşan boşluklarla ayrışmış bir listedir.\\n        `[reason]` susturmanın kaldırılma sebebidir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:1182 redbot/cogs/mutes/mutes.py:1248
 #: redbot/cogs/mutes/voicemutes.py:180
 msgid "You cannot unmute me."
-msgstr ""
+msgstr "Benim susturmamı kaldıramazsın."
 
 #: redbot/cogs/mutes/mutes.py:1184 redbot/cogs/mutes/mutes.py:1250
 #: redbot/cogs/mutes/voicemutes.py:182
 msgid "You cannot unmute yourself."
-msgstr ""
+msgstr "Kendi susturmanı kaldıramazsın."
 
 #: redbot/cogs/mutes/mutes.py:1223
 msgid "{users} unmuted in this server."
-msgstr ""
+msgstr "{users} bu sunucudaki susturmaları kaldırıldı."
 
 #: redbot/cogs/mutes/mutes.py:1240
 #, docstring
 msgid "Unmute a user in this channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[reason]` is the reason for the unmute.\\n        "
-msgstr ""
+msgstr "Bu kanalda bir kullanıcının susturmasını kaldır.\\n\\n        `<users...>` kullanıcı adları, IDleri veya pinglerinden oluşan boşluklarla ayrışmış bir listedir.\\n        `[reason]` susturmanın kaldırılma sebebidir.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:1284 redbot/cogs/mutes/voicemutes.py:227
 msgid "{users} unmuted in this channel."
-msgstr ""
+msgstr "{users} bu kanaldaki susturmaları kaldırıldı."
 
 #: redbot/cogs/mutes/mutes.py:1289
 msgid "The following users could not be unmuted\\n"
-msgstr ""
+msgstr "Şu kullanıcıların susturmaları kaldırılamadı\\n"
 
 #: redbot/cogs/mutes/voicemutes.py:42
 msgid "That user is not in a voice channel."
@@ -347,18 +347,18 @@ msgstr "Bu komutu kullanabilmek için o kullanıcının kanalında {perms} izinl
 #: redbot/cogs/mutes/voicemutes.py:76
 #, docstring
 msgid "Mute a user in their current voice channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[time_and_reason]` is the time to mute for and reason. Time is\\n        any valid time length such as `30 minutes` or `2 days`. If nothing\\n        is provided the mute will use the set default time or indefinite if not set.\\n\\n        Examples:\\n        `[p]voicemute @member1 @member2 spam 5 hours`\\n        `[p]voicemute @member1 3 days`"
-msgstr ""
+msgstr "Bir kullanıcıyı mevcut metin ses sustur.\\n\\n        `<users...>` boşluk ile ayrılmış kullanıcı adları, IDleri ya da pinglerinden oluşan bir listedir.\\n        `[time_and_reason]` Susturmanın ne kadar süreceği ve hangi sebeple yapılacağıdır. Sür\\n       `30 minutes` veya `2 days` gibi geçerli her hangi bir zaman zarfı olabilir. Eğer belirtilmemişse\\n        Bot ayarlanmışsa varsayılan susturma süresini kullanır ve eğer ayarlanmamışsa kullanıcıyı sonsuza dek susturur.\\n\\n        Örnek:\\n        `[p]voicemute @üye1 @üye2 spam 5 hours`\\n        `[p]voicemute @üye1 3 days`\\n`"
 
 #: redbot/cogs/mutes/voicemutes.py:159
 msgid "The following users could not be muted\\n"
-msgstr ""
+msgstr "Şu kullanıcılar susturulamadı\\n"
 
 #: redbot/cogs/mutes/voicemutes.py:173
 #, docstring
 msgid "Unmute a user in their current voice channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[reason]` is the reason for the unmute."
-msgstr ""
+msgstr "Bir kullanıcının şu an bulundukları ses kanalında susturmasını kaldır.\\n\\n        `<users...>` kullanıcı adları, IDleri veya pinglerinden oluşan boşluklarla ayrışmış bir listedir.\\n        `[reason]` susturmanın kaldırılma sebebidir.\\n."
 
 #: redbot/cogs/mutes/voicemutes.py:232
 msgid "The following users could not be unmuted\\n"
-msgstr ""
+msgstr "Şu kullanıcıların susturmaları kaldırılamadı\\n"
 

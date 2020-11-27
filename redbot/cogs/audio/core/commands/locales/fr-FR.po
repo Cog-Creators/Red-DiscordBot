@@ -662,7 +662,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:928
 msgid "Commercial links only: {true_or_false}."
-msgstr "Liens commerciaux seulement : {true_or_false}."
+msgstr "Liens commerciaux uniquement : {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:937
 #, docstring
@@ -696,7 +696,7 @@ msgstr "Lecture automatique :        [{autoplay}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
 msgid "Disconnect timer: [{num_seconds}]\\n"
-msgstr "Temps de déconnexion : [{num_seconds}]\\n"
+msgstr "Délai de déconnexion : [{num_seconds}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
 msgid "Auto Pause timer: [{num_seconds}]\\n"
@@ -716,7 +716,7 @@ msgstr "Prix de la commande :    [{jukebox_price}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
 msgid "Max track length: [{tracklength}]\\n"
-msgstr "Longueur maximale de la piste : [{tracklength}]\\n"
+msgstr "Longueur maximale de piste : [{tracklength}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1014
 msgid "Repeat:           [{repeat}]\\nShuffle:          [{shuffle}]\\nShuffle bumped:   [{bumpped_shuffle}]\\nSong notify msgs: [{notify}]\\nSongs as status:  [{status}]\\nPersist queue:    [{persist_queue}]\\nSpotify search:   [{countrycode}]\\nAuto-Deafen:      [{auto_deafen}]\\n"
@@ -747,7 +747,7 @@ msgstr "Global"
 #: redbot/cogs/audio/core/commands/audioset.py:1058
 #: redbot/cogs/audio/core/commands/audioset.py:1059
 msgid "Cached"
-msgstr "Caché"
+msgstr "En cache"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1061
 #: redbot/cogs/audio/core/commands/audioset.py:1062
@@ -791,7 +791,7 @@ msgstr "Cache Youtube local : [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
 msgid "Local Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Cache locale Lavalink : [{lavalink_status}]\\n"
+msgstr "Cache Lavalink local : [{lavalink_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
 msgid "Global cache status:    [{global_cache}]\\n"
@@ -821,7 +821,7 @@ msgstr "Paramètres de Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Cog version:            [{version}]\\n"
-msgstr "Version Cog : [{version}]\\n"
+msgstr "Version du Cog : [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
@@ -911,7 +911,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1278
 #: redbot/cogs/audio/core/commands/audioset.py:1300
 msgid "Invalid Country Code"
-msgstr "Code de pays invalide"
+msgstr "Code pays invalide"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1279
 #: redbot/cogs/audio/core/commands/audioset.py:1301
@@ -921,12 +921,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1288
 #: redbot/cogs/audio/core/commands/audioset.py:1310
 msgid "Country Code set to {country}."
-msgstr "Code pays défini à {country}."
+msgstr "Code pays défini sur {country}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1318
 #, docstring
 msgid "Sets the caching level.\\n\\n        Level can be one of the following:\\n\\n        0: Disables all caching\\n        1: Enables Spotify Cache\\n        2: Enables YouTube Cache\\n        3: Enables Lavalink Cache\\n        5: Enables all Caches\\n\\n        If you wish to disable a specific cache use a negative number.\\n        "
-msgstr "Définit le niveau de cache.\\n\\n        Le niveau peut être l'un des niveaux suivants :\\n\\n        0 : Désactive toute la mise en cache\\n        1 : Active Spotify Cache\\n        2 : Active le Cache YouTube\\n        3: Active la Cache Lavalink\\n        5 : Active toutes les Caches\\n\\n        Si vous souhaitez désactiver une cache spécifique, utilisez un nombre négatif.\\n        "
+msgstr "Définit le niveau de mise en cache.\\n\\n        Le niveau peut être l'un des niveaux suivants :\\n\\n        0 : Désactive toute la mise en cache\\n        1 : Active le cache Spotify\\n        2 : Active le cache YouTube\\n        3: Active le cache Lavalink\\n        5 : Active toutes les caches\\n\\n        Si vous souhaitez désactiver un cache spécifique, utilisez un nombre négatif.\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1340
 msgid "Max age:          [{max_age}]\\n"
@@ -938,7 +938,7 @@ msgstr "Cache Spotify : [{spotify_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1342
 msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "Cache Youtube: [{youtube_status}]\\n"
+msgstr "Cache YouTube: [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1343
 msgid "Lavalink cache:   [{lavalink_status}]\\n"
@@ -954,7 +954,7 @@ msgstr "Cache Spotify : [{spotify_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1387
 msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "Cache Youtube: [{youtube_status}]\\n"
+msgstr "Cache YouTube: [{youtube_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1388
 msgid "Lavalink cache:   [{lavalink_status}]\\n"
@@ -967,11 +967,11 @@ msgstr "Définit l'âge maximum du cache.\\n\\n        Cette commande vous perme
 
 #: redbot/cogs/audio/core/commands/audioset.py:1410
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\\n"
-msgstr "L'âge du cache ne peut pas être inférieur à 7 jours. Si vous souhaitez le désactiver, exécutez {prefix}cache audioset.\\n"
+msgstr "L'âge du cache ne peut pas être inférieur à 7 jours. Si vous souhaitez le désactiver, exécutez {prefix}audioset cache.\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1415
 msgid "I've set the cache age to {age} days"
-msgstr "J'ai défini l'âge du cache à {age} jours"
+msgstr "L'âge du cache a été défini sur {age} jours"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1422
 #, docstring
@@ -1543,7 +1543,7 @@ msgstr "Impossible de supprimer le préréglage"
 #: redbot/cogs/audio/core/commands/equalizer.py:76
 #: redbot/cogs/audio/core/commands/equalizer.py:96
 msgid "You are not the author of that preset setting."
-msgstr "Vous n'êtes pas l'auteur de ces paramètres."
+msgstr "Vous n'êtes pas l'auteur de ce préréglage."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:105
 #, docstring
@@ -1569,7 +1569,7 @@ msgstr "{num} préréglage(s)"
 #: redbot/cogs/audio/core/commands/equalizer.py:141
 #, docstring
 msgid "Load a saved eq preset."
-msgstr "Charger un preset eq enregistré."
+msgstr "Charger un préréglage eq enregistré."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:149
 msgid "No Preset Found"
@@ -1581,7 +1581,7 @@ msgstr "Impossible de charger le préréglage"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:168
 msgid "You need the DJ role to load equalizer presets."
-msgstr "Vous avez besoin du rôle DJ pour charger les préréglages de l’égalisateur."
+msgstr "Vous avez besoin du rôle DJ pour charger les préréglages de l’égaliseur."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:186
 #, docstring
@@ -1594,7 +1594,7 @@ msgstr "Impossible de modifier le préréglage"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:196
 msgid "You need the DJ role to reset the equalizer."
-msgstr "Vous avez besoin du rôle DJ pour réinitialiser l’égalisateur."
+msgstr "Vous avez besoin du rôle DJ pour réinitialiser l’égaliseur."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:211
 msgid "Equalizer values have been reset."
@@ -1609,11 +1609,11 @@ msgstr "Enregistrer les paramètres eq actuels dans un préréglage."
 #: redbot/cogs/audio/core/commands/equalizer.py:247
 #: redbot/cogs/audio/core/commands/equalizer.py:262
 msgid "Unable To Save Preset"
-msgstr "Impossible d'enregistrer le préréglage."
+msgstr "Impossible d'enregistrer le préréglage"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:230
 msgid "You need the DJ role to save equalizer presets."
-msgstr "Vous devez avoir le rôle DJ pour sauvegarder les préréglages de l'égalisateur."
+msgstr "Vous devez avoir le rôle DJ pour sauvegarder les préréglages de l'égaliseur."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:234
 msgid "Please enter a name for this equalizer preset."
@@ -1650,7 +1650,7 @@ msgstr "Impossible de définir le préréglage"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:318
 msgid "You need the DJ role to set equalizer presets."
-msgstr "Vous avez besoin du rôle DJ pour régler les préréglages de l'égalisateur."
+msgstr "Vous avez besoin du rôle DJ pour régler les préréglages de l'égaliseur."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:357
 msgid "Invalid Band"
@@ -1765,7 +1765,7 @@ msgstr "Mot de passe serveur défini à {password}."
 #: redbot/cogs/audio/core/commands/llset.py:192
 #, docstring
 msgid "Set the Lavalink websocket server port."
-msgstr "Définir le port du websocket du serveur Lavalink."
+msgstr "Définir le port websocket du serveur Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:200
 msgid "Websocket port set to {port}."
@@ -1867,7 +1867,7 @@ msgstr "Pourcentage de la liste."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:119
 msgid "There's  nothing in the queue."
-msgstr "Il n'y a rien dans la liste."
+msgstr "Il n'y a rien dans la file de lecture."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:140
 msgid "Queued and playing tracks:"
