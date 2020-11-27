@@ -1,4 +1,5 @@
 .. Red Core Data Statement
+.. _red_core_data_statement:
 
 =====================
 Red and End User Data
