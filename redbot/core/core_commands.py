@@ -525,7 +525,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata(self, ctx: commands.Context):
         """Commands which interact with the data [botname] has about you.
 
-         More information can be found in the (End User Data Documentation)[https://docs.discord.red/en/stable/red_core_data_statement.html]
+         More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)
          """
 
     # 1/10 minutes. It's a static response, but the inability to lock
@@ -557,7 +557,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.cooldown(1, 1800, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="3rdparty")
     async def mydata_3rd_party(self, ctx: commands.Context):
-        """ View the End User Data statements of each 3rd-party module. """
+        """View the End User Data statements of each 3rd-party module.
+
+        This will send an attachment with the End User Data statements of all loaded 3rd party cog.
+        """
 
         # Can't check this as a command check, and want to prompt DMs as an option.
         if not ctx.channel.permissions_for(ctx.me).attach_files:
@@ -737,7 +740,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.cooldown(1, 7200, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="getmydata")
     async def mydata_getdata(self, ctx: commands.Context):
-        """ [Coming Soon] Get what data [botname] has about you. """
+        """[Coming Soon] Get what data [botname] has about you."""
         await ctx.send(
             _(
                 "This command doesn't do anything yet, "
@@ -758,6 +761,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Set the bot to allow users to request a data deletion.
 
         This is on by default.
+        Opposite of `[p]mydata ownermanagement disallowuserdeletions`
         """
         await ctx.bot._config.datarequests.allow_user_requests.set(True)
         await ctx.send(
@@ -771,6 +775,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_owner_disallow_user_deletions(self, ctx):
         """
         Set the bot to not allow users to request a data deletion.
+
+        Opposite of `[p]mydata ownermanagement allowuserdeletions`
         """
         await ctx.bot._config.datarequests.allow_user_requests.set(False)
         await ctx.send(_("User can not delete their own data."))
@@ -780,9 +786,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Sets how user deletions are treated.
 
+        Example:
+            - `[p]mydata ownermanagement setuserdeletionlevel 1`
+
+        **Arguments:**
+
+        - `<level>` The strictness level for user deletion. See Level guide below.
+
         Level:
-            0: What users can delete is left entirely up to each cog.
-            1: Cogs should delete anything the cog doesn't need about the user.
+            - `0`: What users can delete is left entirely up to each cog.
+            - `1`: Cogs should delete anything the cog doesn't need about the user.
         """
 
         if level == 1:
@@ -809,6 +822,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_discord_deletion_request(self, ctx, user_id: int):
         """
         Handle a deletion request from Discord.
+
+        This will cause the bot to get rid of or disassociate all data from the specified user ID.
+        You should not use this unless Discord has specifically requested this with regard to a deleted user.
+        This will remove the user from various anti-abuse measures.
+        If you are processing a manual request from a user, you may want `[p]mydata ownermanagement deleteforuser` instead.
+
+        **Arguments:**
+
+        - `<user_id>` The id of the user whose data would be deleted.
         """
 
         if not await self.get_serious_confirmation(
@@ -819,7 +841,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "Discord has specifically requested this with regard to a deleted user. "
                 "This will remove the user from various anti-abuse measures. "
                 "If you are processing a manual request from a user, you may want "
-                "`{prefix}{command_name}` instead"
+                "`{prefix}{command_name}` instead."
                 "\n\nIf you are sure this is what you intend to do "
                 "please respond with the following:"
             ).format(prefix=ctx.clean_prefix, command_name="mydata ownermanagement deleteforuser"),
@@ -878,7 +900,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @mydata_owner_management.command(name="deleteforuser")
     async def mydata_user_deletion_request_by_owner(self, ctx, user_id: int):
-        """ Delete data [botname] has about a user for a user. """
+        """Delete data [botname] has about a user for a user.
+
+        This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user.
+        Users have access to different command for this unless they can't interact with the bot at all.
+        This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
+
+        **Arguments:**
+
+        - `<user_id>` The id of the user whose data would be deleted.
+        """
         if not await self.get_serious_confirmation(
             ctx,
             _(
@@ -956,7 +987,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @mydata_owner_management.command(name="deleteuserasowner")
     async def mydata_user_deletion_by_owner(self, ctx, user_id: int):
-        """ Delete data [botname] has about a user. """
+        """Delete data [botname] has about a user.
+
+        This will cause the bot to get rid of or disassociate a lot of data about the specified user.
+        This may include more than just end user data, including anti abuse records.
+
+        **Arguments:**
+
+        - `<user_id>` The id of the user whose data would be deleted.
+        """
         if not await self.get_serious_confirmation(
             ctx,
             _(
@@ -1023,10 +1062,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Commands for toggling embeds on or off.
 
-        This setting determines whether or not to
-        use embeds as a response to a command (for
-        commands that support it). The default is to
-        use embeds.
+        This setting determines whether or not to use embeds as a response to a command (for commands that support it).
+        The default is to use embeds.
         """
 
     @embedset.command(name="showsettings")
@@ -1051,9 +1088,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggle the global embed setting.
 
-        This is used as a fallback if the user
-        or guild hasn't set a preference. The
-        default is to use embeds.
+        This is used as a fallback if the user or guild hasn't set a preference.
+        The default is to use embeds.
         """
         current = await self.bot._config.embeds()
         await self.bot._config.embeds.set(not current)
@@ -1075,6 +1111,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to determine whether or not to use embeds. This is
         used for all commands done in a guild channel except
         for help commands.
+
+        Examples:
+            - `[p]embedset server False` - Disables embeds on this server.
+            - `[p]embedset server` - Resets value to use global default.
+
+        **Arguments:**
+
+        - `<enabled>` Whether to use embeds on this server. Leave blank to reset to default.
         """
         await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
@@ -1100,6 +1144,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to determine whether or not to use embeds. This is
         used for all commands done in a channel except
         for help commands.
+
+        Examples:
+            - `[p]embedset channel False` - Disables embeds in this channel.
+            - `[p]embedset channel` - Resets value to use guild default.
+
+        **Arguments:**
+
+        - `<enabled>` Whether to use embeds in this channel. Leave blank to reset to default.
         """
         await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
@@ -1122,6 +1174,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands executed in a DM with the bot.
+
+        Examples:
+            - `[p]embedset user False` - Disables embeds in your DMs.
+            - `[p]embedset user` - Resets value to use global default.
+
+        **Arguments:**
+
+        - `<enabled>` Whether to use embeds in your DMs. Leave blank to reset to default.
         """
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
@@ -1138,7 +1198,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def traceback(self, ctx: commands.Context, public: bool = False):
         """Sends to the owner the last command exception that has occurred.
 
-        If public (yes is specified), it will be sent to the chat instead."""
+        If public (yes is specified), it will be sent to the chat instead.
+
+        Warning: Sending the traceback publicly can accidentally reveal
+        sensitive information about your computer or configuration.
+
+        Examples:
+            - `[p]traceback` - Sends the traceback to your DMs.
+            - `[p]traceback True` - Sends the last traceback in the current context.
+
+        **Arguments:**
+
+        - `<public>` Whether to send traceback to the current context. Leave blank to send to DMs.
+        """
         if not public:
             destination = ctx.author
         else:
@@ -1160,7 +1232,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
-        """Shows [botname]'s invite url."""
+        """Shows [botname]'s invite url.
+
+        This will always send the invite to DMs to keep it private.
+        """
         try:
             await ctx.author.send(await self._invite_url())
         except discord.errors.Forbidden:
@@ -1172,13 +1247,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group()
     @checks.is_owner()
     async def inviteset(self, ctx):
-        """Setup the bot's invite."""
+        """Commands to setup [botname]'s invite settings."""
         pass
 
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
         """
-        Define if the command should be accessible for the average user.
+        Toggles if `[p]invite` should be accessible for the average user.
+
+        Bot must me made into a `Public bot` in the developer dashboard for public invites to work.
+
+        Example:
+            - `[p]inviteset public yes` - Toggles the public invite setting.
+
+        **Arguments:**
+
+        - `<confirm>` Required to set to public. Not required to toggle back to private.
         """
         if await self.bot._config.invite_public():
             await self.bot._config.invite_public.set(False)
@@ -1629,6 +1713,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Must be between -1 and 60.
 
         Set to -1 to disable this feature.
+
+        This is applied only the current server and not globally.
         """
         guild = ctx.guild
         if time is not None:
