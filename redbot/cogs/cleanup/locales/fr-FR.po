@@ -46,7 +46,7 @@ msgstr ""
 #: redbot/cogs/cleanup/cleanup.py:262
 #, docstring
 msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "Supprime tous les messages après un message spécifié.\\n\\n        Pour obtenir l'ID d'un message, activer le mode développeur dans les paramètres\\n        de Discord, dans l'onglet \"Apparence\". Puis faites clic droit sur un message\\n        et copier son ID.\\n\\n        **Arguments:**\\n\\n        - `<message_id>` L'ID du message à nettoyer après. Ce message ne sera pas supprimé.\\n        - `<delete_pinned>` Si il faut supprimer les messages épinglés ou non. Par défaut sur Faux.\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."

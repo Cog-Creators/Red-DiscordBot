@@ -107,16 +107,16 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:276
 #, docstring
 msgid "Manage permissions with YAML files."
-msgstr ""
+msgstr "Administrar permisos con archivos YAML."
 
 #: redbot/cogs/permissions/permissions.py:280
 #, docstring
 msgid "Sends an example of the yaml layout for permissions"
-msgstr ""
+msgstr "Envía un ejemplo de plantilla yaml para los permisos"
 
 #: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\\n"
-msgstr ""
+msgstr "Ejemplo YAML para configurar las reglas:\\n"
 
 #: redbot/cogs/permissions/permissions.py:304
 #, docstring
@@ -231,7 +231,7 @@ msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:711
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Estás seguro?"
 
 #: redbot/cogs/permissions/permissions.py:718
 #: redbot/cogs/permissions/permissions.py:731
@@ -240,9 +240,9 @@ msgstr "No hay respuesta; se ha agotado el tiempo de espera"
 
 #: redbot/cogs/permissions/permissions.py:726
 msgid "Are you sure? (y/n)"
-msgstr ""
+msgstr "¿Estás seguro? (y/n)"
 
 #: redbot/cogs/permissions/permissions.py:737
 msgid "Action cancelled."
-msgstr ""
+msgstr "Acción cancelada."
 

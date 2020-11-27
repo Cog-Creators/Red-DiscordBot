@@ -26,7 +26,7 @@ msgstr "Svaret ditt har gått ut på tid, vennligst prøv igjen."
 #: redbot/cogs/downloader/converters.py:14
 #: redbot/cogs/downloader/repo_manager.py:176
 msgid "No Downloader cog found."
-msgstr "Ingen nedlastingskog funnet."
+msgstr "Ingen nedlastings cog funnet."
 
 #: redbot/cogs/downloader/converters.py:19
 msgid "Cog `{cog_name}` is not installed."
@@ -57,7 +57,7 @@ msgstr "Noen biblioteker kunne ikke installeres. Sjekk loggene for en komplett l
 #: redbot/cogs/downloader/downloader.py:505
 #, docstring
 msgid "Repo management commands."
-msgstr "Repo ledelse kommandoer."
+msgstr "Repo ledelseskommandoer."
 
 #: redbot/cogs/downloader/downloader.py:512
 #, docstring
@@ -184,12 +184,12 @@ msgstr "Cog-krav og delte biblioteker for alle installerte cogs er reinstallert.
 #: redbot/cogs/downloader/downloader.py:689
 #, docstring
 msgid "Install a cog from the given repo."
-msgstr "Installer en cog fra den angitte repoen."
+msgstr "Installer en cog fra den angitte repo."
 
 #: redbot/cogs/downloader/downloader.py:696
 #, docstring
 msgid "Install a cog from the specified revision of given repo."
-msgstr "Installer en cog fra den angitte versjonen av det angitte repoet."
+msgstr "Installer en cog fra den angitte versjonen av det angitte repo."
 
 #: redbot/cogs/downloader/downloader.py:711
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
@@ -412,7 +412,7 @@ msgstr " (Minimum: {min_version}"
 
 #: redbot/cogs/downloader/downloader.py:1249
 msgid ", at most: {max_version}"
-msgstr ", best: {max_version}"
+msgstr ", på det meste {max_version}"
 
 #: redbot/cogs/downloader/downloader.py:1257
 msgid "\\nThese cogs require higher python version than you have: "
@@ -440,7 +440,7 @@ msgstr "\\nDu kan bruke {command} til å se de oppdaterte utsagnet\\n"
 
 #: redbot/cogs/downloader/downloader.py:1349
 msgid "\\nFailed to update cogs: "
-msgstr "\\nKunne ikke oppdatere tannhjul: "
+msgstr "\\nKunne ikke oppdatere cogs: "
 
 #: redbot/cogs/downloader/downloader.py:1351
 msgid "No cogs were updated."
@@ -460,7 +460,7 @@ msgstr "Ingen av de oppdaterte cogs ble lastet inn. Oppdateringen var fullført.
 
 #: redbot/cogs/downloader/downloader.py:1371
 msgid "Would you like to reload the updated cogs?"
-msgstr "Ønsker du å laste de oppdaterte loggene på nytt?"
+msgstr "Ønsker du å laste de oppdaterte cog på nytt?"
 
 #: redbot/cogs/downloader/downloader.py:1394
 msgid "OK then."

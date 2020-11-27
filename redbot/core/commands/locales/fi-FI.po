@@ -53,7 +53,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:112
 msgid "Disabled"
-msgstr ""
+msgstr "Ei käytössä"
 
 #: redbot/core/commands/help.py:117
 msgid "\\nCustom Tagline: {tag}"
