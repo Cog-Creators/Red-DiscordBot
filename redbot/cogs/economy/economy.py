@@ -851,9 +851,11 @@ class Economy(commands.Cog):
             slot_max = await self.config.guild(ctx.guild).SLOT_MAX()
         if bid > slot_max:
             await ctx.send(
-                _("Invalid minimum bid amount. Must be less than or equal to the maximum amount.")
+                _(
+                    "Warning: Minimum bid is greater than the maximum bid ({max_bid}). "
+                    "Slots will not work."
+                ).format(max_bid=humanize_number(slot_max))
             )
-            return
         guild = ctx.guild
         if is_global:
             await self.config.SLOT_MIN.set(bid)
@@ -885,10 +887,10 @@ class Economy(commands.Cog):
         if bid < slot_min:
             await ctx.send(
                 _(
-                    "Invalid maximum bid amount. Must be greater than or equal to the minimum amount."
-                )
+                    "Warning: Maximum bid is less than the minimum bid ({min_bid}). "
+                    "Slots will not work."
+                ).format(min_bid=humanize_number(slot_min))
             )
-            return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
         if is_global:
