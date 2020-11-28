@@ -1118,7 +1118,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<enabled>` Whether to use embeds on this server. Leave blank to reset to default.
+        - `[enabled]` Whether to use embeds on this server. Leave blank to reset to default.
         """
         await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
@@ -1151,7 +1151,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<enabled>` Whether to use embeds in this channel. Leave blank to reset to default.
+        - `[enabled]` Whether to use embeds in this channel. Leave blank to reset to default.
         """
         await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
@@ -1181,7 +1181,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<enabled>` Whether to use embeds in your DMs. Leave blank to reset to default.
+        - `[enabled]` Whether to use embeds in your DMs. Leave blank to reset to default.
         """
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
@@ -1209,7 +1209,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<public>` Whether to send traceback to the current context. Leave blank to send to DMs.
+        - `[public]` Whether to send traceback to the current context. Leave blank to send to DMs.
         """
         if not public:
             destination = ctx.author
@@ -1262,7 +1262,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<confirm>` Required to set to public. Not required to toggle back to private.
+        - `[confirm]` Required to set to public. Not required to toggle back to private.
         """
         if await self.bot._config.invite_public():
             await self.bot._config.invite_public.set(False)
@@ -1330,7 +1330,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx: commands.Context):
-        """Lists and allows [botname] to leave servers."""
+        """Lists and allows [botname] to leave servers.
+
+        Note: This command is interactive.
+        """
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
         responses = []
@@ -1375,7 +1378,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
-        """Loads packages."""
+        """Loads packages from the local paths and installed cogs.
+
+        See available packages with `[p]cogs`.
+
+        Examples:
+            - `[p]load general` - Loads the `general` cog.
+            - `[p]load admin mod mutes` - Loads multiple cogs.
+
+        **Arguments:**
+
+        - `[cogs...]` Required to set to public. Not required to toggle back to private.
+        """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
