@@ -525,8 +525,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata(self, ctx: commands.Context):
         """Commands which interact with the data [botname] has about you.
 
-         More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)
-         """
+        More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)
+        """
 
     # 1/10 minutes. It's a static response, but the inability to lock
     # will annoy people if it's spammable
