@@ -1,9 +1,12 @@
+import contextlib
 import json
 import logging
+from dateutil.parser import parse as parse_time
 from random import choice
 from string import ascii_letters
+from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
-from typing import ClassVar, Optional, List
+from typing import ClassVar, Optional, List, Tuple
 
 import aiohttp
 import discord
@@ -17,7 +20,7 @@ from .errors import (
     YoutubeQuotaExceeded,
 )
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import humanize_number
+from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
@@ -86,6 +89,7 @@ class YoutubeStream(Stream):
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
+        self._config = kwargs.pop("config")
         self.not_livestreams: List[str] = []
         self.livestreams: List[str] = []
 
@@ -128,8 +132,11 @@ class YoutubeStream(Stream):
                     if (
                         stream_data
                         and stream_data != "None"
-                        and stream_data.get("actualStartTime", None) is not None
                         and stream_data.get("actualEndTime", None) is None
+                        and (
+                            stream_data.get("actualStartTime", None) is not None
+                            or stream_data.get("scheduledStartTime", None) is not None
+                        )
                     ):
                         if video_id not in self.livestreams:
                             self.livestreams.append(data["items"][0]["id"])
@@ -143,24 +150,52 @@ class YoutubeStream(Stream):
         # info from the RSS ... but incase you don't wanna deal with fully rewritting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
-            params = {"key": self._token["api_key"], "id": self.livestreams[-1], "part": "snippet"}
+            params = {
+                "key": self._token["api_key"],
+                "id": self.livestreams[-1],
+                "part": "snippet,liveStreamingDetails",
+            }
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
-            return self.make_embed(data)
+            return await self.make_embed(data)
         raise OfflineStream()
 
-    def make_embed(self, data):
+    async def make_embed(self, data):
         vid_data = data["items"][0]
         video_url = "https://youtube.com/watch?v={}".format(vid_data["id"])
         title = vid_data["snippet"]["title"]
         thumbnail = vid_data["snippet"]["thumbnails"]["medium"]["url"]
         channel_title = vid_data["snippet"]["channelTitle"]
         embed = discord.Embed(title=title, url=video_url)
+        is_schedule = False
+        if vid_data["liveStreamingDetails"]["scheduledStartTime"] is not None:
+            if "actualStartTime" not in vid_data["liveStreamingDetails"]:
+                start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
+                start_in = start_time.replace(tzinfo=None) - datetime.now()
+                embed.description = _("This stream will start in {time}").format(
+                    time=humanize_timedelta(
+                        timedelta=timedelta(minutes=start_in.total_seconds() // 60)
+                    )  # getting rid of seconds
+                )
+                embed.timestamp = start_time
+                is_schedule = True
+            else:
+                # repost message
+                to_remove = []
+                for message in self._messages_cache:
+                    if message.embeds[0].description is discord.Embed.Empty:
+                        continue
+                    with contextlib.suppress(Exception):
+                        autodelete = await self._config.guild(message.guild).autodelete()
+                        if autodelete:
+                            await message.delete()
+                    to_remove.append(message.id)
+                self._messages_cache = [x for x in self._messages_cache if x.id not in to_remove]
         embed.set_author(name=channel_title)
         embed.set_image(url=rnd(thumbnail))
         embed.colour = 0x9255A5
-        return embed
+        return embed, is_schedule
 
     async def fetch_id(self):
         return await self._fetch_channel_resource("id")

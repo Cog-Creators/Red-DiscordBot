@@ -462,14 +462,15 @@ class KickBanMixin(MixinMeta):
         # Call `ban_user()` method for all users that turned out to be guild members.
         for user_id, member in members.items():
             try:
-                success, reason = await self.ban_user(
+                # using `reason` here would shadow the reason passed to command
+                success, failure_reason = await self.ban_user(
                     user=member, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                 )
                 if success:
                     banned.append(user_id)
                 else:
                     errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
-                        user_id=user_id, reason=reason
+                        user_id=user_id, reason=failure_reason
                     )
             except Exception as e:
                 errors[user_id] = _("Failed to ban user {user_id}: {reason}").format(
