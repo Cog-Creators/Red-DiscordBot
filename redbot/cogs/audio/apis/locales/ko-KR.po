@@ -66,7 +66,7 @@ msgstr "You deleted the translation \"Spotify API 키 또는 client secret이 �
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "귀하의 YouTube Data API 토큰이 유효하지 않습니다.\\nYouTube API 키를 다시 한번 확인하시고, `{prefix}audioset youtubeapi`의 지침서를 따르세요."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."

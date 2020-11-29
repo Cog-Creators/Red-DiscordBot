@@ -52,7 +52,7 @@ msgstr "Maximale Warteschlangengröße erreicht."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Titel können nicht wiedergegeben werden"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
 #: redbot/cogs/audio/core/utilities/player.py:604
@@ -105,7 +105,7 @@ msgstr "Unbekannt"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:382
 msgid " - Name:   <{pname}>\\n - Scope:  < {scope} >\\n - ID:     < {pid} >\\n - Tracks: < {ptracks} >\\n - Author: < {author} >\\n\\n"
-msgstr ""
+msgstr " - Name:   <{pname}>\\n - Bereich:  < {scope} >\\n - ID:     < {pid} >\\n - Titel: < {ptracks} >\\n - Autor: < {author} >\\n\\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -156,15 +156,15 @@ msgstr "Die Nummer, des Liedes, muss größer oder gleich 1 sein."
 
 #: redbot/cogs/audio/core/utilities/player.py:174
 msgid "There are only {queuelen} songs currently queued."
-msgstr ""
+msgstr "Es sind derzeit nur {queuelen} Songs in der Warteschlange."
 
 #: redbot/cogs/audio/core/utilities/player.py:180
 msgid "{skip_to_track} Tracks Skipped"
-msgstr ""
+msgstr "{skip_to_track} Titel übersprungen"
 
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Der Besitzer muss die Spotify client ID und Spotify client secret festlegen, bevor Spotify URLs oder Codes verwendet werden können. \\nSiehe `{prefix}audioset spotifyapi` für eine Anleitung."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
@@ -254,7 +254,7 @@ msgstr "Kein Titel"
 
 #: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Playlist Enqueued"
-msgstr "Wiedergabeliste eingereiht"
+msgstr "Playlist eingereiht"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -262,7 +262,7 @@ msgstr "Es wurden {num} Tracks zu der Playlist hinzugefügt.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:512
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr "{time} bis zum Start der Wiedergabeliste: beginnt bei #{position} in der Warteschlange"
+msgstr "{time} bis zum Start der Playlist: beginnt bei #{position} in der Warteschlange"
 
 #: redbot/cogs/audio/core/utilities/player.py:593
 msgid "Nothing found"
@@ -300,11 +300,11 @@ msgstr "Du hast nicht die Berechtigung {name} (`{id}`) [**{scope} **] zu verwalt
 
 #: redbot/cogs/audio/core/utilities/playlists.py:89
 msgid "You do not have the permissions to manage that playlist in {guild}."
-msgstr "Du hast nicht die Berechtigung, diese Wiedergabeliste in {guild} zu verwalten."
+msgstr "Du hast nicht die Berechtigung, diese Playlist in {guild} zu verwalten."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:96
 msgid "You do not have the permissions to manage playlist owned by {user}."
-msgstr "Du hast nicht die Berechtigung, die Wiedergabeliste von {user} zu verwalten."
+msgstr "Du hast nicht die Berechtigung, die Playlist von {user} zu verwalten."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:100
 msgid "You do not have the permissions to manage playlists in {scope} scope."
@@ -312,7 +312,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:104
 msgid "No access to playlist."
-msgstr "Kein Zugriff auf Wiedergabeliste."
+msgstr "Kein Zugriff auf Playlist."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:212
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
@@ -324,7 +324,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
-msgstr "{playlists} Wiedergabelisten gefunden, welche möchtest du?"
+msgstr "{playlists} Playlists gefunden, welche möchtest du?"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:265
 #: redbot/cogs/audio/core/utilities/playlists.py:271
@@ -333,11 +333,11 @@ msgstr "Zu viele Treffer wurden gefunden und sie haben nicht ausgewählt, welche
 
 #: redbot/cogs/audio/core/utilities/playlists.py:296
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "Playlists auf die du in diesem Server zugreifen kannst:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:302
 msgid "Playlists for {scope}:"
-msgstr ""
+msgstr "Playlists für {scope}:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:306
 msgid "Page {page_num}/{total_pages} | {num} playlists."
@@ -361,12 +361,12 @@ msgstr "{num} Titel aus der {playlist_name} Wiedergabeliste hinzugefügt. {num_b
 #: redbot/cogs/audio/core/utilities/playlists.py:359
 #: redbot/cogs/audio/core/utilities/playlists.py:462
 msgid "Added {num} tracks from the {playlist_name} playlist."
-msgstr "{num} Lieder wurden von der {playlist_name} Wiedergabeliste hinzugefügt."
+msgstr "{num} Titel wurden aus der {playlist_name} Playlist hinzugefügt."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:363
 #: redbot/cogs/audio/core/utilities/playlists.py:466
 msgid "Playlist Saved"
-msgstr "Wiedergabeliste gespeichert"
+msgstr "Playlist gespeichert"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:502
 msgid "Connection to Lavalink has failed"
@@ -377,7 +377,7 @@ msgstr "Verbindung zu Lavalink ist fehlgeschlagen"
 #: redbot/cogs/audio/core/utilities/playlists.py:534
 #: redbot/cogs/audio/core/utilities/playlists.py:547
 msgid "Unable To Get Playlists"
-msgstr "Wiedergabelisten können nicht abgerufen werden"
+msgstr "Playlists können nicht abgerufen werden"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:517
 msgid "I don't have permission to connect to your channel."
@@ -385,11 +385,11 @@ msgstr "Ich habe keine Berechtigung, um mich zu deinem Kanal zu verbinden."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:548
 msgid "You must be in the voice channel to use the playlist command."
-msgstr "Du musst dich in dem Sprachkanal befinden, um den Wiedergabelisten Befehl zu verwenden."
+msgstr "Du musst dich in dem Sprachkanal befinden, um den Playlist Befehl zu verwenden."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "the Global"
-msgstr ""
+msgstr "die Globale"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "Global"
@@ -397,7 +397,7 @@ msgstr "Überall"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:659
 msgid "the Server"
-msgstr ""
+msgstr "der Server"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:659
 msgid "Server"
@@ -405,7 +405,7 @@ msgstr "Server"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:661
 msgid "the User"
-msgstr ""
+msgstr "der Benutzer"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:661
 msgid "User"
@@ -413,7 +413,7 @@ msgstr "Benutzer"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
-msgstr ""
+msgstr "__Zu viele Songs in der Warteschlange, zeige nur die ersten 500__.\\n\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\\n"
@@ -434,15 +434,15 @@ msgstr "angefordert von **{user}**\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr ""
+msgstr "Warteschlange für __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr ""
+msgstr "Seite {page_num}/{total_pages} | {num_tracks} Titel, {num_remaining} verbleibend\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr ""
+msgstr "Auto-Play"
 
 #: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"
@@ -458,5 +458,5 @@ msgstr "Passende Titel:"
 
 #: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
-msgstr ""
+msgstr "Seite {page_num}/{total_pages} | {num_tracks} Titel"
 

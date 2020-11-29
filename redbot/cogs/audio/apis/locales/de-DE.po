@@ -46,7 +46,7 @@ msgstr " {bad_tracks} Tracks können nicht zur Warteschlange hinzugefügt werden
 
 #: redbot/cogs/audio/apis/interface.py:669
 msgid "Playlist Enqueued"
-msgstr "Wiedergabeliste eingereiht"
+msgstr "Playlist eingereiht"
 
 #: redbot/cogs/audio/apis/interface.py:670
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
@@ -54,7 +54,7 @@ msgstr "Es wurden {num} Tracks zu der Playlist hinzugefügt.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:676
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr "{time} bis zum Start der Wiedergabeliste: beginnt bei #{position} in der Warteschlange"
+msgstr "{time} bis zum Start der Playlist: beginnt bei #{position} in der Warteschlange"
 
 #: redbot/cogs/audio/apis/interface.py:687
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
@@ -66,9 +66,9 @@ msgstr "Der Spotify API Key oder dar Client secret wurden nicht richtig eingeste
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Dein YouTube Data API Token ist ungültig.\\nÜberprüfe den YouTube API Schlüssel nochmal und folge den Anweisungen unter `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "YouTube API Fehlercode: 403\\nDein YouTube API Schlüssek hat womöglich das heutige Anfragelimit des Kontos erreicht. Bitte folge folgendem Link für mehr Informationen: <https://developers.google.com/youtube/v3/getting-started#quota>."
 
