@@ -127,7 +127,12 @@ class Repo(RepoJSONMixin):
         " -- {module_name}/__init__.py"
     )
 
+    PIP_VERSION_COMMAND = "{python} -m pip --version"
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
+    PIP_INSTALL_OLD_DEP_RESOLVER = (
+        "{python} -m pip install --use-deprecated=legacy-resolver -U -t {target_dir} {reqs}"
+    )
+    PIP_VERSION_INFO: Optional[Tuple[int, int, int]] = None
 
     MODULE_FOLDER_REGEX = re.compile(r"(\w+)\/")
     AMBIGUOUS_ERROR_REGEX = re.compile(
@@ -951,9 +956,18 @@ class Repo(RepoJSONMixin):
 
         # TODO: Check and see if any of these modules are already available
 
+        if self.PIP_VERSION_INFO is None:
+            raise RuntimeError("pip version unknown")
+
+        command = (
+            self.PIP_INSTALL_OLD_DEP_RESOLVER
+            if self.PIP_VERSION_INFO >= (20, 3)
+            else self.PIP_INSTALL
+        )
+
         p = await self._run(
             ProcessFormatter().format(
-                self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
+                command, python=executable, target_dir=target_dir, reqs=requirements
             )
         )
 
@@ -998,6 +1012,22 @@ class Repo(RepoJSONMixin):
             await repo.checkout(repo.branch, force_checkout=True)
         return repo
 
+    @classmethod
+    async def set_pip_version(cls) -> None:
+        repo = Repo("", "", "", "", Path.cwd())
+        p = await repo._run(ProcessFormatter().format(cls.PIP_VERSION_COMMAND, python=executable))
+        __, version_str, __ = p.stdout.decode(**DECODE_PARAMS).strip().split(maxsplit=2)
+
+        match = re.match(r"(\d+)(?:\.(\d+))?(?:\.(\d+))?", version_str)
+        if match is None:
+            raise RuntimeError("pip version couldn't be detected.")
+        version_info = tuple(int(segment or 0) for segment in match.groups())
+
+        if version_info >= (21, 0):
+            raise RuntimeError("This version of Red does not support pip 21.0 and newer.")
+
+        cls.PIP_VERSION_INFO = version_info
+
 
 class RepoManager:
 
@@ -1010,6 +1040,7 @@ class RepoManager:
         self.config.register_global(repos={})
 
     async def initialize(self) -> None:
+        await Repo.set_pip_version()
         await self._load_repos(set_repos=True)
 
     @property
