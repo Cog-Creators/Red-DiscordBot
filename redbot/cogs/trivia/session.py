@@ -1,6 +1,5 @@
 """Module to manage trivia sessions."""
 import asyncio
-import re
 import time
 import random
 from collections import Counter
@@ -243,16 +242,16 @@ class TriviaSession:
             early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
             if early_exit:
                 return False
-
+            trans_table = {ord(","): None, ord(";"): None, ord(":"): None, ord("'"): None}
             self._last_response = time.time()
             guess = message.content.lower()
             guess = normalize_smartquotes(guess)
             if self.settings["ignore_special"]:
-                guess = re.sub("[,;:']+", "", guess)
+                guess = guess.translate(trans_table)
 
             for answer in answers:
                 if self.settings["ignore_special"]:
-                    answer = re.sub("[,;:']+", "", answer)
+                    answer = answer.trandlate(trans_table)
                 if " " in answer and answer in guess:
                     # Exact matching, issue #331
                     return True
