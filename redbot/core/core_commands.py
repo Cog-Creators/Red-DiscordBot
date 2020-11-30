@@ -1380,7 +1380,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages from the local paths and installed cogs.
 
-        See available packages with `[p]cogs`.
+        See packages available to load with `[p]cogs`.
 
         Examples:
             - `[p]load general` - Loads the `general` cog.
@@ -1498,7 +1498,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
-        """Unloads packages."""
+        """Unloads packages.
+
+        See packages available to unload with `[p]cogs`.
+
+        Examples:
+            - `[p]load general` - Loads the `general` cog.
+            - `[p]load admin mod mutes` - Loads multiple cogs.
+
+        **Arguments:**
+
+        - `[cogs...]` Required to set to public. Not required to toggle back to private."""
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
