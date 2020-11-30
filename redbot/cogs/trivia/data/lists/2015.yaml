@@ -1,4 +1,6 @@
 AUTHOR: JennJenn
+CONFIG:
+  - ignore_special: true
 "\"L.A. Love (La La)\" is the title of a January 2015 Top Ten Smash hit for which singer?":
 - fergie
 "'Dismaland' was the temporary theme park/exhibition of which famous 'anonymous' artist?":
@@ -111,7 +113,6 @@ Published in 2015, Go Set a Watchman, written before her only prior and enduring
 - Harper Lee
 The 2015 Mad Max movie is sub-titled?:
 - Fury Road
-- "mad max: fury road"
 - mad max fury road
 The 2015 Tour de France began in what country?:
 - The Netherlands
