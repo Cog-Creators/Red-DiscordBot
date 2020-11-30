@@ -47,7 +47,6 @@ from .utils.chat_formatting import (
 )
 from .commands.requires import PrivilegeLevel
 
-
 _entities = {
     "*": "&midast;",
     "\\": "&bsol;",
@@ -91,7 +90,6 @@ if TYPE_CHECKING:
 __all__ = ["Core"]
 
 log = logging.getLogger("red")
-
 
 _ = i18n.Translator("Core", __file__)
 
@@ -989,8 +987,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_user_deletion_by_owner(self, ctx, user_id: int):
         """Delete data [botname] has about a user.
 
-        This will cause the bot to get rid of or disassociate a lot of data about the specified
-        user. This may include more than just end user data, including anti abuse records.
+        This will cause the bot to get rid of or disassociate a lot of data about the specified user.
+        This may include more than just end user data, including anti abuse records.
 
         **Arguments:**
 
@@ -1062,8 +1060,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Commands for toggling embeds on or off.
 
-        This setting determines whether or not to use embeds as a response to a command (for
-        commands that support it). The default is to use embeds.
+        This setting determines whether or not to use embeds as a response to a command (for commands that support it).
+        The default is to use embeds.
         """
 
     @embedset.command(name="showsettings")
