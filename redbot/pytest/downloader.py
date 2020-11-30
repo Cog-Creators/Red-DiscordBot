@@ -49,6 +49,8 @@ def repo(tmp_path):
     repo_folder = tmp_path / "repos" / "squid"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
+    Repo.PIP_VERSION_INFO = (20, 3, 0)
+
     return Repo(
         url="https://github.com/tekulvw/Squid-Plugins",
         name="squid",
