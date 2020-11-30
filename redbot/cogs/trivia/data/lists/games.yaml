@@ -1,6 +1,6 @@
 AUTHOR: bobloy
 CONFIG:
-  - ignore_special: true
+  ignore_special: true
 "\"Call of Duty: Ghosts\" is what number primary installment in the COD series?":
 - Ten
 - 10
