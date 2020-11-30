@@ -619,10 +619,8 @@ embedset
 
 Commands for toggling embeds on or off.
 
-This setting determines whether or not to
-use embeds as a response to a command (for
-commands that support it). The default is to
-use embeds.
+This setting determines whether or not to use embeds as a response to a command (for commands that support it).
+The default is to use embeds.
 
 .. _core-command-embedset-channel:
 
@@ -650,6 +648,14 @@ to determine whether or not to use embeds. This is
 used for all commands done in a channel except
 for help commands.
 
+Examples:
+    - ``[p]embedset channel False`` - Disables embeds in this channel.
+    - ``[p]embedset channel`` - Resets value to use guild default.
+
+**Arguments:**
+
+- ``[enabled]`` Whether to use embeds in this channel. Leave blank to reset to default.
+
 .. _core-command-embedset-global:
 
 """""""""""""""
@@ -668,9 +674,8 @@ embedset global
 
 Toggle the global embed setting.
 
-This is used as a fallback if the user
-or guild hasn't set a preference. The
-default is to use embeds.
+This is used as a fallback if the user or guild hasn't set a preference.
+The default is to use embeds.
 
 .. _core-command-embedset-server:
 
@@ -699,6 +704,14 @@ If set, this is used instead of the global default
 to determine whether or not to use embeds. This is
 used for all commands done in a guild channel except
 for help commands.
+
+Examples:
+    - ``[p]embedset server False`` - Disables embeds on this server.
+    - ``[p]embedset server`` - Resets value to use global default.
+
+**Arguments:**
+
+- ``[enabled]`` Whether to use embeds on this server. Leave blank to reset to default.
 
 .. _core-command-embedset-showsettings:
 
@@ -738,6 +751,14 @@ the global default will be used instead.
 If set, this is used instead of the global default
 to determine whether or not to use embeds. This is
 used for all commands executed in a DM with the bot.
+
+Examples:
+    - ``[p]embedset user False`` - Disables embeds in your DMs.
+    - ``[p]embedset user`` - Resets value to use global default.
+
+**Arguments:**
+
+- ``[enabled]`` Whether to use embeds in your DMs. Leave blank to reset to default.
 
 .. _core-command-helpset:
 
@@ -1102,6 +1123,8 @@ invite
 
 Shows Red's invite url.
 
+This will always send the invite to DMs to keep it private.
+
 .. _core-command-inviteset:
 
 ^^^^^^^^^
@@ -1118,7 +1141,7 @@ inviteset
 
 **Description**
 
-Setup the bot's invite.
+Commands to setup Red's invite settings.
 
 .. _core-command-inviteset-perms:
 
@@ -1157,7 +1180,16 @@ inviteset public
 
 **Description**
 
-Define if the command should be accessible for the average user.
+Toggles if ``[p]invite`` should be accessible for the average user.
+
+Bot must me made into a ``Public bot`` in the developer dashboard for public invites to work.
+
+Example:
+    - ``[p]inviteset public yes`` - Toggles the public invite setting.
+
+**Arguments:**
+
+- ``[confirm]`` Required to set to public. Not required to toggle back to private.
 
 .. _core-command-leave:
 
@@ -1211,7 +1243,19 @@ load
 
 **Description**
 
-Loads packages.
+Loads cog packages from the local paths and installed cogs.
+
+See packages available to load with ``[p]cogs``.
+
+Additional cogs can be added using Downloader, or from local paths using ``[p]addpath``.
+
+Examples:
+    - ``[p]load general`` - Loads the ``general`` cog.
+    - ``[p]load admin mod mutes`` - Loads multiple cogs.
+
+**Arguments:**
+
+- ``[cogs...]`` The cog packages to load.
 
 .. _core-command-localallowlist:
 
@@ -1397,7 +1441,7 @@ mydata
 
 Commands which interact with the data Red has about you.
 
-More information can be found in the :ref:`End User Data Documentation <red_core_data_statement>`
+More information can be found in the :ref:`End User Data Documentation.<red_core_data_statement>`
 
 .. _core-command-mydata-3rdparty:
 
@@ -1505,7 +1549,15 @@ mydata ownermanagement deleteforuser
 
 **Description**
 
-Delete data Red has about a user for a user. 
+Delete data Red has about a user for a user.
+
+This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user.
+Users have access to different command for this unless they can't interact with the bot at all.
+This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
+
+**Arguments:**
+
+- ``<user_id>`` The id of the user whose data would be deleted.
 
 .. _core-command-mydata-ownermanagement-deleteuserasowner:
 
@@ -1521,7 +1573,14 @@ mydata ownermanagement deleteuserasowner
 
 **Description**
 
-Delete data Red has about a user. 
+Delete data Red has about a user.
+
+This will cause the bot to get rid of or disassociate a lot of data about the specified user.
+This may include more than just end user data, including anti abuse records.
+
+**Arguments:**
+
+- ``<user_id>`` The id of the user whose data would be deleted.
 
 .. _core-command-mydata-ownermanagement-disallowuserdeletions:
 
@@ -1557,6 +1616,15 @@ mydata ownermanagement processdiscordrequest
 
 Handle a deletion request from Discord.
 
+This will cause the bot to get rid of or disassociate all data from the specified user ID.
+You should not use this unless Discord has specifically requested this with regard to a deleted user.
+This will remove the user from various anti-abuse measures.
+If you are processing a manual request from a user, you may want ``[p]mydata ownermanagement deleteforuser`` instead.
+
+**Arguments:**
+
+- ``<user_id>`` The id of the user whose data would be deleted.
+
 .. _core-command-mydata-ownermanagement-setuserdeletionlevel:
 
 """""""""""""""""""""""""""""""""""""""""""
@@ -1572,6 +1640,13 @@ mydata ownermanagement setuserdeletionlevel
 **Description**
 
 Sets how user deletions are treated.
+
+Example:
+    - ``[p]mydata ownermanagement setuserdeletionlevel 1``
+
+**Arguments:**
+
+- ``<level>`` The strictness level for user deletion. See Level guide below.
 
 Level:
     - ``0``: What users can delete is left entirely up to each cog.
@@ -1609,7 +1684,19 @@ reload
 
 **Description**
 
-Reloads packages.
+Reloads cog packages.
+
+This will unload and then load the specified cogs.
+
+Cogs that were not loaded will be loaded.
+
+Examples:
+    - ``[p]reload general`` - Unloads then loads the ``general`` cog.
+    - ``[p]reload admin mod mutes`` - Unloads then loads multiple cogs.
+
+**Arguments:**
+
+- ``[cogs...]`` The cog packages to unload.
 
 .. _core-command-restart:
 
@@ -1650,6 +1737,8 @@ servers
 **Description**
 
 Lists and allows Red to leave servers.
+
+Note: This command is interactive.
 
 .. _core-command-set:
 
@@ -1889,6 +1978,8 @@ Set the delay until the bot removes the command message.
 Must be between -1 and 60.
 
 Set to -1 to disable this feature.
+
+This is applied only the current server and not globally.
 
 .. _core-command-set-description:
 
@@ -2455,6 +2546,17 @@ Sends to the owner the last command exception that has occurred.
 
 If public (yes is specified), it will be sent to the chat instead.
 
+Warning: Sending the traceback publicly can accidentally reveal
+sensitive information about your computer or configuration.
+
+Examples:
+    - ``[p]traceback`` - Sends the traceback to your DMs.
+    - ``[p]traceback True`` - Sends the last traceback in the current context.
+
+**Arguments:**
+
+- ``[public]`` Whether to send traceback to the current context. Leave blank to send to DMs.
+
 .. _core-command-unignore:
 
 ^^^^^^^^
@@ -2527,7 +2629,17 @@ unload
 
 **Description**
 
-Unloads packages.
+Unloads previously loaded cog packages.
+
+See packages available to unload with ``[p]cogs``.
+
+Examples:
+    - ``[p]unload general`` - Unloads the ``general`` cog.
+    - ``[p]unload admin mod mutes`` - Unloads multiple cogs.
+
+**Arguments:**
+
+- ``[cogs...]`` The cog packages to unload.
 
 .. _core-command-uptime:
 
