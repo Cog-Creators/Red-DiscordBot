@@ -989,8 +989,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_user_deletion_by_owner(self, ctx, user_id: int):
         """Delete data [botname] has about a user.
 
-        This will cause the bot to get rid of or disassociate a lot of data about the specified user.
-        This may include more than just end user data, including anti abuse records.
+        This will cause the bot to get rid of or disassociate a lot of data about the specified
+        user. This may include more than just end user data, including anti abuse records.
 
         **Arguments:**
 
@@ -1062,8 +1062,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Commands for toggling embeds on or off.
 
-        This setting determines whether or not to use embeds as a response to a command (for commands that support it).
-        The default is to use embeds.
+        This setting determines whether or not to use embeds as a response to a command (for
+        commands that support it). The default is to use embeds.
         """
 
     @embedset.command(name="showsettings")
@@ -1378,9 +1378,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
-        """Loads packages from the local paths and installed cogs.
+        """Loads cog packages from the local paths and installed cogs.
 
         See packages available to load with `[p]cogs`.
+
+        Additional cogs can be added using Downloader, or from local paths using `[p]addpath`.
 
         Examples:
             - `[p]load general` - Loads the `general` cog.
@@ -1388,7 +1390,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[cogs...]` Required to set to public. Not required to toggle back to private.
+        - `[cogs...]` The cog packages to load.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -1498,17 +1500,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
-        """Unloads packages.
+        """Unloads previously loaded cog packages.
 
         See packages available to unload with `[p]cogs`.
 
         Examples:
-            - `[p]load general` - Loads the `general` cog.
-            - `[p]load admin mod mutes` - Loads multiple cogs.
+            - `[p]unload general` - Unloads the `general` cog.
+            - `[p]unload admin mod mutes` - Unloads multiple cogs.
 
         **Arguments:**
 
-        - `[cogs...]` Required to set to public. Not required to toggle back to private."""
+        - `[cogs...]` The cog packages to unload.
+        """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
@@ -1544,7 +1547,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
-        """Reloads packages."""
+        """Reloads cog packages.
+
+        This will unload and then load the specified cogs.
+
+        Cogs that were not loaded will be loaded.
+
+        Examples:
+            - `[p]reload general` - Unloads then loads the `general` cog.
+            - `[p]reload admin mod mutes` - Unloads then loads multiple cogs.
+
+        **Arguments:**
+
+        - `[cogs...]` The cog packages to unload.
+        """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
