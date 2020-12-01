@@ -203,7 +203,7 @@ def _decode_time(time: int) -> datetime:
     return datetime.utcfromtimestamp(time)
 
 
-async def get_balance(member: discord.Member) -> int:
+async def get_balance(member: Union[discord.Member, discord.User, discord.Object]) -> int:
     """Get the current balance of a member.
 
     Parameters
@@ -599,7 +599,7 @@ async def get_leaderboard_position(
             return pos[0]
 
 
-async def get_account(member: Union[discord.Member, discord.User]) -> Account:
+async def get_account(member: Union[discord.Member, discord.User, discord.Object]) -> Account:
     """Get the appropriate account for the given user or member.
 
     A member is required if the bank is currently guild specific.
