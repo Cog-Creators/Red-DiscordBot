@@ -378,6 +378,12 @@ class RedBase(
         self._red_before_invoke_objs.add(coro)
         return coro
 
+    async def before_identify_hook(self, shard_id, *, initial=False):
+        """A hook that is called before IDENTIFYing a session.
+        Same as in discord.py, but also dispatches "on_identify" bot event."""
+        self.dispatch("identify", shard_id, initial)
+        return await super().before_identify_hook(shard_id, initial=initial)
+
     @property
     def cog_mgr(self) -> NoReturn:
         raise AttributeError("Please don't mess with the cog manager internals.")
@@ -1544,12 +1550,6 @@ class RedBase(
 
         await asyncio.sleep(delay)
         await _delete_helper(message)
-
-    async def before_identify_hook(self, shard_id, *, initial=False):
-        """A hook that is called before IDENTIFYing a session.
-        Dispatches "on_identify" bot event."""
-        self.dispatch("identify", shard_id, initial)
-        return await super().before_identify_hook(shard_id, initial=initial)
 
     async def logout(self):
         """Logs out of Discord and closes all connections."""
