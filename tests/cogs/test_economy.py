@@ -29,6 +29,14 @@ async def test_bank_transfer(bank, member_factory):
 
 
 @pytest.mark.asyncio
+async def test_bank_get_from_object(bank, object_as_member_factory):
+    mbr = object_as_member_factory.get()
+    await bank.set_balance(mbr, 250)
+    acc = await bank.get_account(mbr)
+    assert acc.balance == 250
+
+
+@pytest.mark.asyncio
 async def test_bank_set(bank, member_factory):
     mbr = member_factory.get()
     await bank.set_balance(mbr, 250)
