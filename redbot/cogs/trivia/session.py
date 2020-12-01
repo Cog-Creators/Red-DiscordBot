@@ -282,41 +282,48 @@ class TriviaSession:
         LOG.debug("Force stopping trivia session; #%s in %s", channel, channel.guild.id)
 
     async def pay_winner(self, multiplier: float):
-        """Pay the winner of this trivia session.
+        """Pay the winner(s) of this trivia session.
 
-        The winner is only payed if there are at least 3 human contestants.
+        Payout only occurs if there are at least 3 human contestants.
 
         Parameters
         ----------
         multiplier : float
-            The coefficient of the winner's score, used to determine the amount
+            The coefficient of the winning score, used to determine the amount
             paid.
 
         """
-        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
-        me_ = self.ctx.guild.me
-        if winner is not None and winner != me_ and score > 0:
-            contestants = list(self.scores.keys())
-            if me_ in contestants:
-                contestants.remove(me_)
-            if len(contestants) >= 3:
-                amount = int(multiplier * score)
-                if amount > 0:
-                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
-                    try:
-                        await bank.deposit_credits(winner, int(multiplier * score))
-                    except errors.BalanceTooHigh as e:
-                        await bank.set_balance(winner, e.max_balance)
-                    await self.ctx.send(
-                        _(
-                            "Congratulations, {user}, you have received {num} {currency}"
-                            " for coming first."
-                        ).format(
-                            user=winner.display_name,
-                            num=humanize_number(amount),
-                            currency=await bank.get_currency_name(self.ctx.guild),
-                        )
-                    )
+        if not self.scores:
+            return
+        sorted_scores = self.scores.most_common()
+        top_score = sorted_scores[0][1]
+        winners = []
+        for (player, score) in sorted_scores:
+            if score == top_score:
+                winners.append(player)
+            else:
+                break
+        if self.ctx.guild.me in winners:
+            winners.remove(self.ctx.guild.me)
+        if len(winners) == 0:
+            return
+        payout = int(top_score * multiplier / len(winners))
+        if payout <= 0:
+            return
+        for winner in winners:
+            LOG.debug("Paying trivia winner: %d credits --> %s", payout, winner.name)
+            try:
+                await bank.deposit_credits(winner, payout)
+            except errors.BalanceTooHigh as e:
+                await bank.set_balance(winner, e.max_balance)
+        await self.ctx.send(
+            "Congratulations {users}! You have {plural}received {num} {currency} for winning!".format(
+                users=" and ".join(bold(winner.display_name) for winner in winners),
+                plural="each " if len(winners) > 1 else "",
+                num=payout,
+                currency=await bank.get_currency_name(self.ctx.guild),
+            )
+        )
 
 
 def _parse_answers(answers):
