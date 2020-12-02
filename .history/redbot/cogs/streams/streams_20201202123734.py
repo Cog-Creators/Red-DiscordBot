@@ -555,11 +555,6 @@ class Streams(commands.Cog):
         else:
             await ctx.send_help()
 
-    @message.command(name="streamer")
-    @commands.guild_only()
-    async def custom_message(self):
-        """Set custom stream alert message for already-registered streamer."""
-
     @message.command(name="clear")
     @commands.guild_only()
     async def clear_message(self, ctx: commands.Context):
