@@ -57,19 +57,19 @@ msgstr "Letiltva"
 
 #: redbot/core/commands/help.py:117
 msgid "\\nCustom Tagline: {tag}"
-msgstr ""
+msgstr "\\nEgyéni címke: {tag}"
 
 #: redbot/core/commands/help.py:123
 msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}\\nReact with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Maximum karakterek oldalanként: {page_char_limit}\\nMaximum karakterek szerverenként (csak akkor használva ha a menük nincsenek használatban): {max_pages_in_guild}\\nA segítő parancs egy menü: {use_menus}\\nSegítő parancs mutat rejtett parancsokat: {show_hidden}\\nSegítő parancs csak használható parancsokat mutat: {verify_checks}\\nA segítő menü megjelenít nem használható parancsokat közvetlen kérésnél: {verify_exists}\\nTörlési késleltetés: {delete_delay}\\nReagálás pipával ha a segítség DM-ben van elküldve: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:272
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr ""
+msgstr "Egy parancsról további információk: {ctx.clean_prefix}help <parancs>. További információk egy kategóriáról: {ctx.clean_prefix}help <kategória>."
 
 #: redbot/core/commands/help.py:302
 msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr ""
+msgstr "`Szerkezet: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
 
 #: redbot/core/commands/help.py:343
 msgid "**__Subcommands:__**"
@@ -86,11 +86,11 @@ msgstr "Alparancsok:"
 #: redbot/core/commands/help.py:420 redbot/core/commands/help.py:675
 #: redbot/core/commands/help.py:688 redbot/core/commands/help.py:707
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Súgó Menü"
 
 #: redbot/core/commands/help.py:467
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+msgstr "*{page_num}/{page_count}. oldal*\\n{content_description}"
 
 #: redbot/core/commands/help.py:518
 msgid "**__Commands:__**"
@@ -122,11 +122,11 @@ msgstr "A súgókategória a(z) *{command_name}*-hoz/-hez nem található."
 
 #: redbot/core/commands/help.py:701
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "A *{command_name}* parancsnak nincsen *{not_found}* nevű alparancsa."
 
 #: redbot/core/commands/help.py:776
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "Nem tudtam elküldeni a súgóüzenetet privát üzenetben. Letiltottál vagy kikapcsoltad a közvetlen üzeneteket ennek a szervernek a tagjaitól."
 
 #: redbot/core/commands/help.py:815
 #, docstring

@@ -31,7 +31,7 @@ msgstr "Parancsok arra hogy kapcsolatba kerülj Red cog kezelőjével."
 #: redbot/core/cog_manager.py:329
 #, docstring
 msgid "\\n        Lists current cog paths in order of priority.\\n        "
-msgstr "\\n       Listázza a cog útvonalait priorítás szerint.\\n        "
+msgstr "\\n       Listázza a cog útvonalait prioritás szerint.\\n        "
 
 #: redbot/core/cog_manager.py:337
 msgid "Install Path: {install_path}\\nCore Path: {core_path}\\n\\n"
@@ -95,12 +95,12 @@ msgstr "Az útvonal nem létezik."
 
 #: redbot/core/cog_manager.py:436
 msgid "The bot will install new cogs to the `{}` directory."
-msgstr "A bot le fog tölteni új cogs-okat a `{}` könyvtárba."
+msgstr "A bot új cog-okat fog letölteni a `{}` könyvtárba."
 
 #: redbot/core/cog_manager.py:442
 #, docstring
 msgid "\\n        Lists all loaded and available cogs.\\n        "
-msgstr "\\n        Kilistázza az összes betöltött és elérhető cogs-ot.\\n        "
+msgstr "\\n        Kilistázza a betöltött és elérhető cog-okat.\\n        "
 
 #: redbot/core/cog_manager.py:455
 msgid "**{} loaded:**\\n"
@@ -121,7 +121,7 @@ msgstr "**{} kirakva:**\\n"
 #: redbot/core/core_commands.py:375
 #, docstring
 msgid "Commands related to core functions."
-msgstr ""
+msgstr "Alapfunckiókhoz tartózó parancsok."
 
 #: redbot/core/core_commands.py:383
 #, docstring
@@ -131,7 +131,7 @@ msgstr "Pong."
 #: redbot/core/core_commands.py:388
 #, docstring
 msgid "Shows info about [botname]."
-msgstr ""
+msgstr "[botname] információi."
 
 #: redbot/core/core_commands.py:415
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n(c) Cog Creators"
@@ -139,27 +139,27 @@ msgstr ""
 
 #: redbot/core/core_commands.py:425
 msgid "Instance owned by"
-msgstr ""
+msgstr "Példány tulajdonosa"
 
 #: redbot/core/core_commands.py:428
 msgid "Red version"
-msgstr ""
+msgstr "Red verzió"
 
 #: redbot/core/core_commands.py:431 redbot/core/core_commands.py:474
 msgid "Yes, {version} is available."
-msgstr ""
+msgstr "Igen, {version} elérhető."
 
 #: redbot/core/core_commands.py:435 redbot/core/core_commands.py:478
 msgid "Checking for updates failed."
-msgstr ""
+msgstr "Frissítések keresése sikertelen."
 
 #: redbot/core/core_commands.py:436
 msgid "Outdated"
-msgstr ""
+msgstr "Elavult"
 
 #: redbot/core/core_commands.py:438
 msgid "About this instance"
-msgstr ""
+msgstr "Erről a példányról"
 
 #: redbot/core/core_commands.py:439
 msgid "About Red"
@@ -175,11 +175,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:460
 msgid "Instance owned by: [{owner}]\\nPython:            [{python_version}] (5)\\ndiscord.py:        [{dpy_version}] (6)\\nRed version:       [{red_version}] (7)\\n"
-msgstr ""
+msgstr "Példány tulajdonosa: [{owner}]\\nPython:              [{python_version}] (5)\\ndiscord.py:         [{dpy_version}] (6)\\nRed verziója:        [{red_version}] (7)\\n"
 
 #: redbot/core/core_commands.py:479
 msgid "Outdated:          [{state}]\\n"
-msgstr ""
+msgstr "Elavult:           [{state}]\\n"
 
 #: redbot/core/core_commands.py:482
 msgid "**About Red**\\n"
@@ -187,7 +187,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:493
 msgid "**About this instance**\\n"
-msgstr ""
+msgstr "**Erről a példányról**\\n"
 
 #: redbot/core/core_commands.py:495
 msgid "**References**\\n1. <{}>\\n2. <{}>\\n3. <{}>\\n4. <{}>\\n5. <{}>\\n6. <{}>\\n7. <{}>\\n"
@@ -200,7 +200,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:514
 msgid "Less than one second"
-msgstr ""
+msgstr "Kevesebb, mint 1 másodperc"
 
 #: redbot/core/core_commands.py:516
 msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
@@ -209,7 +209,7 @@ msgstr ""
 #: redbot/core/core_commands.py:523
 #, docstring
 msgid " Commands which interact with the data [botname] has about you. "
-msgstr ""
+msgstr " Parancsok az adatokról amit [botname] tud rólad. "
 
 #: redbot/core/core_commands.py:530
 #, docstring
@@ -272,7 +272,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:668
 msgid "This may take some time."
-msgstr ""
+msgstr "Ez eltarthat egy darabig."
 
 #: redbot/core/core_commands.py:681
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}.\\nPlease contact the owner of this bot to address this.\\nNote: Outside of these failures, data should have been deleted."
@@ -438,19 +438,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1031
 msgid "Global default: {}\\n"
-msgstr ""
+msgstr "Alapértelmezett: {}\\n"
 
 #: redbot/core/core_commands.py:1034
 msgid "Guild setting: {}\\n"
-msgstr ""
+msgstr "Szerver beállítás: {}\\n"
 
 #: redbot/core/core_commands.py:1037
 msgid "Channel setting: {}\\n"
-msgstr ""
+msgstr "Csatorna beállítás: {}\\n"
 
 #: redbot/core/core_commands.py:1039
 msgid "User setting: {}"
-msgstr ""
+msgstr "Felhasználói beállítás: {}"
 
 #: redbot/core/core_commands.py:1045
 #, docstring

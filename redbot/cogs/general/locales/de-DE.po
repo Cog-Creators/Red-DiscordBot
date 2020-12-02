@@ -211,7 +211,7 @@ msgstr "Region"
 
 #: redbot/cogs/general/general.py:269
 msgid "Users online"
-msgstr ""
+msgstr "Benutzer online"
 
 #: redbot/cogs/general/general.py:270
 msgid "Text Channels"
@@ -243,139 +243,139 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
-msgstr ""
+msgstr "Menschen: "
 
 #: redbot/cogs/general/general.py:313
 msgid " • Bots: "
-msgstr ""
+msgstr " • Bots: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\\n"
-msgstr ""
+msgstr "Benutzer online: **{online}/{total_users}**\\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
-msgstr ""
+msgstr "__VIP__ US Ost "
 
 #: redbot/cogs/general/general.py:343
 msgid "__VIP__ US West "
-msgstr ""
+msgstr "__VIP__ US West "
 
 #: redbot/cogs/general/general.py:344
 msgid "__VIP__ Amsterdam "
-msgstr ""
+msgstr "__VIP__ Amsterdam "
 
 #: redbot/cogs/general/general.py:345
 msgid "EU West "
-msgstr ""
+msgstr "EU West "
 
 #: redbot/cogs/general/general.py:346
 msgid "EU Central "
-msgstr ""
+msgstr "EU Zentral "
 
 #: redbot/cogs/general/general.py:347
 msgid "Europe "
-msgstr ""
+msgstr "Europa "
 
 #: redbot/cogs/general/general.py:348
 msgid "London "
-msgstr ""
+msgstr "London "
 
 #: redbot/cogs/general/general.py:349
 msgid "Frankfurt "
-msgstr ""
+msgstr "Frankfurt "
 
 #: redbot/cogs/general/general.py:350
 msgid "Amsterdam "
-msgstr ""
+msgstr "Amsterdam "
 
 #: redbot/cogs/general/general.py:351
 msgid "US West "
-msgstr ""
+msgstr "US West "
 
 #: redbot/cogs/general/general.py:352
 msgid "US East "
-msgstr ""
+msgstr "US Ost "
 
 #: redbot/cogs/general/general.py:353
 msgid "US South "
-msgstr ""
+msgstr "US Süd "
 
 #: redbot/cogs/general/general.py:354
 msgid "US Central "
-msgstr ""
+msgstr "US Zentral "
 
 #: redbot/cogs/general/general.py:355
 msgid "Singapore "
-msgstr ""
+msgstr "Singapur "
 
 #: redbot/cogs/general/general.py:356
 msgid "Sydney "
-msgstr ""
+msgstr "Sydney "
 
 #: redbot/cogs/general/general.py:357
 msgid "Brazil "
-msgstr ""
+msgstr "Brazilien "
 
 #: redbot/cogs/general/general.py:358
 msgid "Hong Kong "
-msgstr ""
+msgstr "Hong Kong "
 
 #: redbot/cogs/general/general.py:359
 msgid "Russia "
-msgstr ""
+msgstr "Russland "
 
 #: redbot/cogs/general/general.py:360
 msgid "Japan "
-msgstr ""
+msgstr "Japan "
 
 #: redbot/cogs/general/general.py:361
 msgid "South Africa "
-msgstr ""
+msgstr "Südafrika "
 
 #: redbot/cogs/general/general.py:362
 msgid "India "
-msgstr ""
+msgstr "Indien "
 
 #: redbot/cogs/general/general.py:363
 msgid "Dubai "
-msgstr ""
+msgstr "Dubai "
 
 #: redbot/cogs/general/general.py:364
 msgid "South Korea "
-msgstr ""
+msgstr "Süd Korea "
 
 #: redbot/cogs/general/general.py:367
 msgid "0 - None"
-msgstr ""
+msgstr "0 - Keine"
 
 #: redbot/cogs/general/general.py:368
 msgid "1 - Low"
-msgstr ""
+msgstr "1 - Niedrig"
 
 #: redbot/cogs/general/general.py:369
 msgid "2 - Medium"
-msgstr ""
+msgstr "2 - Mittel"
 
 #: redbot/cogs/general/general.py:370
 msgid "3 - High"
-msgstr ""
+msgstr "3 - Hoch"
 
 #: redbot/cogs/general/general.py:371
 msgid "4 - Extreme"
-msgstr ""
+msgstr "4 - Extrem"
 
 #: redbot/cogs/general/general.py:375
 msgid "Partnered"
-msgstr ""
+msgstr "Partnered"
 
 #: redbot/cogs/general/general.py:376
 msgid "Verified"
-msgstr ""
+msgstr "Verifiziert"
 
 #: redbot/cogs/general/general.py:377
 msgid "Server Discovery"
-msgstr ""
+msgstr "Server Auffindbarkeit"
 
 #: redbot/cogs/general/general.py:378
 msgid "Featurable"
@@ -383,27 +383,27 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:379
 msgid "Community"
-msgstr ""
+msgstr "Community"
 
 #: redbot/cogs/general/general.py:380
 msgid "Public disabled"
-msgstr ""
+msgstr "Öffentlich deaktiviert"
 
 #: redbot/cogs/general/general.py:381
 msgid "Splash Invite"
-msgstr ""
+msgstr "Splash Einladung"
 
 #: redbot/cogs/general/general.py:382
 msgid "VIP Voice Servers"
-msgstr ""
+msgstr "VIP Sprach-Server"
 
 #: redbot/cogs/general/general.py:383
 msgid "Vanity URL"
-msgstr ""
+msgstr "Vanity URL"
 
 #: redbot/cogs/general/general.py:384
 msgid "More Emojis"
-msgstr ""
+msgstr "Mehr Emojis"
 
 #: redbot/cogs/general/general.py:385
 msgid "Commerce"
@@ -415,31 +415,31 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:387
 msgid "Animated Icon"
-msgstr ""
+msgstr "Animiertes Icon"
 
 #: redbot/cogs/general/general.py:388
 msgid "Banner Image"
-msgstr ""
+msgstr "Banner Bild"
 
 #: redbot/cogs/general/general.py:389
 msgid "Member list disabled"
-msgstr ""
+msgstr "Mitgliederliste deaktiviert"
 
 #: redbot/cogs/general/general.py:397
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
-msgstr ""
+msgstr "{bot_name} ist dem Server durch {bot_join} beigetreten. Das ist über {since_join} Tage her!"
 
 #: redbot/cogs/general/general.py:419
 msgid "Members:"
-msgstr ""
+msgstr "Mitglieder:"
 
 #: redbot/cogs/general/general.py:421
 msgid "Channels:"
-msgstr ""
+msgstr "Kanäle:"
 
 #: redbot/cogs/general/general.py:422
 msgid "💬 Text: {text}\\n🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Text: {text}\\n🔊 Sprache: {voice}"
 
 #: redbot/cogs/general/general.py:428
 msgid "Utility:"
@@ -451,19 +451,19 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:441
 msgid "Misc:"
-msgstr ""
+msgstr "Sonstiges:"
 
 #: redbot/cogs/general/general.py:442
 msgid "AFK channel: {afk_chan}\\nAFK timeout: {afk_timeout}\\nCustom emojis: {emoji_count}\\nRoles: {role_count}"
-msgstr ""
+msgstr "AFK Kanal: {afk_chan}\\nAFK Abklingzeit: {afk_timeout}\\nBenutzerdefinierte Emojis: {emoji_count}\\nRollen: {role_count}"
 
 #: redbot/cogs/general/general.py:447
 msgid "Not set"
-msgstr ""
+msgstr "Nicht festgelegt"
 
 #: redbot/cogs/general/general.py:455
 msgid "Server features:"
-msgstr ""
+msgstr "Server Merkmale:"
 
 #: redbot/cogs/general/general.py:457
 msgid "Tier {boostlevel} with {nitroboosters} boosts\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
@@ -471,7 +471,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:469
 msgid "Nitro Boost:"
-msgstr ""
+msgstr "Nitro Boost:"
 
 #: redbot/cogs/general/general.py:478
 #, docstring

@@ -215,7 +215,7 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:859 redbot/cogs/mutes/mutes.py:1068
 msgid "OK then."
-msgstr ""
+msgstr "De acuerdo."
 
 #: redbot/cogs/mutes/mutes.py:873
 #, docstring
