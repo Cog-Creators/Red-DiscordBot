@@ -559,12 +559,8 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def custom_message(self, ctx: commands.Context):
         """Set custom stream alert message for already-registered streamer.
-        
-        Use this command: [p]streamset message streamer <Streamer name> <Message>
 
-        Streamer must be already registered.
-        Command can be run by moderator.
-        Can only be used in server.
+        [p]streamset message streamer <Streamer name> <Message>
         """
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]

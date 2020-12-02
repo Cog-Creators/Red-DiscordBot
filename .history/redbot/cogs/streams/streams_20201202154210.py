@@ -562,9 +562,9 @@ class Streams(commands.Cog):
         
         Use this command: [p]streamset message streamer <Streamer name> <Message>
 
-        Streamer must be already registered.
-        Command can be run by moderator.
-        Can only be used in server.
+        Streamer must be already registered
+        Command can be run by moderator
+        Can only be used in server
         """
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
