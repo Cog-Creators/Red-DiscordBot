@@ -285,6 +285,7 @@ class TriviaSession:
         """Pay the winner(s) of this trivia session.
 
         Payout only occurs if there are at least 3 human contestants.
+        If a tie occurs the payout is split evenly among the winners.
 
         Parameters
         ----------
@@ -295,17 +296,15 @@ class TriviaSession:
         """
         if not self.scores:
             return
-        sorted_scores = self.scores.most_common()
-        top_score = sorted_scores[0][1]
+        top_score = self.scores.most_common(1)[0][1]
         winners = []
-        for (player, score) in sorted_scores:
-            if score == top_score:
-                winners.append(player)
-            else:
-                break
-        if self.ctx.guild.me in winners:
-            winners.remove(self.ctx.guild.me)
-        if len(winners) == 0:
+        num_humans = 0
+        for (player, score) in self.scores.items():
+            if not player.bot:
+                if score == top_score:
+                    winners.append(player)
+                num_humans += 1
+        if len(winners) == 0 or num_humans < 3:
             return
         payout = int(top_score * multiplier / len(winners))
         if payout <= 0:
