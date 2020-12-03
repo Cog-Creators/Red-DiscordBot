@@ -55,12 +55,12 @@ msgstr "Zengin olun ve hayali para birimi ile eğlenin!"
 #: redbot/cogs/economy/economy.py:170
 #, docstring
 msgid "Base command to manage the bank."
-msgstr ""
+msgstr "Bankayı yönetmek için temel komut."
 
 #: redbot/cogs/economy/economy.py:175
 #, docstring
 msgid "Show the user's account balance.\\n\\n        Example:\\n            - `[p]bank balance`\\n            - `[p]bank balance @Twentysix`\\n\\n        **Arguments**\\n\\n        - `<user>` The user to check the balance of. If omitted, defaults to your own balance.\\n        "
-msgstr ""
+msgstr "Kullanıcının hesap bakiyesini göster.\\n\\n        Örnekler:\\n            - `[p]bank balance`\\n            - `[p]bank balance @Twentysix`\\n\\n        **Seçenekler**\\n\\n        - `<user>` Bakiyesi gösterilecek kullanıcı. Boş bırakılırsa, sizin bakiyeniz gösterilir.\\n        "
 
 #: redbot/cogs/economy/economy.py:195
 msgid "{user}'s balance is {num} {currency}"
@@ -69,7 +69,7 @@ msgstr "{user} adlı kullanıcının bakiyesi {num} {currency}"
 #: redbot/cogs/economy/economy.py:202
 #, docstring
 msgid "Transfer currency to other users.\\n\\n        This will come out of your balance, so make sure you have enough.\\n\\n        Example:\\n            - `[p]bank transfer @Twentysix 500`\\n\\n        **Arguments**\\n\\n        - `<to>` The user to give currency to.\\n        - `<amount>` The amount of currency to give.\\n        "
-msgstr ""
+msgstr "Diğer kullanıcılara bakiye aktar.\\n\\n        Bu sizin bakiyenizden kesilecektir, bu yüzden sizde yeterli miktarda olduğundan emin olun.\\n\\n        Örnek:\\n            - `[p]bank transfer @Twentysix 500`\\n\\n        **Seçenekler**\\n\\n        - `<to>` Bakiye aktarılacak kullanıcı.\\n        - `<amount>` Ne kadar bakiye aktarılacağı.\\n        "
 
 #: redbot/cogs/economy/economy.py:223
 msgid "{user} transferred {num} {currency} to {other_user}"
@@ -78,7 +78,7 @@ msgstr "{user}, {other_user} adlı kullanıcıya {num} {currency} {other_user} a
 #: redbot/cogs/economy/economy.py:235
 #, docstring
 msgid "Set the balance of a user's bank account.\\n\\n        Putting + or - signs before the amount will add/remove currency on the user's bank account instead.\\n\\n        Examples:\\n            - `[p]bank set @Twentysix 26` - Sets balance to 26\\n            - `[p]bank set @Twentysix +2` - Increases balance by 2\\n            - `[p]bank set @Twentysix -6` - Decreases balance by 6\\n\\n        **Arguments**\\n\\n        - `<to>` The user to set the currency of.\\n        - `<creds>` The amount of currency to set their balance to.\\n        "
-msgstr ""
+msgstr "Bir kullanıcının banka hesabındaki bekiyeyi ayarla.\\n\\n        Miktarın önüne + veya - işaretleri koymak bunun yerine kullanıcının hesabına bakiye ekler/eksiltir.\\n\\n        Örnekler:\\n            - `[p]bank set @Twentysix 26` - Bakiyeyi 26 yapar\\n            - `[p]bank set @Twentysix +2` - Bakiyeyi 2 arttırır\\n            - `[p]bank set @Twentysix -6` - Bakiyeyi 6 azaltır\\n\\n        **Seçenekler**\\n\\n        - `<to>` Bakiyesi ayarlanacak kullanıcı.\\n        - `<creds>` Bakiyenin ayarlanacağı miktar.\\n        "
 
 #: redbot/cogs/economy/economy.py:255
 msgid "{author} added {num} {currency} to {user}'s account."
@@ -95,7 +95,7 @@ msgstr "{author}, {user} bu kullanıcısına {num} {currency} ekledi."
 #: redbot/cogs/economy/economy.py:286
 #, docstring
 msgid "Delete all bank accounts.\\n\\n        Examples:\\n            - `[p]bank reset` - Did not confirm. Shows the help message.\\n            - `[p]bank reset yes`\\n\\n        **Arguments**\\n\\n        - `<confirmation>` This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Tüm banka hesaplarını sil.\\n\\n        Örnekler:\\n            - `[p]bank reset` - Onaylanmadığı için yardım mesajını gösterir.\\n            - `[p]bank reset yes`\\n\\n        **Seçenekler**\\n\\n        - `<confirmation>` Belirtilmezse varsayılan olarak hayırdır.\\n        "
 
 #: redbot/cogs/economy/economy.py:298
 msgid "This will delete all bank accounts for {scope}.\\nIf you're sure, type `{prefix}bank reset yes`"
@@ -112,12 +112,12 @@ msgstr "{scope} dahilindeki tüm banka hesapları silindi."
 #: redbot/cogs/economy/economy.py:318
 #, docstring
 msgid "Base command for pruning bank accounts."
-msgstr ""
+msgstr "Banka hesaplarını temizlemek için temel komut."
 
 #: redbot/cogs/economy/economy.py:325
 #, docstring
 msgid "Prune bank accounts for users no longer in the server.\\n\\n        Cannot be used with a global bank. See `[p]bank prune global`.\\n\\n        Examples:\\n            - `[p]bank prune server` - Did not confirm. Shows the help message.\\n            - `[p]bank prune server yes`\\n\\n        **Arguments**\\n\\n        - `<confirmation>` This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Artık sunucuda olmayan kullanıcıların hesaplarını temizle.\\n\\n        Küresel bir banka ile kullanılamaz. Bakınız: `[p]bank prune global`.\\n\\n        Örnekler:\\n            - `[p]bank prune server` - Onaylanmadığı için yardım mesajını gösterir.\\n            - `[p]bank prune server yes`\\n\\n        **Seçenekler**\\n\\n        - `<confirmation>` Belirtilmezse varsayılan olarak hayırdır.\\n        "
 
 #: redbot/cogs/economy/economy.py:339
 msgid "This command cannot be used with a global bank."
@@ -134,7 +134,7 @@ msgstr "Artık sunucuda olmayan üyelerin banka hesapları silinmiştir."
 #: redbot/cogs/economy/economy.py:358
 #, docstring
 msgid "Prune bank accounts for users who no longer share a server with the bot.\\n\\n        Cannot be used without a global bank. See `[p]bank prune server`.\\n\\n        Examples:\\n            - `[p]bank prune global` - Did not confirm. Shows the help message.\\n            - `[p]bank prune global yes`\\n\\n        **Arguments**\\n\\n        - `<confirmation>` This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Artık botla sunucu paylaşmayan kullanıcıların banka hesaplarını temizle.\\n\\n        Küresel bir banka olmadan kullanılamaz. Bakınız: `[p]bank prune server`.\\n\\n        Örnekler:\\n            - `[p]bank prune global` - Onaylanmadığı için yardım mesajını gösterir.\\n            - `[p]bank prune global yes`\\n\\n        **Seçenekler**\\n\\n        - `<confirmation>` Belirtilmezse varsayılan olarak hayırdır.\\n        "
 
 #: redbot/cogs/economy/economy.py:372
 msgid "This command cannot be used with a local bank."
@@ -151,7 +151,7 @@ msgstr "Artık bot ile ortak sunucusu bulunmayan kullanıcıların banka hesapla
 #: redbot/cogs/economy/economy.py:395
 #, docstring
 msgid "Delete the bank account of a specified user.\\n\\n        Examples:\\n            - `[p]bank prune user @TwentySix` - Did not confirm. Shows the help message.\\n            - `[p]bank prune user @TwentySix yes`\\n\\n        **Arguments**\\n\\n        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.\\n        - `<confirmation>` This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Belirtilen kullanıcının banka hesabını sil.\\n\\n        Örnekler:\\n            - `[p]bank prune user @TwentySix` - Onaylanmadığı için yardım mesajını gösterir.\\n            - `[p]bank prune user @TwentySix yes`\\n\\n        **Seçenekler**\\n\\n        - `<user>` Hesabı silinecek kullanıcı. Ping, isim veya kullanıcı Idsi kullanılabilir.\\n        - `<confirmation>` Belirtilmezse varsayılan olarak hayırdır.\\n        "
 
 #: redbot/cogs/economy/economy.py:408
 msgid "This command cannot be used in DMs with a local bank."
@@ -168,7 +168,7 @@ msgstr "Bu üyenin {name} bankası hesabı silindi."
 #: redbot/cogs/economy/economy.py:431
 #, docstring
 msgid "Get some free currency.\\n\\n        The amount awarded and frequency can be configured.\\n        "
-msgstr ""
+msgstr "Bir miktar beleş bakiye kazan.\\n\\n        Kazanılan miktar ve kazanma sıklığı ayarlanabilir.\\n        "
 
 #: redbot/cogs/economy/economy.py:452
 msgid "You've reached the maximum amount of {currency}!Please spend some more 😬\\n\\nYou currently have {new_balance} {currency}."
@@ -193,7 +193,7 @@ msgstr "{author.mention} buyur, sana birazcık {currency}. İyi eğlenceler! (+{
 #: redbot/cogs/economy/economy.py:547
 #, docstring
 msgid "Print the leaderboard.\\n\\n        Defaults to top 10.\\n\\n        Examples:\\n            - `[p]leaderboard`\\n            - `[p]leaderboard 50` - Shows the top 50 instead of top 10.\\n            - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.\\n\\n        **Arguments**\\n\\n        - `<top>` How many positions on the leaderboard to show. Defaults to 10 if omitted.\\n        - `<show_global>` Whether to include results from all servers. This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Sıralamayı göster.\\n\\n        Varsayılan olarak en üstteki 10.\\n\\n        Örnekler:\\n            - `[p]leaderboard`\\n            - `[p]leaderboard 50` - En üstteki 10 yerine 50 yi gösterir.\\n            - `[p]leaderboard 100 yes` - Tüm sunuculardan en üstteki 100 ü gösterir.\\n\\n        **Seçenekler**\\n\\n        - `<top>` Sıralamadı kaç yerin gösterileceği. Boş bırakılırsa 10 kabul edilir.\\n        - `<show_global>` Tüm sunucuların dahil edilip edilmeyeceği. Belirtilmediği sürece kapalıdır.\\n        "
 
 #: redbot/cogs/economy/economy.py:564
 msgid "Page {page_num}/{page_len}."
@@ -231,7 +231,7 @@ msgstr "Sana özelden mesaj atamıyorum."
 #: redbot/cogs/economy/economy.py:676
 #, docstring
 msgid "Use the slot machine.\\n\\n        Example:\\n            - `[p]slot 50`\\n\\n        **Arguments**\\n\\n        - `<bid>` The amount to bet on the slot machine. Winning payouts are higher when you bet more.\\n        "
-msgstr ""
+msgstr "Slot makinesini kullan.\\n\\n        Örnek:\\n            - `[p]slot 50`\\n\\n        **Seçenekler**\\n\\n        - `<bid>` Oynanacak miktar. Kazanıldığında alınan miktar oynanan miktarla birlikte artar.\\n        "
 
 #: redbot/cogs/economy/economy.py:703
 msgid "You're on cooldown, try again in a bit."
@@ -264,7 +264,7 @@ msgstr "\\n{old_balance} - {bid} (Senin teklifin) + {pay} (Kazandığın) → {n
 #: redbot/cogs/economy/economy.py:801
 #, docstring
 msgid "Base command to manage Economy settings."
-msgstr ""
+msgstr "Ekonomi ayarlarını yönetmek için temel komut."
 
 #: redbot/cogs/economy/economy.py:805
 #, docstring
@@ -278,7 +278,7 @@ msgstr "----Ekonomi Ayarları---\\nSlot oynanabilecek en az miktar: {slot_min}\\
 #: redbot/cogs/economy/economy.py:838
 #, docstring
 msgid "Set the minimum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmin 10`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new minimum bid for using the slot machine. Default is 5.\\n        "
-msgstr ""
+msgstr "Slot makinesinde oynanabilecek en az miktar.\\n\\n        Örnek:\\n            - `[p]economyset slotmin 10`\\n\\n        **Seçenekler**\\n\\n        - `<bid>` Slot makinesinde oynanabilecek yeni en düşük miktar. Varsayılan miktar 5 dir.\\n        "
 
 #: redbot/cogs/economy/economy.py:848
 msgid "Invalid min bid amount."
@@ -291,7 +291,7 @@ msgstr "Minimum teklif şimdi {bid} {currency} ' dir."
 #: redbot/cogs/economy/economy.py:864
 #, docstring
 msgid "Set the maximum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmax 50`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new maximum bid for using the slot machine. Default is 100.\\n        "
-msgstr ""
+msgstr "Slot makinesinde oynanabilecek en yüksek miktarı ayarla.\\n\\n        Örnek:\\n            - `[p]economyset slotmax 50`\\n\\n        **Seçenekler**\\n\\n        - `<bid>` Slot makinesinde oynanabilecek yeni en fazla miktar. Varsayılan olarak 100 dür.\\n        "
 
 #: redbot/cogs/economy/economy.py:876
 msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
@@ -304,7 +304,7 @@ msgstr "Maksimum teklifi şimdi {bid} {currency} ' dir."
 #: redbot/cogs/economy/economy.py:893
 #, docstring
 msgid "Set the cooldown for the slot machine.\\n\\n        Example:\\n            - `[p]economyset slottime 10`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.\\n        "
-msgstr ""
+msgstr "Slot makinesi için oynama sıklığını ayarla.\\n\\n        Örnek:\\n            - `[p]economyset slottime 10`\\n\\n        **Seçenekler**\\n\\n        - `<seconds>` Slot makinesinin her oynanışı arasında beklenmesi gereken en düşük süre. Varsayılan olarak 5 dir.\\n        "
 
 #: redbot/cogs/economy/economy.py:907
 msgid "Cooldown is now {num} seconds."
@@ -313,7 +313,7 @@ msgstr "Bekleme süresi şimdi {num} saniye."
 #: redbot/cogs/economy/economy.py:911
 #, docstring
 msgid "Set the cooldown for the payday command.\\n\\n        Example:\\n            - `[p]economyset paydaytime 86400`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.\\n        "
-msgstr ""
+msgstr "Maaş günü komutu için bekleme süresini ayarla.\\n\\n        Örnek:\\n            - `[p]economyset paydaytime 86400`\\n\\n        **Seçenekler**\\n\\n        - `<seconds>` Maaş günü komutunun kullanımları arasında beklenmesi gereken saniye değeri. Varsayılan olarak 300.\\n        "
 
 #: redbot/cogs/economy/economy.py:926
 msgid "Value modified. At least {num} seconds must pass between each payday."
@@ -322,7 +322,7 @@ msgstr "Değer değiştirildi. Her ödeme günü arasında en az {num} saniye ge
 #: redbot/cogs/economy/economy.py:933
 #, docstring
 msgid "Set the amount earned each payday.\\n\\n        Example:\\n            - `[p]economyset paydayamount 400`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new amount to give when using the payday command. Default is 120.\\n        "
-msgstr ""
+msgstr "Her maaş günü kazanılan miktarı ayarla.\\n\\n        Örnek:\\n            - `[p]economyset paydayamount 400`\\n\\n        **Seçenekler**\\n\\n        - `<creds>` Maaş günü komutu kullanıldığında alınacak yeni miktar. Varsayılan olarak 120.\\n        "
 
 #: redbot/cogs/economy/economy.py:946 redbot/cogs/economy/economy.py:979
 msgid "Amount must be greater than zero and less than {maxbal}."
@@ -335,7 +335,7 @@ msgstr "Her ödeme günü şimdi {num} {currency} verecek."
 #: redbot/cogs/economy/economy.py:963
 #, docstring
 msgid "Set the amount earned each payday for a role.\\n\\n        Only available when not using a global bank.\\n\\n        Example:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Arguments**\\n\\n        - `<role>` The role to assign a custom payday amount to.\\n        - `<creds>` The new amount to give when using the payday command.\\n        "
-msgstr ""
+msgstr "Bir rol için her maaş günü alınan miktarı ayarla.\\n\\n        Yalnızca bir küresel banka kullanılmıyorken geçerlidir.\\n\\n        Örnek:\\n            - `[p]economyset rolepaydayamount @Üyeler 400`\\n\\n        **Seçenekler**\\n\\n        - `<role>` Maaşı ayarlanacak rol.\\n        - `<creds>` Maaş komutu kullanıldığında alınacak yeni miktar.\\n        "
 
 #: redbot/cogs/economy/economy.py:985
 msgid "The bank must be per-server for per-role paydays to work."
@@ -349,7 +349,7 @@ msgstr "\n"
 #: redbot/cogs/economy/economy.py:997
 #, docstring
 msgid "Set the initial balance for new bank accounts.\\n\\n        Example:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new initial balance amount. Default is 0.\\n        "
-msgstr ""
+msgstr "Yeni banka hesapları için başlangıç bakiyesini ayarla.\\n\\n        Örnek:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Seçenekler**\\n\\n        - `<creds>` Yeni başlangıç bakiyesi miktarı. Varsayılan olarak 0.\\n        "
 
 #: redbot/cogs/economy/economy.py:1013
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
