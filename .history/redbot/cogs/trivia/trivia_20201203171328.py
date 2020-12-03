@@ -352,7 +352,6 @@ class Trivia(commands.Cog):
         """List available trivia categories."""
         lists = set(p.stem for p in self._all_lists())
         print("POOOOOP")
-        await ctx.send(_("POOOOOOP"))
         if await ctx.embed_requested():
             await ctx.send(
                 embed=discord.Embed(

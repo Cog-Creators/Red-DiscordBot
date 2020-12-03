@@ -581,7 +581,7 @@ class Streams(commands.Cog):
                         not_found = False
         
         if not_found:
-            await ctx.send(_("Streamer `{}` not registered, please use `[p]streamalert <platform> {}`".format(name, name)))
+            await ctx.send(_("Streamer " + name + " not registered, please use [p]streamalert <platform>" + name + ""))
 
         await ctx.send(_("TESTING"))
 

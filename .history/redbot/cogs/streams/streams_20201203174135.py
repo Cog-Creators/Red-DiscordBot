@@ -569,25 +569,16 @@ class Streams(commands.Cog):
                 
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
-
-        print(guild_channels_ids)
-
-        not_found = True
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
                     streams_list[channel_id].append(stream.name.lower())
-                    if stream.name.lower() == name.lower():
-                        not_found = False
-        
-        if not_found:
-            await ctx.send(_("Streamer `{}` not registered, please use `[p]streamalert <platform> {}`".format(name, name)))
 
         await ctx.send(_("TESTING"))
 
-        # print("LIST:", streams_list)
-        # print("NAME:", name)
-        # print("MSG:", msg)
+        print("LIST:", streams_list)
+        print("NAME:", name)
+        print("MSG:", msg)
 
     @message.command(name="clear")
     @commands.guild_only()
