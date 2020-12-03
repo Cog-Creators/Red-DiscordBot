@@ -203,7 +203,7 @@ def _decode_time(time: int) -> datetime:
     return datetime.utcfromtimestamp(time)
 
 
-async def get_balance(member: Union[discord.Member, discord.User, discord.Object]) -> int:
+async def get_balance(member: Union[discord.Member, discord.Object]) -> int:
     """Get the current balance of a member.
 
     Parameters
