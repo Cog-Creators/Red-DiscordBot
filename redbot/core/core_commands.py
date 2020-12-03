@@ -1198,8 +1198,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If public (yes is specified), it will be sent to the chat instead.
 
-        Warning: Sending the traceback publicly can accidentally reveal
-        sensitive information about your computer or configuration.
+        Warning: Sending the traceback publicly can accidentally reveal sensitive information about your computer or configuration.
 
         Examples:
             - `[p]traceback` - Sends the traceback to your DMs.
@@ -1233,6 +1232,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows [botname]'s invite url.
 
         This will always send the invite to DMs to keep it private.
+
+        This command is locked to the owner unless `[p]inviteset public` is set to True.
         """
         try:
             await ctx.author.send(await self._invite_url())
@@ -1300,6 +1301,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Please note that you might need two factor authentication for\
         some permissions.
+
+        Example:
+            - `[p]inviteset perms 134217728` - Adds a "Manage Nicknames" permission requirement to the invite.
+
+        **Arguments:**
+
+        - `<level>` The permission level to require for the bot in the generated invite.
         """
         await self.bot._config.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
