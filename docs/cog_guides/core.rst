@@ -1125,6 +1125,8 @@ Shows Red's invite url.
 
 This will always send the invite to DMs to keep it private.
 
+This command is locked to the owner unless ``[p]inviteset public`` is set to True.
+
 .. _core-command-inviteset:
 
 ^^^^^^^^^
@@ -2546,8 +2548,8 @@ Sends to the owner the last command exception that has occurred.
 
 If public (yes is specified), it will be sent to the chat instead.
 
-Warning: Sending the traceback publicly can accidentally reveal
-sensitive information about your computer or configuration.
+.. warning:: Sending the traceback publicly can accidentally reveal sensitive information about your computer or configuration.
+
 
 Examples:
     - ``[p]traceback`` - Sends the traceback to your DMs.
