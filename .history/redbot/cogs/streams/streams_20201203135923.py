@@ -557,7 +557,7 @@ class Streams(commands.Cog):
 
     @message.command(name="streamer")
     @commands.guild_only()
-    async def custom_message(self, ctx: commands.Context, name: str, msg: str):
+    async def custom_message(self, ctx: commands.Context, name: str):
         """Set custom stream alert message for already-registered streamer.
         
         Use this command: [p]streamset message streamer <Streamer name> <Message>
@@ -566,19 +566,17 @@ class Streams(commands.Cog):
         Command can be run by moderator.
         Can only be used in server.
         """
-        token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         # msg = _("Active alerts:\n\n")
+
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
                     streams_list[channel_id].append(stream.name.lower())
 
-
-        print("LIST:", streams_list)
-        print("NAME:", name)
-        print("MSG:", msg)
+        
+        
 
     @message.command(name="clear")
     @commands.guild_only()

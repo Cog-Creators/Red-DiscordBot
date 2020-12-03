@@ -566,6 +566,7 @@ class Streams(commands.Cog):
         Command can be run by moderator.
         Can only be used in server.
         """
+
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
