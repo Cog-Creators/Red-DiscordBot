@@ -22,7 +22,6 @@ __all__ = [
     "empty_message",
     "empty_role",
     "empty_user",
-    "object_as_member_factory",
     "member_factory",
     "newline_message",
     "user_factory",
@@ -137,17 +136,6 @@ def user_factory():
 @pytest.fixture()
 def empty_user(user_factory):
     return user_factory.get()
-
-
-@pytest.fixture()
-def object_as_member_factory(guild_factory):
-    mock_member = namedtuple("Object", "id guild display_name")
-
-    class ObjectAsMemberFactory:
-        def get(self):
-            return mock_member(random.randint(1, 999999999), guild_factory.get(), "Testing_Name")
-
-    return ObjectAsMemberFactory()
 
 
 @pytest.fixture(scope="module")
