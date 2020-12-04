@@ -566,21 +566,19 @@ class Streams(commands.Cog):
         Streamer must be already registered.
         Command can be run by moderator.
         Can only be used in server.
+
         """
 
         streams_list = defaultdict(list)
-
-        # @\u200b + whoever
 
         not_found = True
         for stream in self.streams:
             if stream.name.lower() == name.lower():
                 not_found = False
                 if mention == "mention":
-                    # if '@\u200b' not in who:
-                    #     print("WRONG MENTION USERS:", who)
-                    #     await ctx.send_help()
-                    stream.__setattr__("mention_message", who + msg)
+                    if '@\u200b' not in who:
+                        
+                    stream.__setattr__("mention_message", msg)
                 elif mention == "nomention":
                     msg = who + msg
                     stream.__setattr__("nomention_message", msg)

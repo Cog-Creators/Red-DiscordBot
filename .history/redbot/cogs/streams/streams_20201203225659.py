@@ -558,7 +558,7 @@ class Streams(commands.Cog):
     # @checks.mod_or_permissions(manage_channels=True)
     @message.command(name="streamer")
     @commands.guild_only()
-    async def custom_message(self, ctx: commands.Context, name: str, mention: str, who: str=None, *, msg: str):
+    async def custom_message(self, ctx: commands.Context, name: str, mention: str, *, msg: str):
         """Set custom stream alert message for already-registered streamer.
         
         Use the command `[p]streamset message streamer <streamer> <mention|nomention> <message>`
@@ -570,19 +570,13 @@ class Streams(commands.Cog):
 
         streams_list = defaultdict(list)
 
-        # @\u200b + whoever
-
         not_found = True
         for stream in self.streams:
             if stream.name.lower() == name.lower():
                 not_found = False
                 if mention == "mention":
-                    # if '@\u200b' not in who:
-                    #     print("WRONG MENTION USERS:", who)
-                    #     await ctx.send_help()
-                    stream.__setattr__("mention_message", who + msg)
+                    stream.__setattr__("mention_message", msg)
                 elif mention == "nomention":
-                    msg = who + msg
                     stream.__setattr__("nomention_message", msg)
                 else:
                     await ctx.send_help()

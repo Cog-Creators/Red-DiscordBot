@@ -580,7 +580,7 @@ class Streams(commands.Cog):
                     # if '@\u200b' not in who:
                     #     print("WRONG MENTION USERS:", who)
                     #     await ctx.send_help()
-                    stream.__setattr__("mention_message", who + msg)
+                    stream.__setattr__("mention_message", msg)
                 elif mention == "nomention":
                     msg = who + msg
                     stream.__setattr__("nomention_message", msg)

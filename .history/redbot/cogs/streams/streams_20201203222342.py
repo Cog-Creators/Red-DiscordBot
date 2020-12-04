@@ -558,55 +558,14 @@ class Streams(commands.Cog):
     # @checks.mod_or_permissions(manage_channels=True)
     @message.command(name="streamer")
     @commands.guild_only()
-    async def custom_message(self, ctx: commands.Context, name: str, mention: str, who: str=None, *, msg: str):
+    async def custom_message(self, ctx: commands.Context, name: str, mention: str, msg: str):
         """Set custom stream alert message for already-registered streamer.
         
-        Use the command `[p]streamset message streamer <streamer> <mention|nomention> <message>`
+        Use the command `[p]streamset message streamer <mention|nomention> <streamer name> <message>`
 
         Streamer must be already registered.
         Command can be run by moderator.
         Can only be used in server.
-        """
-
-        streams_list = defaultdict(list)
-
-        # @\u200b + whoever
-
-        not_found = True
-        for stream in self.streams:
-            if stream.name.lower() == name.lower():
-                not_found = False
-                if mention == "mention":
-                    # if '@\u200b' not in who:
-                    #     print("WRONG MENTION USERS:", who)
-                    #     await ctx.send_help()
-                    stream.__setattr__("mention_message", who + msg)
-                elif mention == "nomention":
-                    msg = who + msg
-                    stream.__setattr__("nomention_message", msg)
-                else:
-                    await ctx.send_help()
-        
-        if not_found:
-            await ctx.send(_("Streamer `{}` not registered, please look at `[p]streamalert help`"))
-
-        if hasattr(self.streams[0], "mention_message"):
-            print(self.streams[0].mention_message)
-
-        await ctx.send(_("DONE ADDING MESSAGE"))
-    
-    @message.command(name="remove")
-    @commands.guild_only()
-    async def remove_message(self, ctx: commands.Context, name: str, mention: str):
-        """Remove custom stream alert message for already-registered streamer.
-        
-        Use the command `[p]streamset message remove <streamer> <mention|nomention|both>`
-
-        Streamer must be already registered.
-        Command can be run by moderator.
-        Can only be used in server.
-
-        Note: this reverts the message for one streamer only, not all.
         """
 
         streams_list = defaultdict(list)
@@ -617,52 +576,29 @@ class Streams(commands.Cog):
             if stream.name.lower() == name.lower():
                 not_found = False
                 if mention == "mention":
-                    if not hasattr(stream, "mention_message"):
-                        print("mention message not here")
-                        break
-                    stream.__delattr__("mention_message")
-                    print("mention message removed")
-                    break
+                    stream.__setattr__("mention_message", msg)
                 elif mention == "nomention":
-                    if not hasattr(stream, "nomention_message"):
-                        print("nomention message not here")
-                        break
-                    stream.__delattr__("nomention_message")
-                    print("nomention message removed")
-                    break
-                elif mention == "both":
-                    if hasattr(stream, "nomention_message"):
-                        stream.__delattr__("nomention_message")
-                    if hasattr(stream, "mention_message"):
-                        stream.__delattr__("mention_message")
-                    print("both removed")
-                    break
+                    stream.__setattr__("nomention_message", msg)
                 else:
                     await ctx.send_help()
+
+
+        # print(self.streams[0].message)
         
         if not_found:
-            await ctx.send(_("No message(s) to remove. Streamer `{}` not registered".format(name)))
+            await ctx.send(_("Streamer `{}` not registered, please use `[p]streamalert <platform> {}`".format(name, name)))
 
-        await ctx.send(_("DONE REMOVING"))
+        await ctx.send(_("TESTING"))
 
 
     @message.command(name="clear")
     @commands.guild_only()
     async def clear_message(self, ctx: commands.Context):
         """Reset the stream alert messages in this server."""
+        print("TESTING")
         guild = ctx.guild
         await self.config.guild(guild).live_message_mention.set(False)
         await self.config.guild(guild).live_message_nomention.set(False)
-
-        for stream in self.streams:
-            if hasattr(stream, "nomention_message"):
-                stream.__delattr__("nomention_message")
-            if hasattr(stream, "mention_message"):
-                stream.__delattr__("mention_message")
-            
-        if not hasattr(self.streams[0], "mention_message"):
-            print("POKIMANE DOESNT HAVE DEFAULT MESSAGE")
-
         await ctx.send(_("Stream alerts in this server will now use the default alert message."))
 
     @streamset.group()
@@ -852,9 +788,7 @@ class Streams(commands.Cog):
                                 channel.guild
                             ).live_message_mention()
                             # CHECK IF CUSTOM LIVE MESSAGE EXISTS
-                            if hasattr(stream, "mention_message"):
-                                content = stream.mention_message
-                            elif alert_msg:
+                            if alert_msg:
                                 content = alert_msg  # Stop bad things from happening here...
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
@@ -873,8 +807,6 @@ class Streams(commands.Cog):
                                 channel.guild
                             ).live_message_nomention()
                             # CHECK IF CUSTOM LIVE MESSAGE EXISTS
-                            if hasattr(stream, "nomention_message"):
-                                content = stream.mention_message
                             if alert_msg:
                                 content = alert_msg  # Stop bad things from happening here...
                                 content = content.replace(
