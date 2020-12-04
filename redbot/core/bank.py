@@ -203,7 +203,7 @@ def _decode_time(time: int) -> datetime:
     return datetime.utcfromtimestamp(time)
 
 
-async def get_balance(member: Union[discord.Member, discord.Object]) -> int:
+async def get_balance(member: Union[discord.Member, discord.User, discord.Object]) -> int:
     """Get the current balance of a member.
 
     Parameters
@@ -221,12 +221,14 @@ async def get_balance(member: Union[discord.Member, discord.Object]) -> int:
     return acc.balance
 
 
-async def can_spend(member: discord.Member, amount: int) -> bool:
+async def can_spend(
+    member: Union[discord.Member, discord.User, discord.Object], amount: int
+) -> bool:
     """Determine if a member can spend the given amount.
 
     Parameters
     ----------
-    member : discord.Member
+    member : Union[discord.Member, discord.User, discord.Object]
         The member wanting to spend.
     amount : int
         The amount the member wants to spend.
@@ -250,12 +252,14 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     return await get_balance(member) >= amount
 
 
-async def set_balance(member: Union[discord.Member, discord.User], amount: int) -> int:
+async def set_balance(
+    member: Union[discord.Member, discord.User, discord.Object], amount: int
+) -> int:
     """Set an account balance.
 
     Parameters
     ----------
-    member : Union[discord.Member, discord.User]
+    member : Union[discord.Member, discord.User, discord.Object]
         The member whose balance to set.
     amount : int
         The amount to set the balance to.
@@ -281,15 +285,17 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
+
     guild = getattr(member, "guild", None)
+    display_name = getattr(member, "display_name", "John Doe")
     max_bal = await get_max_balance(guild)
+
     if amount > max_bal:
         currency = await get_currency_name(guild)
-        raise errors.BalanceTooHigh(
-            user=member.display_name, max_balance=max_bal, currency_name=currency
-        )
+        raise errors.BalanceTooHigh(user=display_name, max_balance=max_bal, currency_name=currency)
+
     if await is_global():
-        group = _config.user(member)
+        group = _config.user_from_id(member.id)
     else:
         group = _config.member(member)
     await group.balance.set(amount)
@@ -299,7 +305,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         await group.created_at.set(time)
 
     if await group.name() == "":
-        await group.name.set(member.display_name)
+        await group.name.set(display_name)
 
     return amount
 
@@ -308,12 +314,14 @@ def _invalid_amount(amount: int) -> bool:
     return amount < 0
 
 
-async def withdraw_credits(member: discord.Member, amount: int) -> int:
+async def withdraw_credits(
+    member: Union[discord.Member, discord.User, discord.Object], amount: int
+) -> int:
     """Remove a certain amount of credits from an account.
 
     Parameters
     ----------
-    member : discord.Member
+    member : Union[discord.Member, discord.User, discord.Object]
         The member to withdraw credits from.
     amount : int
         The amount to withdraw.
@@ -353,12 +361,14 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     return await set_balance(member, bal - amount)
 
 
-async def deposit_credits(member: discord.Member, amount: int) -> int:
+async def deposit_credits(
+    member: Union[discord.Member, discord.User, discord.Object], amount: int
+) -> int:
     """Add a given amount of credits to an account.
 
     Parameters
     ----------
-    member : discord.Member
+    member : Union[discord.Member, discord.User, discord.Object]
         The member to deposit credits to.
     amount : int
         The amount to deposit.
@@ -390,17 +400,17 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
 
 async def transfer_credits(
-    from_: Union[discord.Member, discord.User],
-    to: Union[discord.Member, discord.User],
+    from_: Union[discord.Member, discord.User, discord.Object],
+    to: Union[discord.Member, discord.User, discord.Object],
     amount: int,
 ):
     """Transfer a given amount of credits from one account to another.
 
     Parameters
     ----------
-    from_: Union[discord.Member, discord.User]
+    from_: Union[discord.Member, discord.User, discord.Object]
         The member to transfer from.
-    to : Union[discord.Member, discord.User]
+    to : Union[discord.Member, discord.User, discord.Object]
         The member to transfer to.
     amount : int
         The amount to transfer.
@@ -430,14 +440,14 @@ async def transfer_credits(
                 humanize_number(amount, override_locale="en_US")
             )
         )
+
     guild = getattr(to, "guild", None)
+    display_name = getattr(to, "display_name", "John Doe")
     max_bal = await get_max_balance(guild)
 
     if await get_balance(to) + amount > max_bal:
         currency = await get_currency_name(guild)
-        raise errors.BalanceTooHigh(
-            user=to.display_name, max_balance=max_bal, currency_name=currency
-        )
+        raise errors.BalanceTooHigh(user=display_name, max_balance=max_bal, currency_name=currency)
 
     await withdraw_credits(from_, amount)
     return await deposit_credits(to, amount)
@@ -606,7 +616,7 @@ async def get_account(member: Union[discord.Member, discord.User, discord.Object
 
     Parameters
     ----------
-    member : `discord.User` or `discord.Member`
+    member : Union[discord.Member, discord.User, discord.Object]
         The user whose account to get.
 
     Returns
@@ -620,12 +630,12 @@ async def get_account(member: Union[discord.Member, discord.User, discord.Object
     else:
         all_accounts = await _config.all_members(member.guild)
 
+    guild = getattr(member, "guild", None)
+    display_name = getattr(member, "display_name", "John Doe")
+
     if member.id not in all_accounts:
-        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
-        try:
-            acc_data["balance"] = await get_default_balance(member.guild)
-        except AttributeError:
-            acc_data["balance"] = await get_default_balance()
+        acc_data = {"name": display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
+        acc_data["balance"] = await get_default_balance(guild)
     else:
         acc_data = all_accounts[member.id]
 

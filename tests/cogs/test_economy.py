@@ -29,6 +29,19 @@ async def test_bank_transfer(bank, member_factory):
 
 
 @pytest.mark.asyncio
+async def test_bank_transfer_from_objects(bank, object_as_member_factory):
+    mbr1 = object_as_member_factory.get()
+    mbr2 = object_as_member_factory.get()
+    bal1 = (await bank.get_account(mbr1)).balance
+    bal2 = (await bank.get_account(mbr2)).balance
+    await bank.transfer_credits(mbr1, mbr2, 50)
+    newbal1 = (await bank.get_account(mbr1)).balance
+    newbal2 = (await bank.get_account(mbr2)).balance
+    assert bal1 - 50 == newbal1
+    assert bal2 + 50 == newbal2
+
+
+@pytest.mark.asyncio
 async def test_bank_get_from_object(bank, object_as_member_factory):
     mbr = object_as_member_factory.get()
     await bank.set_balance(mbr, 250)
@@ -39,6 +52,14 @@ async def test_bank_get_from_object(bank, object_as_member_factory):
 @pytest.mark.asyncio
 async def test_bank_set(bank, member_factory):
     mbr = member_factory.get()
+    await bank.set_balance(mbr, 250)
+    acc = await bank.get_account(mbr)
+    assert acc.balance == 250
+
+
+@pytest.mark.asyncio
+async def test_bank_set_from_object(bank, object_as_member_factory):
+    mbr = object_as_member_factory.get()
     await bank.set_balance(mbr, 250)
     acc = await bank.get_account(mbr)
     assert acc.balance == 250
