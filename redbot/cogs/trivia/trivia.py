@@ -4,6 +4,7 @@ import math
 import pathlib
 from collections import Counter
 from typing import List, Literal
+from schema import Schema, Optional, Or, SchemaError
 
 import io
 import yaml
@@ -671,9 +672,39 @@ class Trivia(commands.Cog):
                 return
 
         buffer = io.BytesIO(await attachment.read())
-        yaml.safe_load(buffer)
-        buffer.seek(0)
+        trivia_dict = yaml.safe_load(buffer)
 
+        schema = Schema(
+            {
+                Optional("AUTHOR"): str,
+                Optional("CONFIG"): {
+                    Optional("max_score"): int,
+                    Optional("timeout"): Or(int, float),
+                    Optional("delay"): Or(int, float),
+                    Optional("bot_plays"): bool,
+                    Optional("reveal_answer"): bool,
+                    Optional("payout_multiplier"): Or(int, float),
+                },
+                str: [
+                    str,
+                    int,
+                    bool,
+                    float,
+                ],
+            }
+        )
+        try:
+            schema.validate(trivia_dict)
+        except SchemaError as e:
+            await ctx.send(
+                _(
+                    "The custom trivia list was not saved. "
+                    "The file does not follow the proper data format.\n{}"
+                ).format(box(e))
+            )
+            return
+
+        buffer.seek(0)
         with file.open("wb") as fp:
             fp.write(buffer.read())
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
