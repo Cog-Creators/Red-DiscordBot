@@ -399,7 +399,7 @@ class Admin(commands.Cog):
     @selfrole.command(name="register")
     async def selfrole_register(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
-        Add or remove a selfrole to yourself.
+        Add or remove a selfrole from yourself.
 
         Server admins must have configured the role as user settable.
         NOTE: The role is case sensitive!
