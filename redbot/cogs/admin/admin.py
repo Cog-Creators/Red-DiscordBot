@@ -409,6 +409,30 @@ class Admin(commands.Cog):
         else:
             return await self._addrole(ctx, ctx.author, selfrole, check_user=False)
 
+    @selfrole.command(name="add")
+    @commands.command(hidden=True)
+    async def selfrole_add(self, ctx: commands.Context, *, selfrole: SelfRole):
+        """
+        Add a selfrole to yourself.
+
+        Server admins must have configured the role as user settable.
+        NOTE: The role is case sensitive!
+        """
+        # noinspection PyTypeChecker
+        await self._addrole(ctx, ctx.author, selfrole, check_user=False)
+
+    @selfrole.command(name="remove")
+    @commands.command(hidden=True)
+    async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
+        """
+        Remove a selfrole from yourself.
+
+        Server admins must have configured the role as user settable.
+        NOTE: The role is case sensitive!
+        """
+        # noinspection PyTypeChecker
+        await self._removerole(ctx, ctx.author, selfrole, check_user=False)
+
     @selfrole.command(name="list")
     async def selfrole_list(self, ctx: commands.Context):
         """
