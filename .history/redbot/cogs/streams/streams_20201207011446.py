@@ -585,8 +585,6 @@ class Streams(commands.Cog):
         Can only be used in server.
         """
 
-        # Change from looking at self.streams to looking at self.streamer_info
-        # Change in the print statements way below too
         streams_list = defaultdict(list)
 
         not_found = True
@@ -996,7 +994,7 @@ class Streams(commands.Cog):
                 print("No previously determined no mention message for streamer found", e)
             # if hasattr(raw_stream, "mention_message"):
             try:
-                if raw_stream["id"] not in self.streamer_info:
+                if not self.streamer_info[raw_stream["id"]]:
                     self.streamer_info[raw_stream["id"]] = {
                         "mention_message": raw_stream["mention_message"],
                         "who_to_mention": raw_stream["who_to_mention"]

@@ -73,7 +73,6 @@ class Streams(commands.Cog):
         self.bot: Red = bot
 
         self.streams: List[Stream] = []
-        self.streamer_info = {}
         self.task: Optional[asyncio.Task] = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
@@ -559,16 +558,10 @@ class Streams(commands.Cog):
     @message.command(name="check")
     @commands.guild_only()
     async def check_messages(self, ctx: commands.Context, streamer_name: str):
-        """
-        Testing Testing
-        """
-        await ctx.send(_("Checking for a message..."))
-        print("AHHHHHHHHHHHHHH")
-        print(self.streams)
         for stream in self.streams:
             if stream.name.lower() == streamer_name.lower():
-                print(stream)
                 print(stream.nomention_message)
+                await ctx.send(_("FOUND A MESSAGE"))
                 return
         return
 
@@ -585,8 +578,6 @@ class Streams(commands.Cog):
         Can only be used in server.
         """
 
-        # Change from looking at self.streams to looking at self.streamer_info
-        # Change in the print statements way below too
         streams_list = defaultdict(list)
 
         not_found = True
@@ -966,8 +957,6 @@ class Streams(commands.Cog):
     async def load_streams(self):
         streams = []
         for raw_stream in await self.config.streams():
-            print(raw_stream)
-            print("-- Begin ^^ --")
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
@@ -982,35 +971,6 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-            # if hasattr(raw_stream, "nomention_message"):
-            print(raw_stream["id"])
-            print("-- Changes --")
-            try:
-                if raw_stream["id"] not in self.streamer_info:
-                    self.streamer_info[raw_stream["id"]] = {
-                        "nomention_message": raw_stream["nomention_message"]
-                    }
-                else:
-                    self.streamer_info[raw_stream["id"]]["nomention_message"] = raw_stream["nomention_message"]
-            except KeyError as e:
-                print("No previously determined no mention message for streamer found", e)
-            # if hasattr(raw_stream, "mention_message"):
-            try:
-                if raw_stream["id"] not in self.streamer_info:
-                    self.streamer_info[raw_stream["id"]] = {
-                        "mention_message": raw_stream["mention_message"],
-                        "who_to_mention": raw_stream["who_to_mention"]
-                    }
-                else:
-                    self.streamer_info[raw_stream["id"]]["mention_message"] = raw_stream["mention_message"]
-                    self.streamer_info[raw_stream["id"]]["who_to_mention"] = raw_stream["who_to_mention"]
-            except KeyError as e:
-                print("No previously determined mention message for streamer found", e)
-
-            # if hasattr(raw_stream, "nomention_message"):
-            #     no_mention_msg = raw_stream["nomention_message"]
-            # mention_msg = raw_stream["mention_message"]
-            # mention_audience = 
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
                 if _class.__name__ == "TwitchStream":
@@ -1020,7 +980,6 @@ class Streams(commands.Cog):
                     raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
-        print(self.streamer_info)
         return streams
 
     async def save_streams(self):
@@ -1028,7 +987,6 @@ class Streams(commands.Cog):
         for stream in self.streams:
             raw_streams.append(stream.export())
 
-        print(raw_streams)
         await self.config.streams.set(raw_streams)
 
     def cog_unload(self):

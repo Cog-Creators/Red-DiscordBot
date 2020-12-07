@@ -72,11 +72,8 @@ class Stream:
                 data[k] = v
         data["messages"] = []
         for m in self._messages_cache:
-            # print(m)
-            # print("-----------")
+            print(m + "\n\n")
             data["messages"].append({"channel": m.channel.id, "message": m.id})
-        
-        # print(data)
         return data
 
     def __repr__(self):

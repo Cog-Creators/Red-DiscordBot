@@ -73,7 +73,6 @@ class Streams(commands.Cog):
         self.bot: Red = bot
 
         self.streams: List[Stream] = []
-        self.streamer_info = {}
         self.task: Optional[asyncio.Task] = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
@@ -585,8 +584,6 @@ class Streams(commands.Cog):
         Can only be used in server.
         """
 
-        # Change from looking at self.streams to looking at self.streamer_info
-        # Change in the print statements way below too
         streams_list = defaultdict(list)
 
         not_found = True
@@ -965,10 +962,13 @@ class Streams(commands.Cog):
 
     async def load_streams(self):
         streams = []
+        # print(await self.config.streams())
         for raw_stream in await self.config.streams():
             print(raw_stream)
-            print("-- Begin ^^ --")
+            print("-- Changes --")
             _class = getattr(_streamtypes, raw_stream["type"], None)
+            print("CLASS")
+            print(_class)
             if not _class:
                 continue
             raw_msg_cache = raw_stream["messages"]
@@ -983,31 +983,6 @@ class Streams(commands.Cog):
                     else:
                         raw_stream["_messages_cache"].append(msg)
             # if hasattr(raw_stream, "nomention_message"):
-            print(raw_stream["id"])
-            print("-- Changes --")
-            try:
-                if raw_stream["id"] not in self.streamer_info:
-                    self.streamer_info[raw_stream["id"]] = {
-                        "nomention_message": raw_stream["nomention_message"]
-                    }
-                else:
-                    self.streamer_info[raw_stream["id"]]["nomention_message"] = raw_stream["nomention_message"]
-            except KeyError as e:
-                print("No previously determined no mention message for streamer found", e)
-            # if hasattr(raw_stream, "mention_message"):
-            try:
-                if raw_stream["id"] not in self.streamer_info:
-                    self.streamer_info[raw_stream["id"]] = {
-                        "mention_message": raw_stream["mention_message"],
-                        "who_to_mention": raw_stream["who_to_mention"]
-                    }
-                else:
-                    self.streamer_info[raw_stream["id"]]["mention_message"] = raw_stream["mention_message"]
-                    self.streamer_info[raw_stream["id"]]["who_to_mention"] = raw_stream["who_to_mention"]
-            except KeyError as e:
-                print("No previously determined mention message for streamer found", e)
-
-            # if hasattr(raw_stream, "nomention_message"):
             #     no_mention_msg = raw_stream["nomention_message"]
             # mention_msg = raw_stream["mention_message"]
             # mention_audience = 
@@ -1018,9 +993,11 @@ class Streams(commands.Cog):
                     raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
                 else:
                     raw_stream["token"] = token
+            print(raw_stream)
+            print("-- Done --")
             streams.append(_class(**raw_stream))
 
-        print(self.streamer_info)
+        print(dir(streams[5]))
         return streams
 
     async def save_streams(self):
