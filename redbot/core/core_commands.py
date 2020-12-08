@@ -1842,6 +1842,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          - `[p]addrole`
          - `[p]ban`
          - `[p]ignore guild`
+
          And more.
 
          Examples:
@@ -1869,6 +1870,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          - `[p]mute`
          - `[p]cleanup`
          - `[p]customcommand create`
+
          And more.
 
          Examples:
