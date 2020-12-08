@@ -1792,6 +1792,7 @@ Admins have all the same access and Mods, plus additional admin level commands l
  - ``[p]addrole``
  - ``[p]ban``
  - ``[p]ignore guild``
+
  And more.
 
  Examples:
@@ -1824,6 +1825,7 @@ This grants access to moderator level commands like:
  - ``[p]mute``
  - ``[p]cleanup``
  - ``[p]customcommand create``
+
  And more.
 
  Examples:
@@ -1922,7 +1924,7 @@ Examples:
 
 **Arguments:**
 
-- ``[url]`` A url to an image to be used as an avatar. Leave blank when uploading an attachment.
+- ``[url]`` An image url to be used as an avatar. Leave blank when uploading an attachment.
 
 .. _core-command-set-avatar-remove:
 
