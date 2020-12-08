@@ -1316,7 +1316,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @checks.is_owner()
     async def leave(self, ctx: commands.Context):
-        """Leaves the current server."""
+        """Leaves the current server.
+
+        Note: This command is interactive.
+        """
         await ctx.send(_("Are you sure you want me to leave this server? (y/n)"))
 
         pred = MessagePredicate.yes_or_no(ctx)
@@ -1666,7 +1669,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(name="shutdown")
     @checks.is_owner()
     async def _shutdown(self, ctx: commands.Context, silently: bool = False):
-        """Shuts down the bot."""
+        """Shuts down the bot.
+
+        Allows [botname] to shut down gracefully.
+
+        This is the recommended method for shutting down the bot.
+        """
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         with contextlib.suppress(discord.HTTPException):
@@ -1680,8 +1688,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Attempts to restart [botname].
 
         Makes [botname] quit with exit code 26.
-        The restart is not guaranteed: it must be dealt
-        with by the process manager in use."""
+        The restart is not guaranteed: it must be dealt with by the process manager in use.
+        """
         with contextlib.suppress(discord.HTTPException):
             if not silently:
                 await ctx.send(_("Restarting..."))
@@ -1689,7 +1697,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
-        """Changes [botname]'s settings."""
+        """Commands for changing [botname]'s settings."""
 
     @_set.command("showsettings")
     async def set_showsettings(self, ctx: commands.Context):
@@ -1761,6 +1769,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Set to -1 to disable this feature.
 
         This is applied only the current server and not globally.
+
+        Examples:
+            - `[p]set deletedelay` - Shows the current delete delay setting.
+            - `[p]set deletedelay 60` - Sets the delete delay to the max of 60 seconds.
+            - `[p]set deletedelay -1` - Disables deleting command messages.
+
+        **Arguments:**
+
+        - `[time]` The seconds to wait before deleting the command message. Use -1 to disable.
         """
         guild = ctx.guild
         if time is not None:
@@ -1791,7 +1808,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Use without a description to reset.
         This is shown in a few locations, including the help menu.
 
+        The maximum description length is 250 characters to ensure it displays properly.
+
         The default is "Red V3".
+
+        Examples:
+            - `[p]set description` - Resets the description to the default setting.
+            - `[p]set description MyBot: A Red V3 Bot`
+
+        **Arguments:**
+
+        - `[time]` The seconds to wait before deleting the command message. Use -1 to disable.
         """
         if not description:
             await ctx.bot._config.description.clear()
@@ -1815,6 +1842,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
         Adds an admin role for this guild.
+
+        Admins have all the same access and Mods, plus additional admin level commands like:
+         - `[p]set serverprefix`
+         - `[p]addrole`
+         - `[p]ban`
+         - `[p]ignore guild`
+         And more.
+
+         Examples:
+            - `[p]set addadminrole @Admins`
+            - `[p]set addadminrole Super Admins`
+
+        **Arguments:**
+
+        - `<role>` The role to add as an admin.
         """
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id in roles:
@@ -1827,7 +1869,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
-        Adds a mod role for this guild.
+        Adds a moderator role for this guild.
+
+        This grants access to moderator level commands like:
+         - `[p]mute`
+         - `[p]cleanup`
+         - `[p]customcommand create`
+         And more.
+
+         Examples:
+            - `[p]set addmodrole @Mods`
+            - `[p]set addmodrole Loyal Helpers`
+
+        **Arguments:**
+
+        - `<role>` The role to add as a moderator.
         """
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id in roles:
@@ -1841,6 +1897,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
         Removes an admin role for this guild.
+
+        Examples:
+            - `[p]set removeadminrole @Admins`
+            - `[p]set removeadminrole Super Admins`
+
+        **Arguments:**
+
+        - `<role>` The role to remove from being an admin.
         """
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id not in roles:
@@ -1854,6 +1918,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
         Removes a mod role for this guild.
+
+        Examples:
+            - `[p]set removemodrole @Mods`
+            - `[p]set removemodrole Loyal Helpers`
+
+        **Arguments:**
+
+        - `<role>` The role to remove from being a moderator.
         """
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id not in roles:
@@ -1886,6 +1958,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggle whether to enable fuzzy command search for the server.
 
+        This allows the bot to identify potential misspelled commands and offer corrections.
+
+        Note: This can be processor intensive and may be unsuitable for larger servers.
+
         Default is for fuzzy command search to be disabled.
         """
         current_setting = await ctx.bot._config.guild(ctx.guild).fuzzy()
@@ -1901,6 +1977,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
+
+        This allows the bot to identify potential misspelled commands and offer corrections.
 
         Default is for fuzzy command search to be disabled.
         """
@@ -1921,6 +1999,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Acceptable values for the colour parameter can be found at:
 
         https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
+
+        Examples:
+            - `[p]set colour dark red`
+            - `[p]set colour blurple`
+            - `[p]set colour 0x5DADE2`
+            - `[p]set color 0x#FDFEFE`
+            - `[p]set color #7F8C8D`
+
+        **Arguments:**
+
+        - `[colour]` The colour to use for embeds. Leave blank to set to the default value (red).
         """
         if colour is None:
             ctx.bot._color = discord.Color.red()
@@ -1935,7 +2024,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
 
-        Supports either an attachment or an image URL."""
+        Supports either an attachment or an image URL.
+
+        Examples:
+            - `[p]set avatar` - With an image attachment, this will set the avatar.
+            - `[p]set avatar` - Without an attachment, this will show the command help.
+            - `[p]set avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
+
+        **Arguments:**
+
+        - `[url]` An image url to be used as an avatar. Leave blank when uploading an attachment.
+        """
         if len(ctx.message.attachments) > 0:  # Attachments take priority
             data = await ctx.message.attachments[0].read()
         elif url is not None:
