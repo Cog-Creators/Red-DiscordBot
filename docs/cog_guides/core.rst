@@ -1012,7 +1012,8 @@ helpset verifyexists
 This allows the bot to respond indicating the existence of a specific
 help topic even if the user can't use it.
 
-Note: This setting on it's own does not fully prevent command enumeration.
+.. Note:: This setting on it's own does not fully prevent command enumeration.
+
 
 Defaults to False.
 Using this without a setting will toggle.
@@ -1168,6 +1169,13 @@ You can generate one here: https://discordapi.com/permissions.html
 
 Please note that you might need two factor authentication for        some permissions.
 
+Example:
+    - ``[p]inviteset perms 134217728`` - Adds a "Manage Nicknames" permission requirement to the invite.
+
+**Arguments:**
+
+- ``<level>`` The permission level to require for the bot in the generated invite.
+
 .. _core-command-inviteset-public:
 
 """"""""""""""""
@@ -1210,6 +1218,9 @@ leave
 **Description**
 
 Leaves the current server.
+
+.. Note:: This command is interactive.
+
 
 .. _core-command-licenseinfo:
 
@@ -1719,8 +1730,7 @@ restart
 Attempts to restart Red.
 
 Makes Red quit with exit code 26.
-The restart is not guaranteed: it must be dealt
-with by the process manager in use.
+The restart is not guaranteed: it must be dealt with by the process manager in use.
 
 .. _core-command-servers:
 
@@ -1740,7 +1750,8 @@ servers
 
 Lists and allows Red to leave servers.
 
-Note: This command is interactive.
+.. Note:: This command is interactive.
+
 
 .. _core-command-set:
 
@@ -1756,7 +1767,7 @@ set
 
 **Description**
 
-Changes Red's settings.
+Commands for changing Red's settings.
 
 .. _core-command-set-addadminrole:
 
@@ -1776,6 +1787,21 @@ set addadminrole
 
 Adds an admin role for this guild.
 
+Admins have all the same access and Mods, plus additional admin level commands like:
+ - ``[p]set serverprefix``
+ - ``[p]addrole``
+ - ``[p]ban``
+ - ``[p]ignore guild``
+ And more.
+
+ Examples:
+    - ``[p]set addadminrole @Admins``
+    - ``[p]set addadminrole Super Admins``
+
+**Arguments:**
+
+- ``<role>`` The role to add as an admin.
+
 .. _core-command-set-addmodrole:
 
 """"""""""""""
@@ -1792,7 +1818,21 @@ set addmodrole
 
 **Description**
 
-Adds a mod role for this guild.
+Adds a moderator role for this guild.
+
+This grants access to moderator level commands like:
+ - ``[p]mute``
+ - ``[p]cleanup``
+ - ``[p]customcommand create``
+ And more.
+
+ Examples:
+    - ``[p]set addmodrole @Mods``
+    - ``[p]set addmodrole Loyal Helpers``
+
+**Arguments:**
+
+- ``<role>`` The role to add as a moderator.
 
 .. _core-command-set-api:
 
@@ -1817,7 +1857,8 @@ This setting will be asked for by some 3rd party cogs and some core cogs.
 To add the keys provide the service name and the tokens as a comma separated
 list of key,values as described by the cog requesting this command.
 
-Note: API tokens are sensitive and should only be used in a private channel
+.. Note:: API tokens are sensitive and should only be used in a private channel
+
 or in DM with the bot.
 
 .. _core-command-set-api-list:
@@ -1874,6 +1915,15 @@ Sets Red's avatar
 
 Supports either an attachment or an image URL.
 
+Examples:
+    - ``[p]set avatar`` - With an image attachment, this will set the avatar.
+    - ``[p]set avatar`` - Without an attachment, this will show the command help.
+    - ``[p]set avatar https://links.flaree.xyz/k95`` - Sets the avatar to the provided url.
+
+**Arguments:**
+
+- ``[url]`` A url to an image to be used as an avatar. Leave blank when uploading an attachment.
+
 .. _core-command-set-avatar-remove:
 
 """""""""""""""""
@@ -1917,6 +1967,17 @@ Sets a default colour to be used for the bot's embeds.
 Acceptable values for the colour parameter can be found at:
 
 https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
+
+Examples:
+    - ``[p]set colour dark red``
+    - ``[p]set colour blurple``
+    - ``[p]set colour 0x5DADE2``
+    - ``[p]set color 0x#FDFEFE``
+    - ``[p]set color #7F8C8D``
+
+**Arguments:**
+
+- ``[colour]`` The colour to use for embeds. Leave blank to set to the default value (red).
 
 .. _core-command-set-competing:
 
@@ -1983,6 +2044,15 @@ Set to -1 to disable this feature.
 
 This is applied only the current server and not globally.
 
+Examples:
+    - ``[p]set deletedelay`` - Shows the current delete delay setting.
+    - ``[p]set deletedelay 60`` - Sets the delete delay to the max of 60 seconds.
+    - ``[p]set deletedelay -1`` - Disables deleting command messages.
+
+**Arguments:**
+
+- ``[time]`` The seconds to wait before deleting the command message. Use -1 to disable.
+
 .. _core-command-set-description:
 
 """""""""""""""
@@ -2003,7 +2073,17 @@ Sets the bot's description.
 Use without a description to reset.
 This is shown in a few locations, including the help menu.
 
+The maximum description length is 250 characters to ensure it displays properly.
+
 The default is "Red V3".
+
+Examples:
+    - ``[p]set description`` - Resets the description to the default setting.
+    - ``[p]set description MyBot: A Red V3 Bot``
+
+**Arguments:**
+
+- ``[time]`` The seconds to wait before deleting the command message. Use -1 to disable.
 
 .. _core-command-set-fuzzy:
 
@@ -2022,6 +2102,8 @@ set fuzzy
 **Description**
 
 Toggle whether to enable fuzzy command search in DMs.
+
+This allows the bot to identify potential misspelled commands and offer corrections.
 
 Default is for fuzzy command search to be disabled.
 
@@ -2327,6 +2409,14 @@ set removeadminrole
 
 Removes an admin role for this guild.
 
+Examples:
+    - ``[p]set removeadminrole @Admins``
+    - ``[p]set removeadminrole Super Admins``
+
+**Arguments:**
+
+- ``<role>`` The role to remove from being an admin.
+
 .. _core-command-set-removemodrole:
 
 """""""""""""""""
@@ -2347,6 +2437,14 @@ set removemodrole
 
 Removes a mod role for this guild.
 
+Examples:
+    - ``[p]set removemodrole @Mods``
+    - ``[p]set removemodrole Loyal Helpers``
+
+**Arguments:**
+
+- ``<role>`` The role to remove from being a moderator.
+
 .. _core-command-set-serverfuzzy:
 
 """""""""""""""
@@ -2364,6 +2462,11 @@ set serverfuzzy
 **Description**
 
 Toggle whether to enable fuzzy command search for the server.
+
+This allows the bot to identify potential misspelled commands and offer corrections.
+
+.. Note:: This can be processor intensive and may be unsuitable for larger servers.
+
 
 Default is for fuzzy command search to be disabled.
 
@@ -2528,6 +2631,10 @@ shutdown
 
 Shuts down the bot.
 
+Allows Red to shut down gracefully.
+
+This is the recommended method for shutting down the bot.
+
 .. _core-command-traceback:
 
 ^^^^^^^^^
@@ -2548,7 +2655,7 @@ Sends to the owner the last command exception that has occurred.
 
 If public (yes is specified), it will be sent to the chat instead.
 
-.. warning:: Sending the traceback publicly can accidentally reveal sensitive information about your computer or configuration.
+.. Warning:: Sending the traceback publicly can accidentally reveal sensitive information about your computer or configuration.
 
 
 Examples:
