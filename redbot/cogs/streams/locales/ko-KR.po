@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-26 12:23+0000\n"
+"POT-Creation-Date: 2020-12-03 12:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -174,7 +174,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:526
 #, docstring
-msgid "Manage custom message for stream alerts."
+msgid "Manage custom messages for stream alerts."
 msgstr ""
 
 #: redbot/cogs/streams/streams.py:532
@@ -303,43 +303,47 @@ msgstr ""
 msgid "{stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:176
+#: redbot/cogs/streams/streamtypes.py:183
 msgid "This stream will start in {time}"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:351
-msgid "Untitled broadcast"
-msgstr ""
-
-#: redbot/cogs/streams/streamtypes.py:353
-msgid " - Rerun"
-msgstr ""
-
-#: redbot/cogs/streams/streamtypes.py:356
-#: redbot/cogs/streams/streamtypes.py:399
-#: redbot/cogs/streams/streamtypes.py:440
-msgid "Followers"
-msgstr ""
-
-#: redbot/cogs/streams/streamtypes.py:357
-#: redbot/cogs/streams/streamtypes.py:441
-msgid "Total views"
+#: redbot/cogs/streams/streamtypes.py:189
+msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:362
-#: redbot/cogs/streams/streamtypes.py:403
+msgid "Untitled broadcast"
+msgstr ""
+
+#: redbot/cogs/streams/streamtypes.py:364
+msgid " - Rerun"
+msgstr ""
+
+#: redbot/cogs/streams/streamtypes.py:367
+#: redbot/cogs/streams/streamtypes.py:410
+#: redbot/cogs/streams/streamtypes.py:451
+msgid "Followers"
+msgstr ""
+
+#: redbot/cogs/streams/streamtypes.py:368
+#: redbot/cogs/streams/streamtypes.py:452
+msgid "Total views"
+msgstr ""
+
+#: redbot/cogs/streams/streamtypes.py:373
+#: redbot/cogs/streams/streamtypes.py:414
 msgid "Playing: "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:446
+#: redbot/cogs/streams/streamtypes.py:457
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:460
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:453
+#: redbot/cogs/streams/streamtypes.py:464
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr ""
 

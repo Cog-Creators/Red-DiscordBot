@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-26 12:23+0000\n"
+"POT-Creation-Date: 2020-12-03 12:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -174,8 +174,8 @@ msgstr "<buraya_api_anahtarınızı_yazın>"
 
 #: redbot/cogs/streams/streams.py:526
 #, docstring
-msgid "Manage custom message for stream alerts."
-msgstr "Yayın uyarıları için özelleştirilmiş mesajı yönet."
+msgid "Manage custom messages for stream alerts."
+msgstr ""
 
 #: redbot/cogs/streams/streams.py:532
 #, docstring
@@ -303,43 +303,47 @@ msgstr "{mention}, {stream} canlı yayında!"
 msgid "{stream} is live!"
 msgstr "{stream} canlı yayında!"
 
-#: redbot/cogs/streams/streamtypes.py:176
+#: redbot/cogs/streams/streamtypes.py:183
 msgid "This stream will start in {time}"
 msgstr "Bu yayının başlamasına kalan: {time}"
 
-#: redbot/cogs/streams/streamtypes.py:351
+#: redbot/cogs/streams/streamtypes.py:189
+msgid "This stream was scheduled for {min} minutes ago"
+msgstr ""
+
+#: redbot/cogs/streams/streamtypes.py:362
 msgid "Untitled broadcast"
 msgstr "İsimsiz yayın"
 
-#: redbot/cogs/streams/streamtypes.py:353
+#: redbot/cogs/streams/streamtypes.py:364
 msgid " - Rerun"
 msgstr " - Tekrar"
 
-#: redbot/cogs/streams/streamtypes.py:356
-#: redbot/cogs/streams/streamtypes.py:399
-#: redbot/cogs/streams/streamtypes.py:440
+#: redbot/cogs/streams/streamtypes.py:367
+#: redbot/cogs/streams/streamtypes.py:410
+#: redbot/cogs/streams/streamtypes.py:451
 msgid "Followers"
 msgstr "Takipçiler"
 
-#: redbot/cogs/streams/streamtypes.py:357
-#: redbot/cogs/streams/streamtypes.py:441
+#: redbot/cogs/streams/streamtypes.py:368
+#: redbot/cogs/streams/streamtypes.py:452
 msgid "Total views"
 msgstr "Toplam görüntülenme"
 
-#: redbot/cogs/streams/streamtypes.py:362
-#: redbot/cogs/streams/streamtypes.py:403
+#: redbot/cogs/streams/streamtypes.py:373
+#: redbot/cogs/streams/streamtypes.py:414
 msgid "Playing: "
 msgstr "Oynatılıyor"
 
-#: redbot/cogs/streams/streamtypes.py:446
+#: redbot/cogs/streams/streamtypes.py:457
 msgid "None"
 msgstr "None"
 
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:460
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:453
+#: redbot/cogs/streams/streamtypes.py:464
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Kategori: {category} | Etiketler: {tags}"
 

@@ -55,12 +55,12 @@ msgstr "Få deg god og ha det gøy med bildetekst!"
 #: redbot/cogs/economy/economy.py:170
 #, docstring
 msgid "Base command to manage the bank."
-msgstr ""
+msgstr "Base-kommandoen for å administrere banken."
 
 #: redbot/cogs/economy/economy.py:175
 #, docstring
 msgid "Show the user's account balance.\\n\\n        Example:\\n            - `[p]bank balance`\\n            - `[p]bank balance @Twentysix`\\n\\n        **Arguments**\\n\\n        - `<user>` The user to check the balance of. If omitted, defaults to your own balance.\\n        "
-msgstr ""
+msgstr "Vis brukerens kontosaldo.\\n\\n        Eksempel:\\n            - `[p]bank balance`\\n            - `[p]bank balanse @Twentysix`\\n\\n        **Argumenter**\\n\\n        - `<user>` Brukeren som skal sjekke saldoen. Hvis utelatt, settes standard til din egen saldo.\\n        "
 
 #: redbot/cogs/economy/economy.py:195
 msgid "{user}'s balance is {num} {currency}"
@@ -69,7 +69,7 @@ msgstr "{user} sin saldo er {num} {currency}"
 #: redbot/cogs/economy/economy.py:202
 #, docstring
 msgid "Transfer currency to other users.\\n\\n        This will come out of your balance, so make sure you have enough.\\n\\n        Example:\\n            - `[p]bank transfer @Twentysix 500`\\n\\n        **Arguments**\\n\\n        - `<to>` The user to give currency to.\\n        - `<amount>` The amount of currency to give.\\n        "
-msgstr ""
+msgstr "Overfør valuta til andre brukere.\\n\\n        Dette vil gå ut av saldoen din, så pass på at du har nok.\\n\\n        Eksempel:\\n            - `[p]bank transfer @Twentysix 500`\\n\\n        **Argumenter**\\n\\n        - `<to>` brukeren som skal gi valuta til.\\n        - `<amount>` beløpet av valuta å gi.\\n        "
 
 #: redbot/cogs/economy/economy.py:223
 msgid "{user} transferred {num} {currency} to {other_user}"
@@ -95,7 +95,7 @@ msgstr "{author} har angitt {user} sin kontobalanse til {num} {currency}."
 #: redbot/cogs/economy/economy.py:286
 #, docstring
 msgid "Delete all bank accounts.\\n\\n        Examples:\\n            - `[p]bank reset` - Did not confirm. Shows the help message.\\n            - `[p]bank reset yes`\\n\\n        **Arguments**\\n\\n        - `<confirmation>` This will default to false unless specified.\\n        "
-msgstr ""
+msgstr "Slett alle bankkontoer.\\n\\n        Eksempler:\\n            - `[p]bank reset` - Ikke bekreftet. Viser en hjelp-melding.\\n            - `[p]bank reset yes`\\n\\n        **Argumenter**\\n\\n        - `<confirmation>` vil bli satt som standard med mindre de er angitt.\\n        "
 
 #: redbot/cogs/economy/economy.py:298
 msgid "This will delete all bank accounts for {scope}.\\nIf you're sure, type `{prefix}bank reset yes`"
@@ -112,7 +112,7 @@ msgstr "Alle bankkontoer for {scope} har blitt slettet."
 #: redbot/cogs/economy/economy.py:318
 #, docstring
 msgid "Base command for pruning bank accounts."
-msgstr ""
+msgstr "Base-kommandoen for å utsette bankkontoer."
 
 #: redbot/cogs/economy/economy.py:325
 #, docstring

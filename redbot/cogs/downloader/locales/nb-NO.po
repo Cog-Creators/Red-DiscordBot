@@ -39,12 +39,12 @@ msgstr "\\n**ADVARSEL:** Følgende repoer bruker delte biblioteker som er merket
 #: redbot/cogs/downloader/downloader.py:39
 #, docstring
 msgid "Install community cogs made by Cog Creators.\\n\\n    Community cogs, also called third party cogs, are not included\\n    in the default Red install.\\n\\n    Community cogs come in repositories. Repos are a group of cogs\\n    you can install. You always need to add the creator's repository\\n    using the `[p]repo` command before you can install one or more\\n    cogs from the creator.\\n    "
-msgstr "Installer samfunnskanaler laget av Cog Creators.\\n\\n    samfunnskoger, også kalt tredjeparts cogs, er ikke medfølgende\\n    i standardinstallasjonen av røde blodceller.\\n\\n    samfunnskoger kommer i kodelager. Repos er en gruppe av cogs\\n    du kan installere. Du må alltid legge til skaperens repository\\n    med kommandoen `[p]repo` før du kan installere en eller flere\\n    cogs fra skaperen.\\n    "
+msgstr "Installer samfunnskanaler laget av Cog Creators.\\n\\n    samfunnskoger, også kalt tredjeparts cogs, er ikke medfølgende\\n    i standardinstallasjonen av Red.\\n\\n    samfunnskoger kommer i kodelager. Repos er en gruppe av cogs\\n    du kan installere. Du må alltid legge til skaperens repository\\n    med kommandoen `[p]repo` før du kan installere en eller flere\\n    cogs fra skaperen.\\n    "
 
 #: redbot/cogs/downloader/downloader.py:484
 #, docstring
 msgid "\\n        Install a group of dependencies using pip.\\n\\n        Examples:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Improper usage of this command can break your bot, be careful.\\n\\n        **Arguments**\\n\\n        - `[deps...]` The package or packages you wish to install.\\n        "
-msgstr ""
+msgstr "\\n        Installer en gruppe avhengigheter ved hjelp av pip.\\n\\n        Eksempler:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Uriktig bruk av denne kommandoen kan ødelegge din bot, vær forsiktig.\\n\\n        **Argumenter**\\n\\n        - `[deps...]` Pakken eller pakkene du vil installere.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:505
 msgid "Libraries installed."
@@ -57,7 +57,7 @@ msgstr "Noen biblioteker kunne ikke installeres. Sjekk loggene for en komplett l
 #: redbot/cogs/downloader/downloader.py:517
 #, docstring
 msgid "Base command for repository management."
-msgstr ""
+msgstr "Base kommando for depotadministrasjon."
 
 #: redbot/cogs/downloader/downloader.py:524
 #, docstring

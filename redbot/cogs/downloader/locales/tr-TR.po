@@ -44,7 +44,7 @@ msgstr "Cog Creators tarafından yapılmış topluluk Coglarını kurar.\\n\\n  
 #: redbot/cogs/downloader/downloader.py:484
 #, docstring
 msgid "\\n        Install a group of dependencies using pip.\\n\\n        Examples:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Improper usage of this command can break your bot, be careful.\\n\\n        **Arguments**\\n\\n        - `[deps...]` The package or packages you wish to install.\\n        "
-msgstr ""
+msgstr "\\n        pip kullanarak bir gereklilik gurubunu yükle.\\n\\n        Örnekler:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Bu komutun yanlış kullanımı botu bozabilir, dikkatli olun..\\n\\n        **Seçenekler**\\n\\n        - `[deps...]` Yüklemek istediğiniz paket ya da paketler.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:505
 msgid "Libraries installed."
@@ -57,12 +57,12 @@ msgstr "Bazı kütüphaneler yüklenemedi. Lütfen eksiksiz bir liste için kay�
 #: redbot/cogs/downloader/downloader.py:517
 #, docstring
 msgid "Base command for repository management."
-msgstr ""
+msgstr "Depo yönetimi için temel komut."
 
 #: redbot/cogs/downloader/downloader.py:524
 #, docstring
 msgid "Add a new repo.\\n\\n        Examples:\\n            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`\\n            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`\\n\\n        Repo names can only contain characters A-z, numbers, underscores, and hyphens.\\n        The branch will be the default branch if not specified.\\n\\n        **Arguments**\\n\\n        - `<name>` The name given to the repo.\\n        - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.\\n        - `[branch]` Optional branch to install cogs from.\\n        "
-msgstr ""
+msgstr "Yeni bir depo ekle.\\n\\n        Örnekler:\\n            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`\\n            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`\\n\\n        Depo adları sadece İngilizce karakterler, rakamlar, tireler ve alt tireler içerebilir.\\n        Eğer belirtilmezse deponun varsayılan dalı kullanılacaktır.\\n\\n        **Seçenekler**\\n\\n        - `<name>` Depoya verilen isim.\\n        - `<repo_url>` cog dalının URL'i, genellikle GitHub veya GitLab.\\n        - `[branch]` cogların yükleneceği isteğe bağlı dal.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:544
 msgid "Repo names can only contain characters A-z, numbers, underscores, and hyphens."
@@ -87,7 +87,7 @@ msgstr "Bu repo {name} başarıyla eklendi."
 #: redbot/cogs/downloader/downloader.py:587
 #, docstring
 msgid "\\n        Remove a repo and its files.\\n\\n        Example:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The name of an already added repo\\n        "
-msgstr ""
+msgstr "\\n        Bir depoyu ve dosyalarını kaldır.\\n\\n        Örnek:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` Ekli olan bir deponun ismi\\n        "
 
 #: redbot/cogs/downloader/downloader.py:600
 msgid "The repo `{repo.name}` has been deleted successfully."
@@ -105,7 +105,7 @@ msgstr "Yüklü Repos:\\n\\n"
 #: redbot/cogs/downloader/downloader.py:617
 #, docstring
 msgid "Show information about a repo.\\n\\n        Example:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The name of the repo to show info about.\\n        "
-msgstr ""
+msgstr "Bir depo hakkında bilgi göster.\\n\\n        Örnek:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` Hakkında bilgi gösterilecek deponun adı.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:626
 #: redbot/cogs/downloader/downloader.py:1289
@@ -132,7 +132,7 @@ msgstr "{repo_name} hakkında bilgi:{information}"
 #: redbot/cogs/downloader/downloader.py:643
 #, docstring
 msgid "Update all repos, or ones of your choosing.\\n\\n        This will *not* update the cogs installed from those repos.\\n\\n        Examples:\\n            - `[p]repo update`\\n            - `[p]repo update 26-Cogs`\\n            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`\\n\\n        **Arguments**\\n\\n        - `[repos...]` The name or names of repos to update. If omitted, all repos are updated.\\n        "
-msgstr ""
+msgstr "Seçtiğiniz depoları veya tüm depoları güncelle.\\n\\n        Bu komut depolardan yüklenmiş cogları **güncellemeyecektir**.\\n\\n        Örnekler:\\n            - `[p]repo update`\\n            - `[p]repo update 26-Cogs`\\n            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`\\n\\n        **Seçenekler**\\n\\n        - `[repos...]` Güncellenecek depoların adı. Boş bırakılırsa, tüm depolar güncellenecektir.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:663
 msgid "Repo update completed successfully."
@@ -157,12 +157,12 @@ msgstr "Bu repo zaten güncel."
 #: redbot/cogs/downloader/downloader.py:681
 #, docstring
 msgid "Base command for cog installation management commands."
-msgstr ""
+msgstr "Tüm cog kurulum yönetimi komutları için temel komut."
 
 #: redbot/cogs/downloader/downloader.py:686
 #, docstring
 msgid "\\n        This command should not be used unless Red specifically asks for it.\\n\\n        This command will reinstall cog requirements and shared libraries for all installed cogs.\\n\\n        Red might ask the owner to use this when it clears contents of the lib folder\\n        because of change in minor version of Python.\\n        "
-msgstr ""
+msgstr "\\n        Bu komut Red özellikle talep etmedikçe kullanılmamalıdır.\\n\\n        Bu komut tüm cog gereksinimlerini ve kurulu tüm coglar için paylaşılan kütüphaneleri yeniden kuracaktır.\\n\\n        Red Python alt sürümündeki bir değişiklik\\n        gereğiyle sahipten lib klasörünü boşaltmasını isteyebilir.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:715
 #: redbot/cogs/downloader/downloader.py:1470
@@ -184,12 +184,12 @@ msgstr "Kurulu tüm coglar için gereksinimler ve ortak kütüphaneler yeniden k
 #: redbot/cogs/downloader/downloader.py:742
 #, docstring
 msgid "Install a cog from the given repo.\\n\\n        Examples:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The name of the repo to install cogs from.\\n        - `<cogs>` The cog or cogs to install.\\n        "
-msgstr ""
+msgstr "Belirtilen depodan bir cog kur.\\n\\n        Örnekler:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` İçinden cog kurulacak deponun adı.\\n        - `<cogs>` Kurulacak cog veya coglar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:759
 #, docstring
 msgid "Install a cog from the specified revision of given repo.\\n\\n        Revisions are \\\"commit ids\\\" that point to the point in the code when a specific change was made.\\n        The latest revision can be found in the URL bar for any GitHub repo by [pressing \\\"y\\\" on that repo](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).\\n\\n        Older revisions can be found in the URL bar by [viewing the commit history of any repo](https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png)\\n\\n        Example:\\n            - `[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The name of the repo to install cogs from.\\n        - `<revision>` The revision to install from.\\n        - `<cogs>` The cog or cogs to install.\\n        "
-msgstr ""
+msgstr "Belirtilen deponun belirli bir sürümünden bir cog yükle.\\n\\n        Revizyonlar koddaki belirli bir değişikliğin yapıldığı belirli bir noktayı işaret eden \\\"commit idleri\\\"dir.\\n        Her hangi bir Github deposu için son sürüm URL çubuğunda [o depoda \\\"y\\\" basarak bulunabilir](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).\\n\\n        Daha eski revizyonlar URL çubuğunda [her hangi bir deponun commit tarihine bakarak bulunabilir](https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png)\\n\\n        Örnekler:\\n            - `[p]cog installversion Bozuk-Depo e798cc268e199612b1316a3d1f193da0770c7016 cog_adı`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` İçinden cog kurulacak deponun adı.\\n        - `<revision>` Kurulacak revizyon.\\n        - `<cogs>` Kurulacak cog veya coglar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:789
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
@@ -227,7 +227,7 @@ msgstr "\\n Onları {command_1} kullanarak yükleyebilirsiniz. Son kullanıcı v
 #: redbot/cogs/downloader/downloader.py:875
 #, docstring
 msgid "Uninstall cogs.\\n\\n        You may only uninstall cogs which were previously installed\\n        by Downloader.\\n\\n        Examples:\\n            - `[p]cog uninstall 26-Cogs defender`\\n            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Arguments**\\n\\n        - `<cogs>` The cog or cogs to uninstall.\\n        "
-msgstr ""
+msgstr "Cog kaldır.\\n\\n        Sadece Downloader tarafından kurulmuş\\n        cogları kaldırabilirsiniz.\\n\\n        Örnekler:\\n            - `[p]cog uninstall 26-Cogs defender`\\n            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Seçenekler**\\n\\n        - `<cogs>` Kaldırılacak cog veya coglar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:910
 msgid "Successfully uninstalled cogs: "
@@ -244,7 +244,7 @@ msgstr "\\nMuhtemelen `{prefix}cog uninstall` kullanılarak kaldırılmışlard�
 #: redbot/cogs/downloader/downloader.py:928
 #, docstring
 msgid "Pin cogs - this will lock cogs on their current version.\\n\\n        Examples:\\n            - `[p]cog pin defender`\\n            - `[p]cog pin outdated_cog1 outdated_cog2`\\n\\n        **Arguments**\\n\\n        - `<cogs>` The cog or cogs to pin. Must already be installed.\\n        "
-msgstr ""
+msgstr "Cogları sabitle - bu cogları o anki sürümlerine kilitler.\\n\\n        Örnekler:\\n            - `[p]cog pin defender`\\n            - `[p]cog pin eskimiş_cog1 eskimiş_cog2`\\n\\n        **Seçenekler**\\n\\n        - `<cogs>` Sabitlenecek cog veya coglar. Kurulu olmaları gerekir.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:953
 msgid "Pinned cogs: "
@@ -257,7 +257,7 @@ msgstr "\\nBu coglar zaten sabitlenmişti: "
 #: redbot/cogs/downloader/downloader.py:960
 #, docstring
 msgid "Unpin cogs - this will remove the update lock from those cogs.\\n\\n        Examples:\\n            - `[p]cog unpin defender`\\n            - `[p]cog unpin updated_cog1 updated_cog2`\\n\\n        **Arguments**\\n\\n        - `<cogs>` The cog or cogs to unpin. Must already be installed and pinned."
-msgstr ""
+msgstr "Cogların sabitlemesini kaldır - bu belirtilen cogların güncelleme kilidini açacaktır.\\n\\n        Örnekler:\\n            - `[p]cog unpin defender`\\n            - `[p]cog unpin güncellenmiş_cog1 güncellenmiş_cog2`\\n\\n        **Seçenekler**\\n\\n        - `<cogs>` Sabitlemesi kaldırılacak cog veya coglar. Kurulu ve sabitlenmiş olmaları gerekir."
 
 #: redbot/cogs/downloader/downloader.py:984
 msgid "Unpinned cogs: "
@@ -312,17 +312,17 @@ msgstr "Yüklü olan tüm coglar güncel."
 #: redbot/cogs/downloader/downloader.py:1053
 #, docstring
 msgid "Update all cogs, or ones of your choosing.\\n\\n        Examples:\\n            - `[p]cog update`\\n            - `[p]cog update defender`\\n\\n        **Arguments**\\n\\n        - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.\\n        "
-msgstr ""
+msgstr "Tüm veya seçtiğiniz cogları güncelle.\\n\\n        Örnekler:\\n            - `[p]cog update`\\n            - `[p]cog update defender`\\n\\n        **Seçenekler**\\n\\n        - `[cogs...]` Güncellenecek cog veya coglar. Boş bırakılırsa, tüm coglar güncellenecektir.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1067
 #, docstring
 msgid "Update all cogs from repos of your choosing.\\n\\n        Examples:\\n            - `[p]cog updateallfromrepos 26-Cogs`\\n            - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repos>` The repo or repos to update all cogs from.\\n        "
-msgstr ""
+msgstr "Seçtiğiniz depolardan kurulmuş tüm cogları güncelle.\\n\\n        Örnekler:\\n            - `[p]cog updateallfromrepos 26-Cogs`\\n            - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`\\n\\n        **Seçenekler**\\n\\n        - `<repos>` İçinden kurulmuş tüm cogların güncelleneceği depo veya depolar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1086
 #, docstring
 msgid "Update all cogs, or ones of your choosing to chosen revision of one repo.\\n\\n        Note that update doesn't mean downgrade and therefore `revision`\\n        has to be newer than the version that cog currently has installed. If you want to\\n        downgrade the cog, uninstall and install it again.\\n\\n        See `[p]cog installversion` for an explanation of `revision`.\\n\\n        Example:\\n            - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The repo or repos to update all cogs from.\\n        - `<revision>` The revision to update to.\\n        - `[cogs]` The cog or cogs to update.\\n        "
-msgstr ""
+msgstr "Tüm veya seçtiğiniz cogları bir deponun seçilen sürümüne günceller.\\n\\n        Unutmayınız ki güncelleme geriye alma anlamına gelmez ve \\n        bu nedenden ötürü `sürüm` şu an kurulu olan cogdan yeni olmalıdır. Eğer bir cogun\\n        sürümünü geriye almak istiyorsanız cogu silip yeniden kurun.\\n\\n        `sürüm` hakkında bir açıklama için `[p]cog installversion` inceleyiniz.\\n\\n        Örnek:\\n            - `[p]cog updatetoversion Bozuk-Depo e798cc268e199612b1316a3d1f193da0770c7016 cog_adı`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` İçinden kurulmuş tüm cogların güncelleneceği depo veya depolar.\\n        - `<revision>` Güncellenecek sürüm.\\n        - `[cogs]` Güncellenecek cog veya coglar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1132
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
@@ -363,7 +363,7 @@ msgstr "\\nBu coglar sabitlenmiştir ve denetlenemezler: "
 #: redbot/cogs/downloader/downloader.py:1224
 #, docstring
 msgid "List all available cogs from a single repo.\\n\\n        Example:\\n            - `[p]cog list 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The repo to list cogs from.\\n        "
-msgstr ""
+msgstr "Tek bir depodaki kullanılabilir tüm cogları listele.\\n\\n        Örnek:\\n            - `[p]cog list 26-Cogs`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` İçindeki coglar listelenecek depo.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1236
 msgid "Installed Cogs:\\n"
@@ -376,7 +376,7 @@ msgstr "Kullanılabilir Coglar:\\n"
 #: redbot/cogs/downloader/downloader.py:1256
 #, docstring
 msgid "List information about a single cog.\\n\\n        Example:\\n            - `[p]cog info 26-Cogs defender`\\n\\n        **Arguments**\\n\\n        - `<repo_name>` The repo to get cog info from.\\n        - `<cog_name>` The cog to get info on.\\n        "
-msgstr ""
+msgstr "Tek bir cog hakkında bilgi göster.\\n\\n        Örnek:\\n            - `[p]cog info 26-Cogs defender`\\n\\n        **Seçenekler**\\n\\n        - `<repo_name>` Cog bilgisinin alınacağı depo.\\n        - `<cog_name>` Hangi cog hakkında bilgi alınacağı.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1269
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
@@ -469,7 +469,7 @@ msgstr "Tamam o zaman."
 #: redbot/cogs/downloader/downloader.py:1573
 #, docstring
 msgid "Find which cog a command comes from.\\n\\n        This will only work with loaded cogs.\\n\\n        Example:\\n            - `[p]findcog ping`\\n\\n        **Arguments**\\n\\n        - `<command_name>` The command to search for.\\n        "
-msgstr ""
+msgstr "Bir komutun hangi cog tarafından sağlandığını bul.\\n\\n        Bu sadece load edilmiş coglar için çalışır.\\n\\n        Örnek:\\n            - `[p]findcog ping`\\n\\n        **Seçenekler**\\n\\n        - `<command_name>` Aranacak komut.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1587
 msgid "That command doesn't seem to exist."
