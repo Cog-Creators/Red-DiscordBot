@@ -2077,7 +2077,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx: commands.Context, *, game: str = None):
-        """Sets [botname]'s playing status."""
+        """Sets [botname]'s playing status.
+
+        Maximum length for a playing status is 128 characters.
+
+        Examples:
+            - `[p]set playing` - Clears the activity status.
+            - `[p]set playing the keyboard`
+
+        **Arguments:**
+
+        - `[game]` The text to follow `playing`. Leave blank to clear the current activity status.
+        """
 
         if game:
             if len(game) > 128:
@@ -2097,7 +2108,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx: commands.Context, *, listening: str = None):
-        """Sets [botname]'s listening status."""
+        """Sets [botname]'s listening status.
+
+        Maximum length for a listening status is 128 characters.
+
+        Examples:
+            - `[p]set playing` - Clears the activity status.
+            - `[p]set playing the keyboard`
+
+        **Arguments:**
+
+        - `[game]` The text to follow `playing`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
