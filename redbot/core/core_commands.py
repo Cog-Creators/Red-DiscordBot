@@ -1848,7 +1848,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if game:
             if len(game) > 128:
-                await ctx.send("The maximum length of game descriptions is 128 characters.")
+                await ctx.send(_("The maximum length of game descriptions is 128 characters."))
                 return
             game = discord.Game(name=game)
         else:
@@ -1869,7 +1869,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
             if len(listening) > 128:
-                await ctx.send("The maximum length of listening descriptions is 128 characters.")
+                await ctx.send(
+                    _("The maximum length of listening descriptions is 128 characters.")
+                )
                 return
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
@@ -1891,7 +1893,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
             if len(watching) > 128:
-                await ctx.send("The maximum length of watching descriptions is 128 characters.")
+                await ctx.send(_("The maximum length of watching descriptions is 128 characters."))
                 return
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
@@ -1911,7 +1913,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
             if len(competing) > 128:
-                await ctx.send("The maximum length of competing descriptions is 128 characters.")
+                await ctx.send(
+                    _("The maximum length of competing descriptions is 128 characters.")
+                )
                 return
             activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
         else:
@@ -1968,10 +1972,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             if len(streamer) > 511:
-                await ctx.send("The maximum length of the streamer url is 511 characters.")
+                await ctx.send(_("The maximum length of the streamer url is 511 characters."))
                 return
             if len(stream_title) > 128:
-                await ctx.send("The maximum length of the stream title is 128 characters.")
+                await ctx.send(_("The maximum length of the stream title is 128 characters."))
                 return
             activity = discord.Streaming(url=streamer, name=stream_title)
             await ctx.bot.change_presence(status=status, activity=activity)
