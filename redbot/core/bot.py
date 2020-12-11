@@ -295,8 +295,8 @@ class RedBase(
                         self.bot.remove_dev_env_value("mycog")
                         self.bot.remove_dev_env_value("mycogdata")
 
-            One your cog is loaded, the `mycog` and `mycogdata` values will be implemented in dev
-            commands.
+            One your cog is loaded, the ``mycog`` and ``mycogdata`` values will be implemented in
+            dev commands.
 
         Parameters
         ----------
