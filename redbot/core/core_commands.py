@@ -2079,6 +2079,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _game(self, ctx: commands.Context, *, game: str = None):
         """Sets [botname]'s playing status.
 
+        This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
+
         Maximum length for a playing status is 128 characters.
 
         Examples:
@@ -2087,7 +2089,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[game]` The text to follow `playing`. Leave blank to clear the current activity status.
+        - `[game]` The text to follow `Playing`. Leave blank to clear the current activity status.
         """
 
         if game:
@@ -2110,15 +2112,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _listening(self, ctx: commands.Context, *, listening: str = None):
         """Sets [botname]'s listening status.
 
+        This will appear as `Listening to <listening>`.
+
         Maximum length for a listening status is 128 characters.
 
         Examples:
-            - `[p]set playing` - Clears the activity status.
-            - `[p]set playing the keyboard`
+            - `[p]set listening` - Clears the activity status.
+            - `[p]set listening jams`
 
         **Arguments:**
 
-        - `[game]` The text to follow `playing`. Leave blank to clear the current activity status."""
+        - `[listening]` The text to follow `Listening to`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -2137,7 +2141,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx: commands.Context, *, watching: str = None):
-        """Sets [botname]'s watching status."""
+        """Sets [botname]'s watching status.
+
+        This will appear as `Watching <watching>`.
+
+        Maximum length for a watching status is 128 characters.
+
+        Examples:
+            - `[p]set watching` - Clears the activity status.
+            - `[p]set watching [p]help`
+
+        **Arguments:**
+
+        - `[watching]` The text to follow `Watching`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -2154,7 +2170,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _competing(self, ctx: commands.Context, *, competing: str = None):
-        """Sets [botname]'s competing status."""
+        """Sets [botname]'s competing status.
+
+        This will appear as `Competing in <competing>`.
+
+        Maximum length for a competing status is 128 characters.
+
+        Examples:
+            - `[p]set competing` - Clears the activity status.
+            - `[p]set competing London 2012 Olympic Games`
+
+        **Arguments:**
+
+        - `[competing]` The text to follow `Competing in`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
@@ -2176,10 +2204,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Sets [botname]'s status.
 
         Available statuses:
-            online
-            idle
-            dnd
-            invisible
+            - `online`
+            - `idle`
+            - `dnd`
+            - `invisible`
+
+        Examples:
+            - `[p]set status online` - Clears the activity status.
+            - `[p]set status invisible`
+
+        **Arguments:**
+
+        - `<status>` One of the available statuses.
         """
 
         statuses = {
@@ -2204,7 +2240,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
         """Sets [botname]'s streaming status.
 
-        Leaving both streamer and stream_title empty will clear it."""
+        This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
+        It will also include a `Watch` button with a twitch.tv url for the provided streamer.
+
+        Maximum length for a stream title is 128 characters.
+
+        Leaving both streamer and stream_title empty will clear it.
+
+        Examples:
+            - `[p]set competing` - Clears the activity status.
+            - `[p]set competing London 2012 Olympic Games`
+
+        **Arguments:**
+
+        - `[streamer]` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+        - `[stream_title]` The text to follow `Streaming` in the status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
 
@@ -2224,7 +2274,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command(name="username", aliases=["name"])
     @checks.is_owner()
     async def _username(self, ctx: commands.Context, *, username: str):
-        """Sets [botname]'s username."""
+        """Sets [botname]'s username.
+
+        Maximum length for a username is 32 characters.
+
+        Note: The username of a verified bot cannot be manually changed.
+            Please contact Discord support to change it.
+
+        Example:
+            - `[p]set username BaguetteBot`
+
+        **Arguments:**
+
+        - `<username>` The username to give the bot.
+        """
         try:
             if self.bot.user.public_flags.verified_bot:
                 await ctx.send(
@@ -2269,7 +2332,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
-        """Sets [botname]'s nickname."""
+        """Sets [botname]'s nickname for the current server.
+
+        Maximum length for a nickname is 32 characters.
+
+        Example:
+            - `[p]set username 🎃 SpookyBot 🎃`
+
+        **Arguments:**
+
+        - `[nickname]` The nickname to give the bot. Leave blank to clear the current nickname.
+        """
         try:
             if nickname and len(nickname) > 32:
                 await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
@@ -2283,7 +2356,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command(aliases=["prefixes"], require_var_positional=True)
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets [botname]'s global prefix(es)."""
+        """Sets [botname]'s global prefix(es).
+
+        Warning: This is not additive. It will replace all current prefixes.
+
+        Examples:
+            - `[p]set prefix !`
+            - `[p]set prefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
+            - `[p]set prefix ! ? .` - Sets multiple prefixes.
+
+        **Arguments:**
+
+        - `[prefixes...]` The prefixes the bot will respond to globally.
+        """
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
@@ -2291,7 +2376,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets [botname]'s server prefix(es)."""
+        """Sets [botname]'s server prefix(es).
+
+        Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
+            This is not additive. It will replace all current server prefixes.
+
+        Examples:
+            - `[p]set serverprefix !`
+            - `[p]set serverprefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
+            - `[p]set serverprefix ! ? .` - Sets multiple prefixes.
+
+        **Arguments:**
+
+        - `[prefixes...]` The prefixes the bot will respond to on this server. Leave blank to clear server prefixes"""
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
@@ -2305,15 +2402,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def globallocale(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's default locale.
+
         This will be used when a server has not set a locale, or in DMs.
 
-        `<language_code>` can be any language code with country code included,
-        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-
-        Go to Red's Crowdin page to see locales that are available with translations:
-        https://translate.discord.red
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         To reset to English, use "en-US".
+
+        Examples:
+            - `[p]set locale en-US`
+            - `[p]set locale de-DE`
+            - `[p]set locale fr-FR`
+            - `[p]set locale pl-PL`
+
+        **Arguments:**
+
+        - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
         """
         try:
             locale = BabelLocale.parse(language_code, sep="-")
@@ -2338,14 +2442,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Changes the bot's locale in this server.
 
-        `<language_code>` can be any language code with country code included,
-        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-
-        Go to Red's Crowdin page to see locales that are available with translations:
-        https://translate.discord.red
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         Use "default" to return to the bot's default set language.
         To reset to English, use "en-US".
+
+        Examples:
+            - `[p]set locale en-US`
+            - `[p]set locale de-DE`
+            - `[p]set locale fr-FR`
+            - `[p]set locale pl-PL`
+            - `[p]set locale default` - Resets to the global default locale.
+
+        **Arguments:**
+
+        - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
         """
         if language_code.lower() == "default":
             global_locale = await self.bot._config.locale()
@@ -2375,10 +2486,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Changes bot's regional format. This is used for formatting date, time and numbers.
 
-        `<language_code>` can be any language code with country code included,
-        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Leave `language_code` empty to base regional formatting on bot's locale.
 
-        Leave `<language_code>` empty to base regional formatting on bot's locale.
+        Examples:
+            - `[p]set globalregionalformat en-US`
+            - `[p]set globalregion de-DE`
+            - `[p]set globalregionalformat` - Resets to the locale.
+
+        **Arguments:**
+
+        - `[language_code]` The default region format to use for the bot.
         """
         if language_code is None:
             i18n.set_regional_format(None)
@@ -2411,10 +2529,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Changes bot's regional format in this server. This is used for formatting date, time and numbers.
 
-        `<language_code>` can be any language code with country code included,
-        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Leave `language_code` empty to base regional formatting on bot's locale in this server.
 
-        Leave `<language_code>` empty to base regional formatting on bot's locale in this server.
+        Examples:
+            - `[p]set regionalformat en-US`
+            - `[p]set region de-DE`
+            - `[p]set regionalformat` - Resets to the locale.
+
+        **Arguments:**
+
+        - `[language_code]` The region format to use for the bot in this server.
         """
         if language_code is None:
             i18n.set_contextual_regional_format(None)
@@ -2450,8 +2575,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The maximum amount of allowed characters is 1024.
         Supports markdown, links and "mentions".
-        Link example:
-        `[My link](https://example.com)`
+
+        Link example: `[My link](https://example.com)`
+
+        Examples:
+            - `[p]set custominfo >>> I can use **markdown** like quotes
+                and ~~multiple~~ lines`
+            - `[p]set custominfo Join my [support server](discord.gg/discord)
+                Or send me 🍪`
+            - `[p]set custominfo` - Removes custom info text.
+
+        **Arguments:**
+
+        - `[text]` The custom info text.
         """
         if not text:
             await ctx.bot._config.custom_info.clear()
@@ -2467,15 +2603,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """Set, list or remove various external API tokens.
+        """Commands to set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
         To add the keys provide the service name and the tokens as a comma separated
         list of key,values as described by the cog requesting this command.
 
-        Note: API tokens are sensitive and should only be used in a private channel
-        or in DM with the bot.
+        Note: API tokens are sensitive and should only be used in a private channel or in DM with the bot.
+
+        Examples:
+            - `[p]set api Spotify redirect_uri localhost`
+            - `[p]set api github client_id,whoops client_secret,whoops`
+
+        **Arguments:**
+
+        - `<service>` The service you're adding tokens to.
+        - `<tokens>` Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
@@ -2505,7 +2649,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @api.command(name="remove", require_var_positional=True)
     async def api_remove(self, ctx: commands.Context, *services: str):
-        """Remove the given services with all their keys and tokens."""
+        """Remove the given services with all their keys and tokens.
+
+        Examples:
+            - `[p]set api remove Spotify`
+            - `[p]set api remove github audiodb`
+
+        **Arguments:**
+
+        - `[services...]` The services to remove."""
         bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
         services = [s for s in services if s in bot_services]
 
@@ -2526,12 +2678,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
-        """Manage settings for the help command."""
+        """Commands to manage settings for the help command."""
         pass
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
-        """ Show the current help settings. """
+        """Show the current help settings.
+
+        Warning: These setting may not be accurate if the default formatter is not in use.
+        """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
 
@@ -2548,7 +2703,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
-        """ This resets [botname]'s help formatter to the default formatter. """
+        """This resets [botname]'s help formatter to the default formatter."""
 
         ctx.bot.reset_help_formatter()
         await ctx.send(
@@ -2580,8 +2735,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
+        When enabled, `[p]help` will only show one page at a time and use reactions to navigate to other pages.
+
         This defaults to False.
         Using this without a setting will toggle.
+
+         Examples:
+            - `[p]helpset usemenues False` - Disables using menus on this server.
+            - `[p]helpset usemenues` - Toggles the value.
+
+        **Arguments:**
+
+        - `[use_menus]` Whether to use menus on this server. Leave blank to toggle.
         """
         if use_menus is None:
             use_menus = not await ctx.bot._config.help.use_menus()
@@ -2598,6 +2763,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This defaults to False.
         Using this without a setting will toggle.
+
+        Examples:
+            - `[p]helpset showhidden False` - Disables embeds on this server.
+            - `[p]helpset showhidden` - Toggles the value.
+
+        **Arguments:**
+
+        - `[show_hidden]` Whether to use embeds on this server. Leave blank to toggle.
         """
         if show_hidden is None:
             show_hidden = not await ctx.bot._config.help.show_hidden()
@@ -2614,6 +2787,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Defaults to False.
         Using this without a setting will toggle.
+
+        Note: This is only used when the bot is not using menus.
+
+        Examples:
+            - `[p]helpset usetick False` - Disables ticking in DMs.
+            - `[p]helpset usetick` - Toggles the value.
+
+        **Arguments:**
+
+        - `[use_tick]` Whether to tick the help command in DMs. Leave blank to toggle.
         """
         if use_tick is None:
             use_tick = not await ctx.bot._config.help.use_tick()
@@ -2626,11 +2809,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
-        Sets if commands which can't be run in the current context should be
-        filtered from help.
+        Sets if commands which can't be run in the current context should be filtered from help.
 
         Defaults to True.
         Using this without a setting will toggle.
+
+        Examples:
+            - `[p]helpset verifychecks False` - Enables showing unusable commands.
+            - `[p]helpset verifychecks` - Toggles the value.
+
+        **Arguments:**
+
+        - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
         """
         if verify is None:
             verify = not await ctx.bot._config.help.verify_checks()
@@ -2643,13 +2833,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @helpset.command(name="verifyexists")
     async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
         """
-        This allows the bot to respond indicating the existence of a specific
-        help topic even if the user can't use it.
+        This allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
 
         Note: This setting on it's own does not fully prevent command enumeration.
 
         Defaults to False.
         Using this without a setting will toggle.
+
+        Examples:
+            - `[p]helpset verifyexists False` - Enables showing unusable commands.
+            - `[p]helpset verifyexists` - Toggles the value.
+
+        **Arguments:**
+
+        - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
         """
         if verify is None:
             verify = not await ctx.bot._config.help.verify_exists()
@@ -2668,13 +2865,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
         """Set the character limit for each page in the help message.
 
-        This setting only applies to embedded help.
+        Note: This setting only applies to embedded help.
 
         The default value is 1000 characters. The minimum value is 500.
         The maximum is based on the lower of what you provide and what discord allows.
 
         Please note that setting a relatively small character limit may
         mean some pages will exceed this limit.
+
+        Example:
+            - `[p]helpset pagecharlimit 1500`
+
+        **Arguments:**
+
+        - `<limit>` The max amount of characters to show per page in the help message.
         """
         if limit < 500:
             await ctx.send(_("You must give a value of at least 500 characters."))
@@ -2687,7 +2891,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        This setting does not apply to menu help.
+        Note: This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
