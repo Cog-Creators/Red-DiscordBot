@@ -276,6 +276,69 @@ class RedBase(
         """
         self._help_formatter = commands.help.RedHelpFormatter()
 
+    def add_dev_env_value(self, name: str, value: Callable):
+        """
+        Add a value to the dev environement (debug, eval and repl commands). If dev mode is
+        disabled, nothing will happen.
+
+        .. admonition:: Example
+
+            .. code-block:: python
+
+                class MyCog(commands.Cog):
+                    def __init__(self, bot):
+                        self.bot = bot
+                        bot.add_dev_env_value("mycog", lambda ctx: self)
+                        bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
+
+                    def cog_unload(self):
+                        self.bot.remove_dev_env_value("mycog")
+                        self.bot.remove_dev_env_value("mycogdata")
+
+            One your cog is loaded, the `mycog` and `mycogdata` values will be implemented in dev
+            commands.
+
+        Parameters
+        ----------
+        name: str
+            The name of your env value
+        value: Callable
+            A callable taking exactly one argument, the context.
+
+        Raise
+        -----
+        TypeError
+            The value isn't a callable.
+        ValueError
+            The callable takes no or more than one argument.
+        """
+        signature = inspect.signature(value)
+        if len(signature.parameters) != 1:
+            raise ValueError("Callable must take exactly one argument for context")
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        dev.env_extensions[name] = value
+
+    def remove_dev_env_value(self, name: str):
+        """
+        Remove a custom dev env value.
+
+        Parameters
+        ----------
+        name: str
+            The name of the env value.
+
+        Raise
+        -----
+        KeyError
+            The value was never set.
+        """
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        del dev.env_extensions[name]
+
     def get_command(self, name: str) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
