@@ -776,7 +776,7 @@ helpset
 
 **Description**
 
-Manage settings for the help command.
+Commands to manage settings for the help command.
 
 .. _core-command-helpset-deletedelay:
 
@@ -816,7 +816,8 @@ helpset maxpages
 
 Set the maximum number of help pages sent in a server channel.
 
-This setting does not apply to menu help.
+.. Note:: This setting does not apply to menu help.
+
 
 If a help message contains more pages than this value, the help message will
 be sent to the command author via DM. This is to help reduce spam in server
@@ -840,13 +841,21 @@ helpset pagecharlimit
 
 Set the character limit for each page in the help message.
 
-This setting only applies to embedded help.
+.. Note:: This setting only applies to embedded help.
+
 
 The default value is 1000 characters. The minimum value is 500.
 The maximum is based on the lower of what you provide and what discord allows.
 
 Please note that setting a relatively small character limit may
 mean some pages will exceed this limit.
+
+Example:
+    - ``[p]helpset pagecharlimit 1500``
+
+**Arguments:**
+
+- ``<limit>`` The max amount of characters to show per page in the help message.
 
 .. _core-command-helpset-resetformatter:
 
@@ -862,7 +871,7 @@ helpset resetformatter
 
 **Description**
 
-This resets Red's help formatter to the default formatter. 
+This resets Red's help formatter to the default formatter.
 
 .. _core-command-helpset-resetsettings:
 
@@ -901,6 +910,14 @@ This allows the help command to show hidden commands.
 This defaults to False.
 Using this without a setting will toggle.
 
+Examples:
+    - ``[p]helpset showhidden False`` - Disables embeds on this server.
+    - ``[p]helpset showhidden`` - Toggles the value.
+
+**Arguments:**
+
+- ``[show_hidden]`` Whether to use embeds on this server. Leave blank to toggle.
+
 .. _core-command-helpset-showsettings:
 
 """"""""""""""""""""
@@ -915,7 +932,10 @@ helpset showsettings
 
 **Description**
 
-Show the current help settings. 
+Show the current help settings.
+
+.. Warning:: These setting may not be accurate if the default formatter is not in use.
+
 
 .. _core-command-helpset-tagline:
 
@@ -953,8 +973,18 @@ helpset usemenus
 Allows the help command to be sent as a paginated menu instead of separate
 messages.
 
+When enabled, ``[p]help`` will only show one page at a time and use reactions to navigate to other pages.
+
 This defaults to False.
 Using this without a setting will toggle.
+
+ Examples:
+    - ``[p]helpset usemenues False`` - Disables using menus on this server.
+    - ``[p]helpset usemenues`` - Toggles the value.
+
+**Arguments:**
+
+- ``[use_menus]`` Whether to use menus on this server. Leave blank to toggle.
 
 .. _core-command-helpset-usetick:
 
@@ -975,6 +1005,17 @@ This allows the help command message to be ticked if help is sent in a DM.
 Defaults to False.
 Using this without a setting will toggle.
 
+.. Note:: This is only used when the bot is not using menus.
+
+
+Examples:
+    - ``[p]helpset usetick False`` - Disables ticking in DMs.
+    - ``[p]helpset usetick`` - Toggles the value.
+
+**Arguments:**
+
+- ``[use_tick]`` Whether to tick the help command in DMs. Leave blank to toggle.
+
 .. _core-command-helpset-verifychecks:
 
 """"""""""""""""""""
@@ -989,11 +1030,18 @@ helpset verifychecks
 
 **Description**
 
-Sets if commands which can't be run in the current context should be
-filtered from help.
+Sets if commands which can't be run in the current context should be filtered from help.
 
 Defaults to True.
 Using this without a setting will toggle.
+
+Examples:
+    - ``[p]helpset verifychecks False`` - Enables showing unusable commands.
+    - ``[p]helpset verifychecks`` - Toggles the value.
+
+**Arguments:**
+
+- ``[verify]`` Whether to hide unusable commands in help. Leave blank to toggle.
 
 .. _core-command-helpset-verifyexists:
 
@@ -1009,14 +1057,21 @@ helpset verifyexists
 
 **Description**
 
-This allows the bot to respond indicating the existence of a specific
-help topic even if the user can't use it.
+This allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
 
 .. Note:: This setting on it's own does not fully prevent command enumeration.
 
 
 Defaults to False.
 Using this without a setting will toggle.
+
+Examples:
+    - ``[p]helpset verifyexists False`` - Enables showing unusable commands.
+    - ``[p]helpset verifyexists`` - Toggles the value.
+
+**Arguments:**
+
+- ``[verify]`` Whether to hide unusable commands in help. Leave blank to toggle.
 
 .. _core-command-ignore:
 
@@ -1852,16 +1907,24 @@ set api
 
 **Description**
 
-Set, list or remove various external API tokens.
+Commands to set, list or remove various external API tokens.
 
 This setting will be asked for by some 3rd party cogs and some core cogs.
 
 To add the keys provide the service name and the tokens as a comma separated
 list of key,values as described by the cog requesting this command.
 
-.. Note:: API tokens are sensitive and should only be used in a private channel
+.. Note:: API tokens are sensitive and should only be used in a private channel or in DM with the bot.
 
-or in DM with the bot.
+
+Examples:
+    - ``[p]set api Spotify redirect_uri localhost``
+    - ``[p]set api github client_id,whoops client_secret,whoops``
+
+**Arguments:**
+
+- ``<service>`` The service you're adding tokens to.
+- ``<tokens>`` Pairs of token keys and values. The key and value should be separated by one of `` ``, ``,``, or ``;``.
 
 .. _core-command-set-api-list:
 
@@ -1896,6 +1959,14 @@ set api remove
 **Description**
 
 Remove the given services with all their keys and tokens.
+
+Examples:
+    - ``[p]set api remove Spotify``
+    - ``[p]set api remove github audiodb``
+
+**Arguments:**
+
+- ``[services...]`` The services to remove.
 
 .. _core-command-set-avatar:
 
@@ -1999,6 +2070,18 @@ set competing
 
 Sets Red's competing status.
 
+This will appear as ``Competing in <competing>``.
+
+Maximum length for a competing status is 128 characters.
+
+Examples:
+    - ``[p]set competing`` - Clears the activity status.
+    - ``[p]set competing London 2012 Olympic Games``
+
+**Arguments:**
+
+- ``[competing]`` The text to follow ``Competing in``. Leave blank to clear the current activity status.
+
 .. _core-command-set-custominfo:
 
 """"""""""""""
@@ -2019,8 +2102,19 @@ Customizes a section of ``[p]info``.
 
 The maximum amount of allowed characters is 1024.
 Supports markdown, links and "mentions".
-Link example:
-```My link <https://example.com>`_``
+
+Link example: ``[My link](https://example.com)``
+
+Examples:
+    - ``[p]set custominfo >>> I can use **markdown** like quotes
+        and ~~multiple~~ lines``
+    - ``[p]set custominfo Join my [support server](discord.gg/discord)
+        Or send me 🍪``
+    - ``[p]set custominfo`` - Removes custom info text.
+
+**Arguments:**
+
+- ``[text]`` The custom info text.
 
 .. _core-command-set-deletedelay:
 
@@ -2126,15 +2220,22 @@ set globallocale
 **Description**
 
 Changes the bot's default locale.
+
 This will be used when a server has not set a locale, or in DMs.
 
-``<language_code>`` can be any language code with country code included,
-e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-
-Go to Red's Crowdin page to see locales that are available with translations:
-https://translate.discord.red
+Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 To reset to English, use "en-US".
+
+Examples:
+    - ``[p]set locale en-US``
+    - ``[p]set locale de-DE``
+    - ``[p]set locale fr-FR``
+    - ``[p]set locale pl-PL``
+
+**Arguments:**
+
+- ``<language_code>`` The default locale to use for the bot. This can be any language code with country code included.
 
 .. _core-command-set-globalregionalformat:
 
@@ -2156,10 +2257,17 @@ set globalregionalformat
 
 Changes bot's regional format. This is used for formatting date, time and numbers.
 
-``<language_code>`` can be any language code with country code included,
-e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+Leave ``language_code`` empty to base regional formatting on bot's locale.
 
-Leave ``<language_code>`` empty to base regional formatting on bot's locale.
+Examples:
+    - ``[p]set globalregionalformat en-US``
+    - ``[p]set globalregion de-DE``
+    - ``[p]set globalregionalformat`` - Resets to the locale.
+
+**Arguments:**
+
+- ``[language_code]`` The default region format to use for the bot.
 
 .. _core-command-set-listening:
 
@@ -2179,6 +2287,18 @@ set listening
 
 Sets Red's listening status.
 
+This will appear as ``Listening to <listening>``.
+
+Maximum length for a listening status is 128 characters.
+
+Examples:
+    - ``[p]set listening`` - Clears the activity status.
+    - ``[p]set listening jams``
+
+**Arguments:**
+
+- ``[listening]`` The text to follow ``Listening to``. Leave blank to clear the current activity status.
+
 .. _core-command-set-locale:
 
 """"""""""
@@ -2197,14 +2317,21 @@ set locale
 
 Changes the bot's locale in this server.
 
-``<language_code>`` can be any language code with country code included,
-e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-
-Go to Red's Crowdin page to see locales that are available with translations:
-https://translate.discord.red
+Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 Use "default" to return to the bot's default set language.
 To reset to English, use "en-US".
+
+Examples:
+    - ``[p]set locale en-US``
+    - ``[p]set locale de-DE``
+    - ``[p]set locale fr-FR``
+    - ``[p]set locale pl-PL``
+    - ``[p]set locale default`` - Resets to the global default locale.
+
+**Arguments:**
+
+- ``<language_code>`` The default locale to use for the bot. This can be any language code with country code included.
 
 .. _core-command-set-nickname:
 
@@ -2222,7 +2349,16 @@ set nickname
 
 **Description**
 
-Sets Red's nickname.
+Sets Red's nickname for the current server.
+
+Maximum length for a nickname is 32 characters.
+
+Example:
+    - ``[p]set username 🎃 SpookyBot 🎃``
+
+**Arguments:**
+
+- ``[nickname]`` The nickname to give the bot. Leave blank to clear the current nickname.
 
 .. _core-command-set-ownernotifications:
 
@@ -2346,6 +2482,18 @@ set playing
 
 Sets Red's playing status.
 
+This will appear as ``Playing <game>`` or ``PLAYING A GAME: <game>`` depending on the context.
+
+Maximum length for a playing status is 128 characters.
+
+Examples:
+    - ``[p]set playing`` - Clears the activity status.
+    - ``[p]set playing the keyboard``
+
+**Arguments:**
+
+- ``[game]`` The text to follow ``Playing``. Leave blank to clear the current activity status.
+
 .. _core-command-set-prefix:
 
 """"""""""
@@ -2365,6 +2513,18 @@ set prefix
 **Description**
 
 Sets Red's global prefix(es).
+
+.. Warning:: This is not additive. It will replace all current prefixes.
+
+
+Examples:
+    - ``[p]set prefix !``
+    - ``[p]set prefix "@Red "`` - Quotes are needed to use spaces. This uses a mention as the prefix.
+    - ``[p]set prefix ! ? .`` - Sets multiple prefixes.
+
+**Arguments:**
+
+- ``[prefixes...]`` The prefixes the bot will respond to globally.
 
 .. _core-command-set-regionalformat:
 
@@ -2386,10 +2546,17 @@ set regionalformat
 
 Changes bot's regional format in this server. This is used for formatting date, time and numbers.
 
-``<language_code>`` can be any language code with country code included,
-e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+Leave ``language_code`` empty to base regional formatting on bot's locale in this server.
 
-Leave ``<language_code>`` empty to base regional formatting on bot's locale in this server.
+Examples:
+    - ``[p]set regionalformat en-US``
+    - ``[p]set region de-DE``
+    - ``[p]set regionalformat`` - Resets to the locale.
+
+**Arguments:**
+
+- ``[language_code]`` The region format to use for the bot in this server.
 
 .. _core-command-set-removeadminrole:
 
@@ -2492,6 +2659,19 @@ set serverprefix
 
 Sets Red's server prefix(es).
 
+.. Warning:: This will override global prefixes, the bot will not respond to any global prefixes in this server.
+
+    This is not additive. It will replace all current server prefixes.
+
+Examples:
+    - ``[p]set serverprefix !``
+    - ``[p]set serverprefix "@Red "`` - Quotes are needed to use spaces. This uses a mention as the prefix.
+    - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
+
+**Arguments:**
+
+- ``[prefixes...]`` The prefixes the bot will respond to on this server. Leave blank to clear server prefixes
+
 .. _core-command-set-showsettings:
 
 """"""""""""""""
@@ -2527,10 +2707,18 @@ set status
 Sets Red's status.
 
 Available statuses:
-    online
-    idle
-    dnd
-    invisible
+    - ``online``
+    - ``idle``
+    - ``dnd``
+    - ``invisible``
+
+Examples:
+    - ``[p]set status online`` - Clears the activity status.
+    - ``[p]set status invisible``
+
+**Arguments:**
+
+- ``<status>`` One of the available statuses.
 
 .. _core-command-set-streaming:
 
@@ -2552,7 +2740,21 @@ set streaming
 
 Sets Red's streaming status.
 
+This will appear as ``Streaming <stream_title>`` or ``LIVE ON TWITCH`` depending on the context.
+It will also include a ``Watch`` button with a twitch.tv url for the provided streamer.
+
+Maximum length for a stream title is 128 characters.
+
 Leaving both streamer and stream_title empty will clear it.
+
+Examples:
+    - ``[p]set competing`` - Clears the activity status.
+    - ``[p]set competing London 2012 Olympic Games``
+
+**Arguments:**
+
+- ``[streamer]`` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+- ``[stream_title]`` The text to follow ``Streaming`` in the status.
 
 .. _core-command-set-usebotcolour:
 
@@ -2597,6 +2799,19 @@ set username
 
 Sets Red's username.
 
+Maximum length for a username is 32 characters.
+
+.. Note:: The username of a verified bot cannot be manually changed.
+
+    Please contact Discord support to change it.
+
+Example:
+    - ``[p]set username BaguetteBot``
+
+**Arguments:**
+
+- ``<username>`` The username to give the bot.
+
 .. _core-command-set-watching:
 
 """"""""""""
@@ -2614,6 +2829,18 @@ set watching
 **Description**
 
 Sets Red's watching status.
+
+This will appear as ``Watching <watching>``.
+
+Maximum length for a watching status is 128 characters.
+
+Examples:
+    - ``[p]set watching`` - Clears the activity status.
+    - ``[p]set watching [p]help``
+
+**Arguments:**
+
+- ``[watching]`` The text to follow ``Watching``. Leave blank to clear the current activity status.
 
 .. _core-command-shutdown:
 
