@@ -232,6 +232,7 @@ class Dev(commands.Cog):
                 )
             return
 
+        previous = None
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
@@ -272,7 +273,7 @@ class Dev(commands.Cog):
             context = await ctx.bot.get_context(response)
             env = self.get_environement(context)
             env["__builtins__"] = __builtins__
-            env["_"] = None
+            env["_"] = previous
 
             stdout = io.StringIO()
 
