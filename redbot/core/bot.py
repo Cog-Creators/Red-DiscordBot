@@ -311,6 +311,9 @@ class RedBase(
             The value isn't a callable.
         ValueError
             The callable takes no or more than one argument.
+        RuntimeError
+            The name of the value is either reserved (default environement) or already taken by
+            something else.
         """
         signature = inspect.signature(value)
         if len(signature.parameters) != 1:
@@ -318,6 +321,22 @@ class RedBase(
         dev = self.get_cog("Dev")
         if dev is None:
             return
+        if name in [
+            "bot",
+            "ctx",
+            "author",
+            "guild",
+            "message",
+            "asyncio",
+            "aiohttp",
+            "commands",
+            "_",
+            "__name__",
+            "__builtins__",
+        ]:
+            raise RuntimeError(f"The name {name} is reserved for default environement.")
+        if name in dev.env_extensions:
+            raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value
 
     def remove_dev_env_value(self, name: str):
