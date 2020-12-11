@@ -1013,7 +1013,6 @@ class Streams(commands.Cog):
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            # OUTSIDE OF FOR LOOP
             for raw_msg in raw_msg_cache:
                 # print("IN THE FOR LOOP")
                 # print(raw_msg)

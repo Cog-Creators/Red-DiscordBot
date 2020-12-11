@@ -1005,15 +1005,13 @@ class Streams(commands.Cog):
     async def load_streams(self):
         streams = []
         for raw_stream in await self.config.streams():
-            print(raw_stream)
-            print("------------------------------------------------------------------------------------------------")
+            # print(raw_stream)
+            # print("------------------------------------------------------------------------------------------------")
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
-                print("AHHHHH")
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            # OUTSIDE OF FOR LOOP
             for raw_msg in raw_msg_cache:
                 # print("IN THE FOR LOOP")
                 # print(raw_msg)

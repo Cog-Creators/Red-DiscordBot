@@ -1009,13 +1009,10 @@ class Streams(commands.Cog):
             print("------------------------------------------------------------------------------------------------")
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
-                print("AHHHHH")
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            # OUTSIDE OF FOR LOOP
             for raw_msg in raw_msg_cache:
-                # print("IN THE FOR LOOP")
                 # print(raw_msg)
                 # print("------------------------------------------------------------------------------------------------")
                 chn = self.bot.get_channel(raw_msg["channel"])

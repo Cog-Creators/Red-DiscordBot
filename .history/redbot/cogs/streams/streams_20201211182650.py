@@ -571,11 +571,11 @@ class Streams(commands.Cog):
                 print(stream)
                 try:
                     print(stream.nomention_message)
-                except AttributeError as e:
+                catch KeyError as e:
                     print("meh")
                 try:
                     print(stream.mention_message)
-                except AttributeError as e:
+                catch KeyError as e:
                     print("meh")
 
                 return
@@ -1006,18 +1006,13 @@ class Streams(commands.Cog):
         streams = []
         for raw_stream in await self.config.streams():
             print(raw_stream)
-            print("------------------------------------------------------------------------------------------------")
+            print("-- Begin ^^ --")
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
-                print("AHHHHH")
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            # OUTSIDE OF FOR LOOP
             for raw_msg in raw_msg_cache:
-                # print("IN THE FOR LOOP")
-                # print(raw_msg)
-                # print("------------------------------------------------------------------------------------------------")
                 chn = self.bot.get_channel(raw_msg["channel"])
                 if chn is not None:
                     try:
@@ -1026,10 +1021,6 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-                # try:
-                #     print(raw_stream["nomention_message"])
-                # except KeyError as e:
-                #     print("hi")
                 if "nomention_message" in raw_stream:
                     if raw_stream["id"] not in self.streamer_info:
                         self.streamer_info[raw_stream["id"]] = {
@@ -1064,7 +1055,6 @@ class Streams(commands.Cog):
         return streams
 
     async def load_streamer_info(self):
-        print(self.streamer_info)
         for current_stream in self.streams:
             id = current_stream.id
             if id in self.streamer_info:

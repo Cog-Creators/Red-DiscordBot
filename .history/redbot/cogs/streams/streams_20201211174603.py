@@ -99,7 +99,6 @@ class Streams(commands.Cog):
             await self.move_api_keys()
             await self.get_twitch_bearer_token()
             self.streams = await self.load_streams()
-            self.streamer_info = await self.load_streamer_info()
             self.task = self.bot.loop.create_task(self._stream_alerts())
         except Exception as error:
             log.exception("Failed to initialize Streams cog:", exc_info=error)
@@ -565,19 +564,11 @@ class Streams(commands.Cog):
         """
         await ctx.send(_("Checking for a message..."))
         print("AHHHHHHHHHHHHHH")
-        # print(self.streams)
+        print(self.streams)
         for stream in self.streams:
             if stream.name.lower() == streamer_name.lower():
                 print(stream)
-                try:
-                    print(stream.nomention_message)
-                except AttributeError as e:
-                    print("meh")
-                try:
-                    print(stream.mention_message)
-                except AttributeError as e:
-                    print("meh")
-
+                print(stream.nomention_message)
                 return
         return
 
@@ -593,10 +584,8 @@ class Streams(commands.Cog):
         Command can be run by moderator.
         Can only be used in server.
         """
-        # 1. In load streams, keep it as it is and move all the info into self.streamer_info
-        # 2. Second function that loops through self.streamer_info and appends that data as an attribute into self.streams
-        # 3. Revert to old changes
 
+        # Change from looking at self.streams to looking at self.streamer_info
         # self.streamer_info[streamer_id] = {
         #   "nomention_message": abc,
         #   "mention_message": abc,
@@ -607,51 +596,30 @@ class Streams(commands.Cog):
 
         # Verifying that the user is setting a message for an existing streamer
         not_found = True
-        stream_id = ""
         for stream in self.streams:
             if stream.name.lower() == streamer_name.lower():
-                stream_id = stream.id
                 not_found = False
-                if mention == "mention":
+        if not_found:
+            await ctx.send(_("Streamer `{}` not registered, please look at `[p]streamalert help`".format(streamer_name)))
+
+        if mention == "mention":
                     stream.__setattr__("mention_message", msg)
                     stream.__setattr__("who_to_mention", "@{}".format(to_mention))
                     await ctx.send(_("Custom message for streamer `{}` set to mention @\u200b{}.".format(streamer_name, to_mention)))
                     await self.save_streams()
-                    break
                 elif mention == "nomention":
                     msg = to_mention + " " + msg
-                    print(msg)
                     stream.__setattr__("nomention_message", msg)
                     await self.save_streams()
-                    break
                 else:
                     await ctx.send_help()
-                    break
-        
-        if not_found:
-            await ctx.send(_("Streamer `{}` not registered, please look at `[p]streamalert help`".format(streamer_name)))
-            return
-
-        # if stream_id in self.streamer_info:
-            # stream = self.streamer_info[stream_id]
-            # if mention == "mention":
-            #     stream.__setattr__("mention_message", msg)
-            #     stream.__setattr__("who_to_mention", "@{}".format(to_mention))
-            #     await ctx.send(_("Custom message for streamer `{}` set to mention @\u200b{}.".format(streamer_name, to_mention)))
-            #     await self.save_streams()
-            # elif mention == "nomention":
-            #     msg = to_mention + " " + msg
-            #     stream.__setattr__("nomention_message", msg)
-            #     await self.save_streams()
-            # else:
-            #     await ctx.send_help()
     
 
-        # if hasattr(self.streamer_info[0], "mention_message"):
-        #     print(self.streamer_info[0].mention_message)
+        if hasattr(self.streamer_info[0], "mention_message"):
+            print(self.streamer_info[0].mention_message)
 
         # await self.save_streams()
-        await ctx.send(_("Custom message added for streamer `{}`".format(streamer_name)))
+        await ctx.send(_("DONE ADDING MESSAGE"))
     
     @message.command(name="remove")
     @commands.guild_only()
@@ -1006,18 +974,13 @@ class Streams(commands.Cog):
         streams = []
         for raw_stream in await self.config.streams():
             print(raw_stream)
-            print("------------------------------------------------------------------------------------------------")
+            print("-- Begin ^^ --")
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
-                print("AHHHHH")
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            # OUTSIDE OF FOR LOOP
             for raw_msg in raw_msg_cache:
-                # print("IN THE FOR LOOP")
-                # print(raw_msg)
-                # print("------------------------------------------------------------------------------------------------")
                 chn = self.bot.get_channel(raw_msg["channel"])
                 if chn is not None:
                     try:
@@ -1026,27 +989,30 @@ class Streams(commands.Cog):
                         pass
                     else:
                         raw_stream["_messages_cache"].append(msg)
-                # try:
-                #     print(raw_stream["nomention_message"])
-                # except KeyError as e:
-                #     print("hi")
-                if "nomention_message" in raw_stream:
-                    if raw_stream["id"] not in self.streamer_info:
-                        self.streamer_info[raw_stream["id"]] = {
-                            "nomention_message": raw_stream["nomention_message"]
-                        }
-                    else:
-                        self.streamer_info[raw_stream["id"]]["nomention_message"] = raw_stream["nomention_message"]
-                if "mention_message" in raw_stream:
-                    if raw_stream["id"] not in self.streamer_info:
-                        self.streamer_info[raw_stream["id"]] = {
-                            "mention_message": raw_stream["mention_message"],
-                            "who_to_mention": raw_stream["who_to_mention"]
-                        }
-                    else:
-                        self.streamer_info[raw_stream["id"]]["mention_message"] = raw_stream["mention_message"]
-                        self.streamer_info[raw_stream["id"]]["who_to_mention"] = raw_stream["who_to_mention"]
-
+            # if hasattr(raw_stream, "nomention_message"):
+            print(raw_stream["id"])
+            print("-- Changes --")
+            try:
+                if raw_stream["id"] not in self.streamer_info:
+                    self.streamer_info[raw_stream["id"]] = {
+                        "nomention_message": raw_stream["nomention_message"]
+                    }
+                else:
+                    self.streamer_info[raw_stream["id"]]["nomention_message"] = raw_stream["nomention_message"]
+            except KeyError as e:
+                print("No previously determined no mention message for streamer found", e)
+            # if hasattr(raw_stream, "mention_message"):
+            try:
+                if raw_stream["id"] not in self.streamer_info:
+                    self.streamer_info[raw_stream["id"]] = {
+                        "mention_message": raw_stream["mention_message"],
+                        "who_to_mention": raw_stream["who_to_mention"]
+                    }
+                else:
+                    self.streamer_info[raw_stream["id"]]["mention_message"] = raw_stream["mention_message"]
+                    self.streamer_info[raw_stream["id"]]["who_to_mention"] = raw_stream["who_to_mention"]
+            except KeyError as e:
+                print("No previously determined mention message for streamer found", e)
 
             # if hasattr(raw_stream, "nomention_message"):
             #     no_mention_msg = raw_stream["nomention_message"]
@@ -1061,26 +1027,15 @@ class Streams(commands.Cog):
                     raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
-        return streams
-
-    async def load_streamer_info(self):
         print(self.streamer_info)
-        for current_stream in self.streams:
-            id = current_stream.id
-            if id in self.streamer_info:
-                info = self.streamer_info[id]
-                if "nomention_message" in info:
-                    current_stream.__setattr__("nomention_message", info["nomention_message"])
-                if "mention_message" in info:
-                    current_stream.__setattr__("mention_message", info["mention_message"])
-                    current_stream.__setattr__("who_to_mention", info["who_to_mention"])
+        return streams
 
     async def save_streams(self):
         raw_streams = []
         for stream in self.streams:
             raw_streams.append(stream.export())
 
-        # print(raw_streams)
+        print(raw_streams)
         await self.config.streams.set(raw_streams)
 
     def cog_unload(self):
