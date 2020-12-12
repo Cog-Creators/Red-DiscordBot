@@ -75,7 +75,7 @@ class Stream:
             # print(m)
             # print("-----------")
             data["messages"].append({"channel": m.channel.id, "message": m.id})
-        
+
         # print(data)
         return data
 
