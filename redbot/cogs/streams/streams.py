@@ -691,7 +691,6 @@ class Streams(commands.Cog):
                 not_found = False
                 if mention == "mention":
                     if not hasattr(stream, "mention_message"):
-                        print("mention message not here")
                         break
                     stream.__delattr__("mention_message")
                     stream.__delattr__("who_to_mention")
@@ -715,6 +714,7 @@ class Streams(commands.Cog):
             await ctx.send(
                 _("Streamer `{}` not registered. No message(s) to remove.".format(name))
             )
+            return
 
         await self.save_streams()
         await ctx.send(_("Removed message(s) from streamer `{}`".format(name)))
