@@ -492,7 +492,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `[deps...]` The package or packages you wish to install.
+        - `<deps...>` The package or packages you wish to install.
         """
         repo = Repo("", "", "", "", Path.cwd())
         async with ctx.typing():
@@ -589,7 +589,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The name of an already added repo
+        - `<repo>` The name of an already added repo
         """
         await self._repo_manager.delete_repo(repo.name)
 
@@ -618,7 +618,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The name of the repo to show info about.
+        - `<repo>` The name of the repo to show info about.
         """
         made_by = ", ".join(repo.author) or _("Missing from info.json")
 
@@ -744,8 +744,8 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The name of the repo to install cogs from.
-        - `<cogs>` The cog or cogs to install.
+        - `<repo>` The name of the repo to install cogs from.
+        - `<cogs...>` The cog or cogs to install.
         """
         await self._cog_installrev(ctx, repo, None, cog_names)
 
@@ -753,7 +753,7 @@ class Downloader(commands.Cog):
         name="installversion", usage="<repo> <revision> <cogs...>", require_var_positional=True
     )
     async def _cog_installversion(
-        self, ctx: commands.Context, repo: Repo, rev: str, *cog_names: str
+        self, ctx: commands.Context, repo: Repo, revision: str, *cog_names: str
     ) -> None:
         """Install a cog from the specified revision of given repo.
 
@@ -769,9 +769,9 @@ class Downloader(commands.Cog):
 
         - `<repo_name>` The name of the repo to install cogs from.
         - `<revision>` The revision to install from.
-        - `<cogs>` The cog or cogs to install.
+        - `<cogs...>` The cog or cogs to install.
         """
-        await self._cog_installrev(ctx, repo, rev, cog_names)
+        await self._cog_installrev(ctx, repo, revision, cog_names)
 
     async def _cog_installrev(
         self, ctx: commands.Context, repo: Repo, rev: Optional[str], cog_names: Iterable[str]
@@ -879,7 +879,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<cogs>` The cog or cogs to uninstall.
+        - `<cogs...>` The cog or cogs to uninstall.
         """
         async with ctx.typing():
             uninstalled_cogs = []
@@ -926,7 +926,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<cogs>` The cog or cogs to pin. Must already be installed.
+        - `<cogs...>` The cog or cogs to pin. Must already be installed.
         """
         already_pinned = []
         pinned = []
@@ -955,7 +955,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<cogs>` The cog or cogs to unpin. Must already be installed and pinned."""
+        - `<cogs...>` The cog or cogs to unpin. Must already be installed and pinned."""
         not_pinned = []
         unpinned = []
         for cog in set(cogs):
@@ -1059,13 +1059,13 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repos>` The repo or repos to update all cogs from.
+        - `<repos...>` The repo or repos to update all cogs from.
         """
         await self._cog_update_logic(ctx, repos=repos)
 
     @cog.command(name="updatetoversion")
     async def _cog_updatetoversion(
-        self, ctx: commands.Context, repo: Repo, rev: str, *cogs: InstalledCog
+        self, ctx: commands.Context, repo: Repo, revision: str, *cogs: InstalledCog
     ) -> None:
         """Update all cogs, or ones of your choosing to chosen revision of one repo.
 
@@ -1080,11 +1080,11 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The repo or repos to update all cogs from.
+        - `<repo>` The repo or repos to update all cogs from.
         - `<revision>` The revision to update to.
-        - `[cogs]` The cog or cogs to update.
+        - `[cogs...]` The cog or cogs to update.
         """
-        await self._cog_update_logic(ctx, repo=repo, rev=rev, cogs=cogs)
+        await self._cog_update_logic(ctx, repo=repo, rev=revision, cogs=cogs)
 
     async def _cog_update_logic(
         self,
@@ -1212,7 +1212,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The repo to list cogs from.
+        - `<repo>` The repo to list cogs from.
         """
         installed = await self.installed_cogs()
         installed_str = ""
@@ -1244,8 +1244,8 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The repo to get cog info from.
-        - `<cog_name>` The cog to get info on.
+        - `<repo>` The repo to get cog info from.
+        - `<cog>` The cog to get info on.
         """
         cog = discord.utils.get(repo.available_cogs, name=cog_name)
         if cog is None:
