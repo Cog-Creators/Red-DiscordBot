@@ -131,7 +131,7 @@ msgstr "Change la façon dont les annonces sont envoyées dans ce serveur."
 #: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n        Change le salon où le bot enverra les annonces.\\n\\n        Si le salon est laissé vide, c'est pas défaut le salon actuel.\\n        "
+msgstr "\\n        Change le salon où le bot enverra les annonces.\\n\\n        Si le champ salon est laissé vide, il utilisera, par défaut, le salon actuel.\\n        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"

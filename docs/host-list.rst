@@ -85,7 +85,7 @@ Free hosting
 
 | **Note:** AWS EC2's free tier does not last forever - it's a 12 month trial.
 | Additionally, new Google Cloud customers get a $300 credit which is valid
-  for 12 months.
+  for 3 months.
 
 Other than that... no. There is no good free VPS hoster, outside of
 persuading somebody to host for you, which is incredibly unlikely.

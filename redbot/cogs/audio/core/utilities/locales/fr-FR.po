@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2020-12-03 12:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -434,7 +434,7 @@ msgstr "demandé par : **{user} **\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr "Liste pour __{guild_name}__"
+msgstr "File d'attente pour __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"

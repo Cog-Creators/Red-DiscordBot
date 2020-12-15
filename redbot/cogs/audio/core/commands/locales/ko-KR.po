@@ -59,7 +59,7 @@ msgstr "화이트리스트 수정됨"
 #: redbot/cogs/audio/core/commands/audioset.py:75
 #: redbot/cogs/audio/core/commands/audioset.py:265
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "추가됨: `{whitelisted}` 이/가 화이트리스트에 추가되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:83
 #: redbot/cogs/audio/core/commands/audioset.py:273
@@ -76,7 +76,7 @@ msgstr "화이트리스트에 아무것도 없어요."
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 msgid "Global Whitelist"
-msgstr ""
+msgstr "전역 화이트리스트에요"
 
 #: redbot/cogs/audio/core/commands/audioset.py:109
 #: redbot/cogs/audio/core/commands/audioset.py:299
@@ -98,7 +98,7 @@ msgstr "키워드를 화이트리스트에서 제거합니다."
 #: redbot/cogs/audio/core/commands/audioset.py:140
 #: redbot/cogs/audio/core/commands/audioset.py:330
 msgid "Removed `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "삭제됨: `{whitelisted}`이/가 화이트리스트에서 제거되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:147
 #, docstring
@@ -128,7 +128,7 @@ msgstr "블랙리스트 수정됨"
 #: redbot/cogs/audio/core/commands/audioset.py:169
 #: redbot/cogs/audio/core/commands/audioset.py:358
 msgid "Added `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "추가됨 `{blacklisted}` 가 블랙리스트에 추가되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:177
 #: redbot/cogs/audio/core/commands/audioset.py:366
@@ -145,7 +145,7 @@ msgstr "블랙리스트에 아무것도 없어요."
 
 #: redbot/cogs/audio/core/commands/audioset.py:196
 msgid "Global Blacklist"
-msgstr ""
+msgstr "전역 블랙리스트"
 
 #: redbot/cogs/audio/core/commands/audioset.py:203
 #: redbot/cogs/audio/core/commands/audioset.py:392
@@ -172,7 +172,7 @@ msgstr "키워드가 블랙리스트에 없습니다."
 #: redbot/cogs/audio/core/commands/audioset.py:234
 #: redbot/cogs/audio/core/commands/audioset.py:423
 msgid "Removed `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "삭제됨 `{blacklisted}` 이/가 블랙리스트에서 제거되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:242
 #, docstring
@@ -186,7 +186,7 @@ msgstr "화이트리스트에 키워드를 추가합니다.\\n\\n        하나�
 
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
-msgstr ""
+msgstr "화이트리스트"
 
 #: redbot/cogs/audio/core/commands/audioset.py:338
 #, docstring
@@ -195,7 +195,7 @@ msgstr "키워드 블랙리스트를 관리합니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:385
 msgid "Blacklist"
-msgstr ""
+msgstr "블랙리스트"
 
 #: redbot/cogs/audio/core/commands/audioset.py:432
 #, docstring
@@ -367,7 +367,7 @@ msgstr "자동 재생곡의 재생목록을 정합니다.\\n\\n        **사용�
 #: redbot/cogs/audio/core/commands/playlists.py:1815
 #: redbot/cogs/audio/core/commands/playlists.py:1981
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "플래이리스트들이 유효하지 않아요"
 
 #: redbot/cogs/audio/core/commands/audioset.py:498
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -386,7 +386,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1816
 #: redbot/cogs/audio/core/commands/playlists.py:1982
 msgid "The playlist section of Audio is currently unavailable"
-msgstr ""
+msgstr "현재 오디오의 재생 목록 세션을 이용할 수 없어요"
 
 #: redbot/cogs/audio/core/commands/audioset.py:501
 #: redbot/cogs/audio/core/commands/playlists.py:106
@@ -405,7 +405,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1819
 #: redbot/cogs/audio/core/commands/playlists.py:1985
 msgid "Check your logs."
-msgstr ""
+msgstr "로그를 확인해주세요."
 
 #: redbot/cogs/audio/core/commands/audioset.py:516
 #: redbot/cogs/audio/core/commands/audioset.py:532
@@ -610,7 +610,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:412
 #: redbot/cogs/audio/core/commands/player.py:422
 msgid "Invalid Environment"
-msgstr ""
+msgstr "잘못된 환경입니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:849
 msgid "The localtracks path location has been set to {localpath}"
@@ -2030,7 +2030,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:611
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "유효한 트랙을 얻을 수 없습니다."
 
 #: redbot/cogs/audio/core/commands/player.py:617
 #: redbot/cogs/audio/core/commands/player.py:754
@@ -2046,7 +2046,7 @@ msgstr "트랙을 찾을수 없습니다"
 #: redbot/cogs/audio/core/commands/player.py:893
 #: redbot/cogs/audio/core/commands/playlists.py:1927
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "지금은 라바링크를 통해 음악을 가져올 수 없습니다. 몇분 뒤에 다시 시도해주세요."
 
 #: redbot/cogs/audio/core/commands/player.py:632
 msgid "Auto play started."

@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\\n"
-msgstr ""
+msgstr "Хост: [{host}]\\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\\n"
