@@ -58,7 +58,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 - No cog contains malicious code.
 - No cog contains code that could impact the stability of the bot, such as blocking the event loop for an extended period of time, unreasonably high IO usage, etc.
 - No cog contains copied code that does not respect the license of the source.
-- Disclose in the install_msg info.json key of each cog that contains any of the following
+- Disclose in the install_msg info.json key of each cog that contains any of the following:
 
   - Heavy memory or I/O usage.
   - Any NSFW material.
@@ -152,7 +152,7 @@ While not required for approved Cog Creators, they are still recommended in orde
     a cog which logs command invocation errors could choose to ignore this
     but a cog which takes actions based on messages should not.
 
-- Respect settings when treating non command messages as commands.
+- Respect settings when treating non-command messages as commands.
 - Handle user data responsibly
 
   - Don't do unexpected things with user data.
