@@ -466,11 +466,8 @@ class KickBanMixin(MixinMeta):
         for user_id, member in members.items():
             try:
                 # using `reason` here would shadow the reason passed to command
-                audit_reason = reason[0 : 509 if len(reason) > 512 else 512] + (
-                    "..." if len(reason) > 512 else ""
-                )
                 success, failure_reason = await self.ban_user(
-                    user=member, ctx=ctx, days=days, reason=audit_reason, create_modlog_case=True
+                    user=member, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                 )
                 if success:
                     banned.append(user_id)
