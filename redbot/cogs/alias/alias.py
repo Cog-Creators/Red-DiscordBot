@@ -170,7 +170,7 @@ class Alias(commands.Cog):
         for p in prefixes:
             if content.startswith(p):
                 return p
-        raise ValueError(_("No prefix found."))
+        raise ValueError("No prefix found.")
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)

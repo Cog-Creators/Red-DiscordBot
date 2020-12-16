@@ -1,12 +1,22 @@
+from __future__ import annotations
+
 import contextlib
 import functools
 import io
 import os
+import logging
+import discord
+
 from pathlib import Path
-from typing import Callable, Union, Dict, Optional
+from typing import Callable, TYPE_CHECKING, Union, Dict, Optional
+from contextvars import ContextVar
 
 import babel.localedata
 from babel.core import Locale
+
+if TYPE_CHECKING:
+    from redbot.core.bot import Red
+
 
 __all__ = [
     "get_locale",
@@ -16,10 +26,15 @@ __all__ = [
     "Translator",
     "get_babel_locale",
     "get_babel_regional_format",
+    "get_locale_from_guild",
+    "get_regional_format_from_guild",
+    "set_contextual_locales_from_guild",
 ]
 
-_current_locale = "en-US"
-_current_regional_format = None
+log = logging.getLogger("red.i18n")
+
+_current_locale = ContextVar("_current_locale", default="en-US")
+_current_regional_format = ContextVar("_current_regional_format", default=None)
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -33,29 +48,96 @@ _translators = []
 
 
 def get_locale() -> str:
-    return _current_locale
+    return str(_current_locale.get())
 
 
 def set_locale(locale: str) -> None:
     global _current_locale
-    _current_locale = locale
+    _current_locale = ContextVar("_current_locale", default=locale)
+    reload_locales()
+
+
+def set_contextual_locale(locale: str) -> None:
+    _current_locale.set(locale)
     reload_locales()
 
 
 def get_regional_format() -> str:
-    if _current_regional_format is None:
-        return _current_locale
-    return _current_regional_format
+    if _current_regional_format.get() is None:
+        return str(_current_locale.get())
+    return str(_current_regional_format.get())
 
 
 def set_regional_format(regional_format: Optional[str]) -> None:
     global _current_regional_format
-    _current_regional_format = regional_format
+    _current_regional_format = ContextVar("_current_regional_format", default=regional_format)
+
+
+def set_contextual_regional_format(regional_format: Optional[str]) -> None:
+    _current_regional_format.set(regional_format)
 
 
 def reload_locales() -> None:
     for translator in _translators:
         translator.load_translations()
+
+
+async def get_locale_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str:
+    """
+    Get locale set for the given guild.
+
+    Parameters
+    ----------
+    bot: Red
+         The bot's instance.
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+
+    Returns
+    -------
+    str
+        Guild's locale string.
+    """
+    return await bot._i18n_cache.get_locale(guild)
+
+
+async def get_regional_format_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str:
+    """
+    Get regional format for the given guild.
+
+    Parameters
+    ----------
+    bot: Red
+         The bot's instance.
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+
+    Returns
+    -------
+    str
+        Guild's locale string.
+    """
+    return await bot._i18n_cache.get_regional_format(guild)
+
+
+async def set_contextual_locales_from_guild(bot: Red, guild: Optional[discord.Guild]) -> None:
+    """
+    Set contextual locales (locale and regional format) for given guild context.
+
+    Parameters
+    ----------
+    bot: Red
+         The bot's instance.
+    guild: Optional[discord.Guild]
+         The guild contextual locale is set for.
+         Use `None` if the context doesn't involve guild.
+    """
+    locale = await get_locale_from_guild(bot, guild)
+    regional_format = await get_regional_format_from_guild(bot, guild)
+    set_contextual_locale(locale)
+    set_contextual_regional_format(regional_format)
 
 
 def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
@@ -78,6 +160,10 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
     untranslated = ""
     translated = ""
     translations = {}
+    locale = get_locale()
+
+    translations[locale] = {}
+
     for line in translation_file:
         line = line.strip()
 
@@ -85,7 +171,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
             # New msgid
             if step is IN_MSGSTR and translated:
                 # Store the last translation
-                translations[_unescape(untranslated)] = _unescape(translated)
+                translations[locale][_unescape(untranslated)] = _unescape(translated)
             step = IN_MSGID
             untranslated = line[len(MSGID) : -1]
         elif line.startswith('"') and line.endswith('"'):
@@ -102,7 +188,7 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
 
     if step is IN_MSGSTR and translated:
         # Store the final translation
-        translations[_unescape(untranslated)] = _unescape(translated)
+        translations[locale][_unescape(untranslated)] = _unescape(translated)
     return translations
 
 
@@ -159,8 +245,9 @@ class Translator(Callable[[str], str]):
         This will look for the string in the translator's :code:`.pot` file,
         with respect to the current locale.
         """
+        locale = get_locale()
         try:
-            return self.translations[untranslated]
+            return self.translations[locale][untranslated]
         except KeyError:
             return untranslated
 
@@ -168,7 +255,16 @@ class Translator(Callable[[str], str]):
         """
         Loads the current translations.
         """
-        self.translations = {}
+        locale = get_locale()
+
+        if locale.lower() == "en-us":
+            # Red is written in en-US, no point in loading it
+            return
+        if locale in self.translations:
+            # Locales cannot be loaded twice as they have an entry in
+            # self.translations
+            return
+
         locale_path = get_locale_path(self.cog_folder, "po")
         with contextlib.suppress(IOError, FileNotFoundError):
             with locale_path.open(encoding="utf-8") as file:

@@ -22,7 +22,10 @@ from urllib.parse import urlparse
 
 import lavalink
 
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
+
+_ = Translator("Audio", Path(__file__))
 
 _RE_REMOVE_START: Final[Pattern] = re.compile(r"^(sc|list) ")
 _RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"[&|?]t=(\d+)s?")

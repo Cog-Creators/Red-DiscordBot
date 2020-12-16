@@ -4,6 +4,7 @@ import datetime
 import json
 import logging
 import math
+from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Tuple, Union
 
@@ -12,6 +13,7 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
@@ -23,9 +25,10 @@ from ...audio_logging import debug_exc_log
 from ...errors import TooManyMatches, TrackEnqueueError
 from ...utils import Notifier, PlaylistScope
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -413,6 +416,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             "try again in a few minutes."
                         ),
                     )
+                except Exception as e:
+                    self.update_player_lock(ctx, False)
+                    raise e
 
                 track = result.tracks[0]
             except Exception as err:
@@ -599,6 +605,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
 
             tracks = result.tracks
             if not tracks:
@@ -625,6 +634,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "minutes."
                     ),
                 )
+            except Exception as e:
+                self.update_player_lock(ctx, False)
+                raise e
 
             tracks = result.tracks
 

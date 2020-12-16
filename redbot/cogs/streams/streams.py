@@ -1,7 +1,7 @@
 import discord
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
-from redbot.core.i18n import cog_i18n, Translator
+from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, pagify
 
@@ -19,6 +19,7 @@ from .errors import (
     OfflineStream,
     StreamNotFound,
     StreamsError,
+    YoutubeQuotaExceeded,
 )
 from . import streamtypes as _streamtypes
 
@@ -57,6 +58,7 @@ class Streams(commands.Cog):
         "live_message_mention": False,
         "live_message_nomention": False,
         "ignore_reruns": False,
+        "ignore_schedule": False,
     }
 
     role_defaults = {"mention": False}
@@ -222,9 +224,9 @@ class Streams(commands.Cog):
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(name=channel_id_or_name, token=apikey, config=self.config)
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey)
+            stream = YoutubeStream(id=channel_id_or_name, token=apikey, config=self.config)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -262,7 +264,19 @@ class Streams(commands.Cog):
                     "The YouTube API key is either invalid or has not been set. See {command}."
                 ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
             )
-        except APIError:
+        except YoutubeQuotaExceeded:
+            await ctx.send(
+                _(
+                    "YouTube quota has been exceeded."
+                    " Try again later or contact the owner if this continues."
+                )
+            )
+        except APIError as e:
+            log.error(
+                "Something went wrong whilst trying to contact the stream service's API.\n"
+                "Raw response data:\n%r",
+                e,
+            )
             await ctx.send(
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
@@ -385,7 +399,7 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token)
+                stream = _class(id=channel_name, token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
@@ -394,7 +408,10 @@ class Streams(commands.Cog):
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
             else:
-                stream = _class(name=channel_name, token=token)
+                if is_yt:
+                    stream = _class(name=channel_name, token=token, config=self.config)
+                else:
+                    stream = _class(name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
@@ -412,7 +429,19 @@ class Streams(commands.Cog):
                     ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
                 )
                 return
-            except APIError:
+            except YoutubeQuotaExceeded:
+                await ctx.send(
+                    _(
+                        "YouTube quota has been exceeded."
+                        " Try again later or contact the owner if this continues."
+                    )
+                )
+            except APIError as e:
+                log.error(
+                    "Something went wrong whilst trying to contact the stream service's API.\n"
+                    "Raw response data:\n%r",
+                    e,
+                )
                 await ctx.send(
                     _("Something went wrong whilst trying to contact the stream service's API.")
                 )
@@ -494,7 +523,7 @@ class Streams(commands.Cog):
     @streamset.group()
     @commands.guild_only()
     async def message(self, ctx: commands.Context):
-        """Manage custom message for stream alerts."""
+        """Manage custom messages for stream alerts."""
         pass
 
     @message.command(name="mention")
@@ -620,6 +649,19 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_reruns.set(True)
             await ctx.send(_("Streams of type 'rerun' will no longer send an alert."))
 
+    @streamset.command(name="ignoreschedule")
+    @commands.guild_only()
+    async def ignore_schedule(self, ctx: commands.Context):
+        """Toggle excluding YouTube streams schedules from alerts."""
+        guild = ctx.guild
+        current_setting = await self.config.guild(guild).ignore_schedule()
+        if current_setting:
+            await self.config.guild(guild).ignore_schedule.set(False)
+            await ctx.send(_("Streams schedules will be included in alerts."))
+        else:
+            await self.config.guild(guild).ignore_schedule.set(True)
+            await ctx.send(_("Streams schedules will no longer send an alert."))
+
     async def add_or_remove(self, ctx: commands.Context, stream):
         if ctx.channel.id not in stream.channels:
             stream.channels.append(ctx.channel.id)
@@ -680,6 +722,16 @@ class Streams(commands.Cog):
                 pass
             await asyncio.sleep(await self.config.refresh_timer())
 
+    async def _send_stream_alert(
+        self, stream, channel: discord.TextChannel, embed: discord.Embed, content: str = None
+    ):
+        m = await channel.send(
+            content,
+            embed=embed,
+            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+        )
+        stream._messages_cache.append(m)
+
     async def check_streams(self):
         for stream in self.streams:
             with contextlib.suppress(Exception):
@@ -687,9 +739,12 @@ class Streams(commands.Cog):
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
+                    elif stream.__class__.__name__ == "YoutubeStream":
+                        embed, is_schedule = await stream.is_online()
                     else:
                         embed = await stream.is_online()
                         is_rerun = False
+                        is_schedule = False
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue
@@ -714,6 +769,16 @@ class Streams(commands.Cog):
                         ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
                         if ignore_reruns and is_rerun:
                             continue
+                        ignore_schedules = await self.config.guild(channel.guild).ignore_schedule()
+                        if ignore_schedules and is_schedule:
+                            continue
+                        if is_schedule:
+                            # skip messages and mentions
+                            await self._send_stream_alert(stream, channel, embed)
+                            await self.save_streams()
+                            continue
+                        await set_contextual_locales_from_guild(self.bot, channel.guild)
+
                         mention_str, edited_roles = await self._get_mention_str(
                             channel.guild, channel
                         )
@@ -726,7 +791,7 @@ class Streams(commands.Cog):
                                 content = alert_msg  # Stop bad things from happening here...
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
-                                )  # Backwards compatability
+                                )  # Backwards compatibility
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{mention}", mention_str)
                             else:
@@ -744,7 +809,7 @@ class Streams(commands.Cog):
                                 content = alert_msg  # Stop bad things from happening here...
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
-                                )  # Backwards compatability
+                                )  # Backwards compatibility
                                 content = content.replace("{stream}", str(stream.name))
                             else:
                                 content = _("{stream} is live!").format(
@@ -752,13 +817,7 @@ class Streams(commands.Cog):
                                         str(stream.name), mass_mentions=True, formatting=True
                                     )
                                 )
-
-                        m = await channel.send(
-                            content,
-                            embed=embed,
-                            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
-                        )
-                        stream._messages_cache.append(m)
+                        await self._send_stream_alert(stream, channel, embed, content)
                         if edited_roles:
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
@@ -827,6 +886,8 @@ class Streams(commands.Cog):
                     raw_stream["token"] = token.get("client_id")
                     raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
                 else:
+                    if _class.__name__ == "YoutubeStream":
+                        raw_stream["config"] = self.config
                     raw_stream["token"] = token
             streams.append(_class(**raw_stream))
 
@@ -842,5 +903,3 @@ class Streams(commands.Cog):
     def cog_unload(self):
         if self.task:
             self.task.cancel()
-
-    __del__ = cog_unload

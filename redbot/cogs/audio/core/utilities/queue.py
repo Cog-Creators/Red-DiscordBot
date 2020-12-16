@@ -1,5 +1,6 @@
 import logging
 import math
+from pathlib import Path
 
 from typing import List, Tuple
 
@@ -8,14 +9,16 @@ import lavalink
 
 from fuzzywuzzy import process
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.queue")
+_ = Translator("Audio", Path(__file__))
 
 
 class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):

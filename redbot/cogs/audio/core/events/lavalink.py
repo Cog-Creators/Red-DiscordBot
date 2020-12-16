@@ -1,18 +1,28 @@
 import asyncio
 import contextlib
+import datetime
 import logging
+from pathlib import Path
 
 import discord
 import lavalink
 
+from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+    ):
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
+        self._ll_guild_updates.add(int(extra.get("guildId", 0)))
+
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
@@ -28,6 +38,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
+        await set_contextual_locales_from_guild(self.bot, guild)
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)
         current_length = self.rgetattr(current_track, "length", None)
@@ -156,6 +167,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await player.disconnect()
+                    self._ll_guild_updates.discard(guild.id)
             if status:
                 player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
@@ -174,6 +186,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.current = None
             if not guild_id:
                 return
+            guild_id = int(guild_id)
             self._error_counter.setdefault(guild_id, 0)
             if guild_id not in self._error_counter:
                 self._error_counter[guild_id] = 0
@@ -188,6 +201,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
+                self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)

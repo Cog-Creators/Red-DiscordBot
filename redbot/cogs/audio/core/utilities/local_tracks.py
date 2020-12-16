@@ -8,14 +8,16 @@ import lavalink
 
 from fuzzywuzzy import process
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 from ...audio_dataclasses import LocalPath, Query
 from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
+_ = Translator("Audio", Path(__file__))
 
 
 class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):

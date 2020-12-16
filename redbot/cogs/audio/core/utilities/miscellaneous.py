@@ -5,6 +5,7 @@ import functools
 import json
 import logging
 import re
+from pathlib import Path
 
 from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 
@@ -14,16 +15,17 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from redbot.core import bank, commands
 from redbot.core.commands import Context
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ...apis.playlist_interface import get_all_playlist_for_migration23
 from ...utils import PlaylistScope, task_callback
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
-
+_ = Translator("Audio", Path(__file__))
 _RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}
 
@@ -204,11 +206,11 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)
-        duration = []
-        async for i in AsyncIter(range(len(player.queue))):
-            if not player.queue[i].is_stream:
-                duration.append(player.queue[i].length)
-        queue_dur = sum(duration)
+        dur = [
+            i.length
+            async for i in AsyncIter(player.queue, steps=50).filter(lambda x: not x.is_stream)
+        ]
+        queue_dur = sum(dur)
         if not player.queue:
             queue_dur = 0
         try:
