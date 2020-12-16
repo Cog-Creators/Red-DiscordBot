@@ -10,7 +10,6 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -333,7 +332,8 @@ class Permissions(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to DM you."))
         else:
-            await ctx.send(_("I've just sent the file to you via DM."))
+            if not isinstance(ctx.channel, discord.DMChannel):
+                await ctx.send(_("I've just sent the file to you via DM."))
         finally:
             file.close()
 
@@ -453,7 +453,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-       `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what>` is one or more users, channels or roles the rule is for.
         """
         if not who_or_what:
             await ctx.send_help()

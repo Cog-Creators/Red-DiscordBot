@@ -1,4 +1,8 @@
+import inspect
+
 import pytest
+from discord.ext import commands as dpy_commands
+
 from redbot.core import commands
 
 
@@ -32,3 +36,16 @@ def test_group_decorator_methods(group, coroutine):
 def test_bot_decorator_methods(red, coroutine):
     assert is_Command(red.command(name="cmd")(coroutine))
     assert is_Group(red.group(name="grp")(coroutine))
+
+
+def test_dpy_commands_reexports():
+    dpy_attrs = set()
+    for attr_name, attr_value in dpy_commands.__dict__.items():
+        if attr_name.startswith("_") or inspect.ismodule(attr_value):
+            continue
+
+        dpy_attrs.add(attr_name)
+
+    missing_attrs = dpy_attrs - set(commands.__dict__.keys())
+
+    assert not missing_attrs

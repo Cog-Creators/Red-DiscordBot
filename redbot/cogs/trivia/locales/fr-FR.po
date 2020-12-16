@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-10-18 14:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -104,7 +104,7 @@ msgstr "Gérer les paramètres du Trivia."
 #: redbot/cogs/trivia/trivia.py:83
 #, docstring
 msgid "Show the current trivia settings."
-msgstr ""
+msgstr "Afficher les paramètres actuels de la trivia."
 
 #: redbot/cogs/trivia/trivia.py:87
 msgid "Current settings\\nBot gains points: {bot_plays}\\nAnswer time limit: {delay} seconds\\nLack of response timeout: {timeout} seconds\\nPoints to win: {max_score}\\nReveal answer on timeout: {reveal_answer}\\nPayout multiplier: {payout_multiplier}\\nAllow lists to override settings: {allow_override}"
@@ -172,8 +172,8 @@ msgid "Done. I'll now gain a point if users don't answer in time."
 msgstr "Fait. Je vais maintenant gagné un point si les utilisateurs ne répondent pas dans le délai."
 
 #: redbot/cogs/trivia/trivia.py:163
-msgid "Alright, I won't embarass you at trivia anymore."
-msgstr "D'accord, je ne vous dérangerais plus pour les Trivia."
+msgid "Alright, I won't embarrass you at trivia anymore."
+msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:167
 #, docstring

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2020-09-03 12:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgstr "Я не могу позволить вам редактировать {r
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr "Мне нужно управлять правами ролей, чтобы сделать это."
+msgstr "Мне нужно право на управление ролями, чтобы сделать это."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -56,161 +56,161 @@ msgstr "Я уже что-то объявляю. Если вы хотите сд�
 msgid "A collection of server administration utilities."
 msgstr "Набор утилит администрирования сервера."
 
-#: redbot/cogs/admin/admin.py:161
+#: redbot/cogs/admin/admin.py:162
 msgid "{member.display_name} already has the role {role.name}."
 msgstr "{member.display_name} уже имеет роль {role.name}."
 
-#: redbot/cogs/admin/admin.py:181
+#: redbot/cogs/admin/admin.py:182
 msgid "I successfully added {role.name} to {member.display_name}"
 msgstr "Я успешно добавила роль {role.name} пользователю {member.display_name}"
 
-#: redbot/cogs/admin/admin.py:191
+#: redbot/cogs/admin/admin.py:192
 msgid "{member.display_name} does not have the role {role.name}."
 msgstr "{member.display_name} не имеет роли {role.name}."
 
-#: redbot/cogs/admin/admin.py:211
+#: redbot/cogs/admin/admin.py:212
 msgid "I successfully removed {role.name} from {member.display_name}"
 msgstr "Я успешно забрала роль {role.name} у пользователя {member.display_name}"
 
-#: redbot/cogs/admin/admin.py:222
+#: redbot/cogs/admin/admin.py:223
 #, docstring
 msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
 msgstr "\\n        Добавить роль пользователю.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Если пользователь не указан, по умолчанию используется автор команды.\\n        "
 
-#: redbot/cogs/admin/admin.py:238
+#: redbot/cogs/admin/admin.py:239
 #, docstring
 msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
 msgstr "\\n        Удалить роль у пользователя.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Если пользователь не указан, по умолчанию используется автор команды.\\n        "
 
-#: redbot/cogs/admin/admin.py:252
+#: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
 msgstr "Изменение параметров роли."
 
-#: redbot/cogs/admin/admin.py:259
+#: redbot/cogs/admin/admin.py:260
 #, docstring
 msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
 msgstr "\\n        Изменить цвет роли.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Цвет должен быть в шестнадцатеричном формате.\\n        [Онлайн-палитра цветов](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Примеры:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
 
-#: redbot/cogs/admin/admin.py:288 redbot/cogs/admin/admin.py:321
+#: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
 msgstr "Готово."
 
-#: redbot/cogs/admin/admin.py:292
+#: redbot/cogs/admin/admin.py:293
 #, docstring
 msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
 msgstr "\\n        Изменить название роли.\\n\\n        Используйте двойные кавычки, если роль или имя содержат пробелы.\\n\\n        Примеры:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
 
-#: redbot/cogs/admin/admin.py:326
+#: redbot/cogs/admin/admin.py:327
 #, docstring
 msgid "Announce a message to all servers the bot is in."
 msgstr "Объявить сообщение на всех серверах, к которым подключен бот."
 
-#: redbot/cogs/admin/admin.py:333
+#: redbot/cogs/admin/admin.py:334
 msgid "The announcement has begun."
 msgstr "Объявление началось."
 
-#: redbot/cogs/admin/admin.py:340
+#: redbot/cogs/admin/admin.py:341
 #, docstring
 msgid "Cancel a running announce."
 msgstr "Отменить текущее объявление."
 
-#: redbot/cogs/admin/admin.py:342
+#: redbot/cogs/admin/admin.py:343
 msgid "There is no currently running announcement."
 msgstr "В данный момент нет запущенных объявлений."
 
-#: redbot/cogs/admin/admin.py:345
+#: redbot/cogs/admin/admin.py:346
 msgid "The current announcement has been cancelled."
 msgstr "Текущее объявление было отменено."
 
-#: redbot/cogs/admin/admin.py:351
+#: redbot/cogs/admin/admin.py:352
 #, docstring
 msgid "Change how announcements are sent in this guild."
 msgstr "Изменить способ отправки объявлений на этом сервере."
 
-#: redbot/cogs/admin/admin.py:356
+#: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr ""
+msgstr "\\n        Изменение канала, в который бот будет отправлять объявления.\\n\\n        Если оставить поле пустым, то по умолчанию будет использоваться текущий канал.\\n        "
 
-#: redbot/cogs/admin/admin.py:365
+#: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
 msgstr "Канал объявления был установлен на {channel.mention}"
 
-#: redbot/cogs/admin/admin.py:370
+#: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Сбрасывает канал для объявлений."
 
-#: redbot/cogs/admin/admin.py:395
+#: redbot/cogs/admin/admin.py:396
 #, docstring
 msgid "Apply selfroles."
 msgstr "Применить свои роли."
 
-#: redbot/cogs/admin/admin.py:400
+#: redbot/cogs/admin/admin.py:401
 #, docstring
 msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
 msgstr "\\n        Добавить собственную роль себе.\\n\\n        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
 
-#: redbot/cogs/admin/admin.py:411
+#: redbot/cogs/admin/admin.py:412
 #, docstring
 msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
 msgstr "\\n        Удалить собственную роль у себя.\\n\\n        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
 
-#: redbot/cogs/admin/admin.py:422
+#: redbot/cogs/admin/admin.py:423
 #, docstring
 msgid "\\n        Lists all available selfroles.\\n        "
 msgstr "\\n        Список всех доступных Собственных ролей.\\n        "
 
-#: redbot/cogs/admin/admin.py:432
+#: redbot/cogs/admin/admin.py:433
 msgid "Available Selfroles:\\n{selfroles}"
 msgstr "Доступные собственные роли:\\n{selfroles}"
 
-#: redbot/cogs/admin/admin.py:438
+#: redbot/cogs/admin/admin.py:439
 #, docstring
 msgid "Manage selfroles."
 msgstr "Управление своими ролями."
 
-#: redbot/cogs/admin/admin.py:443
+#: redbot/cogs/admin/admin.py:444
 #, docstring
 msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
 msgstr "\\n        Добавить роль в список доступных своих ролей.\\n\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
 
-#: redbot/cogs/admin/admin.py:450
+#: redbot/cogs/admin/admin.py:451
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Нельзя добавить {role.name} в качестве собственной роли, потому что эта роль выше или равна вашей самой высшей роли в иерархии Discord."
 
-#: redbot/cogs/admin/admin.py:458
+#: redbot/cogs/admin/admin.py:459
 msgid "Added."
 msgstr "Добавлено."
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:462
 msgid "That role is already a selfrole."
 msgstr "У вас уже имеется эта роль."
 
-#: redbot/cogs/admin/admin.py:465
+#: redbot/cogs/admin/admin.py:466
 #, docstring
 msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
 msgstr "\\n        Удалить роль из списка доступных собственных ролей.\\n\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
 
-#: redbot/cogs/admin/admin.py:472
+#: redbot/cogs/admin/admin.py:473
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Вы не можете забрать у себя роль {role.name}, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
-#: redbot/cogs/admin/admin.py:480
+#: redbot/cogs/admin/admin.py:481
 msgid "Removed."
 msgstr "Удалено."
 
-#: redbot/cogs/admin/admin.py:485
+#: redbot/cogs/admin/admin.py:486
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Зафиксировать бота только на его текущих серверах."
 
-#: redbot/cogs/admin/admin.py:490
+#: redbot/cogs/admin/admin.py:491
 msgid "The bot is no longer serverlocked."
 msgstr "Бот больше не зафиксирован на сервере."
 
-#: redbot/cogs/admin/admin.py:492
+#: redbot/cogs/admin/admin.py:493
 msgid "The bot is now serverlocked."
 msgstr "Бот теперь зафиксирован на сервере."
 
@@ -220,7 +220,7 @@ msgstr "Я не могу сделать объявление на следующ
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr "Я не могу сделать объявление на следующих серверах: "
+msgstr "Я не могу объявить на следующих серверах: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."

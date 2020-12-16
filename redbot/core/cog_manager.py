@@ -456,10 +456,14 @@ class CogManagerUI(commands.Cog):
             unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
             for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:

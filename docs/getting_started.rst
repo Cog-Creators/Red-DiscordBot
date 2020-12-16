@@ -81,15 +81,23 @@ parameters.
 
     [p]help command
 
-The parameters are shown as enclosed in ``< >`` if they're required, or
-``[ ]`` if optional.
-As an example, the ban command will show this in the help message, assuming
-your prefix is ``!``:
-``Syntax: !ban <user> [days] [reason]``
+.. note::
+    Arguments enclosed in ``< >`` are **required** for the command to work.
 
-This means that it is necessary to provide ``user``. However, the
-``days`` value (number of messages to delete) is optional, as well as
-the ``reason`` value, used for the modlog.
+    Arguments enclosed in ``[ ]`` are **optional** for the command;
+    you can decide whether to use them or not.
+    
+    If your argument includes spaces like ``Hello world!``, most of the time
+    you will need to place it in double quotes like this: ``"Hello world!"``.
+    Sometimes (especially for the last argument) these double quotes are not
+    required.
+
+    Arguments followed by ``=value`` means that, if not specified,
+    the argument will be equal to ``value``.
+
+    For example, the command ``[p]cleanup messages`` in the cleanup cog has
+    the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
+    ``delete_pinned`` default will be false, unless you specify it as true.
 
 You can use help to show the **categories** too, generally called cogs.
 Just do something like this (notice the capitalization):
@@ -153,14 +161,10 @@ download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
 
-You can find cogs by searching on ``cogs.red``. Find whatever you want,
+You can find cogs by searching on `<https://index.discord.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
-.. note:: ``cogs.red``, the website that list all of the cogs is not
-    ready for v3 yet. For now, you can refer to `this post
-    <https://cogboard.red/t/approved-repositories/210>`_.
-
-.. 26-cogs not available, let's use my repo :3
+.. note:: An even better way to discover new cogs and repositories is in the works! Stay tuned!
 
 Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
@@ -344,22 +348,3 @@ The cog guides are formatted the same. They're divided into 3 sections:
   * **Arguments**
 
     A list of all arguments needed (or not) for the command, with more details.
-
-    .. tip::
-        Arguments enclosed in ``< >`` means that the argument is **required**
-        for the command to work.
-
-        Arguments enclosed in ``[ ]`` means that the argument is **optional**
-        for the command; you can decide to use it or not.
-        
-        If your argument includes spaces like ``Hello world!``, most of the time
-        you will need to place it in double quotes like this: ``"Hello world!"``.
-        Sometimes (especially for the last argument) these double quotes are not
-        required.
-
-        Arguments followed by ``=something`` means that, if not specified,
-        the argument will be equal to ``something``.
-
-        For example, ``[days=1]`` in the ``ban`` command means that the number
-        of days of messages to be deleted will be equal to ``1`` if not
-        specified.

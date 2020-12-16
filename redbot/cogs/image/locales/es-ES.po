@@ -44,7 +44,7 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\\n"
-msgstr ""
+msgstr "Resultados de la búsqueda...\\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."

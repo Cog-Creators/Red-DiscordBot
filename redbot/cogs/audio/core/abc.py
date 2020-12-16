@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import datetime
+
 from abc import ABC, abstractmethod
 from collections import Counter
 from pathlib import Path
-from typing import Any, List, Mapping, MutableMapping, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -25,8 +27,7 @@ if TYPE_CHECKING:
 
 
 class MixinMeta(ABC):
-    """
-    Base class for well behaved type hint detection with composite class.
+    """Base class for well behaved type hint detection with composite class.
 
     Basically, to keep developers sane when not all attributes are defined in each mixin.
     """
@@ -44,10 +45,12 @@ class MixinMeta(ABC):
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
     _daily_global_playlist_cache: MutableMapping[int, bool]
+    _persist_queue_cache: MutableMapping[int, bool]
     _dj_status_cache: MutableMapping[int, Optional[bool]]
     _dj_role_cache: MutableMapping[int, Optional[int]]
     _error_timer: MutableMapping[int, float]
     _disconnected_players: MutableMapping[int, bool]
+    global_api_user: MutableMapping[str, Any]
 
     cog_cleaned_up: bool
     lavalink_connection_aborted: bool
@@ -55,11 +58,16 @@ class MixinMeta(ABC):
     _error_counter: Counter
 
     lavalink_connect_task: Optional[asyncio.Task]
+    _restore_task: Optional[asyncio.Task]
     player_automated_timer_task: Optional[asyncio.Task]
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
 
     _default_lavalink_settings: Mapping
+    permission_cache = discord.Permissions
+
+    _last_ll_update: datetime.datetime
+    _ll_guild_updates: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):
@@ -74,7 +82,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_active_player_count(self) -> Tuple[str, int]:
+    async def get_active_player_count(self) -> Tuple[str, int]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -120,6 +128,12 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def _clear_react(
         self, message: discord.Message, emoji: MutableMapping = None
     ) -> asyncio.Task:
@@ -160,16 +174,20 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def is_query_allowed(
-        self, config: Config, guild: discord.Guild, query: str, query_obj: "Query" = None
+        self,
+        config: Config,
+        ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
+        query: str,
+        query_obj: Query,
     ) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
-    def is_track_length_allowed(self, track: lavalink.Track, maxlength: int) -> bool:
+    def is_track_length_allowed(self, track: Union[lavalink.Track, int], maxlength: int) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
-    def get_track_description(
+    async def get_track_description(
         self,
         track: Union[lavalink.rest_api.Track, "Query"],
         local_folder_current_path: Path,
@@ -178,7 +196,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_track_description_unformatted(
+    async def get_track_description_unformatted(
         self, track: Union[lavalink.rest_api.Track, "Query"], local_folder_current_path: Path
     ) -> Optional[str]:
         raise NotImplementedError()
@@ -496,9 +514,20 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def restore_players(self) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def command_skip(self, ctx: commands.Context, skip_to_track: int = None):
         raise NotImplementedError()
 
     @abstractmethod
     async def command_prev(self, ctx: commands.Context):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def icyparser(self, url: str) -> Optional[str]:
+        raise NotImplementedError()
+
+    async def self_deafen(self, player: lavalink.Player) -> None:
         raise NotImplementedError()

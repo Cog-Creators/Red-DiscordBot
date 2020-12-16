@@ -46,6 +46,8 @@ extend functionalities used throughout the bot, as outlined below.
     .. autodata:: UserInputOptional
         :annotation:
 
+.. _framework-commands-help:
+
 ******************
 Help Functionality
 ******************

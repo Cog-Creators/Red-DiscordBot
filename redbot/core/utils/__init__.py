@@ -1,8 +1,11 @@
 from __future__ import annotations
 import asyncio
+import json
+import logging
 from asyncio import as_completed, Semaphore
 from asyncio.futures import isfuture
 from itertools import chain
+from pathlib import Path
 from typing import (
     Any,
     AsyncIterator,
@@ -22,8 +25,16 @@ from typing import (
 
 from discord.utils import maybe_coroutine
 
-__all__ = ("bounded_gather", "bounded_gather_iter", "deduplicate_iterables", "AsyncIter")
+__all__ = (
+    "bounded_gather",
+    "bounded_gather_iter",
+    "deduplicate_iterables",
+    "AsyncIter",
+    "get_end_user_data_statement",
+    "get_end_user_data_statement_or_raise",
+)
 
+log = logging.getLogger("red.core.utils")
 
 _T = TypeVar("_T")
 _S = TypeVar("_S")
@@ -154,7 +165,7 @@ async def _sem_wrapper(sem, task):
 
 
 def bounded_gather_iter(
-    *coros_or_futures, limit: int = 4, semaphore: Optional[Semaphore] = None,
+    *coros_or_futures, limit: int = 4, semaphore: Optional[Semaphore] = None
 ) -> Iterator[Awaitable[Any]]:
     """
     An iterator that returns tasks as they are ready, but limits the
@@ -498,3 +509,84 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
             raise TypeError("Mapping must be a callable.")
         self._map = func
         return self
+
+
+def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
+    """
+    This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
+    This will log the reason if ``None`` is returned.
+
+    Parameters
+    ----------
+    file: Union[pathlib.Path, str]
+        The ``__file__`` variable for the cog's ``__init__.py`` file.
+
+    Returns
+    -------
+    Optional[str]
+        The end user data statement found in the info.json
+        or ``None`` if there was an issue finding one.
+
+    Examples
+    --------
+    >>> # In cog's `__init__.py`
+    >>> from redbot.core.utils import get_end_user_data_statement
+    >>> __red_end_user_data_statement__  = get_end_user_data_statement(__file__)
+    >>> def setup(bot):
+    ...     ...
+    """
+    try:
+        file = Path(file).parent.absolute()
+        info_json = file / "info.json"
+        statement = get_end_user_data_statement_or_raise(info_json)
+    except FileNotFoundError:
+        log.critical("'%s' does not exist.", str(info_json))
+    except KeyError:
+        log.critical("'%s' is missing an entry for 'end_user_data_statement'", str(info_json))
+    except json.JSONDecodeError as exc:
+        log.critical("'%s' is not a valid JSON file.", str(info_json), exc_info=exc)
+    except UnicodeError as exc:
+        log.critical("'%s' has a bad encoding.", str(info_json), exc_info=exc)
+    except Exception as exc:
+        log.critical(
+            "There was an error when trying to load the end user data statement from '%s'.",
+            str(info_json),
+            exc_info=exc,
+        )
+    else:
+        return statement
+    return None
+
+
+def get_end_user_data_statement_or_raise(file: Union[Path, str]) -> str:
+    """
+    This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
+
+    Parameters
+    ----------
+    file: Union[pathlib.Path, str]
+        The ``__file__`` variable for the cog's ``__init__.py`` file.
+
+    Returns
+    -------
+    str
+        The end user data statement found in the info.json.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``info.json`` does not exist.
+    KeyError
+        When ``info.json`` does not have the ``end_user_data_statement`` key.
+    json.JSONDecodeError
+        When ``info.json`` can't be decoded with ``json.load()``
+    UnicodeError
+        When ``info.json`` can't be decoded due to bad encoding.
+    Exception
+        Any other exception raised from ``pathlib`` and ``json`` modules
+        when attempting to parse the ``info.json`` for the ``end_user_data_statement`` key.
+    """
+    file = Path(file).parent.absolute()
+    info_json = file / "info.json"
+    with info_json.open(encoding="utf-8") as fp:
+        return json.load(fp)["end_user_data_statement"]

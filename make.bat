@@ -21,7 +21,7 @@ exit /B %ERRORLEVEL%
 
 :newenv
 py -3.8 -m venv --clear .venv
-.\.venv\Scripts\python -m pip install -U pip setuptools
+.\.venv\Scripts\python -m pip install -U pip setuptools wheel
 goto syncenv
 
 :syncenv

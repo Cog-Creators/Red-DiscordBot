@@ -165,6 +165,8 @@ on developing cogs for V3. This will also cover differences between V2 and V3 fo
 those who developed cogs for V2.
 
 
+.. _guidelines-for-cog-creators:
+
 ---------------------------
 Guidelines for Cog Creators
 ---------------------------
@@ -231,7 +233,7 @@ Not all of these are strict requirements (some are) but are all generally advisa
   - We announce this in advance.
   - If you need help, ask.
 
-14. Check events against ``bot.cog_disabled_in_guild``
+14. Check events against `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`
 
   - Not all events need to be checked, only those that interact with a guild.
   - Some discretion may apply, for example,
@@ -256,3 +258,8 @@ Not all of these are strict requirements (some are) but are all generally advisa
     variable ``__red_end_user_data_statement__``.
     This should be a string containing a user friendly explanation of what data
     your cog stores and why.
+
+18. Set contextual locales in events and other background tasks that use i18n APIs
+
+  - See `redbot.core.i18n.set_contextual_locales_from_guild()`
+  - Usage of i18n APIs within commands automatically has proper contextual locales set.
