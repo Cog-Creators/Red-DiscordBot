@@ -595,8 +595,14 @@ class KickBanMixin(MixinMeta):
                     invite_link=invite
                 )
             await user.send(msg)
+
+        audit_reason = get_audit_reason(author, reason)
+        audit_reason = audit_reason[0 : 509 if len(audit_reason) > 512 else 512] + (
+            "..." if len(audit_reason) > 512 else ""
+        )
+
         try:
-            await guild.ban(user, reason=reason, delete_message_days=days)
+            await guild.ban(user, reason=audit_reason, delete_message_days=days)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
