@@ -844,11 +844,12 @@ class Economy(commands.Cog):
 
         - `<bid>` The new minimum bid for using the slot machine. Default is 5.
         """
+        guild = ctx.guild
         is_global = await bank.is_global()
         if is_global:
             slot_max = await self.config.SLOT_MAX()
         else:
-            slot_max = await self.config.guild(ctx.guild).SLOT_MAX()
+            slot_max = await self.config.guild(guild).SLOT_MAX()
         if bid > slot_max:
             await ctx.send(
                 _(
@@ -856,7 +857,6 @@ class Economy(commands.Cog):
                     "Slots will not work."
                 ).format(max_bid=humanize_number(slot_max))
             )
-        guild = ctx.guild
         if is_global:
             await self.config.SLOT_MIN.set(bid)
         else:
@@ -879,11 +879,12 @@ class Economy(commands.Cog):
 
         - `<bid>` The new maximum bid for using the slot machine. Default is 100.
         """
+        guild = ctx.guild
         is_global = await bank.is_global()
         if is_global:
             slot_min = await self.config.SLOT_MIN()
         else:
-            slot_min = await self.config.guild(ctx.guild).SLOT_MIN()
+            slot_min = await self.config.guild(guild).SLOT_MIN()
         if bid < slot_min:
             await ctx.send(
                 _(
@@ -891,7 +892,6 @@ class Economy(commands.Cog):
                     "Slots will not work."
                 ).format(min_bid=humanize_number(slot_min))
             )
-        guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
         if is_global:
             await self.config.SLOT_MAX.set(bid)
