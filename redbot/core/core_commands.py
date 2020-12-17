@@ -2678,7 +2678,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
-        """Commands to manage settings for the help command."""
+        """Commands to manage settings for the help command.
+
+        All help settings are applied globally."""
         pass
 
     @helpset.command(name="showsettings")
@@ -2898,6 +2900,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         text channels.
 
         The default value is 2 pages.
+
+        Examples:
+            - `[p]helpset maxpages 50` - Basically never send help to DMs.
+            - `[p]helpset maxpages 0` - Always send help to DMs.
+
+        **Arguments:**
+
+        - `<limit>` The max pages allowed to send per help in a server.
         """
         if pages < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
@@ -2916,6 +2926,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Setting the delay to 0 disables this feature.
 
         The bot has to have MANAGE_MESSAGES permission for this to work.
+
+        Examples:
+            - `[p]helpset deletedelay 60` - Delete the help pages after a minute.
+            - `[p]helpset deletedelay 1` - Delete the help pages as quickly as possible.
+            - `[p]helpset deletedelay 1209600` - Max time to wait before deleting (14 days).
+            - `[p]helpset deletedelay 0` - Disable deleting help pages.
+
+        **Arguments:**CM1000
+sbg8300
+        - `<seconds>` The seconds to wait before deleting help pages.
         """
         if seconds < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
