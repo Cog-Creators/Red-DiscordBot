@@ -45,7 +45,11 @@ class Events(MixinMeta):
         guild, author = message.guild, message.author
         mention_spam = await self.config.guild(guild).mention_spam.all()
 
-        mentions = set(message.mentions)
+        if mention_spam["strict"]:  # if strict is enabled
+            mentions = message.raw_mentions
+        else:  # if not enabled
+            mentions = set(message.mentions)
+
         if mention_spam["ban"]:
             if len(mentions) >= mention_spam["ban"]:
                 try:
@@ -147,6 +151,9 @@ class Events(MixinMeta):
         # As are anyone configured to be
         if await self.bot.is_automod_immune(message):
             return
+
+        await i18n.set_contextual_locales_from_guild(self.bot, message.guild)
+
         deleted = await self.check_duplicates(message)
         if not deleted:
             await self.check_mention_spam(message)

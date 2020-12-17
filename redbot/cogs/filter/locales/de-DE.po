@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-10-26 17:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -54,16 +54,16 @@ msgstr "Anzahl und Zeit wurden festgelegt."
 #: redbot/cogs/filter/filter.py:117
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Wörter vom Serverfilter hinzufügen oder entfernen.\\\\n\\\\n        Nutze Anführungszeichen, um Sätze hinzuzufügen oder zu entfernen.\\\\n        "
 
 #: redbot/cogs/filter/filter.py:125
 #, docstring
 msgid "Send a list of this servers filtered words."
-msgstr ""
+msgstr "Sendet eine Liste der auf dem Server gefilterten Wörter."
 
 #: redbot/cogs/filter/filter.py:130
 msgid "There is no current words setup to be filtered in this server."
-msgstr ""
+msgstr "Auf dem Server sind aktuell keine Wörter zur Filterung eingestellt."
 
 #: redbot/cogs/filter/filter.py:133
 msgid "Filtered in this server:"
@@ -76,16 +76,16 @@ msgstr "Ich kann keine Direktnachrichten an dich senden."
 #: redbot/cogs/filter/filter.py:142
 #, docstring
 msgid "Add or remove words from channel filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Wörter vom Kanalfilter hinzufügen oder entfernen.\\\\n\\\\n        Nutze Anführungszeichen, um Sätze hinzuzufügen oder zu entfernen.\\\\n        "
 
 #: redbot/cogs/filter/filter.py:150
 #, docstring
 msgid "Send the list of the channel's filtered words."
-msgstr ""
+msgstr "Sendet eine Liste der Kanal gefilterten Wörter."
 
 #: redbot/cogs/filter/filter.py:155
 msgid "There is no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "Aktuell werden keine Wörter in diesem Kanal gefiltert."
 
 #: redbot/cogs/filter/filter.py:158
 msgid "Filtered in this channel:"
@@ -156,11 +156,11 @@ msgstr "Name und Nicknamen werden nun gefiltert."
 msgid "Autoban (too many filtered messages.)"
 msgstr "Automatischer Ban (zu viele gefilterte Nachrichten.)"
 
-#: redbot/cogs/filter/filter.py:435
+#: redbot/cogs/filter/filter.py:439
 msgid "Filtered nickname"
 msgstr "Gefilterter Nickname"
 
-#: redbot/cogs/filter/filter.py:435
+#: redbot/cogs/filter/filter.py:439
 msgid "Filtered name"
 msgstr "Gefilterter Name"
 

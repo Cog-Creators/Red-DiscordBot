@@ -3,13 +3,16 @@ import contextlib
 import datetime
 import logging
 import math
-from typing import MutableMapping, Optional, Union, Tuple
+from pathlib import Path
+
+from typing import MutableMapping, Optional
 
 import discord
 import lavalink
-from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
@@ -21,9 +24,10 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.queue")
+_ = Translator("Audio", Path(__file__))
 
 
 class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -66,10 +70,12 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 dur = "LIVE"
             else:
                 dur = self.format_time(player.current.length)
-            song = self.get_track_description(player.current, self.local_folder_current_path) or ""
-            song += _("\n Requested by: **{track.requester}**")
-            song += "\n\n{arrow}`{pos}`/`{dur}`"
-            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
+            song = (
+                await self.get_track_description(player.current, self.local_folder_current_path)
+                or ""
+            )
+            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += f"\n\n{arrow}`{pos}`/`{dur}`"
             embed = discord.Embed(title=_("Now Playing"), description=song)
             guild_data = await self.config.guild(ctx.guild).all()
             if guild_data["thumbnail"] and player.current and player.current.thumbnail:
@@ -186,6 +192,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Clear Queue"),
                 description=_("You need the DJ role to clear the queue."),
             )
+        async for track in AsyncIter(player.queue):
+            await self.api_interface.persistent_queue_api.played(
+                ctx.guild.id, track.extras.get("enqueue_time")
+            )
         player.queue.clear()
         await self.send_embed_msg(
             ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
@@ -220,6 +230,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             if track.requester in listeners:
                 clean_tracks.append(track)
             else:
+                await self.api_interface.persistent_queue_api.played(
+                    ctx.guild.id, track.extras.get("enqueue_time")
+                )
                 removed_tracks += 1
         player.queue = clean_tracks
         if removed_tracks == 0:
@@ -252,6 +265,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 clean_tracks.append(track)
             else:
                 removed_tracks += 1
+                await self.api_interface.persistent_queue_api.played(
+                    ctx.guild.id, track.extras.get("enqueue_time")
+                )
         player.queue = clean_tracks
         if removed_tracks == 0:
             await self.send_embed_msg(ctx, title=_("Removed 0 tracks."))
@@ -325,6 +341,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             await lavalink.connect(ctx.author.voice.channel)
             player = lavalink.get_player(ctx.guild.id)
             player.store("connect", datetime.datetime.utcnow())
+            await self.self_deafen(player)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(

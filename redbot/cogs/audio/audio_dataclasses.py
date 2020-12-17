@@ -5,22 +5,27 @@ import ntpath
 import os
 import posixpath
 import re
+
 from pathlib import Path, PosixPath, WindowsPath
 from typing import (
     AsyncIterator,
+    Callable,
     Final,
     Iterator,
     MutableMapping,
     Optional,
+    Pattern,
     Tuple,
     Union,
-    Callable,
-    Pattern,
 )
 from urllib.parse import urlparse
 
 import lavalink
+
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
+
+_ = Translator("Audio", Path(__file__))
 
 _RE_REMOVE_START: Final[Pattern] = re.compile(r"^(sc|list) ")
 _RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"[&|?]t=(\d+)s?")
@@ -80,8 +85,8 @@ log = logging.getLogger("red.cogs.Audio.audio_dataclasses")
 class LocalPath:
     """Local tracks class.
 
-    Used to handle system dir trees in a cross system manner.
-    The only use of this class is for `localtracks`.
+    Used to handle system dir trees in a cross system manner. The only use of this class is for
+    `localtracks`.
     """
 
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
@@ -335,6 +340,7 @@ class Query:
         self.is_mixer: bool = kwargs.get("mixer", False)
         self.is_twitch: bool = kwargs.get("twitch", False)
         self.is_other: bool = kwargs.get("other", False)
+        self.is_pornhub: bool = kwargs.get("pornhub", False)
         self.is_playlist: bool = kwargs.get("playlist", False)
         self.is_album: bool = kwargs.get("album", False)
         self.is_search: bool = kwargs.get("search", False)
@@ -350,7 +356,6 @@ class Query:
 
         self.start_time: int = kwargs.get("start_time", 0)
         self.track_index: Optional[int] = kwargs.get("track_index", None)
-
         if self.invoked_from == "sc search":
             self.is_youtube = False
             self.is_soundcloud = True
@@ -403,8 +408,7 @@ class Query:
         _local_folder_current_path: Path,
         **kwargs,
     ) -> "Query":
-        """
-        Process the input query into its type
+        """Process the input query into its type.
 
         Parameters
         ----------
@@ -442,7 +446,7 @@ class Query:
 
     @staticmethod
     def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
-        """Parse a track into all the relevant metadata"""
+        """Parse a track into all the relevant metadata."""
         returning: MutableMapping = {}
         if (
             type(track) == type(LocalPath)

@@ -3,17 +3,21 @@ import json
 import logging
 from collections import namedtuple
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, MutableMapping, Optional, Union
 
 import discord
+import lavalink
 
 from redbot.core.bot import Red
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 
 from ..errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
 from ..utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.api.utils")
+_ = Translator("Audio", Path(__file__))
 
 
 @dataclass
@@ -74,8 +78,22 @@ class PlaylistFetchResult:
             self.tracks = json.loads(self.tracks)
 
 
+@dataclass
+class QueueFetchResult:
+    guild_id: int
+    room_id: int
+    track: dict = field(default_factory=lambda: {})
+    track_object: lavalink.Track = None
+
+    def __post_init__(self):
+        if isinstance(self.track, str):
+            self.track = json.loads(self.track)
+        if self.track:
+            self.track_object = lavalink.Track(self.track)
+
+
 def standardize_scope(scope: str) -> str:
-    """Convert any of the used scopes into one we are expecting"""
+    """Convert any of the used scopes into one we are expecting."""
     scope = scope.upper()
     valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
 
@@ -103,7 +121,7 @@ def prepare_config_scope(
     author: Union[discord.abc.User, int] = None,
     guild: Union[discord.Guild, int] = None,
 ):
-    """Return the scope used by Playlists"""
+    """Return the scope used by Playlists."""
     scope = standardize_scope(scope)
     if scope == PlaylistScope.GLOBAL.value:
         config_scope = [PlaylistScope.GLOBAL.value, bot.user.id]
@@ -121,7 +139,7 @@ def prepare_config_scope(
 def prepare_config_scope_for_migration23(  # TODO: remove me in a future version ?
     scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
 ):
-    """Return the scope used by Playlists"""
+    """Return the scope used by Playlists."""
     scope = standardize_scope(scope)
 
     if scope == PlaylistScope.GLOBAL.value:
