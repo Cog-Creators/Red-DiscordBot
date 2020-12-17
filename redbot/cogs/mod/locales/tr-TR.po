@@ -258,7 +258,7 @@ msgstr "Kullanıcının banı kaldırılırken bir şey ters gitti."
 
 #: redbot/cogs/mod/kickban.py:863
 msgid "Unbanned that user from this server."
-msgstr "Bu kullanıcının yasağını bu sunucudan kaldırın."
+msgstr "Bu kullanıcının yasağını bu sunucudan kaldırdın."
 
 #: redbot/cogs/mod/kickban.py:869
 msgid "I don't share another server with this user. I can't reinvite them."

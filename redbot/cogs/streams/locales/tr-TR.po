@@ -175,7 +175,7 @@ msgstr "<buraya_api_anahtarınızı_yazın>"
 #: redbot/cogs/streams/streams.py:526
 #, docstring
 msgid "Manage custom messages for stream alerts."
-msgstr ""
+msgstr "Yayın uyarıları için özel mesajları yönet."
 
 #: redbot/cogs/streams/streams.py:532
 #, docstring
@@ -309,7 +309,7 @@ msgstr "Bu yayının başlamasına kalan: {time}"
 
 #: redbot/cogs/streams/streamtypes.py:189
 msgid "This stream was scheduled for {min} minutes ago"
-msgstr ""
+msgstr "Bu yayın {min} dakika öncesi için planlanmıştı"
 
 #: redbot/cogs/streams/streamtypes.py:362
 msgid "Untitled broadcast"

@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/formatting.py:75
 msgid "tracks"
-msgstr ""
+msgstr "canciones"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:85
 #: redbot/cogs/audio/core/utilities/formatting.py:274
@@ -26,7 +26,7 @@ msgstr "Página {page_num}/{total_pages}"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:96
 msgid "Connection to Lavalink has failed."
-msgstr ""
+msgstr "La conexión a Lavalink ha fallado."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:99
 #: redbot/cogs/audio/core/utilities/player.py:596
@@ -72,40 +72,40 @@ msgstr "La pista excede la longitud máxima."
 #: redbot/cogs/audio/core/utilities/formatting.py:204
 #: redbot/cogs/audio/core/utilities/player.py:607
 msgid "{time} until track playback: #{position} in queue"
-msgstr ""
+msgstr "{time} hasta la reproducción de la pista: #{position} en cola"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:262
 msgid "Tracks Found:"
-msgstr ""
+msgstr "Canciones encontradas:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:263
 msgid "search results"
-msgstr ""
+msgstr "resultados de la búsqueda"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:265
 msgid "Folders Found:"
-msgstr ""
+msgstr "Carpetas encontradas:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:266
 msgid "local folders"
-msgstr ""
+msgstr "carpetas locales"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:268
 msgid "Files Found:"
-msgstr ""
+msgstr "Archivos encontrados:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:269
 msgid "local tracks"
-msgstr ""
+msgstr "canciones locales"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:381
 #: redbot/cogs/audio/core/utilities/playlists.py:228
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:382
 msgid " - Name:   <{pname}>\\n - Scope:  < {scope} >\\n - ID:     < {pid} >\\n - Tracks: < {ptracks} >\\n - Author: < {author} >\\n\\n"
-msgstr ""
+msgstr " - Nombre: <{pname}>\\n - Alcance: < {scope} >\\n - ID: < {pid} >\\n - Canciones: < {ptracks} >\\n - Autor: < {author} >\\n\\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -117,15 +117,15 @@ msgstr "Entorno no válido"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 msgid "No localtracks folder."
-msgstr ""
+msgstr "No hay carpeta de canciones locales."
 
 #: redbot/cogs/audio/core/utilities/miscellaneous.py:53
 msgid "Not enough {currency}"
-msgstr ""
+msgstr "No tienes suficiente {currency}"
 
 #: redbot/cogs/audio/core/utilities/miscellaneous.py:54
 msgid "{required_credits} {currency} required, but you have {bal}."
-msgstr ""
+msgstr "{required_credits} {currency} requerido, pero tienes {bal}."
 
 #: redbot/cogs/audio/core/utilities/player.py:78
 msgid "music in {} servers"
@@ -139,28 +139,28 @@ msgstr "No hay nada en la cola."
 
 #: redbot/cogs/audio/core/utilities/player.py:142
 msgid "Currently livestreaming {track}"
-msgstr ""
+msgstr "Actualmente en vivo {track}"
 
 #: redbot/cogs/audio/core/utilities/player.py:147
 msgid "{time} left on {track}"
-msgstr ""
+msgstr "{time} restante de {track}"
 
 #: redbot/cogs/audio/core/utilities/player.py:155
 #: redbot/cogs/audio/core/utilities/player.py:190
 msgid "Track Skipped"
-msgstr ""
+msgstr "Canción saltada"
 
 #: redbot/cogs/audio/core/utilities/player.py:168
 msgid "Track number must be equal to or greater than 1."
-msgstr ""
+msgstr "El número de la canción debe ser igual o mayor que 1."
 
 #: redbot/cogs/audio/core/utilities/player.py:174
 msgid "There are only {queuelen} songs currently queued."
-msgstr ""
+msgstr "Solo hay {queuelen} canciones actualmente en cola."
 
 #: redbot/cogs/audio/core/utilities/player.py:180
 msgid "{skip_to_track} Tracks Skipped"
-msgstr ""
+msgstr "{skip_to_track} pistas omitidas"
 
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
@@ -174,13 +174,13 @@ msgstr "El propietario necesita establecer el ID del cliente de Spotify y el sec
 #: redbot/cogs/audio/core/utilities/player.py:367
 #: redbot/cogs/audio/core/utilities/playlists.py:570
 msgid "Unable To Get Tracks"
-msgstr ""
+msgstr "No se pueden reproducir las pistas"
 
 #: redbot/cogs/audio/core/utilities/player.py:259
 #: redbot/cogs/audio/core/utilities/player.py:368
 #: redbot/cogs/audio/core/utilities/playlists.py:571
 msgid "Wait until the playlist has finished loading."
-msgstr ""
+msgstr "Espere hasta que la lista de reproducción haya terminado de cargar."
 
 #: redbot/cogs/audio/core/utilities/player.py:270
 #: redbot/cogs/audio/core/utilities/player.py:312
@@ -226,19 +226,19 @@ msgstr "No puedo obtener una pista de Lavalink en este momento, inténtalo de nu
 
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "La clave API de Spotify o el cliente secreto no se han configurado correctamente. \\nUsa `{prefix}audioset spotifyapi` para obtener instrucciones."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
-msgstr ""
+msgstr "No se encontraron pistas"
 
 #: redbot/cogs/audio/core/utilities/player.py:356
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Esta no parece ser una URL o código compatible con Spotify."
 
 #: redbot/cogs/audio/core/utilities/player.py:382
 msgid "{query} is not an allowed query."
-msgstr ""
+msgstr "{query} no es una consulta permitida."
 
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
@@ -250,7 +250,7 @@ msgstr " {bad_tracks} pistas no pueden ser puestas en cola."
 
 #: redbot/cogs/audio/core/utilities/player.py:497
 msgid "No Title"
-msgstr ""
+msgstr "Sin título"
 
 #: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Playlist Enqueued"
@@ -258,95 +258,95 @@ msgstr "Lista de reproducción en cola"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Se han añadido {num} pistas a la cola.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:512
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} hasta el inicio de la reproducción de la lista: comienza en #{position} en cola"
 
 #: redbot/cogs/audio/core/utilities/player.py:593
 msgid "Nothing found"
-msgstr ""
+msgstr "No se encontró nada"
 
 #: redbot/cogs/audio/core/utilities/player.py:628
 msgid "Please wait, finding tracks..."
-msgstr ""
+msgstr "Por favor espere, buscando las pistas..."
 
 #: redbot/cogs/audio/core/utilities/player.py:634
 msgid "Getting track {num}/{total}..."
-msgstr ""
+msgstr "Obteniendo la pista {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:635
 msgid "Matching track {num}/{total}..."
-msgstr ""
+msgstr "Obteniendo la pista {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:636
 #: redbot/cogs/audio/core/utilities/playlists.py:329
 #: redbot/cogs/audio/core/utilities/playlists.py:402
 msgid "Loading track {num}/{total}..."
-msgstr ""
+msgstr "Cargando la pista {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:637
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "Tiempo restante aproximado: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:672
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "La conexión se restableció mientras se cargaba la lista de reproducción."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:71
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "No tienes permisos para administrar {name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:89
 msgid "You do not have the permissions to manage that playlist in {guild}."
-msgstr ""
+msgstr "No tienes permisos para administrar esa lista de reproducción en {guild}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:96
 msgid "You do not have the permissions to manage playlist owned by {user}."
-msgstr ""
+msgstr "No tienes permisos para administrar la lista de reproducción de {user}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:100
 msgid "You do not have the permissions to manage playlists in {scope} scope."
-msgstr ""
+msgstr "No tienes permisos para administrar listas de reproducción en el ámbito {scope}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:104
 msgid "No access to playlist."
-msgstr ""
+msgstr "Sin acceso a la lista de reproducción."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:212
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
-msgstr ""
+msgstr "{match_count} listas de reproducción coinciden con {original_input}: Por favor, intenta ser más específico o utiliza el ID de la lista de reproducción."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:229
 msgid "{number}.    <{playlist.name}>\\n - Scope:  < {scope} >\\n - ID:     < {playlist.id} >\\n - Tracks: < {tracks} >\\n - Author: < {author} >\\n\\n"
-msgstr ""
+msgstr "{number}. <{playlist.name}>\\n - Alcance: < {scope} >\\n - ID: < {playlist.id} >\\n - Pistas: < {tracks} >\\n - Autor: < {author} >\\n\\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
-msgstr ""
+msgstr "{playlists} listas de reproducción encontradas, ¿cuál es la que te gusta?"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:265
 #: redbot/cogs/audio/core/utilities/playlists.py:271
 msgid "Too many matches found and you did not select which one you wanted."
-msgstr ""
+msgstr "Demasiadas coincidencias encontradas y no has seleccionado la que deseabas."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:296
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "Listas de reproducción a las que puedes acceder en este servidor:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:302
 msgid "Playlists for {scope}:"
-msgstr ""
+msgstr "Listas de reproducción para {scope}:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:306
 msgid "Page {page_num}/{total_pages} | {num} playlists."
-msgstr ""
+msgstr "Página {page_num}/{total_pages} | {num} listas de reproducción."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:322
 #: redbot/cogs/audio/core/utilities/playlists.py:400
 msgid "Please wait, adding tracks..."
-msgstr ""
+msgstr "Por favor espere, añadiendo las pistas..."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:349
 #: redbot/cogs/audio/core/utilities/playlists.py:452
@@ -356,17 +356,17 @@ msgstr "Lista de reproducción {name} vacía (`{id}`) [**{scope}**] creada."
 #: redbot/cogs/audio/core/utilities/playlists.py:354
 #: redbot/cogs/audio/core/utilities/playlists.py:457
 msgid "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) could not be loaded."
-msgstr ""
+msgstr "Se han añadido {num} pistas de la lista de reproducción {playlist_name}. No se han podido cargar {num_bad} pista(s)."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:359
 #: redbot/cogs/audio/core/utilities/playlists.py:462
 msgid "Added {num} tracks from the {playlist_name} playlist."
-msgstr ""
+msgstr "Añadidas {num} pistas de la lista de reproducción {playlist_name}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:363
 #: redbot/cogs/audio/core/utilities/playlists.py:466
 msgid "Playlist Saved"
-msgstr ""
+msgstr "Lista de reproducción guardada"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:502
 msgid "Connection to Lavalink has failed"
@@ -377,15 +377,15 @@ msgstr "La conexión a Lavalink ha fallado"
 #: redbot/cogs/audio/core/utilities/playlists.py:534
 #: redbot/cogs/audio/core/utilities/playlists.py:547
 msgid "Unable To Get Playlists"
-msgstr ""
+msgstr "No se puede obtener listas de reproducción"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:517
 msgid "I don't have permission to connect to your channel."
-msgstr "No tengo permiso para conectarse a tu canal."
+msgstr "No tengo permiso para conectarme a tu canal."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:548
 msgid "You must be in the voice channel to use the playlist command."
-msgstr ""
+msgstr "Debes estar en el canal de voz para usar el comando de reproducción."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "the Global"
@@ -397,7 +397,7 @@ msgstr "Global"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:659
 msgid "the Server"
-msgstr ""
+msgstr "el Servidor"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:659
 msgid "Server"
@@ -405,7 +405,7 @@ msgstr "Servidor"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:661
 msgid "the User"
-msgstr ""
+msgstr "el Usuario"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:661
 msgid "User"
@@ -413,32 +413,32 @@ msgstr "Usuario"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
-msgstr ""
+msgstr "__Demasiadas canciones en cola, solo mostrando las primeras 500__.\\n\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\\n"
-msgstr ""
+msgstr "**En vivo actualmente:**\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
 msgid "Requested by: **{user}**"
-msgstr ""
+msgstr "Solicitada por: **{user}**"
 
 #: redbot/cogs/audio/core/utilities/queue.py:62
 msgid "Playing: "
-msgstr ""
+msgstr "Jugando: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\\n"
-msgstr ""
+msgstr "solicitada por **{user}**\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr ""
+msgstr "Cola de __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr ""
+msgstr "Página {page_num}/{total_pages} | {num_tracks} pistas, {num_remaining} restantes\\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
@@ -454,9 +454,9 @@ msgstr "Repetir"
 
 #: redbot/cogs/audio/core/utilities/queue.py:161
 msgid "Matching Tracks:"
-msgstr ""
+msgstr "Canciones coincidentes:"
 
 #: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
-msgstr ""
+msgstr "Página {page_num}/{total_pages} | {num_tracks} canciones"
 

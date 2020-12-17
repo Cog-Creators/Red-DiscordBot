@@ -74,7 +74,7 @@ msgstr "Sana şimdi söylemesem daha iyi"
 
 #: redbot/cogs/general/general.py:65
 msgid "Cannot predict now"
-msgstr "Şuanda tahmin edemem"
+msgstr "Şu anda tahmin edemem"
 
 #: redbot/cogs/general/general.py:66
 msgid "Concentrate and ask again"
