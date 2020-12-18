@@ -45,7 +45,7 @@ msgstr "\\\"{arg}\\\" bezieht sich nicht auf einen eindeutigen Server. Bitte ver
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr "Konnte keiner Wiedergabeliste zugeordnet werden."
+msgstr "Konnte '{}' keiner Playlist zuordnen."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368

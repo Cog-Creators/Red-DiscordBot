@@ -367,7 +367,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1815
 #: redbot/cogs/audio/core/commands/playlists.py:1981
 msgid "Playlists Are Not Available"
-msgstr "Wiedergabelisten sind nicht verfügbar"
+msgstr "Playlists sind nicht verfügbar"
 
 #: redbot/cogs/audio/core/commands/audioset.py:498
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -386,7 +386,7 @@ msgstr "Wiedergabelisten sind nicht verfügbar"
 #: redbot/cogs/audio/core/commands/playlists.py:1816
 #: redbot/cogs/audio/core/commands/playlists.py:1982
 msgid "The playlist section of Audio is currently unavailable"
-msgstr "Der Abschnitt der Wiedergabeliste Audio ist derzeit nicht verfügbar"
+msgstr "Der Playlist Abschnitt von Audio ist derzeit nicht verfügbar"
 
 #: redbot/cogs/audio/core/commands/audioset.py:501
 #: redbot/cogs/audio/core/commands/playlists.py:106
@@ -416,7 +416,7 @@ msgstr "Keine Playlist gefunden"
 #: redbot/cogs/audio/core/commands/playlists.py:124
 #: redbot/cogs/audio/core/commands/playlists.py:1498
 msgid "Could not match '{arg}' to a playlist"
-msgstr "'{arg}' konnte keiner Wiedergabeliste zugeordnet werden"
+msgstr "'{arg}' konnte keiner Playlist zugeordnet werden"
 
 #: redbot/cogs/audio/core/commands/audioset.py:524
 msgid "No Tracks Found"
@@ -424,7 +424,7 @@ msgstr "Keine Titel gefunden"
 
 #: redbot/cogs/audio/core/commands/audioset.py:525
 msgid "Playlist {name} has no tracks."
-msgstr "Die Wiedergabeliste {name} enthält keine Titel."
+msgstr "Die Playlist {name} enthält keine Titel."
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:1587
@@ -448,16 +448,16 @@ msgstr "Du musst die Server-ID für die Suche angeben."
 
 #: redbot/cogs/audio/core/commands/audioset.py:547
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr "Die Wiedergabeliste {name} (`{id}`) [** {scope} **] wird für die automatische Wiedergabe verwendet."
+msgstr "Die Playlist {name} (`{id}`) [** {scope} **] wird für die automatische Wiedergabe verwendet."
 
 #: redbot/cogs/audio/core/commands/audioset.py:560
 #, docstring
 msgid "Resets auto-play to the default playlist."
-msgstr "Setzt die automatische Wiedergabe auf die Standardwiedergabeliste zurück."
+msgstr "Setzt die automatische Wiedergabe auf die Standard-Playlist zurück."
 
 #: redbot/cogs/audio/core/commands/audioset.py:566
 msgid "Set auto-play playlist to play recently played tracks."
-msgstr "Legen Sie die automatische Wiedergabeliste fest, um kürzlich gespielte Titel abzuspielen."
+msgstr "Legen Sie die automatische Playlist fest, um kürzlich gespielte Titel abzuspielen."
 
 #: redbot/cogs/audio/core/commands/audioset.py:572
 #, docstring
@@ -471,7 +471,7 @@ msgstr "Globale tägliche Warteschlange: {true_or_false}."
 #: redbot/cogs/audio/core/commands/audioset.py:593
 #, docstring
 msgid "Toggle daily queues.\\n\\n        Daily queues creates a playlist for all tracks played today.\\n        "
-msgstr "Tägliche Warteschlangen ein oder ausschalten.\\n\\n        Diese Funktion erstellt eine Wiedergabeliste für alle Tracks die an einem Tag gespielt wurden.\\n        "
+msgstr "Tägliche Warteschlangen ein oder ausschalten.\\n\\n        Diese Funktion erstellt eine Playlist für alle Tracks die an einem Tag gespielt wurden.\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:605
 msgid "Daily queues: {true_or_false}."
@@ -552,11 +552,11 @@ msgstr "Leerer Kanal Disconnect Timer gesetzt auf {num_seconds}."
 #: redbot/cogs/audio/core/commands/audioset.py:739
 #, docstring
 msgid "Prioritise tracks with lyrics."
-msgstr ""
+msgstr "Titel mit Songtexten bevorzugen."
 
 #: redbot/cogs/audio/core/commands/audioset.py:745
 msgid "Prefer tracks with lyrics: {true_or_false}."
-msgstr ""
+msgstr "Titel mit Songtexten bevorzugen: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:754
 #, docstring
@@ -653,7 +653,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:908
 msgid "Auto Deafen: {true_or_false}."
-msgstr ""
+msgstr "Automatisch stummschalten: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:917
 #, docstring
@@ -765,11 +765,11 @@ msgstr "Playlist-Name: [{pname}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Playlist ID:      [{pid}]\\n"
-msgstr "Wiedergabeliste-ID: [{pid}]\\n"
+msgstr "Playlist-ID: [{pid}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Playlist scope:   [{pscope}]\\n"
-msgstr "Umfang der Wiedergabeliste: [{pscope}] \\n"
+msgstr "Umfang der Playlist: [{pscope}] \\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1076
 #: redbot/cogs/audio/core/commands/audioset.py:1351
@@ -799,7 +799,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
 msgid "Global timeout:         [{num_seconds}]\\n"
-msgstr ""
+msgstr "Globale Zeitüberschreitung:         [{num_seconds}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1085
 #: redbot/cogs/audio/core/commands/audioset.py:1345
@@ -809,11 +809,11 @@ msgstr "Tage"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1094
 msgid "User Settings"
-msgstr ""
+msgstr "Benutzereinstellungen"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
 msgid "Spotify search:   [{country_code}]\\n"
-msgstr ""
+msgstr "Spotify Suche:   [{country_code}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
@@ -821,15 +821,15 @@ msgstr "Lavalink-Einstellungen"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgstr "Cog Version:            [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr ""
+msgstr "Red-Lavalink:           [{lavalink_version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr ""
+msgstr "Externer Server:        [{use_external_lavalink}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
 msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\nJava Executable:        [{jv_exec}]\\n"
@@ -837,21 +837,21 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1130
 msgid "Localtracks path:       [{localpath}]\\n"
-msgstr ""
+msgstr "Pfad der lokalen Titel:       [{localpath}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1139
 #, docstring
 msgid "Sends the Lavalink server logs to your DMs."
-msgstr ""
+msgstr "Sendet die Lavalink Server Protokolle in deine DMs."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1146
 #: redbot/cogs/audio/core/commands/audioset.py:1148
 msgid "No logs found in your data folder."
-msgstr ""
+msgstr "Keine Protokolle in deinem Datenordner gefunden."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1160
 msgid "Logs are too large, you can find them in {path}"
-msgstr ""
+msgstr "Protokolle sind zu groß. Du kannst diese in {path} finden"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1170
 msgid "I need to be able to DM you to send you the logs."
@@ -976,16 +976,16 @@ msgstr "Ich habe das Cache-Alter auf {age} Tage gesetzt"
 #: redbot/cogs/audio/core/commands/audioset.py:1422
 #, docstring
 msgid "Change globalapi settings."
-msgstr ""
+msgstr "globalapi Einstellungen ändern."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1426
 #, docstring
 msgid "Toggle the server settings.\\n\\n        Default is OFF\\n        "
-msgstr ""
+msgstr "Servereinstellungen umschalten.\\n\\n        Standard ist AUS\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "Global DB is {status}"
-msgstr ""
+msgstr "Global DB ist {status}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "enabled"
@@ -1002,7 +1002,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
-msgstr ""
+msgstr "Anfrage-Zeitüberschreitung auf {time} Sekunde(n) gestellt"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1453
 #, docstring
@@ -1020,11 +1020,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1483
 msgid "Restarting Lavalink"
-msgstr ""
+msgstr "Lavalink wird neugestartet"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1484
 msgid "It can take a couple of minutes for Lavalink to fully start up."
-msgstr ""
+msgstr "Es kann einige Minuten dauern bis Lavalink komplett gestartet ist."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1103,7 +1103,7 @@ msgstr "Jetzt läuft"
 #: redbot/cogs/audio/core/commands/controller.py:123
 #: redbot/cogs/audio/core/commands/queue.py:89
 msgid "Auto-Play"
-msgstr ""
+msgstr "Auto-Play"
 
 #: redbot/cogs/audio/core/commands/controller.py:129
 #: redbot/cogs/audio/core/commands/queue.py:95
@@ -1205,7 +1205,7 @@ msgstr "Du benötigst die DJ-Rolle oder der Track-Requder, um die vorherigen Son
 #: redbot/cogs/audio/core/commands/player.py:803
 #: redbot/cogs/audio/core/commands/playlists.py:1481
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Titel können nicht wiedergegeben werden"
 
 #: redbot/cogs/audio/core/commands/controller.py:272
 msgid "No previous track."
@@ -1510,7 +1510,7 @@ msgstr "Befördert einen Track mit einer bestimmten Nummer an die Spitze der War
 #: redbot/cogs/audio/core/commands/controller.py:864
 #: redbot/cogs/audio/core/commands/player.py:146
 msgid "Unable To Bump Track"
-msgstr ""
+msgstr "Titel konnte nicht an die Spitze gesetzt werden"
 
 #: redbot/cogs/audio/core/commands/controller.py:853
 msgid "You must be in the voice channel to bump a track."
@@ -1522,7 +1522,7 @@ msgstr "Du benötigst die DJ Rolle, um Titel an den Anfang zu schieben."
 
 #: redbot/cogs/audio/core/commands/controller.py:875
 msgid "Moved track to the top of the queue."
-msgstr ""
+msgstr "Titel wurde an die Spitze der Warteschlange gesetzt."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:30
 #, docstring
@@ -1538,7 +1538,7 @@ msgstr "Lösche eine gespeicherte EQ-Voreinstellung."
 #: redbot/cogs/audio/core/commands/equalizer.py:82
 #: redbot/cogs/audio/core/commands/equalizer.py:95
 msgid "Unable To Delete Preset"
-msgstr ""
+msgstr "Voreinstellung konnte nicht gelöscht werden"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:76
 #: redbot/cogs/audio/core/commands/equalizer.py:96
@@ -1556,11 +1556,11 @@ msgstr "Keine gespeicherten Equalizer-Presets."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:111
 msgid "Preset Name"
-msgstr ""
+msgstr "Bezeichnung der Voreinstellung"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:112
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:134
 msgid "{num} preset(s)"
@@ -1573,15 +1573,15 @@ msgstr "Laden Sie eine gespeicherte Equalizer-Voreinstellung."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:149
 msgid "No Preset Found"
-msgstr ""
+msgstr "Keine Voreinstellung gefunden"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:167
 msgid "Unable To Load Preset"
-msgstr ""
+msgstr "Voreinstellung konnte nicht geladen werden"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:168
 msgid "You need the DJ role to load equalizer presets."
-msgstr ""
+msgstr "Du benötigst die DJ Rolle um Equalizer-Voreinstellungen zu laden."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:186
 #, docstring
@@ -1662,11 +1662,11 @@ msgstr "Gültige Bandnummern sind 1-15 oder die in der Hilfe für diesen Befehl 
 
 #: redbot/cogs/audio/core/commands/equalizer.py:382
 msgid "Preset Modified"
-msgstr ""
+msgstr "Voreinstellung geändert"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:383
 msgid "The {band_name}Hz band has been set to {band_value}."
-msgstr ""
+msgstr "Der {band_name}Hz wurde auf {band_value} gesetzt."
 
 #: redbot/cogs/audio/core/commands/llset.py:22
 #, docstring
@@ -1684,23 +1684,23 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:44
 msgid "Java Executable Reset"
-msgstr ""
+msgstr "Java Ausführungsdatei zurückgesetzt"
 
 #: redbot/cogs/audio/core/commands/llset.py:45
 msgid "Audio will now use `java` to run your Lavalink.jar"
-msgstr ""
+msgstr "Audio verwendet nun `java` um deine Lavalink.jar zu starten"
 
 #: redbot/cogs/audio/core/commands/llset.py:54
 msgid "`{java_path}` is not a valid executable"
-msgstr ""
+msgstr "`{java_path}` ist keine gültige ausführbare Datei"
 
 #: redbot/cogs/audio/core/commands/llset.py:61
 msgid "Java Executable Changed"
-msgstr ""
+msgstr "Java Ausführungsdatei geändert"
 
 #: redbot/cogs/audio/core/commands/llset.py:62
 msgid "Audio will now use `{exc}` to run your Lavalink.jar"
-msgstr ""
+msgstr "Audio verwendet nun `{exc}` um deine Lavalink.jar zu starten"
 
 #: redbot/cogs/audio/core/commands/llset.py:72
 #: redbot/cogs/audio/core/commands/llset.py:85
@@ -1710,7 +1710,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:184
 #: redbot/cogs/audio/core/commands/llset.py:209
 msgid "Failed To Shutdown Lavalink"
-msgstr ""
+msgstr "Fehler beim Herunterfahren von Lavalink"
 
 #: redbot/cogs/audio/core/commands/llset.py:73
 msgid "For it to take effect please reload Audio (`{prefix}reload audio`)."
@@ -1782,19 +1782,19 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\\n"
-msgstr ""
+msgstr "Host:             [{host}]\\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\\n"
-msgstr ""
+msgstr "WS Port:          [{port}]\\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
 msgid "Rest Port:        [{port}]\\n"
-msgstr ""
+msgstr "Rest Port:        [{port}]\\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\\n"
-msgstr ""
+msgstr "Passwort:         [{password}]\\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:232
 msgid "I need to be able to DM you to send you this info."
@@ -1976,7 +1976,7 @@ msgstr "Titel eingereiht"
 #: redbot/cogs/audio/core/commands/player.py:353
 #, docstring
 msgid "Pick a Spotify playlist from a list of categories to start playing."
-msgstr "Wählen Sie eine Spotify-Wiedergabeliste aus einer Liste von Kategorien aus, um mit dem Spielen zu beginnen."
+msgstr "Wählen Sie eine Spotify-Playlist aus einer Liste von Kategorien aus, um mit dem Abspielen zu beginnen."
 
 #: redbot/cogs/audio/core/commands/player.py:413
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
@@ -2009,7 +2009,7 @@ msgstr "Keine Kategorien ausgewählt. Versuche es später erneut."
 
 #: redbot/cogs/audio/core/commands/player.py:518
 msgid "Playlists for {friendly_name}"
-msgstr "Wiedergabeliste für {friendly_name}"
+msgstr "Playlist für {friendly_name}"
 
 #: redbot/cogs/audio/core/commands/player.py:525
 msgid "No tracks to play."
@@ -2017,7 +2017,7 @@ msgstr "Keine Titel zum Abspielen."
 
 #: redbot/cogs/audio/core/commands/player.py:535
 msgid "Couldn't find tracks for the selected playlist."
-msgstr "Konnte keine Titel für die ausgewählte Wiedergabeliste finden."
+msgstr "Konnte keine Titel für die ausgewählte Playlist finden."
 
 #: redbot/cogs/audio/core/commands/player.py:543
 #, docstring
@@ -2132,7 +2132,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1697
 #: redbot/cogs/audio/core/commands/playlists.py:2013
 msgid "Playlist Not Found"
-msgstr "Wiedergabeliste nicht gefunden"
+msgstr "Playlist nicht gefunden"
 
 #: redbot/cogs/audio/core/commands/playlists.py:140
 msgid "Could not find a track matching your query."
@@ -2149,7 +2149,7 @@ msgstr "{track} ist bereits in {playlist} (`{id}`) [**{scope}**]."
 #: redbot/cogs/audio/core/commands/playlists.py:170
 #: redbot/cogs/audio/core/commands/playlists.py:212
 msgid "Playlist limit reached: Could not add track."
-msgstr "Limit für Wiedergabeliste erreicht: Track konnte nicht hinzugefügt werden."
+msgstr "Playlist-Limit erreicht: Titel konnte nicht hinzugefügt werden."
 
 #: redbot/cogs/audio/core/commands/playlists.py:193
 msgid "Track added"
@@ -2192,7 +2192,7 @@ msgstr "Playlist geändert"
 #: redbot/cogs/audio/core/commands/playlists.py:1670
 #: redbot/cogs/audio/core/commands/playlists.py:2014
 msgid "Could not match '{arg}' to a playlist."
-msgstr "'{arg}' konnte keiner Wiedergabeliste zugeordnet werden."
+msgstr "'{arg}' konnte keiner Playlist zugeordnet werden."
 
 #: redbot/cogs/audio/core/commands/playlists.py:331
 #: redbot/cogs/audio/core/commands/playlists.py:338
@@ -2261,7 +2261,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:640
 #: redbot/cogs/audio/core/commands/playlists.py:1766
 msgid "Playlist Has Not Been Modified"
-msgstr "Wiedergabeliste wurde nicht geändert"
+msgstr "Playlist wurde nicht geändert"
 
 #: redbot/cogs/audio/core/commands/playlists.py:641
 msgid "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
@@ -2325,7 +2325,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1051
 msgid "ID: {id}"
-msgstr ""
+msgstr "ID: {id}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1052
 msgid "Tracks: {num}"
@@ -2333,11 +2333,11 @@ msgstr "Titel: {num}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1053
 msgid "Author: {name}"
-msgstr ""
+msgstr "Autor: {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
 msgid "Scope: {scope}\\n"
-msgstr ""
+msgstr "Geltungsbereich: {scope}\\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1078
 #, docstring
@@ -2377,11 +2377,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1254
 msgid "URL not in playlist."
-msgstr "URL ist nicht in der Wiedergabeliste."
+msgstr "URL ist nicht in der Playlist."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1266
 msgid "No tracks left, removing playlist."
-msgstr "Keine Titel mehr übrig, entferne Wiedergabeliste."
+msgstr "Keine Titel mehr übrig, entferne Playlist."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1274
 msgid "{num} entries have been removed from the playlist {playlist_name} (`{id}`) [**{scope}**]."
@@ -2419,7 +2419,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1566
 msgid "Playlist Enqueued"
-msgstr "Wiedergabeliste eingereiht"
+msgstr "Playlist eingereiht"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1567
 msgid "{name} - (`{id}`) [**{scope}**]\\nAdded {num} tracks to the queue.{maxlength_msg}"
@@ -2432,15 +2432,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1690
 msgid "Invalid Playlist"
-msgstr ""
+msgstr "Ungültige Playlist"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1691
 msgid "Custom playlists cannot be updated."
-msgstr ""
+msgstr "Benutzerdefinierte Playlist kann nicht aktualisiert werden."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1732
 msgid "Tracks removed"
-msgstr ""
+msgstr "Titel entfernt"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1736
 #: redbot/cogs/audio/core/commands/playlists.py:1756
@@ -2449,7 +2449,7 @@ msgstr "Seite {page_num}/{total_pages}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1754
 msgid "Tracks added"
-msgstr ""
+msgstr "Titel hinzugefügt"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1767
 msgid "No changes for {name} (`{id}`) [**{scope}**]."
@@ -2462,7 +2462,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1836
 msgid "Please upload the playlist file. Any other message will cancel this operation."
-msgstr "Bitte lade die Wiedergabeliste Datei hoch. Weitere Nachrichten werden diesen Vorgang abbrechen."
+msgstr "Bitte lade die Playlist-Datei hoch. Weitere Nachrichten werden diesen Vorgang abbrechen."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1847
 msgid "No file detected, try again later."
@@ -2474,15 +2474,15 @@ msgstr "Upload abgebrochen."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1858
 msgid "Only Red playlist files can be uploaded."
-msgstr ""
+msgstr "Nur Red Playlist-Dateien können hochgeladen werden."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1866
 msgid "Not a valid playlist file."
-msgstr "Keine gültige Wiedergabeliste Datei."
+msgstr "Keine gültige Playlist-Datei."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1878
 msgid "This playlist is too large."
-msgstr "Diese Wiedergabeliste ist zu groß."
+msgstr "Diese Playlist ist zu groß."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1948
 #, docstring
@@ -2491,7 +2491,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:2027
 msgid "'{old}' playlist has been renamed to '{new}' (`{id}`) [**{scope}**]"
-msgstr "'{old}' Wiedergabeliste wurde umbenannt in '{new}' (`{id}`) [**{scope}**]"
+msgstr "'{old}' Playlist wurde umbenannt in '{new}' (`{id}`) [**{scope}**]"
 
 #: redbot/cogs/audio/core/commands/queue.py:38
 #, docstring
@@ -2500,7 +2500,7 @@ msgstr "Listet die Lieder in der Playlist auf."
 
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\\n Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\\n Angefragt von: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/queue.py:175
 #, docstring
@@ -2544,7 +2544,7 @@ msgstr "0 Lieder entfernt."
 #: redbot/cogs/audio/core/commands/queue.py:243
 #: redbot/cogs/audio/core/commands/queue.py:277
 msgid "Removed Tracks From The Queue"
-msgstr ""
+msgstr "Titel aus der Warteschlange entfernt"
 
 #: redbot/cogs/audio/core/commands/queue.py:244
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."

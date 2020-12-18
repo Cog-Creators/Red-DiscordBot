@@ -66,9 +66,9 @@ msgstr "API ключ Spotify или секрет клиента были уст�
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Ваш токен API YouTube Data недействителен.\\nПроверьте ключ YouTube API снова и следуйте инструкциям в `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Код ошибки YouTube API: 403\\nВаш ключ YouTube API достиг лимита запросов на сегодня. Пожалуйста, перейдите по ссылке <https://developers.google.com/youtube/v3/getting-started#quota> для получения дополнительной информации."
 

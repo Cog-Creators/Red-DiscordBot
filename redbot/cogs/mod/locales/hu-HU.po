@@ -411,7 +411,7 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:258
 msgid "Roles"
-msgstr ""
+msgstr "Rangok"
 
 #: redbot/cogs/mod/names.py:258
 msgid "Role"

@@ -654,19 +654,19 @@ msgstr "Utlaster pakker."
 
 #: redbot/core/core_commands.py:1409
 msgid "The following package was unloaded: {pack}."
-msgstr "Følgende pakke ble utlastet: {pack}."
+msgstr "Følgende cog ble utlastet: {pack}."
 
 #: redbot/core/core_commands.py:1413
 msgid "The following packages were unloaded: {packs}."
-msgstr "Følgende pakker ble utlastet: {packs}."
+msgstr "Følgende pakke ble utlastet: {packs}."
 
 #: redbot/core/core_commands.py:1420
 msgid "The following package was not loaded: {pack}."
-msgstr "Følgende pakke ble ikke lastet: {pack}."
+msgstr "Følgende pakke ble utlastet: {pack}."
 
 #: redbot/core/core_commands.py:1424
 msgid "The following packages were not loaded: {packs}."
-msgstr "Følgende pakker ble ikke lastet: {packs}."
+msgstr "Følgende pakke ble ikke lastet: {packs}."
 
 #: redbot/core/core_commands.py:1437
 #, docstring
@@ -679,11 +679,11 @@ msgstr "Oppdater {packs}."
 
 #: redbot/core/core_commands.py:1461
 msgid "Failed to reload the following package: {pack}.\\nCheck your console or logs for details."
-msgstr "Kunne ikke laste følgende pakke: {pack}.\\nSjekk konsollen eller loggene for detaljer."
+msgstr "Kunne ikke laste følgende cog: {pack}.\\nSjekk konsollen eller loggene for detaljer."
 
 #: redbot/core/core_commands.py:1466
 msgid "Failed to reload the following packages: {packs}\\nCheck your console or logs for details."
-msgstr "Kan ikke laste følgende pakker på nytt: {packs}\\nSjekk konsollen eller loggene for detaljer."
+msgstr "Kan ikke laste følgende cog på nytt: {packs}\\nSjekk konsollen eller loggene for detaljer."
 
 #: redbot/core/core_commands.py:1474
 msgid "The following name is not a valid package name: {pack}\\nPackage names cannot start with a number and can only contain ascii numbers, letters, and underscores."
@@ -951,15 +951,15 @@ msgstr "Overvåkningsstatus ryddet."
 #: redbot/core/core_commands.py:1903
 #, docstring
 msgid "Sets [botname]'s competing status."
-msgstr ""
+msgstr "Setter [botname] sin konkurrerende status."
 
 #: redbot/core/core_commands.py:1913
 msgid "Status set to ``Competing in {competing}``."
-msgstr ""
+msgstr "Status satt til ``konkurrerende i {competing}``."
 
 #: redbot/core/core_commands.py:1916
 msgid "Competing cleared."
-msgstr ""
+msgstr "Konkurrerende status fjernet."
 
 #: redbot/core/core_commands.py:1922
 #, docstring

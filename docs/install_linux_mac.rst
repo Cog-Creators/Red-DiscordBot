@@ -217,42 +217,6 @@ Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-ubuntu-1604:
-
-~~~~~~~~~~~~~~~~
-Ubuntu 16.04 LTS
-~~~~~~~~~~~~~~~~
-
-We recommend adding the ``openjdk-r`` ppa to install Java 11:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt -y install software-properties-common
-    sudo add-apt-repository -yu ppa:openjdk-r/ppa
-
-We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
-
-.. code-block:: none
-
-    sudo add-apt-repository -yu ppa:git-core/ppa
-
-We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
-
-.. code-block:: none
-
-    sudo add-apt-repository -yu ppa:deadsnakes/ppa
-
-Now install the pre-requirements with apt:
-
-.. code-block:: none
-
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
-
-Continue by `creating-venv-linux`.
-
-----
-
 .. _install-ubuntu-1804:
 
 ~~~~~~~~~~~~~~~~

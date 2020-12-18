@@ -523,7 +523,7 @@ class Streams(commands.Cog):
     @streamset.group()
     @commands.guild_only()
     async def message(self, ctx: commands.Context):
-        """Manage custom message for stream alerts."""
+        """Manage custom messages for stream alerts."""
         pass
 
     @message.command(name="mention")
