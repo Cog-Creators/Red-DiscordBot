@@ -311,8 +311,19 @@ def init_events(bot, cli_flags):
                 else:
                     msg = _(
                         "Too many people using this command."
-                        " It can only be used {number} time concurrently."
-                    ).format(number=error.number)
+                        " It can only be used once concurrently."
+                    )
+            elif error.per in (commands.BucketType.user, commands.BucketType.member):
+                if error.number > 1:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
             else:
                 if error.number > 1:
                     msg = _(
@@ -322,8 +333,8 @@ def init_events(bot, cli_flags):
                 else:
                     msg = _(
                         "Too many people using this command."
-                        " It can only be used {number} time per {type} concurrently."
-                    ).format(number=error.number, type=error.per.name)
+                        " It can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
             await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
