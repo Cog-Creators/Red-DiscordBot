@@ -24,3 +24,7 @@ jobs:
               repo: context.repo.repo,
               labels: ['Status: Needs Triage']
             });
+      - name: Apply Type Label
+        uses: actions/labeler@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
