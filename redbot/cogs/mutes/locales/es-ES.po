@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:26
 msgid "That user is already muted in this channel."
-msgstr ""
+msgstr "Ese usuario ya está silenciado en este canal."
 
 #: redbot/cogs/mutes/mutes.py:27
 msgid "That user is not muted in this channel."
-msgstr ""
+msgstr "Ese usuario no está silenciado en este canal."
 
 #: redbot/cogs/mutes/mutes.py:28
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
@@ -29,140 +29,140 @@ msgstr "No puedo dejarte hacer eso. No eres más alto que el usuario en la jerar
 
 #: redbot/cogs/mutes/mutes.py:31
 msgid "That user cannot be muted, as they have the Administrator permission."
-msgstr ""
+msgstr "Ese usuario no puede ser silenciado, ya que tiene el permiso de administrador."
 
 #: redbot/cogs/mutes/mutes.py:32
 msgid "Failed to mute or unmute user. I need the Manage Roles permission and the user I'm muting must be lower than myself in the role hierarchy."
-msgstr ""
+msgstr "Error al silenciar o quitar el silencio. Necesito el permiso Administrar roles y el usuario que estoy silenciando debe ser menor que yo en la jerarquía de rol."
 
 #: redbot/cogs/mutes/mutes.py:37
 msgid "Failed to mute or unmute user. I need the Manage Permissions permission."
-msgstr ""
+msgstr "Error al silenciar o desactivar el usuario. Necesito el permiso de Administrar Permisos."
 
 #: redbot/cogs/mutes/mutes.py:40
 msgid "The user has left the server while applying an overwrite."
-msgstr ""
+msgstr "El usuario ha dejado el servidor mientras aplicaba una sobreescritura."
 
 #: redbot/cogs/mutes/mutes.py:41
 msgid "The channel I tried to mute or unmute the user in isn't found."
-msgstr ""
+msgstr "El canal en el que intenté silenciar o quitar el silencio del usuario no se encuentra."
 
 #: redbot/cogs/mutes/mutes.py:42
 msgid "The mute role no longer exists."
-msgstr ""
+msgstr "El role de silenciado ya no existe."
 
 #: redbot/cogs/mutes/mutes.py:43
 msgid "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
-msgstr ""
+msgstr "Debido a que no tengo el permiso de Mover miembros, esto entrará en vigor cuando el usuario vuelva a entrar."
 
 #: redbot/cogs/mutes/mutes.py:241 redbot/cogs/mutes/mutes.py:253
 #: redbot/cogs/mutes/mutes.py:347 redbot/cogs/mutes/mutes.py:415
 #: redbot/cogs/mutes/mutes.py:433
 msgid "Automatic unmute"
-msgstr ""
+msgstr "Desilenciar automáticamente"
 
 #: redbot/cogs/mutes/mutes.py:263
 msgid "I am unable to unmute {user} for the following reason:\\n{reason}"
-msgstr ""
+msgstr "No puedo quitar el silencio de {user} por el siguiente motivo:\\n{reason}"
 
 #: redbot/cogs/mutes/mutes.py:351
 msgid "\\nUnmuted in channels: "
-msgstr ""
+msgstr "\\nDesilenciado en los canales: "
 
 #: redbot/cogs/mutes/mutes.py:374
 msgid "{member} could not be unmuted for the following reasons:\\n"
-msgstr ""
+msgstr "{member} no pudo ser desilenciado por las siguientes razones:\\n"
 
 #: redbot/cogs/mutes/mutes.py:378
 msgid "{reason} In the following channels: {channels}\\n"
-msgstr ""
+msgstr "{reason} en los siguientes canales: {channels}\\n"
 
 #: redbot/cogs/mutes/mutes.py:439
 msgid "I am unable to unmute {user} in {channel} for the following reason:\\n{reason}"
-msgstr ""
+msgstr "No puedo quitar el silencio de {user} en {channel} por el siguiente motivo:\\n{reason}"
 
 #: redbot/cogs/mutes/mutes.py:490
 msgid "Manually removed mute role"
-msgstr ""
+msgstr "Se ha eliminado manualmente el rol de silencio"
 
 #: redbot/cogs/mutes/mutes.py:507
 msgid "Manually applied mute role"
-msgstr ""
+msgstr "Se ha aplicado manualmente el rol de silencio"
 
 #: redbot/cogs/mutes/mutes.py:571
 msgid "Manually removed channel overwrites"
-msgstr ""
+msgstr "Manualmente eliminados las sobreescrituras de los canales"
 
 #: redbot/cogs/mutes/mutes.py:605
 msgid "Previously muted in this server."
-msgstr ""
+msgstr "Anteriormente silenciado en este servidor."
 
 #: redbot/cogs/mutes/mutes.py:611
 #, docstring
 msgid "Mute settings."
-msgstr ""
+msgstr "Ajustes de Silenciado."
 
 #: redbot/cogs/mutes/mutes.py:617
 #, docstring
 msgid "\\n        Whether or not to force role only mutes on the bot\\n        "
-msgstr ""
+msgstr "\\n        Si forzar o no el rol solo silencia en el bot\\n        "
 
 #: redbot/cogs/mutes/mutes.py:622
 msgid "Okay I will enforce role mutes before muting users."
-msgstr ""
+msgstr "Vale, voy a hacer cumplir los silencios de rol antes de silenciar a los usuarios."
 
 #: redbot/cogs/mutes/mutes.py:624
 msgid "Okay I will allow channel overwrites for muting users."
-msgstr ""
+msgstr "Vale, permitiré sobrescrituras en el canal para silenciar usuarios."
 
 #: redbot/cogs/mutes/mutes.py:629
 #, docstring
 msgid "\\n        Shows the current mute settings for this guild.\\n        "
-msgstr ""
+msgstr "\\n        Muestra la configuración de silencio actual de este servidor.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:637
 msgid "Mute Role: {role}\\nNotification Channel: {channel}\\nDefault Time: {time}"
-msgstr ""
+msgstr "Rol de silencio: {role}\\nCanal de notificación: {channel}\\nTiempo por defecto: {time}"
 
 #: redbot/cogs/mutes/mutes.py:640 redbot/cogs/mutes/mutes.py:641
 #: redbot/cogs/mutes/mutes.py:642
 msgid "None"
-msgstr ""
+msgstr "Ninguno"
 
 #: redbot/cogs/mutes/mutes.py:651
 #, docstring
 msgid "\\n        Set the notification channel for automatic unmute issues.\\n\\n        If no channel is provided this will be cleared and notifications\\n        about issues when unmuting users will not be sent anywhere.\\n        "
-msgstr ""
+msgstr "\\n        Establece el canal de notificación para problemas de desilenciación automática.\\n\\n        Si no se proporciona ningún canal, esto se eliminará y las notificaciones\\n        sobre problemas al desilenciar usuarios no se enviarán a ninguna parte.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:659
 msgid "Notification channel for unmute issues has been cleard."
-msgstr ""
+msgstr "El canal de notificación para problemas de desilenciado ha sido borrado."
 
 #: redbot/cogs/mutes/mutes.py:663
 msgid "I will post unmute issues in {channel}."
-msgstr ""
+msgstr "Publicaré los asuntos de desilenciado en {channel}."
 
 #: redbot/cogs/mutes/mutes.py:670
 #, docstring
 msgid "Sets the role to be applied when muting a user.\\n\\n        If no role is setup the bot will attempt to mute a user by setting\\n        channel overwrites in all channels to prevent the user from sending messages.\\n\\n        Note: If no role is setup a user may be able to leave the server\\n        and rejoin no longer being muted.\\n        "
-msgstr ""
+msgstr "Establece el rol a aplicar al silenciar a un usuario.\\n\\n        Si no hay un rol configurado, el bot intentará silenciar a un usuario estableciendo\\n        sobrescrituras de canal en todos los canales para evitar que el usuario envíe mensajes.\\n\\n        Nota: Si no hay un rol configurado, un usuario puede ser capaz de abandonar el servidor\\n        y al volver a unirse ya no estar silenciado.\\n        "
 
 #: redbot/cogs/mutes/mutes.py:685
 msgid "Channel overwrites will be used for mutes instead."
-msgstr ""
+msgstr "Las sobreescrituras de canales se utilizarán para silenciar en su lugar."
 
 #: redbot/cogs/mutes/mutes.py:689 redbot/cogs/mutes/mutes.py:744
 msgid "Mute role set to {role}"
-msgstr ""
+msgstr "Rol de silencio establecido en {role}"
 
 #: redbot/cogs/mutes/mutes.py:693 redbot/cogs/mutes/mutes.py:748
 msgid "No notification channel has been setup, use {command_1} to be updated when there's an issue in automatic unmutes."
-msgstr ""
+msgstr "Ningún canal de notificación ha sido configurado, utilice {command_1} para estar actualizado de cuando haya un problema en las desilenciaciones automáticas."
 
 #: redbot/cogs/mutes/mutes.py:704
 #, docstring
 msgid "Create a Muted role.\\n\\n        This will create a role and apply overwrites to all available channels\\n        to more easily setup muting a user.\\n\\n        If you already have a muted role created on the server use\\n        `[p]muteset role ROLE_NAME_HERE`\\n        "
-msgstr ""
+msgstr "Crear un rol Muted.\\n\\n        Esto creará un rol y aplicará sobrescrituras a todos los canales disponibles\\n        para configurar más fácilmente silenciando a un usuario.\\n\\n        Si ya tienes un rol silenciado creado en el servidor, usa\\n        `[p]muteset role ROLE_NAME_HERE`\\n        "
 
 #: redbot/cogs/mutes/mutes.py:715
 msgid "There is already a mute role setup in this server. Please remove it with {command} before trying to create a new one."
@@ -273,7 +273,7 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:1020
 msgid "{member} could not be unmuted for the following reasons:\\n"
-msgstr ""
+msgstr "{member} no pudo ser desilenciado por las siguientes razones:\\n"
 
 #: redbot/cogs/mutes/mutes.py:1031
 msgid "- {reason} In the following channels: {channels}\\n"
@@ -334,15 +334,15 @@ msgstr ""
 
 #: redbot/cogs/mutes/voicemutes.py:42
 msgid "That user is not in a voice channel."
-msgstr ""
+msgstr "Ese usuario no está en un canal de voz."
 
 #: redbot/cogs/mutes/voicemutes.py:49
 msgid "I require the {perms} permission(s) in that user's channel to do that."
-msgstr ""
+msgstr "Requiero los permisos de {perms} en ese canal del usuario para hacer eso."
 
 #: redbot/cogs/mutes/voicemutes.py:60
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
-msgstr ""
+msgstr "Debes tener los permisos de {perms} en el canal del usuario para usar este comando."
 
 #: redbot/cogs/mutes/voicemutes.py:76
 #, docstring

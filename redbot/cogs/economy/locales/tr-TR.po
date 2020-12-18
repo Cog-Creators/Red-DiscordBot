@@ -73,7 +73,7 @@ msgstr "Diğer kullanıcılara bakiye aktar.\\n\\n        Bu sizin bakiyenizden 
 
 #: redbot/cogs/economy/economy.py:223
 msgid "{user} transferred {num} {currency} to {other_user}"
-msgstr "{user}, {other_user} adlı kullanıcıya {num} {currency} {other_user} aktardı"
+msgstr "{user}, {other_user} adlı kullanıcıya {num} {currency} aktardı"
 
 #: redbot/cogs/economy/economy.py:235
 #, docstring

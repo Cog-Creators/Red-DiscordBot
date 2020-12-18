@@ -37,7 +37,7 @@ msgstr "Basit: {answer}."
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr "Ciddenmi? Cevap tabikide {answer}."
+msgstr "Cidden mi? Cevap tabiki de {answer}."
 
 #: redbot/cogs/trivia/session.py:25
 msgid "To the next one I guess..."

@@ -18,26 +18,26 @@ msgstr ""
 #: redbot/cogs/filter/filter.py:17
 #, docstring
 msgid "Filter unwanted words and phrases from text channels."
-msgstr ""
+msgstr "Filtrar palabras y frases no deseadas de canales de texto."
 
 #: redbot/cogs/filter/filter.py:69
 #, docstring
 msgid "Manage filter settings."
-msgstr ""
+msgstr "Administrar ajustes de filtro."
 
 #: redbot/cogs/filter/filter.py:74
 #, docstring
 msgid "Set the nickname for users with a filtered name.\\n\\n        Note that this has no effect if filtering names is disabled\\n        (to toggle, run `[p]filter names`).\\n\\n        The default name used is *John Doe*.\\n        "
-msgstr ""
+msgstr "Establezca el nick para los usuarios con un nombre filtrado.\\n\\n        Tenga en cuenta que esto no tiene efecto si los nombres de filtro están deshabilitados\\n        (para alternarlo, ejecuta `[p]filter names`).\\n\\n        El nombre por defecto utilizado es *John Doe*.\\n        "
 
 #: redbot/cogs/filter/filter.py:83
 msgid "The name to use on filtered names has been set."
-msgstr ""
+msgstr "Se ha establecido el nombre a utilizar en los nombres filtrados."
 
 #: redbot/cogs/filter/filter.py:87
 #, docstring
 msgid "Set the filter's autoban conditions.\\n\\n        Users will be banned if they send `<count>` filtered words in\\n        `<timeframe>` seconds.\\n\\n        Set both to zero to disable autoban.\\n        "
-msgstr ""
+msgstr "Establecer las condiciones de autoban del filtro.\\n\\n        Los usuarios serán baneados si envían `<count>` palabras filtradas en\\n        `<timeframe>` segundos.\\n\\n        Establecer ambos en cero para desactivar el autoban.\\n        "
 
 #: redbot/cogs/filter/filter.py:96
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
@@ -54,16 +54,16 @@ msgstr "Cuenta y tiempo establecidos."
 #: redbot/cogs/filter/filter.py:117
 #, docstring
 msgid "Add or remove words from server filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Añadir o eliminar palabras del filtro del servidor.\\n\\n        Usar comillas dobles para añadir o eliminar frases.\\n        "
 
 #: redbot/cogs/filter/filter.py:125
 #, docstring
 msgid "Send a list of this servers filtered words."
-msgstr ""
+msgstr "Enviar una lista de las palabras filtradas de estos servidores."
 
 #: redbot/cogs/filter/filter.py:130
 msgid "There is no current words setup to be filtered in this server."
-msgstr ""
+msgstr "No hay ninguna configuración actual de palabras para filtrar en este servidor."
 
 #: redbot/cogs/filter/filter.py:133
 msgid "Filtered in this server:"
@@ -76,25 +76,25 @@ msgstr "No puedo enviarte mensajes directos."
 #: redbot/cogs/filter/filter.py:142
 #, docstring
 msgid "Add or remove words from channel filter.\\n\\n        Use double quotes to add or remove sentences.\\n        "
-msgstr ""
+msgstr "Añade o quita palabras del filtro del canal.\\n\\n        Usa comillas dobles para añadir o eliminar frases.\\n        "
 
 #: redbot/cogs/filter/filter.py:150
 #, docstring
 msgid "Send the list of the channel's filtered words."
-msgstr ""
+msgstr "Enviar la lista de palabras filtradas del canal."
 
 #: redbot/cogs/filter/filter.py:155
 msgid "There is no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "No hay ninguna configuración actual de palabras para filtrar en este canal."
 
 #: redbot/cogs/filter/filter.py:158
 msgid "Filtered in this channel:"
-msgstr ""
+msgstr "Filtrado en este canal:"
 
 #: redbot/cogs/filter/filter.py:167
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter channel add word1 word2 word3`\\n        - `[p]filter channel add \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Añade palabras al filtro.\\n\\n        Usa comillas dobles para añadir frases.\\n\\n        Ejemplos:\\n        - `[p]filter channel add palabra1 palabra2 palabra3`\\n        - `[p]filter channel add \\\"Esta es una frase\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:179
 msgid "Words added to filter."
@@ -107,7 +107,7 @@ msgstr "Palabras ya en el filtro."
 #: redbot/cogs/filter/filter.py:185
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter channel remove word1 word2 word3`\\n        - `[p]filter channel remove \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Elimina palabras del filtro.\\n\\n        Usa comillas dobles para eliminar oraciones.\\n\\n        Ejemplos:\\n        - `[p]filter channel remove palabra1 palabra2 palabra3`\\n        - `[p]filter channel remove \\\"Esta es una frase\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:196
 msgid "Words removed from filter."
@@ -120,47 +120,47 @@ msgstr "Esas palabras no estaban en el filtro."
 #: redbot/cogs/filter/filter.py:203
 #, docstring
 msgid "Add words to the filter.\\n\\n        Use double quotes to add sentences.\\n\\n        Examples:\\n        - `[p]filter add word1 word2 word3`\\n        - `[p]filter add \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Añade palabras al filtro.\\n\\n        Usa comillas dobles para añadir frases.\\n\\n        Ejemplos:\\n        - `[p]filter add palabra1 palabra2 palabra3`\\n        - `[p]filter add \\\"Esto es una frase\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:215
 msgid "Words successfully added to filter."
-msgstr ""
+msgstr "Palabras añadidas correctamente al filtro."
 
 #: redbot/cogs/filter/filter.py:217
 msgid "Those words were already in the filter."
-msgstr ""
+msgstr "Esas palabras ya estaban en el filtro."
 
 #: redbot/cogs/filter/filter.py:221
 #, docstring
 msgid "Remove words from the filter.\\n\\n        Use double quotes to remove sentences.\\n\\n        Examples:\\n        - `[p]filter remove word1 word2 word3`\\n        - `[p]filter remove \\\"This is a sentence\\\"`\\n        "
-msgstr ""
+msgstr "Elimina palabras del filtro.\\n\\n        Usa comillas dobles para eliminar oraciones.\\n\\n        Ejemplos:\\n        - `[p]filter remove palabra1 palabra2 palabra3`\\n        - `[p]filter remove \\\"Esto es una frase\\\"`\\n        "
 
 #: redbot/cogs/filter/filter.py:233
 msgid "Words successfully removed from filter."
-msgstr ""
+msgstr "Palabras eliminadas del filtro con éxito."
 
 #: redbot/cogs/filter/filter.py:239
 #, docstring
 msgid "Toggle name and nickname filtering.\\n\\n        This is disabled by default.\\n        "
-msgstr ""
+msgstr "Alternar nombre y filtro de apodos.\\n\\n        Esto está deshabilitado por defecto.\\n        "
 
 #: redbot/cogs/filter/filter.py:249
 msgid "Names and nicknames will no longer be filtered."
-msgstr ""
+msgstr "Los nombres y apodos ya no serán filtrados."
 
 #: redbot/cogs/filter/filter.py:251
 msgid "Names and nicknames will now be filtered."
-msgstr ""
+msgstr "Ahora se filtrarán los nombres y los apodos."
 
 #: redbot/cogs/filter/filter.py:367
 msgid "Autoban (too many filtered messages.)"
-msgstr ""
+msgstr "Autoban (demasiados mensajes filtrados.)"
 
 #: redbot/cogs/filter/filter.py:439
 msgid "Filtered nickname"
-msgstr ""
+msgstr "Apodo filtrado"
 
 #: redbot/cogs/filter/filter.py:439
 msgid "Filtered name"
-msgstr ""
+msgstr "Nombre filtrado"
 
