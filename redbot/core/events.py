@@ -312,7 +312,7 @@ def init_events(bot, cli_flags):
                     msg = _(
                         "Too many people using this command."
                         " It can only be used once concurrently."
-                    ).format(number=error.number)
+                    )
             elif error.per in (commands.BucketType.user, commands.BucketType.member):
                 if error.number > 1:
                     msg = _(
