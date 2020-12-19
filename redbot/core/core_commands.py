@@ -1185,7 +1185,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "you can invite me on new servers.\n\n"
                 "You can change this by ticking `Public bot` in "
                 "your token settings: "
-                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+                "https://discord.com/developers/applications/{0}/bot".format(self.bot.user.id)
             )
             return
         if not confirm:
