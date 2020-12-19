@@ -67,7 +67,7 @@ async def slow_deletion(messages: Iterable[discord.Message]):
             pass
 
 
-def get_audit_reason(author: discord.Member, reason: str = None):
+def get_audit_reason(author: discord.Member, reason: str = None, *, shorten: bool = False):
     """Construct a reason to appear in the audit log.
 
     Parameters
@@ -76,6 +76,9 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The author behind the audit log action.
     reason : str
         The reason behind the audit log action.
+    shorten : bool
+        When set to ``True``, the returned audit reason string will be
+        shortened to fit the max length allowed by Discord audit logs.
 
     Returns
     -------
@@ -83,11 +86,14 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The formatted audit log reason.
 
     """
-    return (
+    audit_reason = (
         "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
         if reason
         else "Action requested by {} (ID {}).".format(author, author.id)
     )
+    if shorten and len(audit_reason) > 512:
+        audit_reason = f"{audit_reason[:509]}..."
+    return audit_reason
 
 
 async def is_allowed_by_hierarchy(
