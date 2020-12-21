@@ -389,7 +389,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
             await self._add_rule(
@@ -419,7 +419,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
             await self._add_rule(
@@ -443,7 +443,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
@@ -465,7 +465,7 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
             await self._remove_rule(

@@ -1427,7 +1427,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
-    @commands.command(name="reload", require_var_positional=True)
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages."""
