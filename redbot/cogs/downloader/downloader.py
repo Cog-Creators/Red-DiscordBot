@@ -767,7 +767,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `<repo_name>` The name of the repo to install cogs from.
+        - `<repo>` The name of the repo to install cogs from.
         - `<revision>` The revision to install from.
         - `<cogs...>` The cog or cogs to install.
         """
