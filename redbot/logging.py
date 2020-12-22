@@ -127,6 +127,7 @@ class RedRichHandler(RichHandler):
         log_style = f"logging.level.{record.levelname.lower()}"
         time_format = None if self.formatter is None else self.formatter.datefmt
         log_time = datetime.fromtimestamp(record.created)
+        log_name = record.name
 
         level = Text()
         level.append(record.levelname, log_style)
@@ -139,8 +140,7 @@ class RedRichHandler(RichHandler):
                     log_time=log_time,
                     time_format=time_format,
                     level=level,
-                    path=path,
-                    line_no=record.lineno,
+                    path=log_name.capitalize()
                 )
             )
         else:
@@ -151,8 +151,7 @@ class RedRichHandler(RichHandler):
                     log_time=log_time,
                     time_format=time_format,
                     level=level,
-                    path=path,
-                    line_no=record.lineno,
+                    path=log_name.capitalize()
                 )
             )
 
@@ -167,15 +166,20 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -
     warnings_logger = logging.getLogger("py.warnings")
     warnings_logger.setLevel(logging.WARNING)
 
-    formatter = logging.Formatter(
-        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
-    )
-
     if (
         isatty(0) or force_rich_logging
     ):  # Check if the bot thinks it has a active terminal. Or forcefully enable it
-        stdout_handler = RedRichHandler(show_path=False)
+        formatter = logging.Formatter(
+            "{message}", style="{"
+        )
+
+        stdout_handler = RedRichHandler()
+        stdout_handler.setFormatter(formatter)
     else:
+        formatter = logging.Formatter(
+            "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+        )
+
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setFormatter(formatter)
 
