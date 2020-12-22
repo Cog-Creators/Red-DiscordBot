@@ -158,10 +158,14 @@ class RedRichHandler(RichHandler):
 
 
 def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -> None:
-    dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.WARNING)
+    root_logger = logging.getLogger()
+
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
+    dpy_logger = logging.getLogger("discord")
+    dpy_logger.setLevel(logging.WARNING)
+    warnings_logger = logging.getLogger("py.warnings")
+    warnings_logger.setLevel(logging.WARNING)
 
     formatter = logging.Formatter(
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
@@ -175,8 +179,8 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setFormatter(formatter)
 
-    base_logger.addHandler(stdout_handler)
-    dpy_logger.addHandler(stdout_handler)
+    root_logger.addHandler(stdout_handler)
+    logging.captureWarnings(True)
 
     if not location.exists():
         location.mkdir(parents=True, exist_ok=True)
@@ -214,4 +218,4 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -
     )
     for fhandler in (latest_fhandler, all_fhandler):
         fhandler.setFormatter(formatter)
-        base_logger.addHandler(fhandler)
+        root_logger.addHandler(fhandler)
