@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: '3.8'
     - name: Install dependencies
@@ -37,7 +37,7 @@ jobs:
       run: |
         make download_translations
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v2
+      uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: Automated Crowdin downstream
@@ -47,3 +47,4 @@ jobs:
           Please ensure that there are no errors or invalid files are in the PR.
         labels: "Automated PR, Category: i18n, Changelog Entry: Skipped"
         branch: "automated/i18n"
+        author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>

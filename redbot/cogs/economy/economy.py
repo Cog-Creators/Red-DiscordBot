@@ -11,12 +11,12 @@ import discord
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
-
-from redbot.core.bot import Red
+from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
 
@@ -167,14 +167,21 @@ class Economy(commands.Cog):
     @guild_only_check()
     @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
-        """Manage the bank."""
+        """Base command to manage the bank."""
         pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
         """Show the user's account balance.
 
-        Defaults to yours."""
+        Example:
+            - `[p]bank balance`
+            - `[p]bank balance @Twentysix`
+
+        **Arguments**
+
+        - `<user>` The user to check the balance of. If omitted, defaults to your own balance.
+        """
         if user is None:
             user = ctx.author
 
@@ -192,7 +199,18 @@ class Economy(commands.Cog):
 
     @_bank.command()
     async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
-        """Transfer currency to other users."""
+        """Transfer currency to other users.
+
+        This will come out of your balance, so make sure you have enough.
+
+        Example:
+            - `[p]bank transfer @Twentysix 500`
+
+        **Arguments**
+
+        - `<to>` The user to give currency to.
+        - `<amount>` The amount of currency to give.
+        """
         from_ = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
 
@@ -214,14 +232,19 @@ class Economy(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
-        """Set the balance of user's bank account.
+        """Set the balance of a user's bank account.
 
-        Passing positive and negative values will add/remove currency instead.
+        Putting + or - signs before the amount will add/remove currency on the user's bank account instead.
 
         Examples:
-        - `[p]bank set @Twentysix 26` - Sets balance to 26
-        - `[p]bank set @Twentysix +2` - Increases balance by 2
-        - `[p]bank set @Twentysix -6` - Decreases balance by 6
+            - `[p]bank set @Twentysix 26` - Sets balance to 26
+            - `[p]bank set @Twentysix +2` - Increases balance by 2
+            - `[p]bank set @Twentysix -6` - Decreases balance by 6
+
+        **Arguments**
+
+        - `<to>` The user to set the currency of.
+        - `<creds>` The amount of currency to set their balance to.
         """
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
@@ -260,7 +283,16 @@ class Economy(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     @_bank.command()
     async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
+        """Delete all bank accounts.
+
+        Examples:
+            - `[p]bank reset` - Did not confirm. Shows the help message.
+            - `[p]bank reset yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         if confirmation is False:
             await ctx.send(
                 _(
@@ -283,14 +315,25 @@ class Economy(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @_bank.group(name="prune")
     async def _prune(self, ctx):
-        """Prune bank accounts."""
+        """Base command for pruning bank accounts."""
         pass
 
     @_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
     @checks.guildowner()
     async def _local(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users no longer in the server."""
+        """Prune bank accounts for users no longer in the server.
+
+        Cannot be used with a global bank. See `[p]bank prune global`.
+
+        Examples:
+            - `[p]bank prune server` - Did not confirm. Shows the help message.
+            - `[p]bank prune server yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         global_bank = await bank.is_global()
         if global_bank is True:
             return await ctx.send(_("This command cannot be used with a global bank."))
@@ -312,7 +355,18 @@ class Economy(commands.Cog):
     @_prune.command(name="global")
     @checks.is_owner()
     async def _global(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users who no longer share a server with the bot."""
+        """Prune bank accounts for users who no longer share a server with the bot.
+
+        Cannot be used without a global bank. See `[p]bank prune server`.
+
+        Examples:
+            - `[p]bank prune global` - Did not confirm. Shows the help message.
+            - `[p]bank prune global yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         global_bank = await bank.is_global()
         if global_bank is False:
             return await ctx.send(_("This command cannot be used with a local bank."))
@@ -338,7 +392,17 @@ class Economy(commands.Cog):
     async def user(
         self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
     ):
-        """Delete the bank account of a specified user."""
+        """Delete the bank account of a specified user.
+
+        Examples:
+            - `[p]bank prune user @TwentySix` - Did not confirm. Shows the help message.
+            - `[p]bank prune user @TwentySix yes`
+
+        **Arguments**
+
+        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
+        - `<confirmation>` This will default to false unless specified.
+        """
         global_bank = await bank.is_global()
         if global_bank is False and ctx.guild is None:
             return await ctx.send(_("This command cannot be used in DMs with a local bank."))
@@ -364,7 +428,10 @@ class Economy(commands.Cog):
     @guild_only_check()
     @commands.command()
     async def payday(self, ctx: commands.Context):
-        """Get some free currency."""
+        """Get some free currency.
+
+        The amount awarded and frequency can be configured.
+        """
         author = ctx.author
         guild = ctx.guild
 
@@ -480,6 +547,16 @@ class Economy(commands.Cog):
         """Print the leaderboard.
 
         Defaults to top 10.
+
+        Examples:
+            - `[p]leaderboard`
+            - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
+            - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
+
+        **Arguments**
+
+        - `<top>` How many positions on the leaderboard to show. Defaults to 10 if omitted.
+        - `<show_global>` Whether to include results from all servers. This will default to false unless specified.
         """
         guild = ctx.guild
         author = ctx.author
@@ -596,7 +673,15 @@ class Economy(commands.Cog):
     @commands.command()
     @guild_only_check()
     async def slot(self, ctx: commands.Context, bid: int):
-        """Use the slot machine."""
+        """Use the slot machine.
+
+        Example:
+            - `[p]slot 50`
+
+        **Arguments**
+
+        - `<bid>` The amount to bet on the slot machine. Winning payouts are higher when you bet more.
+        """
         author = ctx.author
         guild = ctx.guild
         channel = ctx.channel
@@ -713,7 +798,7 @@ class Economy(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
-        """Manage Economy settings."""
+        """Base command to manage Economy settings."""
 
     @economyset.command(name="showsettings")
     async def economyset_showsettings(self, ctx: commands.Context):
@@ -749,13 +834,30 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmin(self, ctx: commands.Context, bid: int):
-        """Set the minimum slot machine bid."""
-        if bid < 1:
-            await ctx.send(_("Invalid min bid amount."))
-            return
+    async def slotmin(self, ctx: commands.Context, bid: positive_int):
+        """Set the minimum slot machine bid.
+
+        Example:
+            - `[p]economyset slotmin 10`
+
+        **Arguments**
+
+        - `<bid>` The new minimum bid for using the slot machine. Default is 5.
+        """
         guild = ctx.guild
-        if await bank.is_global():
+        is_global = await bank.is_global()
+        if is_global:
+            slot_max = await self.config.SLOT_MAX()
+        else:
+            slot_max = await self.config.guild(guild).SLOT_MAX()
+        if bid > slot_max:
+            await ctx.send(
+                _(
+                    "Warning: Minimum bid is greater than the maximum bid ({max_bid}). "
+                    "Slots will not work."
+                ).format(max_bid=humanize_number(slot_max))
+            )
+        if is_global:
             await self.config.SLOT_MIN.set(bid)
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
@@ -767,17 +869,31 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmax(self, ctx: commands.Context, bid: int):
-        """Set the maximum slot machine bid."""
-        slot_min = await self.config.SLOT_MIN()
-        if bid < 1 or bid < slot_min:
-            await ctx.send(
-                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
-            )
-            return
+    async def slotmax(self, ctx: commands.Context, bid: positive_int):
+        """Set the maximum slot machine bid.
+
+        Example:
+            - `[p]economyset slotmax 50`
+
+        **Arguments**
+
+        - `<bid>` The new maximum bid for using the slot machine. Default is 100.
+        """
         guild = ctx.guild
+        is_global = await bank.is_global()
+        if is_global:
+            slot_min = await self.config.SLOT_MIN()
+        else:
+            slot_min = await self.config.guild(guild).SLOT_MIN()
+        if bid < slot_min:
+            await ctx.send(
+                _(
+                    "Warning: Maximum bid is less than the minimum bid ({min_bid}). "
+                    "Slots will not work."
+                ).format(min_bid=humanize_number(slot_min))
+            )
         credits_name = await bank.get_currency_name(guild)
-        if await bank.is_global():
+        if is_global:
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
@@ -789,7 +905,15 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def slottime(self, ctx: commands.Context, seconds: int):
-        """Set the cooldown for the slot machine."""
+        """Set the cooldown for the slot machine.
+
+        Example:
+            - `[p]economyset slottime 10`
+
+        **Arguments**
+
+        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+        """
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
@@ -799,7 +923,15 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def paydaytime(self, ctx: commands.Context, seconds: int):
-        """Set the cooldown for payday."""
+        """Set the cooldown for the payday command.
+
+        Example:
+            - `[p]economyset paydaytime 86400`
+
+        **Arguments**
+
+        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.
+        """
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
@@ -813,7 +945,15 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def paydayamount(self, ctx: commands.Context, creds: int):
-        """Set the amount earned each payday."""
+        """Set the amount earned each payday.
+
+        Example:
+            - `[p]economyset paydayamount 400`
+
+        **Arguments**
+
+        - `<creds>` The new amount to give when using the payday command. Default is 120.
+        """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
         if creds <= 0 or creds > max_balance:
@@ -835,7 +975,18 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
-        """Set the amount earned each payday for a role."""
+        """Set the amount earned each payday for a role.
+
+        Only available when not using a global bank.
+
+        Example:
+            - `[p]economyset rolepaydayamount @Members 400`
+
+        **Arguments**
+
+        - `<role>` The role to assign a custom payday amount to.
+        - `<creds>` The new amount to give when using the payday command.
+        """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
         if creds <= 0 or creds > max_balance:
@@ -858,7 +1009,15 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):
-        """Set the initial balance for new bank accounts."""
+        """Set the initial balance for new bank accounts.
+
+        Example:
+            - `[p]economyset registeramount 5000`
+
+        **Arguments**
+
+        - `<creds>` The new initial balance amount. Default is 0.
+        """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
         credits_name = await bank.get_currency_name(guild)

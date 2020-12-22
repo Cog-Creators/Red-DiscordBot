@@ -25,11 +25,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
-msgstr ""
+msgstr "Käytössä"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Disabled"
-msgstr ""
+msgstr "Ei käytössä"
 
 #: redbot/cogs/audio/core/events/dpy.py:124
 msgid "No DJ role found. Disabling DJ mode."

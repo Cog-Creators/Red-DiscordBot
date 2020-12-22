@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2020-11-05 12:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -93,242 +93,242 @@ msgstr "Manuelt brukt demping rolle"
 msgid "Manually removed channel overwrites"
 msgstr "Manuelt fjernet kanal overskriver"
 
-#: redbot/cogs/mutes/mutes.py:600
+#: redbot/cogs/mutes/mutes.py:605
 msgid "Previously muted in this server."
 msgstr "Tidligere mutert på denne serveren."
 
-#: redbot/cogs/mutes/mutes.py:606
+#: redbot/cogs/mutes/mutes.py:611
 #, docstring
 msgid "Mute settings."
 msgstr "Demp innstillinger."
 
-#: redbot/cogs/mutes/mutes.py:612
+#: redbot/cogs/mutes/mutes.py:617
 #, docstring
 msgid "\\n        Whether or not to force role only mutes on the bot\\n        "
 msgstr "\\n        Om roller bare skal tvinges til å dempe på boten\\n        "
 
-#: redbot/cogs/mutes/mutes.py:617
+#: redbot/cogs/mutes/mutes.py:622
 msgid "Okay I will enforce role mutes before muting users."
 msgstr "Okai vil jeg håndheve rollemotegn før man muterer brukere."
 
-#: redbot/cogs/mutes/mutes.py:619
+#: redbot/cogs/mutes/mutes.py:624
 msgid "Okay I will allow channel overwrites for muting users."
 msgstr "Jeg tillater jeg kanal overskriving av muterende brukere."
 
-#: redbot/cogs/mutes/mutes.py:624
+#: redbot/cogs/mutes/mutes.py:629
 #, docstring
 msgid "\\n        Shows the current mute settings for this guild.\\n        "
 msgstr "\\n        Viser gjeldende dempet innstillinger for denne guilden.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:632
+#: redbot/cogs/mutes/mutes.py:637
 msgid "Mute Role: {role}\\nNotification Channel: {channel}\\nDefault Time: {time}"
 msgstr "Demp Rolle: {role}\\nVarsling kanal: {channel}\\nStandard tid: {time}"
 
-#: redbot/cogs/mutes/mutes.py:635 redbot/cogs/mutes/mutes.py:636
-#: redbot/cogs/mutes/mutes.py:637
+#: redbot/cogs/mutes/mutes.py:640 redbot/cogs/mutes/mutes.py:641
+#: redbot/cogs/mutes/mutes.py:642
 msgid "None"
 msgstr "Ingen"
 
-#: redbot/cogs/mutes/mutes.py:646
+#: redbot/cogs/mutes/mutes.py:651
 #, docstring
 msgid "\\n        Set the notification channel for automatic unmute issues.\\n\\n        If no channel is provided this will be cleared and notifications\\n        about issues when unmuting users will not be sent anywhere.\\n        "
 msgstr "\\n        Angi varselkanalen for automatisk lyddemping problemer.\\n\\n        Hvis ingen kanal tilbys vil denne fjernes og varsler\\n        om problemer når opp-demping av brukere ikke sendes noen steder.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:654
+#: redbot/cogs/mutes/mutes.py:659
 msgid "Notification channel for unmute issues has been cleard."
 msgstr "Varslingskanalen for udempe problemer har vært klart."
 
-#: redbot/cogs/mutes/mutes.py:658
+#: redbot/cogs/mutes/mutes.py:663
 msgid "I will post unmute issues in {channel}."
 msgstr "Jeg publiserer udempet saker i {channel}."
 
-#: redbot/cogs/mutes/mutes.py:665
+#: redbot/cogs/mutes/mutes.py:670
 #, docstring
 msgid "Sets the role to be applied when muting a user.\\n\\n        If no role is setup the bot will attempt to mute a user by setting\\n        channel overwrites in all channels to prevent the user from sending messages.\\n\\n        Note: If no role is setup a user may be able to leave the server\\n        and rejoin no longer being muted.\\n        "
 msgstr "Angir rollen som skal brukes når lydløs dempes av en bruker.\\n\\nHvis ingen rolle er konfigurert, vil boten forsøke å dempe en bruker ved å angi\\nkanaloverskrivinger i alle kanaler for å forhindre at brukeren sender meldinger.\\n\\n      Merk: Hvis ingen rolle er konfigurert, kan en bruker være i stand til å forlate serveren\\nog bli med på ikke lenger\\n        "
 
-#: redbot/cogs/mutes/mutes.py:680
+#: redbot/cogs/mutes/mutes.py:685
 msgid "Channel overwrites will be used for mutes instead."
 msgstr "Kanal overskriving vil bli brukt til muter i stedet."
 
-#: redbot/cogs/mutes/mutes.py:684 redbot/cogs/mutes/mutes.py:739
+#: redbot/cogs/mutes/mutes.py:689 redbot/cogs/mutes/mutes.py:744
 msgid "Mute role set to {role}"
 msgstr "Demp rolle satt til {role}"
 
-#: redbot/cogs/mutes/mutes.py:688 redbot/cogs/mutes/mutes.py:743
+#: redbot/cogs/mutes/mutes.py:693 redbot/cogs/mutes/mutes.py:748
 msgid "No notification channel has been setup, use {command_1} to be updated when there's an issue in automatic unmutes."
 msgstr "Ingen varselkanal har blitt konfigurert, bruk {command_1} for å bli oppdatert når det er et problem i automatiske dempinger."
 
-#: redbot/cogs/mutes/mutes.py:699
+#: redbot/cogs/mutes/mutes.py:704
 #, docstring
 msgid "Create a Muted role.\\n\\n        This will create a role and apply overwrites to all available channels\\n        to more easily setup muting a user.\\n\\n        If you already have a muted role created on the server use\\n        `[p]muteset role ROLE_NAME_HERE`\\n        "
 msgstr "Opprett en dempet rolle.\\n\\n        Dette vil opprette en rolle og bruke overskriver på alle tilgjengelige kanaler\\n        for enklere å installere dempet en bruker.\\n\\n        Hvis du allerede har en dempet rolle opprettet på server bruk\\n[p]muteset role ROLE_NAME_HERE`\\n        "
 
-#: redbot/cogs/mutes/mutes.py:710
+#: redbot/cogs/mutes/mutes.py:715
 msgid "There is already a mute role setup in this server. Please remove it with {command} before trying to create a new one."
-msgstr ""
+msgstr "Det er allerede et demp rolleoppsett i denne serveren. Fjern det med {command} før du prøver å lage et nytt."
 
-#: redbot/cogs/mutes/mutes.py:721 redbot/cogs/mutes/mutes.py:763
+#: redbot/cogs/mutes/mutes.py:726 redbot/cogs/mutes/mutes.py:768
 msgid "Mute role setup"
 msgstr "Demp rolleoppsett"
 
-#: redbot/cogs/mutes/mutes.py:726
+#: redbot/cogs/mutes/mutes.py:731
 msgid "I could not create a muted role in this server."
 msgstr "Jeg kunne ikke opprette en dempet rolle på denne serveren."
 
-#: redbot/cogs/mutes/mutes.py:733
+#: redbot/cogs/mutes/mutes.py:738
 msgid "I could not set overwrites for the following channels: {channels}"
 msgstr "Jeg kunne ikke sette overskriving for følgende kanaler: {channels}"
 
-#: redbot/cogs/mutes/mutes.py:771
+#: redbot/cogs/mutes/mutes.py:776
 #, docstring
 msgid "\\n        Set the default mute time for the mute command.\\n\\n        If no time interval is provided this will be cleared.\\n        "
 msgstr "\\n        Angi standard dempingstid for dempet kommando.\\n\\n        Hvis et tidsintervall er angitt vil denne fjernes.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:779
+#: redbot/cogs/mutes/mutes.py:784
 msgid "Default mute time removed."
 msgstr "Standard dempingstid fjernet."
 
-#: redbot/cogs/mutes/mutes.py:783
+#: redbot/cogs/mutes/mutes.py:788
 msgid "Please provide a valid time format."
 msgstr "Oppgi et gyldig tidsformat."
 
-#: redbot/cogs/mutes/mutes.py:786
+#: redbot/cogs/mutes/mutes.py:791
 msgid "Default mute time set to {time}."
 msgstr "Standard dempingstid satt til {time}."
 
-#: redbot/cogs/mutes/mutes.py:798
+#: redbot/cogs/mutes/mutes.py:803
 msgid "This server does not have a mute role setup.  You can setup a mute role with `{command_1}` or`{command_2}` if you just want a basic role created setup.\\n\\n"
 msgstr "Denne serveren har ikke et dempet rolleoppsett. Du kan sette opp en dempet rolle med `{command_1}` eller `{command_2}` hvis du bare ønsker en grunnleggende rolle opprettet oppsett.\\n\\n"
 
-#: redbot/cogs/mutes/mutes.py:814
+#: redbot/cogs/mutes/mutes.py:819
 msgid "Channel overwrites for muting users can get expensive on Discord's API as such we recommend that you have an admin setup a mute role instead. Channel overwrites will also not re-apply on guild join, so a user who has been muted may leave and re-join and no longer be muted. Role mutes do not have this issue.\\n\\nAre you sure you want to continue with channel overwrites? "
 msgstr "Kanaloverskriver for mutasjon av brukere kan få dyrt på Discord's API, da anbefaler vi at du i stedet har et admin oppsett en demp rolle. Kanal overskriver vil heller ikke bruke på ny på guild-medlemmet, så en bruker som har blitt dempet kan forlate og gjendelta og ikke lenger bli dempet. Rollen demping har ikke dette problemet.\\n\\nEr du sikker på at du vil fortsette med kanaloverskriving? "
 
-#: redbot/cogs/mutes/mutes.py:824
+#: redbot/cogs/mutes/mutes.py:829
 msgid "Reacting with ✅ will continue the mute with overwrites and stop this message from appearing again, Reacting with ❎ will end the mute attempt."
 msgstr "Kunst med ✅ Vil fortsette dempningen med overskriving og stopper denne meldingen fra å komme til med ❎ Vil avslutte forsøket."
 
-#: redbot/cogs/mutes/mutes.py:830
+#: redbot/cogs/mutes/mutes.py:835
 msgid "Saying `yes` will continue the mute with overwrites and stop this message from appearing again, saying `no` will end the mute attempt."
 msgstr "Kjører `ja` vil fortsette dempingen med overskriving og hindre denne meldingen fra å dukke opp igjen med \"nei\" vil avslutte det tøffe forsøket."
 
-#: redbot/cogs/mutes/mutes.py:854 redbot/cogs/mutes/mutes.py:1063
+#: redbot/cogs/mutes/mutes.py:859 redbot/cogs/mutes/mutes.py:1068
 msgid "OK then."
 msgstr "Ok da."
 
-#: redbot/cogs/mutes/mutes.py:868
+#: redbot/cogs/mutes/mutes.py:873
 #, docstring
 msgid "\\n        Displays active mutes on this server.\\n        "
 msgstr "\\n        Viser aktive muter på denne serveren.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:876
+#: redbot/cogs/mutes/mutes.py:881
 msgid "__Server Mutes__\\n"
 msgstr "__Server Demping__\\n"
 
-#: redbot/cogs/mutes/mutes.py:894
+#: redbot/cogs/mutes/mutes.py:899
 msgid "__Remaining__: {time_left}\\n"
 msgstr "__Remaining__: {time_left}\\n"
 
-#: redbot/cogs/mutes/mutes.py:901
+#: redbot/cogs/mutes/mutes.py:906
 msgid "__<#{channel_id}> Mutes__\\n"
 msgstr "__<#{channel_id}> Demping__\\n"
 
-#: redbot/cogs/mutes/mutes.py:919
+#: redbot/cogs/mutes/mutes.py:924
 msgid "__Remaining__: {time_left}\\n"
 msgstr "__Remaining__: {time_left}\\n"
 
-#: redbot/cogs/mutes/mutes.py:926
+#: redbot/cogs/mutes/mutes.py:931
 msgid "There are no mutes on this server right now."
 msgstr "Det er ingen muter på denne serveren akkurat nå."
 
-#: redbot/cogs/mutes/mutes.py:938
+#: redbot/cogs/mutes/mutes.py:943
 #, docstring
 msgid "Mute users.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[time_and_reason]` is the time to mute for and reason. Time is\\n        any valid time length such as `30 minutes` or `2 days`. If nothing\\n        is provided the mute will use the set default time or indefinite if not set.\\n\\n        Examples:\\n        `[p]mute @member1 @member2 spam 5 hours`\\n        `[p]mute @member1 3 days`\\n\\n        "
 msgstr "Demp brukere.\\n\\n        `<users...>` er en mellomromsseparert liste over brukernavn, ID'er eller meninger.\\n        `[time_and_reason]` er tiden for å dempe, av og grunn. Tid er\\n        enhver gyldig tidslengde som `30 minutter` eller `2 dager`. Hvis ingenting\\n        er angitt vil demp bruke angitt standardtid eller ubestemt hvis det ikke er satt.\\n\\n        Eksempler:\\n        `[p]mute @member1 @member2 spam 5 hours`\\n        `[p]mute @member1 3 days`\\n\\n        "
 
-#: redbot/cogs/mutes/mutes.py:953 redbot/cogs/mutes/mutes.py:1099
+#: redbot/cogs/mutes/mutes.py:958 redbot/cogs/mutes/mutes.py:1104
 #: redbot/cogs/mutes/voicemutes.py:89
 msgid "You cannot mute me."
 msgstr "Du kan ikke dempe meg."
 
-#: redbot/cogs/mutes/mutes.py:955 redbot/cogs/mutes/mutes.py:1101
+#: redbot/cogs/mutes/mutes.py:960 redbot/cogs/mutes/mutes.py:1106
 #: redbot/cogs/mutes/voicemutes.py:91
 msgid "You cannot mute yourself."
 msgstr "Du kan ikke dempe deg selv."
 
-#: redbot/cogs/mutes/mutes.py:966 redbot/cogs/mutes/mutes.py:971
-#: redbot/cogs/mutes/mutes.py:1109 redbot/cogs/mutes/mutes.py:1114
+#: redbot/cogs/mutes/mutes.py:971 redbot/cogs/mutes/mutes.py:976
+#: redbot/cogs/mutes/mutes.py:1114 redbot/cogs/mutes/mutes.py:1119
 #: redbot/cogs/mutes/voicemutes.py:109 redbot/cogs/mutes/voicemutes.py:116
 msgid " for {duration}"
 msgstr " for {duration}"
 
-#: redbot/cogs/mutes/mutes.py:1002
+#: redbot/cogs/mutes/mutes.py:1007
 msgid "{users} has been muted in this server{time}."
 msgstr "{users} er dempet i denne serveren{time}."
 
-#: redbot/cogs/mutes/mutes.py:1004
+#: redbot/cogs/mutes/mutes.py:1009
 msgid "{users} have been muted in this server{time}."
 msgstr "{users} er dempet i denne serveren{time}."
 
-#: redbot/cogs/mutes/mutes.py:1015
+#: redbot/cogs/mutes/mutes.py:1020
 msgid "{member} could not be unmuted for the following reasons:\\n"
 msgstr "{member} kunne ikke lukkes av følgende årsaker:\\n"
 
-#: redbot/cogs/mutes/mutes.py:1026
+#: redbot/cogs/mutes/mutes.py:1031
 msgid "- {reason} In the following channels: {channels}\\n"
 msgstr "- {reason} I følgende kanaler: {channels}\\n"
 
-#: redbot/cogs/mutes/mutes.py:1037
+#: redbot/cogs/mutes/mutes.py:1042
 msgid "Some users could not be properly muted. Would you like to see who, where, and why?"
 msgstr "Noen brukere kunne ikke bli ordentlig dempet. Vil du se hvorfor, hvor og hvorfor?"
 
-#: redbot/cogs/mutes/mutes.py:1085
+#: redbot/cogs/mutes/mutes.py:1090
 #, docstring
 msgid "Mute a user in the current text channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[time_and_reason]` is the time to mute for and reason. Time is\\n        any valid time length such as `30 minutes` or `2 days`. If nothing\\n        is provided the mute will use the set default time or indefinite if not set.\\n\\n        Examples:\\n        `[p]mutechannel @member1 @member2 spam 5 hours`\\n        `[p]mutechannel @member1 3 days`\\n        "
 msgstr "Demp en bruker i gjeldende tekstkanal.\\n\\n        `<users...>` er en mellomromsseparert liste over brukernavn, ID'er eller meninger.\\n        `[time_and_reason]` er tiden for å dempe, av og grunn. Tid er\\n        enhver gyldig tidslengde som `30 minutter` eller `2 dager`. Hvis ingenting\\n        er angitt vil demp bruke angitt standardtid eller ubestemt hvis det ikke er satt.\\n\\n        Eksempler:\\n        `[p]mutechannel @member1 @member2 spam 5 hours`\\n        `[p]mutechunnel @member1 3 days`\\n        "
 
-#: redbot/cogs/mutes/mutes.py:1147 redbot/cogs/mutes/voicemutes.py:152
+#: redbot/cogs/mutes/mutes.py:1152 redbot/cogs/mutes/voicemutes.py:152
 msgid "{users} has been muted in this channel{time}."
 msgstr "{users} har blitt dempet i denne kanalen{time}."
 
-#: redbot/cogs/mutes/mutes.py:1149 redbot/cogs/mutes/voicemutes.py:154
+#: redbot/cogs/mutes/mutes.py:1154 redbot/cogs/mutes/voicemutes.py:154
 msgid "{users} have been muted in this channel{time}."
 msgstr "{users} har blitt dempet i denne kanalen{time}."
 
-#: redbot/cogs/mutes/mutes.py:1154
+#: redbot/cogs/mutes/mutes.py:1159
 msgid "The following users could not be muted\\n"
 msgstr "Følgende brukere kunne ikke dempes\\n"
 
-#: redbot/cogs/mutes/mutes.py:1169
+#: redbot/cogs/mutes/mutes.py:1174
 #, docstring
 msgid "Unmute users.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[reason]` is the reason for the unmute.\\n        "
 msgstr "Udemp brukere.\\n\\n        `<users...>` er en mellomromsseparert liste over brukernavn, ID'er eller meninger.\\n        `[reason]` er årsaken til den fjernede dempingen.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:1177 redbot/cogs/mutes/mutes.py:1243
+#: redbot/cogs/mutes/mutes.py:1182 redbot/cogs/mutes/mutes.py:1248
 #: redbot/cogs/mutes/voicemutes.py:180
 msgid "You cannot unmute me."
 msgstr "Du kan ikke oppheve dempingen."
 
-#: redbot/cogs/mutes/mutes.py:1179 redbot/cogs/mutes/mutes.py:1245
+#: redbot/cogs/mutes/mutes.py:1184 redbot/cogs/mutes/mutes.py:1250
 #: redbot/cogs/mutes/voicemutes.py:182
 msgid "You cannot unmute yourself."
 msgstr "Du kan ikke udempe deg selv."
 
-#: redbot/cogs/mutes/mutes.py:1218
+#: redbot/cogs/mutes/mutes.py:1223
 msgid "{users} unmuted in this server."
 msgstr "{users} fjernet mutasjonen på serveren."
 
-#: redbot/cogs/mutes/mutes.py:1235
+#: redbot/cogs/mutes/mutes.py:1240
 #, docstring
 msgid "Unmute a user in this channel.\\n\\n        `<users...>` is a space separated list of usernames, ID's, or mentions.\\n        `[reason]` is the reason for the unmute.\\n        "
 msgstr "Slå på en bruker i denne kanalen.\\n\\n        `<users...>` er en mellomromsseparert liste over brukernavn, ID'er eller meninger.\\n        `[reason]` er årsaken til den fjernede dempingen.\\n        "
 
-#: redbot/cogs/mutes/mutes.py:1279 redbot/cogs/mutes/voicemutes.py:227
+#: redbot/cogs/mutes/mutes.py:1284 redbot/cogs/mutes/voicemutes.py:227
 msgid "{users} unmuted in this channel."
 msgstr "{users} av-dempet i denne kanalen."
 
-#: redbot/cogs/mutes/mutes.py:1284
+#: redbot/cogs/mutes/mutes.py:1289
 msgid "The following users could not be unmuted\\n"
 msgstr "Kan ikke fjerne følgende brukere\\n"
 
