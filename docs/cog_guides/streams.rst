@@ -191,7 +191,7 @@ streamset message mention
 
 .. code-block:: none
     
-    [p]streamset message mention [message]
+    [p]streamset message mention <message>
 
 **Description**
 
@@ -205,7 +205,7 @@ For example: ``[p]streamset message mention {mention}, {stream} is live!``
 
 **Arguments**
 
-* ``[message]``: Your alert message
+* ``<message>``: Your alert message
 
 .. _streams-command-streamset-message-nomention:
 
@@ -217,7 +217,7 @@ streamset message nomention
 
 .. code-block:: none
     
-    [p]streamset message nomention [message]
+    [p]streamset message nomention <message>
 
 **Description**
 
@@ -229,7 +229,7 @@ For example: ``[p]streamset message nomention {stream} is live!``
 
 **Arguments**
 
-* ``[message]``: Your alert message
+* ``<message>``: Your alert message
 
 .. _streams-command-streamset-message-clear:
 

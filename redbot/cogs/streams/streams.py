@@ -299,12 +299,9 @@ class Streams(commands.Cog):
         pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
-    async def _twitch(self, ctx: commands.Context, channel_name: str = None):
+    async def _twitch(self, ctx: commands.Context, channel_name: str):
         """Manage Twitch stream notifications."""
-        if channel_name is not None:
-            await ctx.invoke(self.twitch_alert_channel, channel_name)
-        else:
-            await ctx.send_help()
+        await ctx.invoke(self.twitch_alert_channel, channel_name)
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
@@ -528,7 +525,7 @@ class Streams(commands.Cog):
 
     @message.command(name="mention")
     @commands.guild_only()
-    async def with_mention(self, ctx: commands.Context, *, message: str = None):
+    async def with_mention(self, ctx: commands.Context, *, message: str):
         """Set stream alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
@@ -536,28 +533,22 @@ class Streams(commands.Cog):
 
         For example: `[p]streamset message mention {mention}, {stream} is live!`
         """
-        if message is not None:
-            guild = ctx.guild
-            await self.config.guild(guild).live_message_mention.set(message)
-            await ctx.send(_("Stream alert message set!"))
-        else:
-            await ctx.send_help()
+        guild = ctx.guild
+        await self.config.guild(guild).live_message_mention.set(message)
+        await ctx.send(_("Stream alert message set!"))
 
     @message.command(name="nomention")
     @commands.guild_only()
-    async def without_mention(self, ctx: commands.Context, *, message: str = None):
+    async def without_mention(self, ctx: commands.Context, *, message: str):
         """Set stream alert message when mentions are disabled.
 
         Use `{stream}` in the message to insert the channel or user name.
 
         For example: `[p]streamset message nomention {stream} is live!`
         """
-        if message is not None:
-            guild = ctx.guild
-            await self.config.guild(guild).live_message_nomention.set(message)
-            await ctx.send(_("Stream alert message set!"))
-        else:
-            await ctx.send_help()
+        guild = ctx.guild
+        await self.config.guild(guild).live_message_nomention.set(message)
+        await ctx.send(_("Stream alert message set!"))
 
     @message.command(name="clear")
     @commands.guild_only()

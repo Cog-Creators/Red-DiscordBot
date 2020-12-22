@@ -362,7 +362,7 @@ class KickBanMixin(MixinMeta):
 
         await ctx.send(message)
 
-    @commands.command(aliases=["hackban"])
+    @commands.command(aliases=["hackban"], usage="<user_ids...> [days] [reason]")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
