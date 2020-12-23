@@ -155,9 +155,7 @@ class RedLogRender(LogRender):
 
         if logger_name:
             logger_name_text = Text()
-            logger_name_text.append("[", style="bright_cyan")
-            logger_name_text.append(logger_name)
-            logger_name_text.append("]", style="bright_cyan")
+            logger_name_text.append(f"[{logger_name}]")
             row.append(logger_name_text)
 
         output.add_row(*row)
