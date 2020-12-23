@@ -59,6 +59,8 @@
   - .github/*
   - .github/ISSUE_TEMPLATE/*
   - .github/PULL_REQUEST_TEMPLATE/*
+  - schema/*
+  - tools/*
 "Category: Mod Cog":
   - redbot/cogs/mod/*
 "Category: Modlog API":
