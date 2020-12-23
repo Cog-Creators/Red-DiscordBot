@@ -2,12 +2,9 @@
   - redbot/cogs/admin/*
 "Category: Alias":
   - redbot/cogs/alias/*
-"Category: Audio API":
-  - redbot/cogs/audio/apis/*
-  - redbot/cogs/audio/data/*
 "Category: Audio Cog":
-  - redbot/cogs/audio/*
-  - redbot/cogs/audio/core/*
+  - redbot/cogs/audio/**/*
+  - !redbot/cogs/audio/**/locales/*
 "Category: Bank API":
   - redbot/core/bank.py
 "Category: Bank Cog":
@@ -86,4 +83,3 @@
   - redbot/core/utils/*
 "Category: Warnings":
   - redbot/cogs/warnings/*
-
