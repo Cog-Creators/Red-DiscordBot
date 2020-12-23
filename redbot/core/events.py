@@ -292,6 +292,11 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
+            if bot._bypass_cooldowns and ctx.author.id in bot.owner_ids:
+                ctx.command.reset_cooldown(ctx)
+                new_ctx = await bot.get_context(ctx.message)
+                await bot.invoke(new_ctx)
+                return
             if delay := humanize_timedelta(seconds=error.retry_after):
                 msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
             else:
