@@ -297,7 +297,7 @@ def init_events(bot, cli_flags):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
             if bot._bypass_cooldowns and ctx.author.id in bot.owner_ids:
-                await ctx.command.reset_cooldown(ctx)
+                ctx.command.reset_cooldown(ctx)
                 new_ctx = await bot.get_context(ctx.message)
                 await bot.invoke(new_ctx)
                 return
