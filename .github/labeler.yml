@@ -36,7 +36,6 @@
 "Category: Dev Cog":
   - redbot/core/dev_commands.py
 "Category: Docs":
-  - docs/*
   - docs/**/*
 "Category: Downloader":
   - redbot/cogs/downloader/*
