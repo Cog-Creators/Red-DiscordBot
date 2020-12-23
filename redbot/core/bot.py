@@ -29,6 +29,7 @@ from typing import (
     overload,
 )
 from types import MappingProxyType
+from rich.console import Console
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -220,6 +221,9 @@ class RedBase(
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
+
+        # Although I see the use of keeping this public, lets rather make it private.
+        self._rich_console = Console()
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
@@ -878,7 +882,7 @@ class RedBase(
                 packages.insert(0, "permissions")
 
             to_remove = []
-            print("Loading packages...")
+            log.info("Loading packages...")
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
@@ -901,7 +905,7 @@ class RedBase(
             for package in to_remove:
                 packages.remove(package)
             if packages:
-                print("Loaded packages: " + ", ".join(packages))
+                log.info("Loaded packages: " + ", ".join(packages))
 
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
