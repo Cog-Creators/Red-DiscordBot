@@ -15,7 +15,7 @@ Read before updating
 
 2. Ubuntu 16.04 is no longer supported as it will soon reach its end of life and it is no longer viable for us to maintain support for it.
 
-    While you might still be able to run Red on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to latest LTS version of Ubuntu.
+    While you might still be able to run Red on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to the latest LTS version of Ubuntu.
 
 
 End-user changelog
@@ -26,8 +26,8 @@ Core Bot
 
 - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
 - Improved consistency of command usage in the help messages within all commands in Core Red (:issue:`4589`)
-- Added friendly error when the duration provided to the command is out of maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
-- Fixed an error when removing path from other operating system with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
+- Added a friendly error when the duration provided to commands that use the ``commands.TimedeltaConverter`` converter is out of the maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
+- Fixed an error when removing path from a different operating system than the bot is currently running on with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
 
 Audio
 *****
@@ -35,7 +35,7 @@ Audio
 - Fixed ``[p]llset java`` failing to set the Java executable path (:issue:`4621`, :issue:`4624`)
 - Fixed Soundcloud playback (:issue:`4683`)
 - Fixed YouTube age-restricted track playback (:issue:`4683`)
-- Added more friendly message for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
+- Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
 - Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
 
 Cleanup
@@ -76,14 +76,14 @@ Streams
 Trivia Lists
 ************
 
-- Added ``whosthatpokemon5`` trivia containing Pokémons from 5th generation (:issue:`4646`)
+- Added ``whosthatpokemon5`` trivia list containing Pokémon from the 5th generation (:issue:`4646`)
 - Added ``geography`` trivia list (:issue:`4618`)
 
 
 Developer changelog
 -------------------
 
-- `get_audit_reason()` can now be passed ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
+- `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 - ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
 
 
