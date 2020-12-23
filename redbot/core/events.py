@@ -103,6 +103,7 @@ def init_events(bot, cli_flags):
             table_counts.add_row("Unique Users", str(users))
 
         outdated_red_message = ""
+        rich_outdated_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
@@ -111,6 +112,11 @@ def init_events(bot, cli_flags):
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(pypi_version, red_version)
+                rich_outdated_message = (
+                    f"[red]Outdated version![/red]\n"
+                    f"[red]!!![/red]Version {pypi_version} is available, "
+                    f"but you're using {red_version}[red]!!![/red]"
+                )
                 current_python = platform.python_version()
                 extra_update = _(
                     "\n\nWhile the following command should work in most scenarios as it is "
@@ -186,6 +192,8 @@ def init_events(bot, cli_flags):
             bot._rich_console.print(
                 f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
+        if rich_outdated_message:
+            bot._rich_console.print(rich_outdated_message)
 
         if not bot.owner_ids:
             # we could possibly exit here in future
