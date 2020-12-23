@@ -377,7 +377,6 @@ class General(commands.Cog):
                 "COMMERCE": _("Commerce"),
                 "COMMUNITY": _("Community"),
                 "DISCOVERABLE": _("Server Discovery"),
-                "ENABLED_DISCOVERABLE_BEFORE": _("Previously Discoverable"),
                 "FEATURABLE": _("Featurable"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
