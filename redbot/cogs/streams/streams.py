@@ -746,7 +746,8 @@ class Streams(commands.Cog):
                             continue
                         autodelete = await self.config.guild(message.guild).autodelete()
                         if autodelete:
-                            await message.delete()
+                            with contextlib.suppress(discord.NotFound):
+                                await message.delete()
                     stream._messages_cache.clear()
                     await self.save_streams()
                 else:
