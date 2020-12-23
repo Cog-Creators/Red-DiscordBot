@@ -725,13 +725,15 @@ class Streams(commands.Cog):
 
     async def check_streams(self):
         for stream in self.streams:
-            with contextlib.suppress(Exception):
+            try:
                 try:
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
+
                     elif stream.__class__.__name__ == "YoutubeStream":
                         embed, is_schedule = await stream.is_online()
+
                     else:
                         embed = await stream.is_online()
                         is_rerun = False
@@ -740,11 +742,11 @@ class Streams(commands.Cog):
                     if not stream._messages_cache:
                         continue
                     for message in stream._messages_cache:
-                        with contextlib.suppress(Exception):
-                            if await self.bot.cog_disabled_in_guild(self, message.guild):
-                                continue
-                            autodelete = await self.config.guild(message.guild).autodelete()
-                            if autodelete:
+                        if await self.bot.cog_disabled_in_guild(self, message.guild):
+                            continue
+                        autodelete = await self.config.guild(message.guild).autodelete()
+                        if autodelete:
+                            with contextlib.suppress(discord.NotFound):
                                 await message.delete()
                     stream._messages_cache.clear()
                     await self.save_streams()
@@ -813,6 +815,8 @@ class Streams(commands.Cog):
                             for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
+            except Exception as e:
+                log.error("An error has occured with Streams. Please report it.", exc_info=e)
 
     async def _get_mention_str(
         self, guild: discord.Guild, channel: discord.TextChannel
