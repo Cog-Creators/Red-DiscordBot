@@ -26,7 +26,7 @@ Core Bot
 
 - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
 - Improved consistency of command usage in the help messages within all commands in Core Red (:issue:`4589`)
-- Added friendly error when the duration provided to the command is out of maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`,:issue:`4630`)
+- Added friendly error when the duration provided to the command is out of maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
 - Fixed an error when removing path from other operating system with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
 
 Audio
@@ -84,7 +84,7 @@ Developer changelog
 -------------------
 
 - `get_audit_reason()` can now be passed ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
-- ``bot.remove_command()`` now returns the command object of the removed command as does `discord.ext.commands.Bot.remove_command()` method (:issue:`4636`)
+- ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
 
 
 Documentation changes
