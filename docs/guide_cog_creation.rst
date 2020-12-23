@@ -160,7 +160,7 @@ Go to :doc:`/guide_publish_cogs`
 Becoming an Approved Cog Creator
 --------------------------------
 
-Go to :doc:`/guide_cog_creators`
+:doc:`/guide_cog_creators` explains the Cog Creator Application process and lists requirements and good practices for Cog Creators.  This information is worth following for anyone creating cogs for Red, regardless of if you plan to publish your cogs or not.
 
 --------------------
 Additional resources
