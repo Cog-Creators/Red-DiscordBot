@@ -33,19 +33,19 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 
 - Readme that contains
 
-  - Repository Name
-  - Installation Instructions
-  - Setup Instructions (if applicable)
+  - Repository name
+  - Installation instructions
+  - Extra setup instructions (if applicable)
   - Credits (if applicable)
 
-- Repo-wide info.json with the keys
+- Repo-wide ``info.json`` file with the keys
 
   - ``author``
   - ``name``
   - ``short``
   - ``description``
 
-- Cog info.jsons with the keys
+- Cog ``info.json`` files with the keys
 
   - ``author``
   - ``name``
@@ -53,12 +53,12 @@ Any Cog Creator that does not follow these requirements will have their repo rem
   - ``requirements`` (if applicable)
   - ``description``
 
-  See `info-json-format` for more information on how to set up info.json files.
+  See `info-json-format` for more information on how to set up ``info.json`` files.
 
 - No cog contains malicious code.
 - No cog contains code that could impact the stability of the bot, such as blocking the event loop for an extended period of time, unreasonably high IO usage, etc.
 - No cog contains copied code that does not respect the license of the source.
-- Disclose in the install_msg info.json key of each cog that contains any of the following:
+- Disclose in the ``install_msg`` key of the ``info.json`` file of each cog that contains any of the following:
 
   - Heavy memory or I/O usage.
   - Any NSFW material.
@@ -68,10 +68,10 @@ Any Cog Creator that does not follow these requirements will have their repo rem
   - Any extra setup instructions required.
 
 - No cog breaks the Discord TOS.
-- No cog conflicts with any core cogs (E.G., causing a core cog to fail to load) unless it is intended to replace that cog.
-- Your repo shows an understanding of a range of common cog practices. This requirement is to ensure QA can trust the safety and functionality of any future code you will create. This is handled on a case-by-case basis, however the following points should outline what we are looking to see:
+- No cog conflicts with any core cogs (e.g., causing a core cog to fail to load) unless it is intended to replace that cog.
+- Your repo shows an understanding of a range of common cog practices. This requirement exists to ensure QA can trust the safety and functionality of any future code you will create. This is handled on a case-by-case basis, however the following points should outline what we are looking to see:
 
-  - Cogs that are more than what is able to be run in an eval.
+  - Cogs that are more than what is able to be run in a simple eval.
   - Cogs that are more than just a simple API access request.
   - Cogs that properly use Red utilities, including Config, checks, and any other utility functions.
   - Cogs that use event listeners (bot.wait_for or cog-wide listeners) or custom tasks that are efficient and handle exceptions appropriately.
@@ -83,7 +83,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 - Any unusable or broken commands or cogs are hidden.
 - The default locale must be English.
 - The main cog class and every command must have a doc-string.
-- No cog allows for escalation of permissions. (E.G., a sending a mass ping through the bot without having permission to do so)
+- No cog allows for escalation of permissions. (e.g., sending a mass ping through the bot without having permission to do so)
 - Respect the role hierarchy. Don’t let a lower role have a way to grant a higher role.
 - If your cog install comes with any pre-packaged data, use `bundled_data_path()` to access it.
 - If your cog install creates any non-config data, use `cog_data_path()` to store it.
@@ -92,7 +92,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 - Use the proper method if one exists. (and ask for one if it doesn't exist)
 
   - If that's not possible, don't break anything in core or any other cog with your code.
-  - If you have to use private methods, lock the cog to specific Red versions you can guarantee it works on without breaking anything using the ``min_bot_version`` and ``max_bot_version`` info.json keys.
+  - If you have to use private methods, lock the cog to specific Red versions you can guarantee it works on without breaking anything using the ``min_bot_version`` and ``max_bot_version`` keys in that cog's ``info.json`` file.
 
 - Cog Creators must keep their cogs up-to-date with core Red or be delisted until cogs meet Red API changes. Repositories must be kept up to date with the latest version of Red within 3 months of its release.
 
@@ -181,8 +181,8 @@ Perks of being a Cog Creator
 
 - Added to a growing, curated list of approved repositories hosted on the `Red Index <https://index.discord.red/>`__.
 - The Cog Creator role on the main Red Server and the Cog Support Server.
-- Access to an additional testing channel and the Advanced Coding channel on the main Red Server.
-- Write permission in the V3-Burndown channel on the main Red Server.
+- Access to an additional testing channel and the #advanced-coding channel on the main Red Server.
+- Write permission in the #v3-burndown channel on the main Red Server.
 - Access to an additional testing channel and the Cog Creators channel on the Support Server.
 - Alerted about breaking changes in Red before anyone else.
 - Ability to request a channel in the Cog Support Server if you feel like the traffic/question volume for your cogs warrants it.
