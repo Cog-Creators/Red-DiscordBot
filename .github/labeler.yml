@@ -10,6 +10,7 @@
 "Category: Bank Cog":
   - redbot/cogs/bank/*
 "Category: Bot Core":
+  - redbot/*
   - redbot/core/__init__.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/bot.py
@@ -17,6 +18,7 @@
   - redbot/core/cli.py
   - redbot/core/cog_manager.py
   - redbot/core/core_commands.py
+  - redbot/core/data_manager.py
   - redbot/core/errors.py
   - redbot/core/events.py
   - redbot/core/global_checks.py
