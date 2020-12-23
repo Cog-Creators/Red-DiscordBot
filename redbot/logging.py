@@ -123,11 +123,7 @@ class RedRichHandler(RichHandler):
         level.append(record.levelname, log_style)
 
         traceback = None
-        if (
-            self.rich_tracebacks
-            and record.exc_info
-            and record.exc_info != (None, None, None)
-        ):
+        if self.rich_tracebacks and record.exc_info and record.exc_info != (None, None, None):
             exc_type, exc_value, exc_traceback = record.exc_info
             assert exc_type is not None
             assert exc_value is not None
@@ -142,9 +138,7 @@ class RedRichHandler(RichHandler):
             )
             message = record.getMessage()
 
-        use_markup = (
-            getattr(record, "markup") if hasattr(record, "markup") else self.markup
-        )
+        use_markup = getattr(record, "markup") if hasattr(record, "markup") else self.markup
         if use_markup:
             message_text = Text.from_markup(message)
         else:
@@ -189,9 +183,7 @@ def init_logging(
         enable_rich_logging = True
 
     if enable_rich_logging is True:
-        rich_formatter = logging.Formatter(
-            datefmt="[%H:%M:%S]", style="{"
-        )
+        rich_formatter = logging.Formatter(datefmt="[%H:%M:%S]", style="{")
 
         stdout_handler = RedRichHandler(
             enable_link_path=False,

@@ -35,9 +35,8 @@ from .utils.chat_formatting import inline, bordered, format_perms_list, humanize
 
 from rich.table import Table
 from rich.columns import Columns
-from rich.console import Console
 from rich.panel import Panel
-from rich.rule import Rule
+from rich.text import Text
 
 log = logging.getLogger("red")
 init()
@@ -179,11 +178,13 @@ def init_events(bot, cli_flags):
         )
 
         if invite_url:
-            bot._rich_console.print("\nInvite URL: [blue underline]{}".format(invite_url))
+            bot._rich_console.print(
+                f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}"
+            )
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
             bot._rich_console.print(
-                "Looking for a quick guide on setting up Red? Checkout [blue underline]https://start.discord.red"
+                f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
 
         if not bot.owner_ids:
