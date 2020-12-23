@@ -29,7 +29,7 @@ Requirements for Cog Creators
 The following is a list of the requirements for approved Cog Creators.
 QA uses this list to request changes for Cog Creator Applications.
 Handling these requirements before submitting your application can streamline the review process.
-Any Cog Creator that does not follow these requirements will have their repo removed from approved listings any may have their Cog Creator status revoked.
+Any Cog Creator that does not follow these requirements will have their repo removed from approved listings and may have their Cog Creator status revoked.
 
 - Readme that contains
 
