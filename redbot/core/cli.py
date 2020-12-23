@@ -261,7 +261,7 @@ def parse_cli_flags(args):
         action="store_false",
         dest="rich_logging",
         default=None,
-        help="Forcefully disables the Rich logging handlers."
+        help="Forcefully disables the Rich logging handlers.",
     )
 
     args = parser.parse_args(args)

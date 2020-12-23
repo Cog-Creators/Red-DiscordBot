@@ -140,7 +140,7 @@ class RedRichHandler(RichHandler):
                     log_time=log_time,
                     time_format=time_format,
                     level=level,
-                    path=log_name.capitalize()
+                    path=log_name.capitalize(),
                 )
             )
         else:
@@ -151,12 +151,14 @@ class RedRichHandler(RichHandler):
                     log_time=log_time,
                     time_format=time_format,
                     level=level,
-                    path=log_name.capitalize()
+                    path=log_name.capitalize(),
                 )
             )
 
 
-def init_logging(level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]) -> None:
+def init_logging(
+    level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]
+) -> None:
     root_logger = logging.getLogger()
 
     base_logger = logging.getLogger("red")
@@ -175,9 +177,7 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: Union[b
         enable_rich_logging = True
 
     if enable_rich_logging is True:
-        formatter = logging.Formatter(
-            "{message}", style="{"
-        )
+        formatter = logging.Formatter("{message}", style="{")
 
         stdout_handler = RedRichHandler()
         stdout_handler.setFormatter(formatter)
