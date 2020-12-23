@@ -107,53 +107,65 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
 
 
 class RedRichHandler(RichHandler):
-    """Adaptation of rich's RichHandler to work with Red's stdout and file log.
-
-    This allows for the traceback to be printed to console nicely, while also
-    allowing for it to still be printed to the File log."""
+    """Adaptation of Rich's RichHandler to manually adjust the path to a logger name"""
 
     def emit(self, record: LogRecord) -> None:
         """Invoked by logging."""
-        if record.exc_info:
-            premessage = record.getMessage()
-            message_text = Traceback.from_exception(*record.exc_info, theme="vim")
-        else:
-            message = self.format(record)
-            message_text = Text(message)
-            message_text.highlight_words(self.KEYWORDS, "logging.keyword")
-            message_text = self.highlighter(message_text)
-
         path = pathlib.Path(record.pathname).name
         log_style = f"logging.level.{record.levelname.lower()}"
+        message = self.format(record)
         time_format = None if self.formatter is None else self.formatter.datefmt
         log_time = datetime.fromtimestamp(record.created)
+
         log_name = record.name
 
         level = Text()
         level.append(record.levelname, log_style)
 
-        if record.exc_info:
-            self.console.print(
-                self._log_render(
-                    self.console,
-                    [premessage, message_text],
-                    log_time=log_time,
-                    time_format=time_format,
-                    level=level,
-                    path=log_name.capitalize(),
-                )
+        traceback = None
+        if (
+            self.rich_tracebacks
+            and record.exc_info
+            and record.exc_info != (None, None, None)
+        ):
+            exc_type, exc_value, exc_traceback = record.exc_info
+            assert exc_type is not None
+            assert exc_value is not None
+            traceback = Traceback.from_exception(
+                exc_type,
+                exc_value,
+                exc_traceback,
+                width=self.tracebacks_width,
+                extra_lines=self.tracebacks_extra_lines,
+                theme=self.tracebacks_theme,
+                word_wrap=self.tracebacks_word_wrap,
             )
+            message = record.getMessage()
+
+        use_markup = (
+            getattr(record, "markup") if hasattr(record, "markup") else self.markup
+        )
+        if use_markup:
+            message_text = Text.from_markup(message)
         else:
-            self.console.print(
-                self._log_render(
-                    self.console,
-                    [message_text],
-                    log_time=log_time,
-                    time_format=time_format,
-                    level=level,
-                    path=log_name.capitalize(),
-                )
+            message_text = Text(message)
+
+        if self.highlighter:
+            message_text = self.highlighter(message_text)
+        if self.KEYWORDS:
+            message_text.highlight_words(self.KEYWORDS, "logging.keyword")
+
+        self.console.print(
+            self._log_render(
+                self.console,
+                [message_text] if not traceback else [message_text, traceback],
+                log_time=log_time,
+                time_format=time_format,
+                level=level,
+                path=log_name,
+                link_path=record.pathname if self.enable_link_path else None,
             )
+        )
 
 
 def init_logging(
@@ -177,17 +189,22 @@ def init_logging(
         enable_rich_logging = True
 
     if enable_rich_logging is True:
-        formatter = logging.Formatter("{message}", style="{")
+        rich_formatter = logging.Formatter(
+            datefmt="[%H:%M:%S]", style="{"
+        )
 
-        stdout_handler = RedRichHandler()
-        stdout_handler.setFormatter(formatter)
+        stdout_handler = RedRichHandler(
+            enable_link_path=False,
+            rich_tracebacks=True,
+        )
+        stdout_handler.setFormatter(rich_formatter)
     else:
-        formatter = logging.Formatter(
+        terminal_formatter = logging.Formatter(
             "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
         )
 
         stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setFormatter(formatter)
+        stdout_handler.setFormatter(terminal_formatter)
 
     root_logger.addHandler(stdout_handler)
     logging.captureWarnings(True)
@@ -226,6 +243,11 @@ def init_logging(
         backupCount=MAX_OLD_LOGS,
         encoding="utf-8",
     )
+
+    file_formatter = logging.Formatter(
+        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+    )
+
     for fhandler in (latest_fhandler, all_fhandler):
-        fhandler.setFormatter(formatter)
+        fhandler.setFormatter(file_formatter)
         root_logger.addHandler(fhandler)
