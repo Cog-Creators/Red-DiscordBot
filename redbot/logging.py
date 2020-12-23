@@ -3,7 +3,7 @@ import pathlib
 import re
 import sys
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
@@ -156,7 +156,7 @@ class RedRichHandler(RichHandler):
             )
 
 
-def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -> None:
+def init_logging(level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]) -> None:
     root_logger = logging.getLogger()
 
     base_logger = logging.getLogger("red")
@@ -166,9 +166,15 @@ def init_logging(level: int, location: pathlib.Path, force_rich_logging: bool) -
     warnings_logger = logging.getLogger("py.warnings")
     warnings_logger.setLevel(logging.WARNING)
 
-    if (
-        isatty(0) or force_rich_logging
-    ):  # Check if the bot thinks it has a active terminal. Or forcefully enable it
+    enable_rich_logging = False
+
+    if isatty(0) and force_rich_logging is None:
+        # Check if the bot thinks it has a active terminal.
+        enable_rich_logging = True
+    elif force_rich_logging is True:
+        enable_rich_logging = True
+
+    if enable_rich_logging is True:
         formatter = logging.Formatter(
             "{message}", style="{"
         )
