@@ -173,9 +173,8 @@ class KickBanMixin(MixinMeta):
 
             ban_type = "hackban"
 
-        audit_reason = get_audit_reason(author, reason)
+        audit_reason = get_audit_reason(author, reason, shorten=True)
 
-        queue_entry = (guild.id, user.id)
         if removed_temp:
             log.info(
                 "{}({}) upgraded the tempban for {} to a permaban.".format(
@@ -199,7 +198,7 @@ class KickBanMixin(MixinMeta):
                 return False, _("I'm not allowed to do that.")
             except discord.NotFound:
                 return False, _("User with ID {user_id} not found").format(user_id=user.id)
-            except Exception as e:
+            except Exception:
                 log.exception(
                     "{}({}) attempted to {} {}({}), but an error occurred.".format(
                         author.name, author.id, ban_type, username, user.id
@@ -238,7 +237,6 @@ class KickBanMixin(MixinMeta):
                             timezone.utc,
                         )
                         if datetime.now(timezone.utc) > unban_time:  # Time to unban the user
-                            queue_entry = (guild.id, uid)
                             try:
                                 await guild.unban(
                                     discord.Object(id=uid), reason=_("Tempban finished")
@@ -292,7 +290,7 @@ class KickBanMixin(MixinMeta):
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
-        audit_reason = get_audit_reason(author, reason)
+        audit_reason = get_audit_reason(author, reason, shorten=True)
         toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
             with contextlib.suppress(discord.HTTPException):
@@ -310,7 +308,7 @@ class KickBanMixin(MixinMeta):
             log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
-        except Exception as e:
+        except Exception:
             log.exception(
                 "{}({}) attempted to kick {}({}), but an error occurred.".format(
                     author.name, author.id, user.name, user.id
@@ -349,7 +347,6 @@ class KickBanMixin(MixinMeta):
         If days is not a number, it's treated as the first word of the reason.
 
         Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
-        author = ctx.author
         guild = ctx.guild
         if days is None:
             days = await self.config.guild(guild).default_days()
@@ -485,8 +482,7 @@ class KickBanMixin(MixinMeta):
 
         for user_id in user_ids:
             user = discord.Object(id=user_id)
-            audit_reason = get_audit_reason(author, reason)
-            queue_entry = (guild.id, user_id)
+            audit_reason = get_audit_reason(author, reason, shorten=True)
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
@@ -576,7 +572,6 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        queue_entry = (guild.id, user.id)
         await self.config.member(user).banned_until.set(unban_time.timestamp())
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
             current_tempbans.append(user.id)
@@ -591,8 +586,11 @@ class KickBanMixin(MixinMeta):
                     invite_link=invite
                 )
             await user.send(msg)
+
+        audit_reason = get_audit_reason(author, reason, shorten=True)
+
         try:
-            await guild.ban(user, reason=reason, delete_message_days=days)
+            await guild.ban(user, reason=audit_reason, delete_message_days=days)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
@@ -636,13 +634,12 @@ class KickBanMixin(MixinMeta):
             )
             return
 
-        audit_reason = get_audit_reason(author, reason)
+        audit_reason = get_audit_reason(author, reason, shorten=True)
 
         invite = await self.get_invite_for_reinvite(ctx)
         if invite is None:
             invite = ""
 
-        queue_entry = (guild.id, user.id)
         try:  # We don't want blocked DMs preventing us from banning
             msg = await user.send(
                 _(
@@ -660,7 +657,7 @@ class KickBanMixin(MixinMeta):
             if msg is not None:
                 await msg.delete()
             return
-        except discord.HTTPException as e:
+        except discord.HTTPException:
             log.exception(
                 "{}({}) attempted to softban {}({}), but an error occurred trying to ban them.".format(
                     author.name, author.id, user.name, user.id
@@ -669,7 +666,7 @@ class KickBanMixin(MixinMeta):
             return
         try:
             await guild.unban(user)
-        except discord.HTTPException as e:
+        except discord.HTTPException:
             log.exception(
                 "{}({}) attempted to softban {}({}), but an error occurred trying to unban them.".format(
                     author.name, author.id, user.name, user.id
@@ -755,7 +752,7 @@ class KickBanMixin(MixinMeta):
             return
         needs_unmute = True if user_voice_state.mute else False
         needs_undeafen = True if user_voice_state.deaf else False
-        audit_reason = get_audit_reason(ctx.author, reason)
+        audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
         if needs_unmute and needs_undeafen:
             await user.edit(mute=False, deafen=False, reason=audit_reason)
         elif needs_unmute:
@@ -796,7 +793,7 @@ class KickBanMixin(MixinMeta):
             return
         needs_mute = True if user_voice_state.mute is False else False
         needs_deafen = True if user_voice_state.deaf is False else False
-        audit_reason = get_audit_reason(ctx.author, reason)
+        audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
         author = ctx.author
         guild = ctx.guild
         if needs_mute and needs_deafen:
@@ -835,14 +832,13 @@ class KickBanMixin(MixinMeta):
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        audit_reason = get_audit_reason(ctx.author, reason)
+        audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
         bans = await guild.bans()
         bans = [be.user for be in bans]
         user = discord.utils.get(bans, id=user_id)
         if not user:
             await ctx.send(_("It seems that user isn't banned!"))
             return
-        queue_entry = (guild.id, user_id)
         try:
             await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:

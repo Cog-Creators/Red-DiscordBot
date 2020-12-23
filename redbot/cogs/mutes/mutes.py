@@ -978,7 +978,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
             author = ctx.message.author
             guild = ctx.guild
-            audit_reason = get_audit_reason(author, reason)
+            audit_reason = get_audit_reason(author, reason, shorten=True)
             success_list = []
             issue_list = []
             for user in users:
@@ -1122,7 +1122,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             author = ctx.message.author
             channel = ctx.message.channel
             guild = ctx.guild
-            audit_reason = get_audit_reason(author, reason)
+            audit_reason = get_audit_reason(author, reason, shorten=True)
             issue_list = []
             success_list = []
             for user in users:
@@ -1187,7 +1187,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         async with ctx.typing():
             guild = ctx.guild
             author = ctx.author
-            audit_reason = get_audit_reason(author, reason)
+            audit_reason = get_audit_reason(author, reason, shorten=True)
             issue_list = []
             success_list = []
             if guild.id in self._channel_mute_events:
@@ -1252,7 +1252,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             channel = ctx.channel
             author = ctx.author
             guild = ctx.guild
-            audit_reason = get_audit_reason(author, reason)
+            audit_reason = get_audit_reason(author, reason, shorten=True)
             success_list = []
             issue_list = []
             for user in users:
