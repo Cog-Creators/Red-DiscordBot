@@ -74,7 +74,8 @@
 "Category: Streams":
   - redbot/cogs/streams/*
 "Category: Tests":
-  - redbot/tests/*
+  - redbot/pytest/*
+  - tests/**/*
 "Category: Trivia Cog":
   - redbot/cogs/trivia/*
 "Category: Trivia Lists":
