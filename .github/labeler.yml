@@ -61,6 +61,8 @@
 "Category: Mod Cog":
   - redbot/cogs/mod/*
 "Category: Modlog API":
+  - redbot/core/generic_casetypes.py
+  - redbot/core/modlog.py
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
