@@ -93,7 +93,7 @@ Documentation changes
 - Added `cog guide for Downloader cog <streams>` (:issue:`4511`)
 - Added `cog guide for Economy cog <streams>` (:issue:`4519`)
 - Added `cog guide for Streams cog <streams>` (:issue:`4521`)
-- Added `guide_cog_creators` (:issue:`4637`)
+- Added `guide_cog_creators` document (:issue:`4637`)
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
 
