@@ -191,7 +191,7 @@ def _update_event_loop_policy():
             _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
-__version__ = "3.4.5.dev1"
+__version__ = "3.4.5"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
