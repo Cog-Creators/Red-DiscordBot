@@ -1,9 +1,12 @@
 .. 3.4.x Changelogs
 
-Redbit 3.4.5 (2020-12-24)
+Redbot 3.4.5 (2020-12-24)
 =========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+
+End-user changelog
+------------------
 
 Streams
 *******
