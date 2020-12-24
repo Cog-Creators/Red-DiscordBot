@@ -1,5 +1,18 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.5 (2020-12-24)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+
+End-user changelog
+------------------
+
+Streams
+*******
+
+- Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
+
 Redbot 3.4.4 (2020-12-24)
 =========================
 
