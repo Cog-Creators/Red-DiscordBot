@@ -1,5 +1,15 @@
 .. 3.4.x Changelogs
 
+Redbit 3.4.5 (2020-12-24)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+
+Streams
+*******
+
+- Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
+
 Redbot 3.4.4 (2020-12-24)
 =========================
 
@@ -38,7 +48,7 @@ Audio
 - Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
 - Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
 
-Cleanup
+Cleanup12-24
 *******
 
 - ``[p]cleanup self`` will now delete the command message when the bot has permissions to do so (:issue:`4640`)
