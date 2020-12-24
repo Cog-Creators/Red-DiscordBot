@@ -17,75 +17,75 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "Опитах да направя нещо, за което Discord ми забрани права. Команда не успя да завърши успешно."
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да премахна {role.name} на {member.display_name}, защото ролята е по-голяма или равна на моята най-висока роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да махна {role.name} на {member.display_name}, защото ролята е по-голяма или равна на моята най-висока роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да редактирам {role.name}, защото ролята е по-голяма или равна на моята най-висока роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да ти позволя да дадеш {role.name} на {member.display_name}, защото ролята е по-голяма или равна на най-високата ти роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да ти позволя да махнеш {role.name} на {member.display_name}, защото ролята е по-голяма или равна на най-високата ти роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Не мога да ти позволя да редактираш {role.name}, защото ролята е по-голяма или равна на най-високата ти роля в йерархията на Discord."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "Трябва ми разрешение да управлявам ролите за да направя това."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "Вече обявявам нещо. Ако искаш да направиш различно съобщение, моля използвай `{prefix}announce cancel` първо."
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr ""
+msgstr "Колекция от помощни програми за администриране на сървъри."
 
 #: redbot/cogs/admin/admin.py:162
 msgid "{member.display_name} already has the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} вече има ролята {role.name}."
 
 #: redbot/cogs/admin/admin.py:182
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "Успешно добавих {role.name} на {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:192
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} няма ролята {role.name}."
 
 #: redbot/cogs/admin/admin.py:212
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "Успешно махнах {role.name} от {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
 msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        Добави роля на потребител.\\n\\n        Използвай двойни кавички, ако ролята съдържа място.\\n        Ако потребител е празно, то по подразбиране е автора на командата.\\n        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
 msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        Махни роля на потребител.\\n\\n        Използвай двойни кавички, ако ролята съдържа място.\\n        Ако потребител е празно, то по подразбиране е автора на командата.\\n        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "Редактирай настройките на ролята."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
@@ -182,11 +182,11 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:459
 msgid "Added."
-msgstr ""
+msgstr "Добавено."
 
 #: redbot/cogs/admin/admin.py:462
 msgid "That role is already a selfrole."
-msgstr ""
+msgstr "Тази роля вече е самостоятелна роля."
 
 #: redbot/cogs/admin/admin.py:466
 #, docstring
@@ -199,34 +199,34 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Removed."
-msgstr ""
+msgstr "Премахнато."
 
 #: redbot/cogs/admin/admin.py:486
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Заключете бота само за текущите му сървъри."
 
 #: redbot/cogs/admin/admin.py:491
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "Ботът вече не е заключен за сървъри."
 
 #: redbot/cogs/admin/admin.py:493
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "Ботът е заключен за сървъри."
 
 #: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "Не можах да обявя в следния сървър: "
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "Не можах да обявя в следните сървъри: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "Admin cog не беше зареден."
 
 #: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
-msgstr ""
+msgstr "Предоставената роля не е валидна самостоятелна роля."
 

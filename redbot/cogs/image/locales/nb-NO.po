@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -59,8 +59,8 @@ msgstr "Hent bilder fra en subreddit.\\n\\n        Du kan tilpasse søket med f�
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr "Bare \"nye\" og \"topp\" er en gyldig sorteringstype."
 
-#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:206
-#: redbot/cogs/image/image.py:239
+#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:197
+#: redbot/cogs/image/image.py:221
 msgid "No results found."
 msgstr "Ingen treff."
 
@@ -78,33 +78,33 @@ msgstr "For å få en Imgur Client ID:\\n1. Logg inn til en Imgur konto.\\n. Bes
 msgid "Retrieve the first search result from Giphy."
 msgstr "Hent det første søkeresultatet fra Giphy."
 
-#: redbot/cogs/image/image.py:190 redbot/cogs/image/image.py:223
+#: redbot/cogs/image/image.py:184 redbot/cogs/image/image.py:208
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
 msgstr "En API-nøkkel er ikke satt! Vennligst angi en med `{prefix}giphycreds`."
 
-#: redbot/cogs/image/image.py:208
+#: redbot/cogs/image/image.py:199
 msgid "Error contacting the Giphy API."
 msgstr "Feil under kontakt med Giphy API."
 
-#: redbot/cogs/image/image.py:213
+#: redbot/cogs/image/image.py:204
 #, docstring
 msgid "Retrieve a random GIF from a Giphy search."
 msgstr "Hent et tilfeldig GIF fra et Giphy søk."
 
-#: redbot/cogs/image/image.py:241
+#: redbot/cogs/image/image.py:223
 msgid "Error contacting the API."
 msgstr "Feil ved kontakt med API-et."
 
-#: redbot/cogs/image/image.py:246
+#: redbot/cogs/image/image.py:228
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
 msgstr "Forklar hvordan du setter GIPHY API-token."
 
-#: redbot/cogs/image/image.py:248
+#: redbot/cogs/image/image.py:230
 msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
 msgstr "For å få en GIPHY API-nøkkel:\\n1. Logg inn på (eller skaper) en GIPHY konto.\\n2. Besøk denne siden: https://developers.giphy.com/dashboard.\\n3. Trykk *Lag en App*.\\n4. Klikk *Velg API*, og *Neste trinn*.\\n5. Legg til et appnavn, for eksempel *Red*.\\n6. Legg til en appbeskrivelse, for eksempel *Brukt for Reds bildecog*.\\n7. Klikk *Lag app*. Du må godta GIPHY API-vilkårene.\\n8. Kopier API-nøkkelen.\\n9. I Discord, kjør kommandoen {command}.\\n"
 
-#: redbot/cogs/image/image.py:261
+#: redbot/cogs/image/image.py:243
 msgid "<your_api_key_here>"
 msgstr "<your_api_key_here>"
 

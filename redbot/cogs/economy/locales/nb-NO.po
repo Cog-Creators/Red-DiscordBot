@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-26 12:23+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -14,6 +14,14 @@ msgstr ""
 "X-Crowdin-Language: nb\n"
 "X-Crowdin-File-ID: 23\n"
 "Language: nb_NO\n"
+
+#: redbot/cogs/economy/converters.py:19
+msgid "{arg} is not an integer."
+msgstr "{arg} er ikke et heltall."
+
+#: redbot/cogs/economy/converters.py:21
+msgid "{arg} is not a positive integer."
+msgstr "{arg} er ikke et positivt heltall."
 
 #: redbot/cogs/economy/economy.py:47
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
@@ -280,101 +288,101 @@ msgstr "----Økonomi innstillinger---\\nMinste spillemaskin bud: {slot_min}\\nMa
 msgid "Set the minimum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmin 10`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new minimum bid for using the slot machine. Default is 5.\\n        "
 msgstr "Still inn minste spormaskin bud.\\n\\n        Eksempel:\\n            -[p]economyset slotmin 10`\\n\\n        **Argumenter**\\n\\n        - `<bid>` Det nye minimumsbudet for bruk av spillemaskinen. Standard er 5.\\n        "
 
-#: redbot/cogs/economy/economy.py:848
-msgid "Invalid min bid amount."
-msgstr "Ugyldig minimums bud beløp."
+#: redbot/cogs/economy/economy.py:855
+msgid "Warning: Minimum bid is greater than the maximum bid ({max_bid}). Slots will not work."
+msgstr ""
 
-#: redbot/cogs/economy/economy.py:857
+#: redbot/cogs/economy/economy.py:866
 msgid "Minimum bid is now {bid} {currency}."
 msgstr "Minste budet er nå {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:864
+#: redbot/cogs/economy/economy.py:873
 #, docstring
 msgid "Set the maximum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmax 50`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new maximum bid for using the slot machine. Default is 100.\\n        "
 msgstr "Angi maksimalt spormaskin bud.\\n\\n        Eksempel:\\n            -[p]economyset slotmax 50`\\n\\n        **Argumenter**\\n\\n        -<bid>` Det nye maksimalbudet for bruk av spillemaskinen. Standard er 100.\\n        "
 
-#: redbot/cogs/economy/economy.py:876
-msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
-msgstr "Ugyldig maksimalt bud beløp. Må være større enn minimumsbeløpet."
+#: redbot/cogs/economy/economy.py:890
+msgid "Warning: Maximum bid is less than the minimum bid ({min_bid}). Slots will not work."
+msgstr ""
 
-#: redbot/cogs/economy/economy.py:886
+#: redbot/cogs/economy/economy.py:901
 msgid "Maximum bid is now {bid} {currency}."
 msgstr "Høyeste bud er nå {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:893
+#: redbot/cogs/economy/economy.py:908
 #, docstring
 msgid "Set the cooldown for the slot machine.\\n\\n        Example:\\n            - `[p]economyset slottime 10`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.\\n        "
 msgstr "Angi nedkjøling for spormaskinen.\\n\\n        Eksempel:\\n            -[p]economyset slottime 10`\\n\\n        **Argumenter**\\n\\n        - `<seconds>` Det nye antall sekunder å vente mellom bruk av spormaskinen. Standard er 5.\\n        "
 
-#: redbot/cogs/economy/economy.py:907
+#: redbot/cogs/economy/economy.py:922
 msgid "Cooldown is now {num} seconds."
 msgstr "Nedkjøling er nå {num} sekunder."
 
-#: redbot/cogs/economy/economy.py:911
+#: redbot/cogs/economy/economy.py:926
 #, docstring
 msgid "Set the cooldown for the payday command.\\n\\n        Example:\\n            - `[p]economyset paydaytime 86400`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.\\n        "
 msgstr "Angi nedkjølingsoperasjonen for lønnskommandoen.\\n\\n        Eksempel:\\n            -[p]economyset paydaytime 86400`\\n\\n        **Argumenter**\\n\\n        - `<seconds>` det nye antallet sekunder å vente i mellom bruk av betalingsdagen. Standard er 300.\\n        "
 
-#: redbot/cogs/economy/economy.py:926
+#: redbot/cogs/economy/economy.py:941
 msgid "Value modified. At least {num} seconds must pass between each payday."
 msgstr "Verdi er endret. Minst {num} sekunder må passere mellom hver lønn."
 
-#: redbot/cogs/economy/economy.py:933
+#: redbot/cogs/economy/economy.py:948
 #, docstring
 msgid "Set the amount earned each payday.\\n\\n        Example:\\n            - `[p]economyset paydayamount 400`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new amount to give when using the payday command. Default is 120.\\n        "
 msgstr "Still inn beløpet du har tjent hver betalingsdag.\\n\\n        Eksempel:\\n            -[p]economyset paydayamount 400`\\n\\n        **Argumenter**\\n\\n        - `<creds>` Det nye beløpet å gi når du bruker kommandoen betaler. Standard er 120.\\n        "
 
-#: redbot/cogs/economy/economy.py:946 redbot/cogs/economy/economy.py:979
+#: redbot/cogs/economy/economy.py:961 redbot/cogs/economy/economy.py:994
 msgid "Amount must be greater than zero and less than {maxbal}."
 msgstr "Beløpet må være større enn null og under {maxbal}."
 
-#: redbot/cogs/economy/economy.py:956
+#: redbot/cogs/economy/economy.py:971
 msgid "Every payday will now give {num} {currency}."
 msgstr "Hver betalingsdag gir nå {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:963
+#: redbot/cogs/economy/economy.py:978
 #, docstring
 msgid "Set the amount earned each payday for a role.\\n\\n        Only available when not using a global bank.\\n\\n        Example:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Arguments**\\n\\n        - `<role>` The role to assign a custom payday amount to.\\n        - `<creds>` The new amount to give when using the payday command.\\n        "
 msgstr "Still inn beløpet som er opptjent hver betalingsdag for en rolle.\\n\\n        kun tilgjengelig når du ikke bruker en global bank.\\n\\n        Eksempel:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Argumenter**\\n\\n        - `<role>` Rollen som tilordner et egendefinert betalerdagers beløp til.\\n        - `<creds>` Det nye beløpet å gi når du bruker \"betalingsdag\"-kommandoen.\\n        "
 
-#: redbot/cogs/economy/economy.py:985
+#: redbot/cogs/economy/economy.py:1000
 msgid "The bank must be per-server for per-role paydays to work."
 msgstr "Banken må være per server for per rolle lønner å arbeide."
 
-#: redbot/cogs/economy/economy.py:989
+#: redbot/cogs/economy/economy.py:1004
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
 msgstr "Hver betalingsdag vil nå gi {num} {currency} til personer med rollen {role_name}."
 
-#: redbot/cogs/economy/economy.py:997
+#: redbot/cogs/economy/economy.py:1012
 #, docstring
 msgid "Set the initial balance for new bank accounts.\\n\\n        Example:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new initial balance amount. Default is 0.\\n        "
 msgstr "Angi første saldo for nye bankkontoer.\\n\\n        Eksempel:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Argumenter**\\n\\n        - `<creds>` og ny opprinnelig saldo. Standard er 0.\\n        "
 
-#: redbot/cogs/economy/economy.py:1013
+#: redbot/cogs/economy/economy.py:1028
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
 msgstr "Beløpet må være større enn eller lik null og mindre enn {maxbal}."
 
-#: redbot/cogs/economy/economy.py:1018
+#: redbot/cogs/economy/economy.py:1033
 msgid "Registering an account will now give {num} {currency}."
 msgstr "Registrering av en konto vil nå gi {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:1027
+#: redbot/cogs/economy/economy.py:1042
 msgid "weeks"
 msgstr "uker"
 
-#: redbot/cogs/economy/economy.py:1028
+#: redbot/cogs/economy/economy.py:1043
 msgid "days"
 msgstr "dager"
 
-#: redbot/cogs/economy/economy.py:1029
+#: redbot/cogs/economy/economy.py:1044
 msgid "hours"
 msgstr "timer"
 
-#: redbot/cogs/economy/economy.py:1030
+#: redbot/cogs/economy/economy.py:1045
 msgid "minutes"
 msgstr "minutter"
 
-#: redbot/cogs/economy/economy.py:1031
+#: redbot/cogs/economy/economy.py:1046
 msgid "seconds"
 msgstr "sekunder"
 
