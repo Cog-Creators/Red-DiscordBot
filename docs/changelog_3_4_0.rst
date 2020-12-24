@@ -48,7 +48,7 @@ Audio
 - Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
 - Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
 
-Cleanup12-24
+Cleanup
 *******
 
 - ``[p]cleanup self`` will now delete the command message when the bot has permissions to do so (:issue:`4640`)
