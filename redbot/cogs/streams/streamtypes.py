@@ -4,7 +4,7 @@ import logging
 from dateutil.parser import parse as parse_time
 from random import choice
 from string import ascii_letters
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import xml.etree.ElementTree as ET
 from typing import ClassVar, Optional, List, Tuple
 
@@ -139,7 +139,7 @@ class YoutubeStream(Stream):
                         if scheduled is not None and actual_start_time is None:
                             scheduled = parse_time(scheduled)
                             if (
-                                scheduled.replace(tzinfo=None) - datetime.now()
+                                scheduled - datetime.now(timezone.utc)
                             ).total_seconds() < -3600:
                                 continue
                         elif actual_start_time is None:
@@ -178,7 +178,7 @@ class YoutubeStream(Stream):
         if vid_data["liveStreamingDetails"].get("scheduledStartTime", None) is not None:
             if "actualStartTime" not in vid_data["liveStreamingDetails"]:
                 start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
-                start_in = start_time.replace() - datetime.now()
+                start_in = start_time - datetime.now(timezone.utc)
                 if start_in.total_seconds() > 0:
                     embed.description = _("This stream will start in {time}").format(
                         time=humanize_timedelta(
