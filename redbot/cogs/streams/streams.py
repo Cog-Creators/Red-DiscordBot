@@ -727,6 +727,8 @@ class Streams(commands.Cog):
         for stream in self.streams:
             try:
                 try:
+                    is_rerun = False
+                    is_schedule = False
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
@@ -736,8 +738,6 @@ class Streams(commands.Cog):
 
                     else:
                         embed = await stream.is_online()
-                        is_rerun = False
-                        is_schedule = False
                 except OfflineStream:
                     if not stream._messages_cache:
                         continue
