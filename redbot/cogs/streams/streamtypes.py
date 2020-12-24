@@ -138,9 +138,7 @@ class YoutubeStream(Stream):
                         scheduled = stream_data.get("scheduledStartTime", None)
                         if scheduled is not None and actual_start_time is None:
                             scheduled = parse_time(scheduled)
-                            if (
-                                scheduled - datetime.now(timezone.utc)
-                            ).total_seconds() < -3600:
+                            if (scheduled - datetime.now(timezone.utc)).total_seconds() < -3600:
                                 continue
                         elif actual_start_time is None:
                             continue
