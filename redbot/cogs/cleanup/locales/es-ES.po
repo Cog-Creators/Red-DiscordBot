@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,7 @@ msgstr "Limpiar mensajes de comandos y mensajes del bot.\\n\\n        Sólo pued
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a second argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n\\n        Examples:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<match_pattern>` The text that messages must contain to be deleted. Use \\\"\\\" to skip this.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
 msgstr "Limpiar mensajes propiedad del bot.\\n\\n        Por defecto, todos los mensajes se limpian. Si se especifica un segundo argumento,\\n        se utiliza para la coincidencia de patrones - sólo se eliminarán los mensajes que contengan el texto dado.\\n\\n        Ejemplos:\\n            - `[p]limpieza propia 6`\\n            - `[p]limpieza propia 10 Pong`\\n            - `[p]limpieza propia 7 \\\"\\\" Verdadero`\\n\\n        **Argumentos:**\\n\\n        - `<number>` El número máximo de mensajes a limpiar. Debe ser un entero positivo.\\n        - `<match_pattern>` El texto que los mensajes deben contener para ser eliminados. Use \\\"\\\" para omitir esto.\\n        - `<delete_pinned>` Si eliminar mensajes fijados o no. Por defecto es False\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:610
+#: redbot/cogs/cleanup/cleanup.py:612
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n\\n        **Arguments:**\\n\\n        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\\n        "
 msgstr "Elimina mensajes duplicados en el canal de los últimos mensajes X y conserva sólo una copia.\\n\\n        Por defecto es 50.\\n\\n        **Argumentos:**\\n\\n        - `<number>` El número de mensajes a buscar duplicados. Debe ser un entero positivo.\\n        "

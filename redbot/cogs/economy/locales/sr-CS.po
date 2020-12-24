@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-11-26 12:23+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "MIME-Version: 1.0\n"
@@ -14,6 +14,14 @@ msgstr ""
 "X-Crowdin-Language: sr-CS\n"
 "X-Crowdin-File-ID: 23\n"
 "Language: sr_CS\n"
+
+#: redbot/cogs/economy/converters.py:19
+msgid "{arg} is not an integer."
+msgstr ""
+
+#: redbot/cogs/economy/converters.py:21
+msgid "{arg} is not a positive integer."
+msgstr ""
 
 #: redbot/cogs/economy/economy.py:47
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
@@ -280,101 +288,101 @@ msgstr ""
 msgid "Set the minimum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmin 10`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new minimum bid for using the slot machine. Default is 5.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:848
-msgid "Invalid min bid amount."
+#: redbot/cogs/economy/economy.py:855
+msgid "Warning: Minimum bid is greater than the maximum bid ({max_bid}). Slots will not work."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:857
+#: redbot/cogs/economy/economy.py:866
 msgid "Minimum bid is now {bid} {currency}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:864
+#: redbot/cogs/economy/economy.py:873
 #, docstring
 msgid "Set the maximum slot machine bid.\\n\\n        Example:\\n            - `[p]economyset slotmax 50`\\n\\n        **Arguments**\\n\\n        - `<bid>` The new maximum bid for using the slot machine. Default is 100.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:876
-msgid "Invalid maximum bid amount. Must be greater than the minimum amount."
+#: redbot/cogs/economy/economy.py:890
+msgid "Warning: Maximum bid is less than the minimum bid ({min_bid}). Slots will not work."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:886
+#: redbot/cogs/economy/economy.py:901
 msgid "Maximum bid is now {bid} {currency}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:893
+#: redbot/cogs/economy/economy.py:908
 #, docstring
 msgid "Set the cooldown for the slot machine.\\n\\n        Example:\\n            - `[p]economyset slottime 10`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:907
+#: redbot/cogs/economy/economy.py:922
 msgid "Cooldown is now {num} seconds."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:911
+#: redbot/cogs/economy/economy.py:926
 #, docstring
 msgid "Set the cooldown for the payday command.\\n\\n        Example:\\n            - `[p]economyset paydaytime 86400`\\n\\n        **Arguments**\\n\\n        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:926
+#: redbot/cogs/economy/economy.py:941
 msgid "Value modified. At least {num} seconds must pass between each payday."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:933
+#: redbot/cogs/economy/economy.py:948
 #, docstring
 msgid "Set the amount earned each payday.\\n\\n        Example:\\n            - `[p]economyset paydayamount 400`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new amount to give when using the payday command. Default is 120.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:946 redbot/cogs/economy/economy.py:979
+#: redbot/cogs/economy/economy.py:961 redbot/cogs/economy/economy.py:994
 msgid "Amount must be greater than zero and less than {maxbal}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:956
+#: redbot/cogs/economy/economy.py:971
 msgid "Every payday will now give {num} {currency}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:963
+#: redbot/cogs/economy/economy.py:978
 #, docstring
 msgid "Set the amount earned each payday for a role.\\n\\n        Only available when not using a global bank.\\n\\n        Example:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Arguments**\\n\\n        - `<role>` The role to assign a custom payday amount to.\\n        - `<creds>` The new amount to give when using the payday command.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:985
+#: redbot/cogs/economy/economy.py:1000
 msgid "The bank must be per-server for per-role paydays to work."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:989
+#: redbot/cogs/economy/economy.py:1004
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:997
+#: redbot/cogs/economy/economy.py:1012
 #, docstring
 msgid "Set the initial balance for new bank accounts.\\n\\n        Example:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new initial balance amount. Default is 0.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1013
+#: redbot/cogs/economy/economy.py:1028
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1018
+#: redbot/cogs/economy/economy.py:1033
 msgid "Registering an account will now give {num} {currency}."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1027
+#: redbot/cogs/economy/economy.py:1042
 msgid "weeks"
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1028
+#: redbot/cogs/economy/economy.py:1043
 msgid "days"
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1029
+#: redbot/cogs/economy/economy.py:1044
 msgid "hours"
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1030
+#: redbot/cogs/economy/economy.py:1045
 msgid "minutes"
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1031
+#: redbot/cogs/economy/economy.py:1046
 msgid "seconds"
 msgstr ""
 

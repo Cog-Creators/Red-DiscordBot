@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -59,8 +59,8 @@ msgstr ""
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr ""
 
-#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:206
-#: redbot/cogs/image/image.py:239
+#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:197
+#: redbot/cogs/image/image.py:221
 msgid "No results found."
 msgstr ""
 
@@ -78,33 +78,33 @@ msgstr ""
 msgid "Retrieve the first search result from Giphy."
 msgstr ""
 
-#: redbot/cogs/image/image.py:190 redbot/cogs/image/image.py:223
+#: redbot/cogs/image/image.py:184 redbot/cogs/image/image.py:208
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
 msgstr ""
 
-#: redbot/cogs/image/image.py:208
+#: redbot/cogs/image/image.py:199
 msgid "Error contacting the Giphy API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:213
+#: redbot/cogs/image/image.py:204
 #, docstring
 msgid "Retrieve a random GIF from a Giphy search."
 msgstr ""
 
-#: redbot/cogs/image/image.py:241
+#: redbot/cogs/image/image.py:223
 msgid "Error contacting the API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:246
+#: redbot/cogs/image/image.py:228
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
 msgstr ""
 
-#: redbot/cogs/image/image.py:248
+#: redbot/cogs/image/image.py:230
 msgid "To get a GIPHY API Key:\\n1. Login to (or create) a GIPHY account.\\n2. Visit this page: https://developers.giphy.com/dashboard.\\n3. Press *Create an App*.\\n4. Click *Select API*, then *Next Step*.\\n5. Add an app name, for example *Red*.\\n6. Add an app description, for example *Used for Red's image cog*.\\n7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\\n8. Copy the API Key.\\n9. In Discord, run the command {command}.\\n"
 msgstr ""
 
-#: redbot/cogs/image/image.py:261
+#: redbot/cogs/image/image.py:243
 msgid "<your_api_key_here>"
 msgstr ""
 
