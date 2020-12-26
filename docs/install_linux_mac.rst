@@ -449,7 +449,7 @@ Or, to install with PostgreSQL support:
 
 .. attention:: 
 
-    Depending on your system brackets may need to be escaped. A common escape sequence would look like this: ``\[``
+    Depending on your system, brackets may need to be escaped. A common escape sequence would look like this: ``\[``
 
 .. note::
 
