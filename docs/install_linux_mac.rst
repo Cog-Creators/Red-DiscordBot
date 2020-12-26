@@ -447,6 +447,10 @@ Or, to install with PostgreSQL support:
     python -m pip install -U Red-DiscordBot[postgres]
 
 
+.. attention:: 
+
+    Depending on your system brackets may need to be escaped. A common escape sequence would look like this: ``\[``
+
 .. note::
 
     These commands are also used for updating Red
