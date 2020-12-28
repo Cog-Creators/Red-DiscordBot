@@ -262,15 +262,15 @@ class Reports(commands.Cog):
             return await author.send(
                 _(
                     "You've sent too many reports recently. "
-                    "Please contact a server admin if this is important matter, "
+                    "Please contact a server admin if this is an important matter, "
                     "or please wait and try again later."
                 )
             )
         if author.id in self.user_cache:
             return await author.send(
                 _(
-                    "Please finish making your prior report before trying to make an "
-                    "additional one!"
+                    "Please finish making your prior report before trying to make a "
+                    "new one!"
                 )
             )
         self.user_cache.append(author.id)
