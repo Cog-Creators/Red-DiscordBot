@@ -762,3 +762,58 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+
+    @cleanup.command(name="stickers", aliases=["s"])
+    @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
+    async def cleanup_stickers(
+        self,
+        ctx: commands.Context,
+        number: positive_int = PositiveInt(3),
+        delete_pinned: bool = False,
+    ):
+        """Deletes messages containing discord stickers.
+
+        Defaults to 3.
+
+        **Arguments:**
+
+        - `<number>` The number of messages to check for a sticker. Must be a positive integer.
+        """
+        channel = ctx.channel
+        author = ctx.message.author
+
+        if number > 100:
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
+
+        def check(m):
+            stickers = m.stickers
+            for s in stickers:
+                return True
+            return False
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
+        )
+        to_delete.append(ctx.message)
+
+        reason = (
+            "{}({}) deleted {} "
+            " messages containing a sticker in channel {}."
+            "".format(
+                author.name,
+                author.id,
+                humanize_number(len(to_delete), override_locale="en_US"),
+                channel.name,
+            )
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
