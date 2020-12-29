@@ -2933,8 +2933,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]helpset deletedelay 1209600` - Max time to wait before deleting (14 days).
             - `[p]helpset deletedelay 0` - Disable deleting help pages.
 
-        **Arguments:**CM1000
-sbg8300
+        **Arguments:**
+
         - `<seconds>` The seconds to wait before deleting help pages.
         """
         if seconds < 0:
