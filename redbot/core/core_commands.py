@@ -1185,7 +1185,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "you can invite me on new servers.\n\n"
                 "You can change this by ticking `Public bot` in "
                 "your token settings: "
-                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+                "https://discord.com/developers/applications/{0}/bot".format(self.bot.user.id)
             )
             return
         if not confirm:
@@ -1282,12 +1282,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         except asyncio.TimeoutError:
             await ctx.send(_("Response timed out."))
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1393,12 +1391,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     page = page[2:]
                 await ctx.send(page)
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
@@ -1431,12 +1427,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
-    @commands.command(name="reload")
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1944,7 +1938,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command(name="streaming", aliases=["stream"])
+    @_set.command(name="streaming", aliases=["stream"], usage="[(<streamer> <stream_title>)]")
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
@@ -2026,13 +2020,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(aliases=["prefixes"])
+    @_set.command(aliases=["prefixes"], require_var_positional=True)
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es)."""
-        if not prefixes:
-            await ctx.send_help()
-            return
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
@@ -2252,7 +2243,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
-    @api.command(name="remove")
+    @api.command(name="remove", require_var_positional=True)
     async def api_remove(self, ctx: commands.Context, *services: str):
         """Remove the given services with all their keys and tokens."""
         bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
@@ -2756,15 +2747,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @allowlist.command(name="add", usage="<user>...")
+    @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
@@ -2788,15 +2775,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @allowlist.command(name="remove", usage="<user>...")
+    @allowlist.command(name="remove", require_var_positional=True)
     async def allowlist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
@@ -2818,15 +2801,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @blocklist.command(name="add", usage="<user>...")
+    @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -2859,15 +2838,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blocklist.command(name="remove", usage="<user>...")
+    @blocklist.command(name="remove", require_var_positional=True)
     async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
@@ -2890,17 +2865,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localallowlist.command(name="add", usage="<user_or_role>...")
+    @localallowlist.command(name="add", require_var_positional=True)
     async def localallowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the server allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2937,17 +2908,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localallowlist.command(name="remove", usage="<user_or_role>...")
+    @localallowlist.command(name="remove", require_var_positional=True)
     async def localallowlist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from the allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2984,17 +2951,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localblocklist.command(name="add", usage="<user_or_role>...")
+    @localblocklist.command(name="add", require_var_positional=True)
     async def localblocklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -3032,17 +2995,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblocklist.command(name="remove", usage="<user_or_role>...")
+    @localblocklist.command(name="remove", require_var_positional=True)
     async def localblocklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)

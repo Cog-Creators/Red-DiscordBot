@@ -83,7 +83,7 @@ cog info
 
 .. code-block:: none
 
-    [p]cog info <repo_name> <cog_name>
+    [p]cog info <repo> <cog>
 
 **Description**
 
@@ -94,8 +94,8 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The repo to get cog info from.
-- ``<cog_name>`` The cog to get info on.
+- ``<repo>`` The repo to get cog info from.
+- ``<cog>`` The cog to get info on.
 
 .. _downloader-command-cog-install:
 
@@ -107,7 +107,7 @@ cog install
 
 .. code-block:: none
 
-    [p]cog install <repo_name> <cogs>
+    [p]cog install <repo> <cogs...>
 
 **Description**
 
@@ -119,8 +119,8 @@ Examples:
 
 **Arguments**
 
-- ``<repo_name>`` The name of the repo to install cogs from.
-- ``<cogs>`` The cog or cogs to install.
+- ``<repo>`` The name of the repo to install cogs from.
+- ``<cogs...>`` The cog or cogs to install.
 
 .. _downloader-command-cog-installversion:
 
@@ -132,7 +132,7 @@ cog installversion
 
 .. code-block:: none
 
-    [p]cog installversion <repo_name> <revision> <cogs>
+    [p]cog installversion <repo> <revision> <cogs...>
 
 **Description**
 
@@ -148,9 +148,9 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The name of the repo to install cogs from.
+- ``<repo>`` The name of the repo to install cogs from.
 - ``<revision>`` The revision to install from.
-- ``<cogs>`` The cog or cogs to install.
+- ``<cogs...>`` The cog or cogs to install.
 
 .. _downloader-command-cog-list:
 
@@ -162,7 +162,7 @@ cog list
 
 .. code-block:: none
 
-    [p]cog list <repo_name>
+    [p]cog list <repo>
 
 **Description**
 
@@ -173,7 +173,7 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The repo to list cogs from.
+- ``<repo>`` The repo to list cogs from.
 
 .. _downloader-command-cog-listpinned:
 
@@ -201,7 +201,7 @@ cog pin
 
 .. code-block:: none
 
-    [p]cog pin <cogs>
+    [p]cog pin <cogs...>
 
 **Description**
 
@@ -213,7 +213,7 @@ Examples:
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to pin. Must already be installed.
+- ``<cogs...>`` The cog or cogs to pin. Must already be installed.
 
 .. _downloader-command-cog-uninstall:
 
@@ -225,7 +225,7 @@ cog uninstall
 
 .. code-block:: none
 
-    [p]cog uninstall <cogs>
+    [p]cog uninstall <cogs...>
 
 **Description**
 
@@ -240,7 +240,7 @@ Examples:
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to uninstall.
+- ``<cogs...>`` The cog or cogs to uninstall.
 
 .. _downloader-command-cog-unpin:
 
@@ -252,7 +252,7 @@ cog unpin
 
 .. code-block:: none
 
-    [p]cog unpin <cogs>
+    [p]cog unpin <cogs...>
 
 **Description**
 
@@ -264,7 +264,7 @@ Examples:
 
 **Arguments**
 
-- ``<cogs>`` The cog or cogs to unpin. Must already be installed and pinned.
+- ``<cogs...>`` The cog or cogs to unpin. Must already be installed and pinned.
 
 .. _downloader-command-cog-update:
 
@@ -300,7 +300,7 @@ cog updateallfromrepos
 
 .. code-block:: none
 
-    [p]cog updateallfromrepos <repos>
+    [p]cog updateallfromrepos <repos...>
 
 **Description**
 
@@ -312,7 +312,7 @@ Examples:
 
 **Arguments**
 
-- ``<repos>`` The repo or repos to update all cogs from.
+- ``<repos...>`` The repo or repos to update all cogs from.
 
 .. _downloader-command-cog-updatetoversion:
 
@@ -324,7 +324,7 @@ cog updatetoversion
 
 .. code-block:: none
 
-    [p]cog updatetoversion <repo_name> <revision> [cogs]
+    [p]cog updatetoversion <repo> <revision> [cogs...]
 
 **Description**
 
@@ -341,9 +341,9 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The repo or repos to update all cogs from.
+- ``<repo>`` The repo or repos to update all cogs from.
 - ``<revision>`` The revision to update to.
-- ``[cogs]`` The cog or cogs to update.
+- ``[cogs...]`` The cog or cogs to update.
 
 .. _downloader-command-findcog:
 
@@ -382,7 +382,7 @@ pipinstall
 
 .. code-block:: none
 
-    [p]pipinstall [deps...]
+    [p]pipinstall <deps...>
 
 **Description**
 
@@ -396,7 +396,7 @@ Improper usage of this command can break your bot, be careful.
 
 **Arguments**
 
-- ``[deps...]`` The package or packages you wish to install.
+- ``<deps...>`` The package or packages you wish to install.
 
 .. _downloader-command-repo:
 
@@ -455,7 +455,7 @@ repo delete
 
 .. code-block:: none
 
-    [p]repo delete <repo_name>
+    [p]repo delete <repo>
 
 .. tip:: Aliases: ``repo remove``, ``repo del``
 
@@ -468,7 +468,7 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The name of an already added repo
+- ``<repo>`` The name of an already added repo
 
 .. _downloader-command-repo-info:
 
@@ -480,7 +480,7 @@ repo info
 
 .. code-block:: none
 
-    [p]repo info <repo_name>
+    [p]repo info <repo>
 
 **Description**
 
@@ -491,7 +491,7 @@ Example:
 
 **Arguments**
 
-- ``<repo_name>`` The name of the repo to show info about.
+- ``<repo>`` The name of the repo to show info about.
 
 .. _downloader-command-repo-list:
 

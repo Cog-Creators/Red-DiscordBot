@@ -1,5 +1,115 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.5 (2020-12-24)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+
+End-user changelog
+------------------
+
+Streams
+*******
+
+- Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
+
+Redbot 3.4.4 (2020-12-24)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreus7`, :ghuser:`NeuroAssassin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.4 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.2_1170>`__.
+
+2. Ubuntu 16.04 is no longer supported as it will soon reach its end of life and it is no longer viable for us to maintain support for it.
+
+    While you might still be able to run Red on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to the latest LTS version of Ubuntu.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Red's logging will now shine in your terminal more than ever (:issue:`4577`)
+- Improved consistency of command usage in the help messages within all commands in Core Red (:issue:`4589`)
+- Added a friendly error when the duration provided to commands that use the ``commands.TimedeltaConverter`` converter is out of the maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
+- Fixed an error when removing path from a different operating system than the bot is currently running on with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
+
+Audio
+*****
+
+- Fixed ``[p]llset java`` failing to set the Java executable path (:issue:`4621`, :issue:`4624`)
+- Fixed Soundcloud playback (:issue:`4683`)
+- Fixed YouTube age-restricted track playback (:issue:`4683`)
+- Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
+- Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
+
+Cleanup
+*******
+
+- ``[p]cleanup self`` will now delete the command message when the bot has permissions to do so (:issue:`4640`)
+
+Dev
+***
+
+- Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
+
+Economy
+*******
+
+- ``[p]economyset slotmin`` and ``[p]economyset slotmax`` now warn when the new value will cause the slots command to not work (:issue:`4583`)
+
+General
+*******
+
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4678`)
+
+Mod
+***
+
+- ``[p]ban`` command will no longer error out when the given reason is too long (:issue:`4187`, :issue:`4189`)
+
+Streams
+*******
+
+- Scheduled YouTube streams now work properly with the cog (:issue:`3691`, :issue:`4615`)
+- YouTube stream schedules are now announced before the stream (:issue:`4615`)
+
+    - Alerts about YouTube stream schedules can be disabled with a new ``[p]streamset ignoreschedule`` command (:issue:`4615`)
+
+- Improved error logging (:issue:`4680`)
+
+Trivia Lists
+************
+
+- Added ``whosthatpokemon5`` trivia list containing Pokémon from the 5th generation (:issue:`4646`)
+- Added ``geography`` trivia list (:issue:`4618`)
+
+
+Developer changelog
+-------------------
+
+- `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
+- ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
+
+
+Documentation changes
+---------------------
+
+- Added `cog guide for Downloader cog <streams>` (:issue:`4511`)
+- Added `cog guide for Economy cog <streams>` (:issue:`4519`)
+- Added `cog guide for Streams cog <streams>` (:issue:`4521`)
+- Added `guide_cog_creators` document (:issue:`4637`)
+- Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
+
+
 Redbot 3.4.3 (2020-11-16)
 =========================
 
@@ -257,7 +367,7 @@ Core Bot
 - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
-    - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
+    - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
@@ -425,13 +535,13 @@ Core Bot
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
     - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
-    - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `guidelines-for-cog-creators` for more information
+    - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
     - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
-    - These methods and variables should be added by all cogs according to their documentation; see `guidelines-for-cog-creators` for more information
+    - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
 - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)

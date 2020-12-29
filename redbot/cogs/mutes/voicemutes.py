@@ -121,7 +121,7 @@ class VoiceMutes(MixinMeta):
                 guild = ctx.guild
                 author = ctx.author
                 channel = user_voice_state.channel
-                audit_reason = get_audit_reason(author, reason)
+                audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_mute_user(
                     guild, channel, author, user, until, audit_reason
@@ -194,7 +194,7 @@ class VoiceMutes(MixinMeta):
                 guild = ctx.guild
                 author = ctx.author
                 channel = user_voice_state.channel
-                audit_reason = get_audit_reason(author, reason)
+                audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_unmute_user(
                     guild, channel, author, user, audit_reason

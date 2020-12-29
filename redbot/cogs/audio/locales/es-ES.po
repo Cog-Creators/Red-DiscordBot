@@ -17,35 +17,36 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:35
 msgid "\\nScope must be a valid version of one of the following:\\n​ ​ ​ ​ Global\\n​ ​ ​ ​ Guild\\n​ ​ ​ ​ User\\n"
-msgstr ""
+msgstr "\\nEl ámbito debe ser una versión válida de uno de los siguientes:\\n   Global\\n   Guild\\n   User\\n"
 
 #: redbot/cogs/audio/converters.py:43
 msgid "\\nAuthor must be a valid version of one of the following:\\n​ ​ ​ ​ User ID\\n​ ​ ​ ​ User Mention\\n​ ​ ​ ​ User Name#123\\n"
-msgstr ""
+msgstr "\\nEl autor debe ser una versión válida de uno de los siguientes:\\n ID del Usuario\\n Mención al Usuario \\n \n"
+" Nombre de Usuario#123\\n"
 
 #: redbot/cogs/audio/converters.py:51
 msgid "\\nGuild must be a valid version of one of the following:\\n​ ​ ​ ​ Guild ID\\n​ ​ ​ ​ Exact guild name\\n"
-msgstr ""
+msgstr "\\nEl servidor debe ser una versión válida de uno de los siguientes:\\n   ID del Servidor\\n   Nombre Exacto del Servidor\\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\\\"{arg}\\\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" no se ha encontrado. Debe ser el ID o el nombre completo de un servidor que el bot pueda ver."
 
 #: redbot/cogs/audio/converters.py:96
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" no se refiere a un servidor único. Por favor, utilice el ID del servidor que está intentando especificar."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\\\"{arg}\\\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "\\\"{arg}\\\" no se ha encontrado. Debe ser el ID o nombre o mencionar a un usuario que el bot pueda ver."
 
 #: redbot/cogs/audio/converters.py:136
 msgid "\\\"{arg}\\\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\\\"{arg}\\\" no se refiere a un servidor único. Por favor, utilice el ID del servidor que está intentando especificar."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "No se pudo emparejar '{}' a una lista de reproducción."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368
@@ -53,17 +54,17 @@ msgstr ""
 #: redbot/cogs/audio/converters.py:431 redbot/cogs/audio/converters.py:453
 #: redbot/cogs/audio/converters.py:480
 msgid "Nothing"
-msgstr ""
+msgstr "Nada"
 
 #: redbot/cogs/audio/converters.py:261
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "No puedes usar `--guild`"
 
 #: redbot/cogs/audio/converters.py:402
 msgid "You cannot use `--to-server`"
-msgstr ""
+msgstr "No puedes usar `--to-server`"
 
 #: redbot/cogs/audio/converters.py:428
 msgid "You cannot use `--from-server`"
-msgstr ""
+msgstr "No puedes usar `--from-server`"
 
