@@ -176,14 +176,8 @@ class Image(commands.Cog):
 
     @commands.guild_only()
     @commands.command()
-    async def gif(self, ctx, *keywords):
+    async def gif(self, ctx, *, keywords):
         """Retrieve the first search result from Giphy."""
-        if keywords:
-            keywords = "+".join(keywords)
-        else:
-            await ctx.send_help()
-            return
-
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
@@ -193,11 +187,8 @@ class Image(commands.Cog):
             )
             return
 
-        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
-            giphy_api_key, keywords
-        )
-
-        async with self.session.get(url) as r:
+        url = "http://api.giphy.com/v1/gifs/search"
+        async with self.session.get(url, params={"api_key": giphy_api_key, "q": keywords}) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:
@@ -209,14 +200,8 @@ class Image(commands.Cog):
 
     @commands.guild_only()
     @commands.command()
-    async def gifr(self, ctx, *keywords):
+    async def gifr(self, ctx, *, keywords):
         """Retrieve a random GIF from a Giphy search."""
-        if keywords:
-            keywords = "+".join(keywords)
-        else:
-            await ctx.send_help()
-            return
-
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
@@ -226,11 +211,8 @@ class Image(commands.Cog):
             )
             return
 
-        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
-            giphy_api_key, keywords
-        )
-
-        async with self.session.get(url) as r:
+        url = "http://api.giphy.com/v1/gifs/random"
+        async with self.session.get(url, params={"api_key": giphy_api_key, "tag": keywords}) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:

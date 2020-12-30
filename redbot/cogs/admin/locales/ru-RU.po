@@ -45,7 +45,7 @@ msgstr "Я не могу позволить вам редактировать {r
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr "Мне нужно управлять правами ролей, чтобы сделать это."
+msgstr "Мне нужно право на управление ролями, чтобы сделать это."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -131,7 +131,7 @@ msgstr "Изменить способ отправки объявлений на
 #: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr ""
+msgstr "\\n        Изменение канала, в который бот будет отправлять объявления.\\n\\n        Если оставить поле пустым, то по умолчанию будет использоваться текущий канал.\\n        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -140,7 +140,7 @@ msgstr "Канал объявления был установлен на {channe
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Сбрасывает канал для объявлений."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
@@ -220,7 +220,7 @@ msgstr "Я не могу сделать объявление на следующ
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr "Я не могу сделать объявление на следующих серверах: "
+msgstr "Я не могу объявить на следующих серверах: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."

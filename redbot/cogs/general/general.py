@@ -87,7 +87,7 @@ class General(commands.Cog):
         To denote options which include whitespace, you should use
         double quotes.
         """
-        choices = [escape(c, mass_mentions=True) for c in choices]
+        choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
             await ctx.send(_("Not enough options to pick from."))
         else:
@@ -372,21 +372,24 @@ class General(commands.Cog):
             }
 
             features = {
-                "PARTNERED": _("Partnered"),
-                "VERIFIED": _("Verified"),
-                "DISCOVERABLE": _("Server Discovery"),
-                "FEATURABLE": _("Featurable"),
-                "COMMUNITY": _("Community"),
-                "PUBLIC_DISABLED": _("Public disabled"),
-                "INVITE_SPLASH": _("Splash Invite"),
-                "VIP_REGIONS": _("VIP Voice Servers"),
-                "VANITY_URL": _("Vanity URL"),
-                "MORE_EMOJI": _("More Emojis"),
-                "COMMERCE": _("Commerce"),
-                "NEWS": _("News Channels"),
                 "ANIMATED_ICON": _("Animated Icon"),
                 "BANNER": _("Banner Image"),
+                "COMMERCE": _("Commerce"),
+                "COMMUNITY": _("Community"),
+                "DISCOVERABLE": _("Server Discovery"),
+                "FEATURABLE": _("Featurable"),
+                "INVITE_SPLASH": _("Splash Invite"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
+                "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
+                "MORE_EMOJI": _("More Emojis"),
+                "NEWS": _("News Channels"),
+                "PARTNERED": _("Partnered"),
+                "PREVIEW_ENABLED": _("Preview enabled"),
+                "PUBLIC_DISABLED": _("Public disabled"),
+                "VANITY_URL": _("Vanity URL"),
+                "VERIFIED": _("Verified"),
+                "VIP_REGIONS": _("VIP Voice Servers"),
+                "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
             }
             guild_features_list = [
                 f"\N{WHITE HEAVY CHECK MARK} {name}"
@@ -455,7 +458,7 @@ class General(commands.Cog):
                 data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
             if guild.premium_tier != 0:
                 nitro_boost = _(
-                    "Tier {boostlevel} with {nitroboosters} boosters\n"
+                    "Tier {boostlevel} with {nitroboosters} boosts\n"
                     "File size limit: {filelimit}\n"
                     "Emoji limit: {emojis_limit}\n"
                     "VCs max bitrate: {bitrate}"
@@ -505,9 +508,12 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{word} by {author}").format(
+                    title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
+                    if len(title) > 256:
+                        title = "{}...".format(title[:253])
+                    embed.title = title
                     embed.url = ud["permalink"]
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)

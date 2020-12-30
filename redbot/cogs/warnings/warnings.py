@@ -126,12 +126,10 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def toggledm(self, ctx: commands.Context):
-        """Toggle whether warnings should be sent to users in DMs."""
-        guild = ctx.guild
-        toggle = not await self.config.guild(guild).toggle_dm()
-        await self.config.guild(guild).toggle_dm.set(toggle)
-        if toggle:
+    async def senddm(self, ctx: commands.Context, true_or_false: bool):
+        """Set whether warnings should be sent to users in DMs."""
+        await self.config.guild(ctx.guild).toggle_dm.set(true_or_false)
+        if true_or_false:
             await ctx.send(_("I will now try to send warnings to users DMs."))
         else:
             await ctx.send(_("Warnings will no longer be sent to users DMs."))
@@ -173,15 +171,13 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def togglechannel(self, ctx: commands.Context):
+    async def usewarnchannel(self, ctx: commands.Context, true_or_false: bool):
         """
-        Toggle if warnings should be sent to a channel set with `[p]warningset warnchannel`.
+        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.
         """
-        guild = ctx.guild
-        toggle = await self.config.guild(guild).toggle_channel()
-        await self.config.guild(guild).toggle_channel.set(not toggle)
-        channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
-        if not toggle:
+        await self.config.guild(ctx.guild).toggle_channel.set(true_or_false)
+        channel = self.bot.get_channel(await self.config.guild(ctx.guild).warn_channel())
+        if true_or_false:
             if channel:
                 await ctx.send(
                     _("Warnings will now be sent to {channel}.").format(channel=channel.mention)

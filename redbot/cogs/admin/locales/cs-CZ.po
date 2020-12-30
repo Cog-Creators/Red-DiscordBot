@@ -131,7 +131,7 @@ msgstr "Změňte způsob odesílání oznámení v tomto klanu."
 #: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr ""
+msgstr "\\n Změnit kanál, kam bot bude posílat oznámení.\\n\\n Pokud je kanál prázdný, nastaví aktuální kanál.\\n        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"

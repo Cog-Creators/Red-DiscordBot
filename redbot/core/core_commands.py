@@ -23,6 +23,7 @@ import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
+from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -384,7 +385,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about Red."""
+        """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -1139,7 +1140,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if self.bot._last_exception:
             for page in pagify(self.bot._last_exception, shorten_by=10):
-                await destination.send(box(page, lang="py"))
+                try:
+                    await destination.send(box(page, lang="py"))
+                except discord.HTTPException:
+                    await ctx.channel.send(
+                        "I couldn't send the traceback message to you in DM. "
+                        "Either you blocked me or you disabled DMs in this server."
+                    )
+                    return
         else:
             await ctx.send(_("No exception has occurred yet."))
 
@@ -1177,7 +1185,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "you can invite me on new servers.\n\n"
                 "You can change this by ticking `Public bot` in "
                 "your token settings: "
-                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+                "https://discord.com/developers/applications/{0}/bot".format(self.bot.user.id)
             )
             return
         if not confirm:
@@ -1227,7 +1235,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 log.debug(_("Leaving guild '{}'").format(ctx.guild.name))
                 await ctx.guild.leave()
             else:
-                await ctx.send(_("Alright, I'll stay then :)"))
+                await ctx.send(_("Alright, I'll stay then. :)"))
 
     @commands.command()
     @checks.is_owner()
@@ -1274,12 +1282,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         except asyncio.TimeoutError:
             await ctx.send(_("Response timed out."))
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1378,15 +1384,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if output:
             total_message = "\n\n".join(output)
-            for page in pagify(total_message):
+            for page in pagify(
+                total_message, delims=["\n", ", "], priority=True, page_length=1500
+            ):
+                if page.startswith(", "):
+                    page = page[2:]
                 await ctx.send(page)
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
@@ -1419,12 +1427,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
-    @commands.command(name="reload")
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1529,9 +1535,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
-        """Attempts to restart Red.
+        """Attempts to restart [botname].
 
-        Makes Red quit with exit code 26.
+        Makes [botname] quit with exit code 26.
         The restart is not guaranteed: it must be dealt
         with by the process manager in use."""
         with contextlib.suppress(discord.HTTPException):
@@ -1557,8 +1563,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_ids = guild_data["mod_role"]
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
-            guild_settings = _("Admin roles: {admin}\nMod roles: {mod}\n").format(
-                admin=admin_roles_str, mod=mod_roles_str
+
+            guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
+            guild_regional_format = (
+                await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+            )
+
+            guild_settings = _(
+                "Admin roles: {admin}\n"
+                "Mod roles: {mod}\n"
+                "Locale: {guild_locale}\n"
+                "Regional format: {guild_regional_format}\n"
+            ).format(
+                admin=admin_roles_str,
+                mod=mod_roles_str,
+                guild_locale=guild_locale,
+                guild_regional_format=guild_regional_format,
             )
         else:
             guild_settings = ""
@@ -1566,21 +1586,24 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
-        regional_format = global_data["regional_format"] or _("Same as bot's locale")
+        regional_format = global_data["regional_format"] or locale
+        colour = discord.Colour(global_data["color"])
 
         prefix_string = " ".join(prefixes)
         settings = _(
             "{bot_name} Settings:\n\n"
             "Prefixes: {prefixes}\n"
             "{guild_settings}"
-            "Locale: {locale}\n"
-            "Regional format: {regional_format}"
+            "Global locale: {locale}\n"
+            "Global regional format: {regional_format}\n"
+            "Default embed colour: {colour}"
         ).format(
             bot_name=ctx.bot.user.name,
             prefixes=prefix_string,
             guild_settings=guild_settings,
             locale=locale,
             regional_format=regional_format,
+            colour=colour,
         )
         for page in pagify(settings):
             await ctx.send(box(page))
@@ -1634,7 +1657,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "This description is too long to properly display. "
-                    "Please try again with below 250 characters"
+                    "Please try again with below 250 characters."
                 )
             )
         else:
@@ -1776,8 +1799,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 url = url[1:-1]
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as r:
-                    data = await r.read()
+                try:
+                    async with session.get(url) as r:
+                        data = await r.read()
+                except aiohttp.InvalidURL:
+                    return await ctx.send(_("That URL is invalid."))
+                except aiohttp.ClientError:
+                    return await ctx.send(_("Something went wrong while trying to get the image."))
         else:
             await ctx.send_help()
             return
@@ -1862,6 +1890,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Watching cleared."))
 
+    @_set.command(name="competing")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _competing(self, ctx: commands.Context, *, competing: str = None):
+        """Sets [botname]'s competing status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if competing:
+            activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to ``Competing in {competing}``.").format(competing=competing)
+            )
+        else:
+            await ctx.send(_("Competing cleared."))
+
     @_set.command()
     @checks.bot_in_a_guild()
     @checks.is_owner()
@@ -1891,7 +1938,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command(name="streaming", aliases=["stream"])
+    @_set.command(name="streaming", aliases=["stream"], usage="[(<streamer> <stream_title>)]")
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
@@ -1919,19 +1966,42 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username."""
         try:
+            if self.bot.user.public_flags.verified_bot:
+                await ctx.send(
+                    _(
+                        "The username of a verified bot cannot be manually changed."
+                        " Please contact Discord support to change it."
+                    )
+                )
+                return
             if len(username) > 32:
                 await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
                 return
-            await self._name(name=username)
-        except discord.HTTPException:
+            async with ctx.typing():
+                await asyncio.wait_for(self._name(name=username), timeout=30)
+        except asyncio.TimeoutError:
             await ctx.send(
                 _(
-                    "Failed to change name. Remember that you can "
-                    "only do it up to 2 times an hour. Use "
-                    "nicknames if you need frequent changes. "
-                    "`{}set nickname`"
-                ).format(ctx.clean_prefix)
+                    "Changing the username timed out. "
+                    "Remember that you can only do it up to 2 times an hour."
+                    " Use nicknames if you need frequent changes: {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}set nickname"))
             )
+        except discord.HTTPException as e:
+            if e.code == 50035:
+                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+                await ctx.send(
+                    _(
+                        "Failed to change the username. "
+                        "Discord returned the following error:\n"
+                        "{error_message}"
+                    ).format(error_message=inline(error_string))
+                )
+            else:
+                log.error(
+                    "Unexpected error occurred when trying to change the username.", exc_info=e
+                )
+                await ctx.send(_("Unexpected error occurred when trying to change the username."))
         else:
             await ctx.send(_("Done."))
 
@@ -1941,7 +2011,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname."""
         try:
-            if len(nickname) > 32:
+            if nickname and len(nickname) > 32:
                 await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
                 return
             await ctx.guild.me.edit(nick=nickname)
@@ -1950,13 +2020,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(aliases=["prefixes"])
+    @_set.command(aliases=["prefixes"], require_var_positional=True)
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es)."""
-        if not prefixes:
-            await ctx.send_help()
-            return
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
@@ -1975,9 +2042,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, language_code: str):
+    async def globallocale(self, ctx: commands.Context, language_code: str):
         """
-        Changes bot's locale.
+        Changes the bot's default locale.
+        This will be used when a server has not set a locale, or in DMs.
 
         `<language_code>` can be any language code with country code included,
         e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
@@ -1999,12 +2067,51 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_locale(standardized_locale_name)
-        await ctx.bot._config.locale.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
+        await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
+        await ctx.send(_("Global locale has been set."))
+
+    @_set.command()
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def locale(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's locale in this server.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Go to Red's Crowdin page to see locales that are available with translations:
+        https://translate.discord.red
+
+        Use "default" to return to the bot's default set language.
+        To reset to English, use "en-US".
+        """
+        if language_code.lower() == "default":
+            global_locale = await self.bot._config.locale()
+            i18n.set_contextual_locale(global_locale)
+            await self.bot._i18n_cache.set_locale(ctx.guild, None)
+            await ctx.send(_("Locale has been set to the default."))
+            return
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_locale(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
-    @_set.command(aliases=["region"])
+    @_set.command(aliases=["globalregion"])
+    @commands.guild_only()
     @checks.is_owner()
-    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+    async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
         Changes bot's regional format. This is used for formatting date, time and numbers.
 
@@ -2015,8 +2122,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if language_code is None:
             i18n.set_regional_format(None)
-            await ctx.bot._config.regional_format.set(None)
-            await ctx.send(_("Regional formatting will now be based on bot's locale."))
+            await self.bot._i18n_cache.set_regional_format(None, None)
+            await ctx.send(_("Global regional formatting will now be based on bot's locale."))
             return
 
         try:
@@ -2031,7 +2138,45 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         standardized_locale_name = f"{locale.language}-{locale.territory}"
         i18n.set_regional_format(standardized_locale_name)
-        await ctx.bot._config.regional_format.set(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
+        await ctx.send(
+            _("Global regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
+
+    @_set.command(aliases=["region"])
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
+        """
+        Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+
+        `<language_code>` can be any language code with country code included,
+        e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+
+        Leave `<language_code>` empty to base regional formatting on bot's locale in this server.
+        """
+        if language_code is None:
+            i18n.set_contextual_regional_format(None)
+            await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
+            await ctx.send(
+                _("Regional formatting will now be based on bot's locale in this server.")
+            )
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_regional_format(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(ctx.guild, standardized_locale_name)
         await ctx.send(
             _("Regional formatting will now be based on `{language_code}` locale.").format(
                 language_code=standardized_locale_name
@@ -2059,10 +2204,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """Set various external API tokens.
+        """Set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
@@ -2077,6 +2222,47 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
+    @api.command(name="list")
+    async def api_list(self, ctx: commands.Context):
+        """Show all external API services along with their keys that have been set.
+
+        Secrets are not shown."""
+
+        services: dict = await ctx.bot.get_shared_api_tokens()
+        if not services:
+            await ctx.send(_("No API services have been set yet."))
+            return
+
+        sorted_services = sorted(services.keys(), key=str.lower)
+
+        joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
+        for service_name in sorted_services:
+            joined += "+ {}\n".format(service_name)
+            for key_name in services[service_name].keys():
+                joined += "  - {}\n".format(key_name)
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
+
+    @api.command(name="remove", require_var_positional=True)
+    async def api_remove(self, ctx: commands.Context, *services: str):
+        """Remove the given services with all their keys and tokens."""
+        bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
+        services = [s for s in services if s in bot_services]
+
+        if services:
+            await self.bot.remove_shared_api_services(*services)
+            if len(services) > 1:
+                msg = _("Services deleted successfully:\n{services_list}").format(
+                    services_list=humanize_list(services)
+                )
+            else:
+                msg = _("Service deleted successfully: {service_name}").format(
+                    service_name=services[0]
+                )
+            await ctx.send(msg)
+        else:
+            await ctx.send(_("None of the services you provided had any keys set."))
+
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
@@ -2085,7 +2271,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
-        """ Show the current help settings """
+        """ Show the current help settings. """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
 
@@ -2093,7 +2279,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             message = help_settings.pretty
         else:
             message = _(
-                "Warning: The default formatter is not in use, these settings may not apply"
+                "Warning: The default formatter is not in use, these settings may not apply."
             )
             message += f"\n\n{help_settings.pretty}"
 
@@ -2102,7 +2288,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
-        """ This resets [botname]'s help formatter to the default formatter """
+        """ This resets [botname]'s help formatter to the default formatter. """
 
         ctx.bot.reset_help_formatter()
         await ctx.send(
@@ -2160,6 +2346,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Help will not filter hidden commands."))
         else:
             await ctx.send(_("Help will filter hidden commands."))
+
+    @helpset.command(name="usetick")
+    async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
+        """
+        This allows the help command message to be ticked if help is sent in a DM.
+
+        Defaults to False.
+        Using this without a setting will toggle.
+        """
+        if use_tick is None:
+            use_tick = not await ctx.bot._config.help.use_tick()
+        await ctx.bot._config.help.use_tick.set(use_tick)
+        if use_tick:
+            await ctx.send(_("Help will now tick the command when sent in a DM."))
+        else:
+            await ctx.send(_("Help will not tick the command when sent in a DM."))
 
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
@@ -2397,7 +2599,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         'Appearance' tab. Enable 'Developer Mode', then right click
         a user and click on 'Copy ID'.
         """
-        destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
+        destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
             await ctx.send(
                 _(
@@ -2479,6 +2681,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
         driver = storage_type()
+
+        from redbot.core.data_manager import basic_config, config_file
+
+        data_path = Path(basic_config["DATA_PATH"])
+        disabled_intents = (
+            ", ".join(
+                intent_name.replace("_", " ").title()
+                for intent_name, enabled in self.bot.intents
+                if not enabled
+            )
+            or "None"
+        )
         if await ctx.embed_requested():
             e = discord.Embed(color=await ctx.embed_colour())
             e.title = "Debug Info for Red"
@@ -2488,26 +2702,40 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e.add_field(name="Pip version", value=pipver, inline=True)
             e.add_field(name="System arch", value=platform.machine(), inline=True)
             e.add_field(name="User", value=user_who_ran, inline=True)
+            e.add_field(name="Storage type", value=driver, inline=True)
+            e.add_field(name="Disabled intents", value=disabled_intents, inline=True)
             e.add_field(name="OS version", value=osver, inline=False)
             e.add_field(
                 name="Python executable",
                 value=escape(sys.executable, formatting=True),
                 inline=False,
             )
-            e.add_field(name="Storage type", value=driver, inline=False)
+            e.add_field(
+                name="Data path",
+                value=escape(str(data_path), formatting=True),
+                inline=False,
+            )
+            e.add_field(
+                name="Metadata file",
+                value=escape(str(config_file), formatting=True),
+                inline=False,
+            )
             await ctx.send(embed=e)
         else:
             info = (
                 "Debug Info for Red\n\n"
                 + "Red version: {}\n".format(redver)
                 + "Python version: {}\n".format(pyver)
-                + "Python executable: {}\n".format(sys.executable)
                 + "Discord.py version: {}\n".format(dpy_version)
                 + "Pip version: {}\n".format(pipver)
                 + "System arch: {}\n".format(platform.machine())
                 + "User: {}\n".format(user_who_ran)
                 + "OS version: {}\n".format(osver)
                 + "Storage type: {}\n".format(driver)
+                + "Disabled intents: {}\n".format(disabled_intents)
+                + "Python executable: {}\n".format(sys.executable)
+                + "Data path: {}\n".format(data_path)
+                + "Metadata file: {}\n".format(config_file)
             )
             await ctx.send(box(info))
 
@@ -2519,15 +2747,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @allowlist.command(name="add", usage="<user>...")
+    @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
 
@@ -2551,15 +2775,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @allowlist.command(name="remove", usage="<user>...")
+    @allowlist.command(name="remove", require_var_positional=True)
     async def allowlist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
 
@@ -2581,15 +2801,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @blocklist.command(name="add", usage="<user>...")
+    @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -2622,15 +2838,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blocklist.command(name="remove", usage="<user>...")
+    @blocklist.command(name="remove", require_var_positional=True)
     async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
 
@@ -2653,17 +2865,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localallowlist.command(name="add", usage="<user_or_role>...")
+    @localallowlist.command(name="add", require_var_positional=True)
     async def localallowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the server allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2700,17 +2908,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localallowlist.command(name="remove", usage="<user_or_role>...")
+    @localallowlist.command(name="remove", require_var_positional=True)
     async def localallowlist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from the allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2747,17 +2951,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localblocklist.command(name="add", usage="<user_or_role>...")
+    @localblocklist.command(name="add", require_var_positional=True)
     async def localblocklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -2795,17 +2995,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblocklist.command(name="remove", usage="<user_or_role>...")
+    @localblocklist.command(name="remove", require_var_positional=True)
     async def localblocklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
@@ -3138,7 +3334,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             output += ", ".join(members)
 
         if not output:
-            output = _("No immunty settings here.")
+            output = _("No immunity settings here.")
 
         for page in pagify(output):
             await ctx.send(page)
@@ -3178,9 +3374,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
-            await ctx.send(_("They are immune"))
+            await ctx.send(_("They are immune."))
         else:
-            await ctx.send(_("They are not Immune"))
+            await ctx.send(_("They are not immune."))
 
     @checks.is_owner()
     @_set.group()
@@ -3308,7 +3504,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @ignore.command(name="list")
     async def ignore_list(self, ctx: commands.Context):
         """
-        List the currently ignored servers and channels
+        List the currently ignored servers and channels.
         """
         for page in pagify(await self.count_ignored(ctx)):
             await ctx.maybe_send_embed(page)
@@ -3413,10 +3609,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
         message = (
-            "This bot is an instance of Red-DiscordBot (hereafter referred to as Red)\n"
+            "This bot is an instance of Red-DiscordBot (hereinafter referred to as Red).\n"
             "Red is a free and open source application made available to the public and "
             "licensed under the GNU GPLv3. The full text of this license is available to you at "
-            "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>"
+            "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>."
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.
