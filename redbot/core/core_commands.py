@@ -2955,8 +2955,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Set the tagline to be used.
 
-        This setting only applies to embedded help. If no tagline is
-        specified, the default will be used instead.
+        The maximum tagline length is 2048 characters.
+        This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
+
+        Examples:
+            - `[p]helpset tagline Thanks for using the bot!`
+            - `[p]helpset tagline` - Resets the tagline to the default.
+
+        **Arguments:**
+
+        - `[tagline]` The tagline to appear at the bottom of help embeds. Leave blank to reset.
         """
         if tagline is None:
             await ctx.bot._config.help.tagline.set("")
@@ -2977,7 +2985,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(cooldown_after_parsing=True)
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx: commands.Context, *, message: str):
-        """Sends a message to the owner."""
+        """Sends a message to the owner.
+
+        This is limited to one message every 60 seconds per person.
+
+        Examples:
+            - `[p]contact Help! The bot has become sentient!`
+
+        **Arguments:**
+
+        - `[tagline]` The tagline to appear at the bottom of help embeds. Leave blank to reset.
+        """
         guild = ctx.message.guild
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
