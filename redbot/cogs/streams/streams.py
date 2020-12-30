@@ -989,7 +989,7 @@ class Streams(commands.Cog):
                         embed, data = await stream.is_online()
                         is_rerun = False
                         is_schedule = False
-                     elif stream.__class__.__name__ == "YoutubeStream":
+                    elif stream.__class__.__name__ == "YoutubeStream":
                         embed, is_schedule = await stream.is_online()
                         is_rerun = False
                         data = {}
