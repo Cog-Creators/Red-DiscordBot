@@ -33,10 +33,15 @@ from .utils._internal_utils import (
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
+from rich.table import Table
+from rich.columns import Columns
+from rich.panel import Panel
+from rich.text import Text
+
 log = logging.getLogger("red")
 init()
 
-INTRO = r"""
+INTRO = r"""[red]
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -52,7 +57,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
         if bot._uptime is None:
-            print("Connected to Discord. Getting ready...")
+            log.info("Connected to Discord. Getting ready...")
 
     @bot.event
     async def on_ready():
@@ -83,36 +88,35 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        INFO = [
-            str(bot.user),
-            "Prefixes: {}".format(", ".join(prefixes)),
-            "Language: {}".format(lang),
-            "Red Bot Version: {}".format(red_version),
-            "Discord.py Version: {}".format(dpy_version),
-            "Shards: {}".format(bot.shard_count),
-            "Storage type: {}".format(data_manager.storage_type()),
-        ]
+        table_general_info = Table(show_edge=False, show_header=False)
+        table_general_info.add_row("Prefixes", ", ".join(prefixes))
+        table_general_info.add_row("Language", lang)
+        table_general_info.add_row("Red version", red_version)
+        table_general_info.add_row("Discord.py version", dpy_version)
+        table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        if guilds:
-            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
-        else:
-            print("Ready. I'm not in any server yet!")
-
-        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
+        table_counts = Table(show_edge=False, show_header=False)
+        # String conversion is needed as Rich doesn't deal with ints
+        table_counts.add_row("Shards", str(bot.shard_count))
+        table_counts.add_row("Servers", str(guilds))
+        if bot.intents.members:  # Lets avoid 0 Unique Users
+            table_counts.add_row("Unique Users", str(users))
 
         outdated_red_message = ""
+        rich_outdated_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                INFO.append(
-                    "Outdated version! {} is available "
-                    "but you're using {}".format(pypi_version, red_version)
-                )
                 outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(pypi_version, red_version)
+                rich_outdated_message = (
+                    f"[red]Outdated version![/red]\n"
+                    f"[red]!!![/red]Version {pypi_version} is available, "
+                    f"but you're using {red_version}[red]!!![/red]"
+                )
                 current_python = platform.python_version()
                 extra_update = _(
                     "\n\nWhile the following command should work in most scenarios as it is "
@@ -163,41 +167,33 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        INFO2 = []
+        bot._rich_console.print(INTRO)
+        if guilds:
+            bot._rich_console.print(
+                Columns(
+                    [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
+                    equal=True,
+                    align="center",
+                )
+            )
+        else:
+            bot._rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
-        reqs_installed = {"docs": None, "test": None}
-        for key in reqs_installed.keys():
-            reqs = [x.name for x in red_pkg._dep_map[key]]
-            try:
-                pkg_resources.require(reqs)
-            except DistributionNotFound:
-                reqs_installed[key] = False
-            else:
-                reqs_installed[key] = True
-
-        options = (
-            ("Voice", True),
-            ("Docs", reqs_installed["docs"]),
-            ("Tests", reqs_installed["test"]),
+        bot._rich_console.print(
+            "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
         )
 
-        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
-
-        for option, enabled in options:
-            enabled = on_symbol if enabled else off_symbol
-            INFO2.append("{} {}".format(enabled, option))
-
-        print(Fore.RED + INTRO)
-        print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2, ascii_border=ascii_border))
-
         if invite_url:
-            print("\nInvite URL: {}\n".format(invite_url))
-
-        if not guilds:
-            print(
-                "Looking for a quick guide on setting up Red? https://docs.discord.red/en/stable/getting_started.html\n"
+            bot._rich_console.print(
+                f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}"
             )
+            # We generally shouldn't care if the client supports it or not as Rich deals with it.
+        if not guilds:
+            bot._rich_console.print(
+                f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
+            )
+        if rich_outdated_message:
+            bot._rich_console.print(rich_outdated_message)
 
         if not bot.owner_ids:
             # we could possibly exit here in future
@@ -296,6 +292,11 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
+            if bot._bypass_cooldowns and ctx.author.id in bot.owner_ids:
+                ctx.command.reset_cooldown(ctx)
+                new_ctx = await bot.get_context(ctx.message)
+                await bot.invoke(new_ctx)
+                return
             if delay := humanize_timedelta(seconds=error.retry_after):
                 msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
             else:
@@ -311,8 +312,19 @@ def init_events(bot, cli_flags):
                 else:
                     msg = _(
                         "Too many people using this command."
-                        " It can only be used {number} time concurrently."
-                    ).format(number=error.number)
+                        " It can only be used once concurrently."
+                    )
+            elif error.per in (commands.BucketType.user, commands.BucketType.member):
+                if error.number > 1:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
             else:
                 if error.number > 1:
                     msg = _(
@@ -322,8 +334,8 @@ def init_events(bot, cli_flags):
                 else:
                     msg = _(
                         "Too many people using this command."
-                        " It can only be used {number} time per {type} concurrently."
-                    ).format(number=error.number, type=error.per.name)
+                        " It can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
             await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)

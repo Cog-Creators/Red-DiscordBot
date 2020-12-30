@@ -66,9 +66,9 @@ msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. 
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Youtube Data API anahtarınız geçersiz..\\nYoutube API anahtarınızı tekrar kontrol edin ve `{prefix}audioset youtubeapi` komutunun verdiği talimatları takip edin."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "YouTube API hata kodu: 403\\nYoutube API anahtarınız hesabın günlük sorgu limitine ulaşmış olabilir. Lütfen daha fazla bilgi için <https://developers.google.com/youtube/v3/getting-started#quota> adresini ziyaret edin."
 

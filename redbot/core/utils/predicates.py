@@ -70,7 +70,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         channel: Optional[discord.TextChannel] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
-        """Match if the reaction fits the described context.
+        """Match if the message fits the described context.
 
         Parameters
         ----------
@@ -866,7 +866,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     Attributes
     ----------
     result : Any
-        The object which the message content matched with. This is
+        The object which the reaction matched with. This is
         dependent on the predicate used - see each predicate's
         documentation for details, not every method will assign this
         attribute. Defaults to ``None``.

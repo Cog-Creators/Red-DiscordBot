@@ -279,7 +279,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Trivia file was not found."))
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, require_var_positional=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
         """Start trivia session on the specified category.
@@ -287,9 +287,6 @@ class Trivia(commands.Cog):
         You may list multiple categories, in which case the trivia will involve
         questions from all of them.
         """
-        if not categories:
-            await ctx.send_help()
-            return
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
@@ -625,7 +622,7 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = attachment.filename.rsplit(".", 1)[0]
+        filename = attachment.filename.rsplit(".", 1)[0].casefold()
 
         # Check if trivia filename exists in core files or if it is a command
         if filename in self.trivia.all_commands or any(

@@ -36,7 +36,11 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/alias
     cog_guides/bank
     cog_guides/cleanup
+    cog_guides/cog_manager_ui
     cog_guides/customcommands
+    cog_guides/downloader
+    cog_guides/economy
+    cog_guides/streams
     cog_guides/trivia
     red_core_data_statement
 
@@ -47,6 +51,7 @@ Welcome to Red - Discord Bot's documentation!
     guide_migration
     guide_cog_creation
     guide_publish_cogs
+    guide_cog_creators
     framework_apikeys
     framework_bank
     framework_bot
