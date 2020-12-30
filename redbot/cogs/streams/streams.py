@@ -460,7 +460,8 @@ class Streams(commands.Cog):
                     "Multiple possible options found. Please enter the number of the one you were trying to add."
                 )
             )
-            await ctx.send(pagify(cat_ask_str.strip()))
+            for page in pagify(cat_ask_str.strip()):
+                await ctx.send(page)
             try:
                 msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
             except asyncio.TimeoutError:
@@ -527,7 +528,8 @@ class Streams(commands.Cog):
                     "Multiple possible options found. Please enter the number of the one you were trying to remove."
                 )
             )
-            await ctx.send(pagify(cat_ask_str.strip()))
+            for page in pagify(cat_ask_str.strip()):
+                await ctx.send(page)
             try:
                 msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
             except asyncio.TimeoutError:
