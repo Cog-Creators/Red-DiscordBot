@@ -2842,7 +2842,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Users on blocklist:")
         else:
             msg = _("User on blocklist:")
-        else
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
@@ -3002,7 +3001,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not curr_list:
             await ctx.send("Server blocklist is empty.")
             return
-        
         if len(curr_list) > 1:
             msg = _("Blacklisted users and/or roles:")
         else:
