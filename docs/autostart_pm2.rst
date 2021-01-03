@@ -35,6 +35,14 @@ You can add additional Red based arguments after the instance, such as :code:`--
     <Red Instance>
     The name of your Red instance.
 
+.. note:: If you used `pyenv virtualenv` to create your virtual environment, please make the following changes to the above generated command
+    
+    <Location to your Python Interpreter>
+    Run `pyenv which python` instead to get your Python interpreter
+    
+    Replace the `redbot` part of `pm2 start redbot` with the output of the following (when ran inside your activated venv)
+    pyenv which redbot
+
 ------------------------------
 Ensuring that PM2 stays online
 ------------------------------
