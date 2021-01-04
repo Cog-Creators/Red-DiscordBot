@@ -2,16 +2,41 @@
 
 .. _host-list:
 
-=============
-VPS providers
-=============
+===================
+Hosting Information
+===================
 
 .. note::
     This doc is written for the :ref:`hosting section <getting-started-hosting>`
     of the :ref:`getting started <getting-started>` guide. Please take a look
-    if you don't know how to host Red on a VPS.
+    if you don't know how to host Red.
 
-This is a list of the recommended VPS providers.
+
+| For your instance of Red to stay online it needs to be hosted in a system.
+  This page contains hosting related information and advice for beginners in 
+  topics such as picking a provider.
+
+First, we would like to make something clear:
+
+.. warning::
+    Red is a highly sophisticated bot and requires a complete operating system
+    to properly operate. This means platforms such as Heroku, Pterodactyl,
+    repl.it, Termux and Docker are **NOT** officially supported. LXC are also
+    unsupported. Workarounds for getting Red  running on those platforms are
+    imperfect due to Red's nature. And you will not be able to recieve support
+    if an issue occurs when hosting on any of these platforms.
+
+
+------------------------------------
+Hosting on a VPS or Dedicated Server
+------------------------------------
+
+| One can host Red in a VPS running Linux or Windows. Using a Linux VPS is the
+  recommened option. Dedicated servers also work but are overpowered and cost 
+  ineffective unless one plans to run a very large bot or use their server for 
+  more than than just hosting Red. After setup, Red can be moved to a different 
+  server for hosting with a backup/restore process. More information and guidance
+  about this process is available in the `Red Support Server <https://discord.com/invite/red>`_.
 
 .. warning::
     Please be aware that a Linux server is controlled through a command line.
@@ -19,73 +44,97 @@ This is a list of the recommended VPS providers.
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
     from DigitalOcean which will introduce you to the Linux basics.
 
--------------
-Linux hosting
--------------
-
-+------------------------------------+------------------------------------------------------+
-|Link                                |Description                                           |
-+====================================+======================================================+
-|`Scaleway                           |Incredibly cheap but powerful VPSes, owned by         |
-|<https://www.scaleway.com/>`_       |`<https://online.net/>`_, based in Europe.            |
-+------------------------------------+------------------------------------------------------+
-|`DigitalOcean                       |US-based cheap VPSes. The gold standard. Locations    |
-|<https://www.digitalocean.com/>`_   |available world wide.                                 |
-+------------------------------------+------------------------------------------------------+
-|`OVH <https://www.ovh.co.uk/>`_     |Cheap VPSes, used by many people. French and Canadian |
-|                                    |locations available.                                  |
-+------------------------------------+------------------------------------------------------+
-|`Time4VPS                           |Cheap VPSes, seemingly based in Lithuania.            |
-|<https://www.time4vps.eu/>`_        |                                                      |
-+------------------------------------+------------------------------------------------------+
-|`Linode <https://www.linode.com/>`_ |More cheap VPSes!                                     |
-+------------------------------------+------------------------------------------------------+
-|`Vultr <https://www.vultr.com/>`_   |US-based, DigitalOcean-like.                          |
-+------------------------------------+------------------------------------------------------+
-
-------
-Others
-------
-
-+-------------------------------------+-----------------------------------------------------+
-|Link                                 |                                                     |
-+=====================================+=====================================================+
-|`AWS <https://aws.amazon.com/>`_     |Amazon Web Services. Free for a year (with certain   |
-|                                     |limits), but very pricey after that.                 |
-+-------------------------------------+-----------------------------------------------------+
-|`Google Cloud                        |Same as AWS, but it's Google.                        |
-|<https://cloud.google.com/compute/>`_|                                                     |
-+-------------------------------------+-----------------------------------------------------+
-|`Microsoft Azure                     |Same as AWS, but it's Microsoft.                     |
-|<https://azure.microsoft.com>`_      |                                                     |
-+-------------------------------------+-----------------------------------------------------+
-|`Oracle Cloud                        |Same as AWS, but it's Oracle.                        |
-|<https://oracle.com/cloud/>`_        |                                                     |
-+-------------------------------------+-----------------------------------------------------+
-|`LowEndBox <http://lowendbox.com/>`_ |A curator for lower specced servers.                 |
-+-------------------------------------+-----------------------------------------------------+
 
 ------------
-Self-hosting
+Self Hosting
 ------------
 
-You can always self-host on your own hardware.
-A Raspberry Pi 3 will be more than sufficient for small to medium sized bots.
+| It's possible to self host red with one's own hardware. A Raspberry Pi 3 
+  will have enough computing capacity to handle a small to medium sized bot. 
+  One also has the option of building a computer for this purpose or purchasing 
+  a  rack server as any modern hardware should work without issues. But keep in
+  mind this option can leaves one vulnerable to factors outside their control
+  such as power outages.
 
-For bigger bots, you can build your own server PC for usage, or buy a rack
-server. Any modern hardware should work 100% fine.
+-------------------
+Choosing a Provider
+-------------------
+
+| The following are some common providers suitable for hosting Red. With
+  each having their pros and cons, this list is mainly intended to act as a
+  starting point for one to conduct their own research and come to
+  a conclusion depending on their needs and budget.
+
+
+-----------------
+Average Providers
+-----------------
+
+| `Scaleway <https://www.scaleway.com/>`_ is a VPS and dedicated server
+ provider French in origin with locations in Poland and Netherlands.
+
+| `DigitalOcean <https://www.digitalocean.com/>`_ is a US based cloud services company 
+ with locations available worldwide, the VPS service is provided under the brand name
+ "Droplet".
+
+| `OVH <https://us.ovhcloud.com/vps/>`_ is a company focused on providing hosting
+ and cloud services with locations in the Europe, North America and Asia Pacific.
+
+| `Time4VPS <https://www.time4vps.eu/>`_ is a Lithuanian VPS provider mainly focused
+ on lower cost.
+
+| `Linode <https://www.linode.com/>`_ is a US based cloud services company similar
+ to DigitalOcean with locations available worldwide.
+
+| `AWS Lightsail <https://aws.amazon.com/lightsail/>`_ is a VPS service from Amazon
+ Web Services priced lower than their enterprise offerings.
+
+| `Vultr <https://www.vultr.com/>`_ is a US based provider of VPS and dedicated servers
+ with locations available worldwide.
+
+| `Hetzner Online <https://www.hetzner.com/>`_ is a German VPS and dedicated server
+ provider with locations in Germany and Finland.
+
+| `Contabo <https://contabo.com/>`_ is also a German VPS and dedicated server provider
+ with locations in Germany and USA.
+
+| `LowEndBox <http://lowendbox.com/>`_ is a website where hosting providers are
+ discussed and curated, often with lower costs and less known providers.
+
+--------------------
+Higher End Providers
+--------------------
+
+| `AWS EC2 <https://aws.amazon.com/ec2/>`__ is the enterprise offering of Amazon Web Services.
+ A limited free plan is available for 12 months, after which a complex pricing model with
+ high costs take over.
+
+| `Google Compute Engine <https://cloud.google.com/compute/>`__ is Google's EC2 competitor.
+ However, an always free plan with limited resources is offered.
+
+| `Microsoft Azure VM <https://azure.microsoft.com/services/virtual-machines/>`__ is
+ Microsoft's EC2 competitor with lower costs than EC2 for Windows instances, but similar
+ otherwise.
+
+| `Oracle Cloud Compute  <https://www.oracle.com/cloud/compute/>`__ is Oracle's EC2
+ competitor. But an always free plan is available with slightly higher specifications
+ compared to that of Google Compute Engine.
 
 ------------
-Free hosting
+Free Hosting
 ------------
 
-| `Google Cloud Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
-  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_ and
+| `Google Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
+  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_,
+  `Microsoft Azure VM <https://azure.microsoft.com/free/>`_ and
   `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
 
-| **Note:** AWS EC2's free tier does not last forever - it's a 12 month trial.
-| Additionally, new Google Cloud customers get a $300 credit which is valid
-  for 3 months.
+| **Note:** Free tiers of AWS and Microsoft Azure only last for 12 months, while
+ Google Compute Engine and Oracle Cloud Compute offer always free services with
+ certain limits.
 
-Other than that... no. There is no good free VPS hoster, outside of
-persuading somebody to host for you, which is incredibly unlikely.
+| Additionally, new Google Cloud customers get a $300 credit which is valid
+  for 3 months. Microsoft Azure customers get a $200 credit valid for one month.
+
+| Excluding the above, there is no recommended free VPS host. Persuation of
+ another individual for hosting Red is an option, albeit low in success rate.
