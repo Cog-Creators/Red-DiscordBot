@@ -126,7 +126,7 @@ Free Hosting
 ------------
 
 | `Google Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
-  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>` and
+  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_ and
   `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
 
 | **Note:** Free tiers of AWS and Microsoft Azure only last for 12 months, while
