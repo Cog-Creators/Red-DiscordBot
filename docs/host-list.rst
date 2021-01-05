@@ -126,16 +126,14 @@ Free Hosting
 ------------
 
 | `Google Compute Engine <https://cloud.google.com/free/docs/gcp-free-tier>`_,
-  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_,
-  `Microsoft Azure VM <https://azure.microsoft.com/free/>`_ and
+  `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>` and
   `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
 
 | **Note:** Free tiers of AWS and Microsoft Azure only last for 12 months, while
  Google Compute Engine and Oracle Cloud Compute offer always free services with
  certain limits.
 
-| Additionally, new Google Cloud customers get a $300 credit which is valid
-  for 3 months. Microsoft Azure customers get a $200 credit valid for one month.
+| Additionally, new Google Cloud customers get a $300 credit which is valid for 3 months.
 
 | Excluding the above, there is no recommended free VPS host. Persuation of
  another individual for hosting Red is an option, albeit low in success rate.
