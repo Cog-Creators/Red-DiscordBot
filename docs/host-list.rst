@@ -19,12 +19,13 @@ Hosting Information
 First, we would like to make something clear:
 
 .. warning::
-    Red is a highly sophisticated bot and requires a complete operating system
-    to properly operate. This means platforms such as Heroku, Pterodactyl,
-    repl.it, Termux and Docker are **NOT** officially supported. LXC are also
-    unsupported. Workarounds for getting Red  running on those platforms are
-    imperfect due to Red's nature. And you will not be able to recieve support
-    if an issue occurs when hosting on any of these platforms.
+    Due to their inability to handle Red's data structure and meet the
+    conditions of being a supported platform; platforms such as Heroku, 
+    Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
+    Docker support found in Cog-Creators GitHub is also a work in progress 
+    and not ready for daily use. Workarounds for getting Red  running on those 
+    platforms are imperfect due to Red's nature. And one will not be able to 
+    recieve support if an issue occurs when hosting on any of these platforms.
 
 
 ------------------------------------
