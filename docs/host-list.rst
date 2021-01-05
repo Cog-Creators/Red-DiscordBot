@@ -23,7 +23,7 @@ First, we would like to make something clear:
     conditions of being a supported platform; platforms such as Heroku, 
     Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
     Docker support found in Cog-Creators GitHub is also a work in progress 
-    and not ready for daily use. Workarounds for getting Red  running on those 
+    and not ready for daily use. Workarounds for getting Red running on those 
     platforms are imperfect due to Red's nature. And one will not be able to 
     recieve support if an issue occurs when hosting on any of these platforms.
 
