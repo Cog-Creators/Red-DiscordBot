@@ -50,7 +50,7 @@ Hosting on a VPS or Dedicated Server
 Self Hosting
 ------------
 
-| It's possible to self host red with one's own hardware. A Raspberry Pi 3 
+| It's possible to self host Red with one's own hardware. A Raspberry Pi 3 
   will have enough computing capacity to handle a small to medium sized bot. 
   One also has the option of building a computer for this purpose or purchasing 
   a  rack server as any modern hardware should work without issues. But keep in
