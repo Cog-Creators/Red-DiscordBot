@@ -161,7 +161,7 @@ msgstr "Bu sunucu için kuralları bir YAML dosyası ile güncelle.\\n\\n       
 #: redbot/cogs/permissions/permissions.py:385
 #, docstring
 msgid "Add a global rule to a command.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Bir komuta küresel bir kural ekle.\\n\\n        `<allow_or_deny>` \\\"allow\\\" veya \\\"deny\\\" olmalıdır.\\n\\n        `<cog_or_command>` kural eklenecek cog veya komuttur.\\n        Büyük küçük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işleyeceği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:401
 #: redbot/cogs/permissions/permissions.py:431
@@ -171,12 +171,12 @@ msgstr "Kural başarıyla eklendi."
 #: redbot/cogs/permissions/permissions.py:415
 #, docstring
 msgid "Add a rule to a command in this server.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Bu sunucuda bir komuta kural ekle.\\n\\n        `<allow_or_deny>`\\\"allow\\\" veya \\\"deny\\\" olmalıdır.\\n\\n        `<cog_or_command>` kuralın ekleneceği cog veya kural olmalıdır.\\n        Küçük büyük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işleyeceği bir ve birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:441
 #, docstring
 msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Bir komuttan bir küresel kuralı kaldır.\\n\\n        `<cog_or_command>` kuralın kaldırılacağı cog veya\\n        komut olmalıdır, küçük büyük harfe duyarlıdır..\\n\\n        `<who_or_what...>` kuralın işlediği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:450
 #: redbot/cogs/permissions/permissions.py:474
@@ -186,7 +186,7 @@ msgstr "Kural silindi."
 #: redbot/cogs/permissions/permissions.py:463
 #, docstring
 msgid "Remove a server rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Bir komuttan bir sunucu kuralını kaldır.\\n\\n        `<cog_or_command>` kuralın kaldırılacağı cog veya\\n        komut olmalıdır, küçük büyük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işlediği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:482
 #, docstring

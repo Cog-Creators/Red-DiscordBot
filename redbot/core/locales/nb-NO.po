@@ -1996,15 +1996,15 @@ msgstr "Send ut en meldingshendelse som om den ble sendt av en annen bruker.\\n\
 #: redbot/core/dev_commands.py:376
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\\n\\n        Does not persist through restarts."
-msgstr ""
+msgstr "Gi bot eiere muligheten til å omgå cooldowns.\\n\\n        vedvarer ikke ved omstarter."
 
 #: redbot/core/dev_commands.py:384
 msgid "Bot owners will now bypass all commands with cooldowns."
-msgstr ""
+msgstr "Bot eiere vil nå omgå alle kommandoer med cooldowns."
 
 #: redbot/core/dev_commands.py:386
 msgid "Bot owners will no longer bypass all commands with cooldowns."
-msgstr ""
+msgstr "Bot eiere vil ikke lenger omgå alle kommandoer med cooldowns."
 
 #: redbot/core/errors.py:49
 msgid "{user}'s balance cannot rise above {max} {currency}."
@@ -2072,15 +2072,15 @@ msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {num
 
 #: redbot/core/events.py:313
 msgid "Too many people using this command. It can only be used once concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes en tid samtidig."
 
 #: redbot/core/events.py:319
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
-msgstr ""
+msgstr "Den kommandoen fullført fortsatt, den kan bare brukes {number} ganger per {type} samtidig."
 
 #: redbot/core/events.py:324
 msgid "That command is still completing, it can only be used once per {type} concurrently."
-msgstr ""
+msgstr "Den kommandoen er fortsatt fullført, den kan bare brukes en gang per {type} samtidig."
 
 #: redbot/core/events.py:330
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
@@ -2088,7 +2088,7 @@ msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes {num
 
 #: redbot/core/events.py:335
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
-msgstr ""
+msgstr "For mange personer som bruker denne kommandoen. Den kan bare brukes en tid per {type} samtidig."
 
 #: redbot/core/modlog.py:344
 msgid "Case #{} | {} {}"

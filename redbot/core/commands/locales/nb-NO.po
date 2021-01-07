@@ -25,7 +25,7 @@ msgstr "`{unit}` er ikke en gyldig tidsenhet for denne kommandoen"
 
 #: redbot/core/commands/converter.py:119
 msgid "The time set is way too high, consider setting something reasonable."
-msgstr ""
+msgstr "Tiden som settes er for høy, kan man vurdere å sette noe rimelig."
 
 #: redbot/core/commands/converter.py:123
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"

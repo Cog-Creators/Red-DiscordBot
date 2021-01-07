@@ -44,7 +44,7 @@ msgstr "Instala programas comunitarios hechos por Cog Creators.\\n\\n    Encenec
 #: redbot/cogs/downloader/downloader.py:484
 #, docstring
 msgid "\\n        Install a group of dependencies using pip.\\n\\n        Examples:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Improper usage of this command can break your bot, be careful.\\n\\n        **Arguments**\\n\\n        - `<deps...>` The package or packages you wish to install.\\n        "
-msgstr ""
+msgstr "\\n        Instale un grupo de dependencias usando pip.\\n\\n        Ejemplos:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        El uso incorrecto de este comando puede romper tu bot, ten cuidado.\\n\\n        **Argumentos**\\n\\n        - `<deps...>` El paquete o paquetes que desea instalar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:502
 msgid "Libraries installed."
@@ -87,7 +87,7 @@ msgstr "Repo `{name}` añadida correctamente."
 #: redbot/cogs/downloader/downloader.py:584
 #, docstring
 msgid "\\n        Remove a repo and its files.\\n\\n        Example:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of an already added repo\\n        "
-msgstr ""
+msgstr "\\n        Eliminar un repositorio y sus archivos.\\n\\n        Ejemplo:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Argumentos**\\n\\n        - `<repo>` El nombre de un repositorio ya añadido\\n        "
 
 #: redbot/cogs/downloader/downloader.py:597
 msgid "The repo `{repo.name}` has been deleted successfully."
@@ -105,7 +105,7 @@ msgstr "Repositorios Instalados: \\n\\n"
 #: redbot/cogs/downloader/downloader.py:614
 #, docstring
 msgid "Show information about a repo.\\n\\n        Example:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of the repo to show info about.\\n        "
-msgstr ""
+msgstr "Mostrar información sobre un repositorio.\\n\\n        Ejemplo:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Argumentos**\\n\\n        - `<repo>` El nombre del repositorio sobre el que mostrar información.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:623
 #: redbot/cogs/downloader/downloader.py:1273
@@ -184,7 +184,7 @@ msgstr "Se han reinstalado los requisitos de Cog y las bibliotecas compartidas p
 #: redbot/cogs/downloader/downloader.py:739
 #, docstring
 msgid "Install a cog from the given repo.\\n\\n        Examples:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of the repo to install cogs from.\\n        - `<cogs...>` The cog or cogs to install.\\n        "
-msgstr ""
+msgstr "Instala un cog desde el repositorio dado.\\n\\n        Ejemplos:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Argumentos**\\n\\n        - `<repo>` El nombre del repositorio del que instalar programas.\\n        - `<cogs...>` El cog o los engranajes a instalar.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:758
 #, docstring
@@ -363,7 +363,7 @@ msgstr "\\nEstos programadores están anclados y por lo tanto no fueron revisado
 #: redbot/cogs/downloader/downloader.py:1208
 #, docstring
 msgid "List all available cogs from a single repo.\\n\\n        Example:\\n            - `[p]cog list 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo>` The repo to list cogs from.\\n        "
-msgstr ""
+msgstr "Listar todos los cogs disponibles de un solo dominio.\\n\\n        Ejemplo:\\n            - `[p]cog list 26-Cogs`\\n\\n        **Argumentos**\\n\\n        - `<repo>` El repositorio del que listar los cogs.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1220
 msgid "Installed Cogs:\\n"
@@ -376,7 +376,7 @@ msgstr "Cogs disponibles: \\n"
 #: redbot/cogs/downloader/downloader.py:1240
 #, docstring
 msgid "List information about a single cog.\\n\\n        Example:\\n            - `[p]cog info 26-Cogs defender`\\n\\n        **Arguments**\\n\\n        - `<repo>` The repo to get cog info from.\\n        - `<cog>` The cog to get info on.\\n        "
-msgstr ""
+msgstr "Listar la información sobre un solo cog.\\n\\n        Ejemplo:\\n            - `[p]cog info 26-Cogs defender`\\n\\n        **Argumentos**\\n\\n        - `<repo>` El repositorio del que obtener información sobre el engranaje.\\n        - `<cog>` El cog del que obtener información.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:1253
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"

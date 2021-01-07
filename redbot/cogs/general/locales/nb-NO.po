@@ -399,7 +399,7 @@ msgstr "Medlemsliste deaktivert"
 
 #: redbot/cogs/general/general.py:383
 msgid "Membership Screening enabled"
-msgstr ""
+msgstr "Medlemskapsoversikt aktivert"
 
 #: redbot/cogs/general/general.py:384
 msgid "More Emojis"
@@ -415,7 +415,7 @@ msgstr "Partner"
 
 #: redbot/cogs/general/general.py:387
 msgid "Preview enabled"
-msgstr ""
+msgstr "Forhåndsvisning aktivert"
 
 #: redbot/cogs/general/general.py:388
 msgid "Public disabled"
@@ -435,7 +435,7 @@ msgstr "VIP stemmeservere"
 
 #: redbot/cogs/general/general.py:392
 msgid "Welcome Screen enabled"
-msgstr ""
+msgstr "Velkommen skjerm aktivert"
 
 #: redbot/cogs/general/general.py:400
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"

@@ -75,7 +75,7 @@ msgstr "Saya berhasil menambahkan {role.name} ke {member.display_name}"
 #: redbot/cogs/admin/admin.py:223
 #, docstring
 msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\ n Tambahkanrole ke user. \\ n \\ n Gunakan tanda kutip ganda jika role berisi spasi. \\ n Jika pengguna dibiarkan kosong, defaultnya adalah pembuat perintah. \\ n        "
+msgstr "\\n Tambahkan role ke user. \\n \\n Gunakan tanda kutip ganda jika role berisi spasi. \\n Jika pengguna dibiarkan kosong, defaultnya adalah pembuat perintah. \\n        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
