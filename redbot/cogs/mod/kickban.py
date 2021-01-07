@@ -652,9 +652,6 @@ class KickBanMixin(MixinMeta):
         Example:
             `[p]softban @Twentysix Let's remove your wallspam.`
             This will softban twentysix and delete 1 days worth message.
-
-        If a reason is specified, it will be the reason that shows up
-        in the audit log.
         """
         guild = ctx.guild
         author = ctx.author
