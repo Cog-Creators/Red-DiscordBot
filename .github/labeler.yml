@@ -2,17 +2,15 @@
   - redbot/cogs/admin/*
 "Category: Alias":
   - redbot/cogs/alias/*
-"Category: Audio API":
-  - redbot/cogs/audio/apis/*
-  - redbot/cogs/audio/data/*
 "Category: Audio Cog":
-  - redbot/cogs/audio/*
-  - redbot/cogs/audio/core/*
+  - redbot/cogs/audio/**/*
+  - !redbot/cogs/audio/**/locales/*
 "Category: Bank API":
   - redbot/core/bank.py
 "Category: Bank Cog":
   - redbot/cogs/bank/*
 "Category: Bot Core":
+  - redbot/*
   - redbot/core/__init__.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/bot.py
@@ -20,6 +18,7 @@
   - redbot/core/cli.py
   - redbot/core/cog_manager.py
   - redbot/core/core_commands.py
+  - redbot/core/data_manager.py
   - redbot/core/errors.py
   - redbot/core/events.py
   - redbot/core/global_checks.py
@@ -39,7 +38,6 @@
 "Category: Dev Cog":
   - redbot/core/dev_commands.py
 "Category: Docs":
-  - docs/*
   - docs/**/*
 "Category: Downloader":
   - redbot/cogs/downloader/*
@@ -61,9 +59,13 @@
   - .github/*
   - .github/ISSUE_TEMPLATE/*
   - .github/PULL_REQUEST_TEMPLATE/*
+  - schema/*
+  - tools/*
 "Category: Mod Cog":
   - redbot/cogs/mod/*
 "Category: Modlog API":
+  - redbot/core/generic_casetypes.py
+  - redbot/core/modlog.py
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
@@ -77,7 +79,8 @@
 "Category: Streams":
   - redbot/cogs/streams/*
 "Category: Tests":
-  - redbot/tests/*
+  - redbot/pytest/*
+  - tests/**/*
 "Category: Trivia Cog":
   - redbot/cogs/trivia/*
 "Category: Trivia Lists":
@@ -86,4 +89,3 @@
   - redbot/core/utils/*
 "Category: Warnings":
   - redbot/cogs/warnings/*
-
