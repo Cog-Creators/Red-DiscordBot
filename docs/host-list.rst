@@ -129,9 +129,8 @@ Free Hosting
   `Oracle Cloud Compute <https://oracle.com/cloud/free/#always-free>`_ and
   `AWS EC2 <https://aws.amazon.com/free/>`_ have free tier VPSes suitable for small bots.
 
-| **Note:** Free tiers of AWS and Microsoft Azure only last for 12 months, while
- Google Compute Engine and Oracle Cloud Compute offer always free services with
- certain limits.
+| **Note:** The free tier offered by AWS for EC2 only lasts for 12 months, while
+ Oracle Cloud and Google Cloud offer always free tiers with limited resources.
 
 | Additionally, new Google Cloud customers get a $300 credit which is valid for 3 months.
 
