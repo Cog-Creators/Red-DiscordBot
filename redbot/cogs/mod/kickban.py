@@ -568,7 +568,6 @@ class KickBanMixin(MixinMeta):
             This will ban Twentysix for 15 minutes.
             `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
             This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
-
         """
         guild = ctx.guild
         author = ctx.author
