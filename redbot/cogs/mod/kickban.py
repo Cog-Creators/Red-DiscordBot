@@ -46,7 +46,7 @@ class KickBanMixin(MixinMeta):
                     # but does not have it set up,
                     # this prevents the command from failing
                     # and defaults back to another regular invite.
-                    pass 
+                    pass
             invites = await guild.invites()
         else:
             invites = []
