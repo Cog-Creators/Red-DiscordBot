@@ -20,6 +20,32 @@ import discord
 
 from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
 
+import io
+import builtins
+
+safe_builtins = {
+    'range',
+    'complex',
+    'set',
+    'frozenset',
+    'slice',
+}
+
+
+class RestrictedUnpickler(pickle.Unpickler):
+
+    def find_class(self, module, name):
+        """Only allow safe classes from builtins"""
+        if module == "builtins" and name in safe_builtins:
+            return getattr(builtins, name)
+        """Forbid everything else"""
+        raise pickle.UnpicklingError("global '%s.%s' is forbidden" %
+                                     (module, name))
+
+def restricted_loads(s):
+    """Helper function analogous to pickle.loads()"""
+    return RestrictedUnpickler(io.BytesIO(s)).load()
+
 __all__ = ["Config", "get_latest_confs", "migrate"]
 
 log = logging.getLogger("red.config")
@@ -102,6 +128,7 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
                 "list or dict) in order to use a config value as "
                 "a context manager."
             )
+        restricted_loads(pickle.dumps(self.raw_value, -1))
         self.__original_value = pickle.loads(pickle.dumps(self.raw_value, -1))
         return self.raw_value
 
@@ -297,6 +324,7 @@ class Group(Value):
 
     @property
     def defaults(self):
+        restricted_loads(pickle.dumps(self._defaults, -1))
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
     async def _get(self, default: Dict[str, Any] = ...) -> Dict[str, Any]:
@@ -552,6 +580,7 @@ class Group(Value):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
+                restricted_loads(pickle.dumps(current[key], -1))
                 defaults[key] = pickle.loads(pickle.dumps(current[key], -1))
         return defaults
 
@@ -654,6 +683,7 @@ class Config(metaclass=ConfigMeta):
 
     @property
     def defaults(self):
+        restricted_loads(pickle.dumps(self._defaults, -1))
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
     @classmethod
@@ -806,7 +836,7 @@ class Config(metaclass=ConfigMeta):
     def _register_default(self, key: str, **kwargs: Any):
         if key not in self._defaults:
             self._defaults[key] = {}
-
+        restricted_loads(pickle.dumps(kwargs, -1))
         data = pickle.loads(pickle.dumps(kwargs, -1))
 
         for k, v in data.items():
@@ -1151,6 +1181,7 @@ class Config(metaclass=ConfigMeta):
             pass
         else:
             for k, v in dict_.items():
+                restricted_loads(pickle.dumps(defaults, -1))
                 data = pickle.loads(pickle.dumps(defaults, -1))
                 data.update(v)
                 ret[int(k)] = data
@@ -1229,6 +1260,7 @@ class Config(metaclass=ConfigMeta):
         ret = {}
         defaults = self.defaults.get(self.MEMBER, {})
         for member_id, member_data in guild_data.items():
+            restricted_loads(pickle.dumps(defaults, -1))
             new_member_data = pickle.loads(pickle.dumps(defaults, -1))
             new_member_data.update(member_data)
             ret[int(member_id)] = new_member_data
