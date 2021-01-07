@@ -32,7 +32,7 @@ msgstr ""
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"
-msgstr ""
+msgstr "全域"
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Server"

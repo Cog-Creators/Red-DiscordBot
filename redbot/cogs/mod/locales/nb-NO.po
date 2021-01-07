@@ -374,7 +374,7 @@ msgstr "Overvåker: {name}"
 
 #: redbot/cogs/mod/names.py:141
 msgid "Competing in: {competing}"
-msgstr ""
+msgstr "Konkurrerende i: {competing}"
 
 #: redbot/cogs/mod/names.py:164
 #, docstring

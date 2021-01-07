@@ -44,7 +44,7 @@ msgstr "Installer samfunnskanaler laget av Cog Creators.\\n\\n    samfunnskoger,
 #: redbot/cogs/downloader/downloader.py:484
 #, docstring
 msgid "\\n        Install a group of dependencies using pip.\\n\\n        Examples:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Improper usage of this command can break your bot, be careful.\\n\\n        **Arguments**\\n\\n        - `<deps...>` The package or packages you wish to install.\\n        "
-msgstr ""
+msgstr "\\n        Installer en gruppe avhengigheter ved hjelp av pip.\\n\\n        Eksempler:\\n            - `[p]pipinstall bs4`\\n            - `[p]pipinstall py-cpuinfo psutil`\\n\\n        Uriktig bruk av denne kommandoen kan ødelegge din bot, vær forsiktig.\\n\\n        **Argumenter**\\n\\n        - `<deps...>` Pakken eller pakkene du vil installere.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:502
 msgid "Libraries installed."
@@ -62,7 +62,7 @@ msgstr "Base kommando for depotadministrasjon."
 #: redbot/cogs/downloader/downloader.py:521
 #, docstring
 msgid "Add a new repo.\\n\\n        Examples:\\n            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`\\n            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`\\n\\n        Repo names can only contain characters A-z, numbers, underscores, and hyphens.\\n        The branch will be the default branch if not specified.\\n\\n        **Arguments**\\n\\n        - `<name>` The name given to the repo.\\n        - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.\\n        - `[branch]` Optional branch to install cogs from.\\n        "
-msgstr ""
+msgstr "Legg til ny repo.\\n\\n        Eksempler:\\n            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`\\n            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`\\n\\n        Repo navn kan bare inneholde tegnene A-z, tall, understrek og bindestrek.\\n        Grenen vil være standardgrenen hvis ikke spesifisert.\\n\\n        **Argumenter**\\n\\n        - `<name>` Navnet gitt på oppholdet.\\n        - `<repo_url>` nettadresse til cog grenen. Vanligvis GitHub eller GitLab.\\n        - `[branch]` Valgfri branch for å installere cogs fra.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:541
 msgid "Repo names can only contain characters A-z, numbers, underscores, and hyphens."
@@ -87,7 +87,7 @@ msgstr "Repo `{name}` ble lagt til."
 #: redbot/cogs/downloader/downloader.py:584
 #, docstring
 msgid "\\n        Remove a repo and its files.\\n\\n        Example:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of an already added repo\\n        "
-msgstr ""
+msgstr "\\n        Fjern en repoe og dens filer.\\n\\n        Eksempel:\\n            - `[p]repo delete 26-Cogs`\\n\\n        **Argumenter**\\n\\n        - `<repo>` Navnet på et allerede lagt til repo\\n        "
 
 #: redbot/cogs/downloader/downloader.py:597
 msgid "The repo `{repo.name}` has been deleted successfully."
@@ -105,7 +105,7 @@ msgstr "Installerte Repoer:\\n\\n"
 #: redbot/cogs/downloader/downloader.py:614
 #, docstring
 msgid "Show information about a repo.\\n\\n        Example:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of the repo to show info about.\\n        "
-msgstr ""
+msgstr "Vis informasjon om en repo.\\n\\n        Eksempel:\\n            - `[p]repo info 26-Cogs`\\n\\n        **Argumenter**\\n\\n        - `<repo>` navnet på repoet for å vise informasjon om.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:623
 #: redbot/cogs/downloader/downloader.py:1273
@@ -132,7 +132,7 @@ msgstr "Informasjon om {repo_name} repo:{information}"
 #: redbot/cogs/downloader/downloader.py:640
 #, docstring
 msgid "Update all repos, or ones of your choosing.\\n\\n        This will *not* update the cogs installed from those repos.\\n\\n        Examples:\\n            - `[p]repo update`\\n            - `[p]repo update 26-Cogs`\\n            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`\\n\\n        **Arguments**\\n\\n        - `[repos...]` The name or names of repos to update. If omitted, all repos are updated.\\n        "
-msgstr ""
+msgstr "Oppdater alle fortegnelser, eller en av de du velger.\\n\\n        Dette kommer *ikke* til å oppdatere loggene som er installert fra kilden.\\n\\n        Eksempler:\\n            - `[p]repo update`\\n            - `[p]repo update 26-Cogs`\\n            - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`\\n\\n        **Argumenter**\\n\\n        - `[repos...]` navnet eller navnet på repos for å oppdatere. Hvis utelatt, oppdateres alle repoer.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:660
 msgid "Repo update completed successfully."
@@ -157,7 +157,7 @@ msgstr "Denne repoen er allerede oppdatert."
 #: redbot/cogs/downloader/downloader.py:678
 #, docstring
 msgid "Base command for cog installation management commands."
-msgstr ""
+msgstr "Basekommando for kommandoer for administrasjon av cog."
 
 #: redbot/cogs/downloader/downloader.py:683
 #, docstring
