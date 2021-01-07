@@ -264,7 +264,6 @@ class KickBanMixin(MixinMeta):
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Kick a user.
-
         Examples:
             `[p]kick 428675506947227648 wanted to be kicked.`
             This will kick Twentysix from the server.
