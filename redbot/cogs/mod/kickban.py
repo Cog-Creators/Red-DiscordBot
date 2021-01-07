@@ -263,8 +263,9 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(kick_members=True)
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Kick a user.
-        
+        """
+        Kick a user.
+
         Examples:
             `[p]kick 428675506947227648 wanted to be kicked.`
             This will kick Twentysix from the server.
@@ -645,7 +646,8 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Kick a user and delete 1 day's worth of their messages.
+        """
+        Kick a user and delete 1 day's worth of their messages.
         
         Example:
             `[p]softban @Twentysix Let's remove your wallspam.`
