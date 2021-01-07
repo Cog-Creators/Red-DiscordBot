@@ -1040,7 +1040,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @embedset.command(name="global")
     @checks.is_owner()
-    async def embedset_global(self, ctx: commands.Context, enabled: bool):
+    async def embedset_global(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set the global embed setting.
 
@@ -1048,6 +1048,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         or guild hasn't set a preference. The
         default is to use embeds.
         """
+        if enabled is None:
+        	enabled = not (await self.bot._config.embeds())
         await self.bot._config.embeds.set(enabled)
         await ctx.send(
             _("Embeds are now {} by default.").format(_("disabled") if enabled else _("enabled"))
@@ -1056,7 +1058,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @embedset.command(name="server", aliases=["guild"])
     @checks.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
-    async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
+    async def embedset_guild(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set the guild's embed setting.
 
@@ -1081,7 +1083,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @embedset.command(name="channel")
     @checks.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
-    async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
+    async def embedset_channel(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set the channel's embed setting.
 
@@ -1104,7 +1106,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @embedset.command(name="user")
-    async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
+    async def embedset_user(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set the user's embed setting for DMs.
 
@@ -1721,12 +1723,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx: commands.Context, enabled: bool):
+    async def serverfuzzy(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set whether to enable fuzzy command search for the server.
-
-        Default is for fuzzy command search to be disabled.
         """
+        if enabled is None:
+            enabled = not (await ctx.bot._config.guild.fuzzy())
         await ctx.bot._config.guild(ctx.guild).fuzzy.set(enabled)
         await ctx.send(
             _("Fuzzy command search has been {} for this server.").format(
@@ -1736,12 +1738,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command()
     @checks.is_owner()
-    async def fuzzy(self, ctx: commands.Context, enabled: bool):
+    async def fuzzy(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set whether to enable fuzzy command search in DMs.
-
-        Default is for fuzzy command search to be disabled.
-        """
+         """
+        if enabled is None:
+            enabled = not (await ctx.bot._config.fuzzy())
         await ctx.bot._config.fuzzy.set(enabled)
         await ctx.send(
             _("Fuzzy command search has been {} in DMs.").format(
