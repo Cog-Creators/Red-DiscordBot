@@ -645,22 +645,8 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def softban(
-        self, 
-        ctx: commands.Context, 
-        user: discord.Member,
-        *, 
-        reason: str = None,
-    ):
-        """Kick a user and delete 1 day's worth of their messages.
-
-        Example:
-            `[p]softban @Twentysix Let's remove your wallspam.`
-            This will softban twentysix and delete 1 days worth message.
-
-        If a reason is specified, it will be the reason that shows up
-        in the audit log.
-        """
+    async def softban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+        """Kick a user and delete 1 day's worth of their messages."""
         guild = ctx.guild
         author = ctx.author
 
