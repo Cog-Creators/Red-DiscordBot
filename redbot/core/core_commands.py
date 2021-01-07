@@ -1049,7 +1049,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         default is to use embeds.
         """
         if enabled is None:
-        	enabled = not (await self.bot._config.embeds())
+            enabled = not (await self.bot._config.embeds())
         await self.bot._config.embeds.set(enabled)
         await ctx.send(
             _("Embeds are now {} by default.").format(_("disabled") if enabled else _("enabled"))
@@ -1741,7 +1741,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def fuzzy(self, ctx: commands.Context, enabled: Optional[bool] = None):
         """
         Set whether to enable fuzzy command search in DMs.
-         """
+        """
         if enabled is None:
             enabled = not (await ctx.bot._config.fuzzy())
         await ctx.bot._config.fuzzy.set(enabled)
