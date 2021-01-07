@@ -649,11 +649,12 @@ class KickBanMixin(MixinMeta):
         """Kick a user and delete 1 day's worth of their messages.
         
         Example:
-            `[p]softban @Twentysix Let's remove your wallspam.`
-            This will softban twentysix and delete 1 days worth message.
+        `[p]softban @Twentysix Let's remove your wallspam.`
+        This will softban twentysix and delete 1 days worth message.
 
         If a reason is specified, it will be the reason that shows up
-        in the audit log."""
+        in the audit log.
+        """
         guild = ctx.guild
         author = ctx.author
 
