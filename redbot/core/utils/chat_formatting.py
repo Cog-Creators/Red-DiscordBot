@@ -144,6 +144,92 @@ def italics(text: str, escape_formatting: bool = True) -> str:
     text = escape(text, formatting=escape_formatting)
     return "*{}*".format(text)
 
+def spoiler(text: str, escape_formatting: bool = True) -> str:
+    """Get the given text as a spoiler.
+
+    Note: By default, this function will escape ``text`` prior to making the text a spoiler.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
+    text = escape(text, formatting=escape_formatting)
+    return "||{}||".format(text)
+
+def strikethrough(text: str, escape_formatting: bool = True) -> str:
+    """Get the given text striked through.
+
+    Note: By default, this function will escape ``text`` prior to striking through.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
+    text = escape(text, formatting=escape_formatting)
+    return "~~{}~~".format(text)
+
+def snake(text: str, escape_formatting: bool = True) -> str:
+    """Get the given text with snake spaces.
+
+    Note: By default, this function will escape ``text`` prior to replacing spaces with underscores.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
+    text = escape(text, formatting=escape_formatting)
+    return text.replace(' ', '_')
+
+def alternatingcase(text: str, escape_formatting: bool = True) -> str:
+    """Get the given text with alternating cases.
+
+    Note: By default, this function will escape ``text`` prior to changing cases.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    escape_formatting : `bool`, optional
+        Set to :code:`False` to not escape markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
+    text = escape(text, formatting=escape_formatting)
+    text = list(text)
+    text[0::2] = map(str.upper, text[0::2])
+    text[1::2] = map(str.lower, text[1::2])
+    return "".join(text)
 
 def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
     """Get two blocks of text in a borders.
