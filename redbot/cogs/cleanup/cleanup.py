@@ -50,6 +50,9 @@ class Cleanup(commands.Cog):
         if ctx.assume_yes:
             return True
 
+        if number > 2 ** 63 - 1:
+            return await ctx.send(_("Try a smaller number instead."))
+
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages? (y/n)").format(
                 number=humanize_number(number)
