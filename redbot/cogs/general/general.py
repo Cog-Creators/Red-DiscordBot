@@ -39,7 +39,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2 ** 64 - 1
+MAX_ROLL: Final[int] = 2 ** 63 - 1
 
 
 @cog_i18n(_)
