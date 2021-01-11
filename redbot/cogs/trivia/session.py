@@ -8,6 +8,7 @@ from redbot.core import bank, errors
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
+from .converters import MAX_VALUE
 from .log import LOG
 
 __all__ = ["TriviaSession"]
@@ -301,6 +302,7 @@ class TriviaSession:
                 contestants.remove(me_)
             if len(contestants) >= 3:
                 amount = int(multiplier * score)
+                amount = MAX_VALUE if amount > MAX_VALUE else amount
                 if amount > 0:
                     LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
                     try:
