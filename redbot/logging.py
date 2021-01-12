@@ -9,6 +9,7 @@ from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
 from rich._log_render import LogRender
+from rich.console import render_group
 from rich.containers import Renderables
 from rich.logging import RichHandler
 from rich.table import Table
@@ -109,6 +110,14 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         self.stream = self._open()
 
 
+class RedTraceback(Traceback):
+    @render_group()
+    def _render_stack(self, stack):
+        for obj in super()._render_stack.__wrapped__(self, stack):
+            if obj != "":
+                yield obj
+
+
 class RedLogRender(LogRender):
     def __call__(
         self,
@@ -187,7 +196,7 @@ class RedRichHandler(RichHandler):
             exc_type, exc_value, exc_traceback = record.exc_info
             assert exc_type is not None
             assert exc_value is not None
-            traceback = Traceback.from_exception(
+            traceback = RedTraceback.from_exception(
                 exc_type,
                 exc_value,
                 exc_traceback,
