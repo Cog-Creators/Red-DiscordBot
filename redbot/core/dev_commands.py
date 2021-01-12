@@ -7,12 +7,11 @@ import textwrap
 import traceback
 import types
 import re
-from contextlib import contextmanager, redirect_stdout
+from contextlib import redirect_stdout
 from copy import copy
 
 import discord
 
-from ..logging import is_rich_logging_enabled, set_console_logging_handler
 from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator
@@ -30,18 +29,6 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 _ = Translator("Dev", __file__)
 
 START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
-
-
-@contextmanager
-def redirect_console():
-    new_target = io.StringIO()
-    old_rich_state = is_rich_logging_enabled()
-    try:
-        set_console_logging_handler(False)
-        with redirect_stdout(new_target):
-            yield new_target
-    finally:
-        set_console_logging_handler(old_rich_state)
 
 
 class Dev(commands.Cog):
@@ -198,6 +185,7 @@ class Dev(commands.Cog):
         }
 
         body = self.cleanup_code(body)
+        stdout = io.StringIO()
 
         to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
 
@@ -210,7 +198,7 @@ class Dev(commands.Cog):
         func = env["func"]
         result = None
         try:
-            with redirect_console() as stdout:
+            with redirect_stdout(stdout):
                 result = await func()
         except:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
@@ -301,10 +289,12 @@ class Dev(commands.Cog):
 
             variables["message"] = response
 
+            stdout = io.StringIO()
+
             msg = ""
 
             try:
-                with redirect_console() as stdout:
+                with redirect_stdout(stdout):
                     if executor is None:
                         result = types.FunctionType(code, variables)()
                     else:

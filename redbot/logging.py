@@ -5,7 +5,7 @@ import sys
 
 from copy import copy
 from typing import List, Tuple, Optional, Union
-from logging import Handler, LogRecord
+from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
@@ -259,78 +259,6 @@ class RedRichHandler(RichHandler):
             self.console.print(traceback)
 
 
-_FILE_FORMATTER = None
-_STDOUT_HANDLER: Optional[Handler] = None
-_STDOUT_HANDLER_RICH: Optional[Handler] = None
-_IS_RICH_LOGGING_ENABLED = False
-
-
-def is_rich_logging_enabled():
-    return _IS_RICH_LOGGING_ENABLED
-
-
-def _get_file_formatter():
-    global _FILE_FORMATTER
-    if _FILE_FORMATTER is None:
-        _FILE_FORMATTER = logging.Formatter(
-            "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
-        )
-    return _FILE_FORMATTER
-
-
-def _get_stdout_handler() -> logging.Handler:
-    rich = is_rich_logging_enabled()
-
-    if not rich:
-        global _STDOUT_HANDLER
-        if _STDOUT_HANDLER is None:
-            _STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
-            _STDOUT_HANDLER.setFormatter(_get_file_formatter())
-
-        return _STDOUT_HANDLER
-
-    global _STDOUT_HANDLER_RICH
-    if _STDOUT_HANDLER_RICH is None:
-        rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
-
-        ansi_dark_theme = Syntax.get_theme("ansi_dark")
-        assert isinstance(ansi_dark_theme, ANSISyntaxTheme)
-        rich_style_map = copy(ansi_dark_theme.style_map)
-        for token_type, style in rich_style_map.items():
-            if style.color is not None and style.color.name in ("bright_blue", "blue"):
-                rich_style_map[token_type] = Style.combine((style, Style(color="purple")))
-
-        _STDOUT_HANDLER_RICH = RedRichHandler(
-            rich_tracebacks=True,
-            show_path=False,
-            highlighter=NullHighlighter(),
-            tracebacks_extra_lines=0,
-            tracebacks_theme=ANSISyntaxTheme(rich_style_map),
-        )
-        _STDOUT_HANDLER_RICH.setFormatter(rich_formatter)
-
-    return _STDOUT_HANDLER_RICH
-
-
-def set_console_logging_handler(force_rich_logging: Union[bool, None]):
-    root_logger = logging.getLogger()
-
-    for handler in (_STDOUT_HANDLER, _STDOUT_HANDLER_RICH):
-        if handler is not None:
-            root_logger.removeHandler(handler)
-
-    global _IS_RICH_LOGGING_ENABLED
-    if isatty(0) and force_rich_logging is None:
-        # Check if the bot thinks it has a active terminal.
-        _IS_RICH_LOGGING_ENABLED = True
-    elif force_rich_logging is True:
-        _IS_RICH_LOGGING_ENABLED = True
-    else:
-        _IS_RICH_LOGGING_ENABLED = False
-
-    root_logger.addHandler(_get_stdout_handler())
-
-
 def init_logging(
     level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]
 ) -> None:
@@ -352,7 +280,40 @@ def init_logging(
         )
     )
 
-    set_console_logging_handler(force_rich_logging)
+    enable_rich_logging = False
+
+    if isatty(0) and force_rich_logging is None:
+        # Check if the bot thinks it has a active terminal.
+        enable_rich_logging = True
+    elif force_rich_logging is True:
+        enable_rich_logging = True
+
+    file_formatter = logging.Formatter(
+        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+    )
+    if enable_rich_logging is True:
+        rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
+
+        ansi_dark_theme = Syntax.get_theme("ansi_dark")
+        assert isinstance(ansi_dark_theme, ANSISyntaxTheme)
+        rich_style_map = copy(ansi_dark_theme.style_map)
+        for token_type, style in rich_style_map.items():
+            if style.color is not None and style.color.name in ("bright_blue", "blue"):
+                rich_style_map[token_type] = Style.combine((style, Style(color="purple")))
+
+        stdout_handler = RedRichHandler(
+            rich_tracebacks=True,
+            show_path=False,
+            highlighter=NullHighlighter(),
+            tracebacks_extra_lines=0,
+            tracebacks_theme=ANSISyntaxTheme(rich_style_map),
+        )
+        stdout_handler.setFormatter(rich_formatter)
+    else:
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setFormatter(file_formatter)
+
+    root_logger.addHandler(stdout_handler)
     logging.captureWarnings(True)
 
     if not location.exists():
@@ -390,7 +351,6 @@ def init_logging(
         encoding="utf-8",
     )
 
-    file_formatter = _get_file_formatter()
     for fhandler in (latest_fhandler, all_fhandler):
         fhandler.setFormatter(file_formatter)
         root_logger.addHandler(fhandler)
