@@ -305,6 +305,7 @@ def init_logging(
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),
+            tracebacks_extra_lines=0,
             tracebacks_theme=ANSISyntaxTheme(rich_style_map),
         )
         stdout_handler.setFormatter(rich_formatter)
