@@ -198,6 +198,7 @@ class RedRichHandler(RichHandler):
                 show_locals=self.tracebacks_show_locals,
                 locals_max_length=self.locals_max_length,
                 locals_max_string=self.locals_max_string,
+                indent_guides=False,
             )
             message = record.getMessage()
 
