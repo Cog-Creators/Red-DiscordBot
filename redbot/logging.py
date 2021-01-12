@@ -184,6 +184,19 @@ class RedRichHandler(RichHandler):
             level_width=self._log_render.level_width,
         )
 
+    def get_level_text(self, record: LogRecord) -> Text:
+        """Get the level name from the record.
+
+        Args:
+            record (LogRecord): LogRecord instance.
+
+        Returns:
+            Text: A tuple of the style and level name.
+        """
+        level_text = super().get_level_text(record)
+        level_text.stylize("bold")
+        return level_text
+
     def emit(self, record: LogRecord) -> None:
         """Invoked by logging."""
         path = pathlib.Path(record.pathname).name
