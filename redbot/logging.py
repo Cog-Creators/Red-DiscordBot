@@ -11,6 +11,7 @@ from os import isatty
 from rich._log_render import LogRender
 from rich.console import render_group
 from rich.containers import Renderables
+from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.table import Table
 from rich.text import Text
@@ -265,7 +266,11 @@ def init_logging(
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
-        stdout_handler = RedRichHandler(rich_tracebacks=True, show_path=False)
+        stdout_handler = RedRichHandler(
+            rich_tracebacks=True,
+            show_path=False,
+            highlighter=NullHighlighter(),
+        )
         stdout_handler.setFormatter(rich_formatter)
     else:
         stdout_handler = logging.StreamHandler(sys.stdout)
