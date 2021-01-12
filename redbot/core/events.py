@@ -33,6 +33,7 @@ from .utils._internal_utils import (
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
+from rich import get_console
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
@@ -167,9 +168,10 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        bot._rich_console.print(INTRO)
+        rich_console = get_console()
+        rich_console.print(INTRO)
         if guilds:
-            bot._rich_console.print(
+            rich_console.print(
                 Columns(
                     [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
                     equal=True,
@@ -177,23 +179,21 @@ def init_events(bot, cli_flags):
                 )
             )
         else:
-            bot._rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
+            rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
-        bot._rich_console.print(
+        rich_console.print(
             "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
         )
 
         if invite_url:
-            bot._rich_console.print(
-                f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}"
-            )
+            rich_console.print(f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
-            bot._rich_console.print(
+            rich_console.print(
                 f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
         if rich_outdated_message:
-            bot._rich_console.print(rich_outdated_message)
+            rich_console.print(rich_outdated_message)
 
         if not bot.owner_ids:
             # we could possibly exit here in future
