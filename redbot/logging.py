@@ -225,7 +225,7 @@ class RedRichHandler(RichHandler):
         self.console.print(
             self._log_render(
                 self.console,
-                [message_text] if not traceback else [message_text, traceback],
+                [message_text],
                 log_time=log_time,
                 time_format=time_format,
                 level=level,
@@ -235,6 +235,8 @@ class RedRichHandler(RichHandler):
                 logger_name=record.name,
             )
         )
+        if traceback:
+            self.console.print(traceback)
 
 
 def init_logging(
