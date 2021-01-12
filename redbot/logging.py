@@ -3,6 +3,7 @@ import pathlib
 import re
 import sys
 
+from copy import copy
 from typing import List, Tuple, Optional, Union
 from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
@@ -16,6 +17,7 @@ from rich.default_styles import DEFAULT_STYLES
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.style import Style
+from rich.syntax import ANSISyntaxTheme, Syntax
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
@@ -292,10 +294,18 @@ def init_logging(
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
+        ansi_dark_theme = Syntax.get_theme("ansi_dark")
+        assert isinstance(ansi_dark_theme, ANSISyntaxTheme)
+        rich_style_map = copy(ansi_dark_theme.style_map)
+        for token_type, style in rich_style_map.items():
+            if style.color is not None and style.color.name in ("bright_blue", "blue"):
+                rich_style_map[token_type] = Style.combine((style, Style(color="purple")))
+
         stdout_handler = RedRichHandler(
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),
+            tracebacks_theme=ANSISyntaxTheme(rich_style_map),
         )
         stdout_handler.setFormatter(rich_formatter)
     else:
