@@ -279,6 +279,7 @@ def init_logging(
             }
         )
     )
+    rich_console.file = sys.stdout
 
     enable_rich_logging = False
 
