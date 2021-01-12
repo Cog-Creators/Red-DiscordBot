@@ -8,13 +8,17 @@ from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
+from rich import get_console
 from rich._log_render import LogRender
 from rich.console import render_group
 from rich.containers import Renderables
+from rich.default_styles import DEFAULT_STYLES
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
+from rich.style import Style
 from rich.table import Table
 from rich.text import Text
+from rich.theme import Theme
 from rich.traceback import Traceback
 
 
@@ -264,6 +268,15 @@ def init_logging(
     dpy_logger.setLevel(logging.WARNING)
     warnings_logger = logging.getLogger("py.warnings")
     warnings_logger.setLevel(logging.WARNING)
+
+    rich_console = get_console()
+    rich_console.push_theme(
+        Theme(
+            {
+                "repr.url": Style.combine((DEFAULT_STYLES["repr.url"], Style(bold=True))),
+            }
+        )
+    )
 
     enable_rich_logging = False
 
