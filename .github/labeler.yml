@@ -32,7 +32,7 @@
 "Category: Command Module":
   - any:
       - redbot/core/commands/*
-  - all:
+    all:
       - "!redbot/core/commands/help.py"
 "Category: Config":
   - redbot/core/drivers/*
