@@ -160,7 +160,7 @@ class Filter(commands.Cog):
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
-        """Base command to add or remove words from channel filter.
+        """Base command to add or remove words from the channel filter.
 
         Use double quotes to add or remove sentences.
         """
