@@ -135,7 +135,7 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Base command to add or remove words from server filter.
+        """Base command to add or remove words from the server filter.
 
         Use double quotes to add or remove sentences.
         """
