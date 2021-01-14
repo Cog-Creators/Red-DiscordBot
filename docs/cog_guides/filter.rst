@@ -48,7 +48,7 @@ filter
 
 **Description**
 
-Base command to add or remove words from server filter.
+Base command to add or remove words from the server filter.
 
 Use double quotes to add or remove sentences.
 
