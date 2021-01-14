@@ -1,3 +1,4 @@
+import argparse
 import logging.handlers
 import pathlib
 import re
@@ -259,9 +260,7 @@ class RedRichHandler(RichHandler):
             self.console.print(traceback)
 
 
-def init_logging(
-    level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]
-) -> None:
+def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
 
     base_logger = logging.getLogger("red")
@@ -283,10 +282,10 @@ def init_logging(
 
     enable_rich_logging = False
 
-    if isatty(0) and force_rich_logging is None:
+    if isatty(0) and cli_flags.rich_logging is None:
         # Check if the bot thinks it has a active terminal.
         enable_rich_logging = True
-    elif force_rich_logging is True:
+    elif cli_flags.rich_logging is True:
         enable_rich_logging = True
 
     file_formatter = logging.Formatter(
