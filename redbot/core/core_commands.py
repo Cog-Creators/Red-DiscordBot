@@ -2994,7 +2994,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[tagline]` The tagline to appear at the bottom of help embeds. Leave blank to reset.
+        - `[message]` The message to send to the owner.
         """
         guild = ctx.message.guild
         author = ctx.message.author
