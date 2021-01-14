@@ -92,7 +92,7 @@ filter channel
 
 **Description**
 
-Base command to add or remove words from channel filter.
+Base command to add or remove words from the channel filter.
 
 Use double quotes to add or remove sentences.
 
