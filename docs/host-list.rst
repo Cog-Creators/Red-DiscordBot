@@ -63,8 +63,15 @@ Choosing a Provider
 
 | The following are some common providers suitable for hosting Red. With
   each having their pros and cons, this list is mainly intended to act as a
-  starting point for one to conduct their own research and come to
-  a conclusion depending on their needs and budget.
+  starting point. One should conduct their own research and come to
+  a conclusion depending on their needs and budget, taking into account
+  providers not listed here if desired. The key is the provider offering 
+  a OS supported by Red.
+
+.. tip::
+ You will have better results with Audio when the region in your Discord 
+ server settings is closer to the bulk of the server's audience and
+ the location you picked for your Red host.
 
 
 -----------------
@@ -84,6 +91,9 @@ Average Providers
 | `Time4VPS <https://www.time4vps.eu/>`_ is a Lithuanian VPS provider mainly focused
  on lower cost.
 
+| `GalaxyGate <https://galaxygate.net/>`_ is a VPS and dedicated server provider
+ with a single location in New York.
+
 | `Linode <https://www.linode.com/>`_ is a US based cloud services company similar
  to DigitalOcean with locations available worldwide.
 
@@ -96,8 +106,8 @@ Average Providers
 | `Hetzner Online <https://www.hetzner.com/>`_ is a German VPS and dedicated server
  provider with locations in Germany and Finland.
 
-| `Contabo <https://contabo.com/>`_ is also a German VPS and dedicated server provider
- with locations in Germany and USA.
+| `Ramnode <https://www.ramnode.com/>`_ is a US based VPS provider focused on
+ low to middle end VPS with locations in the US and Netherlands.
 
 | `LowEndBox <http://lowendbox.com/>`_ is a website where hosting providers are
  discussed and curated, often with lower costs and less known providers.
