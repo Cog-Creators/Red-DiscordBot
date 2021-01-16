@@ -33,7 +33,7 @@ Hosting on a VPS or Dedicated Server
 ------------------------------------
 
 | One can host Red in a VPS running Linux or Windows. Using a Linux VPS is the
-  recommened option. Dedicated servers also work but are overpowered and cost 
+  recommended option. Dedicated servers also work but are overpowered and cost 
   ineffective unless one plans to run a very large bot or use their server for 
   more than than just hosting Red. After setup, Red can be moved to a different 
   server for hosting with a backup/restore process. More information and guidance
