@@ -85,7 +85,7 @@ Average Providers
  "Droplet".
 
 | `OVH <https://us.ovhcloud.com/vps/>`_ is a company focused on providing hosting
- and cloud services with locations in the Europe, North America and Asia Pacific.
+ and cloud services with locations in Europe, North America and Asia Pacific.
 
 | `Time4VPS <https://www.time4vps.eu/>`_ is a Lithuanian VPS provider mainly focused
  on lower cost.
