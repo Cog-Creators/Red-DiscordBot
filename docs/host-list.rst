@@ -63,8 +63,8 @@ Choosing a Provider
 
 | The following are some common providers suitable for hosting Red. With
   each having their pros and cons, this list is mainly intended to act as a
-  starting point. One should conduct their own research and come to
-  a conclusion depending on their needs and budget, taking into account
+  starting point. You should conduct your own research and come to
+  a conclusion depending on your needs and budget, taking into account
   providers not listed here if desired. The key is the provider offering 
   an OS supported by Red.
 
