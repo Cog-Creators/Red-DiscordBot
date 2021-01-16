@@ -66,7 +66,7 @@ Choosing a Provider
   starting point. One should conduct their own research and come to
   a conclusion depending on their needs and budget, taking into account
   providers not listed here if desired. The key is the provider offering 
-  a OS supported by Red.
+  an OS supported by Red.
 
 .. tip::
  You will have better results with Audio when the region in your Discord 
