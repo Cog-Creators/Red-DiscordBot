@@ -52,10 +52,9 @@ Self Hosting
 
 | It's possible to self host Red with your own hardware. A Raspberry Pi 3 
   will have enough computing capacity to handle a small to medium sized bot. 
-  One also has the option of building a computer for this purpose or purchasing 
-  a  rack server as any modern hardware should work without issues. But keep in
-  mind this option can leaves one vulnerable to factors outside their control
-  such as power outages.
+  You can also host on your own computer or rack server. Any modern hardware 
+  should work without issues. However, this option leaves you responsible for
+  keeping the bot online by paying for electricity costs and dealing with power outages.
 
 -------------------
 Choosing a Provider
