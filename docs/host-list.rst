@@ -147,5 +147,5 @@ Free Hosting
 
 | Additionally, new Google Cloud customers get a $300 credit which is valid for 3 months.
 
-| Excluding the above, there is no recommended free VPS host. Persuation of
+| Excluding the above, there is no recommended free VPS host. Persuasion of
  another individual for hosting Red is an option, albeit low in success rate.
