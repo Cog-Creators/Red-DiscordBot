@@ -265,8 +265,8 @@ If you want to do it, follow these steps.
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this list <host-list>` for
-  quality VPS providers.
+  on an online service. Please check :ref:`this page <host-list>` for
+  more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
   be able to host Red. The model 3 or above is recommended.
