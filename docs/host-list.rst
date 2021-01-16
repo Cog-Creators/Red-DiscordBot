@@ -24,7 +24,7 @@ First, we would like to make something clear:
     Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
     Docker support found in GitHub is also a work in progress and not ready
     for daily use. Workarounds for getting Red running on those platforms
-    are imperfect due to Red's nature. And one will not be able to recieve
+    are imperfect due to Red's nature. You will not be able to receive
     support if an issue occurs when hosting on any of these platforms.
 
 
