@@ -12,7 +12,7 @@ Hosting Information
     if you don't know how to host Red.
 
 
-| For your instance of Red to stay online it needs to be hosted in a system.
+| For your instance of Red to stay online 24/7, it needs to be hosted on a dedicated system.
   This page contains hosting related information and advice for beginners in 
   topics such as picking a provider.
 
