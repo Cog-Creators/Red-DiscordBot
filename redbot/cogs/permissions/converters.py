@@ -48,7 +48,7 @@ class GlobalUniqueObjectFinder(commands.Converter):
             async for guild in AsyncIter(bot.guilds, steps=100)
         ]
 
-        objects = itertools.chain(bot.get_all_channels(), bot.users, bot.guilds, *all_roles,)
+        objects = itertools.chain(bot.get_all_channels(), bot.users, bot.guilds, *all_roles)
 
         maybe_matches = []
         async for obj in AsyncIter(objects, steps=100):

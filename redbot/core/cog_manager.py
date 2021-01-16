@@ -127,11 +127,7 @@ class CogManager:
         pathlib.Path
 
         """
-        try:
-            path.exists()
-        except AttributeError:
-            path = Path(path)
-        return path
+        return Path(path)
 
     async def add_path(self, path: Union[Path, str]) -> None:
         """Add a cog path to current list.
@@ -177,7 +173,7 @@ class CogManager:
             Path to remove.
 
         """
-        path = self._ensure_path_obj(path).resolve()
+        path = self._ensure_path_obj(path)
         paths = await self.user_defined_paths()
 
         paths.remove(path)
@@ -456,10 +452,14 @@ class CogManagerUI(commands.Cog):
             unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
             for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:

@@ -45,7 +45,7 @@ _ = Translator("nah", __file__)
 
 """
 Anything here is either a reimplementation or re-export
-of a discord.py funtion or class with more lies for mypy
+of a discord.py function or class with more lies for mypy
 """
 
 __all__ = [

@@ -88,7 +88,7 @@ msgstr "Bir kullanıcının alabileceği maksimum bakiyeyi ayarlayın."
 
 #: redbot/cogs/bank/bank.py:128
 msgid "Amount must be greater than zero and less than {max}."
-msgstr ""
+msgstr "Bu sayı 0 dan yüksek ve {max} bu sayıdan az olmalı."
 
 #: redbot/cogs/bank/bank.py:133
 msgid "Maximum balance has been set to: {amount}"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2020-08-20 12:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -94,42 +94,50 @@ msgstr "Zeige die angegebenen Fälle."
 msgid "That case does not exist for that server."
 msgstr "Dieser Fall existiert nicht auf diesem Server."
 
-#: redbot/cogs/modlog/modlog.py:125
+#: redbot/cogs/modlog/modlog.py:120
+msgid "{case}\\n**Timestamp:** {timestamp}"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:131
 #, docstring
 msgid "Display cases for the specified member."
 msgstr "Zeigt Fälle für das angegebene Mitglied an."
 
-#: redbot/cogs/modlog/modlog.py:136
+#: redbot/cogs/modlog/modlog.py:142
 msgid "That user does not exist."
 msgstr "Dieser Benutzer existiert nicht."
 
-#: redbot/cogs/modlog/modlog.py:139
+#: redbot/cogs/modlog/modlog.py:145
 msgid "Something unexpected went wrong while fetching that user by ID."
 msgstr "Etwas Unerwartetes ist beim Abrufen dieses Benutzers durch ID schiefgelaufen."
 
-#: redbot/cogs/modlog/modlog.py:143
+#: redbot/cogs/modlog/modlog.py:149
 msgid "That user does not have any cases."
 msgstr "Dieser Benutzer hat keine Fälle."
 
-#: redbot/cogs/modlog/modlog.py:154
+#: redbot/cogs/modlog/modlog.py:157
+msgid "{case}\\n**Timestamp:** {timestamp}"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:170
 #, docstring
 msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
 msgstr "Füge eine Beschreibung zu einem Modlog-Fall hinzu.\\n\\n        Bitte beachte, dass du nur Fälle bearbeiten kannst die\\n        du selbst erstellt hast, es sei denn du bist ein Moderator,\\n        Admin oder Besitzer des Servers.\\n\\n        Ist keine Fallnummer angegeben, dann wird der letzte Fall verwendet\n"
 "        "
 
-#: redbot/cogs/modlog/modlog.py:167
+#: redbot/cogs/modlog/modlog.py:183
 msgid "There are no modlog cases in this server."
 msgstr "In diesem server gibt es keine Modlog-Fälle."
 
-#: redbot/cogs/modlog/modlog.py:173
+#: redbot/cogs/modlog/modlog.py:189
 msgid "That case does not exist!"
 msgstr "Dieser Fall existiert nicht!"
 
-#: redbot/cogs/modlog/modlog.py:180
+#: redbot/cogs/modlog/modlog.py:196
 msgid "You are not authorized to modify that case!"
 msgstr "Du bist nicht berechtigt diesen Fall zu ändern!"
 
-#: redbot/cogs/modlog/modlog.py:188
+#: redbot/cogs/modlog/modlog.py:204
 msgid "Reason for case #{num} has been updated."
 msgstr "Beschreibung für Fall nummer #{num} wurde aktualisiert."
 
