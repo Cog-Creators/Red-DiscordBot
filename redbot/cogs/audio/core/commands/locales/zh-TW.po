@@ -675,12 +675,12 @@ msgstr "設定值已變更"
 
 #: redbot/cogs/audio/core/commands/audioset.py:947
 msgid "DJ role set to: {role.name}."
-msgstr ""
+msgstr "DJ身分組設定為: {role.name}。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:953
 #, docstring
 msgid "Show the current settings."
-msgstr ""
+msgstr "顯示當前設定。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:990
 msgid "Server Settings"
@@ -724,7 +724,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "Thumbnails:       [{0}]\\n"
-msgstr ""
+msgstr "預覽圖:       [{0}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
 msgid "Vote skip:        [{vote_enabled}]\\nSkip percentage:  [{vote_percent}%]\\n"
@@ -741,7 +741,7 @@ msgstr "使用者"
 #: redbot/cogs/audio/core/commands/audioset.py:1055
 #: redbot/cogs/audio/core/commands/playlists.py:1025
 msgid "Global"
-msgstr ""
+msgstr "全域"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1057
 #: redbot/cogs/audio/core/commands/audioset.py:1058
@@ -882,7 +882,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1221
 msgid "Voting disabled. All users can use queue management commands."
-msgstr ""
+msgstr "停用投票功能。 所有使用者都可以使用播放清單管理命令。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1228
 msgid "Vote percentage set to {percent}%."
@@ -906,7 +906,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1296
 #, docstring
 msgid "Set the country code for Spotify searches."
-msgstr ""
+msgstr "設定Spotify搜索的國家/地區代碼。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1278
 #: redbot/cogs/audio/core/commands/audioset.py:1300
@@ -1127,11 +1127,11 @@ msgstr "無法管理歌曲"
 
 #: redbot/cogs/audio/core/commands/controller.py:207
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "您必須在語音頻道內才能暫停或繼續播放歌曲。"
 
 #: redbot/cogs/audio/core/commands/controller.py:213
 msgid "You need the DJ role to pause or resume tracks."
-msgstr ""
+msgstr "您需要DJ身分組才能暫停或繼續播放歌曲。"
 
 #: redbot/cogs/audio/core/commands/controller.py:224
 msgid "Track Paused"
@@ -1213,7 +1213,7 @@ msgstr "沒有上一首歌曲。"
 
 #: redbot/cogs/audio/core/commands/controller.py:293
 msgid "Replaying Track"
-msgstr ""
+msgstr "重播歌曲"
 
 #: redbot/cogs/audio/core/commands/controller.py:300
 #, docstring
@@ -1345,11 +1345,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:584
 msgid "You need the DJ role to stop the music."
-msgstr ""
+msgstr "你需要DJ身分組才能停止播放音樂。"
 
 #: redbot/cogs/audio/core/commands/controller.py:601
 msgid "Stopping..."
-msgstr ""
+msgstr "正在停止播放..."
 
 #: redbot/cogs/audio/core/commands/controller.py:609
 #, docstring

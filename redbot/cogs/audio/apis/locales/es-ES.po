@@ -66,9 +66,9 @@ msgstr "La clave API de Spotify o el cliente secreto no se han configurado corre
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Su token de la API de datos de YouTube no es válido.\\nVerifique la clave API de YouTube nuevamente y siga las instrucciones en `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Código de error de la API de YouTube: 403\\nTu clave API de YouTube puede haber alcanzado el límite de consultas de la cuenta para hoy. Consulte <https://developers.google.com/youtube/v3/getting-started#quota> para obtener más información."
 

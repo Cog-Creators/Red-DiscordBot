@@ -133,6 +133,14 @@ class ModInfo(MixinMeta):
         act = _("Watching: {name}").format(name=w_act.name)
         return act, discord.ActivityType.watching
 
+    def handle_competing(self, user):
+        w_acts = [c for c in user.activities if c.type == discord.ActivityType.competing]
+        if not w_acts:
+            return None, discord.ActivityType.competing
+        w_act = w_acts[0]
+        act = _("Competing in: {competing}").format(competing=w_act.name)
+        return act, discord.ActivityType.competing
+
     def get_status_string(self, user):
         string = ""
         for a in [
@@ -141,6 +149,7 @@ class ModInfo(MixinMeta):
             self.handle_listening(user),
             self.handle_streaming(user),
             self.handle_watching(user),
+            self.handle_competing(user),
         ]:
             status_string, status_type = a
             if status_string is None:

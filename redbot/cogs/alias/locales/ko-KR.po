@@ -22,11 +22,11 @@ msgstr "명령어에 대한 별칭을 만들어주세요.\\n\\n    별칭들은 
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\\n"
-msgstr ""
+msgstr "별칭:\\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\n페이지 {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring
@@ -144,7 +144,7 @@ msgstr "이 봇에서 사용할 수 있는 글로벌 별칭들을 나열해주�
 
 #: redbot/cogs/alias/alias.py:411
 msgid "There are no global aliases."
-msgstr ""
+msgstr "전역적인 별칭이 없어요."
 
 #: redbot/cogs/alias/alias_entry.py:198
 msgid "Arguments must be specified with a number."

@@ -21,15 +21,15 @@ msgstr "Я попыталась сделать что-то, в чем Discord о
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Невозможно выдать роль {role.name} для {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
+msgstr "Я не могу добавить роль {role.name} пользователю {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Я не могу убрать {role.name} у {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
+msgstr "Я не могу удалить роль {role.name} у пользователя {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr "Я не могу редактировать {role.name}, потому что эта роль выше моей или равна самой высокой роли в иерархии Discord."
+msgstr "Я не могу редактировать роль {role.name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -41,7 +41,7 @@ msgstr "Я не могу позволить вам удалить {role.name} у
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу позволить вам редактировать {role.name}, потому что эта роль больше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Я не могу позволить вам редактировать роль {role.name}, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
@@ -117,7 +117,7 @@ msgstr "Отменить текущее объявление."
 
 #: redbot/cogs/admin/admin.py:343
 msgid "There is no currently running announcement."
-msgstr "В данный момент нет запущенных объявлений."
+msgstr "В настоящее время нет запущенных объявлений."
 
 #: redbot/cogs/admin/admin.py:346
 msgid "The current announcement has been cancelled."

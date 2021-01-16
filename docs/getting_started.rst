@@ -277,7 +277,7 @@ If you want to do it, follow these steps.
   you're a beginner, we recommend **Ubuntu 20.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
-  <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
+  <https://www.raspberrypi.org/software/>`_ on a micro-SD card.
 
 2.1. **Log in**
 
