@@ -687,6 +687,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             # removed the mute role
             await ctx.send(_("Channel overwrites will be used for mutes instead."))
         else:
+            if role >= ctx.author.top_role:
+                await ctx.send(
+                    _("You can't set this role as it is not lower than you in the role hierarchy.")
+                )
+                return
             await self.config.guild(ctx.guild).mute_role.set(role.id)
             self.mute_role_cache[ctx.guild.id] = role.id
             await ctx.send(_("Mute role set to {role}").format(role=role.name))
