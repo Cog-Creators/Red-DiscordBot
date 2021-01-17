@@ -10,4 +10,4 @@ async def is_allowed_by_hierarchy(
     if not await config.guild(guild).respect_hierarchy():
         return True
     is_special = mod == guild.owner or await bot.is_owner(mod)
-    return mod.top_role.position > user.top_role.position or is_special
+    return mod.top_role > user.top_role or is_special
