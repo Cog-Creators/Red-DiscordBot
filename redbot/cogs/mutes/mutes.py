@@ -28,6 +28,9 @@ MUTE_UNMUTE_ISSUES = {
     "hierarchy_problem": _(
         "I cannot let you do that. You are not higher than the user in the role hierarchy."
     ),
+    "assigned_role_hierarchy_problem": _(
+        "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
+    ),
     "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
     "permissions_issue_role": _(
         "Failed to mute or unmute user. I need the Manage Roles "
@@ -1330,6 +1333,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             role = guild.get_role(mute_role)
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])
+                return ret
+            if author != guild.owner and role >= author.top_role:
+                ret["reason"] = _(MUTE_UNMUTE_ISSUES["assigned_role_hierarchy_problem"])
                 return ret
             if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
