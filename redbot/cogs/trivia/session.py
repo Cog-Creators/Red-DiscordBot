@@ -324,7 +324,7 @@ class TriviaSession:
                 currency=await bank.get_currency_name(self.ctx.guild),
             )
         else:
-            msg =  _(
+            msg = _(
                 "Congratulations {user}! You have received {num} {currency} for winning!"
             ).format(
                 user=bold(winners[0].display_name),
