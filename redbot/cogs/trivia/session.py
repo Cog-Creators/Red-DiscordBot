@@ -261,7 +261,7 @@ class TriviaSession:
             await self.send_table()
         multiplier = self.settings["payout_multiplier"]
         if multiplier > 0:
-            await self.pay_winner(multiplier)
+            await self.pay_winners(multiplier)
         self.stop()
 
     async def send_table(self):
@@ -281,7 +281,7 @@ class TriviaSession:
         channel = self.ctx.channel
         LOG.debug("Force stopping trivia session; #%s in %s", channel, channel.guild.id)
 
-    async def pay_winner(self, multiplier: float):
+    async def pay_winners(self, multiplier: float):
         """Pay the winner(s) of this trivia session.
 
         Payout only occurs if there are at least 3 human contestants.
