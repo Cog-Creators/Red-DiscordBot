@@ -304,7 +304,7 @@ class TriviaSession:
                 if score == top_score:
                     winners.append(player)
                 num_humans += 1
-        if len(winners) == 0 or num_humans < 3:
+        if not winners or num_humans < 3:
             return
         payout = int(top_score * multiplier / len(winners))
         if payout <= 0:
@@ -315,14 +315,23 @@ class TriviaSession:
                 await bank.deposit_credits(winner, payout)
             except errors.BalanceTooHigh as e:
                 await bank.set_balance(winner, e.max_balance)
-        await self.ctx.send(
-            "Congratulations {users}! You have {plural}received {num} {currency} for winning!".format(
-                users=" and ".join(bold(winner.display_name) for winner in winners),
-                plural="each " if len(winners) > 1 else "",
+        if len(winners) > 1:
+            msg = _(
+                "Congratulations {users}! You have each received {num} {currency} for winning!"
+            ).format(
+                users=humanize_list([bold(winner.display_name) for winner in winners]),
                 num=payout,
                 currency=await bank.get_currency_name(self.ctx.guild),
             )
-        )
+        else:
+            msg =  _(
+                "Congratulations {user}! You have received {num} {currency} for winning!"
+            ).format(
+                user=bold(winners[0].display_name),
+                num=payout,
+                currency=await bank.get_currency_name(self.ctx.guild),
+            )
+        await self.ctx.send(msg)
 
 
 def _parse_answers(answers):
