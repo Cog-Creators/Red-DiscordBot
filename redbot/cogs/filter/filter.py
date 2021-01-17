@@ -37,7 +37,6 @@ class Filter(commands.Cog):
         self.config.register_guild(**default_guild_settings)
         self.config.register_member(**default_member_settings)
         self.config.register_channel(**default_channel_settings)
-        self.register_task = self.bot.loop.create_task(self.register_filterban())
         self.pattern_cache = {}
 
     async def red_delete_data_for_user(
@@ -55,17 +54,27 @@ class Filter(commands.Cog):
             if user_id in guild_data:
                 await self.config.member_from_ids(guild_id, user_id).clear()
 
-    def cog_unload(self):
-        self.register_task.cancel()
+    async def initialize(self) -> None:
+        await self.register_casetypes()
 
     @staticmethod
-    async def register_filterban():
-        try:
-            await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban"
-            )
-        except RuntimeError:
-            pass
+    async def register_casetypes() -> None:
+        await modlog.register_casetypes(
+            [
+                {
+                    "name": "filterban",
+                    "default_setting": False,
+                    "image": "\N{FILE CABINET}\N{VARIATION SELECTOR-16} \N{HAMMER}",
+                    "case_str": "Filter ban",
+                },
+                {
+                    "name": "filterhit",
+                    "default_setting": False,
+                    "image": "\N{FILE CABINET}\N{VARIATION SELECTOR-16}",
+                    "case_str": "Filter hit",
+                },
+            ]
+        )
 
     @commands.group()
     @commands.guild_only()
@@ -391,6 +400,20 @@ class Filter(commands.Cog):
         hits = await self.filter_hits(message.content, message.channel)
 
         if hits:
+            await modlog.create_case(
+                bot=self.bot,
+                guild=guild,
+                created_at=message.created_at.replace(tzinfo=timezone.utc),
+                action_type="filterhit",
+                user=author,
+                moderator=guild.me,
+                reason=(
+                    _("Filtered words used: {words}").format(words=humanize_list(list(hits)))
+                    if len(hits) > 1
+                    else _("Filtered word used: {word}").format(word=list(hits)[0])
+                ),
+                channel=message.channel,
+            )
             try:
                 await message.delete()
             except discord.HTTPException:
@@ -471,7 +494,6 @@ class Filter(commands.Cog):
         await set_contextual_locales_from_guild(self.bot, guild)
 
         if await self.filter_hits(member.display_name, member.guild):
-
             name_to_use = guild_data["filter_default_name"]
             reason = _("Filtered nickname") if member.nick else _("Filtered name")
             try:
