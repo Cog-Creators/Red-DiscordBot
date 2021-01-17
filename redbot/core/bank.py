@@ -75,7 +75,7 @@ log = logging.getLogger("red.core.bank")
 
 _data_deletion_lock = asyncio.Lock()
 
-_global = None
+_cache_is_global = None
 _cache = {"bank_name": None, "currency": None, "default_balance": None, "max_balance": None}
 
 
@@ -645,12 +645,12 @@ async def is_global() -> bool:
         :code:`True` if the bank is global, otherwise :code:`False`.
 
     """
-    global _global
+    global _cache_is_global
 
-    if _global is None:
-        _global = await _config.is_global()
+    if _cache_is_global is None:
+        _cache_is_global = await _config.is_global()
 
-    return _global
+    return _cache_is_global
 
 
 async def set_global(global_: bool) -> bool:
@@ -679,7 +679,7 @@ async def set_global(global_: bool) -> bool:
     if (await is_global()) is global_:
         return global_
 
-    global _global
+    global _cache_is_global
 
     if await is_global():
         await _config.clear_all_users()
@@ -687,7 +687,7 @@ async def set_global(global_: bool) -> bool:
         await _config.clear_all_members()
 
     await _config.is_global.set(global_)
-    _global = global_
+    _cache_is_global = global_
     return global_
 
 
