@@ -714,14 +714,23 @@ class Streams(commands.Cog):
             await asyncio.sleep(await self.config.refresh_timer())
 
     async def _send_stream_alert(
-        self, stream, channel: discord.TextChannel, embed: discord.Embed, content: str = None
+        self,
+        stream,
+        channel: discord.TextChannel,
+        embed: discord.Embed,
+        content: str = None,
+        *,
+        is_schedule: bool = False,
     ):
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
         )
-        stream._messages_cache.append(m)
+        message_data = {"channel": m.channel.id, "message": m.id}
+        if is_schedule:
+            message_data["is_schedule"] = True
+        stream.messages.append(message_data)
 
     async def check_streams(self):
         for stream in self.streams:
@@ -739,19 +748,25 @@ class Streams(commands.Cog):
                     else:
                         embed = await stream.is_online()
                 except OfflineStream:
-                    if not stream._messages_cache:
+                    if not stream.messages:
                         continue
-                    for message in stream._messages_cache:
-                        if await self.bot.cog_disabled_in_guild(self, message.guild):
+
+                    for msg_data in stream.iter_messages():
+                        partial_msg = msg_data["partial_message"]
+                        if partial_msg is None:
                             continue
-                        autodelete = await self.config.guild(message.guild).autodelete()
-                        if autodelete:
-                            with contextlib.suppress(discord.NotFound):
-                                await message.delete()
-                    stream._messages_cache.clear()
+                        if await self.bot.cog_disabled_in_guild(self, partial_msg.guild):
+                            continue
+                        if not await self._config.guild(partial_msg.guild).autodelete():
+                            continue
+
+                        with contextlib.suppress(discord.NotFound):
+                            await partial_msg.delete()
+
+                    stream.messages.clear()
                     await self.save_streams()
                 else:
-                    if stream._messages_cache:
+                    if stream.messages:
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
@@ -767,7 +782,7 @@ class Streams(commands.Cog):
                             continue
                         if is_schedule:
                             # skip messages and mentions
-                            await self._send_stream_alert(stream, channel, embed)
+                            await self._send_stream_alert(stream, channel, embed, is_schedule=True)
                             await self.save_streams()
                             continue
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
@@ -864,17 +879,6 @@ class Streams(commands.Cog):
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
-            raw_msg_cache = raw_stream["messages"]
-            raw_stream["_messages_cache"] = []
-            for raw_msg in raw_msg_cache:
-                chn = self.bot.get_channel(raw_msg["channel"])
-                if chn is not None:
-                    try:
-                        msg = await chn.fetch_message(raw_msg["message"])
-                    except discord.HTTPException:
-                        pass
-                    else:
-                        raw_stream["_messages_cache"].append(msg)
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
                 if _class.__name__ == "TwitchStream":
@@ -884,6 +888,7 @@ class Streams(commands.Cog):
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config
                     raw_stream["token"] = token
+            raw_stream["bot"] = self.bot
             streams.append(_class(**raw_stream))
 
         return streams
