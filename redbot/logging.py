@@ -5,11 +5,21 @@ import re
 import sys
 
 from copy import copy
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
+from pygments.token import (
+    Comment,
+    Error,
+    Keyword,
+    Name,
+    Number,
+    Operator,
+    String,
+    Token,
+)
 from rich import get_console
 from rich._log_render import LogRender
 from rich.console import render_group
@@ -116,6 +126,24 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
             )
 
         self.stream = self._open()
+
+
+SYNTAX_THEME = {
+    Token: Style(),
+    Comment: Style(color="bright_black"),
+    Keyword: Style(color="bright_cyan"),
+    Keyword.Constant: Style(color="bright_magenta"),
+    Keyword.Namespace: Style(color="bright_red"),
+    Operator.Word: Style(color="bright_cyan"),
+    Name.Builtin: Style(color="yellow", bold=True),
+    Name.Builtin.Pseudo: Style(color="bright_red"),
+    Name.Exception: Style(color="cyan"),
+    Name.Class: Style(color="bright_green"),
+    Name.Function: Style(color="bright_green"),
+    String: Style(color="yellow"),
+    Number: Style(color="cyan"),
+    Error: Style(bgcolor="red"),
+}
 
 
 class RedTraceback(Traceback):
@@ -294,19 +322,12 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
-        ansi_dark_theme = Syntax.get_theme("ansi_dark")
-        assert isinstance(ansi_dark_theme, ANSISyntaxTheme)
-        rich_style_map = copy(ansi_dark_theme.style_map)
-        for token_type, style in rich_style_map.items():
-            if style.color is not None and style.color.name in ("bright_blue", "blue"):
-                rich_style_map[token_type] = Style.combine((style, Style(color="purple")))
-
         stdout_handler = RedRichHandler(
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),
             tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
-            tracebacks_theme=ANSISyntaxTheme(rich_style_map),
+            tracebacks_theme=ANSISyntaxTheme(SYNTAX_THEME),
         )
         stdout_handler.setFormatter(rich_formatter)
     else:
