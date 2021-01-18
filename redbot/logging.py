@@ -4,7 +4,6 @@ import pathlib
 import re
 import sys
 
-from copy import copy
 from typing import List, Tuple, Optional
 from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
@@ -20,7 +19,7 @@ from pygments.token import (
     String,
     Token,
 )
-from rich import get_console
+import rich
 from rich._log_render import LogRender
 from rich.console import render_group
 from rich.containers import Renderables
@@ -28,7 +27,7 @@ from rich.default_styles import DEFAULT_STYLES
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.style import Style
-from rich.syntax import ANSISyntaxTheme, Syntax
+from rich.syntax import ANSISyntaxTheme
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
@@ -298,7 +297,9 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     warnings_logger = logging.getLogger("py.warnings")
     warnings_logger.setLevel(logging.WARNING)
 
-    rich_console = get_console()
+    rich_console = rich.get_console()
+    if rich_console.color_system == "windows":
+        rich.reconfigure(color_system="standard")
     rich_console.push_theme(
         Theme(
             {
