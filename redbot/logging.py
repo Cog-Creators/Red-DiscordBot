@@ -306,6 +306,14 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     rich_console = rich.get_console()
     if rich_console.color_system == "windows":
         rich.reconfigure(color_system="standard")
+    rich_console.push_theme(
+        Theme(
+            {
+                "logging.level.warning": Style(color="yellow"),
+                "logging.level.critical": Style(bgcolor="red"),
+            }
+        )
+    )
     rich_console.file = sys.stdout
 
     enable_rich_logging = False
