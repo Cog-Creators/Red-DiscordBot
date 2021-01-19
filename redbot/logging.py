@@ -308,6 +308,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     rich_console.push_theme(
         Theme(
             {
+                "log.time": Style(dim=True),
                 "logging.level.warning": Style(color="yellow"),
                 "logging.level.critical": Style(color="white", bgcolor="red"),
                 "repr.number": Style(color="cyan"),
