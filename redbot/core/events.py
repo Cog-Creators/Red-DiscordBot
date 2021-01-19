@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 import aiohttp
 import discord
 import pkg_resources
-from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
@@ -40,7 +39,6 @@ from rich.panel import Panel
 from rich.text import Text
 
 log = logging.getLogger("red")
-init()
 
 INTRO = r"""[red]
 ______         _           ______ _                       _  ______       _
