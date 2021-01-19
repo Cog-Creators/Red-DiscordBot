@@ -335,6 +335,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
             show_path=False,
             highlighter=NullHighlighter(),
             tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
+            tracebacks_show_locals=cli_flags.rich_traceback_show_locals,
             tracebacks_theme=(
                 PygmentsSyntaxTheme(FixedMonokaiStyle)
                 if rich_console.color_system == "truecolor"
