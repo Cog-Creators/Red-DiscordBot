@@ -9,6 +9,7 @@ from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
+from pygments.styles.monokai import MonokaiStyle
 from pygments.token import (
     Comment,
     Error,
@@ -27,7 +28,7 @@ from rich.default_styles import DEFAULT_STYLES
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.style import Style
-from rich.syntax import ANSISyntaxTheme
+from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
@@ -143,6 +144,10 @@ SYNTAX_THEME = {
     Number: Style(color="cyan"),
     Error: Style(bgcolor="red"),
 }
+
+
+class FixedMonokaiStyle(MonokaiStyle):
+    styles = {**MonokaiStyle.styles, Token: "#f8f8f2"}
 
 
 class RedTraceback(Traceback):
@@ -328,7 +333,11 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
             show_path=False,
             highlighter=NullHighlighter(),
             tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
-            tracebacks_theme=ANSISyntaxTheme(SYNTAX_THEME),
+            tracebacks_theme=(
+                PygmentsSyntaxTheme(FixedMonokaiStyle)
+                if rich_console.color_system == "truecolor"
+                else ANSISyntaxTheme(SYNTAX_THEME)
+            ),
         )
         stdout_handler.setFormatter(rich_formatter)
     else:
