@@ -32,7 +32,7 @@ from .utils._internal_utils import (
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
-from rich import get_console
+import rich
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
@@ -166,7 +166,7 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        rich_console = get_console()
+        rich_console = rich.get_console()
         rich_console.print(INTRO)
         if guilds:
             rich_console.print(

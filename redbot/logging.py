@@ -9,6 +9,7 @@ from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
+import rich
 from pygments.styles.monokai import MonokaiStyle
 from pygments.token import (
     Comment,
@@ -20,11 +21,9 @@ from pygments.token import (
     String,
     Token,
 )
-import rich
-from rich._log_render import LogRender
+from rich._log_render import LogRender  # DEP-WARN
 from rich.console import render_group
 from rich.containers import Renderables
-from rich.default_styles import DEFAULT_STYLES
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.style import Style
