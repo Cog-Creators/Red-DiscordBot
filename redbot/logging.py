@@ -310,6 +310,8 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
             {
                 "logging.level.warning": Style(color="yellow"),
                 "logging.level.critical": Style(bgcolor="red"),
+                "repr.number": Style(color="cyan"),
+                "repr.url": Style(underline=True, italic=True, bold=False, color="cyan"),
             }
         )
     )

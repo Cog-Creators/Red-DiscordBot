@@ -113,8 +113,8 @@ def init_events(bot, cli_flags):
                 ).format(pypi_version, red_version)
                 rich_outdated_message = (
                     f"[red]Outdated version![/red]\n"
-                    f"[red]!!![/red]Version {pypi_version} is available, "
-                    f"but you're using {red_version}[red]!!![/red]"
+                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
                 )
                 current_python = platform.python_version()
                 extra_update = _(
