@@ -402,37 +402,3 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
-
-
-def _get_startup_screen_specs():
-    """Get specs for displaying the startup screen on stdout.
-
-    This is so we don't get encoding errors when trying to print unicode
-    emojis to stdout (particularly with Windows Command Prompt).
-
-    Returns
-    -------
-    `tuple`
-        Tuple in the form (`str`, `str`, `bool`) containing (in order) the
-        on symbol, off symbol and whether or not the border should be pure ascii.
-
-    """
-    encoder = codecs.getencoder(sys.stdout.encoding)
-    check_mark = "\N{SQUARE ROOT}"
-    try:
-        encoder(check_mark)
-    except UnicodeEncodeError:
-        on_symbol = "[X]"
-        off_symbol = "[ ]"
-    else:
-        on_symbol = check_mark
-        off_symbol = "X"
-
-    try:
-        encoder("┌┐└┘─│")  # border symbols
-    except UnicodeEncodeError:
-        ascii_border = True
-    else:
-        ascii_border = False
-
-    return on_symbol, off_symbol, ascii_border
