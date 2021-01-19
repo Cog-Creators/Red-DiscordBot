@@ -31,7 +31,7 @@ from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
-from rich.traceback import Traceback
+from rich.traceback import PathHighlighter, Traceback
 
 
 MAX_OLD_LOGS = 8
@@ -316,6 +316,10 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         )
     )
     rich_console.file = sys.stdout
+    # This is terrible solution, but it's the best we can do if we want the paths in tracebacks
+    # to be visible. Rich uses `pygments.string` style  which is fine, but it also uses
+    # this highlighter which dims most of the path and therefore makes it unreadable on Mac.
+    PathHighlighter.highlights = []
 
     enable_rich_logging = False
 
