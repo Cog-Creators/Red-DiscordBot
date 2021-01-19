@@ -33,6 +33,7 @@ from .utils._internal_utils import (
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
 import rich
+from rich import box
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
@@ -87,14 +88,14 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        table_general_info = Table(show_edge=False, show_header=False)
+        table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
         table_general_info.add_row("Red version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        table_counts = Table(show_edge=False, show_header=False)
+        table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         # String conversion is needed as Rich doesn't deal with ints
         table_counts.add_row("Shards", str(bot.shard_count))
         table_counts.add_row("Servers", str(guilds))
