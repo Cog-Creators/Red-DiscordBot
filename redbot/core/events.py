@@ -40,7 +40,7 @@ from rich.text import Text
 
 log = logging.getLogger("red")
 
-INTRO = r"""[red]
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -167,7 +167,7 @@ def init_events(bot, cli_flags):
                 outdated_red_message += extra_update
 
         rich_console = rich.get_console()
-        rich_console.print(INTRO)
+        rich_console.print(INTRO, style="red", markup=False, highlight=False)
         if guilds:
             rich_console.print(
                 Columns(
