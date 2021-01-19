@@ -306,13 +306,6 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     rich_console = rich.get_console()
     if rich_console.color_system == "windows":
         rich.reconfigure(color_system="standard")
-    rich_console.push_theme(
-        Theme(
-            {
-                "repr.url": Style.combine((DEFAULT_STYLES["repr.url"], Style(bold=True))),
-            }
-        )
-    )
     rich_console.file = sys.stdout
 
     enable_rich_logging = False
