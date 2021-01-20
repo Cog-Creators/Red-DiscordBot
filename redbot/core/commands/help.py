@@ -331,7 +331,9 @@ class RedHelpFormatter(HelpFormatterABC):
                         aliases=aliases_formatted_list, number=humanize_number(a_diff)
                     )
                 else:
-                    aliases_content = _("{aliases} and one more alias.").format(aliases=aliases_formatted_list)
+                    aliases_content = _("{aliases} and one more alias.").format(
+                        aliases=aliases_formatted_list
+                    )
             signature += f"\n{alias_fmt}: {aliases_content}"
 
         subcommands = None
