@@ -18,6 +18,7 @@ Mutes
 *****
 
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
+- Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
 
 Trivia
 ******
