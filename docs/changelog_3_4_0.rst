@@ -38,6 +38,11 @@ Mutes
 *****
 
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
+- Mutes cog can now send a DM to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
+
+    - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
+    - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
+
 - Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
 
 Streams
