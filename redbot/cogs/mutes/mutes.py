@@ -499,18 +499,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             message = f"{title}\n------------------\n"
             message += case.reason or _("No reason provided.")
             message += (
-                _("**Moderator**: {moderator}\n").format(moderator=case.moderator)
+                _("\n**Moderator**: {moderator}").format(moderator=case.moderator)
                 if show_mod
                 else ""
             )
             message += (
-                _("**Until**: {until}\n**Duration**: {duration}\n").format(
+                _("\n**Until**: {until}\n**Duration**: {duration}").format(
                     until=until, duration=duration
                 )
                 if duration
                 else ""
             )
-            message += _("**Guild**: {guild_name}").format(guild_name=case.guild.name)
+            message += _("\n**Guild**: {guild_name}").format(guild_name=case.guild.name)
             try:
                 await user.send(message)
             except discord.Forbidden:
