@@ -46,7 +46,12 @@ allowlist
 
 **Description**
 
-Allowlist management commands.
+Commands to manage the allowlist.
+
+.. Warning:: When the allowlist is in use, the bot will ignore commands from everyone not on the list.
+
+
+Use ``[p]allowlist clear`` to disable the allowlist
 
 .. _core-command-allowlist-add:
 
@@ -58,11 +63,19 @@ allowlist add
 
 .. code-block:: none
 
-    [p]allowlist add <user>...
+    [p]allowlist add <users...>
 
 **Description**
 
-Adds a user to the allowlist.
+Adds users to the allowlist.
+
+Example:
+    - ``[p]allowlist add @26 @Will`` - Adds two users to the allowlist
+    - ``[p]allowlist add 262626262626262626`` - Adds a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to add to the allowlist.
 
 .. _core-command-allowlist-clear:
 
@@ -80,6 +93,11 @@ allowlist clear
 
 Clears the allowlist.
 
+This disables the allowlist.
+
+Example:
+    - ``[p]allowlist clear``
+
 .. _core-command-allowlist-list:
 
 """"""""""""""
@@ -96,6 +114,9 @@ allowlist list
 
 Lists users on the allowlist.
 
+Example:
+    - ``[p]allowlist list``
+
 .. _core-command-allowlist-remove:
 
 """"""""""""""""
@@ -106,11 +127,21 @@ allowlist remove
 
 .. code-block:: none
 
-    [p]allowlist remove <user>...
+    [p]allowlist remove <users...>
 
 **Description**
 
-Removes user from the allowlist.
+Removes users from the allowlist.
+
+The allowlist will be disabled if all users are removed.
+
+Example:
+    - ``[p]allowlist remove @26 @Will`` - Removes two users from the allowlist
+    - ``[p]allowlist remove 262626262626262626`` - Removes a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to remove from the allowlist.
 
 .. _core-command-autoimmune:
 
@@ -213,7 +244,9 @@ blocklist
 
 **Description**
 
-Blocklist management commands.
+Commands to manage the blocklist.
+
+Use ``[p]blocklist clear`` to disable the blocklist
 
 .. _core-command-blocklist-add:
 
@@ -225,11 +258,19 @@ blocklist add
 
 .. code-block:: none
 
-    [p]blocklist add <user>...
+    [p]blocklist add <users...>
 
 **Description**
 
-Adds a user to the blocklist.
+Adds users to the blocklist.
+
+Example:
+    - ``[p]blocklist add @26 @Will`` - Adds two users to the blocklist
+    - ``[p]blocklist add 262626262626262626`` - Adds a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to add to the blocklist.
 
 .. _core-command-blocklist-clear:
 
@@ -247,6 +288,9 @@ blocklist clear
 
 Clears the blocklist.
 
+Example:
+    - ``[p]blocklist clear``
+
 .. _core-command-blocklist-list:
 
 """"""""""""""
@@ -263,6 +307,9 @@ blocklist list
 
 Lists users on the blocklist.
 
+Example:
+    - ``[p]blocklist list``
+
 .. _core-command-blocklist-remove:
 
 """"""""""""""""
@@ -273,11 +320,19 @@ blocklist remove
 
 .. code-block:: none
 
-    [p]blocklist remove <user>...
+    [p]blocklist remove <users...>
 
 **Description**
 
-Removes user from the blocklist.
+Removes users from the blocklist.
+
+Example:
+    - ``[p]blocklist remove @26 @Will`` - Removes two users from the blocklist
+    - ``[p]blocklist remove 262626262626262626`` - Removes a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to remove from the blocklist.
 
 .. _core-command-command:
 
@@ -295,7 +350,7 @@ command
 
 **Description**
 
-Manage the bot's commands and cogs.
+Commands to manage the bot's commands and cogs.
 
 .. _core-command-command-defaultdisablecog:
 
@@ -580,6 +635,15 @@ contact
 
 Sends a message to the owner.
 
+This is limited to one message every 60 seconds per person.
+
+Example:
+    - ``[p]contact Help! The bot has become sentient!``
+
+**Arguments:**
+
+- ``[message]`` The message to send to the owner.
+
 .. _core-command-dm:
 
 ^^
@@ -599,9 +663,16 @@ dm
 Sends a DM to a user.
 
 This command needs a user ID to work.
-To get a user ID, go to Discord's settings and open the
-'Appearance' tab. Enable 'Developer Mode', then right click
-a user and click on 'Copy ID'.
+
+To get a user ID, go to Discord's settings and open the 'Appearance' tab.
+Enable 'Developer Mode', then right click a user and click on 'Copy ID'.
+
+Example:
+    - ``[p]dm 262626262626262626 Do you like me? Yes / No``
+
+**Arguments:**
+
+- ``[message]`` The message to dm to the user.
 
 .. _core-command-embedset:
 
@@ -778,6 +849,8 @@ helpset
 
 Commands to manage settings for the help command.
 
+All help settings are applied globally.
+
 .. _core-command-helpset-deletedelay:
 
 """""""""""""""""""
@@ -799,6 +872,16 @@ sent in server text channels.
 Setting the delay to 0 disables this feature.
 
 The bot has to have MANAGE_MESSAGES permission for this to work.
+
+Examples:
+    - ``[p]helpset deletedelay 60`` - Delete the help pages after a minute.
+    - ``[p]helpset deletedelay 1`` - Delete the help pages as quickly as possible.
+    - ``[p]helpset deletedelay 1209600`` - Max time to wait before deleting (14 days).
+    - ``[p]helpset deletedelay 0`` - Disable deleting help pages.
+
+**Arguments:**
+
+- ``<seconds>`` The seconds to wait before deleting help pages.
 
 .. _core-command-helpset-maxpages:
 
@@ -824,6 +907,14 @@ be sent to the command author via DM. This is to help reduce spam in server
 text channels.
 
 The default value is 2 pages.
+
+Examples:
+    - ``[p]helpset maxpages 50`` - Basically never send help to DMs.
+    - ``[p]helpset maxpages 0`` - Always send help to DMs.
+
+**Arguments:**
+
+- ``<limit>`` The max pages allowed to send per help in a server.
 
 .. _core-command-helpset-pagecharlimit:
 
@@ -953,8 +1044,16 @@ helpset tagline
 
 Set the tagline to be used.
 
-This setting only applies to embedded help. If no tagline is
-specified, the default will be used instead.
+The maximum tagline length is 2048 characters.
+This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
+
+Examples:
+    - ``[p]helpset tagline Thanks for using the bot!``
+    - ``[p]helpset tagline`` - Resets the tagline to the default.
+
+**Arguments:**
+
+- ``[tagline]`` The tagline to appear at the bottom of help embeds. Leave blank to reset.
 
 .. _core-command-helpset-usemenus:
 
@@ -1307,7 +1406,7 @@ load
 
 .. code-block:: none
 
-    [p]load [cogs...]
+    [p]load <cogs...>
 
 **Description**
 
@@ -1323,7 +1422,7 @@ Examples:
 
 **Arguments:**
 
-- ``[cogs...]`` The cog packages to load.
+- ``<cogs...>`` The cog packages to load.
 
 .. _core-command-localallowlist:
 
@@ -1343,7 +1442,12 @@ localallowlist
 
 **Description**
 
-Server specific allowlist management commands.
+Commands to manage the server specific allowlist.
+
+.. Warning:: When the allowlist is in use, the bot will ignore commands from everyone not on the list in the server.
+
+
+Use ``[p]localallowlist clear`` to disable the allowlist
 
 .. _core-command-localallowlist-add:
 
@@ -1355,11 +1459,19 @@ localallowlist add
 
 .. code-block:: none
 
-    [p]localallowlist add <user_or_role>...
+    [p]localallowlist add <users_or_roles...>
 
 **Description**
 
 Adds a user or role to the server allowlist.
+
+Example:
+    - ``[p]localallowlist add @26 @Will`` - Adds two users to the local allowlist
+    - ``[p]localallowlist add 262626262626262626`` - Adds a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to remove from the local allowlist.
 
 .. _core-command-localallowlist-clear:
 
@@ -1377,6 +1489,11 @@ localallowlist clear
 
 Clears the allowlist.
 
+This disables the local allowlist.
+
+Example:
+    - ``[p]localallowlist clear``
+
 .. _core-command-localallowlist-list:
 
 """""""""""""""""""
@@ -1393,6 +1510,9 @@ localallowlist list
 
 Lists users and roles on the  server allowlist.
 
+Example:
+    - ``[p]localallowlist list``
+
 .. _core-command-localallowlist-remove:
 
 """""""""""""""""""""
@@ -1403,11 +1523,21 @@ localallowlist remove
 
 .. code-block:: none
 
-    [p]localallowlist remove <user_or_role>...
+    [p]localallowlist remove <users_or_roles...>
 
 **Description**
 
 Removes user or role from the allowlist.
+
+The local allowlist will be disabled if all users are removed.
+
+Example:
+    - ``[p]localallowlist remove @26 @Will`` - Removes two users from the local allowlist
+    - ``[p]localallowlist remove 262626262626262626`` - Removes a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to remove from the local allowlist.
 
 .. _core-command-localblocklist:
 
@@ -1427,7 +1557,9 @@ localblocklist
 
 **Description**
 
-Server specific blocklist management commands.
+Commands to manage the server specific blocklist.
+
+Use ``[p]localblocklist clear`` to disable the blocklist
 
 .. _core-command-localblocklist-add:
 
@@ -1439,11 +1571,19 @@ localblocklist add
 
 .. code-block:: none
 
-    [p]localblocklist add <user_or_role>...
+    [p]localblocklist add <users_or_roles...>
 
 **Description**
 
-Adds a user or role to the blocklist.
+Adds a user or role to the local blocklist.
+
+Example:
+    - ``[p]blocklist add @26 @Will`` - Adds two users to the local blocklist
+    - ``[p]blocklist add 262626262626262626`` - Adds a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to add to the local blocklist.
 
 .. _core-command-localblocklist-clear:
 
@@ -1461,6 +1601,9 @@ localblocklist clear
 
 Clears the server blocklist.
 
+Example:
+    - ``[p]blocklist clear``
+
 .. _core-command-localblocklist-list:
 
 """""""""""""""""""
@@ -1477,6 +1620,9 @@ localblocklist list
 
 Lists users and roles on the blocklist.
 
+Example:
+    - ``[p]localblocklist list``
+
 .. _core-command-localblocklist-remove:
 
 """""""""""""""""""""
@@ -1487,11 +1633,19 @@ localblocklist remove
 
 .. code-block:: none
 
-    [p]localblocklist remove <user_or_role>...
+    [p]localblocklist remove <users_or_roles...>
 
 **Description**
 
 Removes user or role from blocklist.
+
+Example:
+    - ``[p]localblocklist remove @26 @Will`` - Removes two users from the local blocklist
+    - ``[p]localblocklist remove 262626262626262626`` - Removes a user by ID
+
+**Arguments:**
+
+- ``<users...>`` The user or users to remove from the local blocklist.
 
 .. _core-command-mydata:
 
@@ -1748,7 +1902,7 @@ reload
 
 .. code-block:: none
 
-    [p]reload [cogs...]
+    [p]reload <cogs...>
 
 **Description**
 
@@ -1764,7 +1918,7 @@ Examples:
 
 **Arguments:**
 
-- ``[cogs...]`` The cog packages to unload.
+- ``<cogs...>`` The cog packages to unload.
 
 .. _core-command-restart:
 
@@ -1954,7 +2108,7 @@ set api remove
 
 .. code-block:: none
 
-    [p]set api remove [services...]
+    [p]set api remove <services...>
 
 **Description**
 
@@ -1966,7 +2120,7 @@ Examples:
 
 **Arguments:**
 
-- ``[services...]`` The services to remove.
+- ``<services...>`` The services to remove.
 
 .. _core-command-set-avatar:
 
@@ -2506,7 +2660,7 @@ set prefix
 
 .. code-block:: none
 
-    [p]set prefix [prefixes...]
+    [p]set prefix <prefixes...>
 
 .. tip:: Alias: ``set prefixes``
 
@@ -2517,6 +2671,8 @@ Sets Red's global prefix(es).
 .. Warning:: This is not additive. It will replace all current prefixes.
 
 
+See also the ``--mentionable`` flag to enable mentioning the bot as the prefix.
+
 Examples:
     - ``[p]set prefix !``
     - ``[p]set prefix "@Red "`` - Quotes are needed to use spaces. This uses a mention as the prefix.
@@ -2524,7 +2680,7 @@ Examples:
 
 **Arguments:**
 
-- ``[prefixes...]`` The prefixes the bot will respond to globally.
+- ``<prefixes...>`` The prefixes the bot will respond to globally.
 
 .. _core-command-set-regionalformat:
 
@@ -2732,7 +2888,7 @@ set streaming
 
 .. code-block:: none
 
-    [p]set streaming [streamer] [stream_title]
+    [p]set streaming [(<streamer> <stream_title>)]
 
 .. tip:: Alias: ``set stream``
 
@@ -2963,7 +3119,7 @@ unload
 
 .. code-block:: none
 
-    [p]unload [cogs...]
+    [p]unload <cogs...>
 
 **Description**
 
@@ -2977,7 +3133,7 @@ Examples:
 
 **Arguments:**
 
-- ``[cogs...]`` The cog packages to unload.
+- ``<cogs...>`` The cog packages to unload.
 
 .. _core-command-uptime:
 
