@@ -328,7 +328,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 aliases_formatted_list = ", ".join(aliases_list)
                 if a_diff > 1:
                     aliases_content = _("{aliases} and {number} more aliases.").format(
-                        aliases=aliases_formatted_list, number=humanize_number(a_diff),
+                        aliases=aliases_formatted_list, number=humanize_number(a_diff)
                     )
                 else:
                     aliases_content = _("{} and one more alias.").format(aliases_formatted_list)
