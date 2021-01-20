@@ -336,6 +336,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     )
             signature += f"\n{alias_fmt}: {aliases_content}"
 
+        subcommands = None
         if hasattr(command, "all_commands"):
             grp = cast(commands.Group, command)
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
