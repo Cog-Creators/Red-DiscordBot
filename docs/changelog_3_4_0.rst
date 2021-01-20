@@ -22,6 +22,10 @@ Trivia
 Developer changelog
 -------------------
 
+Core Bot
+********
+
+- Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
 
 
 Documentation changes
