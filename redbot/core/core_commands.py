@@ -1399,7 +1399,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[cogs...]` The cog packages to load.
+        - `<cogs...>` The cog packages to load.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -1519,7 +1519,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[cogs...]` The cog packages to unload.
+        - `<cogs...>` The cog packages to unload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
@@ -1568,7 +1568,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[cogs...]` The cog packages to unload.
+        - `<cogs...>` The cog packages to unload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -2360,6 +2360,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: This is not additive. It will replace all current prefixes.
 
+        See also the `--mentionable` flag to enable mentioning the bot as the prefix.
+
         Examples:
             - `[p]set prefix !`
             - `[p]set prefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
@@ -2367,7 +2369,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[prefixes...]` The prefixes the bot will respond to globally.
+        - `<prefixes...>` The prefixes the bot will respond to globally.
         """
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
@@ -2657,7 +2659,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[services...]` The services to remove."""
+        - `<services...>` The services to remove."""
         bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
         services = [s for s in services if s in bot_services]
 
@@ -3252,7 +3254,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def allowlist(self, ctx: commands.Context):
         """
-        Allowlist management commands.
+        Commands to manage the allowlist.
 
         Warning: When the allowlist is in use, the bot will ignore commands from everyone not on the list.
 
@@ -3266,8 +3268,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds users to the allowlist.
 
         Example:
-            - `[p]allowlist add @26 @Will` - Adds two users to the allow list
-            - `[p]allowlsit add 262626262626262626` - Adds a user by ID
+            - `[p]allowlist add @26 @Will` - Adds two users to the allowlist
+            - `[p]allowlist add 262626262626262626` - Adds a user by ID
 
         **Arguments:**
 
@@ -3304,9 +3306,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes users from the allowlist.
 
+        The allowlist will be disabled if all users are removed.
+
         Example:
-            - `[p]allowlist remove @26 @Will` - Removes two users to the allow list
-            - `[p]allowlsit remove 262626262626262626` - Removes a user by ID
+            - `[p]allowlist remove @26 @Will` - Removes two users from the allowlist
+            - `[p]allowlist remove 262626262626262626` - Removes a user by ID
 
         **Arguments:**
 
@@ -3321,6 +3325,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def allowlist_clear(self, ctx: commands.Context):
         """
         Clears the allowlist.
+
+        This disables the allowlist.
+
+        Example:
+            - `[p]allowlist clear`
         """
         await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
@@ -3329,14 +3338,24 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def blocklist(self, ctx: commands.Context):
         """
-        Blocklist management commands.
+        Commands to manage the blocklist.
+
+        Use `[p]blocklist clear` to disable the blocklist
         """
         pass
 
     @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Adds a user to the blocklist.
+        Adds users to the blocklist.
+
+        Example:
+            - `[p]blocklist add @26 @Will` - Adds two users to the blocklist
+            - `[p]blocklist add 262626262626262626` - Adds a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to add to the blocklist.
         """
         for user in users:
             if isinstance(user, int):
@@ -3356,6 +3375,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def blocklist_list(self, ctx: commands.Context):
         """
         Lists users on the blocklist.
+
+        Example:
+            - `[p]blocklist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
@@ -3373,7 +3395,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @blocklist.command(name="remove", require_var_positional=True)
     async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Removes user from the blocklist.
+        Removes users from the blocklist.
+
+        Example:
+            - `[p]blocklist remove @26 @Will` - Removes two users from the blocklist
+            - `[p]blocklist remove 262626262626262626` - Removes a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to remove from the blocklist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
@@ -3384,6 +3414,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def blocklist_clear(self, ctx: commands.Context):
         """
         Clears the blocklist.
+
+        Example:
+            - `[p]blocklist clear`
         """
         await self.bot._whiteblacklist_cache.clear_blacklist()
         await ctx.send(_("Blocklist has been cleared."))
@@ -3393,7 +3426,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localallowlist(self, ctx: commands.Context):
         """
-        Server specific allowlist management commands.
+        Commands to manage the server specific allowlist.
+
+        Warning: When the allowlist is in use, the bot will ignore commands from everyone not on the list in the server.
+
+        Use `[p]localallowlist clear` to disable the allowlist
         """
         pass
 
@@ -3403,6 +3440,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Adds a user or role to the server allowlist.
+
+        Example:
+            - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist
+            - `[p]localallowlist add 262626262626262626` - Adds a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3426,6 +3471,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def localallowlist_list(self, ctx: commands.Context):
         """
         Lists users and roles on the  server allowlist.
+
+        Example:
+            - `[p]localallowlist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
@@ -3446,6 +3494,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Removes user or role from the allowlist.
+
+        The local allowlist will be disabled if all users are removed.
+
+        Example:
+            - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist
+            - `[p]localallowlist remove 262626262626262626` - Removes a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3470,6 +3528,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def localallowlist_clear(self, ctx: commands.Context):
         """
         Clears the allowlist.
+
+        This disables the local allowlist.
+
+        Example:
+            - `[p]localallowlist clear`
         """
         await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
         await ctx.send(_("Server allowlist has been cleared."))
@@ -3479,7 +3542,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(administrator=True)
     async def localblocklist(self, ctx: commands.Context):
         """
-        Server specific blocklist management commands.
+        Commands to manage the server specific blocklist.
+
+        Use `[p]localblocklist clear` to disable the blocklist
         """
         pass
 
@@ -3488,7 +3553,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Adds a user or role to the blocklist.
+        Adds a user or role to the local blocklist.
+
+        Example:
+            - `[p]blocklist add @26 @Will` - Adds two users to the local blocklist
+            - `[p]blocklist add 262626262626262626` - Adds a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to add to the local blocklist.
         """
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
@@ -3513,6 +3586,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def localblocklist_list(self, ctx: commands.Context):
         """
         Lists users and roles on the blocklist.
+
+        Example:
+            - `[p]localblocklist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
@@ -3533,6 +3609,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Removes user or role from blocklist.
+
+        Example:
+            - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist
+            - `[p]localblocklist remove 262626262626262626` - Removes a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to remove from the local blocklist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3546,6 +3630,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def localblocklist_clear(self, ctx: commands.Context):
         """
         Clears the server blocklist.
+
+        Example:
+            - `[p]blocklist clear`
         """
         await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
         await ctx.send(_("Server blocklist has been cleared."))
@@ -3553,7 +3640,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
-        """Manage the bot's commands and cogs."""
+        """Commands to manage the bot's commands and cogs."""
         pass
 
     @checks.is_owner()
