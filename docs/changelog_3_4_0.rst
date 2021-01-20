@@ -27,6 +27,12 @@ Mod
 - ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with vanity url feature that doesn't have vanity url set (:issue:`4714`)
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
 
+Modlog
+******
+
+- Added ``[p]listcases`` command that allows you to see multiple cases for user at once (:issue:`4426`)
+- Added typing indicator to ``[p]casesfor`` command (:issue:`4426`)
+
 Mutes
 *****
 
