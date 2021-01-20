@@ -31,6 +31,12 @@ Mutes
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
 - Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
 
+Streams
+*******
+
+- Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
+- Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
+
 Trivia
 ******
 
