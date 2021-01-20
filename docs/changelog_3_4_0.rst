@@ -13,6 +13,7 @@ Streams
 
 - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
 
+
 Redbot 3.4.4 (2020-12-24)
 =========================
 
@@ -103,9 +104,9 @@ Developer changelog
 Documentation changes
 ---------------------
 
-- Added `cog guide for Downloader cog <streams>` (:issue:`4511`)
-- Added `cog guide for Economy cog <streams>` (:issue:`4519`)
-- Added `cog guide for Streams cog <streams>` (:issue:`4521`)
+- Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
+- Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
+- Added `cog guide for Streams cog <cog_guides/streams>` (:issue:`4521`)
 - Added `guide_cog_creators` document (:issue:`4637`)
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
