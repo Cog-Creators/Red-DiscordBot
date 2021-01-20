@@ -13,6 +13,7 @@ Core Bot
 
 - Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
+- Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with command name that is already taken by a different cog (:issue:`3870`)
 
 Filter
 ******
