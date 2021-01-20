@@ -13,6 +13,21 @@ Core Bot
 
 - Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
+- Improved and fixed a lot of things about our new (colorful) logging (:issue:`4702`, :issue:`4726`)
+
+    - Used colors have been adjusted to be readable on many more terminal applications
+    - ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
+    - Tracebacks will now use full width of the terminal again
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with ``-rich-traceback-extra-lines`` flag)
+    - Disabled syntax highlighting on the log messages
+    - Dev cog no longer captures logging output
+    - Added some cool features for developers
+
+        - Added ``--rich-traceback-extra-lines`` flag which can be used to set the number of additional lines in tracebacks
+        - Added ``--rich-traceback-show-locals`` flag which enables showing local variables in tracebacks
+
+    - Improved and fixed few other minor things
+
 - Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with command name that is already taken by a different cog (:issue:`3870`)
 - Help now includes command aliases in the command help (:issue:`3040`)
 
