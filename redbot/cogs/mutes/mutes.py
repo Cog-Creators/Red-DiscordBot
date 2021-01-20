@@ -13,7 +13,7 @@ from .voicemutes import VoiceMutes
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils import bounded_gather
-from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
+from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -465,7 +465,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def _send_dm_notification(self, case: modlog.Case):
         user = case.user
         show_mod = await self.config.guild(case.guild).show_mod()
-        title = f"**{(await modlog.get_casetype(case.action_type)).case_str}**"
+        title = bold((await modlog.get_casetype(case.action_type)).case_str)
         duration = None
         if case.until:
             # This was stolen from core modlog.py
@@ -477,9 +477,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = end_fmt
             duration = dur_fmt
             # The stolen code ends here
-        if not user.dm_channel:
-            await user.create_dm()
-        if await self.bot.embed_requested(user.dm_channel, user):
+        # okay, this is some poor API to require PrivateChannel here...
+        if await self.bot.embed_requested(await user.create_dm(), user):
             em = discord.Embed(
                 title=title,
                 description=case.reason,
@@ -497,19 +496,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             except discord.Forbidden:
                 pass
         else:
-            maybe_mod = (
+            message = f"{title}\n------------------\n"
+            message += case.reason or _("No reason provided.")
+            message += (
                 _("**Moderator**: {moderator}\n").format(moderator=case.moderator)
                 if show_mod
                 else ""
             )
-            maybe_duration = (
+            message += (
                 _("**Until**: {until}\n**Duration**: {duration}\n").format(
                     until=until, duration=duration
                 )
                 if duration
                 else ""
             )
-            message = f"{title}\n------------------\n{case.reason if case.reason else 'No reason provided.'}\n{maybe_mod}{maybe_duration}**Guild**: {case.guild.name}"
+            message += _("**Guild**: {guild_name}").format(guild_name=case.guild.name)
             try:
                 await user.send(message)
             except discord.Forbidden:
@@ -725,7 +726,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         notification_channel = ctx.guild.get_channel(data["notification_channel"])
         default_time = timedelta(seconds=data["default_time"])
         msg = _(
-            "Mute Role: {role}\nNotification Channel: {channel}\nDefault Time: {time}\nSend DM: {dm}\nShow moderator: {show_mod}"
+            "Mute Role: {role}\n"
+            "Notification Channel: {channel}\n"
+            "Default Time: {time}\n"
+            "Send DM: {dm}\n"
+            "Show moderator: {show_mod}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),
             channel=notification_channel.mention if notification_channel else _("None"),
