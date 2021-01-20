@@ -14,6 +14,11 @@ Core Bot
 - Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 
+Filter
+******
+
+- Added ``filterhit`` case type which is used to log filter hits (:issue:`4676`, :issue:`4739`)
+
 Mod
 ***
 
