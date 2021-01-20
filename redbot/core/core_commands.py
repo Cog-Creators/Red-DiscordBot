@@ -2989,7 +2989,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This is limited to one message every 60 seconds per person.
 
-        Examples:
+        Example:
             - `[p]contact Help! The bot has become sentient!`
 
         **Arguments:**
@@ -3097,9 +3097,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Sends a DM to a user.
 
         This command needs a user ID to work.
-        To get a user ID, go to Discord's settings and open the
-        'Appearance' tab. Enable 'Developer Mode', then right click
-        a user and click on 'Copy ID'.
+
+        To get a user ID, go to Discord's settings and open the 'Appearance' tab.
+        Enable 'Developer Mode', then right click a user and click on 'Copy ID'.
+
+        Example:
+            - `[p]dm 262626262626262626 Do you like me? Yes / No`
+
+        **Arguments:**
+
+        - `[message]` The message to dm to the user.
         """
         destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
@@ -3246,13 +3253,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def allowlist(self, ctx: commands.Context):
         """
         Allowlist management commands.
+
+        Warning: When the allowlist is in use, the bot will ignore commands from everyone not on the list.
+
+        Use `[p]allowlist clear` to disable the allowlist
         """
         pass
 
     @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Adds a user to the allowlist.
+        Adds users to the allowlist.
+
+        Example:
+            - `[p]allowlist add @26 @Will` - Adds two users to the allow list
+            - `[p]allowlsit add 262626262626262626` - Adds a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to add to the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
@@ -3263,6 +3282,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def allowlist_list(self, ctx: commands.Context):
         """
         Lists users on the allowlist.
+
+        Example:
+            - `[p]allowlist list`
         """
         curr_list = await ctx.bot._config.whitelist()
 
@@ -3280,7 +3302,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @allowlist.command(name="remove", require_var_positional=True)
     async def allowlist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
-        Removes user from the allowlist.
+        Removes users from the allowlist.
+
+        Example:
+            - `[p]allowlist remove @26 @Will` - Removes two users to the allow list
+            - `[p]allowlsit remove 262626262626262626` - Removes a user by ID
+
+        **Arguments:**
+
+        - `<users...>` The user or users to remove from the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
