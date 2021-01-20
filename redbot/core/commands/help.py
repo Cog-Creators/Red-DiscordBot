@@ -308,8 +308,8 @@ class RedHelpFormatter(HelpFormatterABC):
         if help_settings.show_aliases and aliases:
             alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
             aliases = sorted(aliases, key=len)
-            a_counter = 0
 
+            a_counter = 0
             valid_alias_list = []
             for alias in aliases:
                 if (a_counter := a_counter + len(alias)) < 500:
