@@ -319,7 +319,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
             a_diff = len(aliases) - len(valid_alias_list)
             aliases_list = [
-                f"{ctx.clean_prefix}{command.parent.name + ' ' if command.parent else ''}{alias}"
+                f"{ctx.clean_prefix}{command.parent.qualified_name + ' ' if command.parent else ''}{alias}"
                 for alias in valid_alias_list
             ]
             if len(valid_alias_list) < 10:
