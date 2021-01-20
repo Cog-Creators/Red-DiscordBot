@@ -8,6 +8,11 @@ Redbot 3.4.6 (Unreleased)
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+
 Mod
 ***
 
