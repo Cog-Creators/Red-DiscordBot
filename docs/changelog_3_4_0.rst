@@ -69,6 +69,16 @@ Core Bot
 
 - Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
 
+Dev Cog
+*******
+
+- Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
+
+    - Variables can be added and removed from the environment of Dev cog using two new methods:
+
+        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
+
 
 Documentation changes
 ---------------------
