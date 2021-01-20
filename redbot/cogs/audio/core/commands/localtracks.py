@@ -7,13 +7,15 @@ from typing import MutableMapping
 import discord
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.local_track")
+_ = Translator("Audio", Path(__file__))
 
 
 class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -83,9 +85,9 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _local_folder_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()

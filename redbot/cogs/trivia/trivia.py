@@ -160,7 +160,7 @@ class Trivia(commands.Cog):
         if enabled:
             await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
         else:
-            await ctx.send(_("Alright, I won't embarass you at trivia anymore."))
+            await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
     async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
@@ -279,7 +279,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Trivia file was not found."))
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, require_var_positional=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
         """Start trivia session on the specified category.
@@ -287,9 +287,6 @@ class Trivia(commands.Cog):
         You may list multiple categories, in which case the trivia will involve
         questions from all of them.
         """
-        if not categories:
-            await ctx.send_help()
-            return
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
@@ -539,7 +536,7 @@ class Trivia(commands.Cog):
             )
             padding = [" " * (len(h) - len(f)) for h, f in zip(headers, fields)]
             fields = tuple(f + padding[i] for i, f in enumerate(fields))
-            lines.append(" | ".join(fields).format(member=member, **m_data))
+            lines.append(" | ".join(fields))
             if rank == top:
                 break
         return "\n".join(lines)
@@ -625,7 +622,7 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = attachment.filename.rsplit(".", 1)[0]
+        filename = attachment.filename.rsplit(".", 1)[0].casefold()
 
         # Check if trivia filename exists in core files or if it is a command
         if filename in self.trivia.all_commands or any(

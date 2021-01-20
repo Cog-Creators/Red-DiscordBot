@@ -5,8 +5,7 @@
 import asyncio
 import contextlib
 import functools
-import warnings
-from typing import Iterable, List, Optional, Union
+from typing import Iterable, List, Union
 import discord
 
 from .. import commands
@@ -95,6 +94,8 @@ async def menu(
             timeout=timeout,
         )
     except asyncio.TimeoutError:
+        if not ctx.me:
+            return
         try:
             if message.channel.permissions_for(ctx.me).manage_messages:
                 await message.clear_reactions()
@@ -170,9 +171,7 @@ async def close_menu(
 
 
 def start_adding_reactions(
-    message: discord.Message,
-    emojis: Iterable[_ReactableEmoji],
-    loop: Optional[asyncio.AbstractEventLoop] = None,
+    message: discord.Message, emojis: Iterable[_ReactableEmoji]
 ) -> asyncio.Task:
     """Start adding reactions to a message.
 
@@ -184,18 +183,12 @@ def start_adding_reactions(
     reaction whilst the reactions are still being added - in fact,
     this is exactly what `menu` uses to do that.
 
-    This spawns a `asyncio.Task` object and schedules it on ``loop``.
-    If ``loop`` omitted, the loop will be retrieved with
-    `asyncio.get_event_loop`.
-
     Parameters
     ----------
     message: discord.Message
         The message to add reactions to.
     emojis : Iterable[Union[str, discord.Emoji]]
         The emojis to react to the message with.
-    loop : Optional[asyncio.AbstractEventLoop]
-        The event loop.
 
     Returns
     -------
@@ -210,17 +203,11 @@ def start_adding_reactions(
             for emoji in emojis:
                 await message.add_reaction(emoji)
 
-    if loop is None:
-        loop = asyncio.get_running_loop()
-    else:
-        warnings.warn(
-            "`loop` kwarg is deprecated since Red 3.3.1. It is currently being ignored"
-            " and will be removed in the first minor release after 2020-08-05.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-    return loop.create_task(task())
+    return asyncio.create_task(task())
 
 
-DEFAULT_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page}
+DEFAULT_CONTROLS = {
+    "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
+    "\N{CROSS MARK}": close_menu,
+    "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
+}

@@ -464,7 +464,7 @@ class Group(Value):
 
         Note
         ----
-        If retreiving a sub-group, the return value of this method will
+        If retrieving a sub-group, the return value of this method will
         include registered defaults for values which have not yet been set.
 
         Parameters
@@ -687,7 +687,7 @@ class Config(metaclass=ConfigMeta):
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
         cog_name : str, optional
-            Config normally uses ``cog_instance`` to determine tha name of your cog.
+            Config normally uses ``cog_instance`` to determine the name of your cog.
             If you wish you may pass ``None`` to ``cog_instance`` and directly specify
             the name of your cog here.
 

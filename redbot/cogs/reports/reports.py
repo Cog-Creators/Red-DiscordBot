@@ -11,7 +11,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
@@ -27,7 +27,7 @@ class Reports(commands.Cog):
 
     Users can open reports using `[p]report`. These are then sent
     to a channel in the server for staff, and the report creator
-    gets a DM. Both can be used to communicate. 
+    gets a DM. Both can be used to communicate.
     """
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
@@ -90,7 +90,7 @@ class Reports(commands.Cog):
                 r["user_id"] = 0xDE1
                 # this might include EUD, and a report of a deleted user
                 # that's been unhandled for long enough for the
-                # user to be deleted and the bot recieve a request like this...
+                # user to be deleted and the bot receive a request like this...
                 r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
@@ -346,8 +346,10 @@ class Reports(commands.Cog):
 
         if t is None:
             return
+        guild = t[0][0]
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
+            await set_contextual_locales_from_guild(self.bot, guild)
             await tun.react_close(
                 uid=payload.user_id, message=_("{closer} has closed the correspondence")
             )
@@ -365,6 +367,7 @@ class Reports(commands.Cog):
                 to_remove.append(k)
                 continue
 
+            await set_contextual_locales_from_guild(self.bot, guild)
             topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
@@ -376,6 +379,7 @@ class Reports(commands.Cog):
         for key in to_remove:
             if tun := self.tunnel_store.pop(key, None):
                 guild, ticket = key
+                await set_contextual_locales_from_guild(self.bot, guild)
                 await tun["tun"].close_because_disabled(
                     _(
                         "Correspondence about ticket# {ticket_number} in "
@@ -422,8 +426,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
-            "Any message succesfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
+            "Any message successfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )

@@ -1153,11 +1153,11 @@ class RepoManager:
     async def update_repos(
         self, repos: Optional[Iterable[Repo]] = None
     ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
-        """Calls `Repo.update` on passed repositories and 
+        """Calls `Repo.update` on passed repositories and
         catches failing ones.
-        
+
         Calling without params updates all currently installed repos.
-        
+
         Parameters
         ----------
         repos: Iterable
@@ -1168,7 +1168,7 @@ class RepoManager:
         tuple of Dict and list
             A mapping of `Repo` objects that received new commits to
             a 2-`tuple` of `str` containing old and new commit hashes.
-            
+
             `list` of failed `Repo` names
         """
         failed = []

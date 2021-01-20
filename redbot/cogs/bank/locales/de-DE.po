@@ -28,7 +28,7 @@ msgstr "Basis Befehl für Bank Einstellungen."
 #: redbot/cogs/bank/bank.py:52
 #, docstring
 msgid "Show the current bank settings."
-msgstr ""
+msgstr "Zeige die aktuellen Bank Einstellungen an."
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"

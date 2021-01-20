@@ -2,20 +2,23 @@ import asyncio
 import contextlib
 import logging
 import re
+from pathlib import Path
 
 import discord
 import lavalink
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...equalizer import Equalizer
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.equalizer")
+_ = Translator("Audio", Path(__file__))
 
 
 class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -34,23 +37,23 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
         reactions = [
-            "\N{BLACK LEFT-POINTING TRIANGLE}",
-            "\N{LEFTWARDS BLACK ARROW}",
+            "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}",
             "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
             "\N{UP-POINTING SMALL RED TRIANGLE}",
             "\N{DOWN-POINTING SMALL RED TRIANGLE}",
             "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
-            "\N{BLACK RIGHTWARDS ARROW}",
-            "\N{BLACK RIGHT-POINTING TRIANGLE}",
-            "\N{BLACK CIRCLE FOR RECORD}",
-            "\N{INFORMATION SOURCE}",
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}",
+            "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}",
+            "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         ]
         await self._eq_msg_clear(player.fetch("eq_message"))
         eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             with contextlib.suppress(discord.HTTPException):
-                await eq_message.add_reaction("\N{INFORMATION SOURCE}")
+                await eq_message.add_reaction("\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}")
         else:
             start_adding_reactions(eq_message, reactions)
 
