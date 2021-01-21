@@ -112,7 +112,12 @@ def parse_timedelta(
                     _("`{unit}` is not a valid unit of time for this command").format(unit=k)
                 )
         if params:
-            delta = timedelta(**params)
+            try:
+                delta = timedelta(**params)
+            except OverflowError:
+                raise BadArgument(
+                    _("The time set is way too high, consider setting something reasonable.")
+                )
             if maximum and maximum < delta:
                 raise BadArgument(
                     _(

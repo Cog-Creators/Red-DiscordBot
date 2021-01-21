@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-18 14:45+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 45\n"
 "Language: de_DE\n"
 
-#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:344
+#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:341
 msgid "There is no ongoing trivia session in this channel."
 msgstr "In diesem Kanal läuft gerade keine Trivia Runde."
 
@@ -266,104 +266,104 @@ msgstr "Trivia-Liste nicht gefunden."
 msgid "Start trivia session on the specified category.\\n\\n        You may list multiple categories, in which case the trivia will involve\\n        questions from all of them.\\n        "
 msgstr "Startet eine Trivia Runde der angegebenen Kategorie\\n\\n        Du kannst mehrere Kategorien wählen, wodurch Trivia die Fragen\\n        aus diesen Kategorien vermischt.\\n        "
 
-#: redbot/cogs/trivia/trivia.py:296
+#: redbot/cogs/trivia/trivia.py:293
 msgid "There is already an ongoing trivia session in this channel."
 msgstr "In diesem Kanal läuft bereits eine Trivia Runde."
 
-#: redbot/cogs/trivia/trivia.py:307
+#: redbot/cogs/trivia/trivia.py:304
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
 msgstr "Ungültige Kategorie `{name}`. Siehe `{prefix}trivia list` für eine Liste der Trivia Kategorien."
 
-#: redbot/cogs/trivia/trivia.py:314
+#: redbot/cogs/trivia/trivia.py:311
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
 msgstr "Beim Analysieren der Trivia Liste für die `{name}` Kategorie trat ein Fehler auf. Möglicherweise wurde sie falsch formatiert."
 
-#: redbot/cogs/trivia/trivia.py:326
+#: redbot/cogs/trivia/trivia.py:323
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
 msgstr "Die Trivia Liste wurde erfolgreich analysiert, sie scheint jedoch leer zu sein!"
 
-#: redbot/cogs/trivia/trivia.py:341
+#: redbot/cogs/trivia/trivia.py:338
 #, docstring
 msgid "Stop an ongoing trivia session."
 msgstr "Stoppt eine laufende Trivia Runde."
 
-#: redbot/cogs/trivia/trivia.py:348
+#: redbot/cogs/trivia/trivia.py:345
 msgid "Trivia stopped."
 msgstr "Trivia gestoppt."
 
-#: redbot/cogs/trivia/trivia.py:352
+#: redbot/cogs/trivia/trivia.py:349
 #, docstring
 msgid "List available trivia categories."
 msgstr "Liste verfügbarer Trivia Kategorien."
 
-#: redbot/cogs/trivia/trivia.py:357 redbot/cogs/trivia/trivia.py:363
+#: redbot/cogs/trivia/trivia.py:354 redbot/cogs/trivia/trivia.py:360
 msgid "Available trivia lists"
 msgstr "Verfügbare Trivia Listen"
 
-#: redbot/cogs/trivia/trivia.py:373
+#: redbot/cogs/trivia/trivia.py:370
 #, docstring
 msgid "Leaderboard for trivia.\\n\\n        Defaults to the top 10 of this server, sorted by total wins. Use\\n        subcommands for a more customised leaderboard.\\n        "
 msgstr "Trivia Bestenliste.\\n\\n        Standardmäßig die Top 10 dieses Servers, sortiert nach Gesamtsiegen.\\n        Verwende untergeordnete Befehle für eine angepasste Bestenliste.\\n        "
 
-#: redbot/cogs/trivia/trivia.py:388
+#: redbot/cogs/trivia/trivia.py:385
 #, docstring
 msgid "Leaderboard for this server.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr "Trivia Bestenliste für diesen Server.\\n\\n        `<sort_by>` kann eine dieser Angaben sein:\\n        - `wins`   : Gesamtsiege\\n         - `avg`   : Durchschnittliche Punktzahl\\n         -  `total`   : gesamte korrekte Antworten aller Runden\\n         - `games`   : Insgesamt gespielte Spiele\\n\\n        `<top>` ist die Anzahl der Plätze, die auf der Bestenliste gezeigt werden sollen.\\n        "
 
-#: redbot/cogs/trivia/trivia.py:401 redbot/cogs/trivia/trivia.py:430
+#: redbot/cogs/trivia/trivia.py:398 redbot/cogs/trivia/trivia.py:427
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr "Unbekannte Angabe `{field_name}`, siehe `{prefix} help trivia leaderboard server` für gültige Angaben nach denen sortiert werden soll."
 
-#: redbot/cogs/trivia/trivia.py:417
+#: redbot/cogs/trivia/trivia.py:414
 #, docstring
 msgid "Global trivia leaderboard.\\n\\n        `<sort_by>` can be any of the following fields:\\n         - `wins`  : total wins\\n         - `avg`   : average score\\n         - `total` : total correct answers from all sessions\\n         - `games` : total games played\\n\\n        `<top>` is the number of ranks to show on the leaderboard.\\n        "
 msgstr "Globale Trivia Bestenliste.\\n\\n        `<sort_by>` kann eine dieser Angaben sein:\\n        - `wins` : Gesamtsiege\\n         - `avg` : Durchschnittliche Punktzahl\\n         -  `total` : gesamte korrekte Antworten aller Runden\\n         - `games` : Insgesamt gespielte Spiele\\n\\n        `<top>` ist die Anzahl der Plätze, die auf der Bestenliste gezeigt werden sollen.\\n        "
 
-#: redbot/cogs/trivia/trivia.py:485
+#: redbot/cogs/trivia/trivia.py:482
 msgid "There are no scores on record!"
 msgstr "Es wurden noch keine Punktzahlen erfasst!"
 
-#: redbot/cogs/trivia/trivia.py:515
+#: redbot/cogs/trivia/trivia.py:512
 msgid "Rank"
 msgstr "Rang"
 
-#: redbot/cogs/trivia/trivia.py:516
+#: redbot/cogs/trivia/trivia.py:513
 msgid "Member"
 msgstr "Mitglied"
 
-#: redbot/cogs/trivia/trivia.py:517
+#: redbot/cogs/trivia/trivia.py:514
 msgid "Wins"
 msgstr "Siege"
 
-#: redbot/cogs/trivia/trivia.py:518
+#: redbot/cogs/trivia/trivia.py:515
 msgid "Games Played"
 msgstr "Gespielte Runden"
 
-#: redbot/cogs/trivia/trivia.py:519
+#: redbot/cogs/trivia/trivia.py:516
 msgid "Total Score"
 msgstr "Gesamtpunktzahl"
 
-#: redbot/cogs/trivia/trivia.py:520
+#: redbot/cogs/trivia/trivia.py:517
 msgid "Average Score"
 msgstr "Durchschnittliche Punktzahl"
 
-#: redbot/cogs/trivia/trivia.py:635
+#: redbot/cogs/trivia/trivia.py:632
 msgid "{filename} is a reserved trivia name and cannot be replaced.\\nChoose another name."
 msgstr "{filename} ist ein reservierter Trivia-Name und kann nicht ersetzt werden.\\nWähle bitte einen anderen Namen."
 
-#: redbot/cogs/trivia/trivia.py:644
+#: redbot/cogs/trivia/trivia.py:641
 msgid "{filename} already exists. Do you wish to overwrite?"
 msgstr "{filename} existiert bereits. Soll die Datei überschrieben werden?"
 
-#: redbot/cogs/trivia/trivia.py:666
+#: redbot/cogs/trivia/trivia.py:663
 msgid "You took too long answering."
 msgstr "Du hast zu lange zum antworten gebraucht."
 
-#: redbot/cogs/trivia/trivia.py:670
+#: redbot/cogs/trivia/trivia.py:667
 msgid "I am not replacing the existing file."
 msgstr "Ich werde die bestehende Datei nicht ersetzen."
 
-#: redbot/cogs/trivia/trivia.py:679
+#: redbot/cogs/trivia/trivia.py:676
 msgid "Saved Trivia list as {filename}."
 msgstr "Trivia-Liste als {filename} gespeichert."
 

@@ -42,7 +42,7 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify, humanize_timedelta
+from ..utils.chat_formatting import box, humanize_list, humanize_number, humanize_timedelta, pagify
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
@@ -72,6 +72,7 @@ class HelpSettings:
     max_pages_in_guild: int = 2
     use_menus: bool = False
     show_hidden: bool = False
+    show_aliases: bool = True
     verify_checks: bool = True
     verify_exists: bool = False
     tagline: str = ""
@@ -300,10 +301,42 @@ class RedHelpFormatter(HelpFormatterABC):
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
         signature = _(
-            "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+            "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
         ).format(ctx=ctx, command=command)
-        subcommands = None
 
+        aliases = command.aliases
+        if help_settings.show_aliases and aliases:
+            alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
+            aliases = sorted(aliases, key=len)
+
+            a_counter = 0
+            valid_alias_list = []
+            for alias in aliases:
+                if (a_counter := a_counter + len(alias)) < 500:
+                    valid_alias_list.append(alias)
+                else:
+                    break
+
+            a_diff = len(aliases) - len(valid_alias_list)
+            aliases_list = [
+                f"{ctx.clean_prefix}{command.parent.qualified_name + ' ' if command.parent else ''}{alias}"
+                for alias in valid_alias_list
+            ]
+            if len(valid_alias_list) < 10:
+                aliases_content = humanize_list(aliases_list)
+            else:
+                aliases_formatted_list = ", ".join(aliases_list)
+                if a_diff > 1:
+                    aliases_content = _("{aliases} and {number} more aliases.").format(
+                        aliases=aliases_formatted_list, number=humanize_number(a_diff)
+                    )
+                else:
+                    aliases_content = _("{aliases} and one more alias.").format(
+                        aliases=aliases_formatted_list
+                    )
+            signature += f"\n{alias_fmt}: {aliases_content}"
+
+        subcommands = None
         if hasattr(command, "all_commands"):
             grp = cast(commands.Group, command)
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
@@ -315,7 +348,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
-            emb["embed"]["description"] = signature
+            emb["embed"]["description"] = box(signature)
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
@@ -375,7 +408,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     None,
                     (
                         description,
-                        signature[1:-1],
+                        signature,
                         command.format_help_for_context(ctx),
                         subtext_header,
                         subtext,

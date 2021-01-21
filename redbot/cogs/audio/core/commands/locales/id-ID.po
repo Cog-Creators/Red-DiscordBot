@@ -18,34 +18,34 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:36
 #, docstring
 msgid "Music configuration options."
-msgstr ""
+msgstr "Opsi konfigurasi musik."
 
 #: redbot/cogs/audio/core/commands/audioset.py:41
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Mengelola daftar putih dan daftar hitam kata kunci."
 
 #: redbot/cogs/audio/core/commands/audioset.py:46
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "Mengelola daftar putih/daftar hitam kata kunci global."
 
 #: redbot/cogs/audio/core/commands/audioset.py:50
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "Mengelola daftar putih kata kunci global."
 
 #: redbot/cogs/audio/core/commands/audioset.py:56
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Menambahkan kata kunci ke daftar putih. \\n\\n    Jika ada yang ditambahkan ke daftar putih, itu akan membuat daftar hitam yang lainnya. \\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
 #: redbot/cogs/audio/core/commands/audioset.py:260
 #: redbot/cogs/audio/core/commands/audioset.py:325
 msgid "Keyword already in the whitelist."
-msgstr ""
+msgstr "Kata kunci sudah ada di daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:74
 #: redbot/cogs/audio/core/commands/audioset.py:116
@@ -54,67 +54,67 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:306
 #: redbot/cogs/audio/core/commands/audioset.py:329
 msgid "Whitelist Modified"
-msgstr ""
+msgstr "Daftar Putih Dimodifikasi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:75
 #: redbot/cogs/audio/core/commands/audioset.py:265
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Menambahkan `{whitelisted}` ke daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:83
 #: redbot/cogs/audio/core/commands/audioset.py:273
 #, docstring
 msgid "List all keywords added to the whitelist."
-msgstr ""
+msgstr "Buat daftar semua kata kunci yang ditambahkan ke daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:86
 #: redbot/cogs/audio/core/commands/audioset.py:112
 #: redbot/cogs/audio/core/commands/audioset.py:276
 #: redbot/cogs/audio/core/commands/audioset.py:302
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "Tidak ada apa pun di daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 msgid "Global Whitelist"
-msgstr ""
+msgstr "Daftar Putih Global"
 
 #: redbot/cogs/audio/core/commands/audioset.py:109
 #: redbot/cogs/audio/core/commands/audioset.py:299
 #, docstring
 msgid "Clear all keywords from the whitelist."
-msgstr ""
+msgstr "Hapus semua kata kunci dari daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:117
 #: redbot/cogs/audio/core/commands/audioset.py:307
 msgid "All entries have been removed from the whitelist."
-msgstr ""
+msgstr "Semua entri telah dihapus dari daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:124
 #: redbot/cogs/audio/core/commands/audioset.py:314
 #, docstring
 msgid "Removes a keyword from the whitelist."
-msgstr ""
+msgstr "Menghapus kata kunci dari daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:140
 #: redbot/cogs/audio/core/commands/audioset.py:330
 msgid "Removed `{whitelisted}` from the whitelist."
-msgstr ""
+msgstr "Menghapus `{whitelisted}` dari daftar putih."
 
 #: redbot/cogs/audio/core/commands/audioset.py:147
 #, docstring
 msgid "Manages the global keyword blacklist."
-msgstr ""
+msgstr "Mengelola daftar hitam kata kunci global."
 
 #: redbot/cogs/audio/core/commands/audioset.py:153
 #: redbot/cogs/audio/core/commands/audioset.py:342
 #, docstring
 msgid "Adds a keyword to the blacklist."
-msgstr ""
+msgstr "Menambahkan kata kunci ke daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:164
 #: redbot/cogs/audio/core/commands/audioset.py:353
 msgid "Keyword already in the blacklist."
-msgstr ""
+msgstr "Kata kunci sudah ada di daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:168
 #: redbot/cogs/audio/core/commands/audioset.py:210
@@ -123,93 +123,93 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:399
 #: redbot/cogs/audio/core/commands/audioset.py:422
 msgid "Blacklist Modified"
-msgstr ""
+msgstr "Daftar Hitam Diubah"
 
 #: redbot/cogs/audio/core/commands/audioset.py:169
 #: redbot/cogs/audio/core/commands/audioset.py:358
 msgid "Added `{blacklisted}` to the blacklist."
-msgstr ""
+msgstr "Menambahkan `{blacklisted}` ke daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:177
 #: redbot/cogs/audio/core/commands/audioset.py:366
 #, docstring
 msgid "List all keywords added to the blacklist."
-msgstr ""
+msgstr "Buat daftar semua kata kunci yang ditambahkan ke daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:180
 #: redbot/cogs/audio/core/commands/audioset.py:206
 #: redbot/cogs/audio/core/commands/audioset.py:369
 #: redbot/cogs/audio/core/commands/audioset.py:395
 msgid "Nothing in the blacklist."
-msgstr ""
+msgstr "Tidak ada di daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:196
 msgid "Global Blacklist"
-msgstr ""
+msgstr "Daftar Hitam Global"
 
 #: redbot/cogs/audio/core/commands/audioset.py:203
 #: redbot/cogs/audio/core/commands/audioset.py:392
 #, docstring
 msgid "Clear all keywords added to the blacklist."
-msgstr ""
+msgstr "Hapus semua kata kunci yang ditambahkan ke daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:211
 #: redbot/cogs/audio/core/commands/audioset.py:400
 msgid "All entries have been removed from the blacklist."
-msgstr ""
+msgstr "Semua entri telah dihapus dari daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:218
 #: redbot/cogs/audio/core/commands/audioset.py:407
 #, docstring
 msgid "Removes a keyword from the blacklist."
-msgstr ""
+msgstr "Menghapus kata kunci dari daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:229
 #: redbot/cogs/audio/core/commands/audioset.py:418
 msgid "Keyword is not in the blacklist."
-msgstr ""
+msgstr "Kata kunci tidak ada dalam daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:234
 #: redbot/cogs/audio/core/commands/audioset.py:423
 msgid "Removed `{blacklisted}` from the blacklist."
-msgstr ""
+msgstr "Menghapus `{blacklisted}` dari daftar hitam."
 
 #: redbot/cogs/audio/core/commands/audioset.py:242
 #, docstring
 msgid "Manages the keyword whitelist."
-msgstr ""
+msgstr "Mengelola daftar putih kata kunci."
 
 #: redbot/cogs/audio/core/commands/audioset.py:246
 #, docstring
 msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr ""
+msgstr "Menambahkan kata kunci ke daftar putih. \\n\\n    Jika ada yang ditambahkan ke daftar putih, itu akan membuat daftar hitam yang lainnya. \\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
-msgstr ""
+msgstr "Daftar putih"
 
 #: redbot/cogs/audio/core/commands/audioset.py:338
 #, docstring
 msgid "Manages the keyword blacklist."
-msgstr ""
+msgstr "Mengelola daftar hitam kata kunci."
 
 #: redbot/cogs/audio/core/commands/audioset.py:385
 msgid "Blacklist"
-msgstr ""
+msgstr "Daftar Hitam"
 
 #: redbot/cogs/audio/core/commands/audioset.py:432
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Ubah pengaturan putar otomatis."
 
 #: redbot/cogs/audio/core/commands/audioset.py:436
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "Alihkan putar otomatis saat tidak ada lagu dalam antrean."
 
 #: redbot/cogs/audio/core/commands/audioset.py:440
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "Putar otomatis saat antrian berakhir: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:585
@@ -252,7 +252,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Enabled"
-msgstr ""
+msgstr "Diaktifkan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:585
@@ -295,15 +295,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Disabled"
-msgstr ""
+msgstr "Dinonaktifkan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\\nRepeat has been disabled."
-msgstr ""
+msgstr "\\nPengulangan telah dinonaktifkan."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\\nPemutusan otomatis di akhir antrian telah dinonaktifkan."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -343,12 +343,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:174
 #: redbot/cogs/audio/core/commands/llset.py:199
 msgid "Setting Changed"
-msgstr ""
+msgstr "Pengaturan Diubah"
 
 #: redbot/cogs/audio/core/commands/audioset.py:464
 #, docstring
 msgid "Set a playlist to auto-play songs from.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
-msgstr ""
+msgstr "Setel daftar putar untuk memutar lagu secara otomatis dari. \\n\\n ** Penggunaan **:\\n `[p] audioset putar otomatis playlist_name_OR_id [args]` \\n\\n ** Args **: \\n Berikut ini semua opsional: \\n --scope <scope> \\n --author [pengguna] \\n --Guild [guild] ** Hanya pemilik bot yang dapat menggunakan ** \\n\\n ** Cakupan ** adalah salah satu dari berikut ini: \\n Global \\n Guild \\n Pengguna \\n\\n ** Penulis ** dapat menjadi salah satu dari berikut ini: \\n ID Pengguna \\n Sebutan Pengguna \\n Nama Pengguna # 123 \\n\\n ** Serikat ** dapat berupa salah satu dari berikut ini: \\n ID Serikat \\n Nama serikat yang tepat \\n\\n Contoh penggunaan: \\n `[p] putar otomatis set audio MyGuildPlaylist` \\n `[P] putar otomatis set audio MyGlobalPlaylist --scope Global` \\n` [p] putar otomatis set audio PersonalPlaylist --scope Pengguna - Penulis Draper` \\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -367,7 +367,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1815
 #: redbot/cogs/audio/core/commands/playlists.py:1981
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "Daftar Putar Tidak Tersedia"
 
 #: redbot/cogs/audio/core/commands/audioset.py:498
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -386,7 +386,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1816
 #: redbot/cogs/audio/core/commands/playlists.py:1982
 msgid "The playlist section of Audio is currently unavailable"
-msgstr ""
+msgstr "Bagian playlist Audio saat ini tidak tersedia"
 
 #: redbot/cogs/audio/core/commands/audioset.py:501
 #: redbot/cogs/audio/core/commands/playlists.py:106
@@ -405,32 +405,32 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1819
 #: redbot/cogs/audio/core/commands/playlists.py:1985
 msgid "Check your logs."
-msgstr ""
+msgstr "Periksa log Anda."
 
 #: redbot/cogs/audio/core/commands/audioset.py:516
 #: redbot/cogs/audio/core/commands/audioset.py:532
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Daftar Putar Tidak Ditemukan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:517
 #: redbot/cogs/audio/core/commands/playlists.py:124
 #: redbot/cogs/audio/core/commands/playlists.py:1498
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "Tidak dapat mencocokkan '{arg}' dengan playlist"
 
 #: redbot/cogs/audio/core/commands/audioset.py:524
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Tidak Ada Trek yang Ditemukan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:525
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "Playlist {name} tidak memiliki trek."
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:1587
 #: redbot/cogs/audio/core/commands/playlists.py:1698
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "Playlist {id} tidak ada dalam cakupan {scope}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:540
 #: redbot/cogs/audio/core/commands/playlists.py:1016

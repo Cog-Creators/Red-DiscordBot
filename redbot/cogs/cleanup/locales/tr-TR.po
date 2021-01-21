@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,7 @@ msgstr "Komut içeren mesajları ve bot'un attığı mesajları temizler.\\n\\n 
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a second argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n\\n        Examples:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<match_pattern>` The text that messages must contain to be deleted. Use \\\"\\\" to skip this.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
 msgstr "Bot'a ait mesajları temizle.\\n\\n        Varsayılan olarak, tüm mesajlar temizlenir. Eğer ikinci bir seçenek belirtilirse,\\n        eşleştirme için kullanılır - yanlızca belirtilmiş seçeneği içeren mesajlar silinir.\\n\\n        Örnekler:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Seçenekler:**\\n\\n        - `<number>` En fazla kaç mesaj silineceği, pozitif tam sayı olmak zorundadır.\\n        - `<match_pattern>` Silinmek için bir mesajın ne içermesi gerektiği. Bunu atlamak için \\\"\\\" kullanın.\\n        - `<delete_pinned>` Sabitlenmiş mesajların silinip silinmeyeceği, varsayılan olarak kapalıdır.\\n        "
 
-#: redbot/cogs/cleanup/cleanup.py:610
+#: redbot/cogs/cleanup/cleanup.py:612
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n\\n        **Arguments:**\\n\\n        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\\n        "
 msgstr "Son X mesajdan aynı olanları siler ve sadece bir tanesini bırakır.\\n\\n        Varsayılan olarak 50.\\n\\n        **Seçenekler:**\\n\\n        - `<number>` Aynıları için denetlenecek mesaj sayısı, pozitif tam sayı olmak zorundadır.\\n        "

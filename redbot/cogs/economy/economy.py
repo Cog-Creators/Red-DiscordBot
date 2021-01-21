@@ -11,12 +11,12 @@ import discord
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
-
-from redbot.core.bot import Red
+from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
 
@@ -834,7 +834,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmin(self, ctx: commands.Context, bid: int):
+    async def slotmin(self, ctx: commands.Context, bid: positive_int):
         """Set the minimum slot machine bid.
 
         Example:
@@ -844,11 +844,20 @@ class Economy(commands.Cog):
 
         - `<bid>` The new minimum bid for using the slot machine. Default is 5.
         """
-        if bid < 1:
-            await ctx.send(_("Invalid min bid amount."))
-            return
         guild = ctx.guild
-        if await bank.is_global():
+        is_global = await bank.is_global()
+        if is_global:
+            slot_max = await self.config.SLOT_MAX()
+        else:
+            slot_max = await self.config.guild(guild).SLOT_MAX()
+        if bid > slot_max:
+            await ctx.send(
+                _(
+                    "Warning: Minimum bid is greater than the maximum bid ({max_bid}). "
+                    "Slots will not work."
+                ).format(max_bid=humanize_number(slot_max))
+            )
+        if is_global:
             await self.config.SLOT_MIN.set(bid)
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
@@ -860,7 +869,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmax(self, ctx: commands.Context, bid: int):
+    async def slotmax(self, ctx: commands.Context, bid: positive_int):
         """Set the maximum slot machine bid.
 
         Example:
@@ -870,15 +879,21 @@ class Economy(commands.Cog):
 
         - `<bid>` The new maximum bid for using the slot machine. Default is 100.
         """
-        slot_min = await self.config.SLOT_MIN()
-        if bid < 1 or bid < slot_min:
-            await ctx.send(
-                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
-            )
-            return
         guild = ctx.guild
+        is_global = await bank.is_global()
+        if is_global:
+            slot_min = await self.config.SLOT_MIN()
+        else:
+            slot_min = await self.config.guild(guild).SLOT_MIN()
+        if bid < slot_min:
+            await ctx.send(
+                _(
+                    "Warning: Maximum bid is less than the minimum bid ({min_bid}). "
+                    "Slots will not work."
+                ).format(min_bid=humanize_number(slot_min))
+            )
         credits_name = await bank.get_currency_name(guild)
-        if await bank.is_global():
+        if is_global:
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)

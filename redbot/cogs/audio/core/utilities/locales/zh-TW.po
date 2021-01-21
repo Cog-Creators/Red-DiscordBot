@@ -393,7 +393,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "Global"
-msgstr ""
+msgstr "全域"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:659
 msgid "the Server"

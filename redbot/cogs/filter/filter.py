@@ -14,7 +14,12 @@ _ = Translator("Filter", __file__)
 
 @cog_i18n(_)
 class Filter(commands.Cog):
-    """Filter unwanted words and phrases from text channels."""
+    """This cog is designed for "filtering" unwanted words and phrases from a server.
+
+    It provides tools to manage a list of words or sentences, and to customize automatic actions to be taken against users who use those words in channels or in their name/nickname.
+
+    This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.
+    """
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -66,7 +71,7 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
-        """Manage filter settings."""
+        """Base command to manage filter settings."""
         pass
 
     @filterset.command(name="defaultname")
@@ -77,6 +82,13 @@ class Filter(commands.Cog):
         (to toggle, run `[p]filter names`).
 
         The default name used is *John Doe*.
+
+        Example:
+            - `[p]filterset defaultname Missingno`
+
+        **Arguments:**
+
+        - `<name>` The new nickname to assign.
         """
         guild = ctx.guild
         await self.config.guild(guild).filter_default_name.set(name)
@@ -90,6 +102,15 @@ class Filter(commands.Cog):
         `<timeframe>` seconds.
 
         Set both to zero to disable autoban.
+
+        Examples:
+            - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
+            - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
+
+        **Arguments:**
+
+        - `<count>` The amount of filtered words required to trigger a ban.
+        - `<timeframe>` The period of time in which too many filtered words will trigger a ban.
         """
         if (count <= 0) != (timeframe <= 0):
             await ctx.send(
@@ -114,7 +135,7 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Add or remove words from server filter.
+        """Base command to add or remove words from the server filter.
 
         Use double quotes to add or remove sentences.
         """
@@ -122,7 +143,7 @@ class Filter(commands.Cog):
 
     @_filter.command(name="list")
     async def _global_list(self, ctx: commands.Context):
-        """Send a list of this servers filtered words."""
+        """Send a list of this server's filtered words."""
         server = ctx.guild
         author = ctx.author
         word_list = await self.config.guild(server).filter()
@@ -139,7 +160,7 @@ class Filter(commands.Cog):
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
-        """Add or remove words from channel filter.
+        """Base command to add or remove words from the channel filter.
 
         Use double quotes to add or remove sentences.
         """
@@ -147,7 +168,7 @@ class Filter(commands.Cog):
 
     @_filter_channel.command(name="list")
     async def _channel_list(self, ctx: commands.Context):
-        """Send the list of the channel's filtered words."""
+        """Send a list of the channel's filtered words."""
         channel = ctx.channel
         author = ctx.author
         word_list = await self.config.channel(channel).filter()
@@ -162,15 +183,19 @@ class Filter(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I can't send direct messages to you."))
 
-    @_filter_channel.command("add")
+    @_filter_channel.command(name="add", require_var_positional=True)
     async def filter_channel_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
 
         Examples:
-        - `[p]filter channel add word1 word2 word3`
-        - `[p]filter channel add "This is a sentence"`
+            - `[p]filter channel add word1 word2 word3`
+            - `[p]filter channel add "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to filter.
         """
         channel = ctx.channel
         added = await self.add_to_filter(channel, words)
@@ -180,15 +205,19 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Words already in the filter."))
 
-    @_filter_channel.command("remove")
+    @_filter_channel.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
     async def filter_channel_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
 
         Examples:
-        - `[p]filter channel remove word1 word2 word3`
-        - `[p]filter channel remove "This is a sentence"`
+            - `[p]filter channel remove word1 word2 word3`
+            - `[p]filter channel remove "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to no longer filter.
         """
         channel = ctx.channel
         removed = await self.remove_from_filter(channel, words)
@@ -198,15 +227,19 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words weren't in the filter."))
 
-    @_filter.command(name="add")
+    @_filter.command(name="add", require_var_positional=True)
     async def filter_add(self, ctx: commands.Context, *words: str):
         """Add words to the filter.
 
         Use double quotes to add sentences.
 
         Examples:
-        - `[p]filter add word1 word2 word3`
-        - `[p]filter add "This is a sentence"`
+            - `[p]filter add word1 word2 word3`
+            - `[p]filter add "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to filter.
         """
         server = ctx.guild
         added = await self.add_to_filter(server, words)
@@ -216,15 +249,19 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Those words were already in the filter."))
 
-    @_filter.command(name="delete", aliases=["remove", "del"])
+    @_filter.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
     async def filter_remove(self, ctx: commands.Context, *words: str):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
 
         Examples:
-        - `[p]filter remove word1 word2 word3`
-        - `[p]filter remove "This is a sentence"`
+            - `[p]filter remove word1 word2 word3`
+            - `[p]filter remove "This is a sentence"`
+
+        **Arguments:**
+
+        - `[words...]` The words or sentences to no longer filter.
         """
         server = ctx.guild
         removed = await self.remove_from_filter(server, words)

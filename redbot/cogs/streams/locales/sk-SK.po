@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-03 12:26+0000\n"
+"POT-Creation-Date: 2020-12-24 12:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "MIME-Version: 1.0\n"
@@ -24,11 +24,11 @@ msgstr ""
 msgid "You need a client secret key if you want to use the Twitch API on this cog.\\nFollow these steps:\\n1. Go to this page: https://dev.twitch.tv/console/apps.\\n2. Click \\\"Manage\\\" on your application.\\n3. Click on \\\"New secret\\\".\\n5. Copy your client ID and your client secret into:\\n{command}\\n\\nNote: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:492
+#: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_id_here>"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:492
+#: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_secret_here>"
 msgstr ""
 
@@ -56,23 +56,23 @@ msgstr ""
 msgid "That user is offline."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:254 redbot/cogs/streams/streams.py:451
+#: redbot/cogs/streams/streams.py:254 redbot/cogs/streams/streams.py:448
 msgid "That channel doesn't seem to exist."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:257 redbot/cogs/streams/streams.py:419
+#: redbot/cogs/streams/streams.py:257 redbot/cogs/streams/streams.py:416
 msgid "The Twitch token is either invalid or has not been set. See {command}."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:263 redbot/cogs/streams/streams.py:426
+#: redbot/cogs/streams/streams.py:263 redbot/cogs/streams/streams.py:423
 msgid "The YouTube API key is either invalid or has not been set. See {command}."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:269 redbot/cogs/streams/streams.py:434
+#: redbot/cogs/streams/streams.py:269 redbot/cogs/streams/streams.py:431
 msgid "YouTube quota has been exceeded. Try again later or contact the owner if this continues."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:281 redbot/cogs/streams/streams.py:446
+#: redbot/cogs/streams/streams.py:281 redbot/cogs/streams/streams.py:443
 msgid "Something went wrong whilst trying to contact the stream service's API."
 msgstr ""
 
@@ -86,220 +86,220 @@ msgstr ""
 msgid "Manage Twitch stream notifications."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:311
+#: redbot/cogs/streams/streams.py:308
 #, docstring
 msgid "Toggle alerts in this channel for a Twitch stream."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:314
+#: redbot/cogs/streams/streams.py:311
 msgid "Please supply the name of a *Twitch* channel, not a Discord channel."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:321
+#: redbot/cogs/streams/streams.py:318
 #, docstring
 msgid "Toggle alerts in this channel for a YouTube stream."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:326
+#: redbot/cogs/streams/streams.py:323
 #, docstring
 msgid "Toggle alerts in this channel for a Smashcast stream."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:331
+#: redbot/cogs/streams/streams.py:328
 #, docstring
 msgid "Toggle alerts in this channel for a Picarto stream."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:336
+#: redbot/cogs/streams/streams.py:333
 #, docstring
 msgid "Disable all stream alerts in this channel or server.\\n\\n        `[p]streamalert stop` will disable this channel's stream\\n        alerts.\\n\\n        Do `[p]streamalert stop yes` to disable all stream alerts in\\n        this server.\\n        "
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:366
+#: redbot/cogs/streams/streams.py:363
 msgid "All the stream alerts in this server have been disabled."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:368
+#: redbot/cogs/streams/streams.py:365
 msgid "All the stream alerts in this channel have been disabled."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:374
+#: redbot/cogs/streams/streams.py:371
 #, docstring
 msgid "List all active stream alerts in this server."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:377
+#: redbot/cogs/streams/streams.py:374
 msgid "Active alerts:\\n\\n"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:385
+#: redbot/cogs/streams/streams.py:382
 msgid "There are no active alerts in this server."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:459
+#: redbot/cogs/streams/streams.py:456
 #, docstring
 msgid "Manage stream alert settings."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:465
+#: redbot/cogs/streams/streams.py:462
 #, docstring
 msgid "Set stream check refresh time."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:467
+#: redbot/cogs/streams/streams.py:464
 msgid "You cannot set the refresh timer to less than 60 seconds"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:477
+#: redbot/cogs/streams/streams.py:474
 #, docstring
 msgid "Explain how to set the twitch token."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:478
+#: redbot/cogs/streams/streams.py:475
 msgid "To set the twitch API tokens, follow these steps:\\n1. Go to this page: https://dev.twitch.tv/dashboard/apps.\\n2. Click *Register Your Application*.\\n3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and select an Application Category of your choosing.\\n4. Click *Register*.\\n5. Copy your client ID and your client secret into:\\n{command}\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:501
+#: redbot/cogs/streams/streams.py:498
 #, docstring
 msgid "Explain how to set the YouTube token."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:503
+#: redbot/cogs/streams/streams.py:500
 msgid "To get one, do the following:\\n1. Create a project\\n(see https://support.google.com/googleapi/answer/6251787 for details)\\n2. Enable the YouTube Data API v3 \\n(see https://support.google.com/googleapi/answer/6158841 for instructions)\\n3. Set up your API key \\n(see https://support.google.com/googleapi/answer/6158862 for instructions)\\n4. Copy your API key and run the command {command}\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:517
+#: redbot/cogs/streams/streams.py:514
 msgid "<your_api_key_here>"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:526
+#: redbot/cogs/streams/streams.py:523
 #, docstring
 msgid "Manage custom messages for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:532
+#: redbot/cogs/streams/streams.py:529
 #, docstring
 msgid "Set stream alert message when mentions are enabled.\\n\\n        Use `{mention}` in the message to insert the selected mentions.\\n        Use `{stream}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message mention {mention}, {stream} is live!`\\n        "
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:542 redbot/cogs/streams/streams.py:558
+#: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:551
 msgid "Stream alert message set!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:549
+#: redbot/cogs/streams/streams.py:543
 #, docstring
 msgid "Set stream alert message when mentions are disabled.\\n\\n        Use `{stream}` in the message to insert the channel or user name.\\n\\n        For example: `[p]streamset message nomention {stream} is live!`\\n        "
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:565
+#: redbot/cogs/streams/streams.py:556
 #, docstring
 msgid "Reset the stream alert messages in this server."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:569
+#: redbot/cogs/streams/streams.py:560
 msgid "Stream alerts in this server will now use the default alert message."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:574
+#: redbot/cogs/streams/streams.py:565
 #, docstring
 msgid "Manage mention settings for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:580
+#: redbot/cogs/streams/streams.py:571
 #, docstring
 msgid "Toggle the `@​everyone` mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:585
+#: redbot/cogs/streams/streams.py:576
 msgid "`@​everyone` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:588
+#: redbot/cogs/streams/streams.py:579
 msgid "When a stream is live, `@​everyone` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:593
+#: redbot/cogs/streams/streams.py:584
 #, docstring
 msgid "Toggle the `@​here` mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:598
+#: redbot/cogs/streams/streams.py:589
 msgid "`@​here` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:601
+#: redbot/cogs/streams/streams.py:592
 msgid "When a stream is live, `@​here` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:606
+#: redbot/cogs/streams/streams.py:597
 #, docstring
 msgid "Toggle a role mention."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:611
+#: redbot/cogs/streams/streams.py:602
 msgid "`@​{role.name}` will no longer be mentioned for stream alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:617
+#: redbot/cogs/streams/streams.py:608
 msgid "When a stream or community is live, `@​{role.name}` will be mentioned."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:621
+#: redbot/cogs/streams/streams.py:612
 msgid "Since the role is not mentionable, it will be momentarily made mentionable when announcing a streamalert. Please make sure I have the correct permissions to manage this role, or else members of this role won't receive a notification."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:632
+#: redbot/cogs/streams/streams.py:623
 #, docstring
 msgid "Toggle alert deletion for when streams go offline."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:635
+#: redbot/cogs/streams/streams.py:626
 msgid "The notifications will be deleted once streams go offline."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:637
+#: redbot/cogs/streams/streams.py:628
 msgid "Notifications will no longer be deleted."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:642
+#: redbot/cogs/streams/streams.py:633
 #, docstring
 msgid "Toggle excluding rerun streams from alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:647
+#: redbot/cogs/streams/streams.py:638
 msgid "Streams of type 'rerun' will be included in alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:650
+#: redbot/cogs/streams/streams.py:641
 msgid "Streams of type 'rerun' will no longer send an alert."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:655
+#: redbot/cogs/streams/streams.py:646
 #, docstring
 msgid "Toggle excluding YouTube streams schedules from alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:660
+#: redbot/cogs/streams/streams.py:651
 msgid "Streams schedules will be included in alerts."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:663
+#: redbot/cogs/streams/streams.py:654
 msgid "Streams schedules will no longer send an alert."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:671
+#: redbot/cogs/streams/streams.py:662
 msgid "I'll now send a notification in this channel when {stream.name} is live."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:680
+#: redbot/cogs/streams/streams.py:671
 msgid "I won't send notifications about {stream.name} in this channel anymore."
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:798
+#: redbot/cogs/streams/streams.py:791
 msgid "{mention}, {stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:815
+#: redbot/cogs/streams/streams.py:808
 msgid "{stream} is live!"
 msgstr ""
 
