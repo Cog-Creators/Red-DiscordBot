@@ -276,10 +276,10 @@ class RedBase(
         """
         self._help_formatter = commands.help.RedHelpFormatter()
 
-    def add_dev_env_value(self, name: str, value: Callable):
+    def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
         """
-        Add a value to the dev environement (debug, eval and repl commands). If dev mode is
-        disabled, nothing will happen.
+        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval`, and ``[p]repl` commands).
+        If dev mode is disabled, nothing will happen.
 
         .. admonition:: Example
 
@@ -295,25 +295,26 @@ class RedBase(
                         self.bot.remove_dev_env_value("mycog")
                         self.bot.remove_dev_env_value("mycogdata")
 
-            One your cog is loaded, the ``mycog`` and ``mycogdata`` values will be implemented in
-            dev commands.
+            Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
+            will be included in the environment of dev commands.
 
         Parameters
         ----------
         name: str
-            The name of your env value
-        value: Callable
-            A callable taking exactly one argument, the context.
+            The name of your custom variable.
+        value: Callable[[commands.Context], Any]
+            The function returning the value of the variable.
+            It must take a `commands.Context` as its sole parameter
 
         Raise
         -----
         TypeError
-            The value isn't a callable.
+            ``value`` argument isn't a callable.
         ValueError
-            The callable takes no or more than one argument.
+            The passed callable takes no or more than one argument.
         RuntimeError
-            The name of the value is either reserved (default environement) or already taken by
-            something else.
+            The name of the custom variable is either reserved by a variable
+            from the default environment or already taken by some other custom variable.
         """
         signature = inspect.signature(value)
         if len(signature.parameters) != 1:
@@ -341,17 +342,17 @@ class RedBase(
 
     def remove_dev_env_value(self, name: str):
         """
-        Remove a custom dev env value.
+        Remove a custom variable from the dev environment.
 
         Parameters
         ----------
         name: str
-            The name of the env value.
+            The name of the custom variable.
 
         Raise
         -----
         KeyError
-            The value was never set.
+            The custom variable was never set.
         """
         dev = self.get_cog("Dev")
         if dev is None:
