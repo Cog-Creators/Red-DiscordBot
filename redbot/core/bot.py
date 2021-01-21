@@ -384,6 +384,12 @@ class RedBase(
         self._red_before_invoke_objs.add(coro)
         return coro
 
+    async def before_identify_hook(self, shard_id, *, initial=False):
+        """A hook that is called before IDENTIFYing a session.
+        Same as in discord.py, but also dispatches "on_red_identify" bot event."""
+        self.dispatch("red_before_identify", shard_id, initial)
+        return await super().before_identify_hook(shard_id, initial=initial)
+
     @property
     def cog_mgr(self) -> NoReturn:
         raise AttributeError("Please don't mess with the cog manager internals.")
