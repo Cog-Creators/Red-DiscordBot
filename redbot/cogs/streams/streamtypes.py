@@ -35,7 +35,7 @@ YOUTUBE_CHANNEL_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id={chan
 
 _ = Translator("Streams", __file__)
 
-log = logging.getLogger("redbot.cogs.Streams")
+log = logging.getLogger("red.core.cogs.Streams")
 
 
 def rnd(url):
