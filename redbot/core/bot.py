@@ -278,7 +278,7 @@ class RedBase(
 
     def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
         """
-        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval`, and ``[p]repl` commands).
+        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval``, and ``[p]repl`` commands).
         If dev mode is disabled, nothing will happen.
 
         .. admonition:: Example
