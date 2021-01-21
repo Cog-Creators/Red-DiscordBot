@@ -93,7 +93,7 @@ class Dev(commands.Cog):
         token = ctx.bot.http.token
         return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
 
-    def get_environement(self, ctx: commands.Context) -> dict:
+    def get_environment(self, ctx: commands.Context) -> dict:
         env = {
             "bot": ctx.bot,
             "ctx": ctx,
@@ -138,7 +138,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = self.get_environement(ctx)
+        env = self.get_environment(ctx)
         code = self.cleanup_code(code)
 
         try:
@@ -178,7 +178,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = self.get_environement(ctx)
+        env = self.get_environment(ctx)
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
@@ -271,7 +271,7 @@ class Dev(commands.Cog):
                     continue
 
             context = await ctx.bot.get_context(response)
-            env = self.get_environement(context)
+            env = self.get_environment(context)
             env["__builtins__"] = __builtins__
             env["_"] = previous
 
