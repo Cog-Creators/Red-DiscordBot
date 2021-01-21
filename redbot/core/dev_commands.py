@@ -232,7 +232,9 @@ class Dev(commands.Cog):
                 )
             return
 
-        previous = None
+        env = self.get_environment(ctx)
+        env["__builtins__"] = __builtins__
+        env["_"] = None
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
@@ -270,11 +272,6 @@ class Dev(commands.Cog):
                     await ctx.send(self.get_syntax_error(e))
                     continue
 
-            context = await ctx.bot.get_context(response)
-            env = self.get_environment(context)
-            env["__builtins__"] = __builtins__
-            env["_"] = previous
-
             stdout = io.StringIO()
 
             msg = ""
@@ -293,6 +290,7 @@ class Dev(commands.Cog):
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
+                    env["_"] = result
                 elif value:
                     msg = "{}".format(value)
 
