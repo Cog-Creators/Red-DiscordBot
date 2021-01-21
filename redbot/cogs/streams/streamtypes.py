@@ -106,6 +106,8 @@ class YoutubeStream(Stream):
 
         async with aiohttp.ClientSession() as session:
             async with session.get(YOUTUBE_CHANNEL_RSS.format(channel_id=self.id)) as r:
+                if r.status == 404:
+                    raise StreamNotFound()
                 rssdata = await r.text()
 
         if self.not_livestreams:
