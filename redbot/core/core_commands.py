@@ -1951,7 +1951,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command(name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]")
+    @_set.command(
+        name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
+    )
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
