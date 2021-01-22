@@ -335,7 +335,9 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     await driver_cls.initialize(**data_manager.storage_details())
 
     redbot.logging.init_logging(
-        level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
+        level=cli_flags.logging_level,
+        location=data_manager.core_data_path() / "logs",
+        force_rich_logging=cli_flags.rich_logging,
     )
 
     log.debug("====Basic Config====")
