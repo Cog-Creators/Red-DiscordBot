@@ -30,10 +30,10 @@ class MixinMeta(ABC):
     async def _send_dm_notification(
         self,
         user: Union[discord.User, discord.Member],
-        moderator: Union[discord.User, discord.Member],
+        moderator: Optional[Union[discord.User, discord.Member]],
         guild: discord.Guild,
         mute_type: str,
-        reason: str,
+        reason: Optional[str],
         duration=None,
     ):
         raise NotImplementedError()
