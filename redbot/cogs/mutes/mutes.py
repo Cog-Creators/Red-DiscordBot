@@ -245,7 +245,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
         if success["success"]:
-            modlog_case = await modlog.create_case(
+            await modlog.create_case(
                 self.bot,
                 guild,
                 datetime.now(timezone.utc),
@@ -355,7 +355,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if channel_list:
             modlog_reason += _("\nUnmuted in channels: ") + channel_list
 
-        modlog_case = await modlog.create_case(
+        await modlog.create_case(
             self.bot,
             guild,
             datetime.now(timezone.utc),
@@ -431,7 +431,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     unmute_type = "vunmute"
                 else:
                     unmute_type = "cunmute"
-                modlog_case = await modlog.create_case(
+                await modlog.create_case(
                     self.bot,
                     channel.guild,
                     datetime.now(timezone.utc),
@@ -556,7 +556,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # they weren't a tracked mute so we can return early
                 return
             if after.id in self._server_mutes[guild.id]:
-                modlog_case = await modlog.create_case(
+                await modlog.create_case(
                     self.bot,
                     guild,
                     datetime.now(timezone.utc),
@@ -576,7 +576,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # initialize the guild in the cache to prevent keyerrors
                 self._server_mutes[guild.id] = {}
             if after.id not in self._server_mutes[guild.id]:
-                modlog_case = await modlog.create_case(
+                await modlog.create_case(
                     self.bot,
                     guild,
                     datetime.now(timezone.utc),
@@ -657,7 +657,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                             _("Channel unmute"),
                             _("Manually removed channel overwrites"),
                         )
-                    modlog_case = await modlog.create_case(
+                    await modlog.create_case(
                         self.bot,
                         after.guild,
                         datetime.now(timezone.utc),
@@ -1113,7 +1113,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     if success["channels"]:
                         # incase we only muted a user in 1 channel not all
                         issue_list.append(success)
-                    modlog_case = await modlog.create_case(
+                    await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1260,7 +1260,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if success["success"]:
                     success_list.append(user)
 
-                    modlog_case = await modlog.create_case(
+                    await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1330,7 +1330,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
                 if success["success"]:
                     success_list.append(user)
-                    modlog_case = await modlog.create_case(
+                    await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
@@ -1396,7 +1396,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
                 if success["success"]:
                     success_list.append(user)
-                    modlog_case = await modlog.create_case(
+                    await modlog.create_case(
                         self.bot,
                         guild,
                         ctx.message.created_at.replace(tzinfo=timezone.utc),
