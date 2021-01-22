@@ -483,9 +483,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         until = None
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
-            until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
-                "%Y-%m-%d %H:%M:%S UTC"
-            )
+            until = datetime.now(timezone.utc) + duration
+            until_str = until.strftime("%Y-%m-%d %H:%M:%S UTC")
 
         if moderator is None:
             moderator_str = _("Unknown")
@@ -501,7 +500,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
             em.timestamp = datetime.utcnow()
             if duration:
-                em.add_field(name=_("Until"), value=until)
+                em.add_field(name=_("Until"), value=until_str)
                 em.add_field(name=_("Duration"), value=duration_str)
             em.add_field(name=_("Guild"), value=guild.name, inline=False)
             if show_mod:
@@ -520,7 +519,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
             message += (
                 _("\n**Until**: {until}\n**Duration**: {duration}").format(
-                    until=until, duration=duration_str
+                    until=until_str, duration=duration_str
                 )
                 if duration
                 else ""
