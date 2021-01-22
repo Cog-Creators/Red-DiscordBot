@@ -112,6 +112,7 @@ class Dev(commands.Cog):
             try:
                 env[name] = value(ctx)
             except Exception as e:
+                traceback.clear_frames(e.__traceback__)
                 env[name] = e
         return env
 
