@@ -479,15 +479,17 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         show_mod = await self.config.guild(guild).show_mod()
         title = bold(mute_type)
-        duration = _(" {duration}").format(duration=humanize_timedelta(timedelta=duration))
-        until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
-            "%Y-%m-%d %H:%M:%S UTC"
-        )
+        until = None
+        if duration:
+            duration = _(" {duration}").format(duration=humanize_timedelta(timedelta=duration))
+            until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
+                "%Y-%m-%d %H:%M:%S UTC"
+            )
 
         if moderator is None:
-            moderator_string = "Unknown"
+            moderator_string = _("Unknown")
         else:
-            moderator_string = f"{moderator.name}#{moderator.discriminator}"
+            moderator_string = str(moderator)
 
         # okay, this is some poor API to require PrivateChannel here...
         if await self.bot.embed_requested(await user.create_dm(), user):
@@ -641,8 +643,24 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.debug("creating case")
                     if isinstance(after, discord.VoiceChannel):
                         unmute_type = "vunmute"
+                        if await self.config.guild(after.guild).dm():
+                            await self._send_dm_notification(
+                                after,
+                                None,
+                                after.guild,
+                                _("Voice unmute"),
+                                _("Manually removed channel overwrites"),
+                            )
                     else:
                         unmute_type = "cunmute"
+                        if await self.config.guild(after.guild).dm():
+                            await self._send_dm_notification(
+                                after,
+                                None,
+                                after.guild,
+                                _("Channel unmute"),
+                                _("Manually removed channel overwrites"),
+                            )
                     modlog_case = await modlog.create_case(
                         self.bot,
                         after.guild,
@@ -655,14 +673,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         channel=after,
                     )
                     log.debug("created case")
-                    if await self.config.guild(after.guild).dm():
-                        await self._send_dm_notification(
-                            after,
-                            None,
-                            after.guild,
-                            _("(Voice-)Channel unmute"),
-                            _("Manually removed channel overwrites"),
-                        )
             if to_del:
                 for u_id in to_del:
                     del self._channel_mutes[after.id][u_id]
@@ -1120,7 +1130,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
                     if await self.config.guild(user.guild).dm():
                         await self._send_dm_notification(
-                            user, author, guild, _("Server Mute"), reason, duration
+                            user, author, guild, _("Server mute"), reason, duration
                         )
                 else:
                     issue_list.append(success)

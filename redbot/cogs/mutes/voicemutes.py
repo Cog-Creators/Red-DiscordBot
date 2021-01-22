@@ -145,7 +145,7 @@ class VoiceMutes(MixinMeta):
                         channel=channel,
                     )
                     await self._send_dm_notification(
-                        user, author, guild, channel, _("Voice mute"), reason, duration
+                        user, author, guild, _("Voice mute"), reason, duration
                     )
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
@@ -221,7 +221,7 @@ class VoiceMutes(MixinMeta):
                         channel=channel,
                     )
                     await self._send_dm_notification(
-                        user, author, guild, channel, _("Voice unmute"), reason
+                        user, author, guild, _("Voice unmute"), reason
                     )
                 else:
                     issue_list.append((user, success["reason"]))
@@ -240,67 +240,3 @@ class VoiceMutes(MixinMeta):
             for user, issue in issue_list:
                 msg += f"{user}: {issue}\n"
             await ctx.send_interactive(pagify(msg))
-
-    async def _send_dm_notification(
-        self,
-        user: Union[discord.User, discord.Member],
-        moderator: Union[discord.User, discord.Member],
-        guild: discord.Guild,
-        channel: discord.VoiceChannel,
-        mute_type: str,
-        reason: str,
-        duration=None,
-    ):
-        show_mod = await self.config.guild(guild).show_mod()
-        title = bold(mute_type)
-        duration = _(" {duration}").format(duration=humanize_timedelta(timedelta=duration))
-        until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
-            "%Y-%m-%d %H:%M:%S UTC"
-        )
-
-        if moderator is None:
-            moderator_string = "Unknown"
-        else:
-            moderator_string = f"{moderator.name}#{moderator.discriminator}"
-
-        # okay, this is some poor API to require PrivateChannel here...
-        if await self.bot.embed_requested(await user.create_dm(), user):
-            em = discord.Embed(
-                title=title,
-                description=reason,
-                color=await self.bot.get_embed_color(user),
-            )
-            em.timestamp = datetime.utcnow()
-            if duration:
-                em.add_field(name=_("**Until**"), value=until)
-                em.add_field(name=_("**Duration**"), value=duration)
-            em.add_field(name=_("**Guild**"), value=guild.name)
-            em.add_field(name=_("**Channel**"), value=channel.name)
-            if show_mod:
-                em.add_field(name=_("**Moderator**"), value=moderator_string)
-            try:
-                await user.send(embed=em)
-            except discord.Forbidden:
-                pass
-        else:
-            message = f"{title}\n------------------\n"
-            message += reason or _("No reason provided.")
-            message += (
-                _("\n**Moderator**: {moderator}").format(moderator=moderator_string)
-                if show_mod
-                else ""
-            )
-            message += (
-                _("\n**Until**: {until}\n**Duration**: {duration}").format(
-                    until=until, duration=duration
-                )
-                if duration
-                else ""
-            )
-            message += _("\n**Guild**: {guild_name}\n**Channel**: {channel_name}").format(
-                guild_name=guild.name, channel_name=channel.name
-            )
-            try:
-                await user.send(message)
-            except discord.Forbidden:
-                pass
