@@ -256,7 +256,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 until=None,
             )
             if await self.config.guild(member.guild).dm():
-                await self._send_dm_notification(modlog_case)
+                await self._send_dm_notification(
+                    member, author, guild, _("Server unmute"), _("Automatic unmute")
+                )
         else:
             chan_id = await self.config.guild(guild).notification_channel()
             notification_channel = guild.get_channel(chan_id)
@@ -365,7 +367,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until=None,
         )
         if await self.config.guild(member.guild).dm():
-            await self._send_dm_notification(modlog_case)
+            await self._send_dm_notification(
+                member, author, guild, _("Server unmute"), _("Automatic unmute")
+            )
         self._channel_mute_events[guild.id].set()
         if any(results):
             reasons = {}
@@ -441,7 +445,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     channel=channel,
                 )
                 if await self.config.guild(member.guild).dm():
-                    await self._send_dm_notification(modlog_case)
+                    await self._send_dm_notification(
+                        member, author, channel.guild, _("Channel unmute"), _("Automatic unmute")
+                    )
             return None
         else:
             error_msg = _(
@@ -462,44 +468,50 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             else:
                 return (member, channel, success["reason"])
 
-    async def _send_dm_notification(self, case: modlog.Case):
-        user = case.user
-        show_mod = await self.config.guild(case.guild).show_mod()
-        title = bold((await modlog.get_casetype(case.action_type)).case_str)
-        duration = None
-        if case.until:
-            # This was stolen from core modlog.py
-            start = datetime.utcfromtimestamp(case.created_at)
-            end = datetime.utcfromtimestamp(case.until)
-            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
-            duration = end - start
-            dur_fmt = _strfdelta(duration)
-            until = end_fmt
-            duration = dur_fmt
-            # The stolen code ends here
+    async def _send_dm_notification(
+        self,
+        user: Union[discord.User, discord.Member],
+        moderator: Union[discord.User, discord.Member],
+        guild: discord.Guild,
+        mute_type: str,
+        reason: str,
+        duration=None,
+    ):
+        show_mod = await self.config.guild(guild).show_mod()
+        title = bold(mute_type)
+        duration = _(" {duration}").format(duration=humanize_timedelta(timedelta=duration))
+        until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
+            "%Y-%m-%d %H:%M:%S UTC"
+        )
+
+        if moderator is None:
+            moderator_string = "Unknown"
+        else:
+            moderator_string = f"{moderator.name}#{moderator.discriminator}"
+
         # okay, this is some poor API to require PrivateChannel here...
         if await self.bot.embed_requested(await user.create_dm(), user):
             em = discord.Embed(
                 title=title,
-                description=case.reason,
+                description=reason,
                 color=await self.bot.get_embed_color(user),
             )
             em.timestamp = datetime.utcnow()
             if duration:
                 em.add_field(name=_("**Until**"), value=until)
                 em.add_field(name=_("**Duration**"), value=duration)
-            em.add_field(name=_("**Guild**"), value=case.guild.name, inline=False)
+            em.add_field(name=_("**Guild**"), value=guild.name, inline=False)
             if show_mod:
-                em.add_field(name=_("**Moderator**"), value=case.moderator)
+                em.add_field(name=_("**Moderator**"), value=moderator_string)
             try:
                 await user.send(embed=em)
             except discord.Forbidden:
                 pass
         else:
             message = f"{title}\n------------------\n"
-            message += case.reason or _("No reason provided.")
+            message += reason or _("No reason provided.")
             message += (
-                _("\n**Moderator**: {moderator}").format(moderator=case.moderator)
+                _("\n**Moderator**: {moderator}").format(moderator=moderator_string)
                 if show_mod
                 else ""
             )
@@ -510,7 +522,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if duration
                 else ""
             )
-            message += _("\n**Guild**: {guild_name}").format(guild_name=case.guild.name)
+            message += _("\n**Guild**: {guild_name}").format(guild_name=guild.name)
             try:
                 await user.send(message)
             except discord.Forbidden:
@@ -554,7 +566,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 del self._server_mutes[guild.id][after.id]
                 should_save = True
                 if await self.config.guild(after.guild).dm():
-                    await self._send_dm_notification(modlog_case)
+                    await self._send_dm_notification(
+                        after, None, guild, _("Server unmute"), _("Manually removed mute role")
+                    )
         elif mute_role in roles_added:
             # send modlog case for mute and add to cache
             if guild.id not in self._server_mutes:
@@ -577,7 +591,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 }
                 should_save = True
                 if await self.config.guild(after.guild).dm():
-                    await self._send_dm_notification(modlog_case)
+                    await self._send_dm_notification(
+                        after, None, guild, _("Server mute"), _("Manually applied mute role")
+                    )
         if should_save:
             await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
 
@@ -640,7 +656,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
                     log.debug("created case")
                     if await self.config.guild(after.guild).dm():
-                        await self._send_dm_notification(modlog_case)
+                        await self._send_dm_notification(
+                            after,
+                            None,
+                            after.guild,
+                            _("(Voice-)Channel unmute"),
+                            _("Manually removed channel overwrites"),
+                        )
             if to_del:
                 for u_id in to_del:
                     del self._channel_mutes[after.id][u_id]
@@ -1097,7 +1119,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         channel=None,
                     )
                     if await self.config.guild(user.guild).dm():
-                        await self._send_dm_notification(modlog_case)
+                        await self._send_dm_notification(
+                            user, author, guild, _("Server Mute"), reason, duration
+                        )
                 else:
                     issue_list.append(success)
         if success_list:
@@ -1243,7 +1267,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         channel=channel,
                     )
                     if await self.config.guild(user.guild).dm():
-                        await self._send_dm_notification(modlog_case)
+                        await self._send_dm_notification(
+                            user, author, guild, _("Channel mute"), reason, duration
+                        )
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
                 else:
@@ -1311,7 +1337,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=None,
                     )
                     if await self.config.guild(user.guild).dm():
-                        await self._send_dm_notification(modlog_case)
+                        await self._send_dm_notification(
+                            user, author, guild, _("Server unmute"), reason
+                        )
                 else:
                     issue_list.append(success)
         self._channel_mute_events[guild.id].set()
@@ -1377,7 +1405,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         channel=channel,
                     )
                     if await self.config.guild(user.guild).dm():
-                        await self._send_dm_notification(modlog_case)
+                        await self._send_dm_notification(
+                            user, author, guild, _("Channel unmute"), reason
+                        )
                 else:
                     issue_list.append((user, success["reason"]))
         if success_list:
