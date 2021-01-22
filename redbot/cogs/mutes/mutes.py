@@ -1746,25 +1746,3 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "reason": _(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
                 }
         return {"success": True, "channel": channel, "reason": None}
-
-
-def _strfdelta(delta):
-    # This is stolen from core modlog.py
-    s = []
-    if delta.days:
-        ds = "%i day" % delta.days
-        if delta.days > 1:
-            ds += "s"
-        s.append(ds)
-    hrs, rem = divmod(delta.seconds, 60 * 60)
-    if hrs:
-        hs = "%i hr" % hrs
-        if hrs > 1:
-            hs += "s"
-        s.append(hs)
-    mins, secs = divmod(rem, 60)
-    if mins:
-        s.append("%i min" % mins)
-    if secs:
-        s.append("%i sec" % secs)
-    return " ".join(s)
