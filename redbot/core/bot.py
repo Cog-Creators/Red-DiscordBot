@@ -331,6 +331,7 @@ class RedBase(
         if name in [
             "bot",
             "ctx",
+            "channel",
             "author",
             "guild",
             "message",
