@@ -2755,9 +2755,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
         if len(users) > 1:
-            await ctx.send(_("Users added to allowlist."))
+            await ctx.send(_("Users has been added to the allowlist."))
         else:
-            await ctx.send(_("User added to allowlist."))
+            await ctx.send(_("User has been added to the allowlist."))
 
     @allowlist.command(name="list")
     async def allowlist_list(self, ctx: commands.Context):
@@ -2770,9 +2770,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send("Allowlist is empty.")
             return
         if len(curr_list) > 1:
-            msg = _("Users on allowlist:")
+            msg = _("Users on the allowlist:")
         else:
-            msg = _("User on allowlist:")
+            msg = _("User on the allowlist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
@@ -2789,7 +2789,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if len(users) > 1:
             await ctx.send(_("Users have been removed from the allowlist."))
         else:
-            await ctx.send(_("User have been removed from the allowlist."))
+            await ctx.send(_("User has been removed from the allowlist."))
 
     @allowlist.command(name="clear")
     async def allowlist_clear(self, ctx: commands.Context):
@@ -2824,9 +2824,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
         if len(users) > 1:
-            await ctx.send(_("Users added to blocklist."))
+            await ctx.send(_("Users have been added to the blocklist."))
         else:
-            await ctx.send(_("User added to blocklist."))
+            await ctx.send(_("User has been added to the blocklist."))
 
     @blocklist.command(name="list")
     async def blocklist_list(self, ctx: commands.Context):
@@ -2839,9 +2839,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send("Blocklist is empty.")
             return
         if len(curr_list) > 1:
-            msg = _("Users on blocklist:")
+            msg = _("Users on the blocklist:")
         else:
-            msg = _("User on blocklist:")
+            msg = _("User on the blocklist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
@@ -2856,9 +2856,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
         if len(users) > 1:
-            await ctx.send(_("Users have been removed from blocklist."))
+            await ctx.send(_("Users have been removed from the blocklist."))
         else:
-            await ctx.send(_("User have been removed from blocklist."))
+            await ctx.send(_("User has been removed from the blocklist."))
 
     @blocklist.command(name="clear")
     async def blocklist_clear(self, ctx: commands.Context):
@@ -2913,9 +2913,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send("Server allowlist is empty.")
             return
         if len(curr_list) > 1:
-            msg = _("Whitelisted users and/or roles:")
+            msg = _("Allowed users and/or roles:")
         else:
-            msg = _("Whitelisted user and/or role:")
+            msg = _("Allowed user or role:")
         for obj in curr_list:
             msg += "\n\t- {}".format(obj)
 
@@ -3002,9 +3002,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send("Server blocklist is empty.")
             return
         if len(curr_list) > 1:
-            msg = _("Blacklisted users and/or roles:")
+            msg = _("Blocked users and/or roles:")
         else:
-            msg = _("Blacklisted user and/or role:")
+            msg = _("Blocked user or role:")
         for obj in curr_list:
             msg += "\n\t- {}".format(obj)
 
