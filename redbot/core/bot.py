@@ -358,8 +358,8 @@ class RedBase(
         name: str
             The name of the custom variable.
 
-        Raise
-        -----
+        Raises
+        ------
         KeyError
             The custom variable was never set.
         """
