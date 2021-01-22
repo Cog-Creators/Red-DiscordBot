@@ -68,6 +68,7 @@ Streams
 *******
 
 - Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
+- Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
 - Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
 
 Trivia
