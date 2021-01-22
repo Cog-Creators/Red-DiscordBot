@@ -491,7 +491,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             moderator_str = str(moderator)
 
-        if reason is None:
+        if not reason:
             reason = _("No reason provided.")
 
         # okay, this is some poor API to require PrivateChannel here...
