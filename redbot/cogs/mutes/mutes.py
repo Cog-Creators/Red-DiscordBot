@@ -429,8 +429,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if create_case:
                 if isinstance(channel, discord.VoiceChannel):
                     unmute_type = "vunmute"
+                    notification_title = _("Voice unmute")
                 else:
                     unmute_type = "cunmute"
+                    notification_title = _("Channel unmute")
                 await modlog.create_case(
                     self.bot,
                     channel.guild,
@@ -443,7 +445,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     channel=channel,
                 )
                 await self._send_dm_notification(
-                    member, author, channel.guild, _("Channel unmute"), _("Automatic unmute")
+                    member, author, channel.guild, notification_title, _("Automatic unmute")
                 )
             return None
         else:
@@ -643,24 +645,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.debug("creating case")
                     if isinstance(after, discord.VoiceChannel):
                         unmute_type = "vunmute"
-                        if send_dm_notification:
-                            await self._send_dm_notification(
-                                user,
-                                None,
-                                after.guild,
-                                _("Voice unmute"),
-                                _("Manually removed channel overwrites"),
-                            )
+                        notification_title = _("Voice unmute")
                     else:
                         unmute_type = "cunmute"
-                        if send_dm_notification:
-                            await self._send_dm_notification(
-                                user,
-                                None,
-                                after.guild,
-                                _("Channel unmute"),
-                                _("Manually removed channel overwrites"),
-                            )
+                        notification_title = _("Channel unmute")
+                    if send_dm_notification:
+                        await self._send_dm_notification(
+                            user,
+                            None,
+                            after.guild,
+                            notification_title,
+                            _("Manually removed channel overwrites"),
+                        )
                     await modlog.create_case(
                         self.bot,
                         after.guild,
