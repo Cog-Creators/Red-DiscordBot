@@ -2792,7 +2792,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
         if len(users) > 1:
-            await ctx.send(_("Users has been added to the allowlist."))
+            await ctx.send(_("Users have been added to the allowlist."))
         else:
             await ctx.send(_("User has been added to the allowlist."))
 
