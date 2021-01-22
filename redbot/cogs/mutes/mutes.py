@@ -479,17 +479,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         show_mod = await self.config.guild(guild).show_mod()
         title = bold(mute_type)
+        duration_str = None
         until = None
         if duration:
-            duration = _(" {duration}").format(duration=humanize_timedelta(timedelta=duration))
+            duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.utcfromtimestamp(datetime.now(timezone.utc) + duration).strftime(
                 "%Y-%m-%d %H:%M:%S UTC"
             )
 
         if moderator is None:
-            moderator_string = _("Unknown")
+            moderator_str = _("Unknown")
         else:
-            moderator_string = str(moderator)
+            moderator_str = str(moderator)
 
         # okay, this is some poor API to require PrivateChannel here...
         if await self.bot.embed_requested(await user.create_dm(), user):
@@ -500,11 +501,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
             em.timestamp = datetime.utcnow()
             if duration:
-                em.add_field(name=_("**Until**"), value=until)
-                em.add_field(name=_("**Duration**"), value=duration)
-            em.add_field(name=_("**Guild**"), value=guild.name, inline=False)
+                em.add_field(name=_("Until"), value=until)
+                em.add_field(name=_("Duration"), value=duration_str)
+            em.add_field(name=_("Guild"), value=guild.name, inline=False)
             if show_mod:
-                em.add_field(name=_("**Moderator**"), value=moderator_string)
+                em.add_field(name=_("Moderator"), value=moderator_str)
             try:
                 await user.send(embed=em)
             except discord.Forbidden:
@@ -513,13 +514,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             message = f"{title}\n------------------\n"
             message += reason or _("No reason provided.")
             message += (
-                _("\n**Moderator**: {moderator}").format(moderator=moderator_string)
+                _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
                 if show_mod
                 else ""
             )
             message += (
                 _("\n**Until**: {until}\n**Duration**: {duration}").format(
-                    until=until, duration=duration
+                    until=until, duration=duration_str
                 )
                 if duration
                 else ""
