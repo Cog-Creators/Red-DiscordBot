@@ -12,6 +12,7 @@ Core Bot
 ********
 
 - Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- Fixed command usage in the help messages for few commands in Red (:issue:`4599`)
 
 Mod
 ***
