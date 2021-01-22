@@ -83,6 +83,7 @@ Core Bot
 ********
 
 - Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
+- Added ``on_red_before_identify`` event that is dispatched before IDENTIFYing a session (:issue:`4647`)
 
 Dev Cog
 *******
