@@ -481,8 +481,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         show_mod = await self.config.guild(guild).show_mod()
         title = bold(mute_type)
-        duration_str = None
-        until = None
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.now(timezone.utc) + duration
@@ -492,6 +490,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             moderator_str = _("Unknown")
         else:
             moderator_str = str(moderator)
+
+        if reason is None:
+            reason = _("No reason provided.")
 
         # okay, this is some poor API to require PrivateChannel here...
         if await self.bot.embed_requested(await user.create_dm(), user):
@@ -513,7 +514,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 pass
         else:
             message = f"{title}\n------------------\n"
-            message += reason or _("No reason provided.")
+            message += reason
             message += (
                 _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
                 if show_mod
