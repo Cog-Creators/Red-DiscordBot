@@ -474,7 +474,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         reason: Optional[str],
         duration=None,
     ):
-        if await self.config.guild(guild).dm():
+        if not await self.config.guild(guild).dm():
             return
 
         show_mod = await self.config.guild(guild).show_mod()
