@@ -8,6 +8,11 @@ Redbot 3.4.6 (Unreleased)
 End-user changelog
 ------------------
 
+Mod
+***
+
+- ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with vanity url feature that doesn't have vanity url set (:issue:`4714`)
+
 Trivia
 ******
 
