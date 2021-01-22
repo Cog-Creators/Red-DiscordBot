@@ -272,6 +272,7 @@ class Dev(commands.Cog):
                     await ctx.send(self.get_syntax_error(e))
                     continue
 
+            env["message"] = response
             stdout = io.StringIO()
 
             msg = ""
