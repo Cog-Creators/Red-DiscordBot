@@ -468,10 +468,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def _send_dm_notification(
         self,
         user: Union[discord.User, discord.Member],
-        moderator: Union[discord.User, discord.Member],
+        moderator: Optional[Union[discord.User, discord.Member]],
         guild: discord.Guild,
         mute_type: str,
-        reason: str,
+        reason: Optional[str],
         duration=None,
     ):
         if await self.config.guild(guild).dm():
