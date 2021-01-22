@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
