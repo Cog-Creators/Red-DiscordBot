@@ -337,6 +337,7 @@ class RedBase(
             "message",
             "asyncio",
             "aiohttp",
+            "discord",
             "commands",
             "_",
             "__name__",
