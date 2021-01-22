@@ -45,6 +45,7 @@ class Dev(commands.Cog):
         super().__init__()
         self._last_result = None
         self.sessions = {}
+        self.env_extensions = {}
 
     @staticmethod
     def async_compile(source, filename, mode):
@@ -92,6 +93,29 @@ class Dev(commands.Cog):
         token = ctx.bot.http.token
         return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
 
+    def get_environment(self, ctx: commands.Context) -> dict:
+        env = {
+            "bot": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
+            "discord": discord,
+            "commands": commands,
+            "_": self._last_result,
+            "__name__": "__main__",
+        }
+        for name, value in self.env_extensions.items():
+            try:
+                env[name] = value(ctx)
+            except Exception as e:
+                traceback.clear_frames(e.__traceback__)
+                env[name] = e
+        return env
+
     @commands.command()
     @checks.is_owner()
     async def debug(self, ctx, *, code):
@@ -115,21 +139,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         code = self.cleanup_code(code)
 
         try:
@@ -169,21 +179,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
@@ -224,19 +220,6 @@ class Dev(commands.Cog):
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
         """
-        variables = {
-            "ctx": ctx,
-            "bot": ctx.bot,
-            "message": ctx.message,
-            "guild": ctx.guild,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "asyncio": asyncio,
-            "_": None,
-            "__builtins__": __builtins__,
-            "__name__": "__main__",
-        }
-
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
                 await ctx.send(
@@ -250,6 +233,9 @@ class Dev(commands.Cog):
                 )
             return
 
+        env = self.get_environment(ctx)
+        env["__builtins__"] = __builtins__
+        env["_"] = None
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
@@ -287,8 +273,7 @@ class Dev(commands.Cog):
                     await ctx.send(self.get_syntax_error(e))
                     continue
 
-            variables["message"] = response
-
+            env["message"] = response
             stdout = io.StringIO()
 
             msg = ""
@@ -296,9 +281,9 @@ class Dev(commands.Cog):
             try:
                 with redirect_stdout(stdout):
                     if executor is None:
-                        result = types.FunctionType(code, variables)()
+                        result = types.FunctionType(code, env)()
                     else:
-                        result = executor(code, variables)
+                        result = executor(code, env)
                     result = await self.maybe_await(result)
             except:
                 value = stdout.getvalue()
@@ -307,7 +292,7 @@ class Dev(commands.Cog):
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
-                    variables["_"] = result
+                    env["_"] = result
                 elif value:
                     msg = "{}".format(value)
 

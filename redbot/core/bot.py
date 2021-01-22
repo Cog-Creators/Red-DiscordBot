@@ -282,6 +282,91 @@ class RedBase(
         """
         self._help_formatter = commands.help.RedHelpFormatter()
 
+    def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
+        """
+        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval``, and ``[p]repl`` commands).
+        If dev mode is disabled, nothing will happen.
+
+        .. admonition:: Example
+
+            .. code-block:: python
+
+                class MyCog(commands.Cog):
+                    def __init__(self, bot):
+                        self.bot = bot
+                        bot.add_dev_env_value("mycog", lambda ctx: self)
+                        bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
+
+                    def cog_unload(self):
+                        self.bot.remove_dev_env_value("mycog")
+                        self.bot.remove_dev_env_value("mycogdata")
+
+            Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
+            will be included in the environment of dev commands.
+
+        Parameters
+        ----------
+        name: str
+            The name of your custom variable.
+        value: Callable[[commands.Context], Any]
+            The function returning the value of the variable.
+            It must take a `commands.Context` as its sole parameter
+
+        Raise
+        -----
+        TypeError
+            ``value`` argument isn't a callable.
+        ValueError
+            The passed callable takes no or more than one argument.
+        RuntimeError
+            The name of the custom variable is either reserved by a variable
+            from the default environment or already taken by some other custom variable.
+        """
+        signature = inspect.signature(value)
+        if len(signature.parameters) != 1:
+            raise ValueError("Callable must take exactly one argument for context")
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        if name in [
+            "bot",
+            "ctx",
+            "channel",
+            "author",
+            "guild",
+            "message",
+            "asyncio",
+            "aiohttp",
+            "discord",
+            "commands",
+            "_",
+            "__name__",
+            "__builtins__",
+        ]:
+            raise RuntimeError(f"The name {name} is reserved for default environement.")
+        if name in dev.env_extensions:
+            raise RuntimeError(f"The name {name} is already used.")
+        dev.env_extensions[name] = value
+
+    def remove_dev_env_value(self, name: str):
+        """
+        Remove a custom variable from the dev environment.
+
+        Parameters
+        ----------
+        name: str
+            The name of the custom variable.
+
+        Raise
+        -----
+        KeyError
+            The custom variable was never set.
+        """
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        del dev.env_extensions[name]
+
     def get_command(self, name: str) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
