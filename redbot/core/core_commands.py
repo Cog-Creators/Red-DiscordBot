@@ -174,6 +174,20 @@ class CoreLogic:
             except errors.CogLoadError as e:
                 failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
+                if isinstance(e, commands.CommandRegistrationError):
+                    if e.alias_conflict:
+                        error_message = _(
+                            "Alias {alias_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(alias_name=inline(e.name))
+                    else:
+                        error_message = _(
+                            "Command {command_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(command_name=inline(e.name))
+                    failed_with_reason_packages.append((name, error_message))
+                    continue
+
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of package\n"
