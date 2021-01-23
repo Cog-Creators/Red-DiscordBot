@@ -80,7 +80,7 @@ class General(commands.Cog):
         """ Nothing to delete """
         return
 
-    @commands.command()
+    @commands.command(usage="<choice> <choices...>")
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
