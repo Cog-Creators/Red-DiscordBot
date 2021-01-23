@@ -513,7 +513,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             except discord.Forbidden:
                 pass
         else:
-            message = f"{title}\n------------------\n"
+            message = f"{title}\n>>> "
             message += reason
             message += (
                 _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
