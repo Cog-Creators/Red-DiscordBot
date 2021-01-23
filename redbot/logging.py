@@ -58,7 +58,7 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         self.baseStem = stem
         self.directory = directory.resolve()
         # Scan for existing files in directory, append to last part of existing log
-        log_part_re = re.compile(rf"{stem}-part(?P<partnum>\d+).log")
+        log_part_re = re.compile(rf"{stem}-part(?P<partnum>\d)\.log")
         highest_part = 0
         for path in directory.iterdir():
             match = log_part_re.match(path.name)
@@ -86,7 +86,7 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
             initial_path.replace(self.directory / f"{self.baseStem}-part1.log")
 
         match = re.match(
-            rf"{self.baseStem}(?:-part(?P<part>\d+)?)?.log", pathlib.Path(self.baseFilename).name
+            rf"{self.baseStem}(?:-part(?P<part>\d))?\.log", pathlib.Path(self.baseFilename).name
         )
         latest_part_num = int(match.groupdict(default="1").get("part", "1"))
         if self.backupCount < 1:
@@ -95,7 +95,7 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         elif latest_part_num > self.backupCount:
             # Rotate files down one
             # red-part2.log becomes red-part1.log etc, a new log is added at the end.
-            for i in range(1, self.backupCount):
+            for i in range(1, self.backupCount + 1):
                 next_log = self.directory / f"{self.baseStem}-part{i + 1}.log"
                 if next_log.exists():
                     prev_log = self.directory / f"{self.baseStem}-part{i}.log"
