@@ -57,6 +57,7 @@ Mutes
 *****
 
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
+- Reason no longer contains leading whitespace when it's passed *after* mute time (:issue:`4749`)
 - Mutes cog can now send a DM to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
 
     - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
