@@ -2985,9 +2985,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
         if len(uids) > 1:
-            await ctx.send(_("Users and/or roles have been removed from the server allowlist.")))
+            await ctx.send(_("Users and/or roles have been removed from the server allowlist."))
         else:
-            await ctx.send(_("User or role has been removed from the server allowlist.")))
+            await ctx.send(_("User or role has been removed from the server allowlist."))
 
     @localallowlist.command(name="clear")
     async def localallowlist_clear(self, ctx: commands.Context):
@@ -3030,9 +3030,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         
         if len(uids) > 1:
-            await ctx.send(_("Users and/or roles have been added from the server blocklist.")))
+            await ctx.send(_("Users and/or roles have been added from the server blocklist."))
         else:
-            await ctx.send(_("User or role has been added from the server blocklist.")))
+            await ctx.send(_("User or role has been added from the server blocklist."))
 
     @localblocklist.command(name="list")
     async def localblocklist_list(self, ctx: commands.Context):
@@ -3067,9 +3067,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         
         if len(uids) > 1:
-            await ctx.send(_("Users and/or roles have been removed from the server blocklist.")))
+            await ctx.send(_("Users and/or roles have been removed from the server blocklist."))
         else:
-            await ctx.send(_("User or role has been removed from the server blocklist.")))
+            await ctx.send(_("User or role has been removed from the server blocklist."))
 
     @localblocklist.command(name="clear")
     async def localblocklist_clear(self, ctx: commands.Context):
