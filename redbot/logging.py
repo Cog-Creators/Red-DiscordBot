@@ -303,8 +303,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     warnings_logger.setLevel(logging.WARNING)
 
     rich_console = rich.get_console()
-    if rich_console.color_system == "windows":
-        rich.reconfigure(color_system="standard")
+    rich.reconfigure(tab_size=4)
     rich_console.push_theme(
         Theme(
             {
