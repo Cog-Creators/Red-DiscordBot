@@ -191,13 +191,13 @@ class ModLog(commands.Cog):
             rendered_cases = []
             message = ""
             for case in cases:
-                message += _("{case}\n**Timestamp:** {timestamp}\n").format(
+                message += _("{case}\n**Timestamp:** {timestamp}\n\n").format(
                     case=await case.message_content(embed=False),
                     timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
                         "%Y-%m-%d %H:%M:%S UTC"
                     ),
                 )
-            for page in pagify(message):
+            for page in pagify(message, ["\n\n", "\n"]):
                 rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
 
