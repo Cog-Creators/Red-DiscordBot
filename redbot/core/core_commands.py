@@ -47,7 +47,6 @@ from .utils.chat_formatting import (
 )
 from .commands.requires import PrivilegeLevel
 
-
 _entities = {
     "*": "&midast;",
     "\\": "&bsol;",
@@ -91,7 +90,6 @@ if TYPE_CHECKING:
 __all__ = ["Core"]
 
 log = logging.getLogger("red")
-
 
 _ = i18n.Translator("Core", __file__)
 
@@ -3028,7 +3026,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
-        
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been added from the server blocklist."))
         else:
@@ -3065,7 +3062,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
-        
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been removed from the server blocklist."))
         else:
