@@ -197,7 +197,7 @@ class ModLog(commands.Cog):
                         "%Y-%m-%d %H:%M:%S UTC"
                     ),
                 )
-            for page in pagify(message, ["\n\n", "\n"]):
+            for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
 
