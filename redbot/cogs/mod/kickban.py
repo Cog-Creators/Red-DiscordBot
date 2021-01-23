@@ -352,14 +352,14 @@ class KickBanMixin(MixinMeta):
         `days` is the amount of days of messages to cleanup on ban.
 
         Examples:
-           - `[p]ban 428675506947227648 7 Continue spam after told to stop.`
-            This ban Twentysix and it will delete 7 days worth messages.
-           - `[p]ban @Twentysix 7 Continue spam after told to stop.`
-            This ban Twentysix and it will delete 7 days worth messages.
+           - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
+            This will ban Twentysix and it will delete 7 days worth of messages.
+           - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
+            This will ban Twentysix and it will delete 7 days worth of messages.
 
         A user ID should be provided if the user is not a member of this server.
         If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead.
+        Minimum 0 days, maximum 7. If not specified, the defaultdays setting will be used instead.
         """
         guild = ctx.guild
         if days is None:
@@ -559,7 +559,7 @@ class KickBanMixin(MixinMeta):
     ):
         """Temporarily ban a user from this server.
 
-        `duration` is the amount of time the user shoud be banned for.
+        `duration` is the amount of time the user should be banned for.
         `days` is the amount of days of messages to cleanup on tempban.
 
         Examples:
