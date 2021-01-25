@@ -122,7 +122,7 @@ class Cleanup(commands.Cog):
 
         return collected
     
-    @statismethod
+    @staticmethod
     async def get_deleted_messages(
         ctx: commands.Context,
         number: int,
@@ -134,7 +134,7 @@ class Cleanup(commands.Cog):
                 
             if m.author.display_name not in message_list:
                 message_list[m.author.display_name] = 0
-            message_list[m.author.display_name] += 1
+            message_list[m.author.display_name] += 1 
         
         formatted_string = ""
         
@@ -146,7 +146,7 @@ class Cleanup(commands.Cog):
            
         
         if len(formatted_string) == 0:
-            return None
+            return "No Messages were deleted"
         else:
             return formatted_string[:2000]
 
