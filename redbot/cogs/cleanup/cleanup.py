@@ -698,7 +698,7 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         deleted = await self.get_deleted_messages(ctx, number)
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, ctx.channel)
         try:
             await ctx.send(deleted, delete_after=6)
         except discord.HTTPException:
