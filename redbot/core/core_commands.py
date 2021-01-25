@@ -2581,10 +2581,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Link example: `[My link](https://example.com)`
 
         Examples:
-            - `[p]set custominfo >>> I can use **markdown** like quotes
-                and ~~multiple~~ lines`
-            - `[p]set custominfo Join my [support server](discord.gg/discord)
-                Or send me 🍪`
+            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines`
+            - `[p]set custominfo Join my [support server](discord.gg/discord)`
             - `[p]set custominfo` - Removes custom info text.
 
         **Arguments:**
