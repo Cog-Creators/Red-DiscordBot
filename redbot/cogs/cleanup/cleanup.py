@@ -138,8 +138,12 @@ class Cleanup(commands.Cog):
         
         formatted_string = ""
         
-        for user, count in message_list.items():
-            formatted_string += f"**{user}**: {count}\n"
+        string_list = [(member, count) for member, count in message_list.items()]
+        ordered_list = sorted(string_list, key=lambda m: m[1], reverse=True)[:(amount)]
+        
+        for data in ordered_list.items():
+            formatted_string += f"**{data[0]}**: {data[1]}\n"
+           
         
         if len(formatted_string) == 0:
             return None
