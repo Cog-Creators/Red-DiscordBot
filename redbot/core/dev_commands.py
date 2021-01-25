@@ -336,18 +336,12 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: Union[discord.Member, discord.User, int], *, content: str):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
         """Dispatch a message event as if it were sent by a different user.
 
-        Only reads the raw content of the message. Attachments, embeds etc. are
-        ignored.
+        Embeds are ignored. Attachments are accepted
         """
-        if isinstance(user, int):
-            try:
-                user = await self.bot.fetch_user(user)
-            except discord.NotFound:
-                raise Exception("User not found") #change this to some other Exception
-                
+       
         old_author = ctx.author
         old_content = ctx.message.content
         ctx.message.author = user
