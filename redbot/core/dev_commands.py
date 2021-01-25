@@ -358,8 +358,6 @@ class Dev(commands.Cog):
             ctx.message.attachments = []
             ctx.message.attachments.append(image)
         
-
-        
         ctx.bot.dispatch("message", ctx.message)
 
         # If we change the author and content back too quickly,
