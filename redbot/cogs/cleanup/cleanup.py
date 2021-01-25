@@ -128,7 +128,7 @@ class Cleanup(commands.Cog):
         number: int,
     ):
         message_list = {}
-        async for m in (await ctx.channel.history(limit=number)):
+        async for m in ctx.channel.history(limit=number):
             if not m.author:
                 continue
                 
