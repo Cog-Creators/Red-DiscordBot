@@ -473,7 +473,7 @@ class RedHelpFormatter(HelpFormatterABC):
             # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
+            # *only* when necessary, by the exact necessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
