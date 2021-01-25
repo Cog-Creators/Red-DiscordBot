@@ -145,55 +145,64 @@ def italics(text: str, escape_formatting: bool = True) -> str:
     return "*{}*".format(text)
 
 def spoiler(text: str, escape_formatting: bool = True) -> str:
-    """
-    Get the given text as a spoiler.
+    """Get the given text as a spoiler.
+    
     Note: By default, this function will escape ``text`` prior to making the text a spoiler.
+    
     Parameters
     ----------
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
         Set to :code:`False` to not escape markdown formatting in the text.
+    
     Returns
     -------
     str
         The marked up text.
+   
     """
     text = escape(text, formatting=escape_formatting)
     return "||{}||".format(text)
 
 def snake(text: str, escape_formatting: bool = True) -> str:
-    """
-    Get the given text with snake spaces.
+    """Get the given text as snake spaces.
+    
     Note: By default, this function will escape ``text`` prior to replacing spaces with underscores.
+    
     Parameters
     ----------
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
         Set to :code:`False` to not escape markdown formatting in the text.
+    
     Returns
     -------
     str
         The marked up text.
+   
     """
     text = escape(text, formatting=escape_formatting)
     return text.replace(' ', '_')
 
 def alternatingcase(text: str, escape_formatting: bool = True) -> str:
-    """
-    Get the given text with alternating cases.
-    Note: By default, this function will escape ``text`` prior to changing cases.
+    """Get the given text with alternating cases.
+    
+    Note: By default, this function will escape ``text`` prior to alternating the cases.
+    
     Parameters
     ----------
     text : str
         The text to be marked up.
     escape_formatting : `bool`, optional
         Set to :code:`False` to not escape markdown formatting in the text.
+    
     Returns
     -------
     str
         The marked up text.
+   
     """
     text = escape(text, formatting=escape_formatting)
     text = list(text)
