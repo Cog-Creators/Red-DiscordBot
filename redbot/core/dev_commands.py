@@ -354,7 +354,10 @@ class Dev(commands.Cog):
             image = attachment.proxy_url
         
         if image:
-            image = discord.File(image, filename="previousattachments.png")
+            imgname = image.split(".")
+            type = imgname[1]
+            name = imgname[0]
+            image = discord.File(image, filename=f"{name}.{type}")
             ctx.message.attachments = []
             ctx.message.attachments.append(image)
         
