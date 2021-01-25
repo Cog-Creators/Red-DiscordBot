@@ -49,6 +49,9 @@ class Cleanup(commands.Cog):
 
         if ctx.assume_yes:
             return True
+        
+        if len(await ctx.channel.history(limit=101)) < 100: #checks if the history doesn't even have 100 messages
+            return True
 
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages? (y/n)").format(
