@@ -121,6 +121,30 @@ class Cleanup(commands.Cog):
                     break
 
         return collected
+    
+    @statismethod
+    async def get_deleted_messages(
+        ctx: commands.Context,
+        number: int,
+    ):
+        message_list = {}
+        async for m in (await ctx.channel.history(limit=number)):
+            if not m.author:
+                continue
+                
+            if m.author.display_name not in message_list:
+                message_list[m.author.display_name] = 0
+            message_list[m.author.display_name] += 1
+        
+        formatted_string = ""
+        
+        for user, count in message_list.items():
+            formatted_string += f"**{user}**: {count}\n"
+        
+        if len(formatted_string) == 0:
+            return None
+        else:
+            return formatted_string[:2000]
 
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
@@ -179,8 +203,12 @@ class Cleanup(commands.Cog):
             channel.id,
         )
         log.info(reason)
-
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            continue
 
     @cleanup.command()
     @commands.guild_only()
@@ -249,8 +277,12 @@ class Cleanup(commands.Cog):
             )
         )
         log.info(reason)
-
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -290,8 +322,12 @@ class Cleanup(commands.Cog):
             channel.name,
         )
         log.info(reason)
-
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -337,8 +373,12 @@ class Cleanup(commands.Cog):
             channel.name,
         )
         log.info(reason)
-
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -390,7 +430,12 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -428,7 +473,12 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -514,7 +564,12 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
+        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
 
     @cleanup.command(name="self")
     @check_self_permissions()
@@ -650,4 +705,9 @@ class Cleanup(commands.Cog):
         )
 
         to_delete.append(ctx.message)
-        await mass_purge(to_delete, ctx.channel)
+        deleted = await self.get_deleted_messages(ctx, number)
+        await mass_purge(to_delete, channel)
+        try:
+            await ctx.send(deleted, delete_after=6)
+        except discord.HTTPException:
+            pass
