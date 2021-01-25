@@ -326,12 +326,8 @@ class Cleanup(commands.Cog):
             channel.name,
         )
         log.info(reason)
-        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
-        try:
-            await ctx.send(deleted, delete_after=6)
-        except discord.HTTPException:
-            pass
+        
 
     @cleanup.command()
     @commands.guild_only()
@@ -377,12 +373,8 @@ class Cleanup(commands.Cog):
             channel.name,
         )
         log.info(reason)
-        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
-        try:
-            await ctx.send(deleted, delete_after=6)
-        except discord.HTTPException:
-            pass
+        
 
     @cleanup.command()
     @commands.guild_only()
@@ -434,12 +426,8 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        deleted = await self.get_deleted_messages(ctx, number)
         await mass_purge(to_delete, channel)
-        try:
-            await ctx.send(deleted, delete_after=6)
-        except discord.HTTPException:
-            pass
+        
 
     @cleanup.command()
     @commands.guild_only()
