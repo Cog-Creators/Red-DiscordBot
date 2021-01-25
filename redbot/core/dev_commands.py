@@ -347,7 +347,7 @@ class Dev(commands.Cog):
         ctx.message.author = user
         ctx.message.content = content
         
-        image = False 
+        image = None
         
         if ctx.message.attachments:
             attachment = ctx.message.attachments[0]
@@ -355,7 +355,10 @@ class Dev(commands.Cog):
         
         if image:
             image = discord.File(image, filename="previousattachments.png")
-        ctx.message.attachments = image
+            ctx.message.attachments = []
+            ctx.message.attachments.append(image)
+        
+
         
         ctx.bot.dispatch("message", ctx.message)
 
