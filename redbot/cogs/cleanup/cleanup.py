@@ -120,7 +120,8 @@ class Cleanup(commands.Cog):
                 if number is not None and number <= len(collected):
                     break
 
-        return collected
+        return collected, len(collected)
+    
 
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
@@ -162,7 +163,7 @@ class Cleanup(commands.Cog):
             else:
                 return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel,
             number=number,
             check=check,
@@ -181,6 +182,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command()
     @commands.guild_only()
@@ -227,7 +229,7 @@ class Cleanup(commands.Cog):
             else:
                 return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel,
             number=number,
             check=check,
@@ -251,6 +253,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command()
     @commands.guild_only()
@@ -279,7 +282,7 @@ class Cleanup(commands.Cog):
         except discord.NotFound:
             return await ctx.send(_("Message not found."))
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
 
@@ -292,6 +295,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command()
     @commands.guild_only()
@@ -325,7 +329,7 @@ class Cleanup(commands.Cog):
         except discord.NotFound:
             return await ctx.send(_("Message not found."))
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel, number=number, before=before, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
@@ -339,6 +343,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command()
     @commands.guild_only()
@@ -378,7 +383,7 @@ class Cleanup(commands.Cog):
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
@@ -391,6 +396,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command()
     @commands.guild_only()
@@ -418,7 +424,7 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel, number=number, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
@@ -429,6 +435,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -493,7 +500,7 @@ class Cleanup(commands.Cog):
                 )
             return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel,
             number=number,
             check=check,
@@ -515,6 +522,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await ctx.send(f"Deleted {deleted} messages", delete_after=6)
 
     @cleanup.command(name="self")
     @check_self_permissions()
@@ -572,7 +580,7 @@ class Cleanup(commands.Cog):
                 return True
             return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel,
             number=number,
             check=check,
@@ -631,7 +639,7 @@ class Cleanup(commands.Cog):
                 msgs.append(c)
                 return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=ctx.channel, limit=number, check=check, before=ctx.message
         )
 
