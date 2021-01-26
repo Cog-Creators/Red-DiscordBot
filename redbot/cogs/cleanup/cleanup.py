@@ -580,7 +580,7 @@ class Cleanup(commands.Cog):
                 return True
             return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=channel,
             number=number,
             check=check,
@@ -639,7 +639,7 @@ class Cleanup(commands.Cog):
                 msgs.append(c)
                 return False
 
-        to_delete = await self.get_messages_for_deletion(
+        to_delete, deleted = await self.get_messages_for_deletion(
             channel=ctx.channel, limit=number, check=check, before=ctx.message
         )
 
