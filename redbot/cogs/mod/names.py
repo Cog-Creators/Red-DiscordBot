@@ -210,6 +210,8 @@ class ModInfo(MixinMeta):
             statusemoji = "\N{LARGE RED CIRCLE}"
         elif user.status.name == "idle":
             statusemoji = "\N{LARGE ORANGE CIRCLE}"
+        if user.is_on_mobile():
+            statusemoji += "📱"
         activity = _("Chilling in {} status").format(user.status)
         status_string = self.get_status_string(user)
 
