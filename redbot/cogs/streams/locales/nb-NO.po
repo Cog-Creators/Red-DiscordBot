@@ -175,7 +175,7 @@ msgstr "<your_api_key_here>"
 #: redbot/cogs/streams/streams.py:523
 #, docstring
 msgid "Manage custom messages for stream alerts."
-msgstr ""
+msgstr "Behandle egen melding for stream-varsler."
 
 #: redbot/cogs/streams/streams.py:529
 #, docstring
@@ -277,15 +277,15 @@ msgstr "Strømmer av typen 'kjør om igjen' vil ikke lenger sende et varsel."
 #: redbot/cogs/streams/streams.py:646
 #, docstring
 msgid "Toggle excluding YouTube streams schedules from alerts."
-msgstr ""
+msgstr "Slå av/på YouTube-strømmer tidsplaner fra varsler."
 
 #: redbot/cogs/streams/streams.py:651
 msgid "Streams schedules will be included in alerts."
-msgstr ""
+msgstr "Stream-planer vil bli inkludert i varsler."
 
 #: redbot/cogs/streams/streams.py:654
 msgid "Streams schedules will no longer send an alert."
-msgstr ""
+msgstr "Streamer tidsplaner vil ikke lenger sende et varsel."
 
 #: redbot/cogs/streams/streams.py:662
 msgid "I'll now send a notification in this channel when {stream.name} is live."
@@ -305,11 +305,11 @@ msgstr "{stream} er direkte!"
 
 #: redbot/cogs/streams/streamtypes.py:183
 msgid "This stream will start in {time}"
-msgstr ""
+msgstr "Denne strømmen starter om {time}"
 
 #: redbot/cogs/streams/streamtypes.py:189
 msgid "This stream was scheduled for {min} minutes ago"
-msgstr ""
+msgstr "Denne strømmen ble planlagt for {min} minutter siden"
 
 #: redbot/cogs/streams/streamtypes.py:362
 msgid "Untitled broadcast"

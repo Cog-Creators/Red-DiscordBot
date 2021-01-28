@@ -290,7 +290,7 @@ msgstr "Still inn minste spormaskin bud.\\n\\n        Eksempel:\\n            -[
 
 #: redbot/cogs/economy/economy.py:855
 msgid "Warning: Minimum bid is greater than the maximum bid ({max_bid}). Slots will not work."
-msgstr ""
+msgstr "Advarsel: Minimum bud er større enn maksimal budet ({max_bid}). Spor vil ikke fungere."
 
 #: redbot/cogs/economy/economy.py:866
 msgid "Minimum bid is now {bid} {currency}."
@@ -303,7 +303,7 @@ msgstr "Angi maksimalt spormaskin bud.\\n\\n        Eksempel:\\n            -[p]
 
 #: redbot/cogs/economy/economy.py:890
 msgid "Warning: Maximum bid is less than the minimum bid ({min_bid}). Slots will not work."
-msgstr ""
+msgstr "Advarsel: Maksimalt bud er mindre enn minimumsbudet ({min_bid}). Spor vil ikke fungere."
 
 #: redbot/cogs/economy/economy.py:901
 msgid "Maximum bid is now {bid} {currency}."

@@ -1,0 +1,91 @@
+"Category: Admin":
+  - redbot/cogs/admin/*
+"Category: Alias":
+  - redbot/cogs/alias/*
+"Category: Audio Cog":
+  - redbot/cogs/audio/**/*
+  - !redbot/cogs/audio/**/locales/*
+"Category: Bank API":
+  - redbot/core/bank.py
+"Category: Bank Cog":
+  - redbot/cogs/bank/*
+"Category: Bot Core":
+  - redbot/*
+  - redbot/core/__init__.py
+  - redbot/core/_sharedlibdeprecation.py
+  - redbot/core/bot.py
+  - redbot/core/checks.py
+  - redbot/core/cli.py
+  - redbot/core/cog_manager.py
+  - redbot/core/core_commands.py
+  - redbot/core/data_manager.py
+  - redbot/core/errors.py
+  - redbot/core/events.py
+  - redbot/core/global_checks.py
+  - redbot/core/settings_caches.py
+"Category: CI":
+  - .github/workflows/*
+"Category: Cleanup Cog":
+  - redbot/cogs/cleanup/*
+"Category: Command Module":
+  - redbot/core/commands/*
+  - !redbot/core/commands/help.py
+"Category: Config":
+  - redbot/core/drivers/*
+  - redbot/core/config.py
+"Category: CustomCom":
+  - redbot/cogs/customcom/*
+"Category: Dev Cog":
+  - redbot/core/dev_commands.py
+"Category: Docs":
+  - docs/**/*
+"Category: Downloader":
+  - redbot/cogs/downloader/*
+"Category: Economy Cog":
+  - redbot/cogs/economy/*
+"Category: Filter":
+  - redbot/cogs/filter/*
+"Category: General Cog":
+  - redbot/cogs/general/*
+"Category: Help":
+  - redbot/core/commands/help.py
+"Category: i18n":
+  - redbot/core/i18n.py
+  - redbot/**/locales/*
+"Category: Image":
+  - redbot/cogs/image/*
+"Category: Meta":
+  - ./*
+  - .github/*
+  - .github/ISSUE_TEMPLATE/*
+  - .github/PULL_REQUEST_TEMPLATE/*
+  - schema/*
+  - tools/*
+"Category: Mod Cog":
+  - redbot/cogs/mod/*
+"Category: Modlog API":
+  - redbot/core/generic_casetypes.py
+  - redbot/core/modlog.py
+"Category: Modlog Cog":
+  - redbot/cogs/modlog/*
+"Category: Mutes Cog":
+  - redbot/cogs/mutes/*
+"Category: Permissions":
+  - redbot/cogs/permissions/*
+"Category: Reports Cog":
+  - redbot/cogs/reports/*
+"Category: RPC/ZMQ API":
+  - redbot/core/rpc.py
+"Category: Streams":
+  - redbot/cogs/streams/*
+"Category: Tests":
+  - redbot/pytest/*
+  - tests/**/*
+"Category: Trivia Cog":
+  - redbot/cogs/trivia/*
+"Category: Trivia Lists":
+  - redbot/cogs/trivia/data/lists/*
+"Category: Utility Functions":
+  - redbot/core/utils/*
+"Category: Warnings":
+  - redbot/cogs/warnings/*

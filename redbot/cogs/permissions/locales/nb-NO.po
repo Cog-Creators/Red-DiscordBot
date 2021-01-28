@@ -161,7 +161,7 @@ msgstr "Oppdater regler for denne serveren med en YAML-fil.\\n\\n        Dette v
 #: redbot/cogs/permissions/permissions.py:385
 #, docstring
 msgid "Add a global rule to a command.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Legg til en global regel i en kommando.\\n\\n `<allow_or_deny>` skal være en av \\\"allow\\\" eller \\\"deny\\\".\\n\\n `<cog_or_command>` er tannhjulet eller kommandoen for å legge til regel til.\\nDette er mellom store og små bokstaver.\\n\\n`<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:401
 #: redbot/cogs/permissions/permissions.py:431
@@ -171,12 +171,12 @@ msgstr "Regel lagt til."
 #: redbot/cogs/permissions/permissions.py:415
 #, docstring
 msgid "Add a rule to a command in this server.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Legg til en regel i en kommando i denne serveren.\\n\\n `<allow_or_deny>` skal være en av \\\"allow\\\" eller \\\"deny\\\".\\n\\n `<cog_or_command>` er cog eller kommandoen for å legge til regel til.\\nDette er mellom store og små bokstaver.\\n\\n`<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for.\\n        "
 
 #: redbot/cogs/permissions/permissions.py:441
 #, docstring
 msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Fjern en global regel fra en kommando.\\n\\n        `<cog_or_command>` er cog eller kommando for å fjerne regelen\\n        fra. Dette skiller store og små bokstaver.\\n\\n        `<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for\\n        "
 
 #: redbot/cogs/permissions/permissions.py:450
 #: redbot/cogs/permissions/permissions.py:474
@@ -186,7 +186,7 @@ msgstr "Regel fjernet."
 #: redbot/cogs/permissions/permissions.py:463
 #, docstring
 msgid "Remove a server rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr ""
+msgstr "Fjern en serverregel fra en kommando.\\n\\n        `<cog_or_command>` er cog eller kommando for å fjerne regelen\\n        fra. Dette skiller store og små bokstaver.\\n\\n        `<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for\\n        "
 
 #: redbot/cogs/permissions/permissions.py:482
 #, docstring

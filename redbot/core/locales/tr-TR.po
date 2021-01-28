@@ -516,7 +516,7 @@ msgstr "Özel durumun oluştuğu son komutu sahibe gönderir.\\n\\n        Eğer
 
 #: redbot/core/core_commands.py:1152
 msgid "No exception has occurred yet."
-msgstr "Henüz her hangi bir özel durum oluşmadı."
+msgstr "Henüz herhangi bir özel durum oluşmadı."
 
 #: redbot/core/core_commands.py:1157
 #, docstring
@@ -1020,7 +1020,7 @@ msgstr "[botname] botunun küresel öneklerini ayarlar."
 
 #: redbot/core/core_commands.py:2028 redbot/core/core_commands.py:2041
 msgid "Prefix set."
-msgstr "Önek seti."
+msgstr "Prefix öneki değiştirildi."
 
 #: redbot/core/core_commands.py:2034
 #, docstring
@@ -1029,7 +1029,7 @@ msgstr "[botname] botunun sunucudaki öneklerini ayarlar."
 
 #: redbot/core/core_commands.py:2037
 msgid "Guild prefixes have been reset."
-msgstr "Lonca önekleri sıfırlandı."
+msgstr "Sunucu prefix öneki sıfırlandı."
 
 #: redbot/core/core_commands.py:2046
 #, docstring
@@ -1061,7 +1061,7 @@ msgstr "Bölge varsayılana ayarlandı."
 
 #: redbot/core/core_commands.py:2109
 msgid "Locale has been set."
-msgstr "Yerel ayarı belirlemek."
+msgstr "Yerel ayar değiştirildi."
 
 #: redbot/core/core_commands.py:2115
 #, docstring
@@ -1996,15 +1996,15 @@ msgstr "Bir mesaj olayını başka bir kullanıcı tarafından gönderilmiş gib
 #: redbot/core/dev_commands.py:376
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\\n\\n        Does not persist through restarts."
-msgstr ""
+msgstr "Bot sahiplerine bekleme süresinden muaf tutulma izni ver.\\n\\n        Yeniden başlatıldığında bu ayar sıfırlanır."
 
 #: redbot/core/dev_commands.py:384
 msgid "Bot owners will now bypass all commands with cooldowns."
-msgstr ""
+msgstr "Bot sahipleri artık bekleme süresi olan tüm komutlardan muaf."
 
 #: redbot/core/dev_commands.py:386
 msgid "Bot owners will no longer bypass all commands with cooldowns."
-msgstr ""
+msgstr "Bot sahipleri artık bekleme süresi olan tüm komutlardan muaf değil."
 
 #: redbot/core/errors.py:49
 msgid "{user}'s balance cannot rise above {max} {currency}."
@@ -2040,7 +2040,7 @@ msgstr "`{user_input}`, `{command}` komutu için geçerli bir değer değil."
 
 #: redbot/core/events.py:252
 msgid "Error in command '{command}'. Check your console or logs for details."
-msgstr "Bu komutu kullanırken bir hata oluştu '{command}'. Konsolu veya logları kontrol edin."
+msgstr "Bu komutu kullanırken bir hata oluştu '{command}'. Detaylar için konsolu veya günlükleri kontrol edin."
 
 #: redbot/core/events.py:277
 msgid "I require the {permission} permission to execute that command."
@@ -2072,15 +2072,15 @@ msgstr "Bu komutu kullanmakta olan çok fazla kişi var. Aynı anda sadece {numb
 
 #: redbot/core/events.py:313
 msgid "Too many people using this command. It can only be used once concurrently."
-msgstr ""
+msgstr "Bu komutu çok fazla kişi kullanmakta. Aynı anda sadece bir kere kullanılabilir."
 
 #: redbot/core/events.py:319
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
-msgstr ""
+msgstr "Komutun çalıştırılması henüz bitmedi, aynı anda {type} başına {number} kere kullanılabilir."
 
 #: redbot/core/events.py:324
 msgid "That command is still completing, it can only be used once per {type} concurrently."
-msgstr ""
+msgstr "Komutun çalıştırılması henüz bitmedi, {type} başına sadece bir kere kullanılabilir."
 
 #: redbot/core/events.py:330
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
@@ -2088,7 +2088,7 @@ msgstr "Bu komutu kullanmakta olan çok fazla kişi var. {type} başına aynı a
 
 #: redbot/core/events.py:335
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
-msgstr ""
+msgstr "Bu komutu çok fazla kişi kullanmakta. Aynı anda {type} başına sadece bir kere kullanılabilir."
 
 #: redbot/core/modlog.py:344
 msgid "Case #{} | {} {}"

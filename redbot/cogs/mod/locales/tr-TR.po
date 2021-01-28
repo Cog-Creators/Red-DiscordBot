@@ -760,5 +760,5 @@ msgstr "Yavaş mod bekletme süresi artık {interval}."
 
 #: redbot/cogs/mod/slowmode.py:41
 msgid "Slowmode has been disabled."
-msgstr "Yavaş mod devredışı bırakıldı."
+msgstr "Yavaş mod devre dışı bırakıldı."
 
