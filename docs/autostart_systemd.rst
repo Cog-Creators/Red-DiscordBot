@@ -4,7 +4,7 @@
 Setting up auto-restart using systemd on Linux
 ==============================================
 
-.. note:: This guide is for setting up PM2 on a Linux environment. This guide assumes that you already have a working Red instance.
+.. note:: This guide is for setting up systemd on a Linux environment. This guide assumes that you already have a working Red instance.
 
 -------------------------
 Creating the service file
