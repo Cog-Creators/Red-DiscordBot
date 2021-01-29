@@ -3705,13 +3705,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
-        """Commands to manage the bot's commands and cogs."""
+        """Commands to enable and disable commands and cogs."""
         pass
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
     async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Set the default state for a cog as disabled."""
+        """Set the default state for a cog as disabled.
+
+        This will disable the cog for all servers by default.
+        To override it, use `[p]command enablecog` on the servers you want to allow usage.
+
+        Note: This will only work on loaded cogs, and must reference the title-case cog name.
+
+        Example:
+            - `[p]command defaultdisablecog Economy`
+            - `[p]command defaultdisablecog ModLog`
+
+        **Arguments:**
+
+        - `<cogname>` The name of the cog to make disabled by default. Must be title-case.
+        """
         cog = self.bot.get_cog(cogname)
         if not cog:
             return await ctx.send(_("Cog with the given name doesn't exist."))
@@ -3723,7 +3737,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     @command_manager.command(name="defaultenablecog")
     async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Set the default state for a cog as enabled."""
+        """Set the default state for a cog as enabled.
+
+        This will re-enable the cog for all servers by default.
+        To override it, use `[p]command disablecog` on the servers you want to disallow usage.
+
+        Note: This will only work on loaded cogs, and must reference the title-case cog name.
+
+        Example:
+            - `[p]command defaultenablecog Economy`
+            - `[p]command defaultenablecog ModLog`
+
+        **Arguments:**
+
+        - `<cogname>` The name of the cog to make enabled by default. Must be title-case.
+        """
         cog = self.bot.get_cog(cogname)
         if not cog:
             return await ctx.send(_("Cog with the given name doesn't exist."))
