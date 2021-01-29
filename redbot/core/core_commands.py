@@ -3316,7 +3316,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds users to the allowlist.
 
-        Example:
+        Examples:
             - `[p]allowlist add @26 @Will` - Adds two users to the allowlist
             - `[p]allowlist add 262626262626262626` - Adds a user by ID
 
@@ -3361,7 +3361,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The allowlist will be disabled if all users are removed.
 
-        Example:
+        Examples:
             - `[p]allowlist remove @26 @Will` - Removes two users from the allowlist
             - `[p]allowlist remove 262626262626262626` - Removes a user by ID
 
@@ -3404,7 +3404,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds users to the blocklist.
 
-        Example:
+        Examples:
             - `[p]blocklist add @26 @Will` - Adds two users to the blocklist
             - `[p]blocklist add 262626262626262626` - Adds a user by ID
 
@@ -3456,7 +3456,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes users from the blocklist.
 
-        Example:
+        Examples:
             - `[p]blocklist remove @26 @Will` - Removes two users from the blocklist
             - `[p]blocklist remove 262626262626262626` - Removes a user by ID
 
@@ -3502,7 +3502,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds a user or role to the server allowlist.
 
-        Example:
+        Examples:
             - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist
             - `[p]localallowlist add 262626262626262626` - Adds a user by ID
 
@@ -3560,7 +3560,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The local allowlist will be disabled if all users are removed.
 
-        Example:
+        Examples:
             - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist
             - `[p]localallowlist remove 262626262626262626` - Removes a user by ID
 
@@ -3618,7 +3618,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds a user or role to the local blocklist.
 
-        Example:
+        Examples:
             - `[p]blocklist add @26 @Will` - Adds two users to the local blocklist
             - `[p]blocklist add 262626262626262626` - Adds a user by ID
 
@@ -3675,7 +3675,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes user or role from blocklist.
 
-        Example:
+        Examples:
             - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist
             - `[p]localblocklist remove 262626262626262626` - Removes a user by ID
 
@@ -3718,7 +3718,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Example:
+        Examples:
             - `[p]command defaultdisablecog Economy`
             - `[p]command defaultdisablecog ModLog`
 
@@ -3744,7 +3744,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Example:
+        Examples:
             - `[p]command defaultenablecog Economy`
             - `[p]command defaultenablecog ModLog`
 
@@ -3761,7 +3761,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_manager.command(name="disablecog")
     async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Disable a cog in this guild."""
+        """Disable a cog in this server.
+
+        Note: This will only work on loaded cogs, and must reference the title-case cog name.
+
+        Examples:
+            - `[p]command disablecog Economy`
+            - `[p]command disablecog ModLog`
+
+        **Arguments:**
+
+        - `<cogname>` The name of the cog to disable on this server. Must be title-case.
+        """
         cog = self.bot.get_cog(cogname)
         if not cog:
             return await ctx.send(_("Cog with the given name doesn't exist."))
@@ -3777,7 +3788,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_manager.command(name="enablecog")
     async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
-        """Enable a cog in this guild."""
+        """Enable a cog in this server.
+
+        Note: This will only work on loaded cogs, and must reference the title-case cog name.
+
+        Examples:
+            - `[p]command enablecog Economy`
+            - `[p]command enablecog ModLog`
+
+        **Arguments:**
+
+        - `<cogname>` The name of the cog to enable on this server. Must be title-case."""
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
@@ -3793,7 +3814,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_manager.command(name="listdisabledcogs")
     async def command_list_disabled_cogs(self, ctx: commands.Context):
-        """List the cogs which are disabled in this guild."""
+        """List the cogs which are disabled in this server.
+
+        Example:
+            - `[p]command listdisabledcogs`
+        """
         disabled = [
             cog.qualified_name
             for cog in self.bot.cogs.values()
@@ -3816,6 +3841,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         List disabled commands.
 
         If you're the bot owner, this will show global disabled commands by default.
+        Otherwise, this will show disabled commands on the current server.
+
+        Examples:
+            - `[p]command listdisabled`
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
