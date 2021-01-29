@@ -3843,7 +3843,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you're the bot owner, this will show global disabled commands by default.
         Otherwise, this will show disabled commands on the current server.
 
-        Examples:
+        Example:
             - `[p]command listdisabled`
         """
         # Select the scope based on the author's privileges
@@ -3854,7 +3854,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @list_disabled.command(name="global")
     async def list_disabled_global(self, ctx: commands.Context):
-        """List disabled commands globally."""
+        """List disabled commands globally.
+
+        Example:
+            - `[p]command listdisabled global`
+        """
         disabled_list = await self.bot._config.disabled_commands()
         if not disabled_list:
             return await ctx.send(_("There aren't any globally disabled commands."))
@@ -3871,7 +3875,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @list_disabled.command(name="guild")
     async def list_disabled_guild(self, ctx: commands.Context):
-        """List disabled commands in this server."""
+        """List disabled commands in this server.
+
+        Example:
+            - `[p]command listdisabled guild`
+        """
         disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
         if not disabled_list:
             return await ctx.send(_("There aren't any disabled commands in {}.").format(ctx.guild))
@@ -3890,8 +3898,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_disable(self, ctx: commands.Context, *, command: str):
         """Disable a command.
 
-        If you're the bot owner, this will disable commands
-        globally by default.
+        If you're the bot owner, this will disable commands globally by default.
+        Otherwise, this will disable commands on the current server.
+
+        Examples:
+            - `[p]command disable userinfo` - Disables the `userinfo` command in the Mod cog.
+            - `[p]command disable urban` - Disables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to disable.
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
@@ -3902,7 +3918,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     @command_disable.command(name="global")
     async def command_disable_global(self, ctx: commands.Context, *, command: str):
-        """Disable a command globally."""
+        """Disable a command globally.
+
+        Examples:
+            - `[p]command disable global userinfo` - Disables the `userinfo` command in the Mod cog.
+            - `[p]command disable global urban` - Disables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to disable globally.
+        """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
@@ -3936,7 +3961,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
-        """Disable a command in this server only."""
+        """Disable a command in this server only.
+
+        Examples:
+            - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
+            - `[p]command disable server urban` - Disables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to disable for the current server.
+        """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
@@ -3975,8 +4009,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_enable(self, ctx: commands.Context, *, command: str):
         """Enable a command.
 
-        If you're a bot owner, this will try to enable a globally
-        disabled command by default.
+        If you're the bot owner, this will try to enable a globally disabled command by default.
+        Otherwise, this will try to enable a command disabled on the current server.
+
+        Examples:
+            - `[p]command enable userinfo` - Enables the `userinfo` command in the Mod cog.
+            - `[p]command enable server urban` - Enables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to enable.
         """
         if await ctx.bot.is_owner(ctx.author):
             await ctx.invoke(self.command_enable_global, command=command)
@@ -3986,7 +4028,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.is_owner()
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
-        """Enable a command globally."""
+        """Enable a command globally.
+
+        Examples:
+            - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
+            - `[p]command enable global urban` - Enables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to enable globally.
+        """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
@@ -4008,7 +4059,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_enable.command(name="server", aliases=["guild"])
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
-        """Enable a command in this server."""
+        """Enable a command in this server.
+
+        Examples:
+            - `[p]command enable server userinfo` - Enables the `userinfo` command in the Mod cog.
+            - `[p]command enable server urban` - Enables the `urban` command in the General cog.
+
+        **Arguments:**
+
+        - `<command>` The command to enable for the current server.
+        """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
