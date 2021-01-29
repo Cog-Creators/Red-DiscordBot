@@ -37,6 +37,11 @@ Core Bot
 
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
+Economy
+*******
+
+- ``[p]economyset rolepaydayamount`` can now remove the previously set payday amount (:issue:`4661`, :issue:`4758`)
+
 Filter
 ******
 
