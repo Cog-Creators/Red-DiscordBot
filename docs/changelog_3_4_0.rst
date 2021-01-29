@@ -14,6 +14,7 @@ Core Bot
 - Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
+- ``[p]command listdisabled guild`` can no longer be ran in DMs (:issue:`4771`, :issue:`4772`)
 - Improved and fixed a lot of things about our new (colorful) logging (:issue:`4702`, :issue:`4726`)
 
     - Used colors have been adjusted to be readable on many more terminal applications
