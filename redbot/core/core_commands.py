@@ -3199,6 +3199,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         paged[0] = header + paged[0]
         await ctx.send_interactive(paged)
 
+    @commands.guild_only()
     @list_disabled.command(name="guild")
     async def list_disabled_guild(self, ctx: commands.Context):
         """List disabled commands in this server."""
