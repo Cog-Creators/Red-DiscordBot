@@ -1006,7 +1006,7 @@ class Economy(commands.Cog):
                 await ctx.send(
                     _(
                         "The payday value attached to role has been removed. "
-                        "Users with this role will now recieve the default pay "
+                        "Users with this role will now receive the default pay "
                         "of {num} {currency}."
                     ).format(num=humanize_number(default_creds), currency=credits_name)
                 )
