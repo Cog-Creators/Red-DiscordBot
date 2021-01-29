@@ -993,7 +993,8 @@ class Economy(commands.Cog):
         if creds >= max_balance:
             return await ctx.send(
                 _(
-                    "The bank requires that you set the payday to be less than it's maximum balance of {maxbal}."
+                    "The bank requires that you set the payday to be less than"
+                    " its maximum balance of {maxbal}."
                 ).format(maxbal=humanize_number(max_balance))
             )
         credits_name = await bank.get_currency_name(guild)
