@@ -976,6 +976,7 @@ class Economy(commands.Cog):
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role.
+        Set to `0` to remove the payday amount you set for that role.
 
         Only available when not using a global bank.
 
@@ -989,23 +990,37 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
-        if creds <= 0 or creds > max_balance:
+        if creds >= max_balance:
             return await ctx.send(
-                _("Amount must be greater than zero and less than {maxbal}.").format(
-                    maxbal=humanize_number(max_balance)
-                )
+                _(
+                    "The bank requires that you set the payday to be less than"
+                    " its maximum balance of {maxbal}."
+                ).format(maxbal=humanize_number(max_balance))
             )
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await ctx.send(_("The bank must be per-server for per-role paydays to work."))
         else:
-            await self.config.role(role).PAYDAY_CREDITS.set(creds)
-            await ctx.send(
-                _(
-                    "Every payday will now give {num} {currency} "
-                    "to people with the role {role_name}."
-                ).format(num=humanize_number(creds), currency=credits_name, role_name=role.name)
-            )
+            if creds <= 0:  # Because I may as well...
+                default_creds = await self.config.guild(guild).PAYDAY_CREDITS()
+                await self.config.role(role).clear()
+                await ctx.send(
+                    _(
+                        "The payday value attached to role has been removed. "
+                        "Users with this role will now receive the default pay "
+                        "of {num} {currency}."
+                    ).format(num=humanize_number(default_creds), currency=credits_name)
+                )
+            else:
+                await self.config.role(role).PAYDAY_CREDITS.set(creds)
+                await ctx.send(
+                    _(
+                        "Every payday will now give {num} {currency} "
+                        "to people with the role {role_name}."
+                    ).format(
+                        num=humanize_number(creds), currency=credits_name, role_name=role.name
+                    )
+                )
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):
