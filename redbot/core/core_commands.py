@@ -2936,9 +2936,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
         if len(uids) > 1:
-            await ctx.send(_("Users and/or roles have been added to allowlist."))
+            await ctx.send(_("Users and/or roles have been added to the allowlist."))
         else:
-            await ctx.send(_("User or role has been added to allowlist."))
+            await ctx.send(_("User or role has been added to the allowlist."))
 
     @localallowlist.command(name="list")
     async def localallowlist_list(self, ctx: commands.Context):
