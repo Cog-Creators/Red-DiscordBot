@@ -444,7 +444,7 @@ Or, to install with PostgreSQL support:
 .. code-block:: none
 
     python -m pip install -U pip setuptools wheel
-    python -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U "Red-DiscordBot[postgres]"
 
 
 .. note::
