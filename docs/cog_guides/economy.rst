@@ -352,7 +352,7 @@ economyset rolepaydayamount
 
 **Description**
 
-Set the amount earned each payday for a role.
+Set the amount earned each payday for a role. Setting to 0 will remove the custom payday for that role instead.
 
 Only available when not using a global bank.
 
