@@ -444,12 +444,7 @@ Or, to install with PostgreSQL support:
 .. code-block:: none
 
     python -m pip install -U pip setuptools wheel
-    python -m pip install -U Red-DiscordBot[postgres]
-
-
-.. attention:: 
-
-    Depending on your system, brackets may need to be escaped. A common escape sequence would look like this: ``\[``
+    python -m pip install -U "Red-DiscordBot[postgres]"
 
 .. note::
 
