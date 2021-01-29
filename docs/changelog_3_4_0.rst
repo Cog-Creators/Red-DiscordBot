@@ -106,6 +106,7 @@ Documentation changes
 - Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
 - Restructured the host list (:issue:`4710`)
 - Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
+- Updated pip command for Red with postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
 
 
 Miscellaneous
