@@ -293,9 +293,8 @@ class TwitchStream(Stream):
                         "https://api.twitch.tv/helix/games", headers=header, params=params
                     ) as r:
                         game_data = await r.json(encoding="utf-8")
-                if game_data:
-                    game_data = game_data["data"][0]
-                    data["game_name"] = game_data["name"]
+                if game_data and game_data.get("data"):
+                    data["game_name"] = game_data["data"][0]["name"]
             params = {"to_id": self.id}
             async with aiohttp.ClientSession() as session:
                 async with session.get(
@@ -303,8 +302,7 @@ class TwitchStream(Stream):
                 ) as r:
                     user_data = await r.json(encoding="utf-8")
             if user_data:
-                followers = user_data["total"]
-                data["followers"] = followers
+                data["followers"] = user_data.get("total")
 
             params = {"id": self.id}
             async with aiohttp.ClientSession() as session:
@@ -312,9 +310,8 @@ class TwitchStream(Stream):
                     "https://api.twitch.tv/helix/users", headers=header, params=params
                 ) as r:
                     user_profile_data = await r.json(encoding="utf-8")
-            if user_profile_data:
-                profile_image_url = user_profile_data["data"][0]["profile_image_url"]
-                data["profile_image_url"] = profile_image_url
+            if user_profile_data and user_profile_data.get("data"):
+                data["profile_image_url"] = user_profile_data["data"][0]["profile_image_url"]
                 data["view_count"] = user_profile_data["data"][0]["view_count"]
                 data["login"] = user_profile_data["data"][0]["login"]
 
@@ -362,8 +359,18 @@ class TwitchStream(Stream):
             status += _(" - Rerun")
         embed = discord.Embed(title=status, url=url, color=0x6441A4)
         embed.set_author(name=data["user_name"])
-        embed.add_field(name=_("Followers"), value=humanize_number(data["followers"]))
-        embed.add_field(name=_("Total views"), value=humanize_number(data["view_count"]))
+        embed.add_field(
+            name=_("Followers"),
+            value=humanize_number(data["followers"])
+            if data["followers"] is not None
+            else "Unknown",
+        )
+        embed.add_field(
+            name=_("Total views"),
+            value=humanize_number(data["view_count"])
+            if data["view_count"] is not None
+            else "Unknown",
+        )
         embed.set_thumbnail(url=logo)
         if data["thumbnail_url"]:
             embed.set_image(url=rnd(data["thumbnail_url"].format(width=320, height=180)))
