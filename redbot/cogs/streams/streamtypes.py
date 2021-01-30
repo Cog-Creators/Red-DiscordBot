@@ -363,13 +363,13 @@ class TwitchStream(Stream):
             name=_("Followers"),
             value=humanize_number(data["followers"])
             if data["followers"] is not None
-            else "Unknown",
+            else _("Unknown"),
         )
         embed.add_field(
             name=_("Total views"),
             value=humanize_number(data["view_count"])
             if data["view_count"] is not None
-            else "Unknown",
+            else _("Unknown"),
         )
         embed.set_thumbnail(url=logo)
         if data["thumbnail_url"]:
