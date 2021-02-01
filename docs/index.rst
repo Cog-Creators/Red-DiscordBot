@@ -40,6 +40,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/customcommands
     cog_guides/downloader
     cog_guides/economy
+    cog_guides/filter
     cog_guides/streams
     red_core_data_statement
 
