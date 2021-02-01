@@ -22,7 +22,7 @@ inputs:
       - Other
 - type: textarea
   attributes:
-    label: "Describe the feature you're suggesting."
+    label: "Description of the feature you're suggesting"
     description: |
       Feel free to describe in as much detail as you wish.
 
