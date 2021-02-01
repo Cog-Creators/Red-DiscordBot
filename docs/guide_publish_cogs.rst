@@ -92,6 +92,6 @@ Adding to the Index
 
 Repositories that are correctly configured can be added to the `public index of cogs <https://index.discord.red/>`_.
 
-To be added to the index, make a pull request to the `Red-Index repository <https://github.com/Cog-Creators/Red-Index>`_ in the unnapproved section.
+To be added to the index, make a pull request to the `Red-Index repository <https://github.com/Cog-Creators/Red-Index>`_ in the unapproved section. You can learn more about this process in the repository description.
 
 To be added to the approved repositories, first see `guide_cog_creators`.
