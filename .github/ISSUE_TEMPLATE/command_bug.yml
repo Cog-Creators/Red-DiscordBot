@@ -18,28 +18,16 @@ inputs:
     description: "From which cog does the command come from?"
     required: true
     choices:
-      - Admin
-      - Alias
       - Audio
-      - Bank
       - Cleanup
-      - CogManagerUI
       - Core
-      - Customcom
       - Dev
       - Downloader
-      - Economy
-      - Filter
-      - General
-      - Image
       - Mod
       - Modlog
       - Mutes
-      - Permissions
-      - Reports
       - Streams
       - Trivia
-      - Warnings
 - type: input
   attributes:
     label: "Command name"
