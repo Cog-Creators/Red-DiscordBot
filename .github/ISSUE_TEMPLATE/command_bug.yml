@@ -7,7 +7,7 @@ issue_body: true
 inputs:
 - type: description
   attributes:
-  - value: 'Thank you for taking the time to fill out an issue. This template is meant for any issues related to commands. If you require help with installing Red we ask that you join our Discord server over at https://discord.gg/red'
+    value: 'Thank you for taking the time to fill out an issue. This template is meant for any issues related to commands. If you require help with installing Red we ask that you join our Discord server over at https://discord.gg/red'
 - type: input
   attributes:
     label: "What version are you using?"
@@ -18,16 +18,28 @@ inputs:
     description: "From which cog does the command come from?"
     required: true
     choices:
+      - Admin
+      - Alias
       - Audio
+      - Bank
       - Cleanup
+      - CogManagerUI
       - Core
+      - Customcom
       - Dev
       - Downloader
+      - Economy
+      - Filter
+      - General
+      - Image
       - Mod
       - Modlog
       - Mutes
+      - Permissions
+      - Reports
       - Streams
       - Trivia
+      - Warnings
 - type: input
   attributes:
     label: "Command name"
