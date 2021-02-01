@@ -56,10 +56,12 @@ inputs:
 - type: textarea
   attributes:
     label: "What actually happened?"
+    description: "A clear and concise description of what the bug is. If the issue is visual in nature, consider posting a screenshot."
     required: true
 - type: textarea
   attributes:
     label: "How can we reproduce this error?"
+    description: "List of steps required to reproduce this error."
     value: |
       1.
       2.
