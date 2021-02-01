@@ -15,9 +15,9 @@ inputs:
     label: "What component of Red (cog, command, API) would you like to see improvements on?"
     placeholder: Audio
     required: true
-- type: textfield
+- type: textarea
   attributes:
-    label: "Descrive the enhancement you're suggesting."
+    label: "Describe the enhancement you're suggesting."
     required: true
     description: |
       Feel free to describe in as much detail as you wish.
