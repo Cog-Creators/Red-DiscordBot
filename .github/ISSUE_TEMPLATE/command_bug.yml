@@ -12,12 +12,6 @@ inputs:
   attributes:
     label: "What version are you using?"
     required: true
-- type: input
-  attributes:
-    label: "Command name"
-    description: "What is the command that caused the error?"
-    placeholder: "play"
-    required: true
 - type: dropdown
   attributes:
     label: "Cog name"
@@ -46,6 +40,12 @@ inputs:
       - Streams
       - Trivia
       - Warnings
+- type: input
+  attributes:
+    label: "Command name"
+    description: "What is the command that caused the error?"
+    placeholder: "play"
+    required: true
 - type: textarea
   attributes:
     label: "Expected behavior"
