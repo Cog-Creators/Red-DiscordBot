@@ -546,15 +546,11 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                try:
-                    message = discord.utils.get(bot.cached_messages, id=message_id)
-                except AttributeError:
-                    # bot.cached_messages didn't exist prior to discord.py 1.1.0
-                    message = None
+                message = discord.utils.get(bot.cached_messages, id=message_id)
                 if message is None:
                     try:
                         message = await mod_channel.fetch_message(message_id)
-                    except (discord.HTTPException, AttributeError):
+                    except discord.HTTPException:
                         message = None
             else:
                 message = None
