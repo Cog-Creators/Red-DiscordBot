@@ -16,7 +16,36 @@ inputs:
   attributes:
     label: "Command name"
     description: "What is the command that caused the error?"
-    placeholder: "Audio"
+    placeholder: "play"
+    required: true
+- type: dropdown
+  attributes:
+    label: "Cog name"
+    description: "From which cog does the command come from?"
+    required: true
+    choices:
+      - Admin
+      - Alias
+      - Audio
+      - Bank
+      - Cleanup
+      - CogManagerUI
+      - Core
+      - Customcom
+      - Dev
+      - Downloader
+      - Economy
+      - Filter
+      - General
+      - Image
+      - Mod
+      - Modlog
+      - Mutes
+      - Permissions
+      - Reports
+      - Streams
+      - Trivia
+      - Warnings
 - type: textarea
   attributes:
     label: "Expected behavior"
@@ -29,4 +58,9 @@ inputs:
 - type: textarea
   attributes:
     label: "How can we reproduce this error?"
+    value: |
+      1.
+      2.
+      3.
+      ...
     required: true
