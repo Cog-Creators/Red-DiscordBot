@@ -56,7 +56,9 @@ inputs:
 - type: textarea
   attributes:
     label: "What actually happened?"
-    description: "A clear and concise description of what the bug is. If the issue is visual in nature, consider posting a screenshot."
+    description: |
+      A clear and concise description of what the bug is.
+      If the issue is visual in nature, consider posting a screenshot.
     required: true
 - type: textarea
   attributes:
