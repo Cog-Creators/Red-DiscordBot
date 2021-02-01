@@ -1,34 +1,32 @@
----
 name: Bug reports for commands
-about: For bugs that involve commands found within Red
+about: For bugs that involve commands found within Red.
 title: ''
 labels: 'Type: Bug'
 assignees: ''
-
----
-
-# Command bugs
-
-<!-- 
-Did you find a bug with a command? Fill out the following:
--->
-
-#### Command name
-
-<!-- Replace this line with the name of the command -->
-
-#### What cog is this command from?
-
-<!-- Replace this line with the name of the cog -->
-
-#### What were you expecting to happen?
-
-<!-- Replace this line with a description of what you were expecting to happen -->
-
-#### What actually happened?
-
-<!-- Replace this line with a description of what actually happened. Include any error messages -->
-
-#### How can we reproduce this issue?
-
-<!-- Replace with numbered steps to reproduce the issue -->
+issue_body: true
+inputs:
+- type: description
+  attributes:
+  - value: 'Thank you for taking the time to fill out an issue. This template is meant for any issues related to commands. If you require help with installing Red we ask that you join our Discord server over at https://discord.gg/red'
+- type: input
+  attributes:
+    label: "What version are you using?"
+    required: true
+- type: input
+  attributes:
+    label: "Command name"
+    description: "What is the command that caused the error?"
+    placeholder: "Audio"
+- type: textarea
+  attributes:
+    label: "Expected behavior"
+    description: "What did you expect to happen?"
+    required: true
+- type: textarea
+  attributes:
+    label: "What actually happened?"
+    required: true
+- type: textarea
+  attributes:
+    label: "How can we reproduce this error?"
+    required: true
