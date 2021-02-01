@@ -1,0 +1,23 @@
+name: Enhancement proposal
+about: For feature requests and improvements related to already existing functionality.
+title: ''
+labels: 'Type: Enhancement'
+assignees: ''
+issue_body: true
+inputs:
+- type: description
+  attributes:
+    value: |
+      Thank you for taking the time to fill out an issue. This template is meant for feature requests and improvements to already existing functionality.
+      If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
+- type: input
+  attributes:
+    label: "What component of Red (cog, command, API) would you like to see improvements on?"
+    placeholder: Audio
+    required: true
+- type: textfield
+  attributes:
+    label: "Descrive the enhancement you're suggesting."
+    required: true
+    description: |
+      Feel free to describe in as much detail as you wish.
