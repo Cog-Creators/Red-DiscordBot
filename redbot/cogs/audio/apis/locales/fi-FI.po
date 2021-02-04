@@ -18,57 +18,57 @@ msgstr ""
 #: redbot/cogs/audio/apis/interface.py:273
 #: redbot/cogs/audio/apis/interface.py:595
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "Kappaleiden hakeminen ei onnistu, ohitetaan jäljellä olevat."
 
 #: redbot/cogs/audio/apis/interface.py:304
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API-avainta tai client secret -arvoa ei ole asetettu oikein. \\nKäytä`{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr ""
+msgstr "Tuo ei näytä olevan kelvollinen soittolistan/albumin Spotify-osoite tai -koodi."
 
 #: redbot/cogs/audio/apis/interface.py:471
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Tuo ei näytä olevan kelvollinen Spotify-osoite tai -koodi."
 
 #: redbot/cogs/audio/apis/interface.py:558
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Yhteys nollattiin soittolistaa ladatessa."
 
 #: redbot/cogs/audio/apis/interface.py:569
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Toistimen aikakatkaisu, ohitetaan jäljellä olevat kappaleet."
 
 #: redbot/cogs/audio/apis/interface.py:661
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} kappaletta ei voida lisätä jonoon."
 
 #: redbot/cogs/audio/apis/interface.py:669
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Soittolista lisätty jonoon"
 
 #: redbot/cogs/audio/apis/interface.py:670
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Lisättiin {num} kappaletta jonoon.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:676
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} aikaa soittolistan toiston aloittamiseen: alkaa sijalla #{position} jonossa"
 
 #: redbot/cogs/audio/apis/interface.py:687
 msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Mitään ei löytynyt.\\nAsettamasi YouTube API-avain voi olla virheellinen tai sinun liikennettäsi voidaan rajoittaa YouTuben hakupalvelussa.\\nTarkista YouTube API-avain ja seuraa ohjeita jotka saat komennolla `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API-avainta tai client secret -arvoa ei ole asetettu oikein. \\nKäytä`{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "YouTube Data API token -arvosi on virheellinen.\\nTarkista YouTube API-avaimesi ja seuraa ohjeita jotka saat komennolla `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "YouTube API -virhekoodi: 403\\nYouTube API-avaimesi voi olla saavuttanut päivittäisen käyttörajansa. Tarkista <https://developers.google.com/youtube/v3/getting-started#quota> saadaksesi lisätietoja."
 

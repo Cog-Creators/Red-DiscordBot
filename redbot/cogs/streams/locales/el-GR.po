@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-24 12:36+0000\n"
+"POT-Creation-Date: 2021-01-28 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -303,47 +303,47 @@ msgstr ""
 msgid "{stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:183
+#: redbot/cogs/streams/streamtypes.py:181
 msgid "This stream will start in {time}"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:189
+#: redbot/cogs/streams/streamtypes.py:187
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:362
+#: redbot/cogs/streams/streamtypes.py:360
 msgid "Untitled broadcast"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:364
+#: redbot/cogs/streams/streamtypes.py:362
 msgid " - Rerun"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:367
-#: redbot/cogs/streams/streamtypes.py:410
-#: redbot/cogs/streams/streamtypes.py:451
+#: redbot/cogs/streams/streamtypes.py:365
+#: redbot/cogs/streams/streamtypes.py:408
+#: redbot/cogs/streams/streamtypes.py:449
 msgid "Followers"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:368
-#: redbot/cogs/streams/streamtypes.py:452
+#: redbot/cogs/streams/streamtypes.py:366
+#: redbot/cogs/streams/streamtypes.py:450
 msgid "Total views"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:373
-#: redbot/cogs/streams/streamtypes.py:414
+#: redbot/cogs/streams/streamtypes.py:371
+#: redbot/cogs/streams/streamtypes.py:412
 msgid "Playing: "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:457
+#: redbot/cogs/streams/streamtypes.py:455
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:460
+#: redbot/cogs/streams/streamtypes.py:458
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:464
+#: redbot/cogs/streams/streamtypes.py:462
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr ""
 

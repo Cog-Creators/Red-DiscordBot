@@ -17,75 +17,76 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "我试了做一件事情Discord不让我做。你的命令没有完成。"
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能加{role.name}到{member.display_name} 应为这个role比我的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能加{role.name}到{member.display_name} 应为这个role比我的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能能改变{role.name}应为这个role比我的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能让你加{role.name}到{member.display_name} 应为这个role比你的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能让你把这个{role.name}从{member.display_name}去掉应为这个role比你的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "我不能让你改变{role.name}应为这个role比你的最高的role高或者一样高"
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "我需要管角色才能做这件事情"
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "我已经在宣布一段话。要是你想做一个不同的宣布请用`{prefix}announce cancel` 先"
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr ""
+msgstr "一些管理server的东西"
 
 #: redbot/cogs/admin/admin.py:162
 msgid "{member.display_name} already has the role {role.name}."
-msgstr ""
+msgstr "{member.display_name}已经有{role.name}"
 
 #: redbot/cogs/admin/admin.py:182
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "我成功的的加了{role.name}到{member.display_name}"
 
 #: redbot/cogs/admin/admin.py:192
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr ""
+msgstr "{member.display_name}没有{role.name}"
 
 #: redbot/cogs/admin/admin.py:212
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "我成功的从{member.display_name}去掉了{role.name}."
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
 msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        加一个角色 到一个人上.\\n\\n        用双引号要是角色的名字有空格.\\n        要是没有说出人，就会被加到用这个命令的人\\n        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
 msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr ""
+msgstr "\\n        从一个人去掉一个角色.\\n\\n        要是角色的名字有空格用双引号.\\n \n"
+"要是没有说出人加给用命令的人.\\n        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "改变角色设定"
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring

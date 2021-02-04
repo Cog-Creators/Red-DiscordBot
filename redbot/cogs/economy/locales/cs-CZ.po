@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-24 12:36+0000\n"
+"POT-Creation-Date: 2021-02-04 12:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -332,7 +332,7 @@ msgstr "Hodnota upravena. Mezi jednotlivými výplatami musí uplynout alespoň 
 msgid "Set the amount earned each payday.\\n\\n        Example:\\n            - `[p]economyset paydayamount 400`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new amount to give when using the payday command. Default is 120.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:961 redbot/cogs/economy/economy.py:994
+#: redbot/cogs/economy/economy.py:961
 msgid "Amount must be greater than zero and less than {maxbal}."
 msgstr "Částka musí být větší nebo rovna nule a menší než {maxbal}."
 
@@ -342,47 +342,55 @@ msgstr "Každý den bude nyní dán {num} {currency}."
 
 #: redbot/cogs/economy/economy.py:978
 #, docstring
-msgid "Set the amount earned each payday for a role.\\n\\n        Only available when not using a global bank.\\n\\n        Example:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Arguments**\\n\\n        - `<role>` The role to assign a custom payday amount to.\\n        - `<creds>` The new amount to give when using the payday command.\\n        "
+msgid "Set the amount earned each payday for a role.\\n        Set to `0` to remove the payday amount you set for that role.\\n\\n        Only available when not using a global bank.\\n\\n        Example:\\n            - `[p]economyset rolepaydayamount @Members 400`\\n\\n        **Arguments**\\n\\n        - `<role>` The role to assign a custom payday amount to.\\n        - `<creds>` The new amount to give when using the payday command.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1000
+#: redbot/cogs/economy/economy.py:995
+msgid "The bank requires that you set the payday to be less than its maximum balance of {maxbal}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:1002
 msgid "The bank must be per-server for per-role paydays to work."
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1004
+#: redbot/cogs/economy/economy.py:1008
+msgid "The payday value attached to role has been removed. Users with this role will now receive the default pay of {num} {currency}."
+msgstr ""
+
+#: redbot/cogs/economy/economy.py:1017
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
 msgstr "Každý den dá nyní {num} {currency} lidem s rolí {role_name}."
 
-#: redbot/cogs/economy/economy.py:1012
+#: redbot/cogs/economy/economy.py:1027
 #, docstring
 msgid "Set the initial balance for new bank accounts.\\n\\n        Example:\\n            - `[p]economyset registeramount 5000`\\n\\n        **Arguments**\\n\\n        - `<creds>` The new initial balance amount. Default is 0.\\n        "
 msgstr ""
 
-#: redbot/cogs/economy/economy.py:1028
+#: redbot/cogs/economy/economy.py:1043
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
 msgstr "Částka musí být větší nebo rovna nule a menší než {maxbal}."
 
-#: redbot/cogs/economy/economy.py:1033
+#: redbot/cogs/economy/economy.py:1048
 msgid "Registering an account will now give {num} {currency}."
 msgstr "Registrace účtu nyní dá {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:1042
+#: redbot/cogs/economy/economy.py:1057
 msgid "weeks"
 msgstr "týdnů"
 
-#: redbot/cogs/economy/economy.py:1043
+#: redbot/cogs/economy/economy.py:1058
 msgid "days"
 msgstr "dnů"
 
-#: redbot/cogs/economy/economy.py:1044
+#: redbot/cogs/economy/economy.py:1059
 msgid "hours"
 msgstr "hodin"
 
-#: redbot/cogs/economy/economy.py:1045
+#: redbot/cogs/economy/economy.py:1060
 msgid "minutes"
 msgstr "minut"
 
-#: redbot/cogs/economy/economy.py:1046
+#: redbot/cogs/economy/economy.py:1061
 msgid "seconds"
 msgstr "sekund"
 

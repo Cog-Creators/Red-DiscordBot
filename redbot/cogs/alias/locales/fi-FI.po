@@ -26,7 +26,7 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgstr "\\n\\nSivu {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-03 12:26+0000\n"
+"POT-Creation-Date: 2021-01-28 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -45,14 +45,14 @@ msgid "Connection to Lavalink has not yet been established."
 msgstr "라바링크와 연결되지 않았습니다."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
-msgid "Unable To Play Tracks"
-msgstr "트랙을 재생할수 없습니다"
-
-#: redbot/cogs/audio/core/utilities/formatting.py:116
 #: redbot/cogs/audio/core/utilities/player.py:444
 #: redbot/cogs/audio/core/utilities/player.py:528
 msgid "Queue size limit reached."
 msgstr "큐 최대 제한에 도달했습니다."
+
+#: redbot/cogs/audio/core/utilities/formatting.py:116
+msgid "Unable To Play Tracks"
+msgstr "트랙을 재생할수 없습니다"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
 #: redbot/cogs/audio/core/utilities/player.py:604

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-17 12:31+0000\n"
+"POT-Creation-Date: 2021-02-04 12:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -15,125 +15,141 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: fi_FI\n"
 
-#: redbot/core/commands/commands.py:525
+#: redbot/core/commands/commands.py:532
 msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+msgstr "\\\"{argument}\\\" ei ole numero."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` ei ole kelvollinen ajanyksikkö tälle komennolle"
 
 #: redbot/core/commands/converter.py:119
 msgid "The time set is way too high, consider setting something reasonable."
-msgstr ""
+msgstr "Asetettu aika on aivan liian suuri, harkitse sen asettamista joksikin kohtuulliseksi."
 
 #: redbot/core/commands/converter.py:123
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "Aika on liian suuri tälle komennolle. (Maksimi: {maximum})"
 
 #: redbot/core/commands/converter.py:129
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "Aika on liian pieni tälle komennolle. (Minimi: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \\\"{name}\\\" not found."
-msgstr ""
+msgstr "Palvelinta \\\"{name}\\\" ei löytynyt."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
-msgstr ""
+msgstr "Odottamaton selite {key}"
 
 #: redbot/core/commands/converter.py:394
 msgid "Expected one of: {}"
-msgstr ""
+msgstr "Odotettiin yhtä seuraavista: {}"
 
-#: redbot/core/commands/help.py:104
+#: redbot/core/commands/help.py:105
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
-#: redbot/core/commands/help.py:106
+#: redbot/core/commands/help.py:107
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
-#: redbot/core/commands/help.py:112
+#: redbot/core/commands/help.py:113
 msgid "Disabled"
 msgstr "Ei käytössä"
 
-#: redbot/core/commands/help.py:117
+#: redbot/core/commands/help.py:118
 msgid "\\nCustom Tagline: {tag}"
-msgstr ""
+msgstr "\\nMukautettu iskulause: {tag}"
 
-#: redbot/core/commands/help.py:123
+#: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}\\nReact with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Maksimikirjainmäärä sivulla: {page_char_limit}\\nMaksimi palvelinkohtainen sivumäärä (käytetään vain jos valikot eivät ole käytössä): {max_pages_in_guild}\\nApusivut ovat valikoita: {use_menus}\\nApusivut näyttävät piilotetut komennot: {show_hidden}\\nApusivu näyttää vain käytettävissä olevat komennot: {verify_checks}\\nApusivu näyttää komennot joita ei voi käyttää, kun niitä suoraan pyydetään: {verify_exists}\\nPoistoviive: {delete_delay}\\nReagoi valmis-merkillä kun apusivut lähetetään yksityisviestillä: {use_tick}{tagline_info}"
 
-#: redbot/core/commands/help.py:272
+#: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
+msgstr "Kirjoita {ctx.clean_prefix}help <command> saadaksesi lisää tietoa komennosta. Voit myös kirjoittaa {ctx.clean_prefix}help <category> saadaksesi lisää tietoa kategoriasta."
+
+#: redbot/core/commands/help.py:303
+msgid "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
 msgstr ""
 
-#: redbot/core/commands/help.py:302
-msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+#: redbot/core/commands/help.py:309
+msgid "Aliases"
 msgstr ""
 
-#: redbot/core/commands/help.py:343
+#: redbot/core/commands/help.py:309
+msgid "Alias"
+msgstr ""
+
+#: redbot/core/commands/help.py:330
+msgid "{aliases} and {number} more aliases."
+msgstr ""
+
+#: redbot/core/commands/help.py:334
+msgid "{aliases} and one more alias."
+msgstr ""
+
+#: redbot/core/commands/help.py:376
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Alikomennot:__**"
 
-#: redbot/core/commands/help.py:345
+#: redbot/core/commands/help.py:378
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Alikomennot:__** (jatkuu)"
 
-#: redbot/core/commands/help.py:356
+#: redbot/core/commands/help.py:389
 msgid "Subcommands:"
-msgstr ""
+msgstr "Alikomennot:"
 
-#: redbot/core/commands/help.py:420 redbot/core/commands/help.py:675
-#: redbot/core/commands/help.py:688 redbot/core/commands/help.py:707
+#: redbot/core/commands/help.py:453 redbot/core/commands/help.py:708
+#: redbot/core/commands/help.py:721 redbot/core/commands/help.py:740
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} -apusivu"
 
-#: redbot/core/commands/help.py:467
+#: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+msgstr "*Sivu {page_num}/{page_count}*\\n{content_description}"
 
-#: redbot/core/commands/help.py:518
+#: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"
-msgstr ""
+msgstr "**__Komennot:__**"
 
-#: redbot/core/commands/help.py:520
+#: redbot/core/commands/help.py:553
 msgid "**__Commands:__** (continued)"
-msgstr ""
+msgstr "**__Komennot:__** (jatkuu)"
 
-#: redbot/core/commands/help.py:530
+#: redbot/core/commands/help.py:563
 msgid "Commands:"
-msgstr ""
+msgstr "Komennot:"
 
-#: redbot/core/commands/help.py:572
+#: redbot/core/commands/help.py:605
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Ei kategoriaa:__**"
 
-#: redbot/core/commands/help.py:585
+#: redbot/core/commands/help.py:618
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (jatkuu)"
 
-#: redbot/core/commands/help.py:601 redbot/core/commands/help.py:615
+#: redbot/core/commands/help.py:634 redbot/core/commands/help.py:648
 msgid "No Category:"
-msgstr ""
+msgstr "Ei kategoriaa:"
 
-#: redbot/core/commands/help.py:684
+#: redbot/core/commands/help.py:717
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Apusivua komennolle *{command_name}* ei löytynyt."
 
-#: redbot/core/commands/help.py:701
+#: redbot/core/commands/help.py:734
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Komennolla *{command_name}* ei ole alikomentoa nimeltä *{not_found}*."
 
-#: redbot/core/commands/help.py:776
+#: redbot/core/commands/help.py:809
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "En voinut lähettää sinulle apuviestiä yksityisviestillä. Olet joko estänyt minut tai poistanut yksityisviestit käytöstä tällä palvelimella."
 
-#: redbot/core/commands/help.py:815
+#: redbot/core/commands/help.py:848
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr ""
+msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 
