@@ -162,7 +162,7 @@ msgstr "Basekommando for kommandoer for administrasjon av cog."
 #: redbot/cogs/downloader/downloader.py:683
 #, docstring
 msgid "\\n        This command should not be used unless Red specifically asks for it.\\n\\n        This command will reinstall cog requirements and shared libraries for all installed cogs.\\n\\n        Red might ask the owner to use this when it clears contents of the lib folder\\n        because of change in minor version of Python.\\n        "
-msgstr ""
+msgstr "\\n        Denne kommandoen bør ikke brukes med mindre det blir rødt spesifikt bedt om det.\\n\\n        Denne kommandoen vil reinstallere cog krav til delte bibliotek for alle installerte cogs.\\n\\n        Rød kan be eieren om å bruke dette når den fjerner innholdet i lib-mappen\\n        på grunn av endring i mindre versjon av Python.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:712
 #: redbot/cogs/downloader/downloader.py:1454
@@ -184,12 +184,12 @@ msgstr "Cog-krav og delte biblioteker for alle installerte cogs er reinstallert.
 #: redbot/cogs/downloader/downloader.py:739
 #, docstring
 msgid "Install a cog from the given repo.\\n\\n        Examples:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of the repo to install cogs from.\\n        - `<cogs...>` The cog or cogs to install.\\n        "
-msgstr ""
+msgstr "Installer en cog fra nevnte repo.\\n\\n      Eksempler:\\n            - `[p]cog install 26-Cogs defender`\\n            - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Argumenter**\\n\\n        - `<cogs...>` cog eller cogs for å installere.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:758
 #, docstring
 msgid "Install a cog from the specified revision of given repo.\\n\\n        Revisions are \\\"commit ids\\\" that point to the point in the code when a specific change was made.\\n        The latest revision can be found in the URL bar for any GitHub repo by [pressing \\\"y\\\" on that repo](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).\\n\\n        Older revisions can be found in the URL bar by [viewing the commit history of any repo](https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png)\\n\\n        Example:\\n            - `[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\\n\\n        **Arguments**\\n\\n        - `<repo>` The name of the repo to install cogs from.\\n        - `<revision>` The revision to install from.\\n        - `<cogs...>` The cog or cogs to install.\\n        "
-msgstr ""
+msgstr "Installer en cog fra den angitte versjonen av det angitte repoet.\\n\\n        Revisjoner er \\\"commit ids\\\" som peker på det punktet i koden når en bestemt endring ble foretatt.\\n        Den nyeste versjonen kan bli funnet i URL-feltet for ethvert GitHub repo ved å [trykke \\\"y\\\" på den forekommen](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commi).\\n\\n        Eldre revisjoner finner du i URL-baren ved å [se forpliktende historikk for eventuelle repo](https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png)\\n\\n        Eksempel:\\n            - `[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\\n\\n        **Arguments**\\n\\n        - `<repo>` navnet på repo for å installere cogs fra.\\n        - `<revision>` revisjonen for å installere fra.\\n        - `<cogs...>` cog eller cogs for å installere.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:785
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\\n"
@@ -227,7 +227,7 @@ msgstr "\\nDu kan laste dem inn med {command_1}. For å se Brukerdatautsagn, kan
 #: redbot/cogs/downloader/downloader.py:871
 #, docstring
 msgid "Uninstall cogs.\\n\\n        You may only uninstall cogs which were previously installed\\n        by Downloader.\\n\\n        Examples:\\n            - `[p]cog uninstall 26-Cogs defender`\\n            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Arguments**\\n\\n        - `<cogs...>` The cog or cogs to uninstall.\\n        "
-msgstr ""
+msgstr "Avinstaller cogs.\\n\\n        Du kan bare avinstallere cogs som tidligere har blitt installert\\n        av Downloader.\\n\\n        Eksempler:\\n            - `[p]cog uninstall 26-Cogs defender`\\n            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`\\n\\n        **Argumenter**\\n\\n        - `<cogs...>` cognen eller cogs for å avinstallere.\\n        "
 
 #: redbot/cogs/downloader/downloader.py:903
 msgid "Successfully uninstalled cogs: "

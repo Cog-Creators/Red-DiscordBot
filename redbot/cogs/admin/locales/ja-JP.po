@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr "私は不和が私に権限を拒否した何かをしようとしました。コマンドを正常に完了できませんでした。"
+msgstr "私はDiscordが許可を拒否した何かをしようとしました。あなたのコマンドは正常に完了できませんでした。"
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} を {member.display_name} に与えることはできません。その役職は、私が持っている最高役職より、上にあるためです。"
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
@@ -182,7 +182,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:459
 msgid "Added."
-msgstr ""
+msgstr "追加されました"
 
 #: redbot/cogs/admin/admin.py:462
 msgid "That role is already a selfrole."
@@ -199,34 +199,34 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Removed."
-msgstr ""
+msgstr "削除されました"
 
 #: redbot/cogs/admin/admin.py:486
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Botを現在のサーバーにのみロックします。"
 
 #: redbot/cogs/admin/admin.py:491
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "Botはもうサーバーロックされていません。"
 
 #: redbot/cogs/admin/admin.py:493
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "Botはサーバーロックされました。"
 
 #: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "以下のサーバーに通知できませんでした： "
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "以下のサーバーに通知できませんでした： "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "管理者コグがロードされていません。"
 
 #: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
-msgstr ""
+msgstr "与えられたロールは有効な自己ロールではありません。"
 

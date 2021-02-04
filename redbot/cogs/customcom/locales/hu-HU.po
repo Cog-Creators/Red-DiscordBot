@@ -74,7 +74,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:323
 msgid "Search results"
-msgstr ""
+msgstr "Keresési találatok"
 
 #: redbot/cogs/customcom/customcom.py:328
 msgid "The following matches have been found:"
@@ -196,11 +196,11 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:564
 msgid "Deleted User"
-msgstr ""
+msgstr "Törölt felhasználó"
 
 #: redbot/cogs/customcom/customcom.py:570
 msgid "Random"
-msgstr ""
+msgstr "Véletlenszerű"
 
 #: redbot/cogs/customcom/customcom.py:570
 msgid "Normal"

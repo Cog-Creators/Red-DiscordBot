@@ -112,7 +112,7 @@ msgstr "Gérer les permissions avec des fichiers YAML."
 #: redbot/cogs/permissions/permissions.py:280
 #, docstring
 msgid "Sends an example of the yaml layout for permissions"
-msgstr ""
+msgstr "Envoie un exemple de mise en page yaml pour les permissions"
 
 #: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\\n"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-24 12:36+0000\n"
+"POT-Creation-Date: 2021-01-21 12:55+0000\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -87,8 +87,12 @@ msgstr ""
 msgid "You got it {user}! **+1** to you!"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:311
-msgid "Congratulations, {user}, you have received {num} {currency} for coming first."
+#: redbot/cogs/trivia/session.py:319
+msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
+msgstr ""
+
+#: redbot/cogs/trivia/session.py:327
+msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:41

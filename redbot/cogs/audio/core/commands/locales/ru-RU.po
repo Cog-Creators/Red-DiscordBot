@@ -795,11 +795,11 @@ msgstr "Локальный кэш Lavalink:   [{lavalink_status}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
 msgid "Global cache status:    [{global_cache}]\\n"
-msgstr ""
+msgstr "Состояние глобального кэша:    [{global_cache}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
 msgid "Global timeout:         [{num_seconds}]\\n"
-msgstr ""
+msgstr "Глобальный тайм-аут:         [{num_seconds}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1085
 #: redbot/cogs/audio/core/commands/audioset.py:1345
@@ -809,11 +809,11 @@ msgstr "дн."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1094
 msgid "User Settings"
-msgstr ""
+msgstr "Настройки пользователя"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
 msgid "Spotify search:   [{country_code}]\\n"
-msgstr ""
+msgstr "Поиск в Spotify: [{country_code}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
@@ -821,15 +821,15 @@ msgstr "Настройки Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgstr "Версия плагина:            [{version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr ""
+msgstr "Red-Lavalink: [{lavalink_version}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr ""
+msgstr "Внешний сервер:        [[{use_external_lavalink}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
 msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\nJava Executable:        [{jv_exec}]\\n"
@@ -837,21 +837,21 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1130
 msgid "Localtracks path:       [{localpath}]\\n"
-msgstr ""
+msgstr "Путь к локальным трекам:       [{localpath}]\\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1139
 #, docstring
 msgid "Sends the Lavalink server logs to your DMs."
-msgstr ""
+msgstr "Отправляет журналы сервера Lavalink в личные сообщения."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1146
 #: redbot/cogs/audio/core/commands/audioset.py:1148
 msgid "No logs found in your data folder."
-msgstr ""
+msgstr "Журналы не найдены в папке данных."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1160
 msgid "Logs are too large, you can find them in {path}"
-msgstr ""
+msgstr "Логи слишком большие, вы можете найти их в {path}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1170
 msgid "I need to be able to DM you to send you the logs."
@@ -976,16 +976,16 @@ msgstr "Я установил возраст кэша на {age} дней"
 #: redbot/cogs/audio/core/commands/audioset.py:1422
 #, docstring
 msgid "Change globalapi settings."
-msgstr ""
+msgstr "Изменить настройки globalapi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1426
 #, docstring
 msgid "Toggle the server settings.\\n\\n        Default is OFF\\n        "
-msgstr ""
+msgstr "Переключить настройки сервера.\\n\\n        По умолчанию: Выкл\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "Global DB is {status}"
-msgstr ""
+msgstr "Глобальная БД - {status}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "enabled"
@@ -998,33 +998,33 @@ msgstr "отключен"
 #: redbot/cogs/audio/core/commands/audioset.py:1442
 #, docstring
 msgid "Set GET request timeout.\\n\\n        Example: 0.1 = 100ms 1 = 1 second\\n        "
-msgstr ""
+msgstr "Установите тайм-аут запроса GET.\\n\\n        Пример: 0.1 = 100 мс 1 = 1 секунда\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
-msgstr ""
+msgstr "Таймаут запроса установлен на {time} секунд(ы)"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1453
 #, docstring
 msgid "Toggle persistent queues.\\n\\n        Persistent queues allows the current queue to be restored when the queue closes.\\n        "
-msgstr ""
+msgstr "Переключение постоянных очередей.\\n\\n        Постоянные очереди позволяют восстановить текущую очередь при закрытии очереди.\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1465
 msgid "Persisting queues: {true_or_false}."
-msgstr ""
+msgstr "Постоянные очереди {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1473
 #, docstring
 msgid "Restarts the lavalink connection."
-msgstr ""
+msgstr "Перезапускает соединение с lavalink."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1483
 msgid "Restarting Lavalink"
-msgstr ""
+msgstr "Перезапуск Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1484
 msgid "It can take a couple of minutes for Lavalink to fully start up."
-msgstr ""
+msgstr "Полный запуск Lavalink может занять пару минут."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1676,7 +1676,7 @@ msgstr "Параметры конфигурации сервера Lavalink."
 #: redbot/cogs/audio/core/commands/llset.py:26
 #, docstring
 msgid "Change your Java executable path\\n\\n        Enter nothing to reset to default.\\n        "
-msgstr ""
+msgstr "Измените путь к исполняемому файлу Java\\n\\n        Ничего не вводите для сброса по умолчанию.\\n        "
 
 #: redbot/cogs/audio/core/commands/llset.py:35
 msgid "You cannot changed the Java executable path of external Lavalink instances from the Audio Cog."
@@ -1696,7 +1696,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:61
 msgid "Java Executable Changed"
-msgstr ""
+msgstr "Исполняемый файл Java изменен"
 
 #: redbot/cogs/audio/core/commands/llset.py:62
 msgid "Audio will now use `{exc}` to run your Lavalink.jar"
@@ -1741,13 +1741,13 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
 msgid "Set the Lavalink server host."
-msgstr ""
+msgstr "Установить хост Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:147
 #: redbot/cogs/audio/core/commands/llset.py:171
 #: redbot/cogs/audio/core/commands/llset.py:196
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Для внешнего сервера Lavalink установлено значение True."
 
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "Host set to {host}."
@@ -1756,7 +1756,7 @@ msgstr "Хост установлен на {host}."
 #: redbot/cogs/audio/core/commands/llset.py:167
 #, docstring
 msgid "Set the Lavalink server password."
-msgstr ""
+msgstr "Установить пароль сервера Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:175
 msgid "Server password set to {password}."
@@ -1765,7 +1765,7 @@ msgstr "Пароль сервера установлен на {password}."
 #: redbot/cogs/audio/core/commands/llset.py:192
 #, docstring
 msgid "Set the Lavalink websocket server port."
-msgstr ""
+msgstr "Установить порт веб-сокет сервера Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:200
 msgid "Websocket port set to {port}."
@@ -1774,11 +1774,11 @@ msgstr "Порт веб-сокета установлен на {port}."
 #: redbot/cogs/audio/core/commands/llset.py:217
 #, docstring
 msgid "Display Lavalink connection settings."
-msgstr ""
+msgstr "Отображение настроек соединения Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:223
 msgid "Connection Settings"
-msgstr ""
+msgstr "Параметры подключения"
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\\n"
