@@ -75,7 +75,7 @@ msgstr "Törli a parancs üzeneteket és a bot válaszait.\\n\\n        Csak akk
 #: redbot/cogs/cleanup/cleanup.py:528
 #, docstring
 msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a second argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n\\n        Examples:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Arguments:**\\n\\n        - `<number>` The max number of messages to cleanup. Must be a positive integer.\\n        - `<match_pattern>` The text that messages must contain to be deleted. Use \\\"\\\" to skip this.\\n        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\\n        "
-msgstr ""
+msgstr "A bot által elküldött üzenetek takarítása.\\n\\n        Alapértelmezésből minden üzenet takarítva lesz. Ha egy második paraméter is meg van adva,\\n        minták párosítására lesz használva - csak a szöveget tartalmazó üzenetek lesznek törölve.\\n\\n        Példák:\\n            - `[p]cleanup self 6`\\n            - `[p]cleanup self 10 Pong`\\n            - `[p]cleanup self 7 \\\"\\\" True`\\n\\n        **Paraméterek:**\\n\\n        - `<number>` A takarítandó üzenetek maximális száma. Pozitív számnak kell lennie.\\n        - `<match_pattern>` A szöveg, amit az üzeneteknek tartalmazniuk kell hogy törölve legyenek. Használd ezt: \\\"\\\" ennek a kihagyásához.\\n        - `<delete_pinned>` Hogy töröljön-e kitűzött üzeneteket. Alapértelmezett: hamis (false)\\n        "
 
 #: redbot/cogs/cleanup/cleanup.py:612
 #, docstring

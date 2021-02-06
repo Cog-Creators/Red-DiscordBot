@@ -23,7 +23,7 @@ msgstr "Muziek configuratie opties."
 #: redbot/cogs/audio/core/commands/audioset.py:41
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Beheert de whitelist en de zwarte lijst voor geblokeerde woorden."
 
 #: redbot/cogs/audio/core/commands/audioset.py:46
 #, docstring

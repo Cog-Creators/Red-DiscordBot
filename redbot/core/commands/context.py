@@ -188,7 +188,7 @@ class Context(DPYContext):
                 else:
                     try:
                         await self.channel.delete_messages((query, resp))
-                    except (discord.HTTPException, AttributeError):
+                    except discord.HTTPException:
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
                         # or channel is a DM

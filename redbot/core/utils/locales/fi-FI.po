@@ -17,49 +17,49 @@ msgstr ""
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "year"
-msgstr ""
+msgstr "vuosi"
 
 #: redbot/core/utils/chat_formatting.py:500
 msgid "years"
-msgstr ""
+msgstr "vuotta"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "month"
-msgstr ""
+msgstr "kuukausi"
 
 #: redbot/core/utils/chat_formatting.py:501
 msgid "months"
-msgstr ""
+msgstr "kuukautta"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "day"
-msgstr ""
+msgstr "päivä"
 
 #: redbot/core/utils/chat_formatting.py:502
 msgid "days"
-msgstr ""
+msgstr "päivää"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hour"
-msgstr ""
+msgstr "tunti"
 
 #: redbot/core/utils/chat_formatting.py:503
 msgid "hours"
-msgstr ""
+msgstr "tuntia"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minute"
-msgstr ""
+msgstr "minuutti"
 
 #: redbot/core/utils/chat_formatting.py:504
 msgid "minutes"
-msgstr ""
+msgstr "minuuttia"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "second"
-msgstr ""
+msgstr "sekunti"
 
 #: redbot/core/utils/chat_formatting.py:505
 msgid "seconds"
-msgstr ""
+msgstr "sekuntia"
 

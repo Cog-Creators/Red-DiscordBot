@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-20 12:25+0000\n"
+"POT-Creation-Date: 2021-01-28 12:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -103,40 +103,49 @@ msgstr ""
 msgid "Display cases for the specified member."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:142
+#: redbot/cogs/modlog/modlog.py:143 redbot/cogs/modlog/modlog.py:183
 msgid "That user does not exist."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:145
+#: redbot/cogs/modlog/modlog.py:146 redbot/cogs/modlog/modlog.py:186
 msgid "Something unexpected went wrong while fetching that user by ID."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:149
+#: redbot/cogs/modlog/modlog.py:150 redbot/cogs/modlog/modlog.py:189
 msgid "That user does not have any cases."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:157
+#: redbot/cogs/modlog/modlog.py:158
 msgid "{case}\\n**Timestamp:** {timestamp}"
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:170
+#: redbot/cogs/modlog/modlog.py:171
+#, docstring
+msgid "List cases for the specified member."
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:194
+msgid "{case}\\n**Timestamp:** {timestamp}\\n\\n"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:207
 #, docstring
 msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:183
+#: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:189
+#: redbot/cogs/modlog/modlog.py:226
 msgid "That case does not exist!"
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:196
+#: redbot/cogs/modlog/modlog.py:233
 msgid "You are not authorized to modify that case!"
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:204
+#: redbot/cogs/modlog/modlog.py:241
 msgid "Reason for case #{num} has been updated."
 msgstr ""
 

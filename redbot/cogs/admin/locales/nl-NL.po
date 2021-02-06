@@ -131,7 +131,7 @@ msgstr "Verander hoe aankondigingen worden verzonden in deze gilde."
 #: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr ""
+msgstr "\\n        Verander het kanaal waar de bot aankondigingen zal verzenden.\\n\\n        Als het kanaal leeg is dan is het standaard ingesteld op het huidige kanaal.\\n        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -140,7 +140,7 @@ msgstr "Het aankondigingskanaal is aangepast naar {channel.mention}"
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Kanaal voor aankondigingen uitschakelen."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring

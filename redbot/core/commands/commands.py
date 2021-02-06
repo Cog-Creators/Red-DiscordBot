@@ -485,15 +485,22 @@ class Command(CogCommandMixin, DPYCommand):
         if not await self.can_run(ctx, change_permission_state=True):
             raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
 
-        if self.cooldown_after_parsing:
-            await self._parse_arguments(ctx)
-            self._prepare_cooldowns(ctx)
-        else:
-            self._prepare_cooldowns(ctx)
-            await self._parse_arguments(ctx)
         if self._max_concurrency is not None:
             await self._max_concurrency.acquire(ctx)
-        await self.call_before_hooks(ctx)
+
+        try:
+            if self.cooldown_after_parsing:
+                await self._parse_arguments(ctx)
+                self._prepare_cooldowns(ctx)
+            else:
+                self._prepare_cooldowns(ctx)
+                await self._parse_arguments(ctx)
+
+            await self.call_before_hooks(ctx)
+        except:
+            if self._max_concurrency is not None:
+                await self._max_concurrency.release(ctx)
+            raise
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter

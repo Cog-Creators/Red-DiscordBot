@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-17 12:31+0000\n"
+"POT-Creation-Date: 2021-02-04 12:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: es_ES\n"
 
-#: redbot/core/commands/commands.py:525
+#: redbot/core/commands/commands.py:532
 msgid "\\\"{argument}\\\" is not a number."
 msgstr "\\\"{argument}\\\" no es un número."
 
@@ -47,92 +47,108 @@ msgstr "Key inesperada {key}"
 msgid "Expected one of: {}"
 msgstr "Se esperaba uno de: {}"
 
-#: redbot/core/commands/help.py:104
+#: redbot/core/commands/help.py:105
 msgid "No"
 msgstr "No"
 
-#: redbot/core/commands/help.py:106
+#: redbot/core/commands/help.py:107
 msgid "Yes"
 msgstr "Sí"
 
-#: redbot/core/commands/help.py:112
+#: redbot/core/commands/help.py:113
 msgid "Disabled"
 msgstr "Desactivado"
 
-#: redbot/core/commands/help.py:117
+#: redbot/core/commands/help.py:118
 msgid "\\nCustom Tagline: {tag}"
 msgstr "\\nTagline personalizada: {tag}"
 
-#: redbot/core/commands/help.py:123
+#: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}\\nReact with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
 msgstr "Caracteres máximos por página: {page_char_limit}\\nPáginas máximas por servidor (solo usadas si no se utilizan menús): {max_pages_in_guild}\\nAyuda es un menú: {use_menus}\\nAyuda muestra comandos ocultos: {show_hidden}\\nAyuda solo muestra comandos que se pueden usar: {verify_checks}\\nAyuda muestra comandos inutilizables cuando se le pregunta directamente: {verify_exists}\\nRetraso de borrado: {delete_delay}\\nReaccionar con una marca de verificación cuando la ayuda se envía a través de DM: {use_tick}{tagline_info}"
 
-#: redbot/core/commands/help.py:272
+#: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
 msgstr "Escribe {ctx.clean_prefix}help <command> para más información sobre un comando. También puedes escribir {ctx.clean_prefix}help <category> para más información sobre una categoría."
 
-#: redbot/core/commands/help.py:302
-msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr "`Sintaxis: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
+#: redbot/core/commands/help.py:303
+msgid "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
+msgstr ""
 
-#: redbot/core/commands/help.py:343
+#: redbot/core/commands/help.py:309
+msgid "Aliases"
+msgstr ""
+
+#: redbot/core/commands/help.py:309
+msgid "Alias"
+msgstr ""
+
+#: redbot/core/commands/help.py:330
+msgid "{aliases} and {number} more aliases."
+msgstr ""
+
+#: redbot/core/commands/help.py:334
+msgid "{aliases} and one more alias."
+msgstr ""
+
+#: redbot/core/commands/help.py:376
 msgid "**__Subcommands:__**"
 msgstr "**__Subcomandos:__**"
 
-#: redbot/core/commands/help.py:345
+#: redbot/core/commands/help.py:378
 msgid "**__Subcommands:__** (continued)"
 msgstr "**__Subcomandos:__** (continuación)"
 
-#: redbot/core/commands/help.py:356
+#: redbot/core/commands/help.py:389
 msgid "Subcommands:"
 msgstr "Subcomandos:"
 
-#: redbot/core/commands/help.py:420 redbot/core/commands/help.py:675
-#: redbot/core/commands/help.py:688 redbot/core/commands/help.py:707
+#: redbot/core/commands/help.py:453 redbot/core/commands/help.py:708
+#: redbot/core/commands/help.py:721 redbot/core/commands/help.py:740
 msgid "{ctx.me.display_name} Help Menu"
 msgstr "Menú de ayuda de {ctx.me.display_name}"
 
-#: redbot/core/commands/help.py:467
+#: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\\n{content_description}"
 msgstr "*Página {page_num} de {page_count}*\\n{content_description}"
 
-#: redbot/core/commands/help.py:518
+#: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"
 msgstr "**__Comandos:__**"
 
-#: redbot/core/commands/help.py:520
+#: redbot/core/commands/help.py:553
 msgid "**__Commands:__** (continued)"
 msgstr "**__Comandos:__** (continuación)"
 
-#: redbot/core/commands/help.py:530
+#: redbot/core/commands/help.py:563
 msgid "Commands:"
 msgstr "Comandos:"
 
-#: redbot/core/commands/help.py:572
+#: redbot/core/commands/help.py:605
 msgid "**__No Category:__**"
 msgstr "**__Sin Categoría:__**"
 
-#: redbot/core/commands/help.py:585
+#: redbot/core/commands/help.py:618
 msgid "{title} (continued)"
 msgstr "{title} (continuación)"
 
-#: redbot/core/commands/help.py:601 redbot/core/commands/help.py:615
+#: redbot/core/commands/help.py:634 redbot/core/commands/help.py:648
 msgid "No Category:"
 msgstr "Sin categoría:"
 
-#: redbot/core/commands/help.py:684
+#: redbot/core/commands/help.py:717
 msgid "Help topic for *{command_name}* not found."
 msgstr "Tema de ayuda para *{command_name}* no encontrado."
 
-#: redbot/core/commands/help.py:701
+#: redbot/core/commands/help.py:734
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
 msgstr "El comando *{command_name}* no tiene ningún subcomando llamado *{not_found}*."
 
-#: redbot/core/commands/help.py:776
+#: redbot/core/commands/help.py:809
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr "No pude enviarte el mensaje de ayuda en MD. O me has bloqueado o has desactivado los MDs en este servidor."
 
-#: redbot/core/commands/help.py:815
+#: redbot/core/commands/help.py:848
 #, docstring
 msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
 msgstr "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "

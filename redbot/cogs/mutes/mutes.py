@@ -13,7 +13,7 @@ from .voicemutes import VoiceMutes
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils import bounded_gather
-from redbot.core.utils.chat_formatting import humanize_timedelta, humanize_list, pagify
+from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -77,6 +77,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "notification_channel": None,
             "muted_users": {},
             "default_time": 0,
+            "dm": False,
+            "show_mod": False,
         }
         self.config.register_global(force_role_mutes=True)
         # Tbh I would rather force everyone to use role mutes.
@@ -256,6 +258,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 _("Automatic unmute"),
                 until=None,
             )
+            await self._send_dm_notification(
+                member, author, guild, _("Server unmute"), _("Automatic unmute")
+            )
         else:
             chan_id = await self.config.guild(guild).notification_channel()
             notification_channel = guild.get_channel(chan_id)
@@ -363,6 +368,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             modlog_reason,
             until=None,
         )
+        await self._send_dm_notification(
+            member, author, guild, _("Server unmute"), _("Automatic unmute")
+        )
         self._channel_mute_events[guild.id].set()
         if any(results):
             reasons = {}
@@ -424,8 +432,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if create_case:
                 if isinstance(channel, discord.VoiceChannel):
                     unmute_type = "vunmute"
+                    notification_title = _("Voice unmute")
                 else:
                     unmute_type = "cunmute"
+                    notification_title = _("Channel unmute")
                 await modlog.create_case(
                     self.bot,
                     channel.guild,
@@ -436,6 +446,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     _("Automatic unmute"),
                     until=None,
                     channel=channel,
+                )
+                await self._send_dm_notification(
+                    member, author, channel.guild, notification_title, _("Automatic unmute")
                 )
             return None
         else:
@@ -456,6 +469,72 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     return None
             else:
                 return (member, channel, success["reason"])
+
+    async def _send_dm_notification(
+        self,
+        user: Union[discord.User, discord.Member],
+        moderator: Optional[Union[discord.User, discord.Member]],
+        guild: discord.Guild,
+        mute_type: str,
+        reason: Optional[str],
+        duration=None,
+    ):
+        if not await self.config.guild(guild).dm():
+            return
+
+        show_mod = await self.config.guild(guild).show_mod()
+        title = bold(mute_type)
+        if duration:
+            duration_str = humanize_timedelta(timedelta=duration)
+            until = datetime.now(timezone.utc) + duration
+            until_str = until.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+        if moderator is None:
+            moderator_str = _("Unknown")
+        else:
+            moderator_str = str(moderator)
+
+        if not reason:
+            reason = _("No reason provided.")
+
+        # okay, this is some poor API to require PrivateChannel here...
+        if await self.bot.embed_requested(await user.create_dm(), user):
+            em = discord.Embed(
+                title=title,
+                description=reason,
+                color=await self.bot.get_embed_color(user),
+            )
+            em.timestamp = datetime.utcnow()
+            if duration:
+                em.add_field(name=_("Until"), value=until_str)
+                em.add_field(name=_("Duration"), value=duration_str)
+            em.add_field(name=_("Guild"), value=guild.name, inline=False)
+            if show_mod:
+                em.add_field(name=_("Moderator"), value=moderator_str)
+            try:
+                await user.send(embed=em)
+            except discord.Forbidden:
+                pass
+        else:
+            message = f"{title}\n>>> "
+            message += reason
+            message += (
+                _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
+                if show_mod
+                else ""
+            )
+            message += (
+                _("\n**Until**: {until}\n**Duration**: {duration}").format(
+                    until=until_str, duration=duration_str
+                )
+                if duration
+                else ""
+            )
+            message += _("\n**Guild**: {guild_name}").format(guild_name=guild.name)
+            try:
+                await user.send(message)
+            except discord.Forbidden:
+                pass
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -494,6 +573,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
                 del self._server_mutes[guild.id][after.id]
                 should_save = True
+                await self._send_dm_notification(
+                    after, None, guild, _("Server unmute"), _("Manually removed mute role")
+                )
         elif mute_role in roles_added:
             # send modlog case for mute and add to cache
             if guild.id not in self._server_mutes:
@@ -515,6 +597,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "until": None,
                 }
                 should_save = True
+                await self._send_dm_notification(
+                    after, None, guild, _("Server mute"), _("Manually applied mute role")
+                )
         if should_save:
             await self.config.guild(guild).muted_users.set(self._server_mutes[guild.id])
 
@@ -555,15 +640,27 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     user_id not in after_perms or any((send_messages, speak))
                 ):
                     user = after.guild.get_member(user_id)
+                    send_dm_notification = True
                     if not user:
+                        send_dm_notification = False
                         user = discord.Object(id=user_id)
                     log.debug(f"{user} - {type(user)}")
                     to_del.append(user_id)
                     log.debug("creating case")
                     if isinstance(after, discord.VoiceChannel):
                         unmute_type = "vunmute"
+                        notification_title = _("Voice unmute")
                     else:
                         unmute_type = "cunmute"
+                        notification_title = _("Channel unmute")
+                    if send_dm_notification:
+                        await self._send_dm_notification(
+                            user,
+                            None,
+                            after.guild,
+                            notification_title,
+                            _("Manually removed channel overwrites"),
+                        )
                     await modlog.create_case(
                         self.bot,
                         after.guild,
@@ -614,6 +711,34 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """Mute settings."""
         pass
 
+    @muteset.command()
+    @commands.guild_only()
+    async def senddm(self, ctx: commands.Context, true_or_false: bool):
+        """Set whether mute notifications should be sent to users in DMs."""
+        await self.config.guild(ctx.guild).dm.set(true_or_false)
+        if true_or_false:
+            await ctx.send(_("I will now try to send mute notifications to users DMs."))
+        else:
+            await ctx.send(_("Mute notifications will no longer be sent to users DMs."))
+
+    @muteset.command()
+    @commands.guild_only()
+    async def showmoderator(self, ctx, true_or_false: bool):
+        """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
+        await self.config.guild(ctx.guild).show_mod.set(true_or_false)
+        if true_or_false:
+            await ctx.send(
+                _(
+                    "I will include the name of the moderator who issued the mute when sending a DM to a user."
+                )
+            )
+        else:
+            await ctx.send(
+                _(
+                    "I will not include the name of the moderator who issued the mute when sending a DM to a user."
+                )
+            )
+
     @muteset.command(name="forcerole")
     @commands.is_owner()
     async def force_role_mutes(self, ctx: commands.Context, force_role_mutes: bool):
@@ -638,11 +763,17 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         notification_channel = ctx.guild.get_channel(data["notification_channel"])
         default_time = timedelta(seconds=data["default_time"])
         msg = _(
-            "Mute Role: {role}\nNotification Channel: {channel}\n" "Default Time: {time}"
+            "Mute Role: {role}\n"
+            "Notification Channel: {channel}\n"
+            "Default Time: {time}\n"
+            "Send DM: {dm}\n"
+            "Show moderator: {show_mod}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),
             channel=notification_channel.mention if notification_channel else _("None"),
             time=humanize_timedelta(timedelta=default_time) if default_time else _("None"),
+            dm=data["dm"],
+            show_mod=data["show_mod"],
         )
         await ctx.maybe_send_embed(msg)
 
@@ -1007,6 +1138,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=until,
                         channel=None,
                     )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Server mute"), reason, duration
+                    )
                 else:
                     issue_list.append(success)
         if success_list:
@@ -1151,6 +1285,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         until=until,
                         channel=channel,
                     )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Channel mute"), reason, duration
+                    )
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
                 else:
@@ -1217,6 +1354,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         reason,
                         until=None,
                     )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Server unmute"), reason
+                    )
                 else:
                     issue_list.append(success)
         self._channel_mute_events[guild.id].set()
@@ -1280,6 +1420,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         reason,
                         until=None,
                         channel=channel,
+                    )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Channel unmute"), reason
                     )
                 else:
                     issue_list.append((user, success["reason"]))

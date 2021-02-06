@@ -146,7 +146,7 @@ def italics(text: str, escape_formatting: bool = True) -> str:
 
 
 def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
-    """Get two blocks of text in a borders.
+    """Get two blocks of text inside borders.
 
     Note
     ----

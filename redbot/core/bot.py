@@ -287,22 +287,23 @@ class RedBase(
         Add a custom variable to the dev environment (``[p]debug``, ``[p]eval``, and ``[p]repl`` commands).
         If dev mode is disabled, nothing will happen.
 
-        .. admonition:: Example
+        Example
+        -------
 
-            .. code-block:: python
+        .. code-block:: python
 
-                class MyCog(commands.Cog):
-                    def __init__(self, bot):
-                        self.bot = bot
-                        bot.add_dev_env_value("mycog", lambda ctx: self)
-                        bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
+            class MyCog(commands.Cog):
+                def __init__(self, bot):
+                    self.bot = bot
+                    bot.add_dev_env_value("mycog", lambda ctx: self)
+                    bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
 
-                    def cog_unload(self):
-                        self.bot.remove_dev_env_value("mycog")
-                        self.bot.remove_dev_env_value("mycogdata")
+                def cog_unload(self):
+                    self.bot.remove_dev_env_value("mycog")
+                    self.bot.remove_dev_env_value("mycogdata")
 
-            Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
-            will be included in the environment of dev commands.
+        Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
+        will be included in the environment of dev commands.
 
         Parameters
         ----------
@@ -312,8 +313,8 @@ class RedBase(
             The function returning the value of the variable.
             It must take a `commands.Context` as its sole parameter
 
-        Raise
-        -----
+        Raises
+        ------
         TypeError
             ``value`` argument isn't a callable.
         ValueError
@@ -357,8 +358,8 @@ class RedBase(
         name: str
             The name of the custom variable.
 
-        Raise
-        -----
+        Raises
+        ------
         KeyError
             The custom variable was never set.
         """

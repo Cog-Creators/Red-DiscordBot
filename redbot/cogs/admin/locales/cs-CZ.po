@@ -140,7 +140,7 @@ msgstr "Kanál pro oznámení byl nastaven na {channel.mention}"
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Zruší kanál pro oznámení."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring

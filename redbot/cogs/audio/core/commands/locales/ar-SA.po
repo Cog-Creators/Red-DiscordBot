@@ -23,7 +23,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:41
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "إدارة القائمة البيضاء والقائمة السوداء للكلمات المفتاحية."
 
 #: redbot/cogs/audio/core/commands/audioset.py:46
 #, docstring

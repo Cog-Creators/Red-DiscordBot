@@ -131,7 +131,7 @@ msgstr "Ändere, wie Ankündigungen in diesem Server gesendet werden."
 #: redbot/cogs/admin/admin.py:357
 #, docstring
 msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n        Ändert den Kanal in dem der Bot Ankündigungen senden wird.\\n\\n        Wird kein Kanal angegeben wird es auf den aktuellen Kanal angewendet.\\n        "
+msgstr "\\n        Ändert den Kanal, in den der Bot Ankündigungen senden wird.\\n\\n        Wenn der Kanal freigelassen wird, wird es auf den aktuellen angewendet.\\n        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
