@@ -123,12 +123,14 @@ class Cleanup(commands.Cog):
         return collected
 
     @staticmethod
-    async def get_message_from_reference(channel: discord.TextChannel, reference: discord.MessageReference) -> Optional[discord.Message]:
+    async def get_message_from_reference(
+        channel: discord.TextChannel, reference: discord.MessageReference
+    ) -> Optional[discord.Message]:
         message = None
         resolved = reference.resolved
         if resolved and isinstance(resolved, discord.Message):
             message = resolved
-        elif (message := reference.cached_message):
+        elif (message := reference.cached_message) :
             pass
         else:
             try:
