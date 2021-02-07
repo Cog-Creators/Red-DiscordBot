@@ -257,7 +257,10 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def after(
-        self, ctx: commands.Context, message_id: Optional[RawMessageIds], delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: Optional[RawMessageIds],
+        delete_pinned: bool = False,
     ):
         """Delete all messages after a specified message.
 
@@ -285,7 +288,7 @@ class Cleanup(commands.Cog):
             resolved = ref.resolved
             if resolved and isinstance(resolved, discord.Message):
                 after = resolved
-            elif (after := ref.cached_message):
+            elif (after := ref.cached_message) :
                 pass
             else:
                 try:
@@ -308,7 +311,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        
+
     @cleanup.command()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
