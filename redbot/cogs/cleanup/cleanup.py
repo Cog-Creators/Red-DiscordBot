@@ -122,6 +122,21 @@ class Cleanup(commands.Cog):
 
         return collected
 
+    @staticmethod
+    async def get_message_from_reference(channel: discord.TextChannel, reference: discord.MessageReference) -> Optional[discord.Message]:
+        message = None
+        resolved = reference.resolved
+        if resolved and isinstance(resolved, discord.Message):
+            message = resolved
+        elif (message := reference.cached_message):
+            pass
+        else:
+            try:
+                message = await channel.fetch_message(reference.message_id)
+            except discord.NotFound:
+                pass
+        return message
+
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
         """Base command for deleting messages."""
@@ -283,24 +298,69 @@ class Cleanup(commands.Cog):
             try:
                 after = await channel.fetch_message(message_id)
             except discord.NotFound:
-                return await ctx.send("Message not found.")
+                return await ctx.send(_("Message not found."))
         elif ref := ctx.message.reference:
-            resolved = ref.resolved
-            if resolved and isinstance(resolved, discord.Message):
-                after = resolved
-            elif (after := ref.cached_message) :
-                pass
-            else:
-                try:
-                    after = await channel.fetch_message(ref.message_id)
-                except discord.NotFound:
-                    pass
+            after = await self.get_message_from_reference(channel, ref)
+
         if after is None:
             raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
+
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel.name,
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    @checks.mod_or_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
+    async def before(
+        self,
+        ctx: commands.Context,
+        message_id: RawMessageIds,
+        number: positive_int,
+        delete_pinned: bool = False,
+    ):
+        """Deletes X messages before the specified message.
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+
+        **Arguments:**
+
+        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
+        """
+
+        channel = ctx.channel
+        author = ctx.author
+
+        if message_id:
+            try:
+                before = await channel.fetch_message(message_id)
+            except discord.NotFound:
+                return await ctx.send(_("Message not found."))
+        elif ref := ctx.message.reference:
+            before = await self.get_message_from_reference(channel, ref)
+
+        if before is None:
+            raise commands.BadArgument
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, number=number, before=before, delete_pinned=delete_pinned
+        )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name,
