@@ -337,6 +337,7 @@ class Cleanup(commands.Cog):
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+        Replying to a message will cleanup all messages before it.
 
         **Arguments:**
 
