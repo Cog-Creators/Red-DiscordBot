@@ -328,7 +328,7 @@ class Cleanup(commands.Cog):
     async def before(
         self,
         ctx: commands.Context,
-        message_id: RawMessageIds,
+        message_id: Optional[RawMessageIds],
         number: positive_int,
         delete_pinned: bool = False,
     ):
