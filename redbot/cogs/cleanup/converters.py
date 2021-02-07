@@ -9,7 +9,7 @@ _ = Translator("Cleanup", __file__)
 
 class RawMessageIds(Converter):
     async def convert(self, ctx: Context, argument: str) -> int:
-        if argument.isnumeric() and len(argument) >= 17 and int(argument) < 9223372036854775808:
+        if argument.isnumeric() and len(argument) >= 17 and int(argument) < 2 ** 63:
             return int(argument)
 
         raise BadArgument(_("{} doesn't look like a valid message ID.").format(argument))
