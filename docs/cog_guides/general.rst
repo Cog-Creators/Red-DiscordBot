@@ -32,9 +32,9 @@ Here's a list of all commands available for this cog.
 
 .. _general-command-8:
 
-^^^^^^^^
+^^^^^^^^^
 8 (8ball)
-^^^^^^^^
+^^^^^^^^^
 
 **Syntax**
 
