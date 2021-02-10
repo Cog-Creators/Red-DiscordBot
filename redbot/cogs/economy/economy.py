@@ -278,9 +278,7 @@ class Economy(commands.Cog):
                     user=to.display_name,
                 )
             elif creds.operation == "error":
-                msg = (
-                    "Can not set bank balance to a non-integer value.Try using a valid argument such as...(+1. 1. -1)"
-                )
+                msg = "Can not set bank balance to a non-integer value.Try using a valid argument such as...(+1. 1. -1)"
         except (ValueError, errors.BalanceTooHigh) as e:
             await ctx.send(str(e))
         else:
