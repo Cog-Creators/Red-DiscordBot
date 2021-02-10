@@ -100,7 +100,7 @@ def guild_only_check():
 class SetParser:
     def __init__(self, argument):
         allowed = ("+", "-")
-        if(argument.isdigit()):
+        if argument.isdigit():
             self.sum = int(argument)
         if argument and argument[0] in allowed:
             if self.sum < 0:
@@ -112,8 +112,8 @@ class SetParser:
             self.sum = abs(self.sum)
         elif argument.isdigit():
             self.operation = "set"
-        elif (not argument.isdigit()):
-            self.operation ='error'
+        elif not argument.isdigit():
+            self.operation = "error"
         else:
             raise RuntimeError
 
@@ -269,7 +269,7 @@ class Economy(commands.Cog):
                     currency=currency,
                     user=to.display_name,
                 )
-            elif creds.operation =='set':
+            elif creds.operation == "set":
                 await bank.set_balance(to, creds.sum)
                 msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
                     author=author.display_name,
@@ -277,8 +277,10 @@ class Economy(commands.Cog):
                     currency=currency,
                     user=to.display_name,
                 )
-            elif creds.operation =='error':
-                msg="Please enter a valid argument!"
+            elif creds.operation == "error":
+                msg = (
+                    "Can not set bank balance to a non-integer value.Try giving a valid argument!"
+                )
         except (ValueError, errors.BalanceTooHigh) as e:
             await ctx.send(str(e))
         else:
