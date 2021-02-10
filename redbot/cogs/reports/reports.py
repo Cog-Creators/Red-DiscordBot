@@ -208,7 +208,7 @@ class Reports(commands.Cog):
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
         if await self.bot.embed_requested(channel, author):
-            em = discord.Embed(description=report)
+            em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
