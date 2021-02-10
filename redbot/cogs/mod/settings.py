@@ -438,7 +438,7 @@ class ModSettings(MixinMeta):
     async def trackallnames(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle whether all name changes should be tracked.
-        
+
         Toggling this off also overrides the tracknicknames setting.
         """
         if enabled is None:
