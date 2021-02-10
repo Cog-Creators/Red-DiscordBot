@@ -416,7 +416,11 @@ class ModSettings(MixinMeta):
     @modset.command()
     @commands.guild_only()
     async def tracknicknames(self, ctx: commands.Context, enabled: bool = None):
-        """Toggle whether nickname changes should be tracked."""
+        """
+        Toggle whether nickname changes should be tracked.
+
+        This setting will be overridden if trackallnames is disabled.
+        """
         guild = ctx.guild
         if enabled is None:
             state = await self.config.guild(guild).track_nicknames()
@@ -435,6 +439,7 @@ class ModSettings(MixinMeta):
         await ctx.send(msg)
 
     @modset.command()
+    @commands.is_owner()
     async def trackallnames(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle whether all name changes should be tracked.
