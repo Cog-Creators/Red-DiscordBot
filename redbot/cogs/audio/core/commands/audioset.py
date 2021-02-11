@@ -1323,7 +1323,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         1: Enables Spotify Cache
         2: Enables YouTube Cache
         3: Enables Lavalink Cache
-        5: Enables all Caches
+        4: Enables all Caches
 
         If you wish to disable a specific cache use a negative number.
         """
