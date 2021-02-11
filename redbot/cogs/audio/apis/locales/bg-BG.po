@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -21,7 +21,9 @@ msgid "Failing to get tracks, skipping remaining."
 msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:304
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
+#: redbot/cogs/audio/apis/spotify.py:175
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
 msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:346
@@ -57,18 +59,18 @@ msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:687
-msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
-
-#: redbot/cogs/audio/apis/spotify.py:175
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
+msgid "Nothing found.\n"
+"The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr ""
 
 #: redbot/cogs/audio/apis/youtube.py:62
-msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgid "Your YouTube Data API token is invalid.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr ""
 
 #: redbot/cogs/audio/apis/youtube.py:74
-msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
+msgid "YouTube API error code: 403\n"
+"Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
 msgstr ""
 

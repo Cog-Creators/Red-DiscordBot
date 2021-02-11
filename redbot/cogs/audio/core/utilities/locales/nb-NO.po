@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-03 12:26+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -45,14 +45,14 @@ msgid "Connection to Lavalink has not yet been established."
 msgstr "Tilkoblingen til Lavalink er ikke etablert ennå."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
-msgid "Unable To Play Tracks"
-msgstr "Kan ikke spille spor"
-
-#: redbot/cogs/audio/core/utilities/formatting.py:116
 #: redbot/cogs/audio/core/utilities/player.py:444
 #: redbot/cogs/audio/core/utilities/player.py:528
 msgid "Queue size limit reached."
 msgstr "Grensen for kø er nådd."
+
+#: redbot/cogs/audio/core/utilities/formatting.py:116
+msgid "Unable To Play Tracks"
+msgstr "Kan ikke spille spor"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
 #: redbot/cogs/audio/core/utilities/player.py:604
@@ -104,8 +104,12 @@ msgid "Unknown"
 msgstr "Ukjent"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:382
-msgid " - Name:   <{pname}>\\n - Scope:  < {scope} >\\n - ID:     < {pid} >\\n - Tracks: < {ptracks} >\\n - Author: < {author} >\\n\\n"
-msgstr " - Navn: <{pname}>\\n - Scope: < {scope} >\\n - ID: < {pid} >\\n - Spor: < {ptracks} >\\n - Forfatter: < {author} >\\n\\n"
+msgid " - Name:   <{pname}>\n"
+" - Scope:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Tracks: < {ptracks} >\n"
+" - Author: < {author} >\n\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -163,12 +167,14 @@ msgid "{skip_to_track} Tracks Skipped"
 msgstr "{skip_to_track} spor hoppet over"
 
 #: redbot/cogs/audio/core/utilities/player.py:239
-msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr "Eieren må angi Spotify-klient-ID og Spotify klient-sekretet, før Spotify-URLer og koder kan brukes. \\nSe `{prefix}audioset spotifyapi for instruksjoner."
+msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
+"See `{prefix}audioset spotifyapi` for instructions."
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:249
-msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr "Eieren må angi YouTube API-nøkkelen før Spotify URL-er eller koder kan brukes.\\nSe {prefix}audioset youtubeapi` for instruksjoner."
+msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
+"See `{prefix}audioset youtubeapi` for instructions."
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -225,8 +231,9 @@ msgid "I'm unable to get a track from Lavalink at the moment, try again in a few
 msgstr "Jeg klarer ikke å finne et spor fra Lavalink i øyeblikket, prøv igjen om noen minutter."
 
 #: redbot/cogs/audio/core/utilities/player.py:331
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Spotify API-nøkkelen eller klienten hemmelig har ikke blitt satt ordentlig. \\nBruk `{prefix}audioset spotifyapi` for instruksjoner."
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -241,8 +248,9 @@ msgid "{query} is not an allowed query."
 msgstr "{query} er ikke tillatt spørring."
 
 #: redbot/cogs/audio/core/utilities/player.py:418
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "Lokale spor vil ikke fungere hvis `Lavalink.jar` ikke kan se sporet.\\nDette kan skyldes tillatelser eller at Lavalink.jar kjøres i en annen maskin enn de lokale sporene."
+msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
+"This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
@@ -319,8 +327,12 @@ msgid "{match_count} playlists match {original_input}: Please try to be more spe
 msgstr "{match_count} spillelister samsvarer med {original_input}-: Vennligst prøv å være mer spesifikk, eller bruk spilleliste-ID."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:229
-msgid "{number}.    <{playlist.name}>\\n - Scope:  < {scope} >\\n - ID:     < {playlist.id} >\\n - Tracks: < {tracks} >\\n - Author: < {author} >\\n\\n"
-msgstr "{number}. <{playlist.name}>\\n - Scope: < {scope} >\\n - ID: {playlist.id} >\\n - Sporer: < {tracks} >\\n - Forfatter: < {author} >\\n\\n"
+msgid "{number}.    <{playlist.name}>\n"
+" - Scope:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Tracks: < {tracks} >\n"
+" - Author: < {author} >\n\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
@@ -412,12 +424,12 @@ msgid "User"
 msgstr "Bruker"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
-msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
-msgstr "__For mange sanger i køen, kun viser den første 500__.\\n\\n"
+msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
-msgid "**Currently livestreaming:**\\n"
-msgstr "**Foreløpig direktestrømming:**\\n"
+msgid "**Currently livestreaming:**\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
@@ -429,16 +441,16 @@ msgid "Playing: "
 msgstr "Spiller: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
-msgid "requested by **{user}**\\n"
-msgstr "forespurt av **{user}**\\n"
+msgid "requested by **{user}**\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
 msgstr "Kø for __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
-msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr "Side {page_num}/{total_pages} ＋ {num_tracks} spor, {num_remaining} gjenstående\\n"
+msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"

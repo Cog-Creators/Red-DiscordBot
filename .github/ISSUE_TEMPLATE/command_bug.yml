@@ -7,10 +7,13 @@ issue_body: true
 inputs:
 - type: description
   attributes:
-    value: 'Thank you for taking the time to fill out an issue. This template is meant for any issues related to commands. If you require help with installing Red we ask that you join our Discord server over at https://discord.gg/red'
+    value: |
+      Thank you for taking the time to fill out an issue. This template is meant for any issues related to commands.
+      If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
 - type: input
   attributes:
-    label: "What version are you using?"
+    label: "What Red version are you using?"
+    placeholder: 3.4.5
     required: true
 - type: dropdown
   attributes:
@@ -48,16 +51,19 @@ inputs:
     required: true
 - type: textarea
   attributes:
-    label: "Expected behavior"
-    description: "What did you expect to happen?"
+    label: "What did you expect to happen?"
     required: true
 - type: textarea
   attributes:
     label: "What actually happened?"
+    description: |
+      A clear and concise description of what the bug is.
+      If the issue is visual in nature, consider posting a screenshot.
     required: true
 - type: textarea
   attributes:
     label: "How can we reproduce this error?"
+    description: "List of steps required to reproduce this error."
     value: |
       1.
       2.

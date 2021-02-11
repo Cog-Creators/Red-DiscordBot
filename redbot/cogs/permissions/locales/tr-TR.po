@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-12-24 12:36+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -16,32 +16,32 @@ msgstr ""
 "Language: tr_TR\n"
 
 #: redbot/cogs/permissions/converters.py:65
-msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr "\\\"{arg}\\\" bulunamadı. Botun görebildiği bir sunucunun, kanalın, kullanıcının ya da rolün IDsi, pingi veya adı olmak zorundadır."
+msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:74
-msgid "\\\"{arg}\\\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr "\\\"{arg}\\\" tek bir sunucu, kanal, kullanıcı veya role hitap etmiyor. Lütfen belirtmeye çalıştığınız kişinin/şeyin ID sini kullanın veya bahsetme kullanın."
+msgid "\"{arg}\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:117
-msgid "\\\"{arg}\\\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
-msgstr "\\\"{arg}\\\" bulunamadı. Bu sunucudaki bir kullanıcı ya da rolün IDsi, bahsetmesi veya adı olmak zorundadır."
+msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:126
-msgid "\\\"{arg}\\\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr "\\\"{arg}\\\" tek bir sunucu, kanal, kullanıcı veya role hitap etmiyor. Lütfen belirtmeye çalıştığınız kişinin/şeyin ID sini kullanın veya bahsetme kullanın."
+msgid "\"{arg}\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:156
-msgid "Cog or command \\\"{name}\\\" not found. Please note that this is case sensitive."
-msgstr "\\\"{name}\\\" adlı komut yada cog bulunamadı. Büyük küçük harf duyarlılığına dikkat ediniz."
+msgid "Cog or command \"{name}\" not found. Please note that this is case sensitive."
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:169
-msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\""
-msgstr "\\\"{arg}\\\" geçerli bir kural değil. Geçerli kurallar \\\"allow\\\" ve \\\"deny\\\""
+msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\""
+msgstr ""
 
 #: redbot/cogs/permissions/converters.py:182
-msgid "\\\"{arg}\\\" is not a valid rule. Valid rules are \\\"allow\\\" or \\\"deny\\\", or \\\"clear\\\" to remove the rule"
-msgstr "\\\"{arg}\\\" geçerli bir kural değil. Geçerli kurallar \\\"allow\\\" veya \\\"deny\\\", veya kuralı kaldırmak isterseniz \\\"clear\\\""
+msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\", or \"clear\" to remove the rule"
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:46
 #: redbot/cogs/permissions/permissions.py:61
@@ -84,13 +84,25 @@ msgid "Explain how permissions works."
 msgstr "İzinlerin nasıl çalıştığını açıkla."
 
 #: redbot/cogs/permissions/permissions.py:215
-msgid "This cog extends the default permission model of the bot. By default, many commands are restricted based on what the command can do.\\nThis cog allows you to refine some of those restrictions. You can allow wider or narrower access to most commands using it. You cannot, however, change the restrictions on owner-only commands.\\n\\nWhen additional rules are set using this cog, those rules will be checked prior to checking for the default restrictions of the command.\\nGlobal rules (set by the owner) are checked first, then rules set for servers. If multiple global or server rules apply to the case, the order they are checked is:\\n  1. Rules about a user.\\n  2. Rules about the voice channel a user is in.\\n  3. Rules about the text channel a command was issued in.\\n  4. Rules about a role the user has (The highest role they have with a rule will be used).\\n  5. Rules about the server a user is in (Global rules only).\\n\\nFor more details, please read the [official documentation](https://docs.discord.red/en/stable/cog_permissions.html)."
-msgstr "Bu cog botun varsayılan izin modelini geliştirir. Varsayılan olarak, birçok komut ne yapabildiğine dayalı olarak sınırlıdır.\\nBu cog bu izinlerden bazılarını özelleştirmenizi sağlar. Onu kullanarak bir çok komutun daha dar veya geniş bir kitle tarafından kullanılmasını sağlayabilirsiniz. Fakat sadece sahibin kullanabileceği komutlar üzerinde değişiklik yapamazsınız.\\n\\nBu cog kullanılarak ek kurallar belirlendiğinde, komutun varsayılan kısıtlamaları denetlenmeden önce bu kısıtlamalar denetlenir.\\nÖnce (bot sahibi tarafından ayarlanan) küresel kurallar, sonra da sunucu için ayarlanan kurallar denetlenir. Eğer bir durumda birden çok küresel veya sunucu ayarı etkili ise denetlenme sıraları şu şekildedir:\\n  1. Bir kullanıcı hakkındaki kurallar.\\n  2. Kullanıcının içinde olduğu ses kanalı hakkındaki kurallar.\\n  3. Bir komutun kullanıldığı metin kanalı hakkındaki kurallar.\\n  4. Bir kullanıcının sahip olduğu roller hakkındaki kurallar (hakkında kural ayarlanmış kullanıcının sahip olduğu en üstteki rol kullanılır).\\n  5. Kullanıcının içinde olduğu bir sunucu hakkındaki kurallar.\\n\\nDaha çok detay için lütfen[resmi kılavuzları](https://docs.discord.red/en/stable/cog_permissions.html) okuyunuz."
+msgid "This cog extends the default permission model of the bot. By default, many commands are restricted based on what the command can do.\n"
+"This cog allows you to refine some of those restrictions. You can allow wider or narrower access to most commands using it. You cannot, however, change the restrictions on owner-only commands.\n\n"
+"When additional rules are set using this cog, those rules will be checked prior to checking for the default restrictions of the command.\n"
+"Global rules (set by the owner) are checked first, then rules set for servers. If multiple global or server rules apply to the case, the order they are checked is:\n"
+"  1. Rules about a user.\n"
+"  2. Rules about the voice channel a user is in.\n"
+"  3. Rules about the text channel a command was issued in.\n"
+"  4. Rules about a role the user has (The highest role they have with a rule will be used).\n"
+"  5. Rules about the server a user is in (Global rules only).\n\n"
+"For more details, please read the [official documentation](https://docs.discord.red/en/stable/cog_permissions.html)."
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:241
 #, docstring
-msgid "Check if a user can run a command.\\n\\n        This will take the current context into account, such as the\\n        server and text channel.\\n        "
-msgstr "Bir kullanıcının bir komutu çalıştırabilir oluşunu kontrol et.\\n\\n        Bu sunucu ve metin kanalı gibi\\n        şu anki kapsamı da hesaba katacaktır.\\n        "
+msgid "Check if a user can run a command.\n\n"
+"        This will take the current context into account, such as the\n"
+"        server and text channel.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:256
 msgid "No such command"
@@ -115,18 +127,26 @@ msgid "Sends an example of the yaml layout for permissions"
 msgstr "İzinler için YAML sayfa düzeninin bir örneğini gönderir"
 
 #: redbot/cogs/permissions/permissions.py:282
-msgid "Example YAML for setting rules:\\n"
-msgstr "Ayar kuralları için örnek YAML:\\n"
+msgid "Example YAML for setting rules:\n"
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:304
 #, docstring
-msgid "Set global rules with a YAML file.\\n\\n        **WARNING**: This will override reset *all* global rules\\n        to the rules specified in the uploaded file.\\n\\n        This does not validate the names of commands and cogs before\\n        setting the new rules.\\n        "
-msgstr "YAML dosyası içinde küresel kuralları ayarla.\\n\\n        **DİKKAT**: Bu hükümsüzleştirme *tüm* kürsel kuralları\\n        yüklenen dosyadaki kurallara sıfırlayacaktır.\\n\\n        Bu yeni kuralları ayarlamadan önce komutların ve cogların\\n        isimlerini doğrulamaz.\\n        "
+msgid "Set global rules with a YAML file.\n\n"
+"        **WARNING**: This will override reset *all* global rules\n"
+"        to the rules specified in the uploaded file.\n\n"
+"        This does not validate the names of commands and cogs before\n"
+"        setting the new rules.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:318
 #, docstring
-msgid "Set rules for this server with a YAML file.\\n\\n        **WARNING**: This will override reset *all* rules in this\\n        server to the rules specified in the uploaded file.\\n        "
-msgstr "Bu sunucu için kuralları YAML dosyası ile ayarla.\\n\\n        **DİKKAT**: Bu hükümsüzleştirme bu sunucudaki *tüm* kuralları\\n        yüklenen dosyada belirtilmiş kurallara sıfırlayacaktır.\\n        "
+msgid "Set rules for this server with a YAML file.\n\n"
+"        **WARNING**: This will override reset *all* rules in this\n"
+"        server to the rules specified in the uploaded file.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:328
 #, docstring
@@ -150,18 +170,29 @@ msgstr "Bu sunucudaki tüm kuralların detaylarını barındıran bir YAML dosya
 
 #: redbot/cogs/permissions/permissions.py:358
 #, docstring
-msgid "Update global rules with a YAML file.\\n\\n        This won't touch any rules not specified in the YAML\\n        file.\\n        "
-msgstr "Küresel kuralları bir YAML dosyası ile güncelle.\\n\\n        Bu YAML dosyasında belirtilmemiş her hangi bir kuralı\\n        değiştirmez.\\n        "
+msgid "Update global rules with a YAML file.\n\n"
+"        This won't touch any rules not specified in the YAML\n"
+"        file.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:369
 #, docstring
-msgid "Update rules for this server with a YAML file.\\n\\n        This won't touch any rules not specified in the YAML\\n        file.\\n        "
-msgstr "Bu sunucu için kuralları bir YAML dosyası ile güncelle.\\n\\n        Bu YAML dosyasında belirtilmemiş her hangi bir kuralı\\n        değiştirmez.\\n        "
+msgid "Update rules for this server with a YAML file.\n\n"
+"        This won't touch any rules not specified in the YAML\n"
+"        file.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:385
 #, docstring
-msgid "Add a global rule to a command.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr "Bir komuta küresel bir kural ekle.\\n\\n        `<allow_or_deny>` \\\"allow\\\" veya \\\"deny\\\" olmalıdır.\\n\\n        `<cog_or_command>` kural eklenecek cog veya komuttur.\\n        Büyük küçük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işleyeceği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
+msgid "Add a global rule to a command.\n\n"
+"        `<allow_or_deny>` should be one of \"allow\" or \"deny\".\n\n"
+"        `<cog_or_command>` is the cog or command to add the rule to.\n"
+"        This is case sensitive.\n\n"
+"        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:401
 #: redbot/cogs/permissions/permissions.py:431
@@ -170,13 +201,22 @@ msgstr "Kural başarıyla eklendi."
 
 #: redbot/cogs/permissions/permissions.py:415
 #, docstring
-msgid "Add a rule to a command in this server.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\" or \\\"deny\\\".\\n\\n        `<cog_or_command>` is the cog or command to add the rule to.\\n        This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr "Bu sunucuda bir komuta kural ekle.\\n\\n        `<allow_or_deny>`\\\"allow\\\" veya \\\"deny\\\" olmalıdır.\\n\\n        `<cog_or_command>` kuralın ekleneceği cog veya kural olmalıdır.\\n        Küçük büyük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işleyeceği bir ve birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
+msgid "Add a rule to a command in this server.\n\n"
+"        `<allow_or_deny>` should be one of \"allow\" or \"deny\".\n\n"
+"        `<cog_or_command>` is the cog or command to add the rule to.\n"
+"        This is case sensitive.\n\n"
+"        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:441
 #, docstring
-msgid "Remove a global rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr "Bir komuttan bir küresel kuralı kaldır.\\n\\n        `<cog_or_command>` kuralın kaldırılacağı cog veya\\n        komut olmalıdır, küçük büyük harfe duyarlıdır..\\n\\n        `<who_or_what...>` kuralın işlediği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
+msgid "Remove a global rule from a command.\n\n"
+"        `<cog_or_command>` is the cog or command to remove the rule\n"
+"        from. This is case sensitive.\n\n"
+"        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:450
 #: redbot/cogs/permissions/permissions.py:474
@@ -185,13 +225,24 @@ msgstr "Kural silindi."
 
 #: redbot/cogs/permissions/permissions.py:463
 #, docstring
-msgid "Remove a server rule from a command.\\n\\n        `<cog_or_command>` is the cog or command to remove the rule\\n        from. This is case sensitive.\\n\\n        `<who_or_what...>` is one or more users, channels or roles the rule is for.\\n        "
-msgstr "Bir komuttan bir sunucu kuralını kaldır.\\n\\n        `<cog_or_command>` kuralın kaldırılacağı cog veya\\n        komut olmalıdır, küçük büyük harfe duyarlıdır.\\n\\n        `<who_or_what...>` kuralın işlediği bir veya birden çok kullanıcı, kanal veya rol olmalıdır.\\n        "
+msgid "Remove a server rule from a command.\n\n"
+"        `<cog_or_command>` is the cog or command to remove the rule\n"
+"        from. This is case sensitive.\n\n"
+"        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:482
 #, docstring
-msgid "Set the default rule for a command in this server.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
-msgstr "Bu sunucudaki varsayılan bir kural ayarla.\\n\\n        Bu, başka bir kural bulunmadığında bir komutun varsayılan \\n        olacağı kuraldır.\\n\\n        `<allow_or_deny>` ikisinden biri olmalı \\\"allow\\\", \\\"deny\\\" ya da \\\"clear\\\".\\n        \\\"clear\\\" varsayılan kuralı sıfırlayacaktır.\\n\\n        `<cog_or_command>` varsayılanı ayarlamak için cog veya \\n        komuttur. Büyük / küçük harfe duyarlıdır.\\n        "
+msgid "Set the default rule for a command in this server.\n\n"
+"        This is the rule a command will default to when no other rule\n"
+"        is found.\n\n"
+"        `<allow_or_deny>` should be one of \"allow\", \"deny\" or \"clear\".\n"
+"        \"clear\" will reset the default rule.\n\n"
+"        `<cog_or_command>` is the cog or command to set the default\n"
+"        rule for. This is case sensitive.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:498
 #: redbot/cogs/permissions/permissions.py:519
@@ -200,8 +251,15 @@ msgstr "Varsayılan ayarlandı."
 
 #: redbot/cogs/permissions/permissions.py:505
 #, docstring
-msgid "Set the default global rule for a command.\\n\\n        This is the rule a command will default to when no other rule\\n        is found.\\n\\n        `<allow_or_deny>` should be one of \\\"allow\\\", \\\"deny\\\" or \\\"clear\\\".\\n        \\\"clear\\\" will reset the default rule.\\n\\n        `<cog_or_command>` is the cog or command to set the default\\n        rule for. This is case sensitive.\\n        "
-msgstr "Bir komut için varsayılan küresel kuralı ayarla.\\n\\n        Bu başka bir kural bulunmadığında komutun uyacağı\\n        kuraldır.\\n\\n        `<allow_or_deny>` şunlardan biri olmak zorundadır: \\\"allow\\\", \\\"deny\\\" veya \\\"clear\\\".\\n        \\\"clear\\\" varsayılan ayarı silecektir.\\n\\n        `<cog_or_command>` varsayılan kuralının ayarlanacağı cog veya komuttur.\\n        Küçük büyük harfe duyarlıdır.\\n        "
+msgid "Set the default global rule for a command.\n\n"
+"        This is the rule a command will default to when no other rule\n"
+"        is found.\n\n"
+"        `<allow_or_deny>` should be one of \"allow\", \"deny\" or \"clear\".\n"
+"        \"clear\" will reset the default rule.\n\n"
+"        `<cog_or_command>` is the cog or command to set the default\n"
+"        rule for. This is case sensitive.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:524
 #, docstring

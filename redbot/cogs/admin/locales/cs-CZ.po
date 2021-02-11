@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -74,13 +74,21 @@ msgstr "Úspěšně jsem odstranil {role.name} od {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
-msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Přidá roli uživateli.\\n\\n        Pokud role obsahuje mezery, použijte dvojí uvozovky.\\n        Ponecháte-li uživatel prázdný, výchozí hodnota autorovi příkazu.\\n        "
+msgid "\n"
+"        Add a role to a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
-msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Odebrat roli uživateli.\\n\\n        Pokud role obsahuje mezery, použijte dvojí uvozovky.\\n        Ponecháte-li uživatel prázdný, výchozí hodnota autorovi příkazu.\\n        "
+msgid "\n"
+"        Remove a role from a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
@@ -89,8 +97,16 @@ msgstr "Upraví nastavení role."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
-msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "\\n       Upravit barvu role.\\n\\n        Pokud role obsahuje mezery, použij dvojité uvozovky.\\n        Barva musí být v hexadecimálním formátu.\\n        [Výběr barev online](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Příklady:\\n            `[p]editrole colour \\\"Spravce\\\" #ff0000`\\n            `[p]editrole colour Spravce #ff9900`\\n        "
+msgid "\n"
+"        Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
@@ -98,8 +114,13 @@ msgstr "Hotovo."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
-msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "\\n        Upraví název role\\n\\n        Použijte dvojité uvozovky, pokud role nebo název obsahuje mezery.\\n\\n        Příklady:\\n            `[p]editrole name \\\"Spravce\\\" Admin`\\n        "
+msgid "\n"
+"        Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Example:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
@@ -130,8 +151,11 @@ msgstr "Změňte způsob odesílání oznámení v tomto klanu."
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
-msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n Změnit kanál, kam bot bude posílat oznámení.\\n\\n Pokud je kanál prázdný, nastaví aktuální kanál.\\n        "
+msgid "\n"
+"        Change the channel where the bot will send announcements.\n\n"
+"        If channel is left blank it defaults to the current channel.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -140,7 +164,7 @@ msgstr "Kanál pro oznámení byl nastaven na {channel.mention}"
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Zruší kanál pro oznámení."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
@@ -149,22 +173,33 @@ msgstr "Aplikovat self-role."
 
 #: redbot/cogs/admin/admin.py:401
 #, docstring
-msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Přidá vám self-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgid "\n"
+"        Add a selfrole to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:412
 #, docstring
-msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Odstraní vámself-roli.\\n\\n        Administrátoři serveru musí mít nastavenou roli podle nastaveného uživatele.\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgid "\n"
+"        Remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:423
 #, docstring
-msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "\\n        Seznam všech dostupných self-rolí.\\n        "
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:433
-msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Dostupné vlastní role:\\n{selfroles}"
+msgid "Available Selfroles:\n"
+"{selfroles}"
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:439
 #, docstring
@@ -173,8 +208,11 @@ msgstr "Spravovat self-role."
 
 #: redbot/cogs/admin/admin.py:444
 #, docstring
-msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Přidá roli do seznamu dostupných self-rolí.\\n\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgid "\n"
+"        Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:451
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -190,8 +228,11 @@ msgstr "Tato role je již self-rolí."
 
 #: redbot/cogs/admin/admin.py:466
 #, docstring
-msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Odstraní roli ze seznamu dostupných self-rolí.\\n\\n        POZNÁMKA: Role je citlivá na malá a velká písmena!\\n        "
+msgid "\n"
+"        Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:473
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."

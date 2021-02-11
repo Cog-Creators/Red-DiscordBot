@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -20,8 +20,9 @@ msgid "You have attempted to run Audio's Lavalink server on an unsupported archi
 msgstr "해당 아키텍쳐에서 오디오의 라바링크 서버는 지원되지 않기 때문에 설정 관련 명령만 이하실 수 있어요"
 
 #: redbot/cogs/audio/core/events/dpy.py:70
-msgid "I'm missing permissions in this server, Please address this as soon as possible.\\n\\nExpected Permissions:\\n"
-msgstr "저에게 이 서버에 대한 몇가지 권한이 누락된 것 같아요, 최대한 빠르게 해당 권한을 부여해 주세요. \\n\\n누락되었다고 예상되어지는 권한입니다.:\\n"
+msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
+"Expected Permissions:\n"
+msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -119,8 +120,9 @@ msgid "Track Stuck"
 msgstr "트랙 걸림"
 
 #: redbot/cogs/audio/core/events/lavalink.py:227
-msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
-msgstr "예상치 못한 에러로 노래 재생이 중지되었습니다.\\n{error}"
+msgid "Playback of the song has stopped due to an unexcepted error.\n"
+"{error}"
+msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"
