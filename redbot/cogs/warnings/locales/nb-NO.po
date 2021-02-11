@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-24 12:25+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -24,16 +24,24 @@ msgid "That command requires bot owner. I can't allow you to use that for an act
 msgstr "Den kommandoen krever bot eier. Jeg kan ikke tillate deg å bruke den for en handling"
 
 #: redbot/cogs/warnings/helpers.py:86
-msgid "Enter the command to be run when the user **exceeds the points for this action to occur.**\\n**If you do not wish to have a command run, enter** `none`.\\n\\nEnter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\\n\\nWARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\\n\\nPlease wait 15 seconds before entering your response."
-msgstr "Skriv inn kommandoen som skal kjøres når brukeren **overstiger punktene for denne handlingen å forekomme.**\\n**Hvis du ikke ønsker å kjøre en kommando, **`none`.\\n\\nSkriv det inn akkurat slik du ville hvis du faktisk prøvde å kjøre kommandoen unntatt ikke sette en prefiks og bruk `{user}` i stedet for noen bruker/medlem argumenter\\n\\nADVARSEL: Kommandoen som er angitt vil bli kjørt uten hensyn til kontroller eller kjølevæsker. Kommandoer som krever bot eier er ikke tillatt av sikkerhetsgrunner.\\n\\nVennligst vent 15 sekunder før du skriver inn svaret ditt."
+msgid "Enter the command to be run when the user **exceeds the points for this action to occur.**\n"
+"**If you do not wish to have a command run, enter** `none`.\n\n"
+"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
+"WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
+"Please wait 15 seconds before entering your response."
+msgstr ""
 
 #: redbot/cogs/warnings/helpers.py:99 redbot/cogs/warnings/helpers.py:143
 msgid "You may enter your response now."
 msgstr "Du kan skrive inn svaret nå."
 
 #: redbot/cogs/warnings/helpers.py:128
-msgid "Enter the command to be run when the user **returns to a value below the points for this action to occur.** Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value.\\n**If you do not wish to have a command run on dropping points, enter** `none`.\\n\\nEnter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\\n\\nWARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\\n\\nPlease wait 15 seconds before entering your response."
-msgstr "Skriv inn kommandoen som skal kjøres når brukeren **overstiger punktene for denne handlingen å forekomme.**\\n**Hvis du ikke ønsker å kjøre en kommando, **`none`.\\n\\nSkriv det inn akkurat slik du ville hvis du faktisk prøvde å kjøre kommandoen unntatt ikke sette en prefiks og bruk `{user}` i stedet for noen bruker/medlem argumenter\\n\\nADVARSEL: Kommandoen som er angitt vil bli kjørt uten hensyn til kontroller eller kjølevæsker. Kommandoer som krever bot eier er ikke tillatt av sikkerhetsgrunner.\\n\\nVennligst vent 15 sekunder før du skriver inn svaret ditt."
+msgid "Enter the command to be run when the user **returns to a value below the points for this action to occur.** Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value.\n"
+"**If you do not wish to have a command run on dropping points, enter** `none`.\n\n"
+"Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
+"WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
+"Please wait 15 seconds before entering your response."
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:30
 #, docstring
@@ -86,8 +94,10 @@ msgstr "Jeg kommer ikke til å oppgi navnet på moderator som ga advarsel ved se
 
 #: redbot/cogs/warnings/warnings.py:158
 #, docstring
-msgid "Set the channel where warnings should be sent to.\\n\\n        Leave empty to use the channel `[p]warn` command was called in.\\n        "
-msgstr "Angi kanalen hvor advarsler skal sendes til.\\n\\n        La stå tom for å bruke kanalen `[p]warn` kommandoen ble kalt inn.\\n        "
+msgid "Set the channel where warnings should be sent to.\n\n"
+"        Leave empty to use the channel `[p]warn` command was called in.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:166
 msgid "The warn channel has been set to {channel}."
@@ -99,8 +109,10 @@ msgstr "Advarsler sendes nå i kanal kommandoen ble brukt i."
 
 #: redbot/cogs/warnings/warnings.py:175
 #, docstring
-msgid "\\n        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\\n        "
-msgstr "\\n        Angi om advarsler skal sendes til en kanal satt med `[p]warningset warnchannel`.\\n        "
+msgid "\n"
+"        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:183
 msgid "Warnings will now be sent to {channel}."
@@ -112,13 +124,22 @@ msgstr "Veksle kanal har blitt deaktivert."
 
 #: redbot/cogs/warnings/warnings.py:194
 #, docstring
-msgid "Manage automated actions for Warnings.\\n\\n        Actions are essentially command macros. Any command can be run\\n        when the action is initially triggered, and/or when the action\\n        is lifted.\\n\\n        Actions must be given a name and a points threshold. When a\\n        user is warned enough so that their points go over this\\n        threshold, the action will be executed.\\n        "
-msgstr "Administrer automatiserte handlinger for advarsler.\\n\\n        Handlinger er i det vesentlige kommandomakroer. Enhver kommando kan kjøres\\n        når handlingen først aktiveres, og/eller når handlingen\\n        er løftet.\\n\\n        Handlinger må gis et navn og en punktterskel. Når en\\n        bruker varsles nok slik at deres poeng går over denne\\n        terskelen handlingen vil bli utført.\\n        "
+msgid "Manage automated actions for Warnings.\n\n"
+"        Actions are essentially command macros. Any command can be run\n"
+"        when the action is initially triggered, and/or when the action\n"
+"        is lifted.\n\n"
+"        Actions must be given a name and a points threshold. When a\n"
+"        user is warned enough so that their points go over this\n"
+"        threshold, the action will be executed.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:209
 #, docstring
-msgid "Create an automated action.\\n\\n        Duplicate action names are not allowed.\\n        "
-msgstr "Opprette en automatisk handling.\\n\\n        Dupliserte handlingsnavn er ikke tillatt.\\n        "
+msgid "Create an automated action.\n\n"
+"        Duplicate action names are not allowed.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:230
 msgid "Duplicate action name found!"
@@ -139,8 +160,11 @@ msgstr "Ingen handling med navn {name} eksisterer!"
 
 #: redbot/cogs/warnings/warnings.py:261
 #, docstring
-msgid "Manage warning reasons.\\n\\n        Reasons must be given a name, description and points value. The\\n        name of the reason must be given when a user is warned.\\n        "
-msgstr "Behandle advarselsgrunner.\\n\\n        Begrunnelser må gis et navn, en beskrivelse og punktverdi.\\n        navn på grunnen må oppgis når en bruker blir advart.\\n        "
+msgid "Manage warning reasons.\n\n"
+"        Reasons must be given a name, description and points value. The\n"
+"        name of the reason must be given when a user is warned.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:273
 #, docstring
@@ -179,8 +203,10 @@ msgid "Points"
 msgstr "Poeng"
 
 #: redbot/cogs/warnings/warnings.py:320
-msgid "Name: {reason_name}\\nPoints: {points}\\nDescription: {description}"
-msgstr "Navn: {reason_name}\\nPoeng: {points}\\nBeskrivelse: {description}"
+msgid "Name: {reason_name}\n"
+"Points: {points}\n"
+"Description: {description}"
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:327
 msgid "There are no reasons configured!"
@@ -204,8 +230,11 @@ msgid "Drop command"
 msgstr "Slipp kommando"
 
 #: redbot/cogs/warnings/warnings.py:351
-msgid "Name: {action_name}\\nPoints: {points}\\nExceed command: {exceed_command}\\nDrop command: {drop_command}"
-msgstr "Navn: {action_name}\\nPoeng: {points}\\nOppnådd kommando: {exceed_command}\\nSlippkommando: {drop_command}"
+msgid "Name: {action_name}\n"
+"Points: {points}\n"
+"Exceed command: {exceed_command}\n"
+"Drop command: {drop_command}"
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:359
 msgid "There are no actions configured!"
@@ -213,8 +242,13 @@ msgstr "Det er ingen handlinger konfigurert!"
 
 #: redbot/cogs/warnings/warnings.py:372
 #, docstring
-msgid "Warn the user for the specified reason.\\n\\n        `<points>` number of points the warning should be for. If no number is supplied\\n        1 point will be given. Pre-set warnings disregard this.\\n        `<reason>` can be a registered reason if it exists or a custom one\\n        is created by default.\\n        "
-msgstr "Advar brukeren av en gitt grunn.\\n\\n        `<points>` antall poeng advarselen skal være for. Hvis ingen nummer er angitt med\\n        = 1 punkter. Forhåndsførte advarsler ser bort fra dette.\\n        `<reason>` kan være en registrert årsak hvis den eksisterer, eller en egendefinert en\\n        er opprettet som standard.\\n        "
+msgid "Warn the user for the specified reason.\n\n"
+"        `<points>` number of points the warning should be for. If no number is supplied\n"
+"        1 point will be given. Pre-set warnings disregard this.\n"
+"        `<reason>` can be a registered reason if it exists or a custom one\n"
+"        is created by default.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn yourself."
@@ -261,12 +295,14 @@ msgid "{user} has been warned."
 msgstr "{user} har blitt advart."
 
 #: redbot/cogs/warnings/warnings.py:496
-msgid "{reason}\\n\\nUse `{prefix}unwarn {user} {message}` to remove this warning."
-msgstr "{reason}\\n\\nBruk `{prefix}unwarn {user} {message}` for å fjerne denne advarselen."
+msgid "{reason}\n\n"
+"Use `{prefix}unwarn {user} {message}` to remove this warning."
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:499
-msgid "{description}\\nPoints: {points}"
-msgstr "{description}\\nPoeng: {points}"
+msgid "{description}\n"
+"Points: {points}"
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:522
 #, docstring
@@ -285,9 +321,9 @@ msgstr "Slettet moderator"
 msgid "Unknown Moderator ({})"
 msgstr "Ukjent moderator ({})"
 
-#: redbot/cogs/warnings/warnings.py:544
-msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
-msgstr "{num_points} -poeng advarsel {reason_name} utstedt av {user} for {description}\\n"
+#: redbot/cogs/warnings/warnings.py:544 redbot/cogs/warnings/warnings.py:578
+msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
+msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:555 redbot/cogs/warnings/warnings.py:589
 msgid "Warnings for {user}"
@@ -301,10 +337,6 @@ msgstr "Vis advarsler for deg selv."
 #: redbot/cogs/warnings/warnings.py:569
 msgid "You have no warnings!"
 msgstr "Du har ingen advarsler!"
-
-#: redbot/cogs/warnings/warnings.py:578
-msgid "{num_points} point warning {reason_name} issued by {user} for {description}\\n"
-msgstr "{num_points} -poeng advarsel {reason_name} utstedt av {user} for {description}\\n"
 
 #: redbot/cogs/warnings/warnings.py:603
 #, docstring

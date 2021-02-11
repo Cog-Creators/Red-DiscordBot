@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -74,13 +74,21 @@ msgstr "Saya berhasil menambahkan {role.name} ke {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
-msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n Tambahkan role ke user. \\n \\n Gunakan tanda kutip ganda jika role berisi spasi. \\n Jika pengguna dibiarkan kosong, defaultnya adalah pembuat perintah. \\n        "
+msgid "\n"
+"        Add a role to a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
-msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\ n Tambahkanrole ke user. \\ n \\ n Gunakan tanda kutip ganda jika role berisi spasi. \\ n Jika pengguna dibiarkan kosong, defaultnya adalah pembuat perintah. \\ n        "
+msgid "\n"
+"        Remove a role from a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
@@ -89,8 +97,16 @@ msgstr "Edit pengaturan role."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
-msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "\\n        Ubah warna role.\\n\\n        Gunakan tanda kutip ganda jika peran tersebut berisi spasi.\\n        Warna harus dalam format heksadesimal.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Contoh:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
+msgid "\n"
+"        Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
@@ -98,8 +114,13 @@ msgstr "Selesai."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
-msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "\\n       Ubah nama role.\\n\\n        Gunakan tanda kutip ganda jika role atau namanya mengandung spasi.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
+msgid "\n"
+"        Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Example:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
@@ -130,8 +151,11 @@ msgstr "Ubah cara pengumuman dikirim di guild ini."
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
-msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n        Ubah Channel tempat bot akan mengirim pengumuman.\\n\\n       Jika channel dibiarkan kosong maka default nya adalah channel saat ini.\\n        "
+msgid "\n"
+"        Change the channel where the bot will send announcements.\n\n"
+"        If channel is left blank it defaults to the current channel.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -149,22 +173,33 @@ msgstr "Terapkan selfroles."
 
 #: redbot/cogs/admin/admin.py:401
 #, docstring
-msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Tambahkan role diri sendiri.\\n\\n        Admin server harus melakukan konfigurasi role sebagai dapat diatur pengguna.\\n        NOTE: Role peka huruf besar / kecil!\\n        "
+msgid "\n"
+"        Add a selfrole to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:412
 #, docstring
-msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Hapus role diri sendiri.\\n\\n        Admin server harus melakukan konfigurasi role sebagai dapat diatur pengguna.\\n        NOTE: Role peka huruf besar / kecil!\\n        "
+msgid "\n"
+"        Remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:423
 #, docstring
-msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "\\n        Daftar semua role diri yang tersedia.\\n        "
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:433
-msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Role diri yang tersedia:\\n{selfroles}"
+msgid "Available Selfroles:\n"
+"{selfroles}"
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:439
 #, docstring
@@ -173,8 +208,11 @@ msgstr "Kelola Roles diri sendiri."
 
 #: redbot/cogs/admin/admin.py:444
 #, docstring
-msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Tambahkan role ke daftar role diri sendiri yang tersedia.\\n\\n        NOTE: Peran peka huruf besar / kecil!\\n        "
+msgid "\n"
+"        Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:451
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -190,8 +228,11 @@ msgstr "Role itu sudah menjadi role diri sendiri."
 
 #: redbot/cogs/admin/admin.py:466
 #, docstring
-msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Tambahkan role ke daftar role diri sendiri yang tersedia.\\n\\n        NOTE: Role peka huruf besar / kecil!\\n        "
+msgid "\n"
+"        Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/admin/admin.py:473
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."

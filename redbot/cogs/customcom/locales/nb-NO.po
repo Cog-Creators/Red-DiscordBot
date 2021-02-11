@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -16,8 +16,9 @@ msgstr ""
 "Language: nb_NO\n"
 
 #: redbot/cogs/customcom/customcom.py:78
-msgid "Welcome to the interactive random {cc} maker!\\nEvery message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr "Velkommen til interaktiv tilfeldig {cc} produserer!\\nHver melding du sender vil bli lagt til som et av de tilfeldige svarene du velger fra når {cc} utløses. For å avslutte denne interaktive menyen, skriv `{quit}`"
+msgid "Welcome to the interactive random {cc} maker!\n"
+"Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:89
 msgid "Add a random response:"
@@ -42,8 +43,12 @@ msgstr "Hva svar du vil ha?"
 
 #: redbot/cogs/customcom/customcom.py:217
 #, docstring
-msgid "This cog contains commands for creating and managing custom commands that display text.\\n\\n    These are useful for storing information members might need, like FAQ answers or invite links.\\n    Custom commands can be used by anyone by default, so be careful with pings.\\n    Commands can only be lowercase, and will not respond to any uppercase letters.\\n    "
-msgstr "Denne cog inneholder kommandoer for å opprette og administrere egendefinerte kommandoer som viser tekst.\\n\\n    Dette er nyttig for å lagre informasjons medlemmer kan trenge, som FAQ svar eller invitasjonslenker.\\n    Egendefinerte kommandoer kan brukes av alle som standard, så vær forsiktig med ping.\\n    Kommandoer kan bare være små og vil ikke svare på store bokstaver.\\n    "
+msgid "This cog contains commands for creating and managing custom commands that display text.\n\n"
+"    These are useful for storing information members might need, like FAQ answers or invite links.\n"
+"    Custom commands can be used by anyone by default, so be careful with pings.\n"
+"    Commands can only be lowercase, and will not respond to any uppercase letters.\n"
+"    "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:247
 #, docstring
@@ -52,21 +57,30 @@ msgstr "Grunnkommando for egendefinerte Kommandoer behandling."
 
 #: redbot/cogs/customcom/customcom.py:252
 #, docstring
-msgid "Get the raw response of a custom command, to get the proper markdown.\\n\\n        This is helpful for copy and pasting.\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to get the raw response of."
-msgstr "Få den rå responsen på en egendefinert kommando, for å få riktig merking.\\n\\n        Dette er nyttig for kopiering og innliming.\\n\\n        **Argumenter:**\\n\\n        - `<command>` Den egendefinerte kommandoen for å få rå svaret på."
+msgid "Get the raw response of a custom command, to get the proper markdown.\n\n"
+"        This is helpful for copy and pasting.\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The custom command to get the raw response of."
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:277
 msgid "Response #{num}/{total}"
 msgstr "Svar #{num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:287
-msgid "Response #{num}/{total}:\\n{raw}"
-msgstr "Svar #{num}/{total}:\\n{raw}"
+msgid "Response #{num}/{total}:\n"
+"{raw}"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:298
 #, docstring
-msgid "\\n        Searches through custom commands, according to the query.\\n\\n        Uses fuzzywuzzy searching to find close matches.\\n\\n        **Arguments:**\\n\\n        - `<query>` The query to search for. Can be multiple words.\\n        "
-msgstr "\\n        Søker gjennom tilpassede kommandoer, etter spørringen.\\n\\n        Bruker fuzzywuzzy som søker for å finne nærliggende treff.\\n\\n        **Argumenter:**\\n\\n        - `<query>` Spørringen å søke etter. Kan være flere ord.\\n        "
+msgid "\n"
+"        Searches through custom commands, according to the query.\n\n"
+"        Uses fuzzywuzzy searching to find close matches.\n\n"
+"        **Arguments:**\n\n"
+"        - `<query>` The query to search for. Can be multiple words.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:318
 msgid "No close matches were found."
@@ -82,13 +96,21 @@ msgstr "Følgende treff har blitt funnet:"
 
 #: redbot/cogs/customcom/customcom.py:333
 #, docstring
-msgid "Create custom commands.\\n\\n        If a type is not specified, a simple CC will be created.\\n        CCs can be enhanced with arguments, see the guide\\n        [here](https://docs.discord.red/en/stable/cog_customcom.html).\\n        "
-msgstr "Opprett tilpassede kommandoer.\\n\\n        Hvis en type ikke er spesifisert, vil en enkel CC opprettes.\\n        CCer kan forbedres med argumenter, se guiden\\n        [here](https://docs.discord.red/en/stable/cog_customcom.html).\\n        "
+msgid "Create custom commands.\n\n"
+"        If a type is not specified, a simple CC will be created.\n"
+"        CCs can be enhanced with arguments, see the guide\n"
+"        [here](https://docs.discord.red/en/stable/cog_customcom.html).\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:344
 #, docstring
-msgid "Create a CC where it will randomly choose a response!\\n\\n        Note: This command is interactive.\\n\\n        **Arguments:**\\n\\n        - `<command>` The command executed to return the text. Cast to lowercase.\\n        "
-msgstr "Lag en CC hvor den vil tilfeldig velge et svar!\\n\\n        Merk: Denne kommandoen er interaktiv.\\n\\n        **Argumenter:**\\n\\n        - `<command>` Kommandoen henrettet for å returnere teksten. Stol på små saker\\n        "
+msgid "Create a CC where it will randomly choose a response!\n\n"
+"        Note: This command is interactive.\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The command executed to return the text. Cast to lowercase.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:354
 #: redbot/cogs/customcom/customcom.py:388
@@ -116,13 +138,31 @@ msgstr "Denne kommandoen finnes allerede. Bruk `{command} for å redigere den."
 
 #: redbot/cogs/customcom/customcom.py:376
 #, docstring
-msgid "Add a simple custom command.\\n\\n        Example:\\n            - `[p]customcom create simple yourcommand Text you want`\\n\\n        **Arguments:**\\n\\n        - `<command>` The command executed to return the text. Cast to lowercase.\\n        - `<text>` The text to return when executing the command. See guide for enhanced usage.\\n        "
-msgstr "Legg til en enkel egendefinert kommando.\\n\\n        Eksempel:\\n            - `[p]customcom create simple yourcommand Text you want`\\n\\n        **Arguments:**\\n\\n        - `<command>` kommandoen kjøres for å returnere teksten. Overfall til lavt.\\n        - `<text>` Teksten som skal returnere når du utfører kommandoen. Se en guide for økt bruk.\\n        "
+msgid "Add a simple custom command.\n\n"
+"        Example:\n"
+"            - `[p]customcom create simple yourcommand Text you want`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The command executed to return the text. Cast to lowercase.\n"
+"        - `<text>` The text to return when executing the command. See guide for enhanced usage.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:410
 #, docstring
-msgid "Set, edit, or view the cooldown for a custom command.\\n\\n        You may set cooldowns per member, channel, or guild. Multiple\\n        cooldowns may be set. All cooldowns must be cooled to call the\\n        custom command.\\n\\n        Examples:\\n            - `[p]customcom cooldown pingrole`\\n            - `[p]customcom cooldown yourcommand 30`\\n            - `[p]cc cooldown mycommand 30 guild`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to check or set the cooldown.\\n        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\\n        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.\\n        "
-msgstr "Legg til, endre eller se nedkjølingen for en egendefinert kommando.\\n\\n        Du kan sette nedkjølere per medlem, kanal eller guild. Flere\\n        kjølingsaggregater kan settes. Alle cooldowns må kjøles for å ringe\\n        egendefinert kommando.\\n\\n        Eksempler:\\n            - `[p]customcom cooldown pingrole`\\n            - `[p]customcom cooldown yourcommand 30`\\n            - `[p]cc cooldown mycommand 30 guild`\\n\\n        **Arguments:**\\n\\n        - `<command>` Den egendefinerte kommandoen for å sjekke eller angi den cooldown.\\n        - `<cooldown>` Antall sekunder å vente før kommandoen låses opp igjen. Hvis utelatt, returneres nåværende innstillinger for cooldown i stedet.\\n        - `<per>` Gruppen for å bruke cooldown på. Standard for per medlem. Gyldige valg er server, guild, bruker og medlem\\n        "
+msgid "Set, edit, or view the cooldown for a custom command.\n\n"
+"        You may set cooldowns per member, channel, or guild. Multiple\n"
+"        cooldowns may be set. All cooldowns must be cooled to call the\n"
+"        custom command.\n\n"
+"        Examples:\n"
+"            - `[p]customcom cooldown pingrole`\n"
+"            - `[p]customcom cooldown yourcommand 30`\n"
+"            - `[p]cc cooldown mycommand 30 guild`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The custom command to check or set the cooldown.\n"
+"        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\n"
+"        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:431
 #: redbot/cogs/customcom/customcom.py:472
@@ -152,8 +192,13 @@ msgstr "Den kommandoen finnes ikke. Bruk `{command} for å legge den til."
 
 #: redbot/cogs/customcom/customcom.py:459
 #, docstring
-msgid "Delete a custom command.\\n\\n        Example:\\n            - `[p]customcom delete yourcommand`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to delete.\\n        "
-msgstr "Slett en egendefinert kommando.\\n\\n        Eksempel:\\n            - `[p]customcom delete yourcommand`\\n\\n        **Arguments:**\\n\\n        - `<command>` Den egendefinerte kommandoen for å slette.\\n        "
+msgid "Delete a custom command.\n\n"
+"        Example:\n"
+"            - `[p]customcom delete yourcommand`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The custom command to delete.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:470
 msgid "Custom command successfully deleted."
@@ -161,8 +206,14 @@ msgstr "Egendefinert kommando slettet."
 
 #: redbot/cogs/customcom/customcom.py:477
 #, docstring
-msgid "Edit a custom command.\\n\\n        Example:\\n            - `[p]customcom edit yourcommand Text you want`\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to edit.\\n        - `<text>` The new text to return when executing the command.\\n        "
-msgstr "Rediger en egendefinert kommando.\\n\\n        Eksempel:\\n            - `[p]customcom edit yourcommand`\\n\\n        **Arguments:**\\n\\n        - `<command>` Den egendefinerte kommandoen for å redigere.\\n  - `<text>` Den nye teksten som skal returneres når du utfører kommandoen\\n        "
+msgid "Edit a custom command.\n\n"
+"        Example:\n"
+"            - `[p]customcom edit yourcommand Text you want`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The custom command to edit.\n"
+"        - `<text>` The new text to return when executing the command.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:489
 msgid "Custom command successfully edited."
@@ -170,8 +221,11 @@ msgstr "Egendefinert kommando redigert."
 
 #: redbot/cogs/customcom/customcom.py:504
 #, docstring
-msgid "List all available custom commands.\\n\\n        The list displays a preview of each command's response, with\\n        markdown escaped and newlines replaced with spaces.\\n        "
-msgstr "List opp alle tilgjengelige tilpassede kommandoer.\\n\\n        Listen viser en forhåndsvisning av hver kommandos svar, Med\\n        \"påslag\" rømte ut, og nye linjer byttet ut med mellomrom.\\n        "
+msgid "List all available custom commands.\n\n"
+"        The list displays a preview of each command's response, with\n"
+"        markdown escaped and newlines replaced with spaces.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:513
 msgid "There are no custom commands in this server. Use `{command}` to start adding some."
@@ -187,8 +241,11 @@ msgstr "Side {num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:543
 #, docstring
-msgid "Shows a custom command's responses and its settings.\\n\\n        **Arguments:**\\n\\n        - `<command>` The custom command to show.\\n        "
-msgstr "Viser en egendefinert kommandos svar og dens innstillinger.\\n\\n        **Argumenter:**\\n\\n        -<command>` Den egendefinerte kommandoen å vise.\\n        "
+msgid "Shows a custom command's responses and its settings.\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` The custom command to show.\n"
+"        "
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:553
 msgid "I could not not find that custom command."
@@ -207,20 +264,23 @@ msgid "Normal"
 msgstr "Vanlig"
 
 #: redbot/cogs/customcom/customcom.py:572
-msgid "Command: {command_name}\\nAuthor: {author}\\nCreated: {created_at}\\nType: {type}\\n"
-msgstr "Kommando: {command_name}\\nForfatter: {author}\\nOpprettet: {created_at}\\nType: {type}\\n"
+msgid "Command: {command_name}\n"
+"Author: {author}\n"
+"Created: {created_at}\n"
+"Type: {type}\n"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:584
-msgid "Cooldowns:\\n"
-msgstr "Nedkjølinger:\\n"
+msgid "Cooldowns:\n"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:586
-msgid "{num} seconds per {period}\\n"
-msgstr "{num} sekunder per {period}\\n"
+msgid "{num} seconds per {period}\n"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:589
-msgid "Responses:\\n"
-msgstr "Respons:\\n"
+msgid "Responses:\n"
+msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:687
 msgid "Too many arguments!"
@@ -231,6 +291,6 @@ msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Argumenter må være sekvensielle. Manglende argumenter: "
 
 #: redbot/cogs/customcom/customcom.py:717
-msgid "Conflicting colon notation for argument {index}: \\\"{name1}\\\" and \\\"{name2}\\\"."
-msgstr "Conflicting colon notation for argument {index}: \\\"{name1}\\\" og \\\"{name2}\\\"."
+msgid "Conflicting colon notation for argument {index}: \"{name1}\" and \"{name2}\"."
+msgstr ""
 
