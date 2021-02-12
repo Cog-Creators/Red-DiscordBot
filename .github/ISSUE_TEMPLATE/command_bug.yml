@@ -20,7 +20,6 @@ body:
   attributes:
     label: "Cog name"
     description: "From which cog does the command come from?"
-    required: true
     options:
       - Admin
       - Alias
