@@ -911,10 +911,12 @@ class Economy(commands.Cog):
 
         Example:
             - `[p]economyset slottime 10`
+            - `[p]economyset slottime 10m`
 
         **Arguments**
 
         - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+        - It is also a timedeltaconverter so `1d` is converted to 1 day
         """
         seconds = seconds.total_seconds()
         guild = ctx.guild
@@ -930,10 +932,12 @@ class Economy(commands.Cog):
 
         Example:
             - `[p]economyset paydaytime 86400`
+            - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
         - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.
+        - It is also a timedeltaconverter so `1d` is converted to 1 day
         """
         seconds = seconds.total_seconds()
         guild = ctx.guild
