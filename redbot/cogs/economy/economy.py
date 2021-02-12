@@ -11,6 +11,7 @@ import discord
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
+from redbot.core.commands import BadArgument, Converter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
@@ -113,6 +114,26 @@ class SetParser:
             self.operation = "set"
         else:
             raise RuntimeError
+            
+class TimeConverter(Converter):
+    async def convert(self, ctx: commands.Context, time: str) -> int:
+        conversions = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800, "mo": 604800*30 }
+        
+        if str(time[-1]) not in conversions:
+            if not str(time).isdigit():
+                raise BadArgument(f"{time} was not able to be converted to a time.")
+            return int(time) 
+        
+        multiplier = conversions[str(time[-1])]
+        
+        time = time[:-1]
+        if not str(time).isdigit():
+            raise BadArgument(f"{time} was not able to be converted to a time.")
+        
+        if int(time) * multiplier < 0:
+            raise BadArgument("This is not a positive integer")
+
+        return int(time) * multiplier
 
 
 @cog_i18n(_)
@@ -904,7 +925,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, seconds: int):
+    async def slottime(self, ctx: commands.Context, seconds: TimeConverter):
         """Set the cooldown for the slot machine.
 
         Example:
@@ -922,7 +943,7 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, seconds: int):
+    async def paydaytime(self, ctx: commands.Context, seconds: TimeConverter):
         """Set the cooldown for the payday command.
 
         Example:
