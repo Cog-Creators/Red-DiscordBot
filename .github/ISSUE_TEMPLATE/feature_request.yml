@@ -14,14 +14,14 @@ body:
   attributes:
     label: "Type of feature request"
     description: "What type of feature would you like to request?"
-    choices:
+    multiple: true
+    options:
       - API functionality
       - Cog
       - Command
       - Other
   validations:
     required: true
-    multiple: true
 - type: textarea
   attributes:
     label: "Description of the feature you're suggesting"
