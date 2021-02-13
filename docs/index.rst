@@ -30,7 +30,6 @@ Welcome to Red - Discord Bot's documentation!
     cog_permissions
 
 .. toctree::
-    :maxdepth: 2
     :caption: User guides
     :hidden:
 

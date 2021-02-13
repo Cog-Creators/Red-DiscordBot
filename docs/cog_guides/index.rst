@@ -1,6 +1,9 @@
 .. _cog_guides_index:
 
-Blah blah blah sample text.
+==========
+Cog Guides
+==========
+
 
 .. toctree::
     :hidden:
