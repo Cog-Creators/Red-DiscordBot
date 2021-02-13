@@ -154,13 +154,13 @@ have successfully created a cog!
 Publishing your cog
 -------------------
 
-Go to :doc:`/guide_publish_cogs`
+Go to :doc:`frameworks/guide_publish_cogs`
 
 --------------------
 Additional resources
 --------------------
 
-Be sure to check out the :doc:`/guide_migration` for some resources
+Be sure to check out the :doc:`frameworks/guide_migration` for some resources
 on developing cogs for V3. This will also cover differences between V2 and V3 for
 those who developed cogs for V2.
 

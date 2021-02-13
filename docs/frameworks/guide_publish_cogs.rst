@@ -18,7 +18,7 @@ The main repository should contain at a minimum:
  - :ref:`An info.json file <info-json-format>`
  - One folder for each cog package in the repository
 
-   - refer to :doc:`/guide_cog_creation` for information on how to create a valid cog package
+   - refer to :doc:`frameworks/guide_cog_creation` for information on how to create a valid cog package
    - you should also put :ref:`info.json file <info-json-format>` inside each cog folder
 
 We also recommend adding a license and README file with general information about the repository.
