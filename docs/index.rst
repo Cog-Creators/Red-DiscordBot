@@ -10,7 +10,8 @@ Welcome to Red - Discord Bot's documentation!
 
 .. toctree::
     :maxdepth: 1
-    :caption: Installation Guides:
+    :caption: Installation Guides
+    :hidden:
 
     install_windows
     install_linux_mac
@@ -22,14 +23,16 @@ Welcome to Red - Discord Bot's documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: Cog Reference:
+    :caption: Cog Reference
+    :hidden:
 
     cog_customcom
     cog_permissions
 
 .. toctree::
     :maxdepth: 2
-    :caption: User guides:
+    :caption: User guides
+    :hidden:
 
     getting_started
     cog_guides/admin
@@ -45,41 +48,44 @@ Welcome to Red - Discord Bot's documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: Red Development Framework Reference:
+    :caption: Red Development Framework
+    :hidden:
 
-    guide_migration
-    guide_cog_creation
-    guide_publish_cogs
-    framework_apikeys
-    framework_bank
-    framework_bot
-    framework_checks
-    framework_cogmanager
-    framework_commands
-    framework_config
-    framework_datamanager
-    framework_events
-    framework_i18n
-    framework_modlog
-    framework_rpc
-    framework_utils
-    version_guarantees
+    frameworks/guide_migration
+    frameworks/guide_cog_creation
+    frameworks/guide_publish_cogs
+    frameworks/framework_apikeys
+    frameworks/framework_bank
+    frameworks/framework_bot
+    frameworks/framework_checks
+    frameworks/framework_cogmanager
+    frameworks/framework_commands
+    frameworks/framework_config
+    frameworks/framework_datamanager
+    frameworks/framework_events
+    frameworks/framework_i18n
+    frameworks/framework_modlog
+    frameworks/framework_rpc
+    frameworks/framework_utils
+    frameworks/version_guarantees
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Changelogs:
+    :maxdepth: 1
+    :caption: Changelogs
+    :hidden:
 
-    changelog_3_4_0
-    changelog_3_3_0
-    release_notes_3_2_0
-    changelog_3_2_0
-    changelog_3_1_0
+    changelogs/changelog_3_4_0
+    changelogs/changelog_3_3_0
+    changelogs/release_notes_3_2_0
+    changelogs/changelog_3_2_0
+    changelogs/changelog_3_1_0
 
 .. toctree::
     :maxdepth: 2
     :caption: Others
+    :hidden:
 
-    host-list
+    host_list
 
 
 Indices and tables
