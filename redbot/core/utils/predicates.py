@@ -982,7 +982,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     ) -> "ReactionPredicate":
         """Match if the reaction is a tick or cross emoji.
 
-        The emojis used can are in
+        The emojis used are in
         `ReactionPredicate.YES_OR_NO_EMOJIS`.
 
         This will assign ``True`` for *yes*, or ``False`` for *no* to
