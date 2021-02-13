@@ -1,5 +1,3 @@
-.. _cog_guides_index:
-
 ==========
 Cog Guides
 ==========
@@ -11,6 +9,7 @@ Cog Guides
     admin
     alias
     bank
+    cleanup
     cog_manager_ui
     custom_commands
     downloader

@@ -22,7 +22,6 @@ Welcome to Red - Discord Bot's documentation!
     autostart_pm2
 
 .. toctree::
-    :maxdepth: 2
     :caption: Cog Reference
     :hidden:
 
@@ -38,7 +37,6 @@ Welcome to Red - Discord Bot's documentation!
     red_core_data_statement
 
 .. toctree::
-    :maxdepth: 2
     :caption: Red Development Framework
     :hidden:
 
@@ -61,7 +59,6 @@ Welcome to Red - Discord Bot's documentation!
     frameworks/version_guarantees
 
 .. toctree::
-    :maxdepth: 1
     :caption: Changelogs
     :hidden:
 
@@ -72,7 +69,6 @@ Welcome to Red - Discord Bot's documentation!
     changelogs/changelog_3_1_0
 
 .. toctree::
-    :maxdepth: 2
     :caption: Others
     :hidden:
 
