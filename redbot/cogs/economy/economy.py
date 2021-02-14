@@ -910,14 +910,14 @@ class Economy(commands.Cog):
     ):
         """Set the cooldown for the slot machine.
 
-        Example:
+        Examples:
             - `[p]economyset slottime 10`
             - `[p]economyset slottime 10m`
 
         **Arguments**
 
-        - `<duration>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
-        - Accepts: seconds, minutes, hours, days, weeks
+        - `<duration>` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
         seconds = duration.total_seconds()
         guild = ctx.guild
@@ -933,14 +933,14 @@ class Economy(commands.Cog):
     ):
         """Set the cooldown for the payday command.
 
-        Example:
+        Examples:
             - `[p]economyset paydaytime 86400`
             - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
-        - `<duration>` The new number of seconds to wait in between uses of payday. Default is 300.
-        - Accepts: seconds, minutes, hours, days, weeks
+        - `<duration>` The new duration to wait in between uses of payday. Default is 5 minutes.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
         seconds = duration.total_seconds()
         guild = ctx.guild
