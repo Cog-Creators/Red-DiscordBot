@@ -302,14 +302,17 @@ economyset paydaytime
 
 .. code-block:: none
 
-    [p]economyset paydaytime <seconds>
-
+    [p]economyset paydaytime <duration>
+    Duration can take arguments in `seconds`, `minutes`, `days`, and `weeks`. 
+    If the duration type is not specified, it will default to seconds.
+        
 **Description**
 
 Set the cooldown for the payday command.
 
 Example:
-    - ``[p]economyset paydaytime 86400``
+    - ``[p]economyset paydaytime 100``
+    - ``[p]economyset paydaytime 10m``
 
 **Arguments**
 
@@ -436,7 +439,9 @@ economyset slottime
 
 .. code-block:: none
 
-    [p]economyset slottime <seconds>
+    [p]economyset paydaytime <duration>
+    Duration can take arguments in `seconds`, `minutes`, `days`, and `weeks`. 
+    If the duration type is not specified, it will default to seconds.
 
 **Description**
 
@@ -444,6 +449,7 @@ Set the cooldown for the slot machine.
 
 Example:
     - ``[p]economyset slottime 10``
+    - ``[p]economyset slottime 10m``
 
 **Arguments**
 
