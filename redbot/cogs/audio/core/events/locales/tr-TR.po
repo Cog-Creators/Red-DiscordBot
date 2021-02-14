@@ -22,7 +22,8 @@ msgstr "Ses modülünün Lavalink sunucusunu desteklenmeyen bir mimaride çalı�
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "Bu sunucuda gerekli izinlere sahip değilim, lütfen bu sorunu en kısa zamanda çözün.\n\n"
+"Beklediğim İzinler:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -122,7 +123,8 @@ msgstr "Parça Takıldı"
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
-msgstr ""
+msgstr "Şarkının oynatımı beklenmedik bir hata sebebiyle durduruldu.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

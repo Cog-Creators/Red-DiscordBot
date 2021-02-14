@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-14 15:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -2476,59 +2476,59 @@ msgid "\n\n"
 "You will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/events.py:227
+#: redbot/core/events.py:226
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
-#: redbot/core/events.py:252
+#: redbot/core/events.py:251
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/events.py:277
+#: redbot/core/events.py:276
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:281
+#: redbot/core/events.py:280
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:289
+#: redbot/core/events.py:288
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:291
+#: redbot/core/events.py:290
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:301
+#: redbot/core/events.py:300
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr ""
 
-#: redbot/core/events.py:303
+#: redbot/core/events.py:302
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:308
+#: redbot/core/events.py:307
 msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr ""
 
-#: redbot/core/events.py:313
+#: redbot/core/events.py:312
 msgid "Too many people using this command. It can only be used once concurrently."
 msgstr ""
 
-#: redbot/core/events.py:319
+#: redbot/core/events.py:318
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:324
+#: redbot/core/events.py:323
 msgid "That command is still completing, it can only be used once per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:330
+#: redbot/core/events.py:329
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:335
+#: redbot/core/events.py:334
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
 msgstr ""
 
