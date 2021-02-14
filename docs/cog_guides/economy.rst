@@ -314,7 +314,7 @@ Examples:
 
 **Arguments**
 
-- | ``<seconds>`` The new duration to wait in between uses of payday. Default is 5 minutes.
+- | ``<duration>`` The new duration to wait in between uses of payday. Default is 5 minutes.
   | Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
 
 .. _economy-command-economyset-registeramount:
@@ -450,7 +450,7 @@ Examples:
 
 **Arguments**
 
-- | ``<seconds>`` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
+- | ``<duration>`` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
   | Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
 
 .. _economy-command-leaderboard:
