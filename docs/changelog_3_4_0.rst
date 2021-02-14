@@ -41,6 +41,7 @@ Core Bot
 Cleanup
 *******
 
+- Renamed ``[p]cleanup spam`` command to ``[p]cleanup duplicates`` with the old name kept as an alias for the time being (:issue:`4814`)
 - Fixed too big integer passed as message ID raising an error in ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
 
 Economy
