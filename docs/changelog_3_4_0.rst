@@ -91,6 +91,11 @@ Trivia
 
 - Payout for trivia sessions ending in a tie now gets split between all the players with the highest score (:issue:`3931`, :issue:`4649`)
 
+Trivia Lists
+************
+
+- Updated answers regarding some of the hero's health and abilities in ``overwatch`` trivia (:issue:`4805`)
+
 
 Developer changelog
 -------------------
