@@ -462,6 +462,7 @@ class Warnings(commands.Cog):
                     " but I wasn't able to send them a warn message."
                 ).format(user=user.mention)
             )
+
         toggle_channel = guild_settings["toggle_channel"]
         if toggle_channel:
             if showmod:

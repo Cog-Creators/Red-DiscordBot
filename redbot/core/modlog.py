@@ -400,6 +400,7 @@ class Case:
             user = escape_spoilers(
                 filter_invites(f"{self.user} ({self.user.id})")
             )  # Invites and spoilers get rendered even in embeds.
+
         if embed:
             if self.reason:
                 reason = _("**Reason:** {}").format(self.reason)
