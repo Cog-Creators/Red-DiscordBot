@@ -24,16 +24,24 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Komutlar için takma adlar oluştur.\n\n"
+"    Takma adlar komutlar için kısa yol olarak kullanılabilen alternatif\n"
+"    isimlerdir. Hem bir komut için seçenekler depolamak\n"
+"    (daha sonra tekrar yazmadan kullanmak için) hem de \"x y z\" demek\n"
+"    gibi basit bir şey için kısa yol olarak kullanılabilirler.\n\n"
+"    Kullanıldıkları zaman takma adlar önlerine yazılanları alıp\n"
+"    depoladıkları komuta eklerler.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
-msgstr ""
+msgstr "Takma adlar:\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\n\n"
 "Page {page}/{total}"
-msgstr ""
+msgstr "\n\n"
+"Sayfa {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

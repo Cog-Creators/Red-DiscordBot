@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-14 15:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -1126,11 +1126,11 @@ msgstr "Koble fra talekanalen."
 #: redbot/cogs/audio/core/commands/controller.py:715
 #: redbot/cogs/audio/core/commands/controller.py:770
 #: redbot/cogs/audio/core/commands/controller.py:846
-#: redbot/cogs/audio/core/commands/equalizer.py:33
-#: redbot/cogs/audio/core/commands/equalizer.py:158
-#: redbot/cogs/audio/core/commands/equalizer.py:188
-#: redbot/cogs/audio/core/commands/equalizer.py:221
-#: redbot/cogs/audio/core/commands/equalizer.py:309
+#: redbot/cogs/audio/core/commands/equalizer.py:39
+#: redbot/cogs/audio/core/commands/equalizer.py:164
+#: redbot/cogs/audio/core/commands/equalizer.py:194
+#: redbot/cogs/audio/core/commands/equalizer.py:227
+#: redbot/cogs/audio/core/commands/equalizer.py:315
 #: redbot/cogs/audio/core/commands/miscellaneous.py:64
 #: redbot/cogs/audio/core/commands/miscellaneous.py:95
 #: redbot/cogs/audio/core/commands/playlists.py:1142
@@ -1609,120 +1609,125 @@ msgstr "Flyttet spor til toppen av køen."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:30
 #, docstring
-msgid "Equalizer management."
-msgstr "Equalizer administrasjon."
+msgid "Equalizer management.\n\n"
+"        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
+"        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz.\n"
+"        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
+"        "
+msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:66
+#: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring
 msgid "Delete a saved eq preset."
 msgstr "Slett en lagret eq forhåndsinnstilling."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:75
-#: redbot/cogs/audio/core/commands/equalizer.py:82
-#: redbot/cogs/audio/core/commands/equalizer.py:95
+#: redbot/cogs/audio/core/commands/equalizer.py:81
+#: redbot/cogs/audio/core/commands/equalizer.py:88
+#: redbot/cogs/audio/core/commands/equalizer.py:101
 msgid "Unable To Delete Preset"
 msgstr "Kan ikke slette forhåndsinnstilling"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:76
-#: redbot/cogs/audio/core/commands/equalizer.py:96
+#: redbot/cogs/audio/core/commands/equalizer.py:82
+#: redbot/cogs/audio/core/commands/equalizer.py:102
 msgid "You are not the author of that preset setting."
 msgstr "Du er ikke forfatteren av den forhåndsinnstilte innstillingen."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:105
+#: redbot/cogs/audio/core/commands/equalizer.py:111
 #, docstring
 msgid "List saved eq presets."
 msgstr "Liste lagrede eq forhåndsinnstillinger."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:108
+#: redbot/cogs/audio/core/commands/equalizer.py:114
 msgid "No saved equalizer presets."
 msgstr "Ingen lagrede equalizer-forhåndsinnstillinger."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:111
+#: redbot/cogs/audio/core/commands/equalizer.py:117
 msgid "Preset Name"
 msgstr "Forhåndsinnstilt navn"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:112
+#: redbot/cogs/audio/core/commands/equalizer.py:118
 msgid "Author"
 msgstr "Forfatter"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:134
+#: redbot/cogs/audio/core/commands/equalizer.py:140
 msgid "{num} preset(s)"
 msgstr "{num} preset(s)"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:141
+#: redbot/cogs/audio/core/commands/equalizer.py:147
 #, docstring
 msgid "Load a saved eq preset."
 msgstr "Last inn en lagret ekstern forhåndsinnstilling."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:149
+#: redbot/cogs/audio/core/commands/equalizer.py:155
 msgid "No Preset Found"
 msgstr "Ingen forhåndsinnstillinger funnet"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:167
+#: redbot/cogs/audio/core/commands/equalizer.py:173
 msgid "Unable To Load Preset"
 msgstr "Kan ikke laste forhåndsinnstilling"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:168
+#: redbot/cogs/audio/core/commands/equalizer.py:174
 msgid "You need the DJ role to load equalizer presets."
 msgstr "Du trenger DJ-rollen for å laste inn forhåndsinnstillinger for equalizer."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:186
+#: redbot/cogs/audio/core/commands/equalizer.py:192
 #, docstring
 msgid "Reset the eq to 0 across all bands."
 msgstr "Tilbakestill eq til 0 over alle bandene."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:195
+#: redbot/cogs/audio/core/commands/equalizer.py:201
 msgid "Unable To Modify Preset"
 msgstr "Kan ikke endre forhåndsinnstilling"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:196
+#: redbot/cogs/audio/core/commands/equalizer.py:202
 msgid "You need the DJ role to reset the equalizer."
 msgstr "Du trenger DJ-rollen for å tilbakestille equalizeren."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:211
+#: redbot/cogs/audio/core/commands/equalizer.py:217
 msgid "Equalizer values have been reset."
 msgstr "Equalizer-verdiene er nullstilt."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:219
+#: redbot/cogs/audio/core/commands/equalizer.py:225
 #, docstring
 msgid "Save the current eq settings to a preset."
 msgstr "Lagre gjeldende eq innstillinger i en forhåndsinnstilling."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:229
-#: redbot/cogs/audio/core/commands/equalizer.py:247
-#: redbot/cogs/audio/core/commands/equalizer.py:262
+#: redbot/cogs/audio/core/commands/equalizer.py:235
+#: redbot/cogs/audio/core/commands/equalizer.py:253
+#: redbot/cogs/audio/core/commands/equalizer.py:268
 msgid "Unable To Save Preset"
 msgstr "Kan ikke lagre forhåndsinnstilling"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:230
+#: redbot/cogs/audio/core/commands/equalizer.py:236
 msgid "You need the DJ role to save equalizer presets."
 msgstr "Du trenger DJ-rollen for å lagre forhåndsinnstillinger for equalizer."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:234
+#: redbot/cogs/audio/core/commands/equalizer.py:240
 msgid "Please enter a name for this equalizer preset."
 msgstr "Vennligst skriv inn et navn for denne equalizer forhåndsinnstillingen."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:248
+#: redbot/cogs/audio/core/commands/equalizer.py:254
 msgid "No equalizer preset name entered, try the command again later."
 msgstr "Ingen equalizer forhåndsinnstillt, prøv kommandoen igjen senere."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:263
+#: redbot/cogs/audio/core/commands/equalizer.py:269
 msgid "Try the command again with a shorter name."
 msgstr "Prøv kommandoen igjen med et kortere navn."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:267
+#: redbot/cogs/audio/core/commands/equalizer.py:273
 msgid "Preset name already exists, do you want to replace it?"
 msgstr "Forhåndsinstilling navn eksisterer allerede, vil du erstatte den?"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:275
+#: redbot/cogs/audio/core/commands/equalizer.py:281
 msgid "Not saving preset."
 msgstr "Lagrer ikke forhåndsinnstillingen."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:287
+#: redbot/cogs/audio/core/commands/equalizer.py:293
 msgid "Current equalizer saved to the {preset_name} preset."
 msgstr "Nåværende equalizer lagret som {preset_name} forhåndsinnstilles."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:301
+#: redbot/cogs/audio/core/commands/equalizer.py:307
 #, docstring
 msgid "Set an eq band with a band number or name and value.\n\n"
 "        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
@@ -1732,27 +1737,27 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:317
+#: redbot/cogs/audio/core/commands/equalizer.py:323
 msgid "Unable To Set Preset"
 msgstr "Kan ikke angi forhåndsinnstilling"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:318
+#: redbot/cogs/audio/core/commands/equalizer.py:324
 msgid "You need the DJ role to set equalizer presets."
 msgstr "Du trenger DJ-rollen for å sette equalizer-forhåndsinnstillinger."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:357
+#: redbot/cogs/audio/core/commands/equalizer.py:363
 msgid "Invalid Band"
 msgstr "Ugyldig bånd"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:358
+#: redbot/cogs/audio/core/commands/equalizer.py:364
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
 msgstr "Gyldige båndnumre er 1-15 eller båndnavnene som er listet ved hjelp for denne kommandoen."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:382
+#: redbot/cogs/audio/core/commands/equalizer.py:388
 msgid "Preset Modified"
 msgstr "Forhåndsinnstilt endret"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:383
+#: redbot/cogs/audio/core/commands/equalizer.py:389
 msgid "The {band_name}Hz band has been set to {band_value}."
 msgstr "{band_name}Hz-båndet er satt til {band_value}."
 

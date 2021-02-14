@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-14 15:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bosnian\n"
 "MIME-Version: 1.0\n"
@@ -151,15 +151,15 @@ msgid "Deletes duplicate messages in the channel from the last X messages and ke
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/converters.py:15
+#: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."
 msgstr ""
 
-#: redbot/cogs/cleanup/converters.py:27
+#: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not an integer."
 msgstr ""
 
-#: redbot/cogs/cleanup/converters.py:29
+#: redbot/cogs/cleanup/converters.py:31
 msgid "{arg} is not a positive integer."
 msgstr ""
 

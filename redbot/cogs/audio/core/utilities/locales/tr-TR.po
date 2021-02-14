@@ -109,7 +109,11 @@ msgid " - Name:   <{pname}>\n"
 " - ID:     < {pid} >\n"
 " - Tracks: < {ptracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr " - İsim:   <{pname}>\n"
+" - Kapsam:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Parçalar: < {ptracks} >\n"
+" - Sahip: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -169,12 +173,14 @@ msgstr "{skip_to_track} Parça Atlandı"
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin Spotify istemci IDsi ve istemci sırrını ayarlaması gerekir. \n"
+"Yönergeler için `{prefix}audioset spotifyapi` komutunu kullanın."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin YouTube API anahtarı ayarlaması gerekir.\n"
+"Yönergeler için `{prefix}audioset youtubeapi` komutunu kullanın."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -233,7 +239,8 @@ msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika s
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API anahtarı veya istemci sırrı düzgün ayarlanmamış. \n"
+"Yönergeler için `{prefix}audioset spotifyapi` komutunu çalıştırın."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -250,7 +257,8 @@ msgstr "{query} izin verilmeyen bir sorgudur."
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "`Lavalink.jar` parçayı bulamazsa yerel parçalar çalışmaz.\n"
+"Bu izinler veya Lavalink.jar'ın parçaları bulundurandan farklı bir makinede çalıştırılmasından kaynaklanabilir."
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
@@ -332,7 +340,11 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}.    <{playlist.name}>\n"
+" - Kapsam:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Parçalar: < {tracks} >\n"
+" - Yapımcı: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
@@ -425,11 +437,11 @@ msgstr "Kullanıcı"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
-msgstr ""
+msgstr "__Sırada çok fazla şarkı var, sadece ilk 500 gösteriliyor__.\n\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Şuan canlı yayınlanıyor:**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
@@ -442,7 +454,7 @@ msgstr "Oynatılıyor: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "talep eden **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
@@ -450,7 +462,7 @@ msgstr "__{guild_name}__ için sıra"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {num_tracks} parça, kalan {num_remaining} \n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
