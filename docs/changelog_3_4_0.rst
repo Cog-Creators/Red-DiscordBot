@@ -18,6 +18,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
 
 
 Miscellaneous
