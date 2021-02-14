@@ -906,7 +906,7 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def slottime(
-        self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
     ):
         """Set the cooldown for the slot machine.
 
@@ -929,7 +929,7 @@ class Economy(commands.Cog):
 
     @economyset.command()
     async def paydaytime(
-        self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
     ):
         """Set the cooldown for the payday command.
 
