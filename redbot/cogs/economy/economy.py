@@ -906,7 +906,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, duration: TimedeltaConverter):
+    async def slottime(self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")):
         """Set the cooldown for the slot machine.
 
         Example:
@@ -927,7 +927,7 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, duration: TimedeltaConverter):
+    async def paydaytime(self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")):
         """Set the cooldown for the payday command.
 
         Example:
