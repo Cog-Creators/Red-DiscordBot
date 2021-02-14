@@ -882,7 +882,7 @@ async def create_case(
         Note: This is ignored if a Member or User object is provided
         in the user field
     extra_info: Optional[str]
-        Any extra infomation to show
+        Any extra information to show in the case
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
