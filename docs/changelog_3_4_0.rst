@@ -78,6 +78,11 @@ Mutes
 
 - Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
 
+Reports
+*******
+
+- Updated the output of Reports cog to use default embed color for the embeds it sends (:issue:`4800`)
+
 Streams
 *******
 
