@@ -308,9 +308,9 @@ economyset paydaytime
 
 Set the cooldown for the payday command.
 
-Example:
-    - ``[p]economyset paydaytime 100``
-    - ``[p]economyset paydaytime 10m``
+Examples:
+    - ``[p]economyset paydaytime 86400``
+    - ``[p]economyset paydaytime 1d``
 
 **Arguments**
 
@@ -421,7 +421,7 @@ economyset slotmin
 
 Set the minimum slot machine bid.
 
-Examples:
+Example:
     - ``[p]economyset slotmin 10``
 
 **Arguments**
