@@ -114,9 +114,8 @@ class SetParser:
             self.operation = "set"
         else:
             raise RuntimeError
-            
-            
-            
+
+
 @cog_i18n(_)
 class Economy(commands.Cog):
     """Get rich and have fun with imaginary currency!"""
@@ -906,7 +905,9 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")):
+    async def slottime(
+        self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the slot machine.
 
         Example:
@@ -927,7 +928,9 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")):
+    async def paydaytime(
+        self, ctx: commands.Context, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the payday command.
 
         Example:
