@@ -119,6 +119,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4788`, :issue:`4810`)
 
 
 Redbot 3.4.5 (2020-12-24)
