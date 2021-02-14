@@ -52,6 +52,7 @@ Filter
 ******
 
 - Added ``filterhit`` case type which is used to log filter hits (:issue:`4676`, :issue:`4739`)
+- Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 
 Mod
 ***
