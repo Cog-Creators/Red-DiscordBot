@@ -919,7 +919,7 @@ class Economy(commands.Cog):
         - `<duration>` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
         Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
-        seconds = duration.total_seconds()
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
@@ -942,7 +942,7 @@ class Economy(commands.Cog):
         - `<duration>` The new duration to wait in between uses of payday. Default is 5 minutes.
         Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
-        seconds = duration.total_seconds()
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
