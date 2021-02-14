@@ -906,7 +906,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, seconds: TimedeltaConverter):
+    async def slottime(self, ctx: commands.Context, duration: TimedeltaConverter):
         """Set the cooldown for the slot machine.
 
         Example:
@@ -915,10 +915,10 @@ class Economy(commands.Cog):
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+        - `<duration>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
         - It is also a timedeltaconverter so `1d` is converted to 1 day
         """
-        seconds = seconds.total_seconds()
+        seconds = duration.total_seconds()
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
@@ -927,7 +927,7 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, seconds: TimedeltaConverter):
+    async def paydaytime(self, ctx: commands.Context, duration: TimedeltaConverter):
         """Set the cooldown for the payday command.
 
         Example:
@@ -936,10 +936,10 @@ class Economy(commands.Cog):
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.
+        - `<duration>` The new number of seconds to wait in between uses of payday. Default is 300.
         - It is also a timedeltaconverter so `1d` is converted to 1 day
         """
-        seconds = seconds.total_seconds()
+        seconds = duration.total_seconds()
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
