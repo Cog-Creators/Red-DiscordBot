@@ -916,7 +916,7 @@ class Economy(commands.Cog):
         **Arguments**
 
         - `<duration>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
-        - It is also a timedeltaconverter so `1d` is converted to 1 day
+        - Accepts: seconds, minutes, hours, days, weeks
         """
         seconds = duration.total_seconds()
         guild = ctx.guild
@@ -937,7 +937,7 @@ class Economy(commands.Cog):
         **Arguments**
 
         - `<duration>` The new number of seconds to wait in between uses of payday. Default is 300.
-        - It is also a timedeltaconverter so `1d` is converted to 1 day
+        - Accepts: seconds, minutes, hours, days, weeks
         """
         seconds = duration.total_seconds()
         guild = ctx.guild
