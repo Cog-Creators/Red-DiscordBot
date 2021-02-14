@@ -14,7 +14,7 @@ import discord
 
 from . import checks, commands
 from .commands import NoParseOptional as Optional
-from .i18n import Translator
+from .i18n import Translator, cog_i18n
 from .utils.chat_formatting import box, pagify
 from .utils.predicates import MessagePredicate
 
@@ -31,6 +31,7 @@ _ = Translator("Dev", __file__)
 START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
 
 
+@cog_i18n(_)
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
