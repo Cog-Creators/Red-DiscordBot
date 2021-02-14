@@ -38,6 +38,11 @@ Core Bot
 - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
+Cleanup
+*******
+
+- Fixed too big integer passed as message ID raising an error in ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
+
 Economy
 *******
 
