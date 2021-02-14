@@ -160,7 +160,7 @@ Explains how to set GIPHY API tokens.
 **Getting your API key**
 
 1. Login (or create) a GIPHY account.
-2. Visit `this page <https://developers.giphy.com/dashboard>`_.
+2. Visit `this page <https://developers.giphy.com/dashboard>`__.
 3. Press 'Create an App'.
 4. Click 'Select API', and then 'Next Step'.
 5. Add an app name, for example 'Red'.
@@ -192,7 +192,7 @@ Explains how to set Imgur API tokens.
 **Getting your API key**
 
 1. Login (or create) an Imgur account.
-2. Visit `this page <https://api.imgur.com/oauth2/addclient>`_.
+2. Visit `this page <https://api.imgur.com/oauth2/addclient>`__.
 3. Add an app name for your application, for example 'Red'.
 4. Select 'Anonymous usage without user authorization' for the auth type.
 5. Set the authorization callback URL to ``https://localhost``
