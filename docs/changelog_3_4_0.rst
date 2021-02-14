@@ -35,6 +35,7 @@ Core Bot
 
     - This can be disabled with ``[p]helpset showaliases`` command
 
+- Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
 Economy
@@ -120,6 +121,7 @@ Miscellaneous
 -------------
 
 - Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4788`, :issue:`4810`)
+- Red's dependencies have been bumped (:issue:`4572`)
 
 
 Redbot 3.4.5 (2020-12-24)
