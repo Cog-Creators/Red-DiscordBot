@@ -251,6 +251,7 @@ class Case:
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
+        extra_info: Optional[str] = None,
     ):
         self.bot = bot
         self.guild = guild
@@ -272,6 +273,7 @@ class Case:
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
+        self.extra_info = extra_info
 
     async def edit(self, data: dict):
         """
@@ -398,7 +400,6 @@ class Case:
             user = escape_spoilers(
                 filter_invites(f"{self.user} ({self.user.id})")
             )  # Invites and spoilers get rendered even in embeds.
-
         if embed:
             if self.reason:
                 reason = _("**Reason:** {}").format(self.reason)
@@ -413,6 +414,8 @@ class Case:
                         )
                         + "..."
                     )
+            if self.extra_info:
+                reason += self.extra_info
             emb = discord.Embed(title=title, description=reason)
             emb.set_author(name=user)
             emb.add_field(name=_("Moderator"), value=moderator, inline=False)
@@ -454,6 +457,8 @@ class Case:
             case_text += _("**User:** {}\n").format(user)
             case_text += _("**Moderator:** {}\n").format(moderator)
             case_text += "{}\n".format(reason)
+            if self.extra_info:
+                case_text += "{}\n".format(self.extra_info)
             if until and duration:
                 case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
             if self.channel:
@@ -502,6 +507,7 @@ class Case:
             "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
+            "extra_info": self.extra_info,
         }
         return data
 
@@ -584,6 +590,7 @@ class Case:
             modified_at=data["modified_at"],
             message=message,
             last_known_username=data.get("last_known_username"),
+            extra_info=data.get("extra_info"),
             **user_objects,
         )
 
@@ -839,6 +846,7 @@ async def create_case(
     until: Optional[datetime] = None,
     channel: Optional[discord.TextChannel] = None,
     last_known_username: Optional[str] = None,
+    extra_info: Optional[str] = None,
 ) -> Optional[Case]:
     """
     Creates a new case.
@@ -873,6 +881,8 @@ async def create_case(
         The last known username of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
+    extra_info: Optional[str]
+        Any extra infomation to show
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -904,6 +914,7 @@ async def create_case(
             modified_at=None,
             message=None,
             last_known_username=last_known_username,
+            extra_info=extra_info,
         )
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)
