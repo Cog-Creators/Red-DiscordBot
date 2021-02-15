@@ -111,6 +111,7 @@ Trivia
 Trivia Lists
 ************
 
+- Added new Who's That Pokémon - Gen. VI trivia list (:issue:`4785`)
 - Updated answers regarding some of the hero's health and abilities in ``overwatch`` trivia (:issue:`4805`)
 
 
