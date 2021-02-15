@@ -159,7 +159,7 @@ Documentation changes
 Miscellaneous
 -------------
 
-- Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4788`, :issue:`4810`)
+- Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
 - Red's dependencies have been bumped (:issue:`4572`)
 
 
