@@ -44,6 +44,11 @@ Cleanup
 - Renamed ``[p]cleanup spam`` command to ``[p]cleanup duplicates`` with the old name kept as an alias for the time being (:issue:`4814`)
 - Fixed too big integer passed as message ID raising an error in ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
 
+Dev Cog
+*******
+
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
+
 Economy
 *******
 
@@ -79,6 +84,7 @@ Mutes
     - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
 
 - Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
 
 Reports
 *******
