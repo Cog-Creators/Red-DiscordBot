@@ -73,6 +73,7 @@ Mod
 - ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with vanity url feature that doesn't have vanity url set (:issue:`4714`)
 - Fixed the edge case in role hierarchy checks (:issue:`4740`)
 - Added usage examples to ``[p]kick``, ``[p]ban``, ``[p]massban``, and ``[p]tempban`` (:issue:`4712`, :issue:`4715`)
+- Updated DM on kick/ban to use bot's default embed color (:issue:`4822`)
 
 Modlog
 ******
