@@ -191,7 +191,7 @@ Explains how to set Imgur API tokens.
 
 **Getting your API key**
 
-1. Login (or create) an Imgur account.
+1. Login to (or create) an Imgur account.
 2. Visit `this page <https://api.imgur.com/oauth2/addclient>`__.
 3. Add an app name for your application, for example 'Red'.
 4. Select 'Anonymous usage without user authorization' for the auth type.
