@@ -38,6 +38,13 @@ Core Bot
 - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
+Audio
+*****
+
+- Improved detection of embed players for fallback on age-restricted YT tracks (:issue:`4818`, :issue:`4819`)
+- Improved MP4/AAC decoding (:issue:`4818`, :issue:`4819`)
+- Requests for YT tracks are now retried if initial request causes connection reset (:issue:`4818`, :issue:`4819`)
+
 Cleanup
 *******
 
