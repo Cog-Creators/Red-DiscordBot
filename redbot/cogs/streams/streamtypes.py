@@ -127,7 +127,24 @@ class YoutubeStream(Stream):
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
-                    stream_data = data.get("items", [{}])[0].get("liveStreamingDetails", {})
+                    try:
+                        self._check_api_errors(data)
+                    except InvalidYoutubeCredentials:
+                        log.error("The YouTube API key is either invalid or has not been set.")
+                        break
+                    except YoutubeQuotaExceeded:
+                        log.error("YouTube quota has been exceeded.")
+                        break
+                    except APIError as e:
+                        log.error(
+                            "Something went wrong whilst trying to"
+                            " contact the stream service's API.\n"
+                            "Raw response data:\n%r",
+                            e,
+                        )
+                        continue
+                    video_data = data.get("items", [{}])[0]
+                    stream_data = video_data.get("liveStreamingDetails", {})
                     log.debug(f"stream_data for {video_id}: {stream_data}")
                     if (
                         stream_data
@@ -143,9 +160,9 @@ class YoutubeStream(Stream):
                         elif actual_start_time is None:
                             continue
                         if video_id not in self.livestreams:
-                            self.livestreams.append(data["items"][0]["id"])
+                            self.livestreams.append(video_id)
                     else:
-                        self.not_livestreams.append(data["items"][0]["id"])
+                        self.not_livestreams.append(video_id)
                         if video_id in self.livestreams:
                             self.livestreams.remove(video_id)
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
@@ -225,17 +242,8 @@ class YoutubeStream(Stream):
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
 
-        if "error" in data:
-            error_code = data["error"]["code"]
-            if error_code == 400 and data["error"]["errors"][0]["reason"] == "keyInvalid":
-                raise InvalidYoutubeCredentials()
-            elif error_code == 403 and data["error"]["errors"][0]["reason"] in (
-                "dailyLimitExceeded",
-                "quotaExceeded",
-                "rateLimitExceeded",
-            ):
-                raise YoutubeQuotaExceeded()
-        elif "items" in data and len(data["items"]) == 0:
+        self._check_api_errors(data)
+        if "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
         elif "items" in data:
             return data["items"][0][resource]
@@ -246,6 +254,19 @@ class YoutubeStream(Stream):
         ):
             raise StreamNotFound()
         raise APIError(data)
+
+    def _check_api_errors(self, data: dict):
+        if "error" in data:
+            error_code = data["error"]["code"]
+            if error_code == 400 and data["error"]["errors"][0]["reason"] == "keyInvalid":
+                raise InvalidYoutubeCredentials()
+            elif error_code == 403 and data["error"]["errors"][0]["reason"] in (
+                "dailyLimitExceeded",
+                "quotaExceeded",
+                "rateLimitExceeded",
+            ):
+                raise YoutubeQuotaExceeded()
+            raise APIError(data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
