@@ -36,7 +36,6 @@ Core Bot
     - This can be disabled with ``[p]helpset showaliases`` command
 
 - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
-- Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
 Audio
 *****
@@ -65,7 +64,6 @@ Filter
 ******
 
 - Added ``filterhit`` case type which is used to log filter hits (:issue:`4676`, :issue:`4739`)
-- Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 
 Mod
 ***
@@ -102,10 +100,8 @@ Reports
 Streams
 *******
 
-- Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
 - Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
 - Fixed meaningless errors happening when YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
-- Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
 
 Trivia
 ******
