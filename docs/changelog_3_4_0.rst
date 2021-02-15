@@ -13,6 +13,11 @@ Core Bot
 
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
+Filter
+******
+
+- Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
+
 
 Developer changelog
 -------------------
