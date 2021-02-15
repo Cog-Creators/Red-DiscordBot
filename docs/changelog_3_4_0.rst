@@ -23,7 +23,7 @@ Core Bot
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
 - ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
-- Improved and fixed a lot of things about our new (colorful) logging (:issue:`4702`, :issue:`4726`)
+- Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
 
     - The colors used have been adjusted to be readable on many more terminal applications
     - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
