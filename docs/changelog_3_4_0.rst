@@ -45,6 +45,11 @@ Core Bot
 
 - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 
+Admin
+*****
+
+- Added ``[p]selfrole register`` command that adds or removes a selfrole from the user running it (:issue:`4660`)
+
 Audio
 *****
 
