@@ -19,26 +19,26 @@ End-user changelog
 Core Bot
 ********
 
-- Fixed rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
-- ``[p]command listdisabled guild`` can no longer be ran in DMs (:issue:`4771`, :issue:`4772`)
+- ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
 - Improved and fixed a lot of things about our new (colorful) logging (:issue:`4702`, :issue:`4726`)
 
-    - Used colors have been adjusted to be readable on many more terminal applications
-    - ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
-    - Tracebacks will now use full width of the terminal again
-    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with ``-rich-traceback-extra-lines`` flag)
+    - The colors used have been adjusted to be readable on many more terminal applications
+    - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
+    - Tracebacks will now use the full width of the terminal again
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``-rich-traceback-extra-lines``)
     - Disabled syntax highlighting on the log messages
     - Dev cog no longer captures logging output
     - Added some cool features for developers
 
-        - Added ``--rich-traceback-extra-lines`` flag which can be used to set the number of additional lines in tracebacks
-        - Added ``--rich-traceback-show-locals`` flag which enables showing local variables in tracebacks
+        - Added the flag ``--rich-traceback-extra-lines`` which can be used to set the number of additional lines in tracebacks
+        - Added the flag ``--rich-traceback-show-locals`` which enables showing local variables in tracebacks
 
-    - Improved and fixed few other minor things
+    - Improved and fixed a few other minor things
 
-- Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with command name that is already taken by a different cog (:issue:`3870`)
+- Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with a command name that is already taken by a different cog (:issue:`3870`)
 - Help now includes command aliases in the command help (:issue:`3040`)
 
     - This can be disabled with ``[p]helpset showaliases`` command
@@ -55,13 +55,13 @@ Audio
 
 - Improved detection of embed players for fallback on age-restricted YT tracks (:issue:`4818`, :issue:`4819`)
 - Improved MP4/AAC decoding (:issue:`4818`, :issue:`4819`)
-- Requests for YT tracks are now retried if initial request causes connection reset (:issue:`4818`, :issue:`4819`)
+- Requests for YT tracks are now retried if the initial request causes a connection reset (:issue:`4818`, :issue:`4819`)
 
 Cleanup
 *******
 
-- Renamed ``[p]cleanup spam`` command to ``[p]cleanup duplicates`` with the old name kept as an alias for the time being (:issue:`4814`)
-- Fixed too big integer passed as message ID raising an error in ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
+- Renamed the ``[p]cleanup spam`` command to ``[p]cleanup duplicates``, with the old name kept as an alias for the time being (:issue:`4814`)
+- Fixed an error from passing an overly large integer as a message ID to ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
 
 Dev Cog
 *******
@@ -76,17 +76,17 @@ Economy
 Filter
 ******
 
-- Added ``filterhit`` case type which is used to log filter hits (:issue:`4676`, :issue:`4739`)
+- Added a case type ``filterhit`` which is used to log filter hits (:issue:`4676`, :issue:`4739`)
 
 Mod
 ***
 
-- ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with vanity url feature that doesn't have vanity url set (:issue:`4714`)
-- Fixed the edge case in role hierarchy checks (:issue:`4740`)
+- The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
 - Added two new settings for disabling username and nickname tracking (:issue:`4799`)
 
-    - Added ``[p]modset trackallnames`` command that allows to disable username tracking and override the nickname tracking setting for all guilds
-    - Added ``[p]modset tracknicknames`` command that allows to disable nickname tracking in a specific guild
+    - Added a command ``[p]modset trackallnames`` that disables username tracking and overrides the nickname tracking setting for all guilds
+    - Added a command ``[p]modset tracknicknames`` that disables nickname tracking in a specific guild
 
 - Added usage examples to ``[p]kick``, ``[p]ban``, ``[p]massban``, and ``[p]tempban`` (:issue:`4712`, :issue:`4715`)
 - Updated DM on kick/ban to use bot's default embed color (:issue:`4822`)
@@ -94,32 +94,32 @@ Mod
 Modlog
 ******
 
-- Added ``[p]listcases`` command that allows you to see multiple cases for user at once (:issue:`4426`)
+- Added a command ``[p]listcases`` that allows you to see multiple cases for a user at once (:issue:`4426`)
 - Added typing indicator to ``[p]casesfor`` command (:issue:`4426`)
 
 Mutes
 *****
 
-- Fixed the edge case in role hierarchy checks (:issue:`4740`)
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
 - Reason no longer contains leading whitespace when it's passed *after* mute time (:issue:`4749`)
-- Mutes cog can now send a DM to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
+- A DM can now be sent to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
 
     - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
     - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
 
-- Added more role hierarchy checks to ensure it can't be bypassed on servers with careless configuration (:issue:`4741`)
+- Added more role hierarchy checks to ensure permission escalations cannot occur on servers with a careless configuration (:issue:`4741`)
 - Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
 
 Reports
 *******
 
-- Updated the output of Reports cog to use default embed color for the embeds it sends (:issue:`4800`)
+- Reports now use the default embed color of the bot (:issue:`4800`)
 
 Streams
 *******
 
 - Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
-- Fixed meaningless errors happening when YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
+- Fixed meaningless errors happening when the YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
 
 Trivia
 ******
@@ -130,7 +130,7 @@ Trivia Lists
 ************
 
 - Added new Who's That Pokémon - Gen. VI trivia list (:issue:`4785`)
-- Updated answers regarding some of the hero's health and abilities in ``overwatch`` trivia (:issue:`4805`)
+- Updated answers regarding some of the hero's health and abilities in the ``overwatch`` trivia list (:issue:`4805`)
 
 
 Developer changelog
@@ -140,12 +140,12 @@ Core Bot
 ********
 
 - Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
-- Added ``on_red_before_identify`` event that is dispatched before IDENTIFYing a session (:issue:`4647`)
+- Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
 
 Utility Functions
 *****************
 
-- Added `redbot.core.utils.chat_formatting.spoiler()` function that wraps the given text in a spoiler (:issue:`4754`)
+- Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
 
 Dev Cog
 *******
@@ -165,7 +165,7 @@ Documentation changes
 - Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
 - Restructured the host list (:issue:`4710`)
 - Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
-- Updated pip command for Red with postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
+- Updated the pip command for Red with the postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4770`)
 
 
