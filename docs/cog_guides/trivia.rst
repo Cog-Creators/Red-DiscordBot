@@ -290,7 +290,7 @@ trivia
 
 .. code-block:: none
 
-    [p]trivia [categories...]
+    [p]trivia <categories...>
 
 **Description**
 
@@ -301,7 +301,7 @@ will use all of the specified lists to select questions from.
 
 **Arguments**
 
-- ``[categories...]`` The category to play. Can be multiple.
+- ``<categories...>`` The category to play. Can be multiple.
 
 .. _trivia-command-trivia-leaderboard:
 
