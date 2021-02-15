@@ -11,6 +11,7 @@ import discord
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
+from redbot.core.commands.converter import TimedeltaConverter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
@@ -904,16 +905,21 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, seconds: int):
+    async def slottime(
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the slot machine.
 
-        Example:
+        Examples:
             - `[p]economyset slottime 10`
+            - `[p]economyset slottime 10m`
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+        - `<duration>` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
@@ -922,16 +928,21 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, seconds: int):
+    async def paydaytime(
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the payday command.
 
-        Example:
+        Examples:
             - `[p]economyset paydaytime 86400`
+            - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.
+        - `<duration>` The new duration to wait in between uses of payday. Default is 5 minutes.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
