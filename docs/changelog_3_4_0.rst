@@ -18,6 +18,12 @@ Filter
 
 - Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 
+Streams
+*******
+
+- Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
+- Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
+
 
 Developer changelog
 -------------------
