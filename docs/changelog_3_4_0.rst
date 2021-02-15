@@ -48,7 +48,7 @@ Core Bot
 Admin
 *****
 
-- Added ``[p]selfrole register`` command that adds or removes a selfrole from the user running it (:issue:`4660`)
+- Added the command ``[p]selfrole register`` that adds or removes a selfrole from the user running it (:issue:`4660`)
 
 Audio
 *****
