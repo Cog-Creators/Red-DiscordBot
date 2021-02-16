@@ -99,6 +99,7 @@ by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
 
 * ``<selfrole>``: The role you want to remove from yourself. |role-input|
 
+
 .. _admin-command-selfrole-list:
 
 """""""""""""
