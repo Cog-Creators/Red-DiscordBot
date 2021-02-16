@@ -54,17 +54,17 @@ Add or remove roles to yourself. Those roles must have been configured as user
 settable by admins using the :ref:`selfroleset command
 <admin-command-selfroleset>`.
 
-.. _admin-command-selfrole-add:
+.. _admin-command-selfrole:
 
 """"""""""""
-selfrole register
+selfrole
 """"""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]selfrole register <selfrole>
+    [p]selfrole <selfrole>
 
 **Description**
 
@@ -75,7 +75,7 @@ by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
 
 * ``<selfrole>``: The role you want to attribute to yourself. |role-input|
 
-.. _admin-command-selfrole-register:
+.. _admin-command-selfrole-add:
 
 """"""""""""
 selfrole add
