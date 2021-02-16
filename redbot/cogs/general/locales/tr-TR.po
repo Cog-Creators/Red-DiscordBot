@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Birden çok seçenekler arasında karak ver.\n\n"
+"        İçinde boşluk bulunduran seçenkler belirtmek için\n"
+"        çift tırnaklar kullanmanız gerekir.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -118,7 +121,10 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Rastgele bir sayı seç.\n\n"
+"        Sonuç 1 ve `<number>` arasında olacaktır.\n\n"
+"        `<number>` varsayılan olarak 100 dür\n"
+"        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -133,12 +139,15 @@ msgstr "{author.mention} İzin verilen en yüksek sayı {maxamount}."
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Bir bozuk para... ya da bir kullanıcı çevirme\n\n"
+"        Varsayılan olarak bozuk para.\n"
+"        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "İyi denemeydi. Sence bu komik mi?\n"
+" Şuna ne dersin *bu* yerine:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -178,7 +187,9 @@ msgstr "{choice} biz kare {author.mention}!"
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "8 topuna bir soru sor.\n\n"
+"        Soru, soru işareti ile bitmelidir.\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -207,7 +218,9 @@ msgstr "Lmgtfy bağlantı oluşturun."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Çünkü sarılmayı herkes sever!\n\n"
+"        10 kuvvet düzeyine kadar.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
@@ -216,7 +229,11 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Sunucu bilgilerini göster.\n\n"
+"        `details`: `True` değerine ayarlıysa daha çok bilgi gösterir.\n"
+"        Varsayılan olarak `False` ayarındadır.\n"
+"        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
@@ -257,7 +274,8 @@ msgstr "  •  Bu komutu kullanarak {command} sunucu hakkında daha fazla bilgi 
 #: redbot/cogs/general/general.py:303
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\n"
+"Parçacık IDsi: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
@@ -269,7 +287,7 @@ msgstr " • Botlar: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Çevrimiçi üyeler: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
@@ -470,7 +488,8 @@ msgstr "Kanallar:"
 #: redbot/cogs/general/general.py:425
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Yazı: {text}\n"
+"🔊 Sesli: {voice}"
 
 #: redbot/cogs/general/general.py:431
 msgid "Utility:"
@@ -481,7 +500,10 @@ msgid "Owner: {owner}\n"
 "Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr ""
+msgstr "Sunucu Sahibi: {owner}\n"
+"Ses Sunucusu: {region}\n"
+"Doğrulama Seviyesi: {verif}\n"
+"Sunucu ID: {id}{shard_info}"
 
 #: redbot/cogs/general/general.py:444
 msgid "Misc:"
@@ -492,7 +514,10 @@ msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
 "Roles: {role_count}"
-msgstr ""
+msgstr "AFK kanalı: {afk_chan}\n"
+"AFK zamanı: {afk_timeout}\n"
+"Özel emojiler: {emoji_count}\n"
+"Roller: {role_count}"
 
 #: redbot/cogs/general/general.py:450
 msgid "Not set"
@@ -507,7 +532,10 @@ msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "{nitroboosters} boost ile boost seviyesi {boostlevel}\n"
+"Dosya boyutu sınırı: {filelimit}\n"
+"Emoji sınırı: {emojis_limit}\n"
+"En yüksek ses kalitesi: {bitrate}"
 
 #: redbot/cogs/general/general.py:472
 msgid "Nitro Boost:"
@@ -518,7 +546,9 @@ msgstr "Nitro Boost:"
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
 "        "
-msgstr ""
+msgstr "Urban sözlük arama.\n\n"
+"        Bu resmi olmayan Urban Sözlük API kullanır.\n"
+"        "
 
 #: redbot/cogs/general/general.py:499 redbot/cogs/general/general.py:568
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
@@ -535,7 +565,8 @@ msgstr "{word} {author}"
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Örneğin:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -546,5 +577,8 @@ msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
 "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\n"
+" {word} by {author}\n\n"
+"{description}\n\n"
+"{thumbs_down} Down / {thumbs_up} Up, Urban sözlük tarafından ayarlandı."
 

@@ -29,7 +29,11 @@ msgid "Enter the command to be run when the user **exceeds the points for this a
 "Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
-msgstr ""
+msgstr "Geben Sie den Befehl ein, der ausgeführt werden soll, wenn der Benutzer **die Punkte überschreitet, die für diese Aktion auftreten.**\n"
+"**Wenn Sie keinen Befehl ausführen möchten, geben Sie** `none`.\n\n"
+"Gib es genau ein, wie du es willst, wenn du den Befehl tatsächlich ausführen möchtest, außer stelle keine Präfix und verwende `{user}` anstelle von Benutzerargumenten/Mitgliedsargumenten\n\n"
+"WARNUNG: Der eingegebene Befehl wird ohne Rücksicht auf Überprüfungen oder Abklingzeiten ausgeführt. Befehle, die Bot-Besitzer benötigen, sind aus Sicherheitsgründen nicht erlaubt.\n\n"
+"Bitte warten Sie 15 Sekunden, bevor Sie Ihre Antwort eingeben."
 
 #: redbot/cogs/warnings/helpers.py:99 redbot/cogs/warnings/helpers.py:143
 msgid "You may enter your response now."
@@ -41,7 +45,11 @@ msgid "Enter the command to be run when the user **returns to a value below the 
 "Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
-msgstr ""
+msgstr "Geben Sie den Befehl ein, der ausgeführt werden soll, wenn der Benutzer **einen Wert unterhalb der Punkte, die für diese Aktion auftreten, zurückgeliefert hat.** Bitte beachten Sie, dass dies für die Umkehr der Aktion verwendet werden soll, wenn der Benutzer den Punktzwert überschritten hat.\n"
+"**Wenn du keinen Befehl ausführen möchtest, wenn du Punkte ablegst, gib** `none`.\n\n"
+"Gib es genau ein, wie du es willst, wenn du den Befehl tatsächlich ausführen möchtest, außer stelle keine Präfix und verwende `{user}` anstelle von Benutzerargumenten/Mitgliedsargumenten\n\n"
+"WARNUNG: Der eingegebene Befehl wird ohne Rücksicht auf Überprüfungen oder Abklingzeiten ausgeführt. Befehle, die Bot-Besitzer benötigen, sind aus Sicherheitsgründen nicht erlaubt.\n\n"
+"Bitte warten Sie 15 Sekunden, bevor Sie Ihre Antwort eingeben."
 
 #: redbot/cogs/warnings/warnings.py:30
 #, docstring
@@ -97,7 +105,9 @@ msgstr "Ich werde den Namen der Moderators der die Verwarnung erteilt hat nicht 
 msgid "Set the channel where warnings should be sent to.\n\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
-msgstr ""
+msgstr "Bestimme den Kanal, in welchen Warnungen gesendet werden sollen.\n\n"
+"Verwende den Befehl ohne einen Kanal zu nennen, um immer den Kanal zu verwenden, in dem der `[p]warn` Befehl verwendet wurde.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:166
 msgid "The warn channel has been set to {channel}."
@@ -132,14 +142,23 @@ msgid "Manage automated actions for Warnings.\n\n"
 "        user is warned enough so that their points go over this\n"
 "        threshold, the action will be executed.\n"
 "        "
-msgstr ""
+msgstr "Verwalte automatisierte Aktionen für Verwarnungen.\n\n"
+"        Aktionen sind im Grunde genommen Befehlmakros. Jeder Befehl kann ausgeführt\n"
+"        werden wenn die Aktion ausgelöst wird, und/oder wenn die Aktion aufgehoben\n"
+"        wird.\n\n"
+"        Aktionen muss sowohl ein Name als auch ein Punkte-Grenzwert vergeben werden.\n"
+"        Wenn ein Benutzer verwarnt wird und dessen Punkte diesen Grenzwert übersteigen,\n"
+"        dann wird die Aktion ausgeführt.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:209
 #, docstring
 msgid "Create an automated action.\n\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr ""
+msgstr "Erstelle eine automatisierte Aktion.\n\n"
+"        Doppelte Aktionsnamen sind nicht erlaubt.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:230
 msgid "Duplicate action name found!"
@@ -164,7 +183,10 @@ msgid "Manage warning reasons.\n\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr ""
+msgstr "Verwalte Gründe für Verwarnungen.\n\n"
+"        Gründen muss ein Name, eine Beschreibung und ein Punktewert vergeben werden.\n"
+"        Der Name des Grunds muss bei der Verwarnung eines Benutzers angegeben werden.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:273
 #, docstring
@@ -206,7 +228,9 @@ msgstr "Punkte"
 msgid "Name: {reason_name}\n"
 "Points: {points}\n"
 "Description: {description}"
-msgstr ""
+msgstr "Name: {reason_name}\n"
+"Punkte: {points}\n"
+"Beschreibung: {description}"
 
 #: redbot/cogs/warnings/warnings.py:327
 msgid "There are no reasons configured!"
@@ -234,7 +258,10 @@ msgid "Name: {action_name}\n"
 "Points: {points}\n"
 "Exceed command: {exceed_command}\n"
 "Drop command: {drop_command}"
-msgstr ""
+msgstr "Name: {action_name}\n"
+"Punkte: {points}\n"
+"Befehl überschreiten: {exceed_command}\n"
+"Befehl ablegen: {drop_command}"
 
 #: redbot/cogs/warnings/warnings.py:359
 msgid "There are no actions configured!"
@@ -248,7 +275,12 @@ msgid "Warn the user for the specified reason.\n\n"
 "        `<reason>` can be a registered reason if it exists or a custom one\n"
 "        is created by default.\n"
 "        "
-msgstr ""
+msgstr "Warnung den Benutzer aus dem angegebenen Grund.\n\n"
+"        `<points>` Anzahl der Punkte, für die die Warnung gelten sollte. Wenn keine Nummer angegeben wird\n"
+"        1 Punkt wird angegeben. Vorgesetzte Warnungen ignorieren dies.\n"
+"        `<reason>` kann ein registrierter Grund sein, wenn sie existiert oder ein benutzerdefinierter\n"
+"        standardmäßig erstellt wird.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn yourself."
@@ -297,12 +329,14 @@ msgstr "{user} wurde verwarnt."
 #: redbot/cogs/warnings/warnings.py:496
 msgid "{reason}\n\n"
 "Use `{prefix}unwarn {user} {message}` to remove this warning."
-msgstr ""
+msgstr "{reason}\n\n"
+"Benutze `{prefix}unwarn {user} {message}` um diese Warnung zu entfernen."
 
 #: redbot/cogs/warnings/warnings.py:499
 msgid "{description}\n"
 "Points: {points}"
-msgstr ""
+msgstr "{description}\n"
+"Punkte: {points}"
 
 #: redbot/cogs/warnings/warnings.py:522
 #, docstring
@@ -323,7 +357,7 @@ msgstr "Unbekannter Moderator ({})"
 
 #: redbot/cogs/warnings/warnings.py:544 redbot/cogs/warnings/warnings.py:578
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
-msgstr ""
+msgstr "{num_points} Punkte Verwarnung {reason_name} ausgestellt von {user} wegen {description}\n"
 
 #: redbot/cogs/warnings/warnings.py:555 redbot/cogs/warnings/warnings.py:589
 msgid "Warnings for {user}"

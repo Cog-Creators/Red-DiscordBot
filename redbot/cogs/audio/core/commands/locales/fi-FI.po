@@ -41,7 +41,9 @@ msgstr "Hallitse globaalin avainsanan valkoistalistaa."
 msgid "Adds a keyword to the whitelist.\n\n"
 "        If anything is added to whitelist, it will blacklist everything else.\n"
 "        "
-msgstr ""
+msgstr "Lisää avainsanan valkoiselle listalle.\n\n"
+"        Jos jotain lisätään valkoiselle listalle, se mustalla listalla kaikki muu.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -298,12 +300,14 @@ msgstr "Ei käytössä"
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"Uudelleentoisto on poistettu käytöstä."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"Yhteyden katkaisu jonon lopussa on poistettu käytöstä."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -487,7 +491,9 @@ msgstr "Asettaa automaattisen toiston soittolistan viimeksi toistettuihin kappal
 msgid "Toggle global daily queues.\n\n"
 "        Global daily queues creates a playlist for all tracks played today.\n"
 "        "
-msgstr ""
+msgstr "Vaihda globaalien päivittäisten jonojen tilaa.\n\n"
+"        Globaalit päivittäiset jonot luovat soittolistan päivän aikana toistetuista kappaleista.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:584
 msgid "Global daily queues: {true_or_false}."
@@ -498,7 +504,9 @@ msgstr "Globaalit päivittäiset jonot: {true_or_false}."
 msgid "Toggle daily queues.\n\n"
 "        Daily queues creates a playlist for all tracks played today.\n"
 "        "
-msgstr ""
+msgstr "Vaihda päivittäisten jonojen tilaa.\n\n"
+"        Päivittäiset jonot luovat soittolistan kaikista päivän aikana toistetuista kappaleista.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:605
 msgid "Daily queues: {true_or_false}."
@@ -509,7 +517,9 @@ msgstr "Päivittäiset jonot: {true_or_false}."
 msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
 "        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
 "        "
-msgstr ""
+msgstr "Vaihda botin automaattisen katkaisun tilaa jonon loppuessa.\n\n"
+"        Tämä asetus ohittaa `[p]audioset emptydisconnect`-asetuksen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:622
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -519,14 +529,17 @@ msgstr "Katkaise yhteys jono loppuessa: {true_or_false}."
 #: redbot/cogs/audio/core/commands/controller.py:753
 msgid "\n"
 "Auto-play has been disabled."
-msgstr ""
+msgstr "\n"
+"Automaattinen toisto on poistettu käytöstä."
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
-msgstr ""
+msgstr "Vaihda DJ-tilaa.\n\n"
+"        DJ-tila sallii DJ-roolin omaavien käyttäjien käyttää Audio-komentoja.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -549,7 +562,9 @@ msgstr "DJ-rooli: {true_or_false}."
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
 "        `[p]audioset dc` takes precedence over this setting.\n"
 "        "
-msgstr ""
+msgstr "Katkaise yhteys puhekanavaan kun botti on ollut sillä yksin x sekuntia, 0 poistaa ominaisuuden käytöstä.\n\n"
+"        `[p]audioset dc` ohittaa tämän asetuksen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -670,7 +685,10 @@ msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
 "        input will turn the max length setting off.\n"
 "        "
-msgstr ""
+msgstr "Kappaleen maksimipituus sekunteina, 0 poistaaksesi ominaisuuden käytöstä.\n\n"
+"        Hyväksyy luvun sekunteina tai muodossa 00:00:00 (`hh:mm:ss`) tai 00:00 (`mm:ss`). Virheellinen\n"
+"       syöte poistaa maksipituuden käytöstä.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:867
 msgid "Invalid length"
@@ -743,35 +761,35 @@ msgstr "Palvelimen asetukset"
 
 #: redbot/cogs/audio/core/commands/audioset.py:991
 msgid "Auto-disconnect:  [{dc}]\n"
-msgstr ""
+msgstr "Automaattinen yhteyden katkaisu:  [{dc}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:992
 msgid "Auto-play:        [{autoplay}]\n"
-msgstr ""
+msgstr "Automaattinen toisto:        [{autoplay}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
 msgid "Disconnect timer: [{num_seconds}]\n"
-msgstr ""
+msgstr "Yhteyden katkaisun viive: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
 msgid "Auto Pause timer: [{num_seconds}]\n"
-msgstr ""
+msgstr "Automaattisen tauon viive: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1004
 msgid "DJ Role:          [{role.name}]\n"
-msgstr ""
+msgstr "DJ-rooli:          [{role.name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1006
 msgid "Jukebox:          [{jukebox_name}]\n"
-msgstr ""
+msgstr "Jukebox-tila: [{jukebox_name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1007
 msgid "Command price:    [{jukebox_price}]\n"
-msgstr ""
+msgstr "Komennon hinta:    [{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
 msgid "Max track length: [{tracklength}]\n"
-msgstr ""
+msgstr "Kappaleen maksimipituus: [{tracklength}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1014
 msgid "Repeat:           [{repeat}]\n"
@@ -782,16 +800,24 @@ msgid "Repeat:           [{repeat}]\n"
 "Persist queue:    [{persist_queue}]\n"
 "Spotify search:   [{countrycode}]\n"
 "Auto-Deafen:      [{auto_deafen}]\n"
-msgstr ""
+msgstr "Uudelleentoisto:           [{repeat}]\n"
+"Sekoitus:          [{shuffle}]\n"
+"Sekoita nostetut:   [{bumpped_shuffle}]\n"
+"Ilmoita kappaleista: [{notify}]\n"
+"Kappaleet tilana:  [{status}]\n"
+"Säilytä jono:    [{persist_queue}]\n"
+"Spotify-haku:   [{countrycode}]\n"
+"Automaattinen hiljennys:      [{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "Thumbnails:       [{0}]\n"
-msgstr ""
+msgstr "Pikkukuvat:       [{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
 msgid "Vote skip:        [{vote_enabled}]\n"
 "Skip percentage:  [{vote_percent}%]\n"
-msgstr ""
+msgstr "Ohitus äänestämällä:        [{vote_enabled}]\n"
+"Ohitusprosentti:  [{vote_percent}%]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1051
 msgid "Server"
@@ -824,15 +850,15 @@ msgstr "Automaattisen toiston asetukset"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 msgid "Playlist name:    [{pname}]\n"
-msgstr ""
+msgstr "Soittolistan nimi:    [{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Playlist ID:      [{pid}]\n"
-msgstr ""
+msgstr "Soittolistan ID:      [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Playlist scope:   [{pscope}]\n"
-msgstr ""
+msgstr "Soittolistan taso:   [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1076
 #: redbot/cogs/audio/core/commands/audioset.py:1351
@@ -842,27 +868,27 @@ msgstr "Välimuistin asetukset"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1078
 msgid "Max age:                [{max_age}]\n"
-msgstr ""
+msgstr "Maksimi-ikä:                [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Local Spotify cache:    [{spotify_status}]\n"
-msgstr ""
+msgstr "Paikallinen Spotify-välimuisti:    [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1080
 msgid "Local Youtube cache:    [{youtube_status}]\n"
-msgstr ""
+msgstr "Paikallinen YouTube-välimuisti:    [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
 msgid "Local Lavalink cache:   [{lavalink_status}]\n"
-msgstr ""
+msgstr "Paikallinen Lavalink-välimuisti:   [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
 msgid "Global cache status:    [{global_cache}]\n"
-msgstr ""
+msgstr "Globaalin välimuistin tila:    [{global_cache}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
 msgid "Global timeout:         [{num_seconds}]\n"
-msgstr ""
+msgstr "Globaali aikakatkaisu:         [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1085
 #: redbot/cogs/audio/core/commands/audioset.py:1345
@@ -876,7 +902,7 @@ msgstr "Käyttäjäasetukset"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
 msgid "Spotify search:   [{country_code}]\n"
-msgstr ""
+msgstr "Spotify-haku: [{country_code}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
@@ -884,7 +910,7 @@ msgstr "Lavalink-asetukset"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Cog version:            [{version}]\n"
-msgstr ""
+msgstr "Cog-versio:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
@@ -892,7 +918,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "External server:        [{use_external_lavalink}]\n"
-msgstr ""
+msgstr "Ulkoinen palvelin:        [{use_external_lavalink}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
 msgid "Lavalink build:         [{llbuild}]\n"
@@ -901,11 +927,16 @@ msgid "Lavalink build:         [{llbuild}]\n"
 "Lavaplayer version:     [{lavaplayer}]\n"
 "Java version:           [{jvm}]\n"
 "Java Executable:        [{jv_exec}]\n"
-msgstr ""
+msgstr "Lavalink-koontiversio:         [{llbuild}]\n"
+"Lavalink-haara:        [{llbranch}]\n"
+"Julkaisupäivä:           [{build_time}]\n"
+"Lavaplayer-versio:     [{lavaplayer}]\n"
+"Java-versio:           [{jvm}]\n"
+"Java-tiedosto:        [{jv_exec}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1130
 msgid "Localtracks path:       [{localpath}]\n"
-msgstr ""
+msgstr "Paikallisten kappaleiden polku:       [{localpath}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1139
 #, docstring
@@ -975,7 +1006,14 @@ msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "5. Accept the terms and conditions.\n"
 "6. Copy your client ID and your client secret into:\n"
 "`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
-msgstr ""
+msgstr "1. Mene Spotify kehittäjäsivustolle ja kirjaudu sisään.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. Klikkaa \"Create An App\".\n"
+"3. Täytä lomakkeeseen tiedot sovelluksestasi: nimi, jne.\n"
+"4. Kun sinulta kysytään teetkö kauppalista integraatiota, vastaa \"No\".\n"
+"5. Hyväksy käyttöehdot.\n"
+"6. Kopioi client ID ja client secret komentoon:\n"
+"`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1274
 #: redbot/cogs/audio/core/commands/audioset.py:1296
@@ -1009,27 +1047,35 @@ msgid "Sets the caching level.\n\n"
 "        5: Enables all Caches\n\n"
 "        If you wish to disable a specific cache use a negative number.\n"
 "        "
-msgstr ""
+msgstr "Asettaa välimuistin tason.\n\n"
+"        Taso voi olla joku seuraavista:\n\n"
+"        0: Ei mitään välimuistia\n"
+"        1: Ottaa Spotify-välimuistin käyttöön\n"
+"        2: Ottaa YouTube-välimuistin käyttöön\n"
+"        3: Ottaa Lavalink-välimuistin käyttöön\n"
+"        5: Ottaa kaikki välimuistit käyttöön\n\n"
+"        Jos haluat poistaa tietyn välimuistin käytöstä, käytä negatiivista numeroa.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1340
 #: redbot/cogs/audio/core/commands/audioset.py:1385
 msgid "Max age:          [{max_age}]\n"
-msgstr ""
+msgstr "Maksimi-ikä:          [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1341
 #: redbot/cogs/audio/core/commands/audioset.py:1386
 msgid "Spotify cache:    [{spotify_status}]\n"
-msgstr ""
+msgstr "Spotify-välimuisti: [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1342
 #: redbot/cogs/audio/core/commands/audioset.py:1387
 msgid "Youtube cache:    [{youtube_status}]\n"
-msgstr ""
+msgstr "Youtube-välimuisti: [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1343
 #: redbot/cogs/audio/core/commands/audioset.py:1388
 msgid "Lavalink cache:   [{lavalink_status}]\n"
-msgstr ""
+msgstr "Lavalink-välimuisti: [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 #, docstring
@@ -1037,11 +1083,14 @@ msgid "Sets the cache max age.\n\n"
 "        This commands allows you to set the max number of days before an entry in the cache becomes\n"
 "        invalid.\n"
 "        "
-msgstr ""
+msgstr "Asettaa välimuistin maksimi-iän.\n\n"
+"        Tällä komennolla voit asettaa kuinka monen päivän jälkeen merkinnästä välimuistissa tulee\n"
+"        kelvoton.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1410
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
-msgstr ""
+msgstr "Välimuistin pituus ei voi olla alle seitsemää päivää. Jos haluat poistaa välimuistin käytöstä aja komento {prefix}audioset cache.\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1415
 msgid "I've set the cache age to {age} days"
@@ -1057,7 +1106,9 @@ msgstr "Muuta globalapi-asetuksia."
 msgid "Toggle the server settings.\n\n"
 "        Default is OFF\n"
 "        "
-msgstr ""
+msgstr "Vaihda palvelimen asetuksia.\n\n"
+"        Oletus on POIS KÄYTÖSTÄ\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "Global DB is {status}"
@@ -1076,7 +1127,9 @@ msgstr "ei käytössä"
 msgid "Set GET request timeout.\n\n"
 "        Example: 0.1 = 100ms 1 = 1 second\n"
 "        "
-msgstr ""
+msgstr "Aseta GET-pyynnön aikakatkaisu.\n\n"
+"        Esimerkiksi: 0.1 = 100ms, 1 = 1 sekunti\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
@@ -1087,7 +1140,9 @@ msgstr "Pyynnön aikakatkaisu asetettiin {time} sekuntiin"
 msgid "Toggle persistent queues.\n\n"
 "        Persistent queues allows the current queue to be restored when the queue closes.\n"
 "        "
-msgstr ""
+msgstr "Vaihda säilyvien jonojen tilaa.\n\n"
+"        Säilyvät jonot mahdollistavat jonon palautuksen sen sulkemisen jälkeen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1465
 msgid "Persisting queues: {true_or_false}."
@@ -1171,7 +1226,8 @@ msgstr "Nyt soi."
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+" Pyytäjä: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
@@ -1302,7 +1358,9 @@ msgstr "Toistetaan kappale uudelleen"
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "Kelaa kappaletta eteen- tai taaksepäin tietty sekuntimäärä tai tiettyyn aikaan.\n\n"
+"        Hyväksyy luvun sekunteina tai ajan muodossa 00:00:00 (`hh:mm:ss`) tai 00:00 (`mm:ss`).\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:318
 #: redbot/cogs/audio/core/commands/controller.py:325
@@ -1372,7 +1430,10 @@ msgid "Toggle bumped track shuffle.\n\n"
 "        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
 "        over `[p]shuffle`.\n"
 "        "
-msgstr ""
+msgstr "Vaihda nostettujen kappaleiden sekoituksen tilaa.\n\n"
+"        Poista tämä käytöstä välttääksesi nostettujen kappaleiden sekoituksen. Tällä asetuksella on suurempi prioriteetti\n"
+" kuin `[p]shuffle`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:457
 msgid "Shuffle bumped tracks: {true_or_false}."
@@ -1735,7 +1796,12 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Aseta taajuusalueen arvo joko nimellä tai numerolla.\n\n"
+"        Alueiden numerot ovat 1-15 voivat vaihdella  -0.25 ja 1.0 välillä.\n"
+"        Alueiden nimet ovat 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k ja16k Hz.\n"
+"        Alueen asettaminen arvoon -0.25 mykistää sen kun taas +0.25 tuplaa sen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:323
 msgid "Unable To Set Preset"
@@ -1771,7 +1837,9 @@ msgstr "Lavalink-palvelimen asetukset."
 msgid "Change your Java executable path\n\n"
 "        Enter nothing to reset to default.\n"
 "        "
-msgstr ""
+msgstr "Syötä Java-ajotiedostosi polku\n\n"
+"        Jätä tyhjäksi palauttaaksesi oletuksen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:35
 msgid "You cannot changed the Java executable path of external Lavalink instances from the Audio Cog."
@@ -1832,7 +1900,8 @@ msgstr "Ulkoinen Lavalink-palvelin: {true_or_false}."
 #: redbot/cogs/audio/core/commands/llset.py:113
 msgid "External Lavalink server: {true_or_false}\n"
 "For it to take effect please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Ulkoinen Lavalink-palvelin: {true_or_false}\n"
+"Tämän muutoksen voimaan ottamiseksi lataa Audio uudelleen (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
@@ -1878,19 +1947,19 @@ msgstr "Yhteysasetukset"
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\n"
-msgstr ""
+msgstr "Osoite:             [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\n"
-msgstr ""
+msgstr "WS-portti:          [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
 msgid "Rest Port:        [{port}]\n"
-msgstr ""
+msgstr "Rest-portti:        [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\n"
-msgstr ""
+msgstr "Salasana:         [{password}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:232
 msgid "I need to be able to DM you to send you this info."
@@ -2042,7 +2111,8 @@ msgstr "Vain yksittäiset kappaleet toimivat samanaikaisen noston ja toiston kan
 #: redbot/cogs/audio/core/commands/player.py:905
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Paikalliset kappaleet eivät toimi jos `Lavalink.jar` ei voi nähdä niitä.\n"
+"Tämä voi johtua tiedosto-oikeuksista tai siitä että Lavalink.jar ajetaan toisella tietokoneella kuin missä kappaleet ovat."
 
 #: redbot/cogs/audio/core/commands/player.py:257
 #: redbot/cogs/audio/core/commands/player.py:792
@@ -2080,12 +2150,14 @@ msgstr "Valitse Spotify-soittolista kategorioista aloittaaksesi toistamisen."
 #: redbot/cogs/audio/core/commands/player.py:413
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Omistajan tulee asettaa Spotify client ID ja Spotify client secret, ennen kuin Spotify-osoitteita voidaan käyttää. \n"
+"Katso `{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/core/commands/player.py:423
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Omistajan täytyy asettee YouTube API -avain ennen kuin Spotify-osoitteita voidaan käyttää.\n"
+"Katso`{prefix}audioset youtubeapi` saadakseksi ohjeita."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2297,7 +2369,8 @@ msgstr "{num} kappaletta lisättiin soittolistaan {playlist} (`{id}`) [**{scope}
 #: redbot/cogs/audio/core/commands/playlists.py:204
 msgid "\n"
 "{existing} {plural} already in the playlist and were skipped."
-msgstr ""
+msgstr "\n"
+"{existing} {plural} jo soittolistalla ja ohitettiin."
 
 #: redbot/cogs/audio/core/commands/playlists.py:206
 msgid "tracks are"
@@ -2541,12 +2614,13 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:891
 msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
-msgstr ""
+msgstr "Soittolistan {playlist_name} (`{id}`) [**{scope}**] tiedot:\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:895
 msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
 "URL: {url}"
-msgstr ""
+msgstr "Soittolistan {playlist_name} (`{id}`) [**{scope}**] tiedot:\n"
+"URL-osoite: {url}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:908
 #: redbot/cogs/audio/core/commands/playlists.py:1056
@@ -2611,7 +2685,7 @@ msgstr "Tekijä: {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "Taso: {scope}\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1078
 #, docstring
@@ -2790,7 +2864,8 @@ msgstr "Soittolista lisätty jonoon"
 #: redbot/cogs/audio/core/commands/playlists.py:1567
 msgid "{name} - (`{id}`) [**{scope}**]\n"
 "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "{name} - (`{id}`) [**{scope}**]\n"
+"Lisättiin {num} kappaletta jonoon.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1613
 #, docstring

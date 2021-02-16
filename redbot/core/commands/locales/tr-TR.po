@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" bir sayı değil."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "Bu komut için bu süre çok kısa. (Minimum: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "Sunucu \"{name}\" bulunamadı."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
@@ -62,7 +62,8 @@ msgstr "Devre dışı bırakıldı"
 #: redbot/core/commands/help.py:118
 msgid "\n"
 "Custom Tagline: {tag}"
-msgstr ""
+msgstr "\n"
+"Özel Kısa Açıklama: {tag}"
 
 #: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\n"
@@ -73,7 +74,14 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Help shows unusable commands when asked directly: {verify_exists}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Sayfa başına maksimum karakter: {page_char_limit}\n"
+"Sunucu başına maksimum sayfa (sadece menüler kullanılmıyorsa kullanılır): {max_pages_in_guild}\n"
+"Help bir menüdür: {use_menus}\n"
+"Help gizli komutları gösterir: {show_hidden}\n"
+"Help sadece kullanılabilen komutları gösterir {verify_checks}\n"
+"Help direk sorulduğunda kullanılamaz komutları gösterir: {verify_exists}\n"
+"Silme gecikmesi: {delete_delay}\n"
+"Yardım özel mesaj olarak gönderildiğin tik ile tepki ver: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
@@ -119,7 +127,8 @@ msgstr "{ctx.me.display_name} Yardım Menüsü"
 #: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
-msgstr ""
+msgstr "*{page_count} sayfadan {page_num}.*\n"
+"{content_description}"
 
 #: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"

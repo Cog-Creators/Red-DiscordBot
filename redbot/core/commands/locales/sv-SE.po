@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" är inte ett tal."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "Denna tid är för liten för detta kommando. (Minimum: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "Servern \"{name}\" hittades inte."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
@@ -119,7 +119,8 @@ msgstr "{ctx.me.display_name} Hjälpmeny"
 #: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
-msgstr ""
+msgstr "*Sida {page_num} av {page_count}*\n"
+"{content_description}"
 
 #: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"

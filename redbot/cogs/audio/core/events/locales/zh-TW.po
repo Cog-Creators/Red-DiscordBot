@@ -55,7 +55,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
-msgstr ""
+msgstr "無效的環境。\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:176
 msgid "Connection to Lavalink has been lost."
@@ -105,7 +105,7 @@ msgstr "歌曲長度: {length} | 點歌者: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "佇列結束"
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"

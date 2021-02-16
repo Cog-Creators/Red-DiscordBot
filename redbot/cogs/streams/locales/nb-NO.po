@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,10 @@ msgid "Various commands relating to streaming platforms.\n\n"
 "    You can check if a Twitch, YouTube or Picarto stream is\n"
 "    currently live.\n"
 "    "
-msgstr ""
+msgstr "Forskjellige kommandoer for streaming-plattformer.\n\n"
+"    Du kan sjekke om en Twitch, YouTube eller Picarto stream er\n"
+"    for øyeblikket live.\n"
+"    "
 
 #: redbot/cogs/streams/streams.py:142
 msgid "You need a client secret key if you want to use the Twitch API on this cog.\n"
@@ -32,7 +35,14 @@ msgid "You need a client secret key if you want to use the Twitch API on this co
 "5. Copy your client ID and your client secret into:\n"
 "{command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
-msgstr ""
+msgstr "Du trenger en klient hemmelig nøkkel hvis du vil bruke Twitch API på denne cog.\n"
+"Følg disse trinnene:\n"
+"1. Gå til denne siden: https://dev.twitch.tv/console/apps.\n"
+"2. Klikk \"Manage\" på søknaden.\n"
+"3. Klikk på \"New secret\".\n"
+"5. Kopier din klient-ID og din klient hemmelig om:\n"
+"{command}\n\n"
+"Merk: Disse kodene er følsomme og bør bare brukes i en privat kanal eller i DM med boten."
 
 #: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_id_here>"
@@ -128,7 +138,12 @@ msgid "Disable all stream alerts in this channel or server.\n\n"
 "        Do `[p]streamalert stop yes` to disable all stream alerts in\n"
 "        this server.\n"
 "        "
-msgstr ""
+msgstr "Deaktiver alle stream-varsler i denne kanalen eller serveren.\n\n"
+"        `[p]streamalert stop` vil deaktivere denne kanalens strøm\n"
+"        varsler.\n\n"
+"        Do `[p]streamalert stop yes` for å deaktivere alle stream-varsler i\n"
+"        denne serveren.\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:363
 msgid "All the stream alerts in this server have been disabled."
@@ -145,7 +160,7 @@ msgstr "List alle aktive stream-varsler på denne serveren."
 
 #: redbot/cogs/streams/streams.py:374
 msgid "Active alerts:\n\n"
-msgstr ""
+msgstr "Aktive varsler:\n\n"
 
 #: redbot/cogs/streams/streams.py:382
 msgid "There are no active alerts in this server."
@@ -180,7 +195,15 @@ msgid "To set the twitch API tokens, follow these steps:\n"
 "{command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr ""
+msgstr "For å stille inn twitch API-token, følg disse trinnene:\n"
+"1. Gå til siden https://dev.twitch.tv/dashboard/applikasjoner.\n"
+"2. Klikk *Registrer din applikasjon*.\n"
+"3. Skriv inn et navn, sett OAuth omdirigere URI til `http://localhost`, og velg en programkategori for din du velger.\n"
+"4. Klikk *Register*.\n"
+"5. Kopier din klient-ID og din klient hemmelig i:\n"
+"{command}\n\n"
+"Merk: Disse kodene er følsomme og bør bare brukes i en privat kanal\n"
+"eller i DM med bot.\n"
 
 #: redbot/cogs/streams/streams.py:498
 #, docstring
@@ -198,7 +221,16 @@ msgid "To get one, do the following:\n"
 "4. Copy your API key and run the command {command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr ""
+msgstr "Slik gjør du følgende:\n"
+"1. Opprett et prosjekt\n"
+"(se https://support.google.com/googleapi/answer/6251787 for detaljer)\n"
+"2. Aktivere YouTube Data API v3 \n"
+"(se https://support.google.com/googleapi/answer/6158841 for instruksjoner)\n"
+"3. Sett opp din API-nøkkel \n"
+"(se https://support.google.com/googleapi/answer/6158862 i instruksjoner)\n"
+"4. Kopier din API-nøkkel og kjør kommandoen {command}\n\n"
+"Merk: Disse tokene er følsomme og skal kun brukes i en privat kanal\n"
+"eller i DM med boten.\n"
 
 #: redbot/cogs/streams/streams.py:514
 msgid "<your_api_key_here>"
@@ -216,7 +248,11 @@ msgid "Set stream alert message when mentions are enabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message mention {mention}, {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Sett strøms varslingsmelding når nevninger er aktivert.\n\n"
+"        Bruk `{mention}` i meldingen for å sette inn de valgte omtalene.\n"
+"        Bruk `{stream}` i meldingen for å sette inn kanal eller brukernavn.\n\n"
+"        For eksempel: `[p]streamset message mention {mention}, {stream} is live!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:551
 msgid "Stream alert message set!"
@@ -228,7 +264,10 @@ msgid "Set stream alert message when mentions are disabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message nomention {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Sett strøms varslingsmelding når nevninger er deaktivert.\n\n"
+"        Bruk `{stream}` i meldingen for å sette inn kanalen eller brukernavnet.\n\n"
+"        For eksempel: `[p]streamset message nomention {stream} is live!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:556
 #, docstring
@@ -342,47 +381,47 @@ msgstr "{mention}, {stream} er direkte!"
 msgid "{stream} is live!"
 msgstr "{stream} er direkte!"
 
-#: redbot/cogs/streams/streamtypes.py:181
+#: redbot/cogs/streams/streamtypes.py:198
 msgid "This stream will start in {time}"
 msgstr "Denne strømmen starter om {time}"
 
-#: redbot/cogs/streams/streamtypes.py:187
+#: redbot/cogs/streams/streamtypes.py:204
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr "Denne strømmen ble planlagt for {min} minutter siden"
 
-#: redbot/cogs/streams/streamtypes.py:360
+#: redbot/cogs/streams/streamtypes.py:381
 msgid "Untitled broadcast"
 msgstr "Frakoblet sending"
 
-#: redbot/cogs/streams/streamtypes.py:362
+#: redbot/cogs/streams/streamtypes.py:383
 msgid " - Rerun"
 msgstr " - kjøre om igjen"
 
-#: redbot/cogs/streams/streamtypes.py:365
-#: redbot/cogs/streams/streamtypes.py:408
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:386
+#: redbot/cogs/streams/streamtypes.py:429
+#: redbot/cogs/streams/streamtypes.py:470
 msgid "Followers"
 msgstr "Følgere"
 
-#: redbot/cogs/streams/streamtypes.py:366
-#: redbot/cogs/streams/streamtypes.py:450
+#: redbot/cogs/streams/streamtypes.py:387
+#: redbot/cogs/streams/streamtypes.py:471
 msgid "Total views"
 msgstr "Visninger totalt"
 
-#: redbot/cogs/streams/streamtypes.py:371
-#: redbot/cogs/streams/streamtypes.py:412
+#: redbot/cogs/streams/streamtypes.py:392
+#: redbot/cogs/streams/streamtypes.py:433
 msgid "Playing: "
 msgstr "Spiller: "
 
-#: redbot/cogs/streams/streamtypes.py:455
+#: redbot/cogs/streams/streamtypes.py:476
 msgid "None"
 msgstr "Ingen"
 
-#: redbot/cogs/streams/streamtypes.py:458
+#: redbot/cogs/streams/streamtypes.py:479
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:462
+#: redbot/cogs/streams/streamtypes.py:483
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Kategori: {category} ＋ Tagger: {tags}"
 

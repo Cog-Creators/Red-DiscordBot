@@ -118,7 +118,7 @@ msgstr ""
 
 #: redbot/cogs/reports/reports.py:318
 msgid "Your report was submitted. (Ticket #{})"
-msgstr ""
+msgstr "Vaše hlášení bylo odesláno. (Ticket #{})"
 
 #: redbot/cogs/reports/reports.py:354
 msgid "{closer} has closed the correspondence"

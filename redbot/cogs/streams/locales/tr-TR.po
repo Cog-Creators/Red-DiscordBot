@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,10 @@ msgid "Various commands relating to streaming platforms.\n\n"
 "    You can check if a Twitch, YouTube or Picarto stream is\n"
 "    currently live.\n"
 "    "
-msgstr ""
+msgstr "Yayın platformları ile ilgili çeşitli komutlar.\n\n"
+"    Bir Twitch, Youtube veya Picarto yayınının şu anda canlı\n"
+"     olup olmadığını kontrol edebilirsiniz.\n"
+"    "
 
 #: redbot/cogs/streams/streams.py:142
 msgid "You need a client secret key if you want to use the Twitch API on this cog.\n"
@@ -32,7 +35,14 @@ msgid "You need a client secret key if you want to use the Twitch API on this co
 "5. Copy your client ID and your client secret into:\n"
 "{command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel or in DM with the bot."
-msgstr ""
+msgstr "Bu cog ile Twitch API kullanabilmek istiyorsanız bir istemci gizli anahtarı edinmeniz gerekir.\n"
+"Bu adımları takip edin:\n"
+"1. Şu sayfayı ziyaret edin: https://dev.twitch.tv/console/apps.\n"
+"2. Uygulamanız üzerinde \"Yönet\" düğmesine tıklayın.\n"
+"3. \"Yeni Sır\" düğmesine yıklayın.\n"
+"5. İstemci IDsini ve sırını şu komuta kopyalayın:\n"
+"{command}\n\n"
+"Not: Bunlar hassas bilgidir ve sadece gizli bir kanalda veya bot ile özel mesaj üzerinden kullanılmalıdır."
 
 #: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_id_here>"
@@ -128,7 +138,12 @@ msgid "Disable all stream alerts in this channel or server.\n\n"
 "        Do `[p]streamalert stop yes` to disable all stream alerts in\n"
 "        this server.\n"
 "        "
-msgstr ""
+msgstr "Bu sunucu veya kanaldaki tüm yayın uyarılarını kapa.\n\n"
+"        `[p]streamalert stop` bu kanal için yayın uyarılarını\n"
+"        kapatacaktır.\n\n"
+"        Bu sunucudaki tüm yayın uyarılarını\n"
+"        kapamak için `[p]streamalert stop yes` komutunu kullanın.\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:363
 msgid "All the stream alerts in this server have been disabled."
@@ -145,7 +160,7 @@ msgstr "Bu sunucudaki etkin yayın uyarılarını listele."
 
 #: redbot/cogs/streams/streams.py:374
 msgid "Active alerts:\n\n"
-msgstr ""
+msgstr "Etkin uyarılar:\n\n"
 
 #: redbot/cogs/streams/streams.py:382
 msgid "There are no active alerts in this server."
@@ -180,7 +195,15 @@ msgid "To set the twitch API tokens, follow these steps:\n"
 "{command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr ""
+msgstr "Twitch API anahtarlarını ayarlamak için şu adımları takip edin:\n"
+"1. Bu sayfaya girin: https://dev.twitch.tv/dashboard/apps.\n"
+"2. *Uygulamanı Kayıt Ettir* düğmesine tıklayın.\n"
+"3. Bir isim girin, Oauth yönlendirme URI ayarını `http://localhost` olarak yapın, ve kafanıza göre bir Uygulama Kategorisi seçin.\n"
+"4. *Kaydet* düğmesine tıklayın.\n"
+"5. İstemci IDsi ve sırrını şu komuta kopyalayın:\n"
+"{command}\n\n"
+"Not: Bu anahtarlar hassas bilgidir ve sadece özel bir kanalda\n"
+"yahut bot ile özel mesajda kullanılmalıdır..\n"
 
 #: redbot/cogs/streams/streams.py:498
 #, docstring
@@ -198,7 +221,16 @@ msgid "To get one, do the following:\n"
 "4. Copy your API key and run the command {command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr ""
+msgstr "Bir anahtar almak için şu adımları takip edin::\n"
+"1. Bir proje oluşturun\n"
+"(detaylar için https://support.google.com/googleapi/answer/6251787 adresini ziyaret edin)\n"
+"2. Youtube Data API v3 ü etkinleştirin. \n"
+"(talimatlar için https://support.google.com/googleapi/answer/6158841 adresini ziyaret edin)\n"
+"3. API anahtarınızı ayarlayın \n"
+"(detaylar için https://support.google.com/googleapi/answer/6158862 adresini ziyaret edin)\n"
+"4. API anahtarınızı kopyalayın ve şu komutu çalıştırın: {command}\n\n"
+"Not: Bu anahtarlar hassas bilgidir ve yalnızca gizli bir kanalda\n"
+"yahut bot ile özel mesajda kullanılması gerekir.\n"
 
 #: redbot/cogs/streams/streams.py:514
 msgid "<your_api_key_here>"
@@ -216,7 +248,11 @@ msgid "Set stream alert message when mentions are enabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message mention {mention}, {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Bahsetmeler etkinleştirildiğinde yayın uyarı mesajını ayarla.\n\n"
+"        Seçilen bahsedişleri eklemek için mesajda `{mention}` kullanın.\n"
+"        Kanal veya kullanıcı adı eklemek için mesajda `{stream}` kullanın.\n\n"
+"        Örnek: `[p]streamset message mention {mention}, {stream} canlı yayında!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:551
 msgid "Stream alert message set!"
@@ -228,7 +264,10 @@ msgid "Set stream alert message when mentions are disabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message nomention {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Bahsetmeler kapatıldığında yayın uyarı mesajını ayarla.\n\n"
+"        Kanal veya kullanıcı adı eklemek için mesajda `{stream}` kullanın.\n\n"
+"        Örnek: `[p]streamset message nomention {stream} canlı yayında!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:556
 #, docstring
@@ -342,47 +381,47 @@ msgstr "{mention}, {stream} canlı yayında!"
 msgid "{stream} is live!"
 msgstr "{stream} canlı yayında!"
 
-#: redbot/cogs/streams/streamtypes.py:181
+#: redbot/cogs/streams/streamtypes.py:198
 msgid "This stream will start in {time}"
 msgstr "Bu yayının başlamasına kalan: {time}"
 
-#: redbot/cogs/streams/streamtypes.py:187
+#: redbot/cogs/streams/streamtypes.py:204
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr "Bu yayın {min} dakika öncesi için planlanmıştı"
 
-#: redbot/cogs/streams/streamtypes.py:360
+#: redbot/cogs/streams/streamtypes.py:381
 msgid "Untitled broadcast"
 msgstr "İsimsiz yayın"
 
-#: redbot/cogs/streams/streamtypes.py:362
+#: redbot/cogs/streams/streamtypes.py:383
 msgid " - Rerun"
 msgstr " - Tekrar"
 
-#: redbot/cogs/streams/streamtypes.py:365
-#: redbot/cogs/streams/streamtypes.py:408
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:386
+#: redbot/cogs/streams/streamtypes.py:429
+#: redbot/cogs/streams/streamtypes.py:470
 msgid "Followers"
 msgstr "Takipçiler"
 
-#: redbot/cogs/streams/streamtypes.py:366
-#: redbot/cogs/streams/streamtypes.py:450
+#: redbot/cogs/streams/streamtypes.py:387
+#: redbot/cogs/streams/streamtypes.py:471
 msgid "Total views"
 msgstr "Toplam görüntülenme"
 
-#: redbot/cogs/streams/streamtypes.py:371
-#: redbot/cogs/streams/streamtypes.py:412
+#: redbot/cogs/streams/streamtypes.py:392
+#: redbot/cogs/streams/streamtypes.py:433
 msgid "Playing: "
 msgstr "Oynatılıyor: "
 
-#: redbot/cogs/streams/streamtypes.py:455
+#: redbot/cogs/streams/streamtypes.py:476
 msgid "None"
 msgstr "None"
 
-#: redbot/cogs/streams/streamtypes.py:458
+#: redbot/cogs/streams/streamtypes.py:479
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:462
+#: redbot/cogs/streams/streamtypes.py:483
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Kategori: {category} | Etiketler: {tags}"
 

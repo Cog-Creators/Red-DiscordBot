@@ -18,7 +18,8 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:78
 msgid "Welcome to the interactive random {cc} maker!\n"
 "Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr ""
+msgstr "Vítejte v interaktivním náhodném {cc} tvůrci!\n"
+"Každá zpráva, kterou odešlete, bude přidána jako jedna z náhodných odpovědí pro výběr od okamžiku, kdy bude tato {cc} spuštěna. Chcete-li ukončit toto interaktivní menu, zadejte `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:89
 msgid "Add a random response:"
@@ -280,7 +281,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:589
 msgid "Responses:\n"
-msgstr ""
+msgstr "Odpovědi:\n"
 
 #: redbot/cogs/customcom/customcom.py:687
 msgid "Too many arguments!"
@@ -288,7 +289,7 @@ msgstr "Příliš mnoho argumentů!"
 
 #: redbot/cogs/customcom/customcom.py:691
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr ""
+msgstr "Argumenty musí být sekvenční. Chybějící argumenty: "
 
 #: redbot/cogs/customcom/customcom.py:717
 msgid "Conflicting colon notation for argument {index}: \"{name1}\" and \"{name2}\"."

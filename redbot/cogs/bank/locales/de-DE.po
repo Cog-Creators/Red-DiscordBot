@@ -53,7 +53,10 @@ msgid "Toggle whether the bank is global or not.\n\n"
 "        If the bank is global, it will become per-server.\n"
 "        If the bank is per-server, it will become global.\n"
 "        "
-msgstr ""
+msgstr "Schalte ein, ob die Bank global ist oder nicht.\n\n"
+"        Wenn die Bank global ist, wird sie pro Server.\n"
+"        Wenn die Bank pro Server ist, wird sie global.\n"
+"        "
 
 #: redbot/cogs/bank/bank.py:90
 msgid "per-server"

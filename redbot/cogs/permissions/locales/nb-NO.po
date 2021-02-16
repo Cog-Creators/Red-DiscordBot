@@ -17,31 +17,31 @@ msgstr ""
 
 #: redbot/cogs/permissions/converters.py:65
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" ble ikke funnet. Det må være ID, mening eller navn på en server, kanal, bruker eller rolle som boten kan se."
 
 #: redbot/cogs/permissions/converters.py:74
 msgid "\"{arg}\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\"{arg}}\"refererer ikke til en unik server, kanal, bruker eller rolle. Vennligst bruk IDen til hva som er allment eller hvem du prøver å spesifisere, eller nevne den/dem."
 
 #: redbot/cogs/permissions/converters.py:117
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
-msgstr ""
+msgstr "\"{arg}\" ble ikke funnet. Det må være ID, mening eller navn på en kanal, bruker eller rolle på denne serveren."
 
 #: redbot/cogs/permissions/converters.py:126
 msgid "\"{arg}\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\"{arg}\" refererer ikke til en unik kanal, bruker eller rolle. Vennligst bruk IDen til hva som er allment eller hvem du prøver å spesifisere, eller nevne den/dem."
 
 #: redbot/cogs/permissions/converters.py:156
 msgid "Cog or command \"{name}\" not found. Please note that this is case sensitive."
-msgstr ""
+msgstr "Cog eller kommando}\"{name}\" ble ikke funnet. Vær oppmerksom på at saken skiller seg mellom små og store bokstaver."
 
 #: redbot/cogs/permissions/converters.py:169
 msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\""
-msgstr ""
+msgstr "\"{arg}\" er ikke en gyldig regel. Gyldige regler er \"allow\" eller \"deny\""
 
 #: redbot/cogs/permissions/converters.py:182
 msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\", or \"clear\" to remove the rule"
-msgstr ""
+msgstr "\"{arg}\" er ikke en gyldig regel. Gyldige regler er \"allow\" eller \"deny\", eller \"clear\" for å fjerne regelen"
 
 #: redbot/cogs/permissions/permissions.py:46
 #: redbot/cogs/permissions/permissions.py:61
@@ -94,7 +94,16 @@ msgid "This cog extends the default permission model of the bot. By default, man
 "  4. Rules about a role the user has (The highest role they have with a rule will be used).\n"
 "  5. Rules about the server a user is in (Global rules only).\n\n"
 "For more details, please read the [official documentation](https://docs.discord.red/en/stable/cog_permissions.html)."
-msgstr ""
+msgstr "Denne cog utvider standard tilgangsmodell for boten. Som standard er mange kommandoer begrenset basert på hva kommandoen kan gjøre.\n"
+"Denne cog gir deg tilgang til noen av disse restriksjonene. Du kan gi mer eller mindre tilgang til de fleste kommandoene ved å bruke den. Du kan imidlertid ikke endre restriksjoner på bare eierkommandoer.\n\n"
+"Når det angis ekstra regler med denne loggen disse reglene vil bli kontrollert før kontroll av kommandoens standardrestriksjoner.\n"
+"Globale regler (fastsatt av eieren) kontrolleres først, så regler angis for servere. Hvis det gjelder flere globale eller serverregler for hvert tilfelle, er rekkefølgen de kontrolleres er:\n"
+"  1. Regler om en bruker.\n"
+"  2. Regler om talekanalen en bruker er i.\n"
+"  3. Regler om tekstkanalen det ble utgitt en kommando i\n"
+"  4. Regler om en rolle som brukeren har (Den fremste rollen de har med regel vil bli brukt).\n"
+"  5. Regler om serveren en bruker er bare i (Globalregler).\n\n"
+"For mer informasjon, vennligst les [offisiell dokumentasjon](https://docs.discord.red/en/stable/cog_permissions.html)."
 
 #: redbot/cogs/permissions/permissions.py:241
 #, docstring
@@ -102,7 +111,10 @@ msgid "Check if a user can run a command.\n\n"
 "        This will take the current context into account, such as the\n"
 "        server and text channel.\n"
 "        "
-msgstr ""
+msgstr "Sjekk om en bruker kan kjøre en kommando.\n\n"
+"        Dette tar hensyn til gjeldende kontekst. slike som\n"
+"        server og tekstkanal.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:256
 msgid "No such command"
@@ -128,7 +140,7 @@ msgstr "Sender et eksempel til yaml-oppsettet for tillatelser"
 
 #: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\n"
-msgstr ""
+msgstr "Eksempel YAML for å fastsette regler:\n"
 
 #: redbot/cogs/permissions/permissions.py:304
 #, docstring
@@ -138,7 +150,12 @@ msgid "Set global rules with a YAML file.\n\n"
 "        This does not validate the names of commands and cogs before\n"
 "        setting the new rules.\n"
 "        "
-msgstr ""
+msgstr "Angi globale regler med en YAML-fil.\n\n"
+"        **ADVARSEL**: Dette vil overskrive *alle* globale regler\n"
+"        for reglene angitt i den opplastede filen.\n\n"
+"        Dette validerer ikke navn på kommandoer og cogs før\n"
+"        å angi de nye reglene.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:318
 #, docstring
@@ -146,7 +163,10 @@ msgid "Set rules for this server with a YAML file.\n\n"
 "        **WARNING**: This will override reset *all* rules in this\n"
 "        server to the rules specified in the uploaded file.\n"
 "        "
-msgstr ""
+msgstr "Angi regler for denne serveren med en YAML-fil.\n\n"
+"        **ADVARSEL**: Dette vil overskrive *alle* reglene i denne\n"
+"        serveren etter reglene angitt i den opplastede filen.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:328
 #, docstring
@@ -174,7 +194,10 @@ msgid "Update global rules with a YAML file.\n\n"
 "        This won't touch any rules not specified in the YAML\n"
 "        file.\n"
 "        "
-msgstr ""
+msgstr "Oppdater globale regler med en YAML-fil.\n\n"
+"        Dette vil ikke berøre noen regler som ikke er angitt i YAML\n"
+"        -filen.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:369
 #, docstring
@@ -182,7 +205,10 @@ msgid "Update rules for this server with a YAML file.\n\n"
 "        This won't touch any rules not specified in the YAML\n"
 "        file.\n"
 "        "
-msgstr ""
+msgstr "Oppdater regler for denne serveren med en YAML-fil.\n\n"
+"        Dette vil ikke berøre noen regler som ikke er angitt i YAML\n"
+"        -filen.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:385
 #, docstring
@@ -192,7 +218,12 @@ msgid "Add a global rule to a command.\n\n"
 "        This is case sensitive.\n\n"
 "        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
 "        "
-msgstr ""
+msgstr "Legg til en global regel i en kommando.\n\n"
+" `<allow_or_deny>` skal være en av \"allow\" eller \"deny\".\n\n"
+" `<cog_or_command>` er tannhjulet eller kommandoen for å legge til regel til.\n"
+"Dette er mellom store og små bokstaver.\n\n"
+"`<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:401
 #: redbot/cogs/permissions/permissions.py:431
@@ -207,7 +238,12 @@ msgid "Add a rule to a command in this server.\n\n"
 "        This is case sensitive.\n\n"
 "        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
 "        "
-msgstr ""
+msgstr "Legg til en regel i en kommando i denne serveren.\n\n"
+" `<allow_or_deny>` skal være en av \"allow\" eller \"deny\".\n\n"
+" `<cog_or_command>` er cog eller kommandoen for å legge til regel til.\n"
+"Dette er mellom store og små bokstaver.\n\n"
+"`<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:441
 #, docstring
@@ -216,7 +252,11 @@ msgid "Remove a global rule from a command.\n\n"
 "        from. This is case sensitive.\n\n"
 "        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
 "        "
-msgstr ""
+msgstr "Fjern en global regel fra en kommando.\n\n"
+"        `<cog_or_command>` er cog eller kommando for å fjerne regelen\n"
+"        fra. Dette skiller store og små bokstaver.\n\n"
+"        `<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:450
 #: redbot/cogs/permissions/permissions.py:474
@@ -230,7 +270,11 @@ msgid "Remove a server rule from a command.\n\n"
 "        from. This is case sensitive.\n\n"
 "        `<who_or_what...>` is one or more users, channels or roles the rule is for.\n"
 "        "
-msgstr ""
+msgstr "Fjern en serverregel fra en kommando.\n\n"
+"        `<cog_or_command>` er cog eller kommando for å fjerne regelen\n"
+"        fra. Dette skiller store og små bokstaver.\n\n"
+"        `<who_or_what...>` er en eller flere brukere, kanaler eller roller regelen er for\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:482
 #, docstring
@@ -242,7 +286,14 @@ msgid "Set the default rule for a command in this server.\n\n"
 "        `<cog_or_command>` is the cog or command to set the default\n"
 "        rule for. This is case sensitive.\n"
 "        "
-msgstr ""
+msgstr "Angi standardregelen for en kommando på denne serveren.\n\n"
+"Dette er regelen en kommando vil være standard når ingen andre regler\n"
+"blir funnet.\n\n"
+"`<allow_or_deny>` skal være en av \"allow\", \" deny\" \"eller \" clear\". \n"
+"\" tøm\"vil tilbakestille standardregelen.\n\n"
+"` <cog_or_command> `er tannhjulet eller kommandoen du vil angi standard\n"
+" regelen for. Dette er store og små bokstaver.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:498
 #: redbot/cogs/permissions/permissions.py:519
@@ -259,7 +310,14 @@ msgid "Set the default global rule for a command.\n\n"
 "        `<cog_or_command>` is the cog or command to set the default\n"
 "        rule for. This is case sensitive.\n"
 "        "
-msgstr ""
+msgstr "Angi standardregelen for en kommando globalt.\n\n"
+"Dette er regelen en kommando vil være standard når ingen andre regler\n"
+"blir funnet.\n\n"
+"`<allow_or_deny>` skal være en av \"allow\", \" deny\" \"eller \" clear\". \n"
+"\" clear\"vil tilbakestille standardregelen.\n\n"
+"` <cog_or_command> `er tannhjulet eller kommandoen du vil angi standard\n"
+" regelen for. Dette er store og små bokstaver.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:524
 #, docstring

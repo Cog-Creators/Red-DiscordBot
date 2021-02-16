@@ -24,16 +24,17 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Vytvořit aliasy pro příkazy n n Aliasy jsou alternativní zkratky pro příkazy. Mohou působit jako lambda (ukládání argumentů pro opakované použití) n nebo jednoduše jako zkratka pro vyslovení \"xyz\" n n Při spuštění budou aliasy přijímat další argumenty a připojovat je k uložený alias. \\ t    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
-msgstr ""
+msgstr "Aliasy:\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\n\n"
 "Page {page}/{total}"
-msgstr ""
+msgstr "\n\n"
+"Strana {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

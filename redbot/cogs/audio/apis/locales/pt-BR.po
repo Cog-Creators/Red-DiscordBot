@@ -62,7 +62,9 @@ msgstr "{time} até o início da reprodução da lista: começa na posição #{p
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Nada encontrado.\n"
+"A chave de API do YouTube pode ser inválida ou você pode estar sendo limitado pelas cotas do serviço de busca do YouTube.\n"
+"Verifique a chave de API do YouTube novamente e siga as instruções em `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"

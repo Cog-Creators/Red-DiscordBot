@@ -41,7 +41,9 @@ msgstr "管理全域白名單關鍵字。"
 msgid "Adds a keyword to the whitelist.\n\n"
 "        If anything is added to whitelist, it will blacklist everything else.\n"
 "        "
-msgstr ""
+msgstr "新增關鍵字到白名單。\n\n"
+"        如果新增任何內容到白名單中，則會將其他所有內容都列入黑名單。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -298,12 +300,14 @@ msgstr "已停用"
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"已停用重複播放。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"已停用在佇列結束時的自動中斷連線功能。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -371,7 +375,30 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "設定播放清單以便自動播放歌曲。\n\n"
+"        **用法**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay 播放清單名稱或ID [參數]`\n\n"
+"        **參數**:\n"
+"        ​ ​ ​ ​ 以下是可選參數:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <範圍>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [作者]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [伺服器] **此命令只有機器人擁有者可使用**\n\n"
+"        **範圍** 可選擇:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **作者** can be one of the following:\n"
+"        ​ ​ ​ ​ 使用者ID\n"
+"        ​ ​ ​ ​ 提及使用者\n"
+"        ​ ​ ​ ​ 使用者名稱#0000\n\n"
+"        **伺服器** 可選擇:\n"
+"        ​ ​ ​ ​ 伺服器ID\n"
+"        ​ ​ ​ ​ 伺服器全名\n\n"
+"        範例:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -509,7 +536,9 @@ msgstr "今日播放清單: {true_or_false}。"
 msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
 "        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
 "        "
-msgstr ""
+msgstr "切換播放完畢後，機器人自動退出語音的設定。\n\n"
+" 此設定優先於`[p]audioset emptydisconnect`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:622
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -519,14 +548,17 @@ msgstr "播放完畢後自動退出語音伺服器功能: {true_or_false}."
 #: redbot/cogs/audio/core/commands/controller.py:753
 msgid "\n"
 "Auto-play has been disabled."
-msgstr ""
+msgstr "\n"
+"已停用自動播放。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
-msgstr ""
+msgstr "切換為DJ模式\n\n"
+"  DJ模式將會允許擁有DJ角色的使用者使用音樂類的指令\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -747,19 +779,19 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:992
 msgid "Auto-play:        [{autoplay}]\n"
-msgstr ""
+msgstr "自動播放:        [{autoplay}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
 msgid "Disconnect timer: [{num_seconds}]\n"
-msgstr ""
+msgstr "自動斷線計時器: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
 msgid "Auto Pause timer: [{num_seconds}]\n"
-msgstr ""
+msgstr "自動暫停計時器: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1004
 msgid "DJ Role:          [{role.name}]\n"
-msgstr ""
+msgstr "DJ角色:          [{role.name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1006
 msgid "Jukebox:          [{jukebox_name}]\n"
@@ -767,7 +799,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1007
 msgid "Command price:    [{jukebox_price}]\n"
-msgstr ""
+msgstr "指令的費用:    [{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
 msgid "Max track length: [{tracklength}]\n"
@@ -786,7 +818,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "Thumbnails:       [{0}]\n"
-msgstr ""
+msgstr "預覽圖:       [{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
 msgid "Vote skip:        [{vote_enabled}]\n"
@@ -824,15 +856,15 @@ msgstr "自動播放設定"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 msgid "Playlist name:    [{pname}]\n"
-msgstr ""
+msgstr "播放清單名稱:    [{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Playlist ID:      [{pid}]\n"
-msgstr ""
+msgstr "播放清單ID:      [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Playlist scope:   [{pscope}]\n"
-msgstr ""
+msgstr "播放清單範圍:   [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1076
 #: redbot/cogs/audio/core/commands/audioset.py:1351
@@ -876,7 +908,7 @@ msgstr "使用者設定"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
 msgid "Spotify search:   [{country_code}]\n"
-msgstr ""
+msgstr "Spotify 搜尋:   [{country_code}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
@@ -884,7 +916,7 @@ msgstr "Lavalink設定"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Cog version:            [{version}]\n"
-msgstr ""
+msgstr "齒輪版本:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
@@ -892,7 +924,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "External server:        [{use_external_lavalink}]\n"
-msgstr ""
+msgstr "外部伺服器:        [{use_external_lavalink}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
 msgid "Lavalink build:         [{llbuild}]\n"
@@ -1009,7 +1041,15 @@ msgid "Sets the caching level.\n\n"
 "        5: Enables all Caches\n\n"
 "        If you wish to disable a specific cache use a negative number.\n"
 "        "
-msgstr ""
+msgstr "設定快取等級。\n\n"
+"        可使用以下等級之一：\n\n"
+"        0: 停用所有快取\n"
+"        1: 啟用 Spotify 快取\n"
+"        2: 啟用 YouTube 快取\n"
+"        3: 啟用 Lavalink 快取\n"
+"        5: 啟用所有快取\n\n"
+"        如果您想停用指定的快取，可使用負數。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1340
 #: redbot/cogs/audio/core/commands/audioset.py:1385
@@ -1019,17 +1059,17 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1341
 #: redbot/cogs/audio/core/commands/audioset.py:1386
 msgid "Spotify cache:    [{spotify_status}]\n"
-msgstr ""
+msgstr "Spotify快取:    [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1342
 #: redbot/cogs/audio/core/commands/audioset.py:1387
 msgid "Youtube cache:    [{youtube_status}]\n"
-msgstr ""
+msgstr "Youtube快取:    [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1343
 #: redbot/cogs/audio/core/commands/audioset.py:1388
 msgid "Lavalink cache:   [{lavalink_status}]\n"
-msgstr ""
+msgstr "Lavalink快取:   [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 #, docstring
@@ -1171,7 +1211,8 @@ msgstr "正在播放。"
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+" 點歌者: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
@@ -1302,7 +1343,9 @@ msgstr "重播歌曲"
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "在軌道上向前或向後搜索幾秒鐘或到特定時間。\n\n"
+"接受的格式為秒數或00:00:00(`hh:mm:ss`)或00:00 (`mm:ss`)的值。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:318
 #: redbot/cogs/audio/core/commands/controller.py:325
@@ -2184,7 +2227,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} 首歌曲無法排入佇列。"
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2835,7 +2878,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1736
 #: redbot/cogs/audio/core/commands/playlists.py:1756
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "第{page_num}頁/共{total_pages}頁"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1754
 msgid "Tracks added"

@@ -155,7 +155,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:809
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "Non sono riuscito ad inviarti il messaggio di aiuto in DM. O mi hai bloccato i DM o hai disabilitato i DM in questo server."
 
 #: redbot/core/commands/help.py:848
 #, docstring

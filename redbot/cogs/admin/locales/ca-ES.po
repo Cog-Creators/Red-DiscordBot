@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -168,10 +168,14 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
-msgid "Apply selfroles."
+msgid "\n"
+"        Add or remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:401
+#: redbot/cogs/admin/admin.py:409
 #, docstring
 msgid "\n"
 "        Add a selfrole to yourself.\n\n"
@@ -180,7 +184,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:420
 #, docstring
 msgid "\n"
 "        Remove a selfrole from yourself.\n\n"
@@ -189,24 +193,24 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:431
 #, docstring
 msgid "\n"
 "        Lists all available selfroles.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:433
+#: redbot/cogs/admin/admin.py:441
 msgid "Available Selfroles:\n"
 "{selfroles}"
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:439
+#: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:452
 #, docstring
 msgid "\n"
 "        Add a role to the list of available selfroles.\n\n"
@@ -214,19 +218,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:451
+#: redbot/cogs/admin/admin.py:459
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:459
+#: redbot/cogs/admin/admin.py:467
 msgid "Added."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:462
+#: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:466
+#: redbot/cogs/admin/admin.py:474
 #, docstring
 msgid "\n"
 "        Remove a role from the list of available selfroles.\n\n"
@@ -234,24 +238,24 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:473
+#: redbot/cogs/admin/admin.py:481
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:481
+#: redbot/cogs/admin/admin.py:489
 msgid "Removed."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:486
+#: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:491
+#: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:493
+#: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
 msgstr ""
 

@@ -68,7 +68,7 @@ msgstr "nincs engedélyezve"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Jelenlegi beállítások:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."

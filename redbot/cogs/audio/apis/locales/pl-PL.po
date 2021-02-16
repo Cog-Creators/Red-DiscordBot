@@ -24,7 +24,8 @@ msgstr "Nie udało się uzyskać utworów, pomijam pozostałe."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Klucz Spotify API lub sekret klienta nie zostały poprawnie ustawione. \n"
+"Użyj `{prefix}audioset spotifyapi` dla dalszych instrukcji."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,7 +63,9 @@ msgstr "{time} do rozpoczęcia odtwarzania listy odtwarzania: zaczyna się od #{
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Niczego nie znaleziono.\n"
+"Klucz API YouTube może być nieprawidłowy lub może być ograniczany w usłudze wyszukiwania YouTube.\n"
+"Sprawdź ponownie klucz API YouTube i postępuj zgodnie z instrukcjami z `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"

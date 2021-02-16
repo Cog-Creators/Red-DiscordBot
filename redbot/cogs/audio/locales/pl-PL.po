@@ -21,7 +21,11 @@ msgid "\n"
 "​ ​ ​ ​ Global\n"
 "​ ​ ​ ​ Guild\n"
 "​ ​ ​ ​ User\n"
-msgstr ""
+msgstr "\n"
+"Zakres musi być poprawną wersją jednego z poniższych:\n"
+" ​ ​ ​ Global\n"
+"​ ​ ​ ​ Guild\n"
+"​ ​ ​ ​ User\n"
 
 #: redbot/cogs/audio/converters.py:43
 msgid "\n"
@@ -29,26 +33,33 @@ msgid "\n"
 "​ ​ ​ ​ User ID\n"
 "​ ​ ​ ​ User Mention\n"
 "​ ​ ​ ​ User Name#123\n"
-msgstr ""
+msgstr "\n"
+"Autor musi być prawidłową wersją jednego z następujących elementów::\n"
+"​ ​ ​ ​ ID użytkownika\n"
+"​ ​ ​ ​ Wzmianka użytkowika\n"
+"​ ​ ​ ​ Nazwa Użytkownika#123\n"
 
 #: redbot/cogs/audio/converters.py:51
 msgid "\n"
 "Guild must be a valid version of one of the following:\n"
 "​ ​ ​ ​ Guild ID\n"
 "​ ​ ​ ​ Exact guild name\n"
-msgstr ""
+msgstr "\n"
+"Gildia musi być poprawną wersją jednego z poniższych:\n"
+" ​ ​ ​ ID Gildii\n"
+"​ ​ ​ ​Dokładna nazwa gildii\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\"{arg}\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "Nie znaleziono \"{arg}\". Musi to być identyfikator lub pełna nazwa serwera, który bot może zobaczyć."
 
 #: redbot/cogs/audio/converters.py:96 redbot/cogs/audio/converters.py:136
 msgid "\"{arg}\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\"{arg}\" nie odnosi się do unikalnego serwera. Użyj identyfikatora serwera, który próbujesz określić."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\"{arg}\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "Nie znaleziono \"{arg}\". Musi to być identyfikator lub nazwa lub wzmianka o użytkowniku, którego bot widzi."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."

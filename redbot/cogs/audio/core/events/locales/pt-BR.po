@@ -105,7 +105,7 @@ msgstr "Duração da faixa: {length} | Solicitado por: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "Fila terminou."
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"

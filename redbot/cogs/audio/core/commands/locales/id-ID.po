@@ -41,7 +41,9 @@ msgstr "Mengelola daftar putih kata kunci global."
 msgid "Adds a keyword to the whitelist.\n\n"
 "        If anything is added to whitelist, it will blacklist everything else.\n"
 "        "
-msgstr ""
+msgstr "Menambahkan kata kunci ke daftar putih. \n\n"
+"    Jika ada yang ditambahkan ke daftar putih, itu akan membuat daftar hitam yang lainnya. \n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -298,12 +300,14 @@ msgstr "Dinonaktifkan"
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"Pengulangan telah dinonaktifkan."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"Pemutusan otomatis di akhir antrian telah dinonaktifkan."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -371,7 +375,30 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "Setel daftar putar untuk memutar lagu secara otomatis dari. \n\n"
+" ** Penggunaan **:\n"
+" `[p] audioset putar otomatis playlist_name_OR_id [args]` \n\n"
+" ** Args **: \n"
+" Berikut ini semua opsional: \n"
+" --scope <scope> \n"
+" --author [pengguna] \n"
+" --Guild [guild] ** Hanya pemilik bot yang dapat menggunakan ** \n\n"
+" ** Cakupan ** adalah salah satu dari berikut ini: \n"
+" Global \n"
+" Guild \n"
+" Pengguna \n\n"
+" ** Penulis ** dapat menjadi salah satu dari berikut ini: \n"
+" ID Pengguna \n"
+" Sebutan Pengguna \n"
+" Nama Pengguna # 123 \n\n"
+" ** Serikat ** dapat berupa salah satu dari berikut ini: \n"
+" ID Serikat \n"
+" Nama serikat yang tepat \n\n"
+" Contoh penggunaan: \n"
+" `[p] putar otomatis set audio MyGuildPlaylist` \n"
+" `[P] putar otomatis set audio MyGlobalPlaylist --scope Global` \n"
+"` [p] putar otomatis set audio PersonalPlaylist --scope Pengguna - Penulis Draper` \n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -1065,11 +1092,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "enabled"
-msgstr ""
+msgstr "diaktifkan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "disabled"
-msgstr ""
+msgstr "dinonaktifkan"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1442
 #, docstring
@@ -2184,7 +2211,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} lagu tidak dapat diantrekan."
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2785,7 +2812,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1566
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Antrean Daftar Putar"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1567
 msgid "{name} - (`{id}`) [**{scope}**]\n"

@@ -298,12 +298,14 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"Herhalen is uitgeschakeld."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"Automatisch verbinding verbreken aan het einde van de wachtrij is uitgeschakeld."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -526,7 +528,9 @@ msgstr ""
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
-msgstr ""
+msgstr "Verander DJ modus.\n\n"
+"        DJ modus laat gebruikers met de DJ rol audio commando's gebruiken.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -549,7 +553,9 @@ msgstr "DJ role: {true_or_false}."
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
 "        `[p]audioset dc` takes precedence over this setting.\n"
 "        "
-msgstr ""
+msgstr "Verbreek automatisch de verbinding met het kanaal wanneer de bot alleen is voor x seconden, 0 om uit te schakelen.\n\n"
+"        `[p]audioset dc` heeft voorrang op deze instelling.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -2184,7 +2190,7 @@ msgstr "Geen resultaten."
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} nummers kunnen niet in de wachtrij worden geplaatst."
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"

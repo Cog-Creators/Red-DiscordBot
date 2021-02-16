@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -33,19 +33,24 @@ msgstr "Komendy dla interfejsu menedżera cogów dla Reda."
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Wyświetla listę bieżących ścieżek cogów w kolejności ważności.\n"
+"        "
 
 #: redbot/core/cog_manager.py:333
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
-msgstr ""
+msgstr "Ścieżka instalacji: {install_path}\n"
+"Ścieżka rdzenia: {core_path}\n\n"
 
 #: redbot/core/cog_manager.py:347
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dodaj ścieżkę do listy dostępnych ścieżek cogów.\n"
+"        "
 
 #: redbot/core/cog_manager.py:351
 msgid "That path does not exist or does not point to a valid directory."
@@ -60,7 +65,9 @@ msgstr "Ścieżka dodana pomyślnie."
 msgid "\n"
 "        Removes a path from the available cog paths given the `path_number` from `[p]paths`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Usuwa ścieżkę z listy dostępnych ścieżek cogów z podanym `path_number` z `[p]paths`.\n"
+"        "
 
 #: redbot/core/cog_manager.py:369 redbot/core/cog_manager.py:392
 msgid "Path numbers must be positive."
@@ -79,7 +86,9 @@ msgstr "Ścieżka usunięta pomyślnie."
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ponownie porządkuje ścieżki wewnętrznie, by umożliwić odkrycie innych cogów.\n"
+"        "
 
 #: redbot/core/cog_manager.py:399
 msgid "Invalid 'from' index."
@@ -101,7 +110,12 @@ msgid "\n"
 "            directory and it must already exist.\n\n"
 "        No installed cogs will be transferred in the process.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Zwraca obecną ścieżkę instalacji lub ustawia ją jeśli została podana.\n"
+"            Podana ścieżka musi być ścieżką abolutną lub relatywną do ścieżki bota\n"
+"            oraz musi już istnieć.\n\n"
+"        Zainstalowane już cogi nie zostaną przeniesione w wyniku tej operacji.\n"
+"        "
 
 #: redbot/core/cog_manager.py:427
 msgid "That path does not exist."
@@ -116,15 +130,17 @@ msgstr "Bot będzie instalować nowe moduły w katalogu `{}`."
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Zwraca listę załadowanych i dostępnych modułów.\n"
+"        "
 
 #: redbot/core/cog_manager.py:451 redbot/core/cog_manager.py:466
 msgid "**{} loaded:**\n"
-msgstr ""
+msgstr "**{} załadowane:**\n"
 
 #: redbot/core/cog_manager.py:452 redbot/core/cog_manager.py:468
 msgid "**{} unloaded:**\n"
-msgstr ""
+msgstr "**{} niezaładowane:**\n"
 
 #: redbot/core/core_commands.py:177
 msgid "Alias {alias_name} is already an existing command or alias in one of the loaded cogs."
@@ -153,7 +169,9 @@ msgstr ""
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "Ten bot jest instancją [Red, an open source Discord bot]({}) stworzonej przez [Twentysix]({}) i [rozwijanej przez wielu] ({}).\n\n"
+"Red jest wspierana przez pełną pasji społeczność, która wnosi i tworzy treści dla wszystkich. [Dołącz do nas już dziś]({}) i pomóż nam rosnąć!\n\n"
+"(c) Twórcy Cog'ów"
 
 #: redbot/core/core_commands.py:437
 msgid "Instance owned by"
@@ -191,26 +209,31 @@ msgstr "Sprawia radość od 02 Sty 2016 (ponad {} dni temu!)"
 msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "Ten bot jest instancją Red, open source Discord bot'a (1) stworzonego przez [Twentysix](2) i rozwijanego przez wielu (3).\n\n"
+"Red jest wspierana przez pełną pasji społeczność, która wnosi i tworzy treści dla wszystkich. Dołącz do nas już dziś (4) i pomóż nam rosnąć!\n\n"
+"(c) Twórcy Cog'ów"
 
 #: redbot/core/core_commands.py:472
 msgid "Instance owned by: [{owner}]\n"
 "Python:            [{python_version}] (5)\n"
 "discord.py:        [{dpy_version}] (6)\n"
 "Red version:       [{red_version}] (7)\n"
-msgstr ""
+msgstr "Instancja należąca do [{owner}]\n"
+"Python:            [{python_version}] (5)\n"
+"discord.py:        [{dpy_version}] (6)\n"
+"Wersja Red:       [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:491
 msgid "Outdated:          [{state}]\n"
-msgstr ""
+msgstr "Nieaktualny:          [{state}]\n"
 
 #: redbot/core/core_commands.py:494
 msgid "**About Red**\n"
-msgstr ""
+msgstr "**O Red**\n"
 
 #: redbot/core/core_commands.py:505
 msgid "**About this instance**\n"
-msgstr ""
+msgstr "**O tej instancji**\n"
 
 #: redbot/core/core_commands.py:507
 msgid "**References**\n"
@@ -221,7 +244,14 @@ msgid "**References**\n"
 "5. <{}>\n"
 "6. <{}>\n"
 "7. <{}>\n"
-msgstr ""
+msgstr "**Odnośniki**\n"
+"1. <{}>\n"
+"2. <{}>\n"
+"3. <{}>\n"
+"4. <{}>\n"
+"5. <{}>\n"
+"6. <{}>\n"
+"7. <{}>\n"
 
 #: redbot/core/core_commands.py:523
 #, docstring
@@ -249,7 +279,8 @@ msgstr " Dowiedz się jaki rodzaj danych [botname] przechowuje i dlaczego. "
 #: redbot/core/core_commands.py:547
 msgid "This bot stores some data about users as necessary to function. This is mostly the ID your user is assigned by Discord, linked to a handful of things depending on what you interact with in the bot. There are a few commands which store it to keep track of who created something. (such as playlists) For full details about this as well as more in depth details of what is stored and why, see {link}.\n\n"
 "Additionally, 3rd party addons loaded by the bot's owner may or may not store additional things. You can use `{prefix}mydata 3rdparty` to view the statements provided by each 3rd-party addition."
-msgstr ""
+msgstr "Ten bot przechowuje pewne dane o użytkownikach, które są niezbędne do działania. Jest to głównie ID przypisane twojemu użytkownikowi przez Discord, powiązany z kilkoma rzeczami w zależności od tego, z czym wchodzisz w interakcje w bocie. Istnieje kilka komend, które przechowują go, aby śledzić, kto coś stworzył. (takie jak listy odtwarzania) Aby uzyskać szczegółowe informacje na ten temat, a także bardziej szczegółowe informacje o tym, co jest przechowywane i dlaczego, zobacz {link}.\n\n"
+"Dodatkowo, dodatki stron trzecich ładowane przez właściciela bota mogą, ale nie muszą, przechowywać dodatkowe rzeczy. Możesz użyć `{prefix} mydata 3rdparty`, aby wyświetlić oświadczenia dostarczone przez każde dodanie strony trzeciej."
 
 #: redbot/core/core_commands.py:566
 #, docstring
@@ -274,7 +305,7 @@ msgstr "Poniżej znajdują się oświadczenia dostarczone przez rozszerzenia str
 
 #: redbot/core/core_commands.py:608
 msgid "3rd-party extensions without statements\n"
-msgstr ""
+msgstr "Rozszerzenia stron trzecich bez oświadczeń\n"
 
 #: redbot/core/core_commands.py:619
 msgid "Here's a generated page with the statements provided by 3rd-party extensions."
@@ -296,7 +327,12 @@ msgid "\n"
 "        such as command cooldowns will be kept until no longer necessary.\n\n"
 "        Further interactions with [botname] may cause it to learn about you again.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Niech [botname] zapomni, co o tobie wie.\n\n"
+"        Może to nie usunąć wszystkich danych o tobie, dane potrzebne do operacji,\n"
+"        takie jak czasy odnowienia komend, będą przechowywane do momentu, gdy nie będą już potrzebne.\n\n"
+" Dalsze interakcje z [botname] mogą spowodować, że ponownie dowie się o tobie.\n"
+"        "
 
 #: redbot/core/core_commands.py:663
 msgid "This command ({command}) does not support non-interactive usage."
@@ -493,15 +529,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1043
 msgid "Global default: {}\n"
-msgstr ""
+msgstr "Globalna wartość domyślna: {}\n"
 
 #: redbot/core/core_commands.py:1046
 msgid "Guild setting: {}\n"
-msgstr ""
+msgstr "Ustawienia serwera: {}\n"
 
 #: redbot/core/core_commands.py:1049
 msgid "Channel setting: {}\n"
-msgstr ""
+msgstr "Ustawienia kanału: {}\n"
 
 #: redbot/core/core_commands.py:1051
 msgid "User setting: {}"
@@ -872,7 +908,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1652
 msgid "I will not delete command messages."
-msgstr ""
+msgstr "Nie usunę wiadomości komend."
 
 #: redbot/core/core_commands.py:1657
 #, docstring
@@ -2328,7 +2364,12 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:122
+#: redbot/core/dev_commands.py:36
+#, docstring
+msgid "Various development focused utilities."
+msgstr ""
+
+#: redbot/core/dev_commands.py:123
 #, docstring
 msgid "Evaluate a statement of python code.\n\n"
 "        The bot will always respond with the return value of the code.\n"
@@ -2349,7 +2390,7 @@ msgid "Evaluate a statement of python code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:163
+#: redbot/core/dev_commands.py:164
 #, docstring
 msgid "Execute asynchronous code.\n\n"
 "        This command wraps code into the body of an async function and then\n"
@@ -2369,7 +2410,7 @@ msgid "Execute asynchronous code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:217
+#: redbot/core/dev_commands.py:218
 #, docstring
 msgid "Open an interactive REPL.\n\n"
 "        The REPL will only recognise code as messages which start with a\n"
@@ -2378,51 +2419,51 @@ msgid "Open an interactive REPL.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:226
+#: redbot/core/dev_commands.py:227
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
 msgstr "Już działa sesja REPL na tym kanale. Wyjdź za pomocą `quit`."
 
-#: redbot/core/dev_commands.py:230
+#: redbot/core/dev_commands.py:231
 msgid "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:241
+#: redbot/core/dev_commands.py:242
 msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
 msgstr ""
 
-#: redbot/core/dev_commands.py:255
+#: redbot/core/dev_commands.py:256
 msgid "Exiting."
 msgstr ""
 
-#: redbot/core/dev_commands.py:306
+#: redbot/core/dev_commands.py:307
 msgid "Unexpected error: `{}`"
 msgstr "Nieoczekiwany błąd: `{}`"
 
-#: redbot/core/dev_commands.py:310
+#: redbot/core/dev_commands.py:311
 #, docstring
 msgid "Pauses/resumes the REPL running in the current channel"
 msgstr ""
 
-#: redbot/core/dev_commands.py:312
+#: redbot/core/dev_commands.py:313
 msgid "There is no currently running REPL session in this channel."
 msgstr ""
 
-#: redbot/core/dev_commands.py:320
+#: redbot/core/dev_commands.py:321
 msgid "The REPL session in this channel has been resumed."
 msgstr ""
 
-#: redbot/core/dev_commands.py:322
+#: redbot/core/dev_commands.py:323
 msgid "The REPL session in this channel is now paused."
 msgstr ""
 
-#: redbot/core/dev_commands.py:327
+#: redbot/core/dev_commands.py:328
 #, docstring
 msgid "Mock another user invoking a command.\n\n"
 "        The prefix must not be entered.\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:340
+#: redbot/core/dev_commands.py:341
 #, docstring
 msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        Only reads the raw content of the message. Attachments, embeds etc. are\n"
@@ -2430,17 +2471,17 @@ msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:361
+#: redbot/core/dev_commands.py:362
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\n\n"
 "        Does not persist through restarts."
 msgstr ""
 
-#: redbot/core/dev_commands.py:369
+#: redbot/core/dev_commands.py:370
 msgid "Bot owners will now bypass all commands with cooldowns."
 msgstr ""
 
-#: redbot/core/dev_commands.py:371
+#: redbot/core/dev_commands.py:372
 msgid "Bot owners will no longer bypass all commands with cooldowns."
 msgstr ""
 
@@ -2478,7 +2519,7 @@ msgstr ""
 
 #: redbot/core/events.py:226
 msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+msgstr "`{user_input}` nie jest poprawną wartością dla `{command}`"
 
 #: redbot/core/events.py:251
 msgid "Error in command '{command}'. Check your console or logs for details."
@@ -2542,7 +2583,7 @@ msgstr ""
 
 #: redbot/core/modlog.py:349
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznane"
 
 #: redbot/core/modlog.py:353 redbot/core/modlog.py:375
 #: redbot/core/modlog.py:390

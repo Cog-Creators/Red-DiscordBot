@@ -33,7 +33,8 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:205
 msgid "\n\n"
 "Page {page}/{total}"
-msgstr ""
+msgstr "\n\n"
+"Sivu {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

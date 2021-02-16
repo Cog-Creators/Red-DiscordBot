@@ -500,11 +500,11 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1220
 msgid "Installed Cogs:\n"
-msgstr ""
+msgstr "已安裝齒輪：\n"
 
 #: redbot/cogs/downloader/downloader.py:1227
 msgid "Available Cogs:\n"
-msgstr ""
+msgstr "可用的齒輪：\n"
 
 #: redbot/cogs/downloader/downloader.py:1240
 #, docstring

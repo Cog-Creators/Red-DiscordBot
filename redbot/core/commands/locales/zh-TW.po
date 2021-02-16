@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" 不是數字。"
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "對於該命令來說，此時間量太小。 (最小值: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "沒有找到\"{name}\"伺服器."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
@@ -165,5 +165,15 @@ msgid "\n"
 "    (Help) you know I need someone\n"
 "    (Help!)\n"
 "    "
-msgstr ""
+msgstr "\n"
+"    I need somebody\n"
+"    (Help) not just anybody\n"
+"    (Help) you know I need someone\n"
+"    (Help!)\n"
+"    \n\n"
+"   我需要某人\n"
+"    (救命)不只是任何人\n"
+"    (救命)你知道我需要某人\n"
+"    (救命!)\n"
+"     "
 
