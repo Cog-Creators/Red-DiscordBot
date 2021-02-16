@@ -49,15 +49,15 @@ msgstr ""
 
 #: redbot/core/commands/help.py:105
 msgid "No"
-msgstr ""
+msgstr "لا"
 
 #: redbot/core/commands/help.py:107
 msgid "Yes"
-msgstr ""
+msgstr "نعم"
 
 #: redbot/core/commands/help.py:113
 msgid "Disabled"
-msgstr ""
+msgstr "معطل"
 
 #: redbot/core/commands/help.py:118
 msgid "\n"

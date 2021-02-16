@@ -105,7 +105,7 @@ msgstr "Длина трека: {length} | Запрошено: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "Очередь закончилась."
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"

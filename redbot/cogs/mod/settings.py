@@ -1,9 +1,11 @@
+import asyncio
 from collections import defaultdict, deque
 from typing import Optional
 from datetime import timedelta
 
 from redbot.core import commands, i18n, checks
-from redbot.core.utils.chat_formatting import box, humanize_timedelta
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
 from .abc import MixinMeta
 
@@ -16,7 +18,6 @@ class ModSettings(MixinMeta):
     """
 
     @commands.group()
-    @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manage server administration settings."""
@@ -24,8 +25,19 @@ class ModSettings(MixinMeta):
     @modset.command(name="showsettings")
     async def modset_showsettings(self, ctx: commands.Context):
         """Show the current server administration settings."""
+        globaldata = await self.config.all()
+        track_all_names = globaldata["track_all_names"]
+        msg = ""
+        msg += _("Track name changes: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if track_all_names else _("No")
+        )
         guild = ctx.guild
+        if not guild:
+            await ctx.send(box(msg))
+            return
+
         data = await self.config.guild(guild).all()
+        track_nicknames = data["track_nicknames"]
         delete_repeats = data["delete_repeats"]
         warn_mention_spam = data["mention_spam"]["warn"]
         kick_mention_spam = data["mention_spam"]["kick"]
@@ -37,7 +49,11 @@ class ModSettings(MixinMeta):
         dm_on_kickban = data["dm_on_kickban"]
         default_days = data["default_days"]
         default_tempban_duration = data["default_tempban_duration"]
-        msg = ""
+        if not track_all_names and track_nicknames:
+            yes_or_no = _("Overridden by another setting")
+        else:
+            yes_or_no = _("Yes") if track_nicknames else _("No")
+        msg += _("Track nickname changes: {yes_or_no}\n").format(yes_or_no=yes_or_no)
         msg += _("Delete repeats: {num_repeats}\n").format(
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
             if delete_repeats != -1
@@ -398,3 +414,114 @@ class ModSettings(MixinMeta):
                 duration=humanize_timedelta(timedelta=duration)
             )
         )
+
+    @modset.command()
+    @commands.guild_only()
+    async def tracknicknames(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether nickname changes should be tracked.
+
+        This setting will be overridden if trackallnames is disabled.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            state = await self.config.guild(guild).track_nicknames()
+            if state:
+                msg = _("Nickname changes are currently being tracked.")
+            else:
+                msg = _("Nickname changes are not currently being tracked.")
+            await ctx.send(msg)
+            return
+
+        if enabled:
+            msg = _("Nickname changes will now be tracked.")
+        else:
+            msg = _("Nickname changes will no longer be tracked.")
+        await self.config.guild(guild).track_nicknames.set(enabled)
+        await ctx.send(msg)
+
+    @modset.command()
+    @commands.is_owner()
+    async def trackallnames(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether all name changes should be tracked.
+
+        Toggling this off also overrides the tracknicknames setting.
+        """
+        if enabled is None:
+            state = await self.config.track_all_names()
+            if state:
+                msg = _("Name changes are currently being tracked.")
+            else:
+                msg = _("All name changes are currently not being tracked.")
+            await ctx.send(msg)
+            return
+
+        if enabled:
+            msg = _("Name changes will now be tracked.")
+        else:
+            msg = _(
+                "All name changes will no longer be tracked.\n"
+                "To delete existing name data, use {command}."
+            ).format(command=f"`{ctx.clean_prefix}modset deletenames`")
+        await self.config.track_all_names.set(enabled)
+        await ctx.send(msg)
+
+    @modset.command()
+    @commands.max_concurrency(1, commands.BucketType.default)
+    @commands.is_owner()
+    async def deletenames(self, ctx: commands.Context, confirmation: bool = False) -> None:
+        """Delete all stored usernames and nicknames.
+
+        Examples:
+            - `[p]modset deletenames` - Did not confirm. Shows the help message.
+            - `[p]modset deletenames yes` - Deletes all stored usernames and nicknames.
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        if not confirmation:
+            await ctx.send(
+                _(
+                    "This will delete all stored usernames and nicknames the bot has stored."
+                    "\nIf you're sure, type {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}modset deletenames yes"))
+            )
+            return
+
+        async with ctx.typing():
+            # Nickname data
+            async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
+                guilds_to_remove = []
+                for guild_id, guild_data in mod_member_data.items():
+                    await asyncio.sleep(0)
+                    members_to_remove = []
+
+                    async for member_id, member_data in AsyncIter(guild_data.items(), steps=100):
+                        if "past_nicks" in member_data:
+                            del member_data["past_nicks"]
+                        if not member_data:
+                            members_to_remove.append(member_id)
+
+                    async for member_id in AsyncIter(members_to_remove, steps=100):
+                        del guild_data[member_id]
+                    if not guild_data:
+                        guilds_to_remove.append(guild_id)
+
+                async for guild_id in AsyncIter(guilds_to_remove, steps=100):
+                    del mod_member_data[guild_id]
+
+            # Username data
+            async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
+                users_to_remove = []
+                async for user_id, user_data in AsyncIter(mod_user_data.items(), steps=100):
+                    if "past_names" in user_data:
+                        del user_data["past_names"]
+                    if not user_data:
+                        users_to_remove.append(user_id)
+
+                async for user_id in AsyncIter(users_to_remove, steps=100):
+                    del mod_user_data[user_id]
+
+        await ctx.send(_("Usernames and nicknames have been deleted from Mod config."))

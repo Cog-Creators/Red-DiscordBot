@@ -67,11 +67,11 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:502
 msgid "Libraries installed."
-msgstr ""
+msgstr "تم تثبيت المكتبات."
 
 #: redbot/cogs/downloader/downloader.py:505
 msgid "Some libraries failed to install. Please check your logs for a complete list."
-msgstr ""
+msgstr "بعض المكتبات فشلت في التثبيت. الرجاء التحقق من السجلات الخاصة بك للحصول على قائمة كاملة."
 
 #: redbot/cogs/downloader/downloader.py:514
 #, docstring
@@ -95,7 +95,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:541
 msgid "Repo names can only contain characters A-z, numbers, underscores, and hyphens."
-msgstr ""
+msgstr "أسماء المستودع يمكن أن تحتوي فقط على أحرف A-z والأرقام والشرطات السفلية والواصلات."
 
 #: redbot/cogs/downloader/downloader.py:550
 msgid "The repo name you provided is already in use. Please choose another name."
@@ -111,7 +111,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:578
 msgid "Repo `{name}` successfully added."
-msgstr ""
+msgstr "تم إضافة Repo `{name} بنجاح."
 
 #: redbot/cogs/downloader/downloader.py:584
 #, docstring
@@ -126,16 +126,16 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:597
 msgid "The repo `{repo.name}` has been deleted successfully."
-msgstr ""
+msgstr "تم حذف المستودع `{repo.name}` بنجاح."
 
 #: redbot/cogs/downloader/downloader.py:602
 #, docstring
 msgid "List all installed repos."
-msgstr ""
+msgstr "قائمة جميع المستودع المثبت."
 
 #: redbot/cogs/downloader/downloader.py:605
 msgid "Installed Repos:\n\n"
-msgstr ""
+msgstr "المستودع المثبت:\n\n"
 
 #: redbot/cogs/downloader/downloader.py:614
 #, docstring
@@ -151,25 +151,27 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:1273
 #: redbot/cogs/downloader/downloader.py:1583
 msgid "Missing from info.json"
-msgstr ""
+msgstr "مفقودة من info.json"
 
 #: redbot/cogs/downloader/downloader.py:625
 msgid "Repo url: {repo_url}\n"
-msgstr ""
+msgstr "رابط المستعرض: {repo_url}\n"
 
 #: redbot/cogs/downloader/downloader.py:627
 msgid "Branch: {branch_name}\n"
-msgstr ""
+msgstr "الفرع: {branch_name}\n"
 
 #: redbot/cogs/downloader/downloader.py:628
 msgid "Made by: {author}\n"
 "Description:\n"
 "{description}"
-msgstr ""
+msgstr "صنع بواسطة: {author}\n"
+"الوصف:\n"
+"{description}"
 
 #: redbot/cogs/downloader/downloader.py:632
 msgid "Information on {repo_name} repo:{information}"
-msgstr ""
+msgstr "معلومات عن {repo_name} مستودع:{information}"
 
 #: redbot/cogs/downloader/downloader.py:640
 #, docstring
@@ -186,25 +188,26 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:660
 msgid "Repo update completed successfully."
-msgstr ""
+msgstr "اكتمل تحديث Repo بنجاح."
 
 #: redbot/cogs/downloader/downloader.py:661
 #: redbot/cogs/downloader/downloader.py:1471
 msgid "\n"
 "Updated: "
-msgstr ""
+msgstr "\n"
+"تم تحديثه: "
 
 #: redbot/cogs/downloader/downloader.py:663
 msgid "All installed repos are already up to date."
-msgstr ""
+msgstr "تم بالفعل تحديث جميع المستودعات المثبتة."
 
 #: redbot/cogs/downloader/downloader.py:666
 msgid "These repos are already up to date."
-msgstr ""
+msgstr "هذه المستودعات محدثة بالفعل."
 
 #: redbot/cogs/downloader/downloader.py:668
 msgid "This repo is already up to date."
-msgstr ""
+msgstr "تم تحديث هذا المستودع مسبقاً."
 
 #: redbot/cogs/downloader/downloader.py:678
 #, docstring
@@ -224,21 +227,22 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:712
 #: redbot/cogs/downloader/downloader.py:1454
 msgid "Failed to install requirements: "
-msgstr ""
+msgstr "فشل تثبيت المتطلبات: "
 
 #: redbot/cogs/downloader/downloader.py:717
 #: redbot/cogs/downloader/downloader.py:1492
 msgid "\n"
 "Failed to install shared libraries: "
-msgstr ""
+msgstr "\n"
+"فشل تثبيت المكتبات المشتركة: "
 
 #: redbot/cogs/downloader/downloader.py:723
 msgid "Cog requirements and shared libraries for all installed cogs have been reinstalled but there were some errors:\n"
-msgstr ""
+msgstr "تم إعادة تثبيت متطلبات الكود والمكتبات المشتركة لجميع الرموز المثبتة ولكن كانت هناك بعض الأخطاء:\n"
 
 #: redbot/cogs/downloader/downloader.py:731
 msgid "Cog requirements and shared libraries for all installed cogs have been reinstalled."
-msgstr ""
+msgstr "تمت إعادة تثبيت متطلبات الكود والمكتبات المشتركة لجميع الرموز المثبتة."
 
 #: redbot/cogs/downloader/downloader.py:739
 #, docstring
@@ -270,36 +274,40 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:785
 #: redbot/cogs/downloader/downloader.py:1116
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
-msgstr ""
+msgstr "خطأ: قصير الذاكرة 1 `{rev}` غامض. المرشحون المحتملون:\n"
 
 #: redbot/cogs/downloader/downloader.py:797
 #: redbot/cogs/downloader/downloader.py:1127
 msgid "Error: there is no revision `{rev}` in repo `{repo.name}`"
-msgstr ""
+msgstr "خطأ: لا توجد مراجعة{rev}` في repo `{repo.name}`"
 
 #: redbot/cogs/downloader/downloader.py:811
 msgid "\n"
 "Failed to install requirements: "
-msgstr ""
+msgstr "\n"
+"فشل تثبيت المتطلبات: "
 
 #: redbot/cogs/downloader/downloader.py:832
 msgid "\n"
 "Failed to install shared libraries for `{repo.name}` repo: "
-msgstr ""
+msgstr "\n"
+"فشل تثبيت المكتبات المشتركة لـ `{repo.name}`repo: "
 
 #: redbot/cogs/downloader/downloader.py:840
 msgid "\n"
 "Failed to install cogs: "
-msgstr ""
+msgstr "\n"
+"فشل تثبيت الكونج: "
 
 #: redbot/cogs/downloader/downloader.py:844
 msgid "Successfully installed cogs: "
-msgstr ""
+msgstr "تم تثبيت التعليمات البرمجية بنجاح: "
 
 #: redbot/cogs/downloader/downloader.py:847
 msgid "\n"
 "These cogs are now pinned and won't get updated automatically. To change this, use `{prefix}cog unpin <cog>`"
-msgstr ""
+msgstr "\n"
+"تم تثبيت هذه التعليمات البرمجية الآن ولن يتم تحديثها تلقائياً. لتغيير هذا، استخدم `{prefix}إلغاء تثبيت cog <cog>`"
 
 #: redbot/cogs/downloader/downloader.py:854
 msgid "\n"
@@ -321,18 +329,21 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:903
 msgid "Successfully uninstalled cogs: "
-msgstr ""
+msgstr "تم إلغاء تثبيت الكود بنجاح: "
 
 #: redbot/cogs/downloader/downloader.py:906
 msgid "\n"
 "Downloader has removed these cogs from the installed cogs list but it wasn't able to find their files: "
-msgstr ""
+msgstr "\n"
+"قام تنزيل بإزالة هذه الرموز من قائمة الرموز المثبتة ولكنه لم يتمكن من العثور على ملفاته: "
 
 #: redbot/cogs/downloader/downloader.py:911
 msgid "\n"
 "They were most likely removed without using `{prefix}cog uninstall`.\n"
 "You may need to remove those files manually if the cogs are still usable. If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-msgstr ""
+msgstr "\n"
+"تم إزالتها على الأرجح بدون استخدام `{prefix}إلغاء تثبيت `.\n"
+"قد تحتاج إلى إزالة هذه الملفات يدوياً إذا كانت الرموز لا تزال قابلة للاستخدام. إذا كان الأمر كذلك، تأكد من أن الشفرة قد تم تفريغها بواسطة '{prefix}تفريغ {cogs}`."
 
 #: redbot/cogs/downloader/downloader.py:921
 #, docstring
@@ -347,12 +358,13 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:943
 msgid "Pinned cogs: "
-msgstr ""
+msgstr "المدونة المثبتة: "
 
 #: redbot/cogs/downloader/downloader.py:945
 msgid "\n"
 "These cogs were already pinned: "
-msgstr ""
+msgstr "\n"
+"هذه المدونات تم تثبيتها بالفعل: "
 
 #: redbot/cogs/downloader/downloader.py:950
 #, docstring
@@ -366,12 +378,13 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:971
 msgid "Unpinned cogs: "
-msgstr ""
+msgstr "المدونة المثبتة: "
 
 #: redbot/cogs/downloader/downloader.py:973
 msgid "\n"
 "These cogs weren't pinned: "
-msgstr ""
+msgstr "\n"
+"لم يتم تثبيت هذه الرموز: "
 
 #: redbot/cogs/downloader/downloader.py:978
 #, docstring
@@ -401,16 +414,21 @@ msgid "\n"
 "        This command doesn't update cogs, it only checks for updates.\n"
 "        Use `[p]cog update` to update cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        تحقق من تحديثات الكود المتاحة (بما في ذلك الكود المثبت).\n\n"
+"        لا يقوم هذا الأمر بتحديث المدونات ، فإنه يقوم فقط بالتحقق من وجود تحديثات.\n"
+"        استخدم `[p]تحديث` لتحديث المدونات البرمجية.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1018
 msgid "These cogs can be updated: "
-msgstr ""
+msgstr "يمكن تحديث هذه الرموز: "
 
 #: redbot/cogs/downloader/downloader.py:1023
 msgid "\n"
 "These shared libraries can be updated: "
-msgstr ""
+msgstr "\n"
+"يمكن تحديث هذه المكتبات المشتركة: "
 
 #: redbot/cogs/downloader/downloader.py:1027
 msgid "No cogs can be updated."
@@ -418,7 +436,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1031
 msgid "All installed cogs are up to date."
-msgstr ""
+msgstr "تم تحديث جميع الرموز المثبتة."
 
 #: redbot/cogs/downloader/downloader.py:1040
 #, docstring
@@ -460,33 +478,34 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1148
 msgid "There were no cogs to check."
-msgstr ""
+msgstr "لم تكن هناك رموز للتحقق."
 
 #: redbot/cogs/downloader/downloader.py:1151
 #: redbot/cogs/downloader/downloader.py:1185
 msgid "\n"
 "These cogs are pinned and therefore weren't checked: "
-msgstr ""
+msgstr "\n"
+"تم تثبيت هذه المدونات وبالتالي لم يتم تحديدها: "
 
 #: redbot/cogs/downloader/downloader.py:1166
 msgid "Cogs from provided repos are already up to date."
-msgstr ""
+msgstr "Cog من المستودعات المقدمة قد تم تحديثها بالفعل."
 
 #: redbot/cogs/downloader/downloader.py:1169
 msgid "Provided cogs are already up to date with this revision."
-msgstr ""
+msgstr "تم تحديث المدونات مسبقاً مع هذا التنقيح."
 
 #: redbot/cogs/downloader/downloader.py:1173
 msgid "Cogs from provided repo are already up to date with this revision."
-msgstr ""
+msgstr "Cog من المستودع المقدم هي بالفعل على اطلاع على هذا التنقيح."
 
 #: redbot/cogs/downloader/downloader.py:1178
 msgid "Provided cogs are already up to date."
-msgstr ""
+msgstr "تم تحديث الكود المقدمة مسبقاً."
 
 #: redbot/cogs/downloader/downloader.py:1180
 msgid "All installed cogs are already up to date."
-msgstr ""
+msgstr "تم بالفعل تحديث جميع الرموز المثبتة."
 
 #: redbot/cogs/downloader/downloader.py:1208
 #, docstring
@@ -500,11 +519,11 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1220
 msgid "Installed Cogs:\n"
-msgstr ""
+msgstr "الكوادس المثبتة:\n"
 
 #: redbot/cogs/downloader/downloader.py:1227
 msgid "Available Cogs:\n"
-msgstr ""
+msgstr "المدونات المتاحة:\n"
 
 #: redbot/cogs/downloader/downloader.py:1240
 #, docstring
@@ -519,7 +538,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1253
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
-msgstr ""
+msgstr "لا يوجد رمز `{cog_name}` في repo `{repo.name}`"
 
 #: redbot/cogs/downloader/downloader.py:1259
 msgid "Information on {cog_name}:\n"
@@ -537,43 +556,48 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:1339
 msgid "\n"
 "Couldn't find these cogs in {repo.name}: "
-msgstr ""
+msgstr "\n"
+"تعذر العثور على هذه الرموز في {repo.name}: "
 
 #: redbot/cogs/downloader/downloader.py:1343
 msgid "\n"
 "These cogs were already installed: "
-msgstr ""
+msgstr "\n"
+"هذه المدونات تم تثبيتها بالفعل: "
 
 #: redbot/cogs/downloader/downloader.py:1347
 msgid "\n"
 "Some cogs with these names are already installed from different repos: "
-msgstr ""
+msgstr "\n"
+"تم تثبيت بعض الكود مع هذه الأسماء بالفعل من مستودع مختلف: "
 
 #: redbot/cogs/downloader/downloader.py:1365
 msgid " (Minimum: {min_version})"
-msgstr ""
+msgstr " (الحد الأدنى: {min_version})"
 
 #: redbot/cogs/downloader/downloader.py:1378
 msgid " (Minimum: {min_version}"
-msgstr ""
+msgstr " (الحد الأدنى: {min_version}"
 
 #: redbot/cogs/downloader/downloader.py:1382
 msgid ", at most: {max_version}"
-msgstr ""
+msgstr "، على الأكثر: {max_version}"
 
 #: redbot/cogs/downloader/downloader.py:1390
 msgid "\n"
 "These cogs require higher python version than you have: "
-msgstr ""
+msgstr "\n"
+"هذه المدونات تتطلب إصدار بيثون أعلى مما لديك: "
 
 #: redbot/cogs/downloader/downloader.py:1394
 msgid "\n"
 "These cogs require different Red version than you currently have ({current_version}): "
-msgstr ""
+msgstr "\n"
+"هذه المدونات تتطلب إصدار أحمر مختلف عما لديك حاليا ({current_version}): "
 
 #: redbot/cogs/downloader/downloader.py:1460
 msgid "Cog update completed successfully."
-msgstr ""
+msgstr "اكتمل تحديث Cog بنجاح."
 
 #: redbot/cogs/downloader/downloader.py:1474
 msgid "\n"
@@ -588,28 +612,30 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:1482
 msgid "\n"
 "Failed to update cogs: "
-msgstr ""
+msgstr "\n"
+"فشل تحديث Cog: "
 
 #: redbot/cogs/downloader/downloader.py:1484
 msgid "No cogs were updated."
-msgstr ""
+msgstr "لم يتم تحديث أي Cog."
 
 #: redbot/cogs/downloader/downloader.py:1486
 msgid "\n"
 "Some shared libraries were updated, you should restart the bot to bring the changes into effect."
-msgstr ""
+msgstr "\n"
+"تم تحديث بعض المكتبات المشتركة، يجب إعادة تشغيل البوت لإدخال التغييرات إلى حيز النفاذ."
 
 #: redbot/cogs/downloader/downloader.py:1500
 msgid "None of the updated cogs were previously loaded. Update complete."
-msgstr ""
+msgstr "لم يتم تحميل أي من الرموز المحدثة. اكتمل التحديث."
 
 #: redbot/cogs/downloader/downloader.py:1504
 msgid "Would you like to reload the updated cogs?"
-msgstr ""
+msgstr "هل ترغب في اعادة إرسال البيانات؟"
 
 #: redbot/cogs/downloader/downloader.py:1527
 msgid "OK then."
-msgstr ""
+msgstr "حسنًا حينئذ."
 
 #: redbot/cogs/downloader/downloader.py:1557
 #, docstring
@@ -624,15 +650,15 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1571
 msgid "That command doesn't seem to exist."
-msgstr ""
+msgstr "لا يبدو أن هذا الأمر موجود."
 
 #: redbot/cogs/downloader/downloader.py:1586
 msgid "Missing from installed repos"
-msgstr ""
+msgstr "مفقود من المستودعات المثبتة"
 
 #: redbot/cogs/downloader/downloader.py:1596
 msgid "Unknown"
-msgstr ""
+msgstr "غير معروف"
 
 #: redbot/cogs/downloader/downloader.py:1597
 msgid "None - this cog wasn't installed via downloader"
@@ -640,7 +666,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1600
 msgid "This command is not provided by a cog."
-msgstr ""
+msgstr "لم يتم توفير هذا الأمر بواسطة شركة."
 
 #: redbot/cogs/downloader/downloader.py:1606
 msgid "Command:"
@@ -671,21 +697,21 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1621
 msgid "Repo branch: {branch_name}\n"
-msgstr ""
+msgstr "فرع الاسترداد: {branch_name}\n"
 
 #: redbot/cogs/downloader/downloader.py:1642
 msgid "Failed to update the following repositories:"
-msgstr ""
+msgstr "فشل تحديث المستودعات التالية:"
 
 #: redbot/cogs/downloader/downloader.py:1644
 msgid "Failed to update the following repository:"
-msgstr ""
+msgstr "فشل تحديث المستودعات التالية:"
 
 #: redbot/cogs/downloader/downloader.py:1647
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
-msgstr ""
+msgstr "قد يكون فرع المستودع قد تمت إزالته أو لم يعد من الممكن الوصول إلى المستودع في عنوان url. راجع السجلات لمزيد من المعلومات."
 
 #: redbot/cogs/downloader/repo_manager.py:183
 msgid "Repo by the name \"{repo_name}\" does not exist."
-msgstr ""
+msgstr "Repo بالاسم \"{repo_name}\" غير موجود."
 

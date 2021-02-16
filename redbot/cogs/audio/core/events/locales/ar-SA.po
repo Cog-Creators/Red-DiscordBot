@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr ""
+msgstr "لقد حاولت تشغيل خادم Lavalink للصوت على هندسة معمارية غير مدعومة. لن تتوفر سوى الأوامر ذات الصلة بالاعدادات."
 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
@@ -26,15 +26,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
-msgstr ""
+msgstr "تمكين"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Disabled"
-msgstr ""
+msgstr "معطل"
 
 #: redbot/cogs/audio/core/events/dpy.py:124
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "لم يتم العثور على دور DJ. تعطيل وضع DJ."
 
 #: redbot/cogs/audio/core/events/dpy.py:134
 msgid "`{user_input}` is not a valid value for `{command}`"
@@ -55,7 +55,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
-msgstr ""
+msgstr "بيئة غير صالحة"
 
 #: redbot/cogs/audio/core/events/dpy.py:176
 msgid "Connection to Lavalink has been lost."
@@ -89,7 +89,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:96
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "تعذر الحصول على مسار صالح."
 
 #: redbot/cogs/audio/core/events/lavalink.py:128
 msgid "Auto Play started."
@@ -97,11 +97,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:143
 msgid "Now Playing"
-msgstr ""
+msgstr "تشغيل الآن"
 
 #: redbot/cogs/audio/core/events/lavalink.py:145
 msgid "Track length: {length} | Requested by: {user}"
-msgstr ""
+msgstr "طول المسار: {length} <unk> طلب من: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
@@ -113,11 +113,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "إغلاق مشغل الصوت بسبب العديد من الأخطاء التي يتم الكشف عنها. إذا استمر هذا، يرجى إبلاغ مالك البوت بأن رمز الصوت قد يكون غير متوفر مؤقتاً."
 
 #: redbot/cogs/audio/core/events/lavalink.py:226
 msgid "Track Stuck"
-msgstr ""
+msgstr "تعثر المسارات"
 
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
@@ -126,5 +126,5 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"
-msgstr ""
+msgstr "خطأ في المسار"
 

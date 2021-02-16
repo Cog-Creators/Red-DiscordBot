@@ -280,7 +280,7 @@ msgstr "{user}으로부터의 경고"
 
 #: redbot/cogs/warnings/warnings.py:442 redbot/cogs/warnings/warnings.py:471
 msgid "Warning"
-msgstr ""
+msgstr "경고"
 
 #: redbot/cogs/warnings/warnings.py:450
 msgid "You have received a warning in {guild_name}."

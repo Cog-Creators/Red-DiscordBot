@@ -197,7 +197,9 @@ msgstr "Mots supprimés avec succès du filtre."
 msgid "Toggle name and nickname filtering.\n\n"
 "        This is disabled by default.\n"
 "        "
-msgstr ""
+msgstr "Activer le filtrage des noms et des pseudos.\n\n"
+"        Ceci est désactivé par défaut.\n"
+"        "
 
 #: redbot/cogs/filter/filter.py:295
 msgid "Names and nicknames will no longer be filtered."

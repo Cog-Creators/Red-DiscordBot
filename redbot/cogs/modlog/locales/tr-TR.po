@@ -35,7 +35,9 @@ msgstr "Hatalı vaka türlerini düzeltmek için komut."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `<channel>` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Mod kayıtları için bir kanal ayarla.\n\n"
+"        Mod kayıtlarını kapamak için `<channel>` boş bırakın.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:53
 msgid "Mod events will be sent to {channel}."
@@ -68,7 +70,7 @@ msgstr "deaktif"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Şuanki ayarlar:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
@@ -99,7 +101,8 @@ msgstr "O sunucu için öyle bir vaka bulunmamakta."
 #: redbot/cogs/modlog/modlog.py:120 redbot/cogs/modlog/modlog.py:158
 msgid "{case}\n"
 "**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\n"
+"**Zaman Damgası:** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
@@ -126,7 +129,8 @@ msgstr "Belirtilen üye için vakaları incele."
 #: redbot/cogs/modlog/modlog.py:194
 msgid "{case}\n"
 "**Timestamp:** {timestamp}\n\n"
-msgstr ""
+msgstr "{case}\n"
+"**Zaman damgası:** {timestamp}\n\n"
 
 #: redbot/cogs/modlog/modlog.py:207
 #, docstring
@@ -135,7 +139,11 @@ msgid "Specify a reason for a modlog case.\n\n"
 "        the owner of unless you are a mod, admin or server owner.\n\n"
 "        If no case number is specified, the latest case will be used.\n"
 "        "
-msgstr ""
+msgstr "Bir mod vakası için sebep belirt.\n\n"
+"        Lütfen unutmayınız ki eğer mod, admin veya sunucu sahibi\n"
+"        değilseniz sadece sahibi olduğunuz vakalarda oynama yapabilirsiniz.\n\n"
+"        Eğer bir vaka numarası belirtilmemişse en son vaka kullanılacaktır.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."

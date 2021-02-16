@@ -280,7 +280,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:589
 msgid "Responses:\n"
-msgstr ""
+msgstr "回應:\n"
 
 #: redbot/cogs/customcom/customcom.py:687
 msgid "Too many arguments!"

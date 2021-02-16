@@ -22,7 +22,8 @@ msgstr "해당 아키텍쳐에서 오디오의 라바링크 서버는 지원되�
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "저에게 이 서버에 대한 몇가지 권한이 누락된 것 같아요, 최대한 빠르게 해당 권한을 부여해 주세요. \n\n"
+"누락되었다고 예상되어지는 권한입니다.:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -122,7 +123,8 @@ msgstr "트랙 걸림"
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
-msgstr ""
+msgstr "예상치 못한 에러로 노래 재생이 중지되었습니다.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

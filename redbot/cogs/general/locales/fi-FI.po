@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Valitse joku annetuista vaihtoehdoista.\n\n"
+"        Antaaksesi vaihtoehdon joka sisältää välilyöntejä, käytä \n"
+"        lainausmerkkejä.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -118,7 +121,10 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Arvo satunnainen.\n\n"
+"        Tulos on 1 ja `<number>` välillä.\n\n"
+"        `<number>` on oletuksena 100.\n"
+"        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -133,12 +139,15 @@ msgstr "{author.mention} Suurin sallittu luku on {maxamount}."
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Heittää kolikon... tai käyttäjän.\n\n"
+"        Oletuksena kolikon.\n"
+"        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Hyvä yritys. Onko tää sun mielestä hauskaa?\n"
+" Mitä jos tehtäis sittenkin *näin*:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -178,7 +187,9 @@ msgstr "{choice} Olemme tasoissa {author.mention}!"
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "Kysy kasipallolta kysymys.\n\n"
+"        Kysymyksen tulee päättyä kysymysmerkkiin.\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -207,7 +218,9 @@ msgstr "Luo lmgtfy-linkki."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Koska kaikki pitävät halauksista!\n\n"
+"        10 erilaista halaustasoa.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
@@ -269,7 +282,7 @@ msgstr " • Botteja: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Käyttäjiä paikalla **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
@@ -470,7 +483,8 @@ msgstr "Kanavat:"
 #: redbot/cogs/general/general.py:425
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Teksti: {text}\n"
+"🔊 Puhe: {voice}"
 
 #: redbot/cogs/general/general.py:431
 msgid "Utility:"
@@ -535,7 +549,8 @@ msgstr ""
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Esimerkiksi:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."

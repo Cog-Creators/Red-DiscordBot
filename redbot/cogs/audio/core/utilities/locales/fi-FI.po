@@ -109,7 +109,11 @@ msgid " - Name:   <{pname}>\n"
 " - ID:     < {pid} >\n"
 " - Tracks: < {ptracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr " - Nimi:   <{pname}>\n"
+" - Taso:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Kappaleita: < {ptracks} >\n"
+" - Tekijä: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -169,12 +173,14 @@ msgstr "{skip_to_track} kappaletta ohitettu"
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Omistajan tulee asettaa Spotify client ID ja Spotify client secret, ennen kuin Spotify-osoitteita voidaan käyttää. \n"
+"Katso `{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Omistajan täytyy asettee YouTube API -avain ennen kuin Spotify-osoitteita voidaan käyttää.\n"
+"Katso`{prefix}audioset youtubeapi` saadakseksi ohjeita."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -233,7 +239,8 @@ msgstr "En saa kappaletta Lavalinkiltä tällä hetkellä, yritä uudelleen muut
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API-avainta tai client secret -arvoa ei ole asetettu oikein. \n"
+"Käytä`{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -250,7 +257,8 @@ msgstr "{query} ei ole sallittu haku."
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Paikalliset kappaleet eivät toimi jos `Lavalink.jar` ei voi nähdä niitä.\n"
+"Tämä voi johtua tiedosto-oikeuksista tai siitä että Lavalink.jar ajetaan toisella tietokoneella kuin missä kappaleet ovat."
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
@@ -332,7 +340,11 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}.    <{playlist.name}>\n"
+" - Taso:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Kappaleita: < {tracks} >\n"
+" - Tekijä: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
@@ -425,11 +437,11 @@ msgstr "Käyttäjä"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
-msgstr ""
+msgstr "__Liian monta kappaletta jonossa, näytetään vain ensimmäiset 500__.\n\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Tällä hetkellä livestriimaa:**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
@@ -442,7 +454,7 @@ msgstr "Toistetaan: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "jonka lisäsi **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
@@ -450,7 +462,7 @@ msgstr "Palvelimen __{guild_name}__ jono"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num_tracks} kappaletta, {num_remaining} jäljellä\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"

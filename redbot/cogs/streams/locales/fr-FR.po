@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -128,7 +128,11 @@ msgid "Disable all stream alerts in this channel or server.\n\n"
 "        Do `[p]streamalert stop yes` to disable all stream alerts in\n"
 "        this server.\n"
 "        "
-msgstr ""
+msgstr "Désactive toutes les alertes de stream sur ce salon ou ce serveur.\n\n"
+"        `[p]streamalert stop'' désactivera les alertes pour ce salon.\n\n"
+"        Utiliser `[p]streamalert stop yes` pour désactiver les alertes\n"
+"        pour ce serveur.\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:363
 msgid "All the stream alerts in this server have been disabled."
@@ -145,7 +149,7 @@ msgstr "Liste toutes les alertes de streams actives dans ce serveur."
 
 #: redbot/cogs/streams/streams.py:374
 msgid "Active alerts:\n\n"
-msgstr ""
+msgstr "Alertes actives :\n\n"
 
 #: redbot/cogs/streams/streams.py:382
 msgid "There are no active alerts in this server."
@@ -342,47 +346,47 @@ msgstr "{mention}, {stream} est en live !"
 msgid "{stream} is live!"
 msgstr "{stream} est en live !"
 
-#: redbot/cogs/streams/streamtypes.py:181
+#: redbot/cogs/streams/streamtypes.py:198
 msgid "This stream will start in {time}"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:187
+#: redbot/cogs/streams/streamtypes.py:204
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:360
+#: redbot/cogs/streams/streamtypes.py:381
 msgid "Untitled broadcast"
 msgstr "Diffusion sans titre"
 
-#: redbot/cogs/streams/streamtypes.py:362
+#: redbot/cogs/streams/streamtypes.py:383
 msgid " - Rerun"
 msgstr " - Rerun"
 
-#: redbot/cogs/streams/streamtypes.py:365
-#: redbot/cogs/streams/streamtypes.py:408
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:386
+#: redbot/cogs/streams/streamtypes.py:429
+#: redbot/cogs/streams/streamtypes.py:470
 msgid "Followers"
 msgstr "Abonnés"
 
-#: redbot/cogs/streams/streamtypes.py:366
-#: redbot/cogs/streams/streamtypes.py:450
+#: redbot/cogs/streams/streamtypes.py:387
+#: redbot/cogs/streams/streamtypes.py:471
 msgid "Total views"
 msgstr "Vues totales"
 
-#: redbot/cogs/streams/streamtypes.py:371
-#: redbot/cogs/streams/streamtypes.py:412
+#: redbot/cogs/streams/streamtypes.py:392
+#: redbot/cogs/streams/streamtypes.py:433
 msgid "Playing: "
 msgstr "Joue à : "
 
-#: redbot/cogs/streams/streamtypes.py:455
+#: redbot/cogs/streams/streamtypes.py:476
 msgid "None"
 msgstr "Aucun"
 
-#: redbot/cogs/streams/streamtypes.py:458
+#: redbot/cogs/streams/streamtypes.py:479
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:462
+#: redbot/cogs/streams/streamtypes.py:483
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}Catégorie : {category} | Tags : {tags}"
 

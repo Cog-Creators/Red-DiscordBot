@@ -17,31 +17,31 @@ msgstr ""
 
 #: redbot/cogs/permissions/converters.py:65
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" n'a pas été trouvé. Ce doit être une ID, une mention, ou le nom d'un serveur, salon, utilisateur ou rôle que le bot peut voir."
 
 #: redbot/cogs/permissions/converters.py:74
 msgid "\"{arg}\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\"{arg}\" ne fait pas référence à un serveur, salon, utilisateur ou rôle unique. Veuillez utilisez l'ID de ce que vous essayez de spécifier, ou mentionnez-le/les."
 
 #: redbot/cogs/permissions/converters.py:117
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a channel, user or role in this server."
-msgstr ""
+msgstr "\"{arg}\" n'a pas été trouvé. Cela doit être l'ID, la mention ou le nom d'un serveur, d'un salon, d'un utilisateur ou d'un rôle dans ce serveur."
 
 #: redbot/cogs/permissions/converters.py:126
 msgid "\"{arg}\" does not refer to a unique channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
-msgstr ""
+msgstr "\"{arg}\" ne fait pas référence à un salon, utilisateur ou rôle. Veuillez utilisez l'ID de ce que vous essayez de spécifier, ou mentionnez-le/les."
 
 #: redbot/cogs/permissions/converters.py:156
 msgid "Cog or command \"{name}\" not found. Please note that this is case sensitive."
-msgstr ""
+msgstr "Cog ou commande \"{name}\" introuvable. Veuillez notez que c'est sensible aux caractères."
 
 #: redbot/cogs/permissions/converters.py:169
 msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\""
-msgstr ""
+msgstr "\"{arg}\" n'est pas une règle valide. Les règles valides sont \"allow\" ou \"deny\""
 
 #: redbot/cogs/permissions/converters.py:182
 msgid "\"{arg}\" is not a valid rule. Valid rules are \"allow\" or \"deny\", or \"clear\" to remove the rule"
-msgstr ""
+msgstr "\"{arg}\" n'est pas une règle valide. Les règles valides sont \"allow\" ou \"deny\", ou \"clear\" pour supprimer la règle"
 
 #: redbot/cogs/permissions/permissions.py:46
 #: redbot/cogs/permissions/permissions.py:61
@@ -102,7 +102,10 @@ msgid "Check if a user can run a command.\n\n"
 "        This will take the current context into account, such as the\n"
 "        server and text channel.\n"
 "        "
-msgstr ""
+msgstr "Vérifie si un utilisateur peut utiliser une commande.\n\n"
+"         Cela prendra en compte le contexte actuel, tel que\n"
+"         le serveur et le salon textuel.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:256
 msgid "No such command"
@@ -128,7 +131,7 @@ msgstr "Envoie un exemple de mise en page yaml pour les permissions"
 
 #: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\n"
-msgstr ""
+msgstr "Exemple d'AYML pour définir les règles :\n"
 
 #: redbot/cogs/permissions/permissions.py:304
 #, docstring

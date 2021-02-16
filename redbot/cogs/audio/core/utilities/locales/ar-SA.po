@@ -72,7 +72,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:204
 #: redbot/cogs/audio/core/utilities/player.py:607
 msgid "{time} until track playback: #{position} in queue"
-msgstr ""
+msgstr "{time} حتى تشغيل المسار: #{position} في قائمة الانتظار"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:262
 msgid "Tracks Found:"
@@ -101,7 +101,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:381
 #: redbot/cogs/audio/core/utilities/playlists.py:228
 msgid "Unknown"
-msgstr ""
+msgstr "غير معروف"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:382
 msgid " - Name:   <{pname}>\n"
@@ -117,11 +117,11 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:330
 #: redbot/cogs/audio/core/utilities/player.py:655
 msgid "Invalid Environment"
-msgstr ""
+msgstr "بيئة غير صالحة"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 msgid "No localtracks folder."
-msgstr ""
+msgstr "لا يوجد مجلد للمسارات المحلية."
 
 #: redbot/cogs/audio/core/utilities/miscellaneous.py:53
 msgid "Not enough {currency}"
@@ -133,7 +133,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:78
 msgid "music in {} servers"
-msgstr ""
+msgstr "الموسيقى في السيرفر هى {}"
 
 #: redbot/cogs/audio/core/utilities/player.py:136
 #: redbot/cogs/audio/core/utilities/player.py:140
@@ -241,7 +241,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:356
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "لا يبدو أن هذا عنوان URL أو رمز Spotify مدعوم."
 
 #: redbot/cogs/audio/core/utilities/player.py:382
 msgid "{query} is not an allowed query."
@@ -262,57 +262,57 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "قائمة التشغيل قائمة الانتظار"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "أضاف {num} مسارات إلى قائمة الانتظار.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:512
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "أضاف {num} مسارات إلى قائمة الانتظار.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:593
 msgid "Nothing found"
-msgstr ""
+msgstr "لا يوجد ما تبحث عنه"
 
 #: redbot/cogs/audio/core/utilities/player.py:628
 msgid "Please wait, finding tracks..."
-msgstr ""
+msgstr "الرجاء الانتظار، العثور على المسارات..."
 
 #: redbot/cogs/audio/core/utilities/player.py:634
 msgid "Getting track {num}/{total}..."
-msgstr ""
+msgstr "الحصول على المسار {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:635
 msgid "Matching track {num}/{total}..."
-msgstr ""
+msgstr "مطابقة المسار {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:636
 #: redbot/cogs/audio/core/utilities/playlists.py:329
 #: redbot/cogs/audio/core/utilities/playlists.py:402
 msgid "Loading track {num}/{total}..."
-msgstr ""
+msgstr "الحصول على المسار {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:637
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "الوقت المتبقي تقريبًا: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:672
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "تم إعادة تعيين الاتصال أثناء تحميل قائمة التشغيل."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:71
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "ليس لديك الصلاحيات لإدارة {name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:89
 msgid "You do not have the permissions to manage that playlist in {guild}."
-msgstr ""
+msgstr "ليس لديك الصلاحيات لإدارة قائمة التشغيل هذه في {guild}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:96
 msgid "You do not have the permissions to manage playlist owned by {user}."
-msgstr ""
+msgstr "ليس لديك الصلاحيات لإدارة قائمة التشغيل التي يملكها {user}."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:100
 msgid "You do not have the permissions to manage playlists in {scope} scope."
@@ -320,11 +320,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:104
 msgid "No access to playlist."
-msgstr ""
+msgstr "لا يمكن الوصول إلى قائمة التشغيل."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:212
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
-msgstr ""
+msgstr "{match_count} قوائم التشغيل تتطابق مع {original_input}: الرجاء محاولة أن تكون أكثر تحديدا، أو استخدام معرف قائمة التشغيل."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:229
 msgid "{number}.    <{playlist.name}>\n"
@@ -332,16 +332,20 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}. <{playlist.name}>\n"
+" - النطاق: < {scope} >\n"
+" - المعرف: < {playlist.id} >\n"
+" - المسار: < {tracks} >\n"
+" - المؤلف: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
-msgstr ""
+msgstr "تم العثور على {playlists} قائمة تشغيل، أي واحد تريد؟"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:265
 #: redbot/cogs/audio/core/utilities/playlists.py:271
 msgid "Too many matches found and you did not select which one you wanted."
-msgstr ""
+msgstr "عثر على عدد كبير من المطابقات ولم تقم بتحديد أي منها تريد."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:296
 msgid "Playlists you can access in this server:"
@@ -363,7 +367,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:349
 #: redbot/cogs/audio/core/utilities/playlists.py:452
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
+msgstr "تم إنشاء قائمة تشغيل فارغة {name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:354
 #: redbot/cogs/audio/core/utilities/playlists.py:457
@@ -429,20 +433,20 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**حاليًا:**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
 msgid "Requested by: **{user}**"
-msgstr ""
+msgstr "طلب من: **{user}**"
 
 #: redbot/cogs/audio/core/utilities/queue.py:62
 msgid "Playing: "
-msgstr ""
+msgstr "تشغيل: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "مطلوب من قبل **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
@@ -450,23 +454,23 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "الصفحة {page_num}/{total_pages} <unk> {num_tracks} المسارات، {num_remaining} تبقى\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr ""
+msgstr "التشغيل التلقائي"
 
 #: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"
-msgstr ""
+msgstr "عشوائي"
 
 #: redbot/cogs/audio/core/utilities/queue.py:109
 msgid "Repeat"
-msgstr ""
+msgstr "كرر"
 
 #: redbot/cogs/audio/core/utilities/queue.py:161
 msgid "Matching Tracks:"
-msgstr ""
+msgstr "مسارات المطابقة:"
 
 #: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"

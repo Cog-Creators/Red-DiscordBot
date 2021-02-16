@@ -1,5 +1,182 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.6 (2021-02-16)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1199>`__.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
+- Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
+- ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
+- Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
+
+    - The colors used have been adjusted to be readable on many more terminal applications
+    - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
+    - Tracebacks will now use the full width of the terminal again
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``-rich-traceback-extra-lines``)
+    - Disabled syntax highlighting on the log messages
+    - Dev cog no longer captures logging output
+    - Added some cool features for developers
+
+        - Added the flag ``--rich-traceback-extra-lines`` which can be used to set the number of additional lines in tracebacks
+        - Added the flag ``--rich-traceback-show-locals`` which enables showing local variables in tracebacks
+
+    - Improved and fixed a few other minor things
+
+- Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with a command name that is already taken by a different cog (:issue:`3870`)
+- Help now includes command aliases in the command help (:issue:`3040`)
+
+    - This can be disabled with ``[p]helpset showaliases`` command
+
+- Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
+
+Admin
+*****
+
+- ``[p]selfrole`` can now be used without a subcommand and passed with a selfrole directly to add/remove it from the user running the command (:issue:`4826`)
+
+Audio
+*****
+
+- Improved detection of embed players for fallback on age-restricted YT tracks (:issue:`4818`, :issue:`4819`)
+- Improved MP4/AAC decoding (:issue:`4818`, :issue:`4819`)
+- Requests for YT tracks are now retried if the initial request causes a connection reset (:issue:`4818`, :issue:`4819`)
+
+Cleanup
+*******
+
+- Renamed the ``[p]cleanup spam`` command to ``[p]cleanup duplicates``, with the old name kept as an alias for the time being (:issue:`4814`)
+- Fixed an error from passing an overly large integer as a message ID to ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
+
+Dev Cog
+*******
+
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
+
+Economy
+*******
+
+- ``[p]economyset rolepaydayamount`` can now remove the previously set payday amount (:issue:`4661`, :issue:`4758`)
+
+Filter
+******
+
+- Added a case type ``filterhit`` which is used to log filter hits (:issue:`4676`, :issue:`4739`)
+
+Mod
+***
+
+- The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
+- Added two new settings for disabling username and nickname tracking (:issue:`4799`)
+
+    - Added a command ``[p]modset trackallnames`` that disables username tracking and overrides the nickname tracking setting for all guilds
+    - Added a command ``[p]modset tracknicknames`` that disables nickname tracking in a specific guild
+
+- Added a command ``[p]modset deletenames`` that deletes all stored usernames and nicknames (:issue:`4827`)
+- Added usage examples to ``[p]kick``, ``[p]ban``, ``[p]massban``, and ``[p]tempban`` (:issue:`4712`, :issue:`4715`)
+- Updated DM on kick/ban to use bot's default embed color (:issue:`4822`)
+
+Modlog
+******
+
+- Added a command ``[p]listcases`` that allows you to see multiple cases for a user at once (:issue:`4426`)
+- Added typing indicator to ``[p]casesfor`` command (:issue:`4426`)
+
+Mutes
+*****
+
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
+- The modlog reason no longer contains leading whitespace when it's passed *after* the mute time (:issue:`4749`)
+- A DM can now be sent to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
+
+    - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
+    - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
+
+- Added more role hierarchy checks to ensure permission escalations cannot occur on servers with a careless configuration (:issue:`4741`)
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
+
+Reports
+*******
+
+- Reports now use the default embed color of the bot (:issue:`4800`)
+
+Streams
+*******
+
+- Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
+- Fixed meaningless errors happening when the YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
+
+Trivia
+******
+
+- Payout for trivia sessions ending in a tie now gets split between all the players with the highest score (:issue:`3931`, :issue:`4649`)
+
+Trivia Lists
+************
+
+- Added new Who's That Pokémon - Gen. VI trivia list (:issue:`4785`)
+- Updated answers regarding some of the hero's health and abilities in the ``overwatch`` trivia list (:issue:`4805`)
+
+
+Developer changelog
+-------------------
+
+Core Bot
+********
+
+- Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
+- Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
+
+Utility Functions
+*****************
+
+- Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
+
+Dev Cog
+*******
+
+- Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
+
+    - Variables can be added and removed from the environment of Dev cog using two new methods:
+
+        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
+
+
+Documentation changes
+---------------------
+
+- Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
+- Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
+- Restructured the host list (:issue:`4710`)
+- Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
+- Updated the pip command for Red with the postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4770`)
+
+
+Miscellaneous
+-------------
+
+- Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
+- Red's dependencies have been bumped (:issue:`4572`)
+
+
 Redbot 3.4.5 (2020-12-24)
 =========================
 | Thanks to all these amazing people that contributed to this release:
@@ -12,6 +189,7 @@ Streams
 *******
 
 - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
+
 
 Redbot 3.4.4 (2020-12-24)
 =========================
@@ -103,9 +281,9 @@ Developer changelog
 Documentation changes
 ---------------------
 
-- Added `cog guide for Downloader cog <streams>` (:issue:`4511`)
-- Added `cog guide for Economy cog <streams>` (:issue:`4519`)
-- Added `cog guide for Streams cog <streams>` (:issue:`4521`)
+- Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
+- Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
+- Added `cog guide for Streams cog <cog_guides/streams>` (:issue:`4521`)
 - Added `guide_cog_creators` document (:issue:`4637`)
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 

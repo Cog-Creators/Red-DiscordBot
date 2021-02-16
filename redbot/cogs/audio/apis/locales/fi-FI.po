@@ -24,7 +24,8 @@ msgstr "Kappaleiden hakeminen ei onnistu, ohitetaan jäljellä olevat."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API-avainta tai client secret -arvoa ei ole asetettu oikein. \n"
+"Käytä`{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,15 +63,19 @@ msgstr "{time} aikaa soittolistan toiston aloittamiseen: alkaa sijalla #{positio
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Mitään ei löytynyt.\n"
+"Asettamasi YouTube API-avain voi olla virheellinen tai sinun liikennettäsi voidaan rajoittaa YouTuben hakupalvelussa.\n"
+"Tarkista YouTube API-avain ja seuraa ohjeita jotka saat komennolla `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "YouTube Data API token -arvosi on virheellinen.\n"
+"Tarkista YouTube API-avaimesi ja seuraa ohjeita jotka saat komennolla `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "YouTube API -virhekoodi: 403\n"
+"YouTube API-avaimesi voi olla saavuttanut päivittäisen käyttörajansa. Tarkista <https://developers.google.com/youtube/v3/getting-started#quota> saadaksesi lisätietoja."
 

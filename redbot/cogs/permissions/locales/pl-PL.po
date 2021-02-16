@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/permissions/converters.py:65
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr ""
+msgstr "Nie znaleziono \"{arg}\". Musi to być ID, wzmianka lub nazwa serwera, kanału, użytkownika lub roli, którą bot może zobaczyć."
 
 #: redbot/cogs/permissions/converters.py:74
 msgid "\"{arg}\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."
@@ -128,7 +128,7 @@ msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:282
 msgid "Example YAML for setting rules:\n"
-msgstr ""
+msgstr "Przykładowy YAML dla ustawiania reguł:\n"
 
 #: redbot/cogs/permissions/permissions.py:304
 #, docstring
@@ -138,7 +138,12 @@ msgid "Set global rules with a YAML file.\n\n"
 "        This does not validate the names of commands and cogs before\n"
 "        setting the new rules.\n"
 "        "
-msgstr ""
+msgstr "Ustaw reguły globalne z plikiem YAML.\n\n"
+"        **OSTRZEŻENIE**: Zastąpi to *wszystkie* globalne reguły\n"
+"        na reguły określone w przesłanym pliku.\n\n"
+"        Nie sprawdza to nazw komend i modułów przed\n"
+"        ustawieniem nowych reguł.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:318
 #, docstring
@@ -146,7 +151,10 @@ msgid "Set rules for this server with a YAML file.\n\n"
 "        **WARNING**: This will override reset *all* rules in this\n"
 "        server to the rules specified in the uploaded file.\n"
 "        "
-msgstr ""
+msgstr "Ustaw reguły dla tego serwera z plikiem YAML.\n\n"
+"        **OSTRZEŻENIE**: Zastąpi to *wszystkie* reguły na tym\n"
+"        serwerze na reguły określone w przesłanym pliku.\n"
+"        "
 
 #: redbot/cogs/permissions/permissions.py:328
 #, docstring

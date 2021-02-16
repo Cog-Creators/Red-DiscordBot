@@ -26,11 +26,11 @@ msgstr "Jak tak vidím, tak ano"
 
 #: redbot/cogs/general/general.py:53
 msgid "It is certain"
-msgstr ""
+msgstr "Je to jisté"
 
 #: redbot/cogs/general/general.py:54
 msgid "It is decidedly so"
-msgstr ""
+msgstr "Rozhodně"
 
 #: redbot/cogs/general/general.py:55
 msgid "Most likely"
@@ -42,7 +42,7 @@ msgstr "Vypadá to dobře"
 
 #: redbot/cogs/general/general.py:57
 msgid "Signs point to yes"
-msgstr ""
+msgstr "Znamení ukazují na ano"
 
 #: redbot/cogs/general/general.py:58
 msgid "Without a doubt"
@@ -62,7 +62,7 @@ msgstr "Na to se můžeš spolehnout"
 
 #: redbot/cogs/general/general.py:62
 msgid "Reply hazy, try again"
-msgstr ""
+msgstr "Odpověď je nejasná, zkuste to znovu"
 
 #: redbot/cogs/general/general.py:63
 msgid "Ask again later"
@@ -94,7 +94,7 @@ msgstr "Moje zdroje říkají, že ne"
 
 #: redbot/cogs/general/general.py:70
 msgid "Outlook not so good"
-msgstr ""
+msgstr "To nevypadá dobře"
 
 #: redbot/cogs/general/general.py:71
 msgid "Very doubtful"
@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Vyberte si mezi více možnostmi.\n\n"
+"        Pro zvýraznění možností, které obsahují mezery byste měli použít\n"
+"        dvojité uvozovky.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -138,7 +141,8 @@ msgstr ""
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Dobrý pokus. Myslíš si, že je to vtipné?\n"
+" Co tak zkusit:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -535,7 +539,8 @@ msgstr "{word} od {author}"
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Příklad:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."

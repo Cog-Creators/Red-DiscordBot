@@ -24,7 +24,8 @@ msgstr "Nepodařilo se získat skladby, přeskakuji zbývající."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API klíč nebo klientský tajný klíč nebyl správně nastaven. \n"
+"Pro pokyny použijte `{prefix}audioset spotifyapi`."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,15 +63,19 @@ msgstr "{time} do začátku přehrávání playlistu: je na #{position} pozici v
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Nic nenalezeno.\n"
+"YouTube API klíč může být neplatný nebo může být omezen na YouTube's vyhledávací službu.\n"
+"Podívejte se znovu na YouTube API klíč a postupujte podle instrukcí na `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Váš YouTube data API token je neplatný.\n"
+"Zkontrolujte YouTube API klíč a postupujte podle instrukcí na `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Kód chyby API pro YouTube: 403\n"
+"Váš YouTube API klíč možná dosáhl dnešního limitu dotazu na účet. Prosím zkontrolujte <https://developers.google.com/youtube/v3/getting-started#quota> pro více informací."
 

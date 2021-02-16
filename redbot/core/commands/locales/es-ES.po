@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" no es un número."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "Esta cantidad de tiempo es demasiado pequeña para este comando. (Mínim
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "Servidor \"{name}\" no encontrado."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
@@ -62,7 +62,8 @@ msgstr "Desactivado"
 #: redbot/core/commands/help.py:118
 msgid "\n"
 "Custom Tagline: {tag}"
-msgstr ""
+msgstr "\n"
+"Tagline personalizada: {tag}"
 
 #: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\n"
@@ -73,7 +74,14 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Help shows unusable commands when asked directly: {verify_exists}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Caracteres máximos por página: {page_char_limit}\n"
+"Páginas máximas por servidor (solo usadas si no se utilizan menús): {max_pages_in_guild}\n"
+"Ayuda es un menú: {use_menus}\n"
+"Ayuda muestra comandos ocultos: {show_hidden}\n"
+"Ayuda solo muestra comandos que se pueden usar: {verify_checks}\n"
+"Ayuda muestra comandos inutilizables cuando se le pregunta directamente: {verify_exists}\n"
+"Retraso de borrado: {delete_delay}\n"
+"Reaccionar con una marca de verificación cuando la ayuda se envía a través de DM: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
@@ -119,7 +127,8 @@ msgstr "Menú de ayuda de {ctx.me.display_name}"
 #: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
-msgstr ""
+msgstr "*Página {page_num} de {page_count}*\n"
+"{content_description}"
 
 #: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"

@@ -35,7 +35,8 @@ msgstr ""
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `<channel>` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Seteaza un canal ca activitati pentru actiuni de moderare. \n"
+"Omite <channel> pentru a dezactiva  modlog-ul        "
 
 #: redbot/cogs/modlog/modlog.py:53
 msgid "Mod events will be sent to {channel}."
@@ -68,7 +69,7 @@ msgstr "dezactivat"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Setările curente:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."

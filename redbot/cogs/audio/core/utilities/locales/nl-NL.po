@@ -233,7 +233,8 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "De Spotitify API-sleutel of clientgeheim is niet correct ingesteld. \n"
+"Gebruik `{prefix}audioset spotifyapi` voor instructies."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -241,7 +242,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:356
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Dit lijkt geen ondersteunde Spotify URL of code te zijn."
 
 #: redbot/cogs/audio/core/utilities/player.py:382
 msgid "{query} is not an allowed query."
@@ -254,7 +255,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} nummers kunnen niet in de wachtrij worden geplaatst."
 
 #: redbot/cogs/audio/core/utilities/player.py:497
 msgid "No Title"
@@ -266,7 +267,7 @@ msgstr "Afspeellijst toegevoegd"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Er zijn {num} nummers toegevoegd aan de wachtrij.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:512
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
@@ -300,7 +301,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:672
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "De verbinding is gereset tijdens het laden van de afspeellijst."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:71
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."

@@ -24,16 +24,23 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Создать синонимы для команд.\n\n"
+"    Синонимы - это альтернативные сокращения имен для команд.\n"
+"    Они могут действовать как лямбда (хранение аргументов для\n"
+"    многократного использования) или просто как сокращение \"а б в\".\n\n"
+"    При запуске синонимы принимают любые дополнительные\n"
+"    аргументы и добавляют их к сохраненному синониму.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
-msgstr ""
+msgstr "Синонимы:\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\n\n"
 "Page {page}/{total}"
-msgstr ""
+msgstr "\n\n"
+"Страница {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

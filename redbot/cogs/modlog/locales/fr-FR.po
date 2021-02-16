@@ -35,7 +35,9 @@ msgstr "Commande pour réparer les cas de mauvaise conduite."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `<channel>` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Définir un salon comme modlog.\n\n"
+"        Omettre `<channel>` pour désactiver le modlog.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:53
 msgid "Mod events will be sent to {channel}."
@@ -68,7 +70,7 @@ msgstr "désactivé"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Paramètres actuels :\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
@@ -99,7 +101,8 @@ msgstr "Ce cas n'existe pas pour ce serveur."
 #: redbot/cogs/modlog/modlog.py:120 redbot/cogs/modlog/modlog.py:158
 msgid "{case}\n"
 "**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\n"
+"**Horodatage :** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
@@ -135,7 +138,11 @@ msgid "Specify a reason for a modlog case.\n\n"
 "        the owner of unless you are a mod, admin or server owner.\n\n"
 "        If no case number is specified, the latest case will be used.\n"
 "        "
-msgstr ""
+msgstr "Spécifiez une raison pour un argument de modlog.\n\n"
+"        Veuillez noter que vous ne pouvez modifier que les arguments où vous êtes\n"
+"        le propriétaire sauf si vous êtes un modérateur, administrateur ou propriétaire du serveur.\n\n"
+"        Si aucun numéro d'argument n'est spécifié, le dernier argument sera utilisé.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."
