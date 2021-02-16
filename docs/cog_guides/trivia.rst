@@ -38,6 +38,8 @@ Here is a list of all of the commands for this cog:
 triviaset
 ^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -53,6 +55,8 @@ Commands for managing trivia settings.
 ^^^^^^^^^^^^^^^^^^
 triviaset botplays
 ^^^^^^^^^^^^^^^^^^
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -75,6 +79,8 @@ Sets whether the bot gains a point if nobody guesses correctly.
 triviaset maxscore
 ^^^^^^^^^^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -95,6 +101,8 @@ Sets the total points required to win.
 triviaset override
 ^^^^^^^^^^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -114,6 +122,8 @@ Allow/disallow trivia lists to override the settings.
 ^^^^^^^^^^^^^^^^
 triviaset payout
 ^^^^^^^^^^^^^^^^
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -139,6 +149,8 @@ the amount received is determined by multiplying their total score by this multi
 triviaset revealanswer
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -160,6 +172,8 @@ Sets whether or not the answer is revealed if the time limit for answering runs 
 triviaset showsettings
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -175,6 +189,8 @@ Shows the current trivia settings.
 ^^^^^^^^^^^^^^^^^^^
 triviaset stopafter
 ^^^^^^^^^^^^^^^^^^^
+
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -197,6 +213,8 @@ session due to lack of response.
 triviaset timelimit
 ^^^^^^^^^^^^^^^^^^^
 
+.. note:: |mod-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -217,6 +235,8 @@ Sets the maximum time permitted to answer a question.
 triviaset custom
 ^^^^^^^^^^^^^^^^
 
+.. note:: |owner-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -232,6 +252,8 @@ Manage custom trivia lists.
 ^^^^^^^^^^^^^^^^^^^^^^^
 triviaset custom upload
 ^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: |owner-lock|
 
 **Syntax**
 
@@ -250,6 +272,8 @@ your list as an attachment in Discord.
 triviaset custom list
 ^^^^^^^^^^^^^^^^^^^^^
 
+.. note:: |owner-lock|
+
 **Syntax**
 
 .. code-block:: none
@@ -265,6 +289,8 @@ List all uploaded custom trivia lists.
 ^^^^^^^^^^^^^^^^^^^^^^^
 triviaset custom delete
 ^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: |owner-lock|
 
 **Syntax**
 
