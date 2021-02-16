@@ -404,8 +404,7 @@ class Admin(commands.Cog):
         else:
             return await self._addrole(ctx, ctx.author, selfrole, check_user=False)
 
-    @selfrole.command(name="add")
-    @commands.command(hidden=True)
+    @selfrole.command(name="add", hidden=True)
     async def selfrole_add(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Add a selfrole to yourself.
@@ -416,8 +415,7 @@ class Admin(commands.Cog):
         # noinspection PyTypeChecker
         await self._addrole(ctx, ctx.author, selfrole, check_user=False)
 
-    @selfrole.command(name="remove")
-    @commands.command(hidden=True)
+    @selfrole.command(name="remove", hidden=True)
     async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Remove a selfrole from yourself.
