@@ -2797,7 +2797,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         pass
 
     @allowlist.command(name="add", require_var_positional=True)
-    async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, discord.User, int]):
         """
         Adds a user to the allowlist.
         """
@@ -2857,13 +2857,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         pass
 
     @blocklist.command(name="add", require_var_positional=True)
-    async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, discord.User, int]):
         """
         Adds a user to the blocklist.
         """
         for user in users:
             if isinstance(user, int):
-                user_obj = discord.Object(id=user)
+                try:
+                    user_obj = await ctx.bot.get_or_fetch_user(user)
+                except discord.NotFound:
+                    await ctx.send("This doesn't seem to be a user")
+                    return 
             else:
                 user_obj = user
             if await ctx.bot.is_owner(user_obj):
@@ -2898,7 +2902,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(box(page))
 
     @blocklist.command(name="remove", require_var_positional=True)
-    async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
+    async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, discord.User, int]):
         """
         Removes user from the blocklist.
         """
