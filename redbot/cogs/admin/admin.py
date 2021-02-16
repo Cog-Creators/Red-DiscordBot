@@ -391,12 +391,7 @@ class Admin(commands.Cog):
         return valid_roles
 
     @commands.guild_only()
-    @commands.group()
-    async def selfrole(self, ctx: commands.Context):
-        """Apply selfroles."""
-        pass
-
-    @selfrole.command()
+    @commands.group(invoke_without_command=True)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Add or remove a selfrole from yourself.

@@ -46,34 +46,16 @@ selfrole
 
 .. code-block:: none
 
-    [p]selfrole
-
-**Description**
-
-Add or remove roles to yourself. Those roles must have been configured as user
-settable by admins using the :ref:`selfroleset command
-<admin-command-selfroleset>`.
-
-.. _admin-command-selfrole:
-
-""""""""""""
-selfrole
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
     [p]selfrole <selfrole>
 
 **Description**
 
-Add or remove a role to yourself. It must have been configured as user settable
+Add or remove a role from yourself. It must have been configured as user settable
 by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
 
 **Arguments**
 
-* ``<selfrole>``: The role you want to attribute to yourself. |role-input|
+* ``<selfrole>``: The role you want to attribute or remove from yourself. |role-input|
 
 .. _admin-command-selfrole-add:
 
