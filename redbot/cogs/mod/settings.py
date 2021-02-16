@@ -18,7 +18,6 @@ class ModSettings(MixinMeta):
     """
 
     @commands.group()
-    @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manage server administration settings."""
@@ -26,8 +25,19 @@ class ModSettings(MixinMeta):
     @modset.command(name="showsettings")
     async def modset_showsettings(self, ctx: commands.Context):
         """Show the current server administration settings."""
+        globaldata = await self.config.all()
+        track_all_names = globaldata["track_all_names"]
+        msg = ""
+        msg += _("Track name changes: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if track_all_names else _("No")
+        )
         guild = ctx.guild
+        if not guild:
+            await ctx.send(box(msg))
+            return
+
         data = await self.config.guild(guild).all()
+        track_nicknames = data["track_nicknames"]
         delete_repeats = data["delete_repeats"]
         warn_mention_spam = data["mention_spam"]["warn"]
         kick_mention_spam = data["mention_spam"]["kick"]
@@ -39,7 +49,11 @@ class ModSettings(MixinMeta):
         dm_on_kickban = data["dm_on_kickban"]
         default_days = data["default_days"]
         default_tempban_duration = data["default_tempban_duration"]
-        msg = ""
+        if not track_all_names and track_nicknames:
+            yes_or_no = _("Overridden by another setting")
+        else:
+            yes_or_no = _("Yes") if track_nicknames else _("No")
+        msg += _("Track nickname changes: {yes_or_no}\n").format(yes_or_no=yes_or_no)
         msg += _("Delete repeats: {num_repeats}\n").format(
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
             if delete_repeats != -1
@@ -400,6 +414,58 @@ class ModSettings(MixinMeta):
                 duration=humanize_timedelta(timedelta=duration)
             )
         )
+
+    @modset.command()
+    @commands.guild_only()
+    async def tracknicknames(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether nickname changes should be tracked.
+
+        This setting will be overridden if trackallnames is disabled.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            state = await self.config.guild(guild).track_nicknames()
+            if state:
+                msg = _("Nickname changes are currently being tracked.")
+            else:
+                msg = _("Nickname changes are not currently being tracked.")
+            await ctx.send(msg)
+            return
+
+        if enabled:
+            msg = _("Nickname changes will now be tracked.")
+        else:
+            msg = _("Nickname changes will no longer be tracked.")
+        await self.config.guild(guild).track_nicknames.set(enabled)
+        await ctx.send(msg)
+
+    @modset.command()
+    @commands.is_owner()
+    async def trackallnames(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether all name changes should be tracked.
+
+        Toggling this off also overrides the tracknicknames setting.
+        """
+        if enabled is None:
+            state = await self.config.track_all_names()
+            if state:
+                msg = _("Name changes are currently being tracked.")
+            else:
+                msg = _("All name changes are currently not being tracked.")
+            await ctx.send(msg)
+            return
+
+        if enabled:
+            msg = _("Name changes will now be tracked.")
+        else:
+            msg = _(
+                "All name changes will no longer be tracked.\n"
+                "To delete existing name data, use {command}."
+            ).format(command=f"`{ctx.clean_prefix}modset deletenames`")
+        await self.config.track_all_names.set(enabled)
+        await ctx.send(msg)
 
     @modset.command()
     @commands.max_concurrency(1, commands.BucketType.default)
