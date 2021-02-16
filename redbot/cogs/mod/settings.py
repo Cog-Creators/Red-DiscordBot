@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from redbot.core import commands, i18n, checks
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, humanize_timedelta
+from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
 from .abc import MixinMeta
 
@@ -404,8 +404,26 @@ class ModSettings(MixinMeta):
     @modset.command()
     @commands.max_concurrency(1, commands.BucketType.default)
     @commands.is_owner()
-    async def deletenames(self, ctx: commands.Context) -> None:
-        """Delete all stored usernames and nicknames."""
+    async def deletenames(self, ctx: commands.Context, confirmation: bool = False) -> None:
+        """Delete all stored usernames and nicknames.
+
+        Examples:
+            - `[p]modset deletenames` - Did not confirm. Shows the help message.
+            - `[p]modset deletenames yes` - Deletes all stored usernames and nicknames.
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        if not confirmation:
+            await ctx.send(
+                _(
+                    "This will delete all stored usernames and nicknames the bot has stored."
+                    "\nIf you're sure, type {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}modset deletenames yes"))
+            )
+            return
+
         async with ctx.typing():
             # Nickname data
             async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
