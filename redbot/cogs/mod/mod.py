@@ -4,6 +4,7 @@ import re
 from abc import ABC
 from collections import defaultdict
 from typing import List, Tuple, Literal
+from copy import deepcopy
 
 import discord
 from redbot.core.utils import AsyncIter
@@ -202,3 +203,45 @@ class Mod(
             )
             await self.config.guild_from_id(guild_id).delete_delay.clear()
         await ctx.send(_("Delete delay settings restored."))
+
+    @commands.max_concurrency(1, commands.BucketType.default)
+    @commands.command()
+    @commands.is_owner()
+    async def deletenames(self, ctx: commands.Context) -> None:
+        """Delete all stored names and usernames"""
+        async with ctx.typing():
+            async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
+                async for guild_id, guild_data in AsyncIter(mod_member_data.items(), steps=100):
+                    for member_id, member_data in guild_data.items():
+                        if "past_nicks" in mod_member_data[guild_id][member_id]:
+                            del mod_member_data[guild_id][member_id]["past_nicks"]
+
+            async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
+                async for user_id, user_data in AsyncIter(mod_user_data.items(), steps=100):
+                    if "past_names" in mod_user_data[user_id]:
+                        del mod_user_data[user_id]["past_names"]
+
+        await ctx.send(_("Name and nicknames have been deleted from Mod config."))
+
+    @commands.max_concurrency(1, commands.BucketType.default)
+    @commands.command()
+    @commands.is_owner()
+    async def deletemodkeys(self, ctx: commands.Context) -> None:
+        """Delete all empty mod config keys"""
+        async with ctx.typing():
+            async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
+                member_data = deepcopy(mod_member_data)
+                async for guild_id, guild_data in AsyncIter(member_data.items(), steps=100):
+                    for member_id, member_data in guild_data.items():
+                        if not member_data:
+                            del mod_member_data[guild_id][member_id]
+                    if not mod_member_data[guild_id]:
+                        del mod_member_data[guild_id]
+
+            async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
+                user_data = deepcopy(mod_user_data)
+                async for user_id, user_data in AsyncIter(user_data.items(), steps=100):
+                    if not user_data:
+                        del mod_user_data[user_id]
+
+        await ctx.send(_("Empty keys have been deleted from Mod config."))
