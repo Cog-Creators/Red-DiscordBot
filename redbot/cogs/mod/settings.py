@@ -460,7 +460,7 @@ class ModSettings(MixinMeta):
         else:
             msg = _(
                 "All name changes will no longer be tracked.\n"
-                f"To delete existing name data, use `{ctx.prefix}modset deletenames`."
-            )
+                "To delete existing name data, use {command}."
+            ).format(command=f"`{ctx.clean_prefix}modset deletenames`")
         await self.config.track_all_names.set(enabled)
         await ctx.send(msg)
