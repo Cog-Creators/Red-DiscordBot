@@ -396,8 +396,8 @@ class Admin(commands.Cog):
         """Apply selfroles."""
         pass
 
-    @selfrole.command(name="register")
-    async def selfrole_register(self, ctx: commands.Context, *, selfrole: SelfRole):
+    @selfrole.command()
+    async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Add or remove a selfrole from yourself.
 
