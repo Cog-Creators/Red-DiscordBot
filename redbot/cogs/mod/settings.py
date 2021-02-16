@@ -426,7 +426,7 @@ class ModSettings(MixinMeta):
                         guilds_to_remove.append(guild_id)
 
                 async for guild_id in AsyncIter(guilds_to_remove, steps=100):
-                    del mod_member_data[member_id]
+                    del mod_member_data[guild_id]
 
             # Username data
             async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
