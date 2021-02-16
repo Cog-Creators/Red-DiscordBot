@@ -153,7 +153,8 @@ class KickBanMixin(MixinMeta):
             if toggle:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=bold(_("You have been banned from {guild}.").format(guild=guild))
+                        title=bold(_("You have been banned from {guild}.").format(guild=guild)),
+                        color=await self.bot.get_embed_color(user),
                     )
                     em.add_field(
                         name=_("**Reason**"),
@@ -309,7 +310,8 @@ class KickBanMixin(MixinMeta):
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild)),
+                    color=await self.bot.get_embed_color(user),
                 )
                 em.add_field(
                     name=_("**Reason**"),

@@ -302,18 +302,20 @@ economyset paydaytime
 
 .. code-block:: none
 
-    [p]economyset paydaytime <seconds>
+    [p]economyset paydaytime <duration>
 
 **Description**
 
 Set the cooldown for the payday command.
 
-Example:
+Examples:
     - ``[p]economyset paydaytime 86400``
+    - ``[p]economyset paydaytime 1d``
 
 **Arguments**
 
-- ``<seconds>`` The new number of seconds to wait in between uses of payday. Default is 300.
+- | ``<duration>`` The new duration to wait in between uses of payday. Default is 5 minutes.
+  | Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
 
 .. _economy-command-economyset-registeramount:
 
@@ -436,18 +438,20 @@ economyset slottime
 
 .. code-block:: none
 
-    [p]economyset slottime <seconds>
+    [p]economyset slottime <duration>
 
 **Description**
 
 Set the cooldown for the slot machine.
 
-Example:
+Examples:
     - ``[p]economyset slottime 10``
+    - ``[p]economyset slottime 10m``
 
 **Arguments**
 
-- ``<seconds>`` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+- | ``<duration>`` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
+  | Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
 
 .. _economy-command-leaderboard:
 

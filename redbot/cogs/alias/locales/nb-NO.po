@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-26 17:01+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -17,16 +17,23 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:35
 #, docstring
-msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
-msgstr "Lag aliaser for kommandoer.\\n\\nAliaser er alternative navne-snarveier for kommandoer. De\\nkan fungere som både lambda (lagre argumenter for gjentatt bruk)\\neller bare som en snarvei for å si \\\"x y z\\\".\\n\\nNår startet, aliaser vil akseptere andre argumenter\\nog legge dem til de lagrede alias.\\n    "
+msgid "Create aliases for commands.\n\n"
+"    Aliases are alternative names shortcuts for commands. They\n"
+"    can act as both a lambda (storing arguments for repeated use)\n"
+"    or as simply a shortcut to saying \"x y z\".\n\n"
+"    When run, aliases will accept any additional arguments\n"
+"    and append them to the stored alias.\n"
+"    "
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:203
-msgid "Aliases:\\n"
-msgstr "Aliaser:\\n"
+msgid "Aliases:\n"
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:205
-msgid "\\n\\nPage {page}/{total}"
-msgstr "\\n\\nSide {page}/{total}"
+msgid "\n\n"
+"Page {page}/{total}"
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring
