@@ -45,7 +45,12 @@ msgid "Bank settings:\n\n"
 "Currency: {currency_name}\n"
 "Default balance: {default_balance}\n"
 "Maximum allowed balance: {maximum_bal}\n"
-msgstr ""
+msgstr "Ustawienia banku:\n\n"
+"Nazwa banku: {bank_name}\n"
+"Zakres banku: {bank_scope}\n"
+"Waluta: {currency_name}\n"
+"Domyślne saldo: {default_balance}\n"
+"Maksymalne dozwolone saldo: {maximum_bal}\n"
 
 #: redbot/cogs/bank/bank.py:83
 #, docstring
@@ -53,7 +58,10 @@ msgid "Toggle whether the bank is global or not.\n\n"
 "        If the bank is global, it will become per-server.\n"
 "        If the bank is per-server, it will become global.\n"
 "        "
-msgstr ""
+msgstr "Przełącza ustawienie, czy bank jest globalny, czy nie.\n\n"
+"        Jeśli bank jest globalny, będzie przypisany do poszczególnych serwerów.\n"
+"        Jeśli bank jest przeznaczony na serwer, stanie się globalny.\n"
+"        "
 
 #: redbot/cogs/bank/bank.py:90
 msgid "per-server"

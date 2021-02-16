@@ -41,7 +41,9 @@ msgstr "Gerencia a lista branca global de palavras-chave."
 msgid "Adds a keyword to the whitelist.\n\n"
 "        If anything is added to whitelist, it will blacklist everything else.\n"
 "        "
-msgstr ""
+msgstr "Adiciona uma palavra-chave na lista branca.\n\n"
+"        Se algo for adicionado na lista branca, todo o resto estará na lista negra.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -298,12 +300,14 @@ msgstr "Desabilitado"
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"A repetição foi desabilitada."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"Desconexão automática ao final da fila foi desabilitada."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -371,7 +375,30 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "Define uma lista de reprodução para a reprodução automática.\n\n"
+"        **Uso**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\n\n"
+"        **Argumentos**:\n"
+"        ​ ​ ​ ​ Os seguintes são todos opcionais:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <escopo>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [usuário]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guilda] **Somente o dono do bot pode usar esses**\n\n"
+"        **Scope** pode ser um dos seguintes:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** pode ser um dos seguintes:\n"
+"        ​ ​ ​ ​ ID de usuário\n"
+"        ​ ​ ​ ​ Menção a usuário\n"
+"        ​ ​ ​ ​ NomeDeUsuário#123\n\n"
+"        **Guild** pode ser um dos seguintes:\n"
+"        ​ ​ ​ ​ ID de guilda\n"
+"        ​ ​ ​ ​ Nome exato da guilda\n\n"
+"        Exemplos de uso:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay ListaDeReproducaoDaGuilda`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay ListaDeReproducaoGlobal --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay ListaDeReproducaoPessoal --scope User --author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -498,7 +525,9 @@ msgstr ""
 msgid "Toggle daily queues.\n\n"
 "        Daily queues creates a playlist for all tracks played today.\n"
 "        "
-msgstr ""
+msgstr "Alternar filas diárias.\n\n"
+"        A função de filas diárias cria uma lista de reprodução para todas as faixas tocadas hoje.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:605
 msgid "Daily queues: {true_or_false}."
@@ -509,7 +538,9 @@ msgstr "Filas diárias: {true_or_false}."
 msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
 "        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
 "        "
-msgstr ""
+msgstr "Alterna a desconexão automática ao final da reprodução.\n\n"
+"        Essa configuração tem precedência sobre `[p]audioset emptydisconnect`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:622
 msgid "Auto-disconnection at queue end: {true_or_false}."
@@ -519,14 +550,17 @@ msgstr "Desconexão automática ao final da fila: {true_or_false}."
 #: redbot/cogs/audio/core/commands/controller.py:753
 msgid "\n"
 "Auto-play has been disabled."
-msgstr ""
+msgstr "\n"
+"Reprodução automática foi desabilitada."
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
-msgstr ""
+msgstr "Alterna o modo DJ.\n\n"
+"        O modo DJ permite aos usuários com o cargo de DJ usar os comandos de áudio.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -549,7 +583,9 @@ msgstr "Cargo de DJ: {true_or_false}."
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
 "        `[p]audioset dc` takes precedence over this setting.\n"
 "        "
-msgstr ""
+msgstr "Desconectar automaticamente do canal quando o bot estiver sozinho nele por x segundos, 0 para desabilitar.\n\n"
+"        `[p]audioset dc` tem precedência sobre essa opção.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -619,7 +655,9 @@ msgstr "Preço do comando para enfileirar faixas definido como {price} {currency
 msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\n\n"
 "        Leave the path blank to reset the path to the default, the Audio data directory.\n"
 "        "
-msgstr ""
+msgstr "Define o caminho para as faixas locais se o Lavalink.jar não tiver sido executado do diretório de dados da engrenagem Audio.\n\n"
+"        Deixe o caminho em branco para redefinir ao padrão, o diretório de dados da engrenagem Audio.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:792
 msgid "The localtracks path location has been reset to {localpath}"
@@ -828,7 +866,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "Playlist ID:      [{pid}]\n"
-msgstr ""
+msgstr "ID da Playlist: [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Playlist scope:   [{pscope}]\n"
@@ -2551,7 +2589,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:908
 #: redbot/cogs/audio/core/commands/playlists.py:1056
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 #: redbot/cogs/audio/core/commands/playlists.py:910
 msgid "Page {page}/{pages} | Author: {author_name} | {num} track(s)"

@@ -101,7 +101,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:381
 #: redbot/cogs/audio/core/utilities/playlists.py:228
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:382
 msgid " - Name:   <{pname}>\n"

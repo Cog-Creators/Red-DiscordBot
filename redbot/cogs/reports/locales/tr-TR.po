@@ -22,7 +22,11 @@ msgid "Create user reports that server staff can respond to.\n\n"
 "    to a channel in the server for staff, and the report creator\n"
 "    gets a DM. Both can be used to communicate.\n"
 "    "
-msgstr ""
+msgstr "Sunucu yetkililerinin cevap verebileceği kullanıcı raporları oluştur.\n\n"
+"    Kullanıcılar `[p]report` komutuyla rapor açabilirler. Bunlar daha sonra\n"
+"    yetkililer için sunucudaki bir kanala gönderilir, ve raporu yazan kişi\n"
+"    özelden bir mesaj alır. İletişim için ikisi de kullanılabilir.\n"
+"    "
 
 #: redbot/cogs/reports/reports.py:104
 #, docstring
@@ -77,7 +81,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report <text>` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "Bir rapor gönder.\n\n"
+"        Etkileşimli raporlama için her hangi bir seçenek sunmadan kullan, veya\n"
+"        `[p]report <text>` ile etkileşimsiz kullan.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
@@ -98,7 +105,8 @@ msgstr "Lütfen ek bir tane yazmayı denemeden önce var olan raporunuzu yazmay�
 #: redbot/cogs/reports/reports.py:286
 msgid "Please respond to this message with your Report.\n"
 "Your report should be a single message"
-msgstr ""
+msgstr "Lütfen bu mesajı raporunuz ile yanıtların.\n"
+"Raporunuz tek bir mesajdan oluşmalıdır"
 
 #: redbot/cogs/reports/reports.py:292
 msgid "This requires DMs enabled."
@@ -139,7 +147,11 @@ msgid "Open a message tunnel.\n\n"
 "        to the ticket opener's direct messages.\n\n"
 "        Tunnels do not persist across bot restarts.\n"
 "        "
-msgstr ""
+msgstr "Bir mesaj tüneli aç.\n\n"
+"        Bu tünel bu kanalda yazdıklarınızı raporu açan\n"
+"        kişiye özelden atar.\n\n"
+"        Tüneller bot yeniden başlatıldığında kaybolur.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:409
 msgid "That ticket doesn't seem to exist"
@@ -158,7 +170,10 @@ msgid " Anything you say or upload here (8MB file size limitation on uploads) wi
 "You can close a communication at any point by reacting with the ❎ to the last message received.\n"
 "Any message successfully forwarded will be marked with ✅.\n"
 "Tunnels are not persistent across bot restarts."
-msgstr ""
+msgstr " Burada yazdığınız veya eklediğiniz (eklerde 8MB dosya boyutu sınırı bulunur) konu kapatılana kadar onlara ulaştırılır.\n"
+"Bir konuyu istediğiniz zaman aldığınız son mesaja ❎ tepkisini vererek kapatabilirsiniz.\n"
+"Başarıyla gönderilen mesajlar ✅ ile işaretlenir.\n"
+"Tüneller bot yeniden başlatıldığında kaybolur."
 
 #: redbot/cogs/reports/reports.py:435
 msgid "A moderator in the server `{guild.name}` has opened a 2-way communication about ticket number {ticket_number}."

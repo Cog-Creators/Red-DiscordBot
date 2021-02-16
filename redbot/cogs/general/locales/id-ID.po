@@ -155,7 +155,7 @@ msgstr "EKOR! *"
 #: redbot/cogs/general/general.py:146
 #, docstring
 msgid "Play Rock Paper Scissors."
-msgstr ""
+msgstr "Mainkan Batu Kertas Gunting."
 
 #: redbot/cogs/general/general.py:151
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
@@ -171,7 +171,7 @@ msgstr "Kau kalah!"
 
 #: redbot/cogs/general/general.py:184
 msgid "{choice} We're square {author.mention}!"
-msgstr ""
+msgstr "Kami persegi!"
 
 #: redbot/cogs/general/general.py:191
 #, docstring
@@ -539,7 +539,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "Turun / Naik, Didukung oleh Urban Dictionary."
 
 #: redbot/cogs/general/general.py:544
 msgid "<{permalink}>\n"

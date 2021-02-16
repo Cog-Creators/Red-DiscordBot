@@ -25,7 +25,9 @@ msgstr "Příkazy související s obrázky."
 msgid "Retrieve pictures from Imgur.\n\n"
 "        Make sure to set the Client ID using `[p]imgurcreds`.\n"
 "        "
-msgstr ""
+msgstr "Získat obrázky z Imguru.\n\n"
+"        Nezapomeňte nastavit ID klienta pomocí `[p]imgurcreds`.\n"
+"        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring
@@ -33,7 +35,10 @@ msgid "Search Imgur for the specified term.\n\n"
 "        Use `count` to choose how many images should be returned.\n"
 "        Command can return up to 5 images.\n"
 "        "
-msgstr ""
+msgstr "Hledat Imgur pro zadaný výraz.\n\n"
+"        Použijte `count` pro zvolení, kolik obrázků by mělo být vráceno.\n"
+"        Příkaz se může vrátit až 5 obrázků.\n"
+"        "
 
 #: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
 msgid "Image count has to be between 1 and 5."
@@ -49,7 +54,7 @@ msgstr "Při hledání nebyly nalezeny žádné výsledky."
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\n"
-msgstr ""
+msgstr "Výsledky hledání...\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."
@@ -63,7 +68,12 @@ msgid "Get images from a subreddit.\n\n"
 "        - `<sort_type>`: new, top\n"
 "        - `<window>`: day, week, month, year, all\n"
 "        "
-msgstr ""
+msgstr "Získat obrázky z subredditu.\n\n"
+"        Hledání můžete přizpůsobit následujícími možnostmi:\n"
+"        - `<count>`: počet obrázků k vrácení (až 5)\n"
+"        - `<sort_type>`: nový, top\n"
+"        - `<window>`: den, týden, měsíc, rok, všechny\n"
+"        "
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."
@@ -91,7 +101,17 @@ msgid "To get an Imgur Client ID:\n"
 "8. Check the captcha box and click next.\n"
 "9. Your Client ID will be on the next page.\n"
 "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-msgstr ""
+msgstr "Chcete-li získat Imgur Client ID:\n"
+"1. Přihlaste se k účtu Imgur.\n"
+". Navštivte tuto stránku https://api.imgur.com/oauth2/addclient.\n"
+"3. Zadejte jméno vaší aplikace.\n"
+"4. Vyberte *Anonymní použití bez autorizace* pro typ autentizace.\n"
+"5. Nastavte adresu URL pro autorizační hovor na `https://localhost`.\n"
+"6. Nechte webovou stránku aplikace.\n"
+"7. Zadejte platnou e-mailovou adresu a popis.\n"
+"8. Zkontrolujte pole captcha a klikněte na další.\n"
+"9. ID Vašeho klienta bude na další stránce.\n"
+"10. Spustit příkaz `{prefix}nastaví api imgur client_id <your_client_id_here>`. \n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring
@@ -131,7 +151,16 @@ msgid "To get a GIPHY API Key:\n"
 "7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\n"
 "8. Copy the API Key.\n"
 "9. In Discord, run the command {command}.\n"
-msgstr ""
+msgstr "Pro získání GIPHY API klíče:\n"
+"1. Přihlaste se (nebo vytvořte) na GIPHY účet.\n"
+"2. Navštivte tuto stránku: https://developers.giphy.com/dashboard.\n"
+"3. Stiskněte *Vytvořit aplikaci*.\n"
+"4. Klepněte na *Vybrat API*, pak *další krok*.\n"
+"5. Přidejte název aplikace, například *Red*.\n"
+"6. Přidejte popis aplikace, například *Používá se pro červené kolečko obrázků*.\n"
+"7. Klikněte *Vytvořit aplikaci*. Budete muset souhlasit s podmínkami GIPHY API.\n"
+"8. Kopírujte API klíč.\n"
+"9. V Discordu spusťte příkaz {command}.\n"
 
 #: redbot/cogs/image/image.py:243
 msgid "<your_api_key_here>"

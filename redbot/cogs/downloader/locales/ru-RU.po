@@ -632,7 +632,7 @@ msgstr "Отсутствует из установленных репозито�
 
 #: redbot/cogs/downloader/downloader.py:1596
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестный"
 
 #: redbot/cogs/downloader/downloader.py:1597
 msgid "None - this cog wasn't installed via downloader"

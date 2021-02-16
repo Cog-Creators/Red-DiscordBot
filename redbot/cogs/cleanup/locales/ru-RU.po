@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -73,7 +73,14 @@ msgid "Delete all messages after a specified message.\n\n"
 "        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Удалить все сообщения после указанного сообщения.\n\n"
+"        Для получения идентификатора сообщения, включить режим разработчика во вкладке\n"
+"        в Discord. Затем щелкните правой кнопкой мыши на сообщении\n"
+"        и скопируйте его идентификатор.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<message_id>` Идентификатор сообщения, чтобы очистить. Это сообщение не будет удалено.\n"
+"        - `<delete_pinned>` Удалять ли закрепленные сообщения или нет. По умолчанию Ложь\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."
@@ -90,7 +97,14 @@ msgid "Deletes X messages before the specified message.\n\n"
 "        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Удалить все сообщения после указанного сообщения.\n\n"
+"        Для получения идентификатора сообщения, включить режим разработчика во вкладке\n"
+"        в Discord. Затем щелкните правой кнопкой мыши на сообщении\n"
+"        и скопируйте его идентификатор.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<message_id>` Идентификатор сообщения, чтобы очистить. Это сообщение не будет удалено.\n"
+"        - `<delete_pinned>` Удалять ли закрепленные сообщения или нет. По умолчанию Ложь\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:354
 #, docstring
@@ -103,7 +117,15 @@ msgid "Delete the messages between Message One and Message Two, providing the me
 "        - `<two>` The id of the message to cleanup before. This message won't be deleted.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Удалите сообщения между сообщением 1 и сообщением 2, указав идентификаторы сообщений.\n\n"
+"        Первый идентификатор сообщения должен быть старым сообщением, а второй— новым.\n\n"
+"        Пример:\n"
+"            - `[p]очистка между 123456789123456789 987654321987654321`\n\n"
+"        **Аргументы:**\n\n"
+"        - `<one>` Идентификатор сообщения для очистки. Это сообщение не будет удалено.\n"
+"        - `<two>` Идентификатор сообщения, который нужно очистить раньше. Это сообщение не будет удалено.\n"
+"        - `<delete_pinned>` Удалять или нет. По умолчанию Ложь\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:402
 #, docstring
@@ -142,7 +164,7 @@ msgid "Clean up messages owned by the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:612
+#: redbot/cogs/cleanup/cleanup.py:614
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"

@@ -22,7 +22,8 @@ msgstr "Du har forsøkt å kjøre Audios Lavalink server på en konstruksjon som
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "Jeg mangler tillatelser i denne serveren, Vennligst adresse dette så snart som mulig.\n\n"
+"Forventede tillatelser:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -122,7 +123,8 @@ msgstr "Spor satt fast"
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
-msgstr ""
+msgstr "Avspilling av sangen har stoppet på grunn av uunnlatelig feil.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

@@ -25,7 +25,9 @@ msgstr "Image spezifische Befehle."
 msgid "Retrieve pictures from Imgur.\n\n"
 "        Make sure to set the Client ID using `[p]imgurcreds`.\n"
 "        "
-msgstr ""
+msgstr "Lade Bilder von Imgur.\n\n"
+"        Stelle sicher, dass du die Client ID mit `[p]imgurcreds` festgelegt hast\n"
+"        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring
@@ -33,7 +35,10 @@ msgid "Search Imgur for the specified term.\n\n"
 "        Use `count` to choose how many images should be returned.\n"
 "        Command can return up to 5 images.\n"
 "        "
-msgstr ""
+msgstr "Sucht auf Imgur nach dem angegebenen Wert.\n\n"
+"        `count` gibt an, wie viele Bilder zurückgegeben werden sollen.\n"
+"        Der Befehl kann bis zu fünf Bilder zurückgeben.\n"
+"        "
 
 #: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
 msgid "Image count has to be between 1 and 5."
@@ -49,7 +54,7 @@ msgstr "Die Suche gab keine Treffer."
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\n"
-msgstr ""
+msgstr "Suchergebnisse...\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."
@@ -63,7 +68,12 @@ msgid "Get images from a subreddit.\n\n"
 "        - `<sort_type>`: new, top\n"
 "        - `<window>`: day, week, month, year, all\n"
 "        "
-msgstr ""
+msgstr "Lädt Bilder aus einem Subreddit.\n\n"
+"        Die Suche kann mit folgenden Optionen angepasst werden:\n"
+"        - `<count>`: Anzahl an Bildern (maximal fünf)\n"
+"        - `<sort_type>`: new, top\n"
+"        - `<window>`: day, week, month, year, all\n"
+"        "
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."

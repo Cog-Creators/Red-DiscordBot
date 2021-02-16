@@ -105,7 +105,7 @@ msgstr "長さ: {length} | {user} によって追加"
 
 #: redbot/cogs/audio/core/events/lavalink.py:166
 msgid "Queue ended."
-msgstr ""
+msgstr "キューを再生しきりました。"
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"

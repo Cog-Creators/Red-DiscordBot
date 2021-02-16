@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Wähle zwischen mehreren Optionen.\n\n"
+"        Um Optionen zu wählen die Leerzeichen enthalten solltest\n"
+"        du Anführungszeichen verwenden.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -118,7 +121,10 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Würfel eine zufällige Nummer.\n\n"
+"        Das Ergebnis wird zwischen 1 und `<number>` liegen.\n\n"
+"        `<number>`ist standardmässig 100.\n"
+"        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -133,12 +139,15 @@ msgstr ""
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Wirf eine Münze... oder einen Benutzer.\n\n"
+"        Standardmässig eine Münze.\n"
+"        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Netter Versuch. Denkst du das wäre lustig?\n"
+"Nimm *das:*\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -178,7 +187,9 @@ msgstr "{choice} Unentschieden, {author.mention}!"
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "Stelle 8 Ball eine Frage.\n\n"
+"        Frage muss mit einem Fragezeichen abschließen.\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -207,7 +218,9 @@ msgstr "Erstelle einen Imgtfy Link."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Weil jeder Umarmungen mag!\n\n"
+"        Bis zu 10 Intensitätsstufen.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
@@ -269,7 +282,7 @@ msgstr " • Bots: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Benutzer online: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
@@ -470,7 +483,8 @@ msgstr "Kanäle:"
 #: redbot/cogs/general/general.py:425
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Text: {text}\n"
+"🔊 Sprache: {voice}"
 
 #: redbot/cogs/general/general.py:431
 msgid "Utility:"
@@ -492,7 +506,10 @@ msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
 "Roles: {role_count}"
-msgstr ""
+msgstr "AFK Kanal: {afk_chan}\n"
+"AFK Abklingzeit: {afk_timeout}\n"
+"Benutzerdefinierte Emojis: {emoji_count}\n"
+"Rollen: {role_count}"
 
 #: redbot/cogs/general/general.py:450
 msgid "Not set"
@@ -518,7 +535,9 @@ msgstr "Nitro Boost:"
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
 "        "
-msgstr ""
+msgstr "Durchsuche das Urban Dictionary.\n\n"
+"        Dies verwendet die inoffizielle Urban Dictionary API.\n"
+"        "
 
 #: redbot/cogs/general/general.py:499 redbot/cogs/general/general.py:568
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
@@ -535,7 +554,8 @@ msgstr "{word} von {author}"
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Beispiel:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -546,5 +566,8 @@ msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
 "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\n"
+"{word} von {author}\n\n"
+"{description}\n\n"
+"{thumbs_down} Runter / {thumbs_up} Hoch, Powered by Urban Dictionary."
 

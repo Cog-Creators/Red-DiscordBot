@@ -233,7 +233,8 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\n"
+"Gunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -241,7 +242,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:356
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Tampaknya ini bukan URL atau kode Spotify yang didukung."
 
 #: redbot/cogs/audio/core/utilities/player.py:382
 msgid "{query} is not an allowed query."
@@ -254,7 +255,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} lagu tidak dapat diantrekan."
 
 #: redbot/cogs/audio/core/utilities/player.py:497
 msgid "No Title"
@@ -262,15 +263,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Antrean Daftar Putar"
 
 #: redbot/cogs/audio/core/utilities/player.py:506
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Menambahkan {num} trek ke antrian. {maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:512
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} hingga dimulainya pemutaran playlist: dimulai dari #{position} dalam antrian"
 
 #: redbot/cogs/audio/core/utilities/player.py:593
 msgid "Nothing found"
@@ -300,7 +301,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:672
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Sambungan disetel ulang saat memuat daftar putar."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:71
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."

@@ -60,11 +60,11 @@ msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "enabled"
-msgstr ""
+msgstr "diaktifkan"
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "disabled"
-msgstr ""
+msgstr "dinonaktifkan"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"

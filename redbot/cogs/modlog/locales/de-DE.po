@@ -35,7 +35,9 @@ msgstr "Command um fehlerhafte Fälle zu reparieren."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `<channel>` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Lege einen Kanal als modlog fest.\n\n"
+"        Lasse `<channel>` weg um modlog zu deaktivieren.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:53
 msgid "Mod events will be sent to {channel}."
@@ -68,7 +70,7 @@ msgstr "deaktiviert"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Aktuelle Einstellungen:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
@@ -135,7 +137,12 @@ msgid "Specify a reason for a modlog case.\n\n"
 "        the owner of unless you are a mod, admin or server owner.\n\n"
 "        If no case number is specified, the latest case will be used.\n"
 "        "
-msgstr ""
+msgstr "Füge eine Beschreibung zu einem Modlog-Fall hinzu.\n\n"
+"        Bitte beachte, dass du nur Fälle bearbeiten kannst die\n"
+"        du selbst erstellt hast, es sei denn du bist ein Moderator,\n"
+"        Admin oder Besitzer des Servers.\n\n"
+"        Ist keine Fallnummer angegeben, dann wird der letzte Fall verwendet\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."

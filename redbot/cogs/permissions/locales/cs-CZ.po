@@ -71,7 +71,7 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:83
 #, docstring
 msgid "Customise permissions for commands and cogs."
-msgstr ""
+msgstr "Přizpůsobit oprávnění pro příkazy a cogy."
 
 #: redbot/cogs/permissions/permissions.py:207
 #, docstring
@@ -114,12 +114,12 @@ msgstr ""
 
 #: redbot/cogs/permissions/permissions.py:269
 msgid "That user can not run the specified command."
-msgstr ""
+msgstr "Tento uživatel nemůže spustit zadaný příkaz."
 
 #: redbot/cogs/permissions/permissions.py:276
 #, docstring
 msgid "Manage permissions with YAML files."
-msgstr ""
+msgstr "Spravovat oprávnění pomocí YAML souborů."
 
 #: redbot/cogs/permissions/permissions.py:280
 #, docstring
@@ -161,7 +161,7 @@ msgstr "Nemám dovolená PM."
 #: redbot/cogs/permissions/permissions.py:336
 #: redbot/cogs/permissions/permissions.py:351
 msgid "I've just sent the file to you via DM."
-msgstr ""
+msgstr "Právě jsem vám poslal soubor prostřednictvím DM."
 
 #: redbot/cogs/permissions/permissions.py:344
 #, docstring
@@ -269,27 +269,27 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:534
 #, docstring
 msgid "Reset all rules in this server."
-msgstr ""
+msgstr "Obnovit všechna pravidla na tomto serveru."
 
 #: redbot/cogs/permissions/permissions.py:637
 msgid "You must upload a file."
-msgstr ""
+msgstr "Musíte nahrát soubor."
 
 #: redbot/cogs/permissions/permissions.py:643
 msgid "Invalid syntax: "
-msgstr ""
+msgstr "Neplatný syntax: "
 
 #: redbot/cogs/permissions/permissions.py:646
 msgid "Your YAML file did not match the schema: "
-msgstr ""
+msgstr "Váš YAML soubor se neshoduje se schématem: "
 
 #: redbot/cogs/permissions/permissions.py:649
 msgid "Rules set."
-msgstr ""
+msgstr "Pravidla nastavena."
 
 #: redbot/cogs/permissions/permissions.py:693
 msgid "Are you sure?"
-msgstr ""
+msgstr "Jste si jisti?"
 
 #: redbot/cogs/permissions/permissions.py:700
 #: redbot/cogs/permissions/permissions.py:713
@@ -298,9 +298,9 @@ msgstr "Vypršel časový limit odpovědi."
 
 #: redbot/cogs/permissions/permissions.py:708
 msgid "Are you sure? (y/n)"
-msgstr ""
+msgstr "Jste si jisti? (y/n)"
 
 #: redbot/cogs/permissions/permissions.py:719
 msgid "Action cancelled."
-msgstr ""
+msgstr "Akce zrušena."
 

@@ -138,7 +138,8 @@ msgstr ""
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Szép próbálkozás. Azt hiszed vicces vagy?\n"
+" Mit szólnál *ehhez* inkább:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -216,7 +217,11 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Szerver információ mutatása.\n\n"
+"        `details`: Több információt mutat, amikor `True`-ra van állítva.\n"
+"        Alapértelmezetten False.\n"
+"        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
@@ -269,7 +274,7 @@ msgstr " • Botok: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Online felhasználók: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
@@ -470,7 +475,8 @@ msgstr "Csatornák:"
 #: redbot/cogs/general/general.py:425
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Szöveg: {text}\n"
+"🔊 Hang: {voice}"
 
 #: redbot/cogs/general/general.py:431
 msgid "Utility:"
@@ -481,7 +487,10 @@ msgid "Owner: {owner}\n"
 "Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr ""
+msgstr "Tulajdonos: {owner}\n"
+"Hang régió: {region}\n"
+"Ellenőr. szint: {verif}\n"
+"Szerver ID: {id}{shard_info}"
 
 #: redbot/cogs/general/general.py:444
 msgid "Misc:"
@@ -492,7 +501,10 @@ msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
 "Roles: {role_count}"
-msgstr ""
+msgstr "AFK csatorna: {afk_chan}\n"
+"AFK időkorlát: {afk_timeout}\n"
+"Egyedi emojik: {emoji_count}\n"
+"Rangok: {role_count}"
 
 #: redbot/cogs/general/general.py:450
 msgid "Not set"
@@ -507,7 +519,10 @@ msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "{boostlevel}. szint {nitroboosters} gyorsítással\n"
+"Fájlméret határ: {filelimit}\n"
+"Emoji határ: {emojis_limit}\n"
+"Maximum hangminőség: {bitrate}"
 
 #: redbot/cogs/general/general.py:472
 msgid "Nitro Boost:"
@@ -535,7 +550,8 @@ msgstr ""
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Például:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."

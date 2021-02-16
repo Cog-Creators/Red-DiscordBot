@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/permissions/converters.py:65
 msgid "\"{arg}\" was not found. It must be the ID, mention, or name of a server, channel, user or role which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" не был найден. Это должен быть ID, упоминание или имя сервера, канала, пользователя или роли, которые может видеть бот."
 
 #: redbot/cogs/permissions/converters.py:74
 msgid "\"{arg}\" does not refer to a unique server, channel, user or role. Please use the ID for whatever/whoever you're trying to specify, or mention it/them."

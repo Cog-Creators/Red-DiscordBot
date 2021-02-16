@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -33,19 +33,24 @@ msgstr "Kommandon för att få kontakt med Reds kugghanterare."
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Listar aktuella kugghjulsbanor i prioritetsordning.\n"
+"        "
 
 #: redbot/core/cog_manager.py:333
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
-msgstr ""
+msgstr "Installationsväg: {install_path}\n"
+"Huvudväg: {core_path}\n\n"
 
 #: redbot/core/cog_manager.py:347
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Lägg till en sökväg till listan över tillgängliga kugghjulsvägar.\n"
+"        "
 
 #: redbot/core/cog_manager.py:351
 msgid "That path does not exist or does not point to a valid directory."
@@ -60,7 +65,9 @@ msgstr "Sökvägen har lagts till."
 msgid "\n"
 "        Removes a path from the available cog paths given the `path_number` from `[p]paths`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Tar bort en sökväg från tillgängliga kugghjulsvägar med tanke på `path_number` från `[p]paths`.\n"
+"        "
 
 #: redbot/core/cog_manager.py:369 redbot/core/cog_manager.py:392
 msgid "Path numbers must be positive."
@@ -79,7 +86,9 @@ msgstr "Sökvägen är borttagen."
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Omsorterar vägar internt för att möjliggöra upptäckten av olika koggar.\n"
+"        "
 
 #: redbot/core/cog_manager.py:399
 msgid "Invalid 'from' index."
@@ -101,7 +110,12 @@ msgid "\n"
 "            directory and it must already exist.\n\n"
 "        No installed cogs will be transferred in the process.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Returnerar den aktuella installationssökvägen eller sätter den om en är angiven.\n"
+"            Den angivna sökvägen måste vara absolut eller relativ till botens\n"
+"            katalog och den måste redan finnas.\n\n"
+"        Inga installerade kuggar kommer att överföras i processen.\n"
+"        "
 
 #: redbot/core/cog_manager.py:427
 msgid "That path does not exist."
@@ -116,15 +130,17 @@ msgstr "Boten kommer att installera nya cogar i `{}` mappen."
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Listar alla inlästa och tillgängliga koggar.\n"
+"        "
 
 #: redbot/core/cog_manager.py:451 redbot/core/cog_manager.py:466
 msgid "**{} loaded:**\n"
-msgstr ""
+msgstr "**{} laddad:**\n"
 
 #: redbot/core/cog_manager.py:452 redbot/core/cog_manager.py:468
 msgid "**{} unloaded:**\n"
-msgstr ""
+msgstr "**{} urladdad:**\n"
 
 #: redbot/core/core_commands.py:177
 msgid "Alias {alias_name} is already an existing command or alias in one of the loaded cogs."
@@ -153,7 +169,9 @@ msgstr ""
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "Denna bot är en instans av [Red, en open source Discord bot]({}) skapad av [Twentysix]({}) och [förbättrad av många]({}).\n\n"
+"Red backas upp av en passionerad gemenskap som bidrar och skapar innehåll för alla att njuta av. [Följ med oss idag]({}) och hjälp oss att förbättra!\n\n"
+"(c) Cog Creators"
 
 #: redbot/core/core_commands.py:437
 msgid "Instance owned by"
@@ -191,26 +209,31 @@ msgstr "Skapar glädje sedan 02 jan 2016 (över {} dagar sedan!)"
 msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "Denna bot är en instans av Red, en open source Discord bot (1) skapad av Twentysix (2) och förbättrad av många (3).\n\n"
+"Red backas upp av en passionerad gemenskap som bidrar och skapar innehåll för alla att njuta av. Följ med oss idag (4) och hjälp oss att förbättra!\n\n"
+"(c) Cog Creators"
 
 #: redbot/core/core_commands.py:472
 msgid "Instance owned by: [{owner}]\n"
 "Python:            [{python_version}] (5)\n"
 "discord.py:        [{dpy_version}] (6)\n"
 "Red version:       [{red_version}] (7)\n"
-msgstr ""
+msgstr "Instansen ägs av: [{owner}]\n"
+"Python:            [{python_version}] (5)\n"
+"discord.py:        [{dpy_version}] (6)\n"
+"Red version:       [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:491
 msgid "Outdated:          [{state}]\n"
-msgstr ""
+msgstr "Föråldrad:          [{state}]\n"
 
 #: redbot/core/core_commands.py:494
 msgid "**About Red**\n"
-msgstr ""
+msgstr "**Om Red**\n"
 
 #: redbot/core/core_commands.py:505
 msgid "**About this instance**\n"
-msgstr ""
+msgstr "**Om denna instans**\n"
 
 #: redbot/core/core_commands.py:507
 msgid "**References**\n"
@@ -221,7 +244,14 @@ msgid "**References**\n"
 "5. <{}>\n"
 "6. <{}>\n"
 "7. <{}>\n"
-msgstr ""
+msgstr "**Referenser**\n"
+"1. <{}>\n"
+"2. <{}>\n"
+"3. <{}>\n"
+"4. <{}>\n"
+"5. <{}>\n"
+"6. <{}>\n"
+"7. <{}>\n"
 
 #: redbot/core/core_commands.py:523
 #, docstring
@@ -2328,7 +2358,12 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:122
+#: redbot/core/dev_commands.py:36
+#, docstring
+msgid "Various development focused utilities."
+msgstr ""
+
+#: redbot/core/dev_commands.py:123
 #, docstring
 msgid "Evaluate a statement of python code.\n\n"
 "        The bot will always respond with the return value of the code.\n"
@@ -2349,7 +2384,7 @@ msgid "Evaluate a statement of python code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:163
+#: redbot/core/dev_commands.py:164
 #, docstring
 msgid "Execute asynchronous code.\n\n"
 "        This command wraps code into the body of an async function and then\n"
@@ -2369,7 +2404,7 @@ msgid "Execute asynchronous code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:217
+#: redbot/core/dev_commands.py:218
 #, docstring
 msgid "Open an interactive REPL.\n\n"
 "        The REPL will only recognise code as messages which start with a\n"
@@ -2378,51 +2413,51 @@ msgid "Open an interactive REPL.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:226
+#: redbot/core/dev_commands.py:227
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
 msgstr "Kör redan en REPL session i denna kanal, avsluta den med `quit`."
 
-#: redbot/core/dev_commands.py:230
+#: redbot/core/dev_commands.py:231
 msgid "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:241
+#: redbot/core/dev_commands.py:242
 msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
 msgstr ""
 
-#: redbot/core/dev_commands.py:255
+#: redbot/core/dev_commands.py:256
 msgid "Exiting."
 msgstr ""
 
-#: redbot/core/dev_commands.py:306
+#: redbot/core/dev_commands.py:307
 msgid "Unexpected error: `{}`"
 msgstr "Oväntat fel: `{}`"
 
-#: redbot/core/dev_commands.py:310
+#: redbot/core/dev_commands.py:311
 #, docstring
 msgid "Pauses/resumes the REPL running in the current channel"
 msgstr ""
 
-#: redbot/core/dev_commands.py:312
+#: redbot/core/dev_commands.py:313
 msgid "There is no currently running REPL session in this channel."
 msgstr ""
 
-#: redbot/core/dev_commands.py:320
+#: redbot/core/dev_commands.py:321
 msgid "The REPL session in this channel has been resumed."
 msgstr ""
 
-#: redbot/core/dev_commands.py:322
+#: redbot/core/dev_commands.py:323
 msgid "The REPL session in this channel is now paused."
 msgstr ""
 
-#: redbot/core/dev_commands.py:327
+#: redbot/core/dev_commands.py:328
 #, docstring
 msgid "Mock another user invoking a command.\n\n"
 "        The prefix must not be entered.\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:340
+#: redbot/core/dev_commands.py:341
 #, docstring
 msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        Only reads the raw content of the message. Attachments, embeds etc. are\n"
@@ -2430,17 +2465,17 @@ msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:361
+#: redbot/core/dev_commands.py:362
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\n\n"
 "        Does not persist through restarts."
 msgstr ""
 
-#: redbot/core/dev_commands.py:369
+#: redbot/core/dev_commands.py:370
 msgid "Bot owners will now bypass all commands with cooldowns."
 msgstr ""
 
-#: redbot/core/dev_commands.py:371
+#: redbot/core/dev_commands.py:372
 msgid "Bot owners will no longer bypass all commands with cooldowns."
 msgstr ""
 

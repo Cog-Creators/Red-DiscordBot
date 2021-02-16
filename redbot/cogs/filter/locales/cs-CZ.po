@@ -21,7 +21,10 @@ msgid "This cog is designed for \"filtering\" unwanted words and phrases from a 
 "    It provides tools to manage a list of words or sentences, and to customize automatic actions to be taken against users who use those words in channels or in their name/nickname.\n\n"
 "    This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.\n"
 "    "
-msgstr ""
+msgstr "Tento cog je navržen pro \"filtrování\" nechtěných slov a frází na serveru.\n\n"
+"    Poskytuje nástroje pro správu seznamu slov nebo vět, a přizpůsobit automatické akce prováděné proti uživatelům, kteří používají tato slova v kanálech nebo v jejich jméno/přezdívkách.\n\n"
+"    Toto lze použít k zabránění nevhodnému jazyku, diskuzím mimo téma, pozváním odkazů a dalším.\n"
+"    "
 
 #: redbot/cogs/filter/filter.py:83
 #, docstring

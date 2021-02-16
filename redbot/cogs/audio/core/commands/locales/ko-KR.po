@@ -41,7 +41,9 @@ msgstr "전체 키워드 화이트리스트를 관리합니다."
 msgid "Adds a keyword to the whitelist.\n\n"
 "        If anything is added to whitelist, it will blacklist everything else.\n"
 "        "
-msgstr ""
+msgstr "화이트리스트에 키워드를 추가합니다.\n\n"
+"        하나라도 화이트리스트에 등록이 된다면, 다른 모든석을 블랙리스트처리합니다.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -298,12 +300,14 @@ msgstr "비활성화됨"
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"반복재생이 비활성화되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"큐에있는 곡이 다 재생되면 자동으로 연결해제 기능이 비활성화되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -371,7 +375,30 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "자동 재생곡의 재생목록을 정합니다.\n\n"
+"        **사용법**:\n"
+"        ​ ​ ​ ​ `[p]audioset 재생목록_이름_혹은_ID [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ 옵션들:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **오직 봇 소유자만 명령어를 사용할수 있습니다.**\n\n"
+"        **Scope** is one of the following:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -519,14 +546,16 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:753
 msgid "\n"
 "Auto-play has been disabled."
-msgstr ""
+msgstr "자동재생이 비활성화되었습니다."
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
-msgstr ""
+msgstr "DJ전용모드를 활성화합니다.\n\n"
+"        DJ모드는 DJ역할이 있는 사용자만이 음악 명령어를 사용할수있도록 합니다.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -549,7 +578,9 @@ msgstr "DJ 역할: {true_or_false}."
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
 "        `[p]audioset dc` takes precedence over this setting.\n"
 "        "
-msgstr ""
+msgstr "봇이 x초 이상 체널에 환자 있을때 체널에서 자동으로 나갑니다, 0으로 설정하면 비활성화됩니다.\n\n"
+"        `[p]audioset dc` 설정이 우선권을 가집니다.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -810,7 +841,7 @@ msgstr "전체"
 #: redbot/cogs/audio/core/commands/audioset.py:1058
 #: redbot/cogs/audio/core/commands/audioset.py:1059
 msgid "Cached"
-msgstr ""
+msgstr "캐시됨"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1061
 #: redbot/cogs/audio/core/commands/audioset.py:1062
@@ -1171,7 +1202,8 @@ msgstr "현재 재생중."
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+" 신청자: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
@@ -1648,7 +1680,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/equalizer.py:118
 msgid "Author"
-msgstr ""
+msgstr "작성자"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:140
 msgid "{num} preset(s)"
@@ -1908,7 +1940,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/localtracks.py:42
 msgid "Folder Not Found"
-msgstr ""
+msgstr "폴더를 찾을 수 없습니다"
 
 #: redbot/cogs/audio/core/commands/localtracks.py:43
 msgid "Localtracks folder named {name} does not exist."
@@ -1922,7 +1954,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/localtracks.py:59
 #: redbot/cogs/audio/core/commands/localtracks.py:115
 msgid "No album folders found."
-msgstr ""
+msgstr "앨범을 찾을 수 없습니다."
 
 #: redbot/cogs/audio/core/commands/localtracks.py:101
 #, docstring
@@ -2048,21 +2080,21 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:792
 #: redbot/cogs/audio/core/commands/player.py:912
 msgid "Track is not playable."
-msgstr ""
+msgstr "재생할 수 없는 트랙입니다."
 
 #: redbot/cogs/audio/core/commands/player.py:259
 #: redbot/cogs/audio/core/commands/player.py:793
 #: redbot/cogs/audio/core/commands/player.py:913
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "** {suffix} **는 완전히 지원되는 형식이 아니며 일부 트랙이 재생되지 않을 수 있습니다."
 
 #: redbot/cogs/audio/core/commands/player.py:290
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "이 서버에서는이 트랙을 사용할 수 없습니다."
 
 #: redbot/cogs/audio/core/commands/player.py:312
 msgid "Track exceeds maximum length."
-msgstr ""
+msgstr "트랙이 최대 길이를 초과했습니다."
 
 #: redbot/cogs/audio/core/commands/player.py:335
 msgid "{time} until track playback: #1 in queue"
@@ -2080,12 +2112,14 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:413
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "봇 관리자가 Spotify URL 또는 코드를 사용하기 전에 Spotify 클라이언트 ID 및 암호를 설정해 주어야 합니다. \n"
+" `{prefix}audioset spotifyapi`을 참조하세요."
 
 #: redbot/cogs/audio/core/commands/player.py:423
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "봇 관리자가 Youtube URL 또는 코드를 사용하기 전에 Youtube API Key를 설정해 주어야 합니다. \n"
+" `{prefix}audioset youtubeapi`을 참조하세요."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2093,7 +2127,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:488
 msgid "No categories found"
-msgstr ""
+msgstr "카테고리를 찾을 수 없습니다"
 
 #: redbot/cogs/audio/core/commands/player.py:492
 #: redbot/cogs/audio/core/commands/player.py:510
@@ -2102,7 +2136,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:497
 msgid "Categories"
-msgstr ""
+msgstr "카테고리들"
 
 #: redbot/cogs/audio/core/commands/player.py:503
 msgid "No categories selected, try again later."
@@ -2184,7 +2218,7 @@ msgstr "아무것도 찾지 못했습니다."
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} 을 대기열에 추가할 수 없습니다."
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2196,7 +2230,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:866
 msgid "search"
-msgstr ""
+msgstr "검색"
 
 #: redbot/cogs/audio/core/commands/player.py:869
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
@@ -2551,7 +2585,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:908
 #: redbot/cogs/audio/core/commands/playlists.py:1056
 msgid "Unknown"
-msgstr ""
+msgstr "알 수 없음"
 
 #: redbot/cogs/audio/core/commands/playlists.py:910
 msgid "Page {page}/{pages} | Author: {author_name} | {num} track(s)"
@@ -2656,7 +2690,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/queue.py:364
 #: redbot/cogs/audio/core/commands/queue.py:372
 msgid "There's nothing in the queue."
-msgstr ""
+msgstr "대기열에 아무것도 없습니다."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1168
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."

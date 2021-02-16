@@ -139,7 +139,9 @@ msgstr ""
 msgid "Create an automated action.\n\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr ""
+msgstr "Crée une action automatisée.\n\n"
+"        Les noms d'actions dupliqués ne sont pas autorisés.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:230
 msgid "Duplicate action name found!"
@@ -164,7 +166,10 @@ msgid "Manage warning reasons.\n\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr ""
+msgstr "Gérer les raisons d'avertissement.\n\n"
+"        Les raisons doivent avoir un nom, une description et une valeur de points. Le nom\n"
+"        de la raison devra être donné quand un utilisateur est averti.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:273
 #, docstring
@@ -206,7 +211,9 @@ msgstr "Points"
 msgid "Name: {reason_name}\n"
 "Points: {points}\n"
 "Description: {description}"
-msgstr ""
+msgstr "Nom : {reason_name}\n"
+"Points : {points}\n"
+"Description : {description}"
 
 #: redbot/cogs/warnings/warnings.py:327
 msgid "There are no reasons configured!"
@@ -297,12 +304,14 @@ msgstr "{user} a été averti."
 #: redbot/cogs/warnings/warnings.py:496
 msgid "{reason}\n\n"
 "Use `{prefix}unwarn {user} {message}` to remove this warning."
-msgstr ""
+msgstr "{reason}\n\n"
+"Utilisez `{prefix}unwarn {user} {message}` pour retirer cet avertissement."
 
 #: redbot/cogs/warnings/warnings.py:499
 msgid "{description}\n"
 "Points: {points}"
-msgstr ""
+msgstr "{description}\n"
+"Points : {points}"
 
 #: redbot/cogs/warnings/warnings.py:522
 #, docstring
@@ -323,7 +332,7 @@ msgstr "Modérateur inconnu ({})"
 
 #: redbot/cogs/warnings/warnings.py:544 redbot/cogs/warnings/warnings.py:578
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
-msgstr ""
+msgstr "{num_points} points d'avertissement {reason_name} émis par {user} pour {description}\n"
 
 #: redbot/cogs/warnings/warnings.py:555 redbot/cogs/warnings/warnings.py:589
 msgid "Warnings for {user}"

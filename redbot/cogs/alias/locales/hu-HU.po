@@ -28,12 +28,13 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
-msgstr ""
+msgstr "Aliasok:\n"
 
 #: redbot/cogs/alias/alias.py:205
 msgid "\n\n"
 "Page {page}/{total}"
-msgstr ""
+msgstr "\n\n"
+"Oldal {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

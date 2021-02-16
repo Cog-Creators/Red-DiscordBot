@@ -109,7 +109,11 @@ msgid " - Name:   <{pname}>\n"
 " - ID:     < {pid} >\n"
 " - Tracks: < {ptracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr " - Имя: <{pname}>\n"
+" - Длина: < {scope} >\n"
+" - ID: < {pid} >\n"
+" - Треки: < {ptracks} >\n"
+" - Автор: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:108
 #: redbot/cogs/audio/core/utilities/player.py:238
@@ -169,12 +173,14 @@ msgstr "{skip_to_track} треков пропущено"
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Владелец должен установить идентификатор клиента Spotify и секрет клиента Spotify, прежде чем можно будет использовать URL-адреса или коды Spotify..\n"
+"Просмотрите `{prefix}audioset spotifyapi` для получения инструкций."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Владелец должен установить ключ YouTube API перед использованием URL-адресов или кодов Spotify.\n"
+"Смотрите `{prefix}audioset youtubeapi` для получения инструкций."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -233,7 +239,8 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "API ключ Spotify или секрет клиента были установлены неправильно. \n"
+"Для получения инструкций используйте `{prefix}audioset spotifyapi`."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -250,7 +257,8 @@ msgstr "{query} не является допустимым запросом."
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\n"
+"Это может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
@@ -332,7 +340,11 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}. <{playlist.name}>\n"
+" - Область: < {scope} >\n"
+" - ID: < {playlist.id} >\n"
+" - Треки: < {tracks} >\n"
+" - Автор: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
@@ -425,11 +437,11 @@ msgstr "Пользователь"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
-msgstr ""
+msgstr "__Слишком много песен в очереди, отображаются только первые 500__.\n\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Сейчас в прямом эфире:**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
@@ -442,7 +454,7 @@ msgstr "Воспроизводится: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "по запросу: **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
@@ -450,7 +462,7 @@ msgstr "Очередь для __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "Страница {page_num}/{total_pages} | {num_tracks} треков, {num_remaining} осталось\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"

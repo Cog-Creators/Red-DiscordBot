@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -103,7 +103,7 @@ msgstr "Переключить оповещения в этом канале д�
 
 #: redbot/cogs/streams/streams.py:311
 msgid "Please supply the name of a *Twitch* channel, not a Discord channel."
-msgstr ""
+msgstr "Пожалуйста укажите имя Twitch-канала, а не Discord-канала."
 
 #: redbot/cogs/streams/streams.py:318
 #, docstring
@@ -128,7 +128,7 @@ msgid "Disable all stream alerts in this channel or server.\n\n"
 "        Do `[p]streamalert stop yes` to disable all stream alerts in\n"
 "        this server.\n"
 "        "
-msgstr ""
+msgstr "Отключение всех оповещений о трансляциях в текущем канале или сервере. `[p]streamalert stop` отключит оповещения в текущем канале. Выполните `[p]streamalert stop yes` чтобы отключить все оповещения в текущем сервере."
 
 #: redbot/cogs/streams/streams.py:363
 msgid "All the stream alerts in this server have been disabled."
@@ -145,7 +145,7 @@ msgstr "Список всех активных оповещений о тран�
 
 #: redbot/cogs/streams/streams.py:374
 msgid "Active alerts:\n\n"
-msgstr ""
+msgstr "Активные уведомления:"
 
 #: redbot/cogs/streams/streams.py:382
 msgid "There are no active alerts in this server."
@@ -220,7 +220,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:551
 msgid "Stream alert message set!"
-msgstr ""
+msgstr "Сообщение уведомления о трансляции установлено!"
 
 #: redbot/cogs/streams/streams.py:543
 #, docstring
@@ -233,7 +233,7 @@ msgstr ""
 #: redbot/cogs/streams/streams.py:556
 #, docstring
 msgid "Reset the stream alert messages in this server."
-msgstr ""
+msgstr "Сброс сообщений уведомлений о трансляции в текущем сервере."
 
 #: redbot/cogs/streams/streams.py:560
 msgid "Stream alerts in this server will now use the default alert message."
@@ -255,7 +255,7 @@ msgstr "Упоминание `@​everyone` больше не будет исп�
 
 #: redbot/cogs/streams/streams.py:579
 msgid "When a stream is live, `@​everyone` will be mentioned."
-msgstr ""
+msgstr "Когда трансляция в эфире, будет использоваться `@everyone`."
 
 #: redbot/cogs/streams/streams.py:584
 #, docstring
@@ -268,7 +268,7 @@ msgstr "Упоминание `@​here` больше не будет испол�
 
 #: redbot/cogs/streams/streams.py:592
 msgid "When a stream is live, `@​here` will be mentioned."
-msgstr ""
+msgstr "Когда трансляция в эфире, будет использоваться `@​here`."
 
 #: redbot/cogs/streams/streams.py:597
 #, docstring
@@ -342,47 +342,47 @@ msgstr ""
 msgid "{stream} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:181
+#: redbot/cogs/streams/streamtypes.py:198
 msgid "This stream will start in {time}"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:187
+#: redbot/cogs/streams/streamtypes.py:204
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:360
+#: redbot/cogs/streams/streamtypes.py:381
 msgid "Untitled broadcast"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:362
+#: redbot/cogs/streams/streamtypes.py:383
 msgid " - Rerun"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:365
-#: redbot/cogs/streams/streamtypes.py:408
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:386
+#: redbot/cogs/streams/streamtypes.py:429
+#: redbot/cogs/streams/streamtypes.py:470
 msgid "Followers"
-msgstr ""
+msgstr "Подписчики"
 
-#: redbot/cogs/streams/streamtypes.py:366
-#: redbot/cogs/streams/streamtypes.py:450
+#: redbot/cogs/streams/streamtypes.py:387
+#: redbot/cogs/streams/streamtypes.py:471
 msgid "Total views"
-msgstr ""
+msgstr "Всего просмотров"
 
-#: redbot/cogs/streams/streamtypes.py:371
-#: redbot/cogs/streams/streamtypes.py:412
+#: redbot/cogs/streams/streamtypes.py:392
+#: redbot/cogs/streams/streamtypes.py:433
 msgid "Playing: "
 msgstr "Воспроизводится: "
 
-#: redbot/cogs/streams/streamtypes.py:455
+#: redbot/cogs/streams/streamtypes.py:476
 msgid "None"
 msgstr "Нет"
 
-#: redbot/cogs/streams/streamtypes.py:458
+#: redbot/cogs/streams/streamtypes.py:479
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:462
+#: redbot/cogs/streams/streamtypes.py:483
 msgid "{adult}Category: {category} | Tags: {tags}"
-msgstr ""
+msgstr "{adult}Категория: {category} | Теги: {tags}"
 

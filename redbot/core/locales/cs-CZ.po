@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -33,19 +33,24 @@ msgstr "Příkazy pro rozhraní s Red cog manažerem."
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vypíše aktuální cesty cogů v pořadí podle priority.\n"
+"        "
 
 #: redbot/core/cog_manager.py:333
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
-msgstr ""
+msgstr "Instalační cesta: {install_path}\n"
+" Umístění jádra bota: {core_path}\n\n"
 
 #: redbot/core/cog_manager.py:347
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Přidat cestu k seznamu dostupných cest cogů\n"
+"        "
 
 #: redbot/core/cog_manager.py:351
 msgid "That path does not exist or does not point to a valid directory."
@@ -120,11 +125,11 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:451 redbot/core/cog_manager.py:466
 msgid "**{} loaded:**\n"
-msgstr ""
+msgstr "**{} načteno:**\n"
 
 #: redbot/core/cog_manager.py:452 redbot/core/cog_manager.py:468
 msgid "**{} unloaded:**\n"
-msgstr ""
+msgstr "**{} odnačteno:**\n"
 
 #: redbot/core/core_commands.py:177
 msgid "Alias {alias_name} is already an existing command or alias in one of the loaded cogs."
@@ -493,15 +498,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1043
 msgid "Global default: {}\n"
-msgstr ""
+msgstr "Globální výchozí: {}\n"
 
 #: redbot/core/core_commands.py:1046
 msgid "Guild setting: {}\n"
-msgstr ""
+msgstr "Nastavení cechu: {}\n"
 
 #: redbot/core/core_commands.py:1049
 msgid "Channel setting: {}\n"
-msgstr ""
+msgstr "Nastavení kanálu: {}\n"
 
 #: redbot/core/core_commands.py:1051
 msgid "User setting: {}"
@@ -676,7 +681,7 @@ msgstr ""
 #: redbot/core/core_commands.py:1995 redbot/core/core_commands.py:2039
 #: redbot/core/core_commands.py:2054
 msgid "Done."
-msgstr ""
+msgstr "Hotovo."
 
 #: redbot/core/core_commands.py:1293
 msgid "Alright then."
@@ -897,7 +902,9 @@ msgstr ""
 msgid "\n"
 "        Adds an admin role for this guild.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Přidá admin roli pro tento cech\n"
+"        "
 
 #: redbot/core/core_commands.py:1689
 msgid "This role is already an admin role."
@@ -927,7 +934,9 @@ msgstr "Tato role je nyní považována za moderátorskou roli."
 msgid "\n"
 "        Removes an admin role for this guild.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Přidá admin roli pro tento cech\n"
+"        "
 
 #: redbot/core/core_commands.py:1715
 msgid "That role was not an admin role to begin with."
@@ -2055,7 +2064,10 @@ msgid "Disable a command.\n\n"
 "        If you're the bot owner, this will disable commands\n"
 "        globally by default.\n"
 "        "
-msgstr ""
+msgstr "Zakažte příkaz.\n\n"
+"        Pokud vlastníte bota, ve výchozím nastavení toto zakáže příkazy\n"
+"        globálně\n"
+"        "
 
 #: redbot/core/core_commands.py:3236
 #, docstring
@@ -2242,7 +2254,7 @@ msgstr "Neznámý kanál s id: {id}"
 #: redbot/core/core_commands.py:3574
 #, docstring
 msgid "Add servers or channels to the ignore list."
-msgstr ""
+msgstr "Přidat servery nebo kanály do ignorovaného seznamu."
 
 #: redbot/core/core_commands.py:3578
 #, docstring
@@ -2260,29 +2272,29 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3598
 msgid "Channel added to ignore list."
-msgstr ""
+msgstr "Kanál přidán do seznamu ignorovaných."
 
 #: redbot/core/core_commands.py:3600
 msgid "Channel already in ignore list."
-msgstr ""
+msgstr "Kanál je již v seznamu ignorovaný."
 
 #: redbot/core/core_commands.py:3605
 #, docstring
 msgid "Ignore commands in this server."
-msgstr ""
+msgstr "Ignorovat příkazy na tomto serveru."
 
 #: redbot/core/core_commands.py:3609
 msgid "This server has been added to the ignore list."
-msgstr ""
+msgstr "Tento server byl přidán do ignorovaného seznamu."
 
 #: redbot/core/core_commands.py:3611
 msgid "This server is already being ignored."
-msgstr ""
+msgstr "Tento server je již ignorován."
 
 #: redbot/core/core_commands.py:3617
 #, docstring
 msgid "Remove servers or channels from the ignore list."
-msgstr ""
+msgstr "Odeberte servery nebo kanály z ignorovaného seznamu."
 
 #: redbot/core/core_commands.py:3625
 #, docstring
@@ -2293,24 +2305,24 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3634
 msgid "Channel removed from ignore list."
-msgstr ""
+msgstr "Kanál byl odebrán ze seznamu ignorovaných."
 
 #: redbot/core/core_commands.py:3636
 msgid "That channel is not in the ignore list."
-msgstr ""
+msgstr "Tento kanál není v seznamu ignorovaných."
 
 #: redbot/core/core_commands.py:3641
 #, docstring
 msgid "Remove this server from the ignore list."
-msgstr ""
+msgstr "Odstranit server ze seznamu ignorovaných."
 
 #: redbot/core/core_commands.py:3645
 msgid "This server has been removed from the ignore list."
-msgstr ""
+msgstr "Tento server byl odebrán z ignorovaného seznamu."
 
 #: redbot/core/core_commands.py:3647
 msgid "This server is not in the ignore list."
-msgstr ""
+msgstr "Tento server není v seznamu ignorovaných."
 
 #: redbot/core/core_commands.py:3653
 msgid "This server is currently being ignored."
@@ -2328,7 +2340,12 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:122
+#: redbot/core/dev_commands.py:36
+#, docstring
+msgid "Various development focused utilities."
+msgstr ""
+
+#: redbot/core/dev_commands.py:123
 #, docstring
 msgid "Evaluate a statement of python code.\n\n"
 "        The bot will always respond with the return value of the code.\n"
@@ -2349,7 +2366,7 @@ msgid "Evaluate a statement of python code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:163
+#: redbot/core/dev_commands.py:164
 #, docstring
 msgid "Execute asynchronous code.\n\n"
 "        This command wraps code into the body of an async function and then\n"
@@ -2369,7 +2386,7 @@ msgid "Execute asynchronous code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:217
+#: redbot/core/dev_commands.py:218
 #, docstring
 msgid "Open an interactive REPL.\n\n"
 "        The REPL will only recognise code as messages which start with a\n"
@@ -2378,51 +2395,51 @@ msgid "Open an interactive REPL.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:226
+#: redbot/core/dev_commands.py:227
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:230
+#: redbot/core/dev_commands.py:231
 msgid "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:241
+#: redbot/core/dev_commands.py:242
 msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
 msgstr ""
 
-#: redbot/core/dev_commands.py:255
+#: redbot/core/dev_commands.py:256
 msgid "Exiting."
 msgstr "Ukončování."
 
-#: redbot/core/dev_commands.py:306
+#: redbot/core/dev_commands.py:307
 msgid "Unexpected error: `{}`"
 msgstr "Neočekávaná chyba: '{0}'"
 
-#: redbot/core/dev_commands.py:310
+#: redbot/core/dev_commands.py:311
 #, docstring
 msgid "Pauses/resumes the REPL running in the current channel"
 msgstr ""
 
-#: redbot/core/dev_commands.py:312
+#: redbot/core/dev_commands.py:313
 msgid "There is no currently running REPL session in this channel."
 msgstr ""
 
-#: redbot/core/dev_commands.py:320
+#: redbot/core/dev_commands.py:321
 msgid "The REPL session in this channel has been resumed."
 msgstr ""
 
-#: redbot/core/dev_commands.py:322
+#: redbot/core/dev_commands.py:323
 msgid "The REPL session in this channel is now paused."
 msgstr ""
 
-#: redbot/core/dev_commands.py:327
+#: redbot/core/dev_commands.py:328
 #, docstring
 msgid "Mock another user invoking a command.\n\n"
 "        The prefix must not be entered.\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:340
+#: redbot/core/dev_commands.py:341
 #, docstring
 msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        Only reads the raw content of the message. Attachments, embeds etc. are\n"
@@ -2430,17 +2447,17 @@ msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:361
+#: redbot/core/dev_commands.py:362
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\n\n"
 "        Does not persist through restarts."
 msgstr ""
 
-#: redbot/core/dev_commands.py:369
+#: redbot/core/dev_commands.py:370
 msgid "Bot owners will now bypass all commands with cooldowns."
 msgstr ""
 
-#: redbot/core/dev_commands.py:371
+#: redbot/core/dev_commands.py:372
 msgid "Bot owners will no longer bypass all commands with cooldowns."
 msgstr ""
 
@@ -2588,11 +2605,11 @@ msgstr "Naposledy upraveno"
 
 #: redbot/core/modlog.py:454
 msgid "**User:** {}\n"
-msgstr ""
+msgstr "**Uživatel:** {}\n"
 
 #: redbot/core/modlog.py:455
 msgid "**Moderator:** {}\n"
-msgstr ""
+msgstr "**Moderátor:** {}\n"
 
 #: redbot/core/modlog.py:458
 msgid "**Until:** {}\n"
@@ -2605,7 +2622,7 @@ msgstr ""
 
 #: redbot/core/modlog.py:463
 msgid "**Channel**: {}\n"
-msgstr ""
+msgstr "**Kanál**: {}\n"
 
 #: redbot/core/modlog.py:465
 msgid "**Amended by:** {}\n"
@@ -2613,5 +2630,5 @@ msgstr ""
 
 #: redbot/core/modlog.py:467
 msgid "**Last modified at:** {}\n"
-msgstr ""
+msgstr "**Naposledy upraveno v:** {}\n"
 

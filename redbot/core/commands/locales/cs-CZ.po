@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" není číslo."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "Tento čas je pro tento příkaz příliš velký. (Maximum: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "Server \"{name}\" nebyl nalezen."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"

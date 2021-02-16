@@ -288,7 +288,7 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:691
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr ""
+msgstr "Gli argomenti devono essere consecutivi. Argomenti mancanti: "
 
 #: redbot/cogs/customcom/customcom.py:717
 msgid "Conflicting colon notation for argument {index}: \"{name1}\" and \"{name2}\"."

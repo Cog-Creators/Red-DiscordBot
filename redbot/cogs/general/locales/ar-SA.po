@@ -18,87 +18,87 @@ msgstr ""
 #: redbot/cogs/general/general.py:47
 #, docstring
 msgid "General commands."
-msgstr ""
+msgstr "أوامر عامة."
 
 #: redbot/cogs/general/general.py:52
 msgid "As I see it, yes"
-msgstr ""
+msgstr "كما أراه، نعم"
 
 #: redbot/cogs/general/general.py:53
 msgid "It is certain"
-msgstr ""
+msgstr "إنها مؤكدة"
 
 #: redbot/cogs/general/general.py:54
 msgid "It is decidedly so"
-msgstr ""
+msgstr "ومن المؤكد أن الأمر كذلك"
 
 #: redbot/cogs/general/general.py:55
 msgid "Most likely"
-msgstr ""
+msgstr "الأكثر إعجاباً"
 
 #: redbot/cogs/general/general.py:56
 msgid "Outlook good"
-msgstr ""
+msgstr "توقعات جيدة"
 
 #: redbot/cogs/general/general.py:57
 msgid "Signs point to yes"
-msgstr ""
+msgstr "الإشارات تشير إلى نعم"
 
 #: redbot/cogs/general/general.py:58
 msgid "Without a doubt"
-msgstr ""
+msgstr "بلا شك"
 
 #: redbot/cogs/general/general.py:59
 msgid "Yes"
-msgstr ""
+msgstr "نعم"
 
 #: redbot/cogs/general/general.py:60
 msgid "Yes – definitely"
-msgstr ""
+msgstr "نعم - بالتأكيد"
 
 #: redbot/cogs/general/general.py:61
 msgid "You may rely on it"
-msgstr ""
+msgstr "يمكنك الاعتماد عليها"
 
 #: redbot/cogs/general/general.py:62
 msgid "Reply hazy, try again"
-msgstr ""
+msgstr "الرد على الضغط، حاول مرة أخرى"
 
 #: redbot/cogs/general/general.py:63
 msgid "Ask again later"
-msgstr ""
+msgstr "اسأل مرة أخرى لاحقاً"
 
 #: redbot/cogs/general/general.py:64
 msgid "Better not tell you now"
-msgstr ""
+msgstr "الأفضل أن لا تخبرك الآن"
 
 #: redbot/cogs/general/general.py:65
 msgid "Cannot predict now"
-msgstr ""
+msgstr "لا يمكن التنبؤ الآن"
 
 #: redbot/cogs/general/general.py:66
 msgid "Concentrate and ask again"
-msgstr ""
+msgstr "ركز واسأل مرة أخرى"
 
 #: redbot/cogs/general/general.py:67
 msgid "Don't count on it"
-msgstr ""
+msgstr "لا تعول عليها"
 
 #: redbot/cogs/general/general.py:68
 msgid "My reply is no"
-msgstr ""
+msgstr "جوابي. لا"
 
 #: redbot/cogs/general/general.py:69
 msgid "My sources say no"
-msgstr ""
+msgstr "مصادري تقول لا"
 
 #: redbot/cogs/general/general.py:70
 msgid "Outlook not so good"
-msgstr ""
+msgstr "توقعاتي ليست على ما يرام"
 
 #: redbot/cogs/general/general.py:71
 msgid "Very doubtful"
-msgstr ""
+msgstr "مشكوك فيه جدًا"
 
 #: redbot/cogs/general/general.py:85
 #, docstring
@@ -106,11 +106,14 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "اختر بين خيارات متعددة.\n\n"
+"        للإشارة إلى خيارات تشمل مساحة بيضاء، يجب عليك استخدام\n"
+"        اقتباسات مزدوجة.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
-msgstr ""
+msgstr "لا توجد خيارات كافية للاختيار منها."
 
 #: redbot/cogs/general/general.py:98
 #, docstring
@@ -220,31 +223,31 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
-msgstr ""
+msgstr "تم إنشاؤها في {date}. هذا أكثر من {num} يوم مضت!"
 
 #: redbot/cogs/general/general.py:268
 msgid "Region"
-msgstr ""
+msgstr "المنطقة"
 
 #: redbot/cogs/general/general.py:269
 msgid "Users online"
-msgstr ""
+msgstr "المستخدمين المتصلين"
 
 #: redbot/cogs/general/general.py:270
 msgid "Text Channels"
-msgstr ""
+msgstr "قنوات النص"
 
 #: redbot/cogs/general/general.py:271
 msgid "Voice Channels"
-msgstr ""
+msgstr "القنوات الصوتية"
 
 #: redbot/cogs/general/general.py:272
 msgid "Roles"
-msgstr ""
+msgstr "الرتب"
 
 #: redbot/cogs/general/general.py:273
 msgid "Owner"
-msgstr ""
+msgstr "المالك"
 
 #: redbot/cogs/general/general.py:275
 msgid "Server ID: "
@@ -257,27 +260,28 @@ msgstr ""
 #: redbot/cogs/general/general.py:303
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\n"
+"معرف القطع: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
-msgstr ""
+msgstr "البشر: "
 
 #: redbot/cogs/general/general.py:313
 msgid " • Bots: "
-msgstr ""
+msgstr " • بوت: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "المستخدمون على الإنترنت: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
-msgstr ""
+msgstr "__VIP__ شرق الولايات المتحدة "
 
 #: redbot/cogs/general/general.py:343
 msgid "__VIP__ US West "
-msgstr ""
+msgstr "__VIP__ الولايات المتحدة الغربية "
 
 #: redbot/cogs/general/general.py:344
 msgid "__VIP__ Amsterdam "
@@ -285,103 +289,103 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:345
 msgid "EU West "
-msgstr ""
+msgstr "الاتحاد الأوروبي الغربية "
 
 #: redbot/cogs/general/general.py:346
 msgid "EU Central "
-msgstr ""
+msgstr "الاتحاد الأوروبي المركزي "
 
 #: redbot/cogs/general/general.py:347
 msgid "Europe "
-msgstr ""
+msgstr "أوروبا "
 
 #: redbot/cogs/general/general.py:348
 msgid "London "
-msgstr ""
+msgstr "لندن "
 
 #: redbot/cogs/general/general.py:349
 msgid "Frankfurt "
-msgstr ""
+msgstr "لندن "
 
 #: redbot/cogs/general/general.py:350
 msgid "Amsterdam "
-msgstr ""
+msgstr "أمستردام"
 
 #: redbot/cogs/general/general.py:351
 msgid "US West "
-msgstr ""
+msgstr "الولايات المتحدة الغربية "
 
 #: redbot/cogs/general/general.py:352
 msgid "US East "
-msgstr ""
+msgstr "الولايات المتحدة الشرقية "
 
 #: redbot/cogs/general/general.py:353
 msgid "US South "
-msgstr ""
+msgstr "جنوب الولايات المتحدة "
 
 #: redbot/cogs/general/general.py:354
 msgid "US Central "
-msgstr ""
+msgstr "وسط الولايات المتحدة "
 
 #: redbot/cogs/general/general.py:355
 msgid "Singapore "
-msgstr ""
+msgstr "سنغافورة "
 
 #: redbot/cogs/general/general.py:356
 msgid "Sydney "
-msgstr ""
+msgstr "سيدني "
 
 #: redbot/cogs/general/general.py:357
 msgid "Brazil "
-msgstr ""
+msgstr "البرازيل "
 
 #: redbot/cogs/general/general.py:358
 msgid "Hong Kong "
-msgstr ""
+msgstr "هونغ كونغ "
 
 #: redbot/cogs/general/general.py:359
 msgid "Russia "
-msgstr ""
+msgstr "روسيا "
 
 #: redbot/cogs/general/general.py:360
 msgid "Japan "
-msgstr ""
+msgstr "اليابان "
 
 #: redbot/cogs/general/general.py:361
 msgid "South Africa "
-msgstr ""
+msgstr "جنوب أفريقيا "
 
 #: redbot/cogs/general/general.py:362
 msgid "India "
-msgstr ""
+msgstr "الهند "
 
 #: redbot/cogs/general/general.py:363
 msgid "Dubai "
-msgstr ""
+msgstr "دبي"
 
 #: redbot/cogs/general/general.py:364
 msgid "South Korea "
-msgstr ""
+msgstr "كوريا الجنوبية "
 
 #: redbot/cogs/general/general.py:367
 msgid "0 - None"
-msgstr ""
+msgstr "0 - لا شيء"
 
 #: redbot/cogs/general/general.py:368
 msgid "1 - Low"
-msgstr ""
+msgstr "1 - منخفض"
 
 #: redbot/cogs/general/general.py:369
 msgid "2 - Medium"
-msgstr ""
+msgstr "2 - متوسط"
 
 #: redbot/cogs/general/general.py:370
 msgid "3 - High"
-msgstr ""
+msgstr "3 - عالي"
 
 #: redbot/cogs/general/general.py:371
 msgid "4 - Extreme"
-msgstr ""
+msgstr "4 - متطرفة"
 
 #: redbot/cogs/general/general.py:375
 msgid "Animated Icon"
@@ -401,15 +405,15 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:379
 msgid "Server Discovery"
-msgstr ""
+msgstr "اكتشاف السيرفر"
 
 #: redbot/cogs/general/general.py:380
 msgid "Featurable"
-msgstr ""
+msgstr "مميز"
 
 #: redbot/cogs/general/general.py:381
 msgid "Splash Invite"
-msgstr ""
+msgstr "دعوة Splash"
 
 #: redbot/cogs/general/general.py:382
 msgid "Member list disabled"
@@ -421,7 +425,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:384
 msgid "More Emojis"
-msgstr ""
+msgstr "المزيد من الإيموجيس"
 
 #: redbot/cogs/general/general.py:385
 msgid "News Channels"
@@ -429,7 +433,7 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:386
 msgid "Partnered"
-msgstr ""
+msgstr "شريك"
 
 #: redbot/cogs/general/general.py:387
 msgid "Preview enabled"
@@ -437,19 +441,19 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:388
 msgid "Public disabled"
-msgstr ""
+msgstr "معطل عام"
 
 #: redbot/cogs/general/general.py:389
 msgid "Vanity URL"
-msgstr ""
+msgstr "رابط الفانوس"
 
 #: redbot/cogs/general/general.py:390
 msgid "Verified"
-msgstr ""
+msgstr "تم التحقق"
 
 #: redbot/cogs/general/general.py:391
 msgid "VIP Voice Servers"
-msgstr ""
+msgstr "خوادم صوت VIP"
 
 #: redbot/cogs/general/general.py:392
 msgid "Welcome Screen enabled"
