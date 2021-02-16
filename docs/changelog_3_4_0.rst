@@ -83,7 +83,7 @@ Mod
 
 - The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
 - Fixed an edge case in role hierarchy checks (:issue:`4740`)
-- Added two new settings for disabling username and nickname tracking (:issue:`4827`)
+- Added two new settings for disabling username and nickname tracking (:issue:`4799`)
 
     - Added a command ``[p]modset trackallnames`` that disables username tracking and overrides the nickname tracking setting for all guilds
     - Added a command ``[p]modset tracknicknames`` that disables nickname tracking in a specific guild
