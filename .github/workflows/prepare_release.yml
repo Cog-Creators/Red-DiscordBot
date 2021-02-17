@@ -7,10 +7,6 @@ on:
         required: false
         default: 'auto'
 
-env:
-  CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-  CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
-
 jobs:
   crowdin_download_translations:
     runs-on: ubuntu-latest
@@ -30,6 +26,9 @@ jobs:
       - name: Download translations
         run: |
           make download_translations
+        env:
+          CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+          CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
 
       - name: Create Pull Request
         id: cpr_crowdin

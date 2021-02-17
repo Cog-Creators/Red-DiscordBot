@@ -4,10 +4,6 @@ on:
     branches:
       - V3/develop
 
-env:
-  CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-  CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
-
 jobs:
   deploy:
     if: github.repository == 'Cog-Creators/Red-DiscordBot'
@@ -31,3 +27,6 @@ jobs:
     - name: Upload source files
       run: |
         make upload_translations
+      env:
+        CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+        CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
