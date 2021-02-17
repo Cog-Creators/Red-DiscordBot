@@ -1,10 +1,6 @@
-name: Publish to Crowdin
+name: Crowdin - Download translations
 on:
-  schedule:
-    - cron: '0 12 * * THU'
   workflow_dispatch:
-  repository_dispatch:
-    types: crowdin
 
 env:
   CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
@@ -26,13 +22,6 @@ jobs:
         echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
         sudo apt-get update -qq
         sudo apt-get install -y crowdin
-        pip install redgettext==3.3
-    - name: Generate source files
-      run: |
-        make gettext
-    - name: Upload source files
-      run: |
-        make upload_translations
     - name: Download translations
       run: |
         make download_translations
