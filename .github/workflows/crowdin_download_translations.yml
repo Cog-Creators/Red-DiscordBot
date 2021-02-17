@@ -26,6 +26,7 @@ jobs:
       run: |
         make download_translations
     - name: Create Pull Request
+      id: cpr
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,3 +38,31 @@ jobs:
         labels: "Automated PR, Category: i18n, Changelog Entry: Skipped"
         branch: "automated/i18n"
         author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+    - name: Close and reopen the PR with different token to trigger CI
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ secrets.COGCREATORS_BOT_REPO_SCOPED }}
+        script: |
+          const pr_number = '${{ steps.cpr.outputs.pull-request-number }}';
+          const pr_operation = '${{ steps.cpr.outputs.pull-request-operation }}';
+          let sleep_time = 0;
+
+          if (!['created', 'updated'].includes(pr_operation)) {
+            console.log('PR was not created as there were no changes.')
+            return;
+          }
+
+          for (const new_state of ['closed', 'open']) {
+            // some sleep time needed to make sure API handles open after close
+            if (sleep_time)
+              await new Promise(r => setTimeout(r, sleep_time));
+
+            github.issues.update({
+              issue_number: pr_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: new_state
+            });
+
+            sleep_time = 2000;
+          }
