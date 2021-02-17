@@ -1,6 +1,8 @@
 name: Crowdin - Upload strings
 on:
   push:
+    branches:
+      - V3/develop
 
 env:
   CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
