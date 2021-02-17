@@ -51,7 +51,11 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_local.command(name="play")
     async def command_local_play(self, ctx: commands.Context):
-        """Play a local track."""
+        """Play a local track.
+
+        If there's no album folders, and instead a regular .mp3 file, use the play command instead of
+        local play. For more help, check the help documentation for the play command.
+        """
         if not await self.localtracks_folder_exists(ctx):
             return
         localtracks_folders = await self.get_localtracks_folders(ctx, search_subfolders=True)

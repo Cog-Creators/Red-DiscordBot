@@ -37,7 +37,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_play(self, ctx: commands.Context, *, query: str):
-        """Play a URL or search for a track."""
+        """Play a URL or search for a track.
+
+        To play a local track/file, the query should be (your localtrack folder)/(mp3 file).
+        To check what your localtrack folder is, check your audio settings using the audioset command..
+        """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
