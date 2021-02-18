@@ -4098,8 +4098,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Leave blank to send nothing.
 
-        To include the command name in the message, include the
-        `{command}` placeholder.
+        To include the command name in the message, include the `{command}` placeholder.
+
+        Examples:
+            - `[p]command disabledmsg This command is disabled`
+            - `[p]command disabledmsg {command} is disabled`
+            - `[p]command disabledmsg` - Sends nothing when a disabled command is attempted.
+
+        **Arguments:**
+
+        - `[message]` The message to send when a disabled command is attempted.
         """
         await ctx.bot._config.disabled_command_msg.set(message)
         await ctx.tick()
@@ -4109,7 +4117,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group(name="autoimmune")
     async def autoimmune_group(self, ctx: commands.Context):
         """
-        Server settings for immunity from automated actions.
+        Commands to manage server settings for immunity from automated actions.
+
+        This includes duplicate message deletion and mention spam from the Mod cog, and filters from the Filter cog.
         """
         pass
 
