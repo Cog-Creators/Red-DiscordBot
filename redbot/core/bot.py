@@ -29,7 +29,6 @@ from typing import (
     overload,
 )
 from types import MappingProxyType
-from rich.console import Console
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -223,9 +222,6 @@ class RedBase(
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
-
-        # Although I see the use of keeping this public, lets rather make it private.
-        self._rich_console = Console()
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """

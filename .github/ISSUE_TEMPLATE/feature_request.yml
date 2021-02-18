@@ -1,0 +1,45 @@
+name: Feature request
+about: For feature requests regarding Red itself.
+title: ''
+labels: 'Type: Feature'
+assignees: ''
+issue_body: true
+inputs:
+- type: description
+  attributes:
+    value: |
+      Thank you for taking the time to fill out an issue, this template is meant for any feature suggestions.
+      If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
+- type: multi_select
+  attributes:
+    label: "Type of feature request"
+    description: "What type of feature would you like to request?"
+    required: true
+    choices:
+      - API functionality
+      - Cog
+      - Command
+      - Other
+- type: textarea
+  attributes:
+    label: "Description of the feature you're suggesting"
+    description: |
+      Feel free to describe in as much detail as you wish.
+
+      If you are requesting API functionality:
+        - Describe what it should do
+        - Note whether it is to extend existing functionality or introduce new functionality
+
+      If you are requesting a cog to be included in core: 
+        - Describe the functionality in as much detail as possible
+        - Include the command structure, if possible
+        - Please note that unless it's something that should be core functionality,
+          we reserve the right to reject your suggestion and point you to our cog 
+          board to request it for a third-party cog
+      
+      If you are requesting a command:
+        - Include what cog it should be in and a name for the command
+        - Describe the intended functionality for the command
+        - Note any restrictions on who can use the command or where it can be used
+    required: true
+

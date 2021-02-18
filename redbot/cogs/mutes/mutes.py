@@ -63,6 +63,7 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     pass
 
 
+@i18n.cog_i18n(_)
 class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     """
     Mute users temporarily or indefinitely.

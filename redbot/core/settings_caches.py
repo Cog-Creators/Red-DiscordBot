@@ -437,7 +437,7 @@ class DisabledCogCache:
             This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.set(True)
-        del self._disable_map[cog_name]
+        self._disable_map.pop(cog_name, None)
 
     async def default_enable(self, cog_name: str):
         """
@@ -449,7 +449,7 @@ class DisabledCogCache:
             This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.clear()
-        del self._disable_map[cog_name]
+        self._disable_map.pop(cog_name, None)
 
     async def disable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
         """

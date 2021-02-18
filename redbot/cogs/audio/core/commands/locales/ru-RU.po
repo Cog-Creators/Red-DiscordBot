@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2021-02-14 15:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -36,9 +36,14 @@ msgid "Manages the global keyword whitelist."
 msgstr "Глобальное управление белого списка ключевых слов."
 
 #: redbot/cogs/audio/core/commands/audioset.py:56
+#: redbot/cogs/audio/core/commands/audioset.py:246
 #, docstring
-msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr "Добавляет ключевое слово в белый список.\\n\\n        Если что-либо добавлено в белый список, то будет добавлять в черный список всё остальное\\n        "
+msgid "Adds a keyword to the whitelist.\n\n"
+"        If anything is added to whitelist, it will blacklist everything else.\n"
+"        "
+msgstr "Добавляет ключевое слово в белый список.\n\n"
+"        Если что-либо добавлено в белый список, то будет добавлять в черный список всё остальное\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -179,11 +184,6 @@ msgstr "Удалено `{blacklisted}` из чёрного списка."
 msgid "Manages the keyword whitelist."
 msgstr "Управляет белым списком ключевых слов."
 
-#: redbot/cogs/audio/core/commands/audioset.py:246
-#, docstring
-msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr "Добавляет ключевое слово в белый список.\\n\\n        Если что-либо добавлено в белый список, то будет добавлять в черный список всё остальное\\n        "
-
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
 msgstr "Белый список"
@@ -298,12 +298,16 @@ msgid "Disabled"
 msgstr "Отключено"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
-msgid "\\nRepeat has been disabled."
-msgstr "\\nПовтор был отключен."
+msgid "\n"
+"Repeat has been disabled."
+msgstr "\n"
+"Повтор был отключен."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
-msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr "\\nАвтоотключение в конце очереди отключено."
+msgid "\n"
+"Auto-disconnecting at queue end has been disabled."
+msgstr "\n"
+"Автоотключение в конце очереди отключено."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -347,7 +351,30 @@ msgstr "Настройки изменены"
 
 #: redbot/cogs/audio/core/commands/audioset.py:464
 #, docstring
-msgid "Set a playlist to auto-play songs from.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
+msgid "Set a playlist to auto-play songs from.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
@@ -461,8 +488,12 @@ msgstr "Создать плейлист автовоспроизведения �
 
 #: redbot/cogs/audio/core/commands/audioset.py:572
 #, docstring
-msgid "Toggle global daily queues.\\n\\n        Global daily queues creates a playlist for all tracks played today.\\n        "
-msgstr "Переключить ежедневные очереди.\\n\\n        Ежедневные очереди создают плейлист для всех воспроизведенных сегодня треков\\n        "
+msgid "Toggle global daily queues.\n\n"
+"        Global daily queues creates a playlist for all tracks played today.\n"
+"        "
+msgstr "Переключить ежедневные очереди.\n\n"
+"        Ежедневные очереди создают плейлист для всех воспроизведенных сегодня треков\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:584
 msgid "Global daily queues: {true_or_false}."
@@ -470,8 +501,12 @@ msgstr "Ежедневные очереди {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:593
 #, docstring
-msgid "Toggle daily queues.\\n\\n        Daily queues creates a playlist for all tracks played today.\\n        "
-msgstr "Переключить ежедневные очереди.\\n\\n        Ежедневные очереди создают плейлист для всех воспроизведенных сегодня треков\\n        "
+msgid "Toggle daily queues.\n\n"
+"        Daily queues creates a playlist for all tracks played today.\n"
+"        "
+msgstr "Переключить ежедневные очереди.\n\n"
+"        Ежедневные очереди создают плейлист для всех воспроизведенных сегодня треков\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:605
 msgid "Daily queues: {true_or_false}."
@@ -479,21 +514,32 @@ msgstr "Ежедневные очереди {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:614
 #, docstring
-msgid "Toggle the bot auto-disconnecting when done playing.\\n\\n        This setting takes precedence over `[p]audioset emptydisconnect`.\\n        "
-msgstr "Переключить автоотключение бота после конца воспроизведения.\\n\\n        Эта настройка занимает приоритет над `[p]audioset emptydisconnect`.\\n        "
+msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
+"        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
+"        "
+msgstr "Переключить автоотключение бота после конца воспроизведения.\n\n"
+"        Эта настройка занимает приоритет над `[p]audioset emptydisconnect`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:622
 msgid "Auto-disconnection at queue end: {true_or_false}."
 msgstr "Автоотключение в конце очереди: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:626
-msgid "\\nAuto-play has been disabled."
-msgstr "\\nАвтоматическое воспроизведение отключено."
+#: redbot/cogs/audio/core/commands/controller.py:753
+msgid "\n"
+"Auto-play has been disabled."
+msgstr "\n"
+"Автоматическое воспроизведение отключено."
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
-msgid "Toggle DJ mode.\\n\\n        DJ mode allows users with the DJ role to use audio commands.\\n        "
-msgstr "Переключить режим диджея.\\n\\n        Режим диджея позволяет пользователям с ролью диджея использовать аудио команды.\\n        "
+msgid "Toggle DJ mode.\n\n"
+"        DJ mode allows users with the DJ role to use audio commands.\n"
+"        "
+msgstr "Переключить режим диджея.\n\n"
+"        Режим диджея позволяет пользователям с ролью диджея использовать аудио команды.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -513,8 +559,12 @@ msgstr "DJ роль: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:679
 #, docstring
-msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\\n\\n        `[p]audioset dc` takes precedence over this setting.\\n        "
-msgstr "Автоматическое отключение от канала, когда бот один в течение х секунд, 0 для отключения.\\n\\n        `[p]audioset dc` имеет приоритет над этой настройкой.\\n        "
+msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
+"        `[p]audioset dc` takes precedence over this setting.\n"
+"        "
+msgstr "Автоматическое отключение от канала, когда бот один в течение х секунд, 0 для отключения.\n\n"
+"        `[p]audioset dc` имеет приоритет над этой настройкой.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -581,15 +631,30 @@ msgstr "Цена команды отслеживания очередей уст
 
 #: redbot/cogs/audio/core/commands/audioset.py:781
 #, docstring
-msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\\n\\n        Leave the path blank to reset the path to the default, the Audio data directory.\\n        "
-msgstr "Установите путь к локальным трекам, если Lavalink.jar не запущен из папки аудио данных.\\n\\n        Оставьте путь пустым, чтобы сбросить путь к папке аудио данных по умолчанию.\\n        "
+msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\n\n"
+"        Leave the path blank to reset the path to the default, the Audio data directory.\n"
+"        "
+msgstr "Установите путь к локальным трекам, если Lavalink.jar не запущен из папки аудио данных.\n\n"
+"        Оставьте путь пустым, чтобы сбросить путь к папке аудио данных по умолчанию.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:792
 msgid "The localtracks path location has been reset to {localpath}"
 msgstr "Путь к локальным трекам был сброшен на {localpath}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:797
-msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\\n```\\nParentDirectory\\n  |__ localtracks  (folder)\\n  |     |__ Awesome Album Name  (folder)\\n  |           |__01 Cool Song.mp3\\n  |           |__02 Groovy Song.mp3\\n```\\nThe folder path given to this command must contain the localtracks folder.\\n**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\\nUse this command with no path given to reset it to the default, the Audio data directory for this bot.\\nDo you want to continue to set the provided path for local tracks?"
+msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
+"```\n"
+"ParentDirectory\n"
+"  |__ localtracks  (folder)\n"
+"  |     |__ Awesome Album Name  (folder)\n"
+"  |           |__01 Cool Song.mp3\n"
+"  |           |__02 Groovy Song.mp3\n"
+"```\n"
+"The folder path given to this command must contain the localtracks folder.\n"
+"**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\n"
+"Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
+"Do you want to continue to set the provided path for local tracks?"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:829
@@ -618,8 +683,14 @@ msgstr "Путь к локальным трекам был установлен 
 
 #: redbot/cogs/audio/core/commands/audioset.py:858
 #, docstring
-msgid "Max length of a track to queue in seconds, 0 to disable.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\\n        input will turn the max length setting off.\\n        "
-msgstr "Максимальная длина трека в очереди в секундах, 0 для отключения.\\n\\n        Принимает секунды или значение, форматированное 00:00:00 (`чч:мм:ss`) или 00:00 (`mm:ss`). Недопустимый\\n        ввод отключит настройку максимальной длины.\\n        "
+msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
+"        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
+"        input will turn the max length setting off.\n"
+"        "
+msgstr "Максимальная длина трека в очереди в секундах, 0 для отключения.\n\n"
+"        Принимает секунды или значение, форматированное 00:00:00 (`чч:мм:ss`) или 00:00 (`mm:ss`). Недопустимый\n"
+"        ввод отключит настройку максимальной длины.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:867
 msgid "Invalid length"
@@ -657,7 +728,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:917
 #, docstring
-msgid "Toggle the domain restriction on Audio.\\n\\n        When toggled off, users will be able to play songs from non-commercial websites and links.\\n        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and\\n        Bandcamp links.\\n        "
+msgid "Toggle the domain restriction on Audio.\n\n"
+"        When toggled off, users will be able to play songs from non-commercial websites and links.\n"
+"        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and\n"
+"        Bandcamp links.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:928
@@ -687,48 +762,57 @@ msgid "Server Settings"
 msgstr "Настройки сервера"
 
 #: redbot/cogs/audio/core/commands/audioset.py:991
-msgid "Auto-disconnect:  [{dc}]\\n"
-msgstr "Автоотключение:  [{dc}]\\n"
+msgid "Auto-disconnect:  [{dc}]\n"
+msgstr "Автоотключение:  [{dc}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:992
-msgid "Auto-play:        [{autoplay}]\\n"
-msgstr "Автовоспроизведение: [{autoplay}]\\n"
+msgid "Auto-play:        [{autoplay}]\n"
+msgstr "Автовоспроизведение: [{autoplay}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
-msgid "Disconnect timer: [{num_seconds}]\\n"
-msgstr "Таймер отключения: [{num_seconds}]\\n"
+msgid "Disconnect timer: [{num_seconds}]\n"
+msgstr "Таймер отключения: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
-msgid "Auto Pause timer: [{num_seconds}]\\n"
-msgstr "Таймер отключения: [{num_seconds}]\\n"
+msgid "Auto Pause timer: [{num_seconds}]\n"
+msgstr "Таймер отключения: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1004
-msgid "DJ Role:          [{role.name}]\\n"
-msgstr "Роль диджея:          [{role.name}]\\n"
+msgid "DJ Role:          [{role.name}]\n"
+msgstr "Роль диджея:          [{role.name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1006
-msgid "Jukebox:          [{jukebox_name}]\\n"
-msgstr "Музыкальный автомат:          [{jukebox_name}]\\n"
+msgid "Jukebox:          [{jukebox_name}]\n"
+msgstr "Музыкальный автомат:          [{jukebox_name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1007
-msgid "Command price:    [{jukebox_price}]\\n"
-msgstr "Цена команды:    [{jukebox_price}]\\n"
+msgid "Command price:    [{jukebox_price}]\n"
+msgstr "Цена команды:    [{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
-msgid "Max track length: [{tracklength}]\\n"
-msgstr "Максимальная длина трека: [{tracklength}]\\n"
+msgid "Max track length: [{tracklength}]\n"
+msgstr "Максимальная длина трека: [{tracklength}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1014
-msgid "Repeat:           [{repeat}]\\nShuffle:          [{shuffle}]\\nShuffle bumped:   [{bumpped_shuffle}]\\nSong notify msgs: [{notify}]\\nSongs as status:  [{status}]\\nPersist queue:    [{persist_queue}]\\nSpotify search:   [{countrycode}]\\nAuto-Deafen:      [{auto_deafen}]\\n"
+msgid "Repeat:           [{repeat}]\n"
+"Shuffle:          [{shuffle}]\n"
+"Shuffle bumped:   [{bumpped_shuffle}]\n"
+"Song notify msgs: [{notify}]\n"
+"Songs as status:  [{status}]\n"
+"Persist queue:    [{persist_queue}]\n"
+"Spotify search:   [{countrycode}]\n"
+"Auto-Deafen:      [{auto_deafen}]\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
-msgid "Thumbnails:       [{0}]\\n"
-msgstr "Миниатюры:       [{0}]\\n"
+msgid "Thumbnails:       [{0}]\n"
+msgstr "Миниатюры:       [{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
-msgid "Vote skip:        [{vote_enabled}]\\nSkip percentage:  [{vote_percent}%]\\n"
-msgstr "Пропуск голосования:    [{vote_enabled}] \\nГолосов За: [{vote_percent}%]\\n"
+msgid "Vote skip:        [{vote_enabled}]\n"
+"Skip percentage:  [{vote_percent}%]\n"
+msgstr "Пропуск голосования:    [{vote_enabled}] \n"
+"Голосов За: [{vote_percent}%]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1051
 msgid "Server"
@@ -760,16 +844,16 @@ msgid "Auto-play Settings"
 msgstr "Настройки автовоспроизведения"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
-msgid "Playlist name:    [{pname}]\\n"
-msgstr "Название плейлиста: [{pname}]\\n"
+msgid "Playlist name:    [{pname}]\n"
+msgstr "Название плейлиста: [{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
-msgid "Playlist ID:      [{pid}]\\n"
-msgstr "ID плейлиста: [{pid}]\\n"
+msgid "Playlist ID:      [{pid}]\n"
+msgstr "ID плейлиста: [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
-msgid "Playlist scope:   [{pscope}]\\n"
-msgstr "Размер плейлиста: [{pscope}]\\n"
+msgid "Playlist scope:   [{pscope}]\n"
+msgstr "Размер плейлиста: [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1076
 #: redbot/cogs/audio/core/commands/audioset.py:1351
@@ -778,28 +862,28 @@ msgid "Cache Settings"
 msgstr "Настройки кэша"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1078
-msgid "Max age:                [{max_age}]\\n"
-msgstr "Макс. возраст: [{max_age}]\\n"
+msgid "Max age:                [{max_age}]\n"
+msgstr "Макс. возраст: [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
-msgid "Local Spotify cache:    [{spotify_status}]\\n"
-msgstr "Локальный кэш Spotify:    [{spotify_status}]\\n"
+msgid "Local Spotify cache:    [{spotify_status}]\n"
+msgstr "Локальный кэш Spotify:    [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1080
-msgid "Local Youtube cache:    [{youtube_status}]\\n"
-msgstr "Локальный кэш Youtube: [{youtube_status}]\\n"
+msgid "Local Youtube cache:    [{youtube_status}]\n"
+msgstr "Локальный кэш Youtube: [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
-msgid "Local Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Локальный кэш Lavalink:   [{lavalink_status}]\\n"
+msgid "Local Lavalink cache:   [{lavalink_status}]\n"
+msgstr "Локальный кэш Lavalink:   [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
-msgid "Global cache status:    [{global_cache}]\\n"
-msgstr ""
+msgid "Global cache status:    [{global_cache}]\n"
+msgstr "Состояние глобального кэша:    [{global_cache}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
-msgid "Global timeout:         [{num_seconds}]\\n"
-msgstr ""
+msgid "Global timeout:         [{num_seconds}]\n"
+msgstr "Глобальный тайм-аут:         [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1085
 #: redbot/cogs/audio/core/commands/audioset.py:1345
@@ -809,49 +893,54 @@ msgstr "дн."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1094
 msgid "User Settings"
-msgstr ""
+msgstr "Настройки пользователя"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
-msgid "Spotify search:   [{country_code}]\\n"
-msgstr ""
+msgid "Spotify search:   [{country_code}]\n"
+msgstr "Поиск в Spotify: [{country_code}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
 msgstr "Настройки Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
-msgid "Cog version:            [{version}]\\n"
-msgstr ""
+msgid "Cog version:            [{version}]\n"
+msgstr "Версия плагина:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
-msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr ""
+msgid "Red-Lavalink:           [{lavalink_version}]\n"
+msgstr "Red-Lavalink: [{lavalink_version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
-msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr ""
+msgid "External server:        [{use_external_lavalink}]\n"
+msgstr "Внешний сервер:        [[{use_external_lavalink}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
-msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\nJava Executable:        [{jv_exec}]\\n"
+msgid "Lavalink build:         [{llbuild}]\n"
+"Lavalink branch:        [{llbranch}]\n"
+"Release date:           [{build_time}]\n"
+"Lavaplayer version:     [{lavaplayer}]\n"
+"Java version:           [{jvm}]\n"
+"Java Executable:        [{jv_exec}]\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1130
-msgid "Localtracks path:       [{localpath}]\\n"
-msgstr ""
+msgid "Localtracks path:       [{localpath}]\n"
+msgstr "Путь к локальным трекам:       [{localpath}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1139
 #, docstring
 msgid "Sends the Lavalink server logs to your DMs."
-msgstr ""
+msgstr "Отправляет журналы сервера Lavalink в личные сообщения."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1146
 #: redbot/cogs/audio/core/commands/audioset.py:1148
 msgid "No logs found in your data folder."
-msgstr ""
+msgstr "Журналы не найдены в папке данных."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1160
 msgid "Logs are too large, you can find them in {path}"
-msgstr ""
+msgstr "Логи слишком большие, вы можете найти их в {path}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1170
 msgid "I need to be able to DM you to send you the logs."
@@ -899,8 +988,22 @@ msgid "Instructions to set the Spotify API tokens."
 msgstr "Инструкции по установке токенов Spotify API."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1257
-msgid "1. Go to Spotify developers and log in with your Spotify account.\\n(https://developer.spotify.com/dashboard/applications)\\n2. Click \\\"Create An App\\\".\\n3. Fill out the form provided with your app name, etc.\\n4. When asked if you're developing commercial integration select \\\"No\\\".\\n5. Accept the terms and conditions.\\n6. Copy your client ID and your client secret into:\\n`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
-msgstr "1. Перейдите на страницу Spotify для разработчиков и войдите в свой аккаунт в Spotify.\\n(https://developer.spotify.com/dashboard/applications)\\n2. Нажмите \\\"Создать приложение\\\".\\n3. Заполните предоставленную форму с именем приложения и т.п.\\n4. Если вы разрабатываете коммерческую интеграцию, то выберите \\\"Нет\\\".\\n5. Принять условия\\n6. Скопируйте ваш ID клиента и секрет клиента в:\\n`{prefix}установите api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. Click \"Create An App\".\n"
+"3. Fill out the form provided with your app name, etc.\n"
+"4. When asked if you're developing commercial integration select \"No\".\n"
+"5. Accept the terms and conditions.\n"
+"6. Copy your client ID and your client secret into:\n"
+"`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+msgstr "1. Перейдите на страницу Spotify для разработчиков и войдите в свой аккаунт в Spotify.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. Нажмите \"Создать приложение\".\n"
+"3. Заполните предоставленную форму с именем приложения и т.п.\n"
+"4. Если вы разрабатываете коммерческую интеграцию, то выберите \"Нет\".\n"
+"5. Принять условия\n"
+"6. Скопируйте ваш ID клиента и секрет клиента в:\n"
+"`{prefix}установите api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1274
 #: redbot/cogs/audio/core/commands/audioset.py:1296
@@ -925,49 +1028,59 @@ msgstr "Код страны установлен на {country}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1318
 #, docstring
-msgid "Sets the caching level.\\n\\n        Level can be one of the following:\\n\\n        0: Disables all caching\\n        1: Enables Spotify Cache\\n        2: Enables YouTube Cache\\n        3: Enables Lavalink Cache\\n        5: Enables all Caches\\n\\n        If you wish to disable a specific cache use a negative number.\\n        "
-msgstr "Устанавливает уровень кэширования.\\n\\n        Уровень может быть одним из следующих:\\n\\n        0: Отключает все кэширование\\n        1: Включает кэш Spotify\\n        2: Включает кэш YouTube\\n        3: Включает Lavalink кэш\\n        5: Включает все кэши\\n\\n        Если вы хотите отключить определенный кэш, используйте отрицательное число.\\n        "
+msgid "Sets the caching level.\n\n"
+"        Level can be one of the following:\n\n"
+"        0: Disables all caching\n"
+"        1: Enables Spotify Cache\n"
+"        2: Enables YouTube Cache\n"
+"        3: Enables Lavalink Cache\n"
+"        5: Enables all Caches\n\n"
+"        If you wish to disable a specific cache use a negative number.\n"
+"        "
+msgstr "Устанавливает уровень кэширования.\n\n"
+"        Уровень может быть одним из следующих:\n\n"
+"        0: Отключает все кэширование\n"
+"        1: Включает кэш Spotify\n"
+"        2: Включает кэш YouTube\n"
+"        3: Включает Lavalink кэш\n"
+"        5: Включает все кэши\n\n"
+"        Если вы хотите отключить определенный кэш, используйте отрицательное число.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1340
-msgid "Max age:          [{max_age}]\\n"
-msgstr "Макс. возраст: [{max_age}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1385
+msgid "Max age:          [{max_age}]\n"
+msgstr "Макс. возраст: [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1341
-msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr "Кэш Spotify: [{spotify_status}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1386
+msgid "Spotify cache:    [{spotify_status}]\n"
+msgstr "Кэш Spotify: [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1342
-msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "Кэш Youtube: [{youtube_status}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1387
+msgid "Youtube cache:    [{youtube_status}]\n"
+msgstr "Кэш Youtube: [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1343
-msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Кэш Lavalink: [{lavalink_status}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1385
-msgid "Max age:          [{max_age}]\\n"
-msgstr "Макс. возраст: [{max_age}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1386
-msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr "Кэш Spotify: [{spotify_status}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1387
-msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "Кэш Youtube: [{youtube_status}]\\n"
-
 #: redbot/cogs/audio/core/commands/audioset.py:1388
-msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Кэш Lavalink: [{lavalink_status}]\\n"
+msgid "Lavalink cache:   [{lavalink_status}]\n"
+msgstr "Кэш Lavalink: [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 #, docstring
-msgid "Sets the cache max age.\\n\\n        This commands allows you to set the max number of days before an entry in the cache becomes\\n        invalid.\\n        "
-msgstr "Устанавливает максимальный возраст кэша.\\n\\n        Эта команда позволяет установить максимальное количество дней до того, как запись в кэше становится\\n        недействительной.\\n        "
+msgid "Sets the cache max age.\n\n"
+"        This commands allows you to set the max number of days before an entry in the cache becomes\n"
+"        invalid.\n"
+"        "
+msgstr "Устанавливает максимальный возраст кэша.\n\n"
+"        Эта команда позволяет установить максимальное количество дней до того, как запись в кэше становится\n"
+"        недействительной.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1410
-msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\\n"
-msgstr "Возраст кеширования не может быть менее 7 дней. Если вы хотите отключить его, запустите `{prefix}audioset cache`.\\n"
+msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
+msgstr "Возраст кеширования не может быть менее 7 дней. Если вы хотите отключить его, запустите `{prefix}audioset cache`.\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1415
 msgid "I've set the cache age to {age} days"
@@ -976,16 +1089,20 @@ msgstr "Я установил возраст кэша на {age} дней"
 #: redbot/cogs/audio/core/commands/audioset.py:1422
 #, docstring
 msgid "Change globalapi settings."
-msgstr ""
+msgstr "Изменить настройки globalapi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1426
 #, docstring
-msgid "Toggle the server settings.\\n\\n        Default is OFF\\n        "
-msgstr ""
+msgid "Toggle the server settings.\n\n"
+"        Default is OFF\n"
+"        "
+msgstr "Переключить настройки сервера.\n\n"
+"        По умолчанию: Выкл\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "Global DB is {status}"
-msgstr ""
+msgstr "Глобальная БД - {status}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "enabled"
@@ -997,34 +1114,42 @@ msgstr "отключен"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1442
 #, docstring
-msgid "Set GET request timeout.\\n\\n        Example: 0.1 = 100ms 1 = 1 second\\n        "
-msgstr ""
+msgid "Set GET request timeout.\n\n"
+"        Example: 0.1 = 100ms 1 = 1 second\n"
+"        "
+msgstr "Установите тайм-аут запроса GET.\n\n"
+"        Пример: 0.1 = 100 мс 1 = 1 секунда\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
-msgstr ""
+msgstr "Таймаут запроса установлен на {time} секунд(ы)"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1453
 #, docstring
-msgid "Toggle persistent queues.\\n\\n        Persistent queues allows the current queue to be restored when the queue closes.\\n        "
-msgstr ""
+msgid "Toggle persistent queues.\n\n"
+"        Persistent queues allows the current queue to be restored when the queue closes.\n"
+"        "
+msgstr "Переключение постоянных очередей.\n\n"
+"        Постоянные очереди позволяют восстановить текущую очередь при закрытии очереди.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1465
 msgid "Persisting queues: {true_or_false}."
-msgstr ""
+msgstr "Постоянные очереди {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1473
 #, docstring
 msgid "Restarts the lavalink connection."
-msgstr ""
+msgstr "Перезапускает соединение с lavalink."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1483
 msgid "Restarting Lavalink"
-msgstr ""
+msgstr "Перезапуск Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1484
 msgid "It can take a couple of minutes for Lavalink to fully start up."
-msgstr ""
+msgstr "Полный запуск Lavalink может занять пару минут."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1046,11 +1171,11 @@ msgstr "Отключить от голосового канала."
 #: redbot/cogs/audio/core/commands/controller.py:715
 #: redbot/cogs/audio/core/commands/controller.py:770
 #: redbot/cogs/audio/core/commands/controller.py:846
-#: redbot/cogs/audio/core/commands/equalizer.py:33
-#: redbot/cogs/audio/core/commands/equalizer.py:158
-#: redbot/cogs/audio/core/commands/equalizer.py:188
-#: redbot/cogs/audio/core/commands/equalizer.py:221
-#: redbot/cogs/audio/core/commands/equalizer.py:309
+#: redbot/cogs/audio/core/commands/equalizer.py:39
+#: redbot/cogs/audio/core/commands/equalizer.py:164
+#: redbot/cogs/audio/core/commands/equalizer.py:194
+#: redbot/cogs/audio/core/commands/equalizer.py:227
+#: redbot/cogs/audio/core/commands/equalizer.py:315
 #: redbot/cogs/audio/core/commands/miscellaneous.py:64
 #: redbot/cogs/audio/core/commands/miscellaneous.py:95
 #: redbot/cogs/audio/core/commands/playlists.py:1142
@@ -1088,8 +1213,11 @@ msgid "Now playing."
 msgstr "Сейчас играет."
 
 #: redbot/cogs/audio/core/commands/controller.py:105
-msgid "\\n Requested by: **{track.requester}**"
-msgstr "\\n Запрошено: **{track.requester}**"
+#: redbot/cogs/audio/core/commands/queue.py:77
+msgid "\n"
+" Requested by: **{track.requester}**"
+msgstr "\n"
+" Запрошено: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
@@ -1217,8 +1345,12 @@ msgstr "Воспроизведение дорожки"
 
 #: redbot/cogs/audio/core/commands/controller.py:300
 #, docstring
-msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\\n        "
-msgstr "Перемотать трек вперед или назад.\\n\\n        Для использования доступны чч - часы, мм- минуты, сс - секунды \\\\nФормат: 00:00:00 (`чч:мм:сс`) или 00:00 (`мм:сс`).\\n        "
+msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
+"        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
+"        "
+msgstr "Перемотать трек вперед или назад.\n\n"
+"        Для использования доступны чч - часы, мм- минуты, сс - секунды \\nФормат: 00:00:00 (`чч:мм:сс`) или 00:00 (`мм:сс`).\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:318
 #: redbot/cogs/audio/core/commands/controller.py:325
@@ -1284,7 +1416,10 @@ msgstr "Перемешивать треки: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/controller.py:425
 #, docstring
-msgid "Toggle bumped track shuffle.\\n\\n        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\\n        over `[p]shuffle`.\\n        "
+msgid "Toggle bumped track shuffle.\n\n"
+"        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
+"        over `[p]shuffle`.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:457
@@ -1450,10 +1585,6 @@ msgstr "Вы должны быть в голосовом канале для п�
 msgid "Repeat tracks: {true_or_false}."
 msgstr "Повтор треков: {true_or_false}."
 
-#: redbot/cogs/audio/core/commands/controller.py:753
-msgid "\\nAuto-play has been disabled."
-msgstr "\\nАвтоматическое воспроизведение отключено."
-
 #: redbot/cogs/audio/core/commands/controller.py:765
 #, docstring
 msgid "Remove a specific track number from the queue."
@@ -1526,145 +1657,160 @@ msgstr "Трек перемещен в начало очереди."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:30
 #, docstring
-msgid "Equalizer management."
-msgstr "Управление эквалайзером."
+msgid "Equalizer management.\n\n"
+"        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
+"        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz.\n"
+"        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
+"        "
+msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:66
+#: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring
 msgid "Delete a saved eq preset."
 msgstr "Удаление сохраненной предустановки эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:75
-#: redbot/cogs/audio/core/commands/equalizer.py:82
-#: redbot/cogs/audio/core/commands/equalizer.py:95
+#: redbot/cogs/audio/core/commands/equalizer.py:81
+#: redbot/cogs/audio/core/commands/equalizer.py:88
+#: redbot/cogs/audio/core/commands/equalizer.py:101
 msgid "Unable To Delete Preset"
 msgstr "Не удается удалить пресет"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:76
-#: redbot/cogs/audio/core/commands/equalizer.py:96
+#: redbot/cogs/audio/core/commands/equalizer.py:82
+#: redbot/cogs/audio/core/commands/equalizer.py:102
 msgid "You are not the author of that preset setting."
 msgstr "Вы не являетесь автором данной настройки пресета."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:105
+#: redbot/cogs/audio/core/commands/equalizer.py:111
 #, docstring
 msgid "List saved eq presets."
 msgstr "Список сохраненных настроек eq."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:108
+#: redbot/cogs/audio/core/commands/equalizer.py:114
 msgid "No saved equalizer presets."
 msgstr "Нет сохраненных пресетов эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:111
+#: redbot/cogs/audio/core/commands/equalizer.py:117
 msgid "Preset Name"
 msgstr "Название пресета"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:112
+#: redbot/cogs/audio/core/commands/equalizer.py:118
 msgid "Author"
 msgstr "Автор"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:134
+#: redbot/cogs/audio/core/commands/equalizer.py:140
 msgid "{num} preset(s)"
 msgstr "{num} предустанов(ок)"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:141
+#: redbot/cogs/audio/core/commands/equalizer.py:147
 #, docstring
 msgid "Load a saved eq preset."
 msgstr "Загрузить сохраненную предустановку эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:149
+#: redbot/cogs/audio/core/commands/equalizer.py:155
 msgid "No Preset Found"
 msgstr "Пресет не найден"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:167
+#: redbot/cogs/audio/core/commands/equalizer.py:173
 msgid "Unable To Load Preset"
 msgstr "Не удается загрузить пресет"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:168
+#: redbot/cogs/audio/core/commands/equalizer.py:174
 msgid "You need the DJ role to load equalizer presets."
 msgstr "Вам нужна роль DJ для загрузки пресетов эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:186
+#: redbot/cogs/audio/core/commands/equalizer.py:192
 #, docstring
 msgid "Reset the eq to 0 across all bands."
 msgstr "Сброс эквалайзера на 0 во всех диапазонах частот."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:195
+#: redbot/cogs/audio/core/commands/equalizer.py:201
 msgid "Unable To Modify Preset"
 msgstr "Не удается изменить пресет"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:196
+#: redbot/cogs/audio/core/commands/equalizer.py:202
 msgid "You need the DJ role to reset the equalizer."
 msgstr "Для сброса эквалайзера вам нужна роль DJ."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:211
+#: redbot/cogs/audio/core/commands/equalizer.py:217
 msgid "Equalizer values have been reset."
 msgstr "Значения эквалайзера были сброшены."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:219
+#: redbot/cogs/audio/core/commands/equalizer.py:225
 #, docstring
 msgid "Save the current eq settings to a preset."
 msgstr "Сохранение текущих настроек эквалайзера в пресет."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:229
-#: redbot/cogs/audio/core/commands/equalizer.py:247
-#: redbot/cogs/audio/core/commands/equalizer.py:262
+#: redbot/cogs/audio/core/commands/equalizer.py:235
+#: redbot/cogs/audio/core/commands/equalizer.py:253
+#: redbot/cogs/audio/core/commands/equalizer.py:268
 msgid "Unable To Save Preset"
 msgstr "Не удается сохранить пресет"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:230
+#: redbot/cogs/audio/core/commands/equalizer.py:236
 msgid "You need the DJ role to save equalizer presets."
 msgstr "Вам нужна роль DJ для сохранения пресетов эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:234
+#: redbot/cogs/audio/core/commands/equalizer.py:240
 msgid "Please enter a name for this equalizer preset."
 msgstr "Пожалуйста, введите имя для этого пресета эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:248
+#: redbot/cogs/audio/core/commands/equalizer.py:254
 msgid "No equalizer preset name entered, try the command again later."
 msgstr "Имя пресета эквалайзера не введено, попробуйте еще раз."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:263
+#: redbot/cogs/audio/core/commands/equalizer.py:269
 msgid "Try the command again with a shorter name."
 msgstr "Попробуйте ввести команду еще раз с более коротким именем."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:267
+#: redbot/cogs/audio/core/commands/equalizer.py:273
 msgid "Preset name already exists, do you want to replace it?"
 msgstr "Имя пресета уже существует, заменить его?"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:275
+#: redbot/cogs/audio/core/commands/equalizer.py:281
 msgid "Not saving preset."
 msgstr "Не сохранять пресет."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:287
+#: redbot/cogs/audio/core/commands/equalizer.py:293
 msgid "Current equalizer saved to the {preset_name} preset."
 msgstr "Эквалазер сохранил {preset_name} пресет."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:301
+#: redbot/cogs/audio/core/commands/equalizer.py:307
 #, docstring
-msgid "Set an eq band with a band number or name and value.\\n\\n        Band positions are 1-15 and values have a range of -0.25 to 1.0.\\n        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\\n        6.3k, 10k, and 16k Hz.\\n        Setting a band value to -0.25 nullifies it while +0.25 is double.\\n        "
-msgstr "Установка эквалайзера с номером диапазона или названием и значением.\\n\\n  Позиции диапазона от 1 до 15, а значения имеют диапазон от -0,25 до 1,0.\\n  Названия позиций 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\\n 6.3k, 10k и 16k Hz.\\n  Установка значения диапазона в -0,25 приводит к его обнулению, а +0,25 - к удвоению.\\n        "
+msgid "Set an eq band with a band number or name and value.\n\n"
+"        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
+"        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz.\n"
+"        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
+"        "
+msgstr "Установка эквалайзера с номером диапазона или названием и значением.\n\n"
+"  Позиции диапазона от 1 до 15, а значения имеют диапазон от -0,25 до 1,0.\n"
+"  Названия позиций 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+" 6.3k, 10k и 16k Hz.\n"
+"  Установка значения диапазона в -0,25 приводит к его обнулению, а +0,25 - к удвоению.\n"
+"        "
 
-#: redbot/cogs/audio/core/commands/equalizer.py:317
+#: redbot/cogs/audio/core/commands/equalizer.py:323
 msgid "Unable To Set Preset"
 msgstr "Не удалось установить пресет"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:318
+#: redbot/cogs/audio/core/commands/equalizer.py:324
 msgid "You need the DJ role to set equalizer presets."
 msgstr "Вам нужна роль DJ для установки пресетов эквалайзера."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:357
+#: redbot/cogs/audio/core/commands/equalizer.py:363
 msgid "Invalid Band"
 msgstr "Неверная полоса"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:358
+#: redbot/cogs/audio/core/commands/equalizer.py:364
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
 msgstr "Допустимые номера диапазонов 1-15 или названия, указанные в справке по этой команде."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:382
+#: redbot/cogs/audio/core/commands/equalizer.py:388
 msgid "Preset Modified"
 msgstr "Пресет изменен"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:383
+#: redbot/cogs/audio/core/commands/equalizer.py:389
 msgid "The {band_name}Hz band has been set to {band_value}."
 msgstr ""
 
@@ -1675,8 +1821,12 @@ msgstr "Параметры конфигурации сервера Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:26
 #, docstring
-msgid "Change your Java executable path\\n\\n        Enter nothing to reset to default.\\n        "
-msgstr ""
+msgid "Change your Java executable path\n\n"
+"        Enter nothing to reset to default.\n"
+"        "
+msgstr "Измените путь к исполняемому файлу Java\n\n"
+"        Ничего не вводите для сброса по умолчанию.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:35
 msgid "You cannot changed the Java executable path of external Lavalink instances from the Audio Cog."
@@ -1696,7 +1846,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:61
 msgid "Java Executable Changed"
-msgstr ""
+msgstr "Исполняемый файл Java изменен"
 
 #: redbot/cogs/audio/core/commands/llset.py:62
 msgid "Audio will now use `{exc}` to run your Lavalink.jar"
@@ -1735,19 +1885,20 @@ msgid "External Lavalink server: {true_or_false}."
 msgstr "Внешний сервер Lavalink: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:113
-msgid "External Lavalink server: {true_or_false}\\nFor it to take effect please reload Audio (`{prefix}reload audio`)."
+msgid "External Lavalink server: {true_or_false}\n"
+"For it to take effect please reload Audio (`{prefix}reload audio`)."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
 msgid "Set the Lavalink server host."
-msgstr ""
+msgstr "Установить хост Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:147
 #: redbot/cogs/audio/core/commands/llset.py:171
 #: redbot/cogs/audio/core/commands/llset.py:196
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Для внешнего сервера Lavalink установлено значение True."
 
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "Host set to {host}."
@@ -1756,7 +1907,7 @@ msgstr "Хост установлен на {host}."
 #: redbot/cogs/audio/core/commands/llset.py:167
 #, docstring
 msgid "Set the Lavalink server password."
-msgstr ""
+msgstr "Установить пароль сервера Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:175
 msgid "Server password set to {password}."
@@ -1765,7 +1916,7 @@ msgstr "Пароль сервера установлен на {password}."
 #: redbot/cogs/audio/core/commands/llset.py:192
 #, docstring
 msgid "Set the Lavalink websocket server port."
-msgstr ""
+msgstr "Установить порт веб-сокет сервера Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:200
 msgid "Websocket port set to {port}."
@@ -1774,26 +1925,26 @@ msgstr "Порт веб-сокета установлен на {port}."
 #: redbot/cogs/audio/core/commands/llset.py:217
 #, docstring
 msgid "Display Lavalink connection settings."
-msgstr ""
+msgstr "Отображение настроек соединения Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:223
 msgid "Connection Settings"
-msgstr ""
+msgstr "Параметры подключения"
 
 #: redbot/cogs/audio/core/commands/llset.py:224
-msgid "Host:             [{host}]\\n"
-msgstr "Хост: [{host}]\\n"
+msgid "Host:             [{host}]\n"
+msgstr "Хост: [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
-msgid "WS Port:          [{port}]\\n"
+msgid "WS Port:          [{port}]\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:227
-msgid "Rest Port:        [{port}]\\n"
+msgid "Rest Port:        [{port}]\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:228
-msgid "Password:         [{password}]\\n"
+msgid "Password:         [{password}]\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:232
@@ -1841,7 +1992,7 @@ msgstr "Нет совпадений."
 #: redbot/cogs/audio/core/commands/miscellaneous.py:29
 #, docstring
 msgid "Make Red sing one of her songs."
-msgstr ""
+msgstr "Заставь Red спеть одну из ее песен."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:45
 #, docstring
@@ -1942,8 +2093,12 @@ msgid "Only single tracks work with bump play."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:250
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\\nЭто может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
+#: redbot/cogs/audio/core/commands/player.py:785
+#: redbot/cogs/audio/core/commands/player.py:905
+msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
+"This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
+msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\n"
+"Это может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
 
 #: redbot/cogs/audio/core/commands/player.py:257
 #: redbot/cogs/audio/core/commands/player.py:792
@@ -1955,7 +2110,7 @@ msgstr "Трек не воспроизводится."
 #: redbot/cogs/audio/core/commands/player.py:793
 #: redbot/cogs/audio/core/commands/player.py:913
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "**{suffix}** не является полностью поддерживаемым форматом, и некоторые треки не могут воспроизводиться."
 
 #: redbot/cogs/audio/core/commands/player.py:290
 msgid "This track is not allowed in this server."
@@ -1979,12 +2134,16 @@ msgid "Pick a Spotify playlist from a list of categories to start playing."
 msgstr "Выберите плейлист Spotify из списка категорий, чтобы начать играть."
 
 #: redbot/cogs/audio/core/commands/player.py:413
-msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
+"See `{prefix}audioset spotifyapi` for instructions."
+msgstr "Владелец должен установить идентификатор клиента Spotify и секрет клиента Spotify, прежде чем можно будет использовать URL-адреса или коды Spotify..\n"
+"Просмотрите `{prefix}audioset spotifyapi` для получения инструкций."
 
 #: redbot/cogs/audio/core/commands/player.py:423
-msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
+"See `{prefix}audioset youtubeapi` for instructions."
+msgstr "Владелец должен установить ключ YouTube API перед использованием URL-адресов или кодов Spotify.\n"
+"Смотрите `{prefix}audioset youtubeapi` для получения инструкций."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2058,7 +2217,10 @@ msgstr "Добавление трека в очередь."
 
 #: redbot/cogs/audio/core/commands/player.py:640
 #, docstring
-msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\\n        <search term>` to search on SoundCloud instead of YouTube.\\n        "
+msgid "Pick a track with a search.\n\n"
+"        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\n"
+"        <search term>` to search on SoundCloud instead of YouTube.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:692
@@ -2077,14 +2239,10 @@ msgstr "Вы должны быть в голосовом канале, чтоб�
 msgid "Nothing found."
 msgstr "Ничего не найдено."
 
-#: redbot/cogs/audio/core/commands/player.py:785
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\\nЭто может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
-
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} треков не могут быть поставлены в очередь."
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"
@@ -2102,18 +2260,49 @@ msgstr "поиск"
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:905
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\\nЭто может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
-
 #: redbot/cogs/audio/core/commands/playlists.py:44
 #, docstring
-msgid "Playlist configuration options.\\n\\n        Scope info:\\n        ​ ​ ​ ​ **Global**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\\n        ​ ​ ​ ​ **Guild**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\\n        ​ ​ ​ ​ **User**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\\n        "
+msgid "Playlist configuration options.\n\n"
+"        Scope info:\n"
+"        ​ ​ ​ ​ **Global**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\n"
+"        ​ ​ ​ ​ **Guild**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\n"
+"        ​ ​ ​ ​ **User**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:69
 #, docstring
-msgid "Add a track URL, playlist link, or quick search to a playlist.\\n\\n        The track(s) will be appended to the end of the playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\\n        "
+msgid "Add a track URL, playlist link, or quick search to a playlist.\n\n"
+"        The track(s) will be appended to the end of the playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:123
@@ -2164,7 +2353,8 @@ msgid "{num} tracks appended to {playlist} (`{id}`) [**{scope}**]."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:204
-msgid "\\n{existing} {plural} already in the playlist and were skipped."
+msgid "\n"
+"{existing} {plural} already in the playlist and were skipped."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:206
@@ -2197,7 +2387,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:331
 #: redbot/cogs/audio/core/commands/playlists.py:338
 msgid "the Global"
-msgstr ""
+msgstr "Глобальный"
 
 #: redbot/cogs/audio/core/commands/playlists.py:346
 msgid "Playlist Copied"
@@ -2209,7 +2399,30 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:362
 #, docstring
-msgid "Create an empty playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\\n        "
+msgid "Create an empty playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:416
@@ -2234,11 +2447,34 @@ msgstr "Плейлист создан"
 
 #: redbot/cogs/audio/core/commands/playlists.py:428
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
+msgstr "Пустой плейлист {name} (`{id}`) [**{scope}**] создан."
 
 #: redbot/cogs/audio/core/commands/playlists.py:441
 #, docstring
-msgid "Delete a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\\n        "
+msgid "Delete a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:514
@@ -2251,7 +2487,30 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:531
 #, docstring
-msgid "Remove duplicate tracks from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
+msgid "Remove duplicate tracks from a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:627
@@ -2269,12 +2528,38 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:662
 #, docstring
-msgid "Download a copy of a playlist.\\n\\n        These files can be used with the `[p]playlist upload` command.\\n        Red v2-compatible playlists can be generated by passing True\\n        for the v2 variable.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`\\n        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\\n        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\\n        "
+msgid "Download a copy of a playlist.\n\n"
+"        These files can be used with the `[p]playlist upload` command.\n"
+"        Red v2-compatible playlists can be generated by passing True\n"
+"        for the v2 variable.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`\n"
+"        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:731
 msgid "That playlist has no tracks."
-msgstr ""
+msgstr "В этом плейлисте нет треков."
 
 #: redbot/cogs/audio/core/commands/playlists.py:774
 msgid "This playlist is too large to be send in this server."
@@ -2286,15 +2571,39 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:799
 #, docstring
-msgid "Retrieve information from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`\\n        "
+msgid "Retrieve information from a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:891
-msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\\n"
+msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:895
-msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\\nURL: {url}"
+msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
+"URL: {url}"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:908
@@ -2308,7 +2617,30 @@ msgstr "Страница {page}/{pages} | Автор: {author_name} | {num} тр
 
 #: redbot/cogs/audio/core/commands/playlists.py:922
 #, docstring
-msgid "List saved playlists.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist list [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist list`\\n        ​ ​ ​ ​ `[p]playlist list --scope Global`\\n        ​ ​ ​ ​ `[p]playlist list --scope User`\\n        "
+msgid "List saved playlists.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist list [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist list`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:998
@@ -2336,12 +2668,35 @@ msgid "Author: {name}"
 msgstr "Автор: {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
-msgid "Scope: {scope}\\n"
-msgstr "Область: {scope}\\n"
+msgid "Scope: {scope}\n"
+msgstr "Область: {scope}\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1078
 #, docstring
-msgid "Save the queue to a playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`\\n        "
+msgid "Save the queue to a playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1147
@@ -2372,7 +2727,30 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1188
 #, docstring
-msgid "Remove a track from a playlist by url.\\n\\n         **Usage**:\\n        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`\\n        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\\n        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\\n        "
+msgid "Remove a track from a playlist by url.\n\n"
+"         **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1254
@@ -2393,7 +2771,30 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1306
 #, docstring
-msgid "Save a playlist from a url.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist save name url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\\n        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\\n        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\\n        "
+msgid "Save a playlist from a url.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist save name url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\n"
+"        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1397
@@ -2410,7 +2811,30 @@ msgstr "Не удается создать ваш плейлист."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1432
 #, docstring
-msgid "Load a playlist into the queue.\\n\\n        **Usage**:\\n        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`\\n        "
+msgid "Load a playlist into the queue.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1482
@@ -2422,12 +2846,37 @@ msgid "Playlist Enqueued"
 msgstr "Плейлист поставлен в очередь"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1567
-msgid "{name} - (`{id}`) [**{scope}**]\\nAdded {num} tracks to the queue.{maxlength_msg}"
-msgstr "{name} - (`{id}`) [**{scope}**]\\nДобавлено {num} треков в очередь.{maxlength_msg}"
+msgid "{name} - (`{id}`) [**{scope}**]\n"
+"Added {num} tracks to the queue.{maxlength_msg}"
+msgstr "{name} - (`{id}`) [**{scope}**]\n"
+"Добавлено {num} треков в очередь.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1613
 #, docstring
-msgid "Updates all tracks in a playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`\\n        "
+msgid "Updates all tracks in a playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1690
@@ -2457,7 +2906,32 @@ msgstr "Нет изменений для {name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1779
 #, docstring
-msgid "Uploads a playlist file as a playlist for the bot.\\n\\n        V2 and old V3 playlist will be slow.\\n        V3 Playlist made with `[p]playlist download` will load a lot faster.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist upload [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist upload`\\n        ​ ​ ​ ​ `[p]playlist upload --scope Global`\\n        ​ ​ ​ ​ `[p]playlist upload --scope User`\\n        "
+msgid "Uploads a playlist file as a playlist for the bot.\n\n"
+"        V2 and old V3 playlist will be slow.\n"
+"        V3 Playlist made with `[p]playlist download` will load a lot faster.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist upload [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist upload`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1836
@@ -2486,7 +2960,30 @@ msgstr "Этот плейлист слишком большой."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1948
 #, docstring
-msgid "Rename an existing playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`\\n        "
+msgid "Rename an existing playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:2027
@@ -2497,10 +2994,6 @@ msgstr ""
 #, docstring
 msgid "List the songs in the queue."
 msgstr "Список песен в очереди."
-
-#: redbot/cogs/audio/core/commands/queue.py:77
-msgid "\\n Requested by: **{track.requester}**"
-msgstr "\\n Запрошено: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/queue.py:175
 #, docstring
@@ -2526,7 +3019,7 @@ msgstr "Очередь очищена."
 #: redbot/cogs/audio/core/commands/queue.py:206
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
-msgstr ""
+msgstr "Удаление треков из очереди, если запрашивающий не находится в голосовом канале."
 
 #: redbot/cogs/audio/core/commands/queue.py:223
 msgid "Unable To Clean Queue"
@@ -2534,7 +3027,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/queue.py:224
 msgid "You need the DJ role to clean the queue."
-msgstr ""
+msgstr "Вам нужна роль DJ, чтобы очистить очередь."
 
 #: redbot/cogs/audio/core/commands/queue.py:239
 #: redbot/cogs/audio/core/commands/queue.py:273
@@ -2548,7 +3041,7 @@ msgstr "Треки удаленные из очереди"
 
 #: redbot/cogs/audio/core/commands/queue.py:244
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
-msgstr ""
+msgstr "Удалено {removed_tracks} треков, запрошенных участниками вне голосового канала."
 
 #: redbot/cogs/audio/core/commands/queue.py:252
 #, docstring
