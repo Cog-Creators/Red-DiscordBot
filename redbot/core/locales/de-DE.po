@@ -932,7 +932,8 @@ msgstr "Ändert die Einstellungen von [botname]."
 msgid "\n"
 "        Show the current settings for [botname].\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Zeige die aktuellen Einstellungen für [botname].        "
 
 #: redbot/core/core_commands.py:1584
 msgid "Admin roles: {admin}\n"
@@ -1864,11 +1865,11 @@ msgstr "\n"
 
 #: redbot/core/core_commands.py:2822
 msgid "Users on the allowlist:"
-msgstr ""
+msgstr "Benutzer auf der Erlaubnis-Liste:"
 
 #: redbot/core/core_commands.py:2824
 msgid "User on the allowlist:"
-msgstr ""
+msgstr "Benutzer auf der Erlaubnis-Liste:"
 
 #: redbot/core/core_commands.py:2833
 #, docstring
@@ -1881,11 +1882,11 @@ msgstr "\n"
 
 #: redbot/core/core_commands.py:2839
 msgid "Users have been removed from the allowlist."
-msgstr ""
+msgstr "Benutzer wurden von der Erlaubnis-Liste entfernt."
 
 #: redbot/core/core_commands.py:2841
 msgid "User has been removed from the allowlist."
-msgstr ""
+msgstr "Der Benutzer wurde von der Erlaubnis-Liste entfernt."
 
 #: redbot/core/core_commands.py:2845 redbot/core/core_commands.py:3006
 #, docstring

@@ -64,7 +64,9 @@ msgstr "Üyelerin yerini değiştirme iznine sahip olmadığımdan, bu kullanıc
 msgid "\n"
 "    Mute users temporarily or indefinitely.\n"
 "    "
-msgstr ""
+msgstr "\n"
+"    Kullanıcıları geçici veya kalıcı olarak sustur.\n"
+"    "
 
 #: redbot/cogs/mutes/mutes.py:247 redbot/cogs/mutes/mutes.py:259
 #: redbot/cogs/mutes/mutes.py:263 redbot/cogs/mutes/mutes.py:356
@@ -395,7 +397,7 @@ msgstr "__Sunucudaki Susturmalar__\n"
 
 #: redbot/cogs/mutes/mutes.py:1039 redbot/cogs/mutes/mutes.py:1064
 msgid "__Remaining__: {time_left}\n"
-msgstr ""
+msgstr "__Kalan süre__: {time_left}\n"
 
 #: redbot/cogs/mutes/mutes.py:1046
 msgid "__<#{channel_id}> Mutes__\n"

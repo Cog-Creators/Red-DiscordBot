@@ -40,11 +40,11 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\"{arg}\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "{arg}\" не найден. Это должен быть ID или полное имя сервера, которое может увидеть бот."
 
 #: redbot/cogs/audio/converters.py:96 redbot/cogs/audio/converters.py:136
 msgid "\"{arg}\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "{arg}\" не относится к уникальному серверу. Пожалуйста, используйте ID сервера, который вы пытаетесь указать."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\"{arg}\" was not found. It must be the ID or name or mention a user which the bot can see."
@@ -52,7 +52,7 @@ msgstr ""
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "Не удалось сопоставить '{}' с плейлистом."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368
@@ -64,7 +64,7 @@ msgstr "Ничего"
 
 #: redbot/cogs/audio/converters.py:261
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "Вы не можете использовать `--guild`"
 
 #: redbot/cogs/audio/converters.py:402
 msgid "You cannot use `--to-server`"

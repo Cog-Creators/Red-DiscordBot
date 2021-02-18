@@ -1720,7 +1720,7 @@ msgstr "Speichern Sie die aktuellen EQ-Einstellungen in einer Voreinstellung."
 #: redbot/cogs/audio/core/commands/equalizer.py:253
 #: redbot/cogs/audio/core/commands/equalizer.py:268
 msgid "Unable To Save Preset"
-msgstr ""
+msgstr "Voreinstellung kann nicht gespeichert werden"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:236
 msgid "You need the DJ role to save equalizer presets."
@@ -1850,7 +1850,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:100
 #: redbot/cogs/audio/core/commands/llset.py:126
 msgid "External Lavalink server: {true_or_false}."
-msgstr ""
+msgstr "Externer Lavalink Server: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:113
 msgid "External Lavalink server: {true_or_false}\n"
@@ -1860,13 +1860,13 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
 msgid "Set the Lavalink server host."
-msgstr ""
+msgstr "Lege den Lavalink Server Host fest."
 
 #: redbot/cogs/audio/core/commands/llset.py:147
 #: redbot/cogs/audio/core/commands/llset.py:171
 #: redbot/cogs/audio/core/commands/llset.py:196
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Externer Lavalink Server gesetzt auf Wahr."
 
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "Host set to {host}."
@@ -1901,15 +1901,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\n"
-msgstr ""
+msgstr "Host:             [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\n"
-msgstr ""
+msgstr "WS Port:          [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
 msgid "Rest Port:        [{port}]\n"
-msgstr ""
+msgstr "Rest Port:        [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\n"
@@ -2110,7 +2110,8 @@ msgstr "Der Besitzer muss die Spotify client ID und Spotify client secret festle
 #: redbot/cogs/audio/core/commands/player.py:423
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Der Besitzer muss der YouTube API schlüssel festlegen, bevor Spotify URLs oder Codes verwendet werden können. \n"
+"Siehe `{prefix}audioset youtubeapi` für eine Anleitung."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2172,7 +2173,7 @@ msgstr "Tracks können nicht abgerufen werden"
 #: redbot/cogs/audio/core/commands/player.py:893
 #: redbot/cogs/audio/core/commands/playlists.py:1927
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Ich bin momentan nicht in der Lage, einen Track von Lavalink zu bekommen. Versuchen Sie es in ein paar Minuten erneut."
 
 #: redbot/cogs/audio/core/commands/player.py:632
 msgid "Auto play started."

@@ -2192,11 +2192,11 @@ msgstr "Bir bot sahibini kara listeye ekleyemezsiniz."
 
 #: redbot/core/core_commands.py:3044
 msgid "Users and/or roles have been added from the server blocklist."
-msgstr ""
+msgstr "Kullanıcılar ve/veya roller sunucu kara listesine eklendi."
 
 #: redbot/core/core_commands.py:3046
 msgid "User or role has been added from the server blocklist."
-msgstr ""
+msgstr "Kullanıcı veya rol sunucu kara listesine eklendi."
 
 #: redbot/core/core_commands.py:3050
 #, docstring
@@ -2688,7 +2688,7 @@ msgstr "\n"
 #: redbot/core/dev_commands.py:36
 #, docstring
 msgid "Various development focused utilities."
-msgstr ""
+msgstr "Çeşitli geliştirme odaklı araçlar."
 
 #: redbot/core/dev_commands.py:123
 #, docstring

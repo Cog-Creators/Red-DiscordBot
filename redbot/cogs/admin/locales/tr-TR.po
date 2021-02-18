@@ -195,7 +195,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kendinden bir selfrole kaldır.\n\n"
+"        Sunucu yöneticilerinin bu rolü kullanıcı tarafından alınabilir ayarlaması gerekir.\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:409
 #, docstring

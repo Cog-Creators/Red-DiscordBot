@@ -197,7 +197,7 @@ msgstr "Erledigt. Ich erhalte jetzt einen Punkt wenn Benutzer nicht rechtzeitig 
 
 #: redbot/cogs/trivia/trivia.py:163
 msgid "Alright, I won't embarrass you at trivia anymore."
-msgstr ""
+msgstr "Na gut, ich werde euch nicht länger bei Trivia vorführen."
 
 #: redbot/cogs/trivia/trivia.py:167
 #, docstring

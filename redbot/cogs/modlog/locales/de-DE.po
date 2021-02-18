@@ -101,7 +101,8 @@ msgstr "Dieser Fall existiert nicht auf diesem Server."
 #: redbot/cogs/modlog/modlog.py:120 redbot/cogs/modlog/modlog.py:158
 msgid "{case}\n"
 "**Timestamp:** {timestamp}"
-msgstr ""
+msgstr "{case}\n"
+"**Zeitstempel:** {timestamp}"
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
@@ -123,12 +124,13 @@ msgstr "Dieser Benutzer hat keine Fälle."
 #: redbot/cogs/modlog/modlog.py:171
 #, docstring
 msgid "List cases for the specified member."
-msgstr ""
+msgstr "Listen sie Fälle für das angegebene Mitglied auf."
 
 #: redbot/cogs/modlog/modlog.py:194
 msgid "{case}\n"
 "**Timestamp:** {timestamp}\n\n"
-msgstr ""
+msgstr "{case}\n"
+"**Zeitstempel:** {timestamp}\n\n"
 
 #: redbot/cogs/modlog/modlog.py:207
 #, docstring
