@@ -57,7 +57,7 @@ jobs:
             );
             console.log(script({github, context}));
 
-  pr_bumps:
+  pr_stable_bump:
     runs-on: ubuntu-latest
     steps:
       # Checkout repository and install Python
@@ -95,43 +95,6 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.cpr_bump_stable.outputs.pull-request-number }}
           PR_OPERATION: ${{ steps.cpr_bump_stable.outputs.pull-request-operation }}
-        with:
-          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
-          script: |
-            const script = require(
-              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
-            );
-            console.log(await script({github, context}));
-
-      # Development version PR
-      - name: Update Red version number to dev
-        id: bump_version_dev
-        run: |
-          python .github/workflows/scripts/bump_version.py
-        env:
-          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
-          NEW_STABLE_VERSION: ${{ github.event.inputs.new_stable_version }}
-          DEV_BUMP: '1'
-
-      - name: Create Pull Request
-        id: cpr_bump_dev
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
-          title: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
-          body: |
-            This is an automated PR.
-            Please ensure that there are no errors or invalid files are in the PR.
-          labels: "Automated PR, Changelog Entry: Skipped"
-          branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-
-      - name: Close and reopen the PR with different token to trigger CI
-        uses: actions/github-script@v3
-        env:
-          PR_NUMBER: ${{ steps.cpr_bump_dev.outputs.pull-request-number }}
-          PR_OPERATION: ${{ steps.cpr_bump_dev.outputs.pull-request-operation }}
         with:
           github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
           script: |
