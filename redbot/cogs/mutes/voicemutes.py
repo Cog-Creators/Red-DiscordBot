@@ -1,10 +1,11 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
 import discord
 from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils.chat_formatting import (
+    bold,
     humanize_timedelta,
     humanize_list,
     pagify,
@@ -143,6 +144,9 @@ class VoiceMutes(MixinMeta):
                         until=until,
                         channel=channel,
                     )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Voice mute"), reason, duration
+                    )
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
                 else:
@@ -215,6 +219,9 @@ class VoiceMutes(MixinMeta):
                         reason,
                         until=None,
                         channel=channel,
+                    )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Voice unmute"), reason
                     )
                 else:
                     issue_list.append((user, success["reason"]))

@@ -3,8 +3,10 @@
 "Category: Alias":
   - redbot/cogs/alias/*
 "Category: Audio Cog":
-  - redbot/cogs/audio/**/*
-  - !redbot/cogs/audio/**/locales/*
+  - any:
+      - redbot/cogs/audio/**/*
+    all:
+      - "!redbot/cogs/audio/**/locales/*"
 "Category: Bank API":
   - redbot/core/bank.py
 "Category: Bank Cog":
@@ -28,8 +30,10 @@
 "Category: Cleanup Cog":
   - redbot/cogs/cleanup/*
 "Category: Command Module":
-  - redbot/core/commands/*
-  - !redbot/core/commands/help.py
+  - any:
+      - redbot/core/commands/*
+    all:
+      - "!redbot/core/commands/help.py"
 "Category: Config":
   - redbot/core/drivers/*
   - redbot/core/config.py

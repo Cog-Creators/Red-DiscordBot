@@ -51,5 +51,5 @@ class MuteTime(Converter):
                     time_data[k] = int(v)
         if time_data:
             result["duration"] = timedelta(**time_data)
-        result["reason"] = argument
+        result["reason"] = argument.strip()
         return result

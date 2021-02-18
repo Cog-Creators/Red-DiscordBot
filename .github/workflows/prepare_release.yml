@@ -1,0 +1,104 @@
+name: Prepare release
+on:
+  workflow_dispatch:
+    inputs:
+      new_stable_version:
+        description: Version number for the new stable release (leave empty to just strip `.dev1`)
+        required: false
+        default: 'auto'
+
+jobs:
+  crowdin_download_translations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
+          echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
+          sudo apt-get update -qq
+          sudo apt-get install -y crowdin
+
+      - name: Download translations
+        run: |
+          make download_translations
+        env:
+          CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+          CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
+
+      - name: Create Pull Request
+        id: cpr_crowdin
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Automated Crowdin downstream
+          title: "[i18n] Automated Crowdin downstream"
+          body: |
+            This is an automated PR.
+            Please ensure that there are no errors or invalid files are in the PR.
+          labels: "Automated PR, Category: i18n, Changelog Entry: Skipped"
+          branch: "automated/i18n"
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+      - name: Close and reopen the PR with different token to trigger CI
+        uses: actions/github-script@v3
+        env:
+          PR_NUMBER: ${{ steps.cpr_crowdin.outputs.pull-request-number }}
+          PR_OPERATION: ${{ steps.cpr_crowdin.outputs.pull-request-operation }}
+        with:
+          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
+            );
+            console.log(script({github, context}));
+
+  pr_stable_bump:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository and install Python
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Create PR for stable version bump
+      - name: Update Red version number from input
+        id: bump_version_stable
+        run: |
+          python .github/workflows/scripts/bump_version.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
+          NEW_STABLE_VERSION: ${{ github.event.inputs.new_stable_version }}
+
+      - name: Create Pull Request
+        id: cpr_bump_stable
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
+          title: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
+          body: |
+            This is an automated PR.
+            Please ensure that there are no errors or invalid files are in the PR.
+          labels: "Automated PR, Changelog Entry: Skipped"
+          branch: "automated/pr_bumps/${{ steps.bump_version_stable.outputs.new_version }}"
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+      - name: Close and reopen the PR with different token to trigger CI
+        uses: actions/github-script@v3
+        env:
+          PR_NUMBER: ${{ steps.cpr_bump_stable.outputs.pull-request-number }}
+          PR_OPERATION: ${{ steps.cpr_bump_stable.outputs.pull-request-operation }}
+        with:
+          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
+            );
+            console.log(await script({github, context}));

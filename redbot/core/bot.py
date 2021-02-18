@@ -29,7 +29,6 @@ from typing import (
     overload,
 )
 from types import MappingProxyType
-from rich.console import Console
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -110,6 +109,7 @@ class RedBase(
             help__delete_delay=0,
             help__use_menus=False,
             help__show_hidden=False,
+            help__show_aliases=True,
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
@@ -223,9 +223,6 @@ class RedBase(
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
 
-        # Although I see the use of keeping this public, lets rather make it private.
-        self._rich_console = Console()
-
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
         Set's Red's help formatter.
@@ -280,6 +277,92 @@ class RedBase(
 
         """
         self._help_formatter = commands.help.RedHelpFormatter()
+
+    def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
+        """
+        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval``, and ``[p]repl`` commands).
+        If dev mode is disabled, nothing will happen.
+
+        Example
+        -------
+
+        .. code-block:: python
+
+            class MyCog(commands.Cog):
+                def __init__(self, bot):
+                    self.bot = bot
+                    bot.add_dev_env_value("mycog", lambda ctx: self)
+                    bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
+
+                def cog_unload(self):
+                    self.bot.remove_dev_env_value("mycog")
+                    self.bot.remove_dev_env_value("mycogdata")
+
+        Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
+        will be included in the environment of dev commands.
+
+        Parameters
+        ----------
+        name: str
+            The name of your custom variable.
+        value: Callable[[commands.Context], Any]
+            The function returning the value of the variable.
+            It must take a `commands.Context` as its sole parameter
+
+        Raises
+        ------
+        TypeError
+            ``value`` argument isn't a callable.
+        ValueError
+            The passed callable takes no or more than one argument.
+        RuntimeError
+            The name of the custom variable is either reserved by a variable
+            from the default environment or already taken by some other custom variable.
+        """
+        signature = inspect.signature(value)
+        if len(signature.parameters) != 1:
+            raise ValueError("Callable must take exactly one argument for context")
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        if name in [
+            "bot",
+            "ctx",
+            "channel",
+            "author",
+            "guild",
+            "message",
+            "asyncio",
+            "aiohttp",
+            "discord",
+            "commands",
+            "_",
+            "__name__",
+            "__builtins__",
+        ]:
+            raise RuntimeError(f"The name {name} is reserved for default environement.")
+        if name in dev.env_extensions:
+            raise RuntimeError(f"The name {name} is already used.")
+        dev.env_extensions[name] = value
+
+    def remove_dev_env_value(self, name: str):
+        """
+        Remove a custom variable from the dev environment.
+
+        Parameters
+        ----------
+        name: str
+            The name of the custom variable.
+
+        Raises
+        ------
+        KeyError
+            The custom variable was never set.
+        """
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        del dev.env_extensions[name]
 
     def get_command(self, name: str) -> Optional[commands.Command]:
         com = super().get_command(name)
@@ -382,6 +465,12 @@ class RedBase(
 
         self._red_before_invoke_objs.add(coro)
         return coro
+
+    async def before_identify_hook(self, shard_id, *, initial=False):
+        """A hook that is called before IDENTIFYing a session.
+        Same as in discord.py, but also dispatches "on_red_identify" bot event."""
+        self.dispatch("red_before_identify", shard_id, initial)
+        return await super().before_identify_hook(shard_id, initial=initial)
 
     @property
     def cog_mgr(self) -> NoReturn:

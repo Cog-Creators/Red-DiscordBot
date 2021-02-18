@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-29 12:34+0000\n"
+"POT-Creation-Date: 2021-02-14 15:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -36,9 +36,14 @@ msgid "Manages the global keyword whitelist."
 msgstr "Global anahtar kelimeler için beyaz listeyi yönetir."
 
 #: redbot/cogs/audio/core/commands/audioset.py:56
+#: redbot/cogs/audio/core/commands/audioset.py:246
 #, docstring
-msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr "Anahtar kelimeyi beyaz listeye ekler.\\n\\n        Beyaz listeye herhangi bir şey eklerseniz, geri kalan her şeyi kara listeye ekler.\\n        "
+msgid "Adds a keyword to the whitelist.\n\n"
+"        If anything is added to whitelist, it will blacklist everything else.\n"
+"        "
+msgstr "Beyaz listeye bir anahtar kelime ekler.\n"
+"        Beyaz listeye herhangi bir şey eklenirse diğer her şey kara listeye alınır.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:70
 #: redbot/cogs/audio/core/commands/audioset.py:135
@@ -179,11 +184,6 @@ msgstr "`{blacklisted}` kara listeden kaldırıldı."
 msgid "Manages the keyword whitelist."
 msgstr "Beyaz listedeki tüm anahtar kelimeleri yönetir."
 
-#: redbot/cogs/audio/core/commands/audioset.py:246
-#, docstring
-msgid "Adds a keyword to the whitelist.\\n\\n        If anything is added to whitelist, it will blacklist everything else.\\n        "
-msgstr "Anahtar kelimeyi beyaz listeye ekler.\\n\\n        Beyaz listeye herhangi bir şey eklerseniz, geri kalan her şeyi kara listeye ekler.\\n        "
-
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
 msgstr "Beyaz Liste"
@@ -298,12 +298,16 @@ msgid "Disabled"
 msgstr "Devre dışı bırakıldı"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
-msgid "\\nRepeat has been disabled."
-msgstr "\\nTekrar çalma devre dışı bırakıldı."
+msgid "\n"
+"Repeat has been disabled."
+msgstr "\n"
+"Tekrar devre dışı bırakıldı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
-msgid "\\nAuto-disconnecting at queue end has been disabled."
-msgstr "\\nSıradaki parça bittiğinde otomatik çıkış devre dışı bırakıldı."
+msgid "\n"
+"Auto-disconnecting at queue end has been disabled."
+msgstr "\n"
+"Çalma sırası bittiğinde otomatik çıkış devre dışı bırakıldı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -347,8 +351,54 @@ msgstr "Ayar Değiştirildi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:464
 #, docstring
-msgid "Set a playlist to auto-play songs from.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\\n        "
-msgstr "Otomatik çalınan şarkılardan çalma listesi oluştur.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\\n\\n        **Konu**:\\n        ​ ​ ​ ​Kullanımı tamamen opsiyoneldir.:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bu komutu sadece bot sahibi kullanabilir**\\n\\n        **Kapsamı** bunlardan biri olabilir:\\n            ​Global\\n        ​ ​ ​ ​ Sunucu\\n        ​ ​ ​ ​ Kullanıcı\\n\\n        **Yaratıcı** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı ID\\n        ​ ​ ​ ​ Kullanıcı Mention\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu ID\\n        ​ ​ ​ ​ Sunucunun tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]audioset autoplay SunucuCalmaListem`\\n        ​ ​ ​ ​ `[p]audioset autoplay GlobalCalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]audioset autoplay KisiselCalmaListem --scope Kullanıcı --author Draper`\\n        "
+msgid "Set a playlist to auto-play songs from.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        "
+msgstr "İçinden otomatik olarak şarkı çalınacak bir çalma listesi ayarla.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay çalma_listesi_adı_yada_IDsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --kapsam <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --yapımcı [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --sunucu [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"            ​Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay BenimÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay BenimKişiselÇalmaListem --scope User --author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -461,8 +511,12 @@ msgstr "Son çalınan parçaları çalmak için otomatik çalma listesini ayarla
 
 #: redbot/cogs/audio/core/commands/audioset.py:572
 #, docstring
-msgid "Toggle global daily queues.\\n\\n        Global daily queues creates a playlist for all tracks played today.\\n        "
-msgstr "Günlük sıralamaları aç/kapat.\\n\\n        Günlük sıralamalar bugün çalınan tüm parçalara ait bir çalma listesi oluşturur.\\n        "
+msgid "Toggle global daily queues.\n\n"
+"        Global daily queues creates a playlist for all tracks played today.\n"
+"        "
+msgstr "Küresel günlük sıraları aç/kapa.\n\n"
+"        Günlük küresel sıralar bugün çalınan tüm parçalardan bir çalma listesi oluşturur.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:584
 msgid "Global daily queues: {true_or_false}."
@@ -470,8 +524,12 @@ msgstr "Günlük sıralamalar: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:593
 #, docstring
-msgid "Toggle daily queues.\\n\\n        Daily queues creates a playlist for all tracks played today.\\n        "
-msgstr "Günlük sıralamaları aç/kapat.\\n\\n        Günlük sıralamalar bugün çalınan tüm parçalara ait bir çalma listesi oluşturur.\\n        "
+msgid "Toggle daily queues.\n\n"
+"        Daily queues creates a playlist for all tracks played today.\n"
+"        "
+msgstr "Günlük sıraları aç/kapa.\n\n"
+"        Günlük sıralar bugün çalınan tüm parçalardan bir çalma listesi oluşturur.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:605
 msgid "Daily queues: {true_or_false}."
@@ -479,21 +537,32 @@ msgstr "Günlük sıralamalar: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:614
 #, docstring
-msgid "Toggle the bot auto-disconnecting when done playing.\\n\\n        This setting takes precedence over `[p]audioset emptydisconnect`.\\n        "
-msgstr "Çalma işlemi bittiğinde botun otomatik olarak ses kanalından çıkış yapması özelliğini açar/kapatır.\\n\\n        Bu ayar `[p]audioset emptydisconnect` komutundan öncelikli olarak devreye alınır.\\n        "
+msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
+"        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
+"        "
+msgstr "Botun çalma bitince otomatik olarak kanaldan çıkmasını ayarla.\n\n"
+"        Bu ayar `[p]audioset emptydisconnect` ayarından önceliklidir.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:622
 msgid "Auto-disconnection at queue end: {true_or_false}."
 msgstr "Sıra sonunda kanalı terkeder: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:626
-msgid "\\nAuto-play has been disabled."
-msgstr "\\nOto-oynatma devre dışı bırakıldı."
+#: redbot/cogs/audio/core/commands/controller.py:753
+msgid "\n"
+"Auto-play has been disabled."
+msgstr "\n"
+"Otomatik çalma devre dışı bırakıldı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:637
 #, docstring
-msgid "Toggle DJ mode.\\n\\n        DJ mode allows users with the DJ role to use audio commands.\\n        "
-msgstr "DJ modunu açıp kapatır.\\n\\n        DJ modu, DJ rolüne sahip kullanıcıların ses komutlarını kullanmasını sağlar.\\n        "
+msgid "Toggle DJ mode.\n\n"
+"        DJ mode allows users with the DJ role to use audio commands.\n"
+"        "
+msgstr "DJ modunu aç/kapa.\n\n"
+"        DJ modu DJ rolüne sahip kullanıcıların ses komutlarını kullanmasını sağlar.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:648
 msgid "Missing DJ Role"
@@ -513,8 +582,12 @@ msgstr "DJ rolü: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:679
 #, docstring
-msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\\n\\n        `[p]audioset dc` takes precedence over this setting.\\n        "
-msgstr "x saniye kadar bot ses kanalında yalnız kalırsa otomatik çıkış yapar, ayarı kapatmak için 0 ayarlayınız.\\n\\n        `[p]audioset dc` komutu bu ayara göre önceliklidir.\\n        "
+msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
+"        `[p]audioset dc` takes precedence over this setting.\n"
+"        "
+msgstr "Botun kanalda kaç saniye yalnız kalırsa kanaldan ayrılacağını ayarla, devre dışı bırakmak için 0 girin.\n\n"
+"        `[p]audioset dc` ayarı bu ayara önceliklidir.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:685
 #: redbot/cogs/audio/core/commands/audioset.py:714
@@ -581,16 +654,42 @@ msgstr "Sıraya şarkı ekleme komut bedeli {price}{currency} olarak ayarlandı.
 
 #: redbot/cogs/audio/core/commands/audioset.py:781
 #, docstring
-msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\\n\\n        Leave the path blank to reset the path to the default, the Audio data directory.\\n        "
-msgstr "Lavalink.jar Audio data dosyasından çalmıyorsa yerel dosya dizinini ayarlar.\\n\\n        Varsayılan Audio data dosyasının ayarlanması için boş bırakın.\\n        "
+msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\n\n"
+"        Leave the path blank to reset the path to the default, the Audio data directory.\n"
+"        "
+msgstr "Lavalink.jar ses verilerinin olduğu klasörden çalıştırılmıyorsa yerel parçaların nereden çalınacağını ayarla.\n\n"
+"        Varsayılan olan ses veri klasörüne sıfırlamak için boş bırakın.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:792
 msgid "The localtracks path location has been reset to {localpath}"
 msgstr "Yerel müzik dosya dizini {localpath} olarak sıfırlandı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:797
-msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\\n```\\nParentDirectory\\n  |__ localtracks  (folder)\\n  |     |__ Awesome Album Name  (folder)\\n  |           |__01 Cool Song.mp3\\n  |           |__02 Groovy Song.mp3\\n```\\nThe folder path given to this command must contain the localtracks folder.\\n**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\\nUse this command with no path given to reset it to the default, the Audio data directory for this bot.\\nDo you want to continue to set the provided path for local tracks?"
-msgstr "Bu ayar sadece bot sahiplerinin yerel müzik klasörünü lavalink.jar audio data klasörü dışından çalıyorsa ayarlaması içindir.\\nAşağıdaki örnekte olduğu gibi, full dizin 'ParentDirectory' bu komutla ayarlanmalıdır.\\nDizin boşluk içermemelidir..\\n```\\nParentDirectory\\n  |__ localtracks  (folder)\\n  |     |__ Awesome Album Name  (folder)\\n  |           |__01 Cool Song.mp3\\n  |           |__02 Groovy Song.mp3\\n  |\\n  |__ Lavalink.jar\\n  |__ application.yml\\n```\\nDosya dizini lavalink.jar, the application.yml ve localtracks klasörlerini içermelidir.\\nBu komutu dizini varsayılana döndürmek için boş bir şekilde gönderebilirsiniz.\\nYerel müzik klasörünü ayarlamak için devam etmek istiyor musunuz?"
+msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
+"```\n"
+"ParentDirectory\n"
+"  |__ localtracks  (folder)\n"
+"  |     |__ Awesome Album Name  (folder)\n"
+"  |           |__01 Cool Song.mp3\n"
+"  |           |__02 Groovy Song.mp3\n"
+"```\n"
+"The folder path given to this command must contain the localtracks folder.\n"
+"**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\n"
+"Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
+"Do you want to continue to set the provided path for local tracks?"
+msgstr "Bu ayar sadece bot sahiplerinin aşağıdaki örnekteki gibi yerel parçalar klasörünü ayarlaması içindir. Bu komutu `ÜstDizin` klasörünün tam yolu girilmelidir.\n"
+"```\n"
+"ÜstDizin\n"
+"  |__ localtracks  (Klasör)\n"
+"  |     |__ Albüm adı  (Klasör)\n"
+"  |           |__01 Şarkı.mp3\n"
+"  |           |__02 Başka bir şarkı.mp3\n"
+"```\n"
+"Bu komuta verilen konum localtracks klasörünü içermelidir.\n"
+"**Bu klasör ve dosyalar `Lavalink.jar`'ın çalıştırıldığı yerden görülebilir olmalıdır.**\n"
+"Varsayılan olan ses veri klasörüne sıfırlamak için bu komutu konumu boş bırakarak kullanın.\n"
+"Yerel parçalar konumunu verilen klasöre ayarlamaya devam etmek istiyor musunuz?"
 
 #: redbot/cogs/audio/core/commands/audioset.py:829
 msgid "Invalid Path"
@@ -618,8 +717,14 @@ msgstr "Yerel müzik dosya dizini {localpath} olarak sıfırlandı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:858
 #, docstring
-msgid "Max length of a track to queue in seconds, 0 to disable.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\\n        input will turn the max length setting off.\\n        "
-msgstr "Sıraya eklenebilecek en uzun şarkı süresini ayarlar. Devre dışı bırakmak için 0 girin. Saniye ya da bu şekilde formatlar kabul edilir. 00:00:00 (`ss:dd:ss`) veya 00:00 (`dd:ss`).\\n        Geçersiz giriş süreyi devre dışı bırakır        "
+msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
+"        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
+"        input will turn the max length setting off.\n"
+"        "
+msgstr "Sıraya alınabilecek bir parçanın saniye olarak maksimum uzunluğunu ayarlar, devre dışı bırakmak için 0 girin.\n\n"
+"        Bu komut 00:00:00 (`saat:dk:sn`) veya 00:00 (`dk:sn`) şeklinde biçimlendirilmiş bir\n"
+"        değer kabul eder. Geçersiz değer girmek maksimum uzunluk ayarını kapatır.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:867
 msgid "Invalid length"
@@ -657,8 +762,16 @@ msgstr "Otomatik Sağırlaştırma: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:917
 #, docstring
-msgid "Toggle the domain restriction on Audio.\\n\\n        When toggled off, users will be able to play songs from non-commercial websites and links.\\n        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and\\n        Bandcamp links.\\n        "
-msgstr "Alan adı sınırlamasını müzik için açıp kapatır.\\n\\n        Kapalıyken, kullanıcılar sadece ticari olmayan web sitelerinden ve bağlantılardan şarkı çalabilecekler.\\n        Açıkken, kullanıcılar sadece YouTube, SoundCloud, Mixer, Vimeo, Twitch\\n ve Bandcamp linklerinden şarkı çalabilecekler.\\n        "
+msgid "Toggle the domain restriction on Audio.\n\n"
+"        When toggled off, users will be able to play songs from non-commercial websites and links.\n"
+"        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and\n"
+"        Bandcamp links.\n"
+"        "
+msgstr "Ses için alan adı kısıtlamasını açıp kapatır.\n\n"
+"        Devre dışı bırakıldığında kullanıcılar ticari olmayan web sitesi ve linklerden şarkı çalabilirler.\n"
+"        Etkinleştirildiğinde kullanıcılar YouTube, SoundCloud, Mixer, Vimeo, Twitch ve Bandcamp\n"
+"        linklerine sınırlanırlar.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:928
 msgid "Commercial links only: {true_or_false}."
@@ -687,48 +800,64 @@ msgid "Server Settings"
 msgstr "Sunucu ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:991
-msgid "Auto-disconnect:  [{dc}]\\n"
-msgstr "Oto-ayrılma:"
+msgid "Auto-disconnect:  [{dc}]\n"
+msgstr "Kanaldan otomatik çıkma:  [{dc}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:992
-msgid "Auto-play:        [{autoplay}]\\n"
-msgstr "Otomatik çalma:        [{autoplay}]\\n"
+msgid "Auto-play:        [{autoplay}]\n"
+msgstr "Otomatik oynatma:        [{autoplay}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
-msgid "Disconnect timer: [{num_seconds}]\\n"
-msgstr "Ayrılma sayacı: [{num_seconds}]\\n"
+msgid "Disconnect timer: [{num_seconds}]\n"
+msgstr "Ayrılma zamanlayıcısı: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
-msgid "Auto Pause timer: [{num_seconds}]\\n"
-msgstr "Otomatik durdurma zamanlayıcısı: {num_seconds}\\n"
+msgid "Auto Pause timer: [{num_seconds}]\n"
+msgstr "Otomatik durdurma zamanlayıcısı: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1004
-msgid "DJ Role:          [{role.name}]\\n"
-msgstr "DJ Rolü: [{role.name}]\\n"
+msgid "DJ Role:          [{role.name}]\n"
+msgstr "DJ Rolü:          [{role.name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1006
-msgid "Jukebox:          [{jukebox_name}]\\n"
-msgstr "Jukebox:          [{jukebox_name}]\\n"
+msgid "Jukebox:          [{jukebox_name}]\n"
+msgstr "Müzik kutusu:          [{jukebox_name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1007
-msgid "Command price:    [{jukebox_price}]\\n"
-msgstr "Komut bedeli:  [{jukebox_price}]\\n"
+msgid "Command price:    [{jukebox_price}]\n"
+msgstr "Komut bedeli:    [{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
-msgid "Max track length: [{tracklength}]\\n"
-msgstr "Şarkı süre uzunluğu: [{tracklength}]\\n"
+msgid "Max track length: [{tracklength}]\n"
+msgstr "Maksimum parça uzunluğu: [{tracklength}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1014
-msgid "Repeat:           [{repeat}]\\nShuffle:          [{shuffle}]\\nShuffle bumped:   [{bumpped_shuffle}]\\nSong notify msgs: [{notify}]\\nSongs as status:  [{status}]\\nPersist queue:    [{persist_queue}]\\nSpotify search:   [{countrycode}]\\nAuto-Deafen:      [{auto_deafen}]\\n"
-msgstr "Tekrarla:           [{repeat}]\\nKarıştır:          [{shuffle}]\\nÖne alınabilir karıştırma:   [{bumpped_shuffle}]\\nŞarkı bildirim Mesajları: [{notify}]\\nBot durumu olarak şarkı:  [{status}]\\nKalıcı sıralar:    [{persist_queue}]\\nSpotify araması:   [{countrycode}]\\nOtomatik Sağırlaştırma:      [{auto_deafen}]\\n"
+msgid "Repeat:           [{repeat}]\n"
+"Shuffle:          [{shuffle}]\n"
+"Shuffle bumped:   [{bumpped_shuffle}]\n"
+"Song notify msgs: [{notify}]\n"
+"Songs as status:  [{status}]\n"
+"Persist queue:    [{persist_queue}]\n"
+"Spotify search:   [{countrycode}]\n"
+"Auto-Deafen:      [{auto_deafen}]\n"
+msgstr "Tekararlama:           [{repeat}]\n"
+"Karıştırma:          [{shuffle}]\n"
+"Sıra başına alma:   [{bumpped_shuffle}]\n"
+"Şarkı bildirme msjları: [{notify}]\n"
+"Bot durumu olarak şarkılar:  [{status}]\n"
+"Kalıcı sıra:    [{persist_queue}]\n"
+"Spotify arama:   [{countrycode}]\n"
+"Otomatik sağırlaştırma:      [{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
-msgid "Thumbnails:       [{0}]\\n"
-msgstr "Thumbnails:       [{0}]\\n"
+msgid "Thumbnails:       [{0}]\n"
+msgstr "Küçük resimler:       [{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
-msgid "Vote skip:        [{vote_enabled}]\\nSkip percentage:  [{vote_percent}%]\\n"
-msgstr "Şarkı geçme oylaması:        [{vote_enabled}]\\nGeçme yüzdesi:  [{vote_percent}%]\\n"
+msgid "Vote skip:        [{vote_enabled}]\n"
+"Skip percentage:  [{vote_percent}%]\n"
+msgstr "Şarkı atlama oylaması:        [{vote_enabled}]\n"
+"Atlama yüzdesi:  [{vote_percent}%]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1051
 msgid "Server"
@@ -760,16 +889,16 @@ msgid "Auto-play Settings"
 msgstr "Otomatik Çalma Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
-msgid "Playlist name:    [{pname}]\\n"
-msgstr "Çalma listesi adı:    [{pname}]\\n"
+msgid "Playlist name:    [{pname}]\n"
+msgstr "Çalma listesi adı:    [{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1069
-msgid "Playlist ID:      [{pid}]\\n"
-msgstr "Çalma Listesi ID:      [{pid}]\\n"
+msgid "Playlist ID:      [{pid}]\n"
+msgstr "Çalma listesi IDsi:      [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1070
-msgid "Playlist scope:   [{pscope}]\\n"
-msgstr "Çalma listesi kapsamı:   [{pscope}]\\n"
+msgid "Playlist scope:   [{pscope}]\n"
+msgstr "Çalma listesi kapsamı:   [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1076
 #: redbot/cogs/audio/core/commands/audioset.py:1351
@@ -778,28 +907,28 @@ msgid "Cache Settings"
 msgstr "Önbellek Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1078
-msgid "Max age:                [{max_age}]\\n"
-msgstr "Maksimum yaş:                [{max_age}]\\n"
+msgid "Max age:                [{max_age}]\n"
+msgstr "Maksimum yaş:                [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
-msgid "Local Spotify cache:    [{spotify_status}]\\n"
-msgstr "Spotify önbelleği:    [{spotify_status}]\\n"
+msgid "Local Spotify cache:    [{spotify_status}]\n"
+msgstr "Yerel Spotify önbelleği:    [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1080
-msgid "Local Youtube cache:    [{youtube_status}]\\n"
-msgstr "YouTube önbelleği:    [{youtube_status}]\\n"
+msgid "Local Youtube cache:    [{youtube_status}]\n"
+msgstr "Yerel Yotube önbelleği:    [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
-msgid "Local Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Lavalink önbelleği:   [{lavalink_status}]\\n"
+msgid "Local Lavalink cache:   [{lavalink_status}]\n"
+msgstr "Yerel Lavalink önbelleği:   [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
-msgid "Global cache status:    [{global_cache}]\\n"
-msgstr "Küresel önbellek durumu:    [{global_cache}]\\n"
+msgid "Global cache status:    [{global_cache}]\n"
+msgstr "Küresel önbellek durumu:    [{global_cache}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
-msgid "Global timeout:         [{num_seconds}]\\n"
-msgstr "Küresel zaman aşımı:         [{num_seconds}]\\n"
+msgid "Global timeout:         [{num_seconds}]\n"
+msgstr "Küresel zaman aşımı:         [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1085
 #: redbot/cogs/audio/core/commands/audioset.py:1345
@@ -812,32 +941,42 @@ msgid "User Settings"
 msgstr "Kullanıcı Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1096
-msgid "Spotify search:   [{country_code}]\\n"
-msgstr "Spotify araması:    [{country_code}]\\n"
+msgid "Spotify search:   [{country_code}]\n"
+msgstr "Spotify arama:   [{country_code}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "Lavalink Settings"
 msgstr "Lavalink Ayarları"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
-msgid "Cog version:            [{version}]\\n"
-msgstr "Cog versiyon:            [{version}]\\n"
+msgid "Cog version:            [{version}]\n"
+msgstr "Cog sürümü:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
-msgid "Red-Lavalink:           [{lavalink_version}]\\n"
-msgstr "Red-Lavalink:           [{lavalink_version}]\\n"
+msgid "Red-Lavalink:           [{lavalink_version}]\n"
+msgstr "Red-Lavalink:           [{lavalink_version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
-msgid "External server:        [{use_external_lavalink}]\\n"
-msgstr "External sunucu:        [{use_external_lavalink}]\\n"
+msgid "External server:        [{use_external_lavalink}]\n"
+msgstr "Harici sunucu:        [{use_external_lavalink}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1114
-msgid "Lavalink build:         [{llbuild}]\\nLavalink branch:        [{llbranch}]\\nRelease date:           [{build_time}]\\nLavaplayer version:     [{lavaplayer}]\\nJava version:           [{jvm}]\\nJava Executable:        [{jv_exec}]\\n"
-msgstr "Lavalink yapı numarası:         [{llbuild}]\\nLavalink dalı:        [{llbranch}]\\nYayın tarihi:           [{build_time}]\\nLavaplayer sürümü:     [{lavaplayer}]\\nJava sürümü:           [{jvm}]\\nJava Dosyası:        [{jv_exec}]\\n"
+msgid "Lavalink build:         [{llbuild}]\n"
+"Lavalink branch:        [{llbranch}]\n"
+"Release date:           [{build_time}]\n"
+"Lavaplayer version:     [{lavaplayer}]\n"
+"Java version:           [{jvm}]\n"
+"Java Executable:        [{jv_exec}]\n"
+msgstr "Lavalink yapı numarası:         [{llbuild}]\n"
+"Lavalink branşı:        [{llbranch}]\n"
+"Çıkış tarihi:           [{build_time}]\n"
+"Lavaplayer sürümü:     [{lavaplayer}]\n"
+"Java sürümü:           [{jvm}]\n"
+"Java dosyası:        [{jv_exec}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1130
-msgid "Localtracks path:       [{localpath}]\\n"
-msgstr "Yerel müzik klasörü:  [{localpath}]\\n"
+msgid "Localtracks path:       [{localpath}]\n"
+msgstr "Yerel parçalar klasörü:       [{localpath}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1139
 #, docstring
@@ -899,8 +1038,22 @@ msgid "Instructions to set the Spotify API tokens."
 msgstr "Spotify API tokenini ayarlamak için bilgiler."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1257
-msgid "1. Go to Spotify developers and log in with your Spotify account.\\n(https://developer.spotify.com/dashboard/applications)\\n2. Click \\\"Create An App\\\".\\n3. Fill out the form provided with your app name, etc.\\n4. When asked if you're developing commercial integration select \\\"No\\\".\\n5. Accept the terms and conditions.\\n6. Copy your client ID and your client secret into:\\n`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
-msgstr "1. Spotify developers sayfasına spotify hesabınızla giriş yapın.\\n(https://developer.spotify.com/dashboard/applications)\\n2. \\\"Create An App\\\"'e tıklayın.\\n3. Uygulama ismi gibi bilgileri doldurun.\\n4. Şirketsel bir uygulamamı diye sorulduğunda \\\"Hayır\\\" diye cevap verin.\\n5. Şartlar ve koşulları kabul edin.\\n6. Client ID ve client secret'ınızı kopyalayın ve gerekli yerlere yapıştırın.:\\n`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. Click \"Create An App\".\n"
+"3. Fill out the form provided with your app name, etc.\n"
+"4. When asked if you're developing commercial integration select \"No\".\n"
+"5. Accept the terms and conditions.\n"
+"6. Copy your client ID and your client secret into:\n"
+"`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
+msgstr "1. Spotify developers sayfasına spotify hesabınızla giriş yapın.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. \"Create An App\"'e tıklayın.\n"
+"3. Formdaki uygulama ismi gibi bilgileri doldurun.\n"
+"4. Ticari bir uygulama mı diye sorulduğunda \"Hayır\" ile cevap verin.\n"
+"5. Şartlar ve koşulları kabul edin.\n"
+"6. İstemci IDnizi ve istemcisi sırrınızı (client secret) kopyalayın ve gerekli yerlere yapıştırın:\n"
+"`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1274
 #: redbot/cogs/audio/core/commands/audioset.py:1296
@@ -925,49 +1078,59 @@ msgstr "Ülke Kodu {country} olarak ayarlandı."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1318
 #, docstring
-msgid "Sets the caching level.\\n\\n        Level can be one of the following:\\n\\n        0: Disables all caching\\n        1: Enables Spotify Cache\\n        2: Enables YouTube Cache\\n        3: Enables Lavalink Cache\\n        5: Enables all Caches\\n\\n        If you wish to disable a specific cache use a negative number.\\n        "
-msgstr "Önbellekleme seviyesini ayarlar.\\n\\n        Seviye bunlardan birisi olabilir:\\n\\n        0: Tüm önbelleklemeyi durdurur\\n        1: Spotify önbelleklemesini açar\\n        2: YouTube önbelleklemesini açar\\n        3: Lavalink  önbelleklemesini açar\\n        5: Tüm önbelleklemeleri açar\\n\\n        Belirli bir önbelleği devre dışı bırakmak istiyorsanız negatif bir sayı kullanın.\\n        "
+msgid "Sets the caching level.\n\n"
+"        Level can be one of the following:\n\n"
+"        0: Disables all caching\n"
+"        1: Enables Spotify Cache\n"
+"        2: Enables YouTube Cache\n"
+"        3: Enables Lavalink Cache\n"
+"        5: Enables all Caches\n\n"
+"        If you wish to disable a specific cache use a negative number.\n"
+"        "
+msgstr "Önbellekleme düzeyini ayarla.\n\n"
+"        Düzey bunlardan biri olabilir:\n\n"
+"        0: Tüm önbellekleri kapatır\n"
+"        1: Spotify önbelleğini açar\n"
+"        2: YouTube önbelleğini açar\n"
+"        3: Lavalink önbelleğini açar\n"
+"        5: Tüm önbellekleri açar\n\n"
+"        Belirli bir önbelleği kapamak istiyorsanız negatif sayı kullanın.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1340
-msgid "Max age:          [{max_age}]\\n"
-msgstr "Maksimum yaş:          [{max_age}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1385
+msgid "Max age:          [{max_age}]\n"
+msgstr "Maksimum yaş:          [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1341
-msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr "Spotify önbelleği:    [{spotify_status}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1386
+msgid "Spotify cache:    [{spotify_status}]\n"
+msgstr "Spotify önbelleği:    [{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1342
-msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "YouTube önbelleği:    [{youtube_status}]\\n"
+#: redbot/cogs/audio/core/commands/audioset.py:1387
+msgid "Youtube cache:    [{youtube_status}]\n"
+msgstr "Youtube önbelleği:    [{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1343
-msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Lavalink önbelleği:   [{lavalink_status}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1385
-msgid "Max age:          [{max_age}]\\n"
-msgstr "Maksimum yaş:          [{max_age}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1386
-msgid "Spotify cache:    [{spotify_status}]\\n"
-msgstr "Spotify önbelleği:    [{spotify_status}]\\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1387
-msgid "Youtube cache:    [{youtube_status}]\\n"
-msgstr "YouTube önbelleği:    [{youtube_status}]\\n"
-
 #: redbot/cogs/audio/core/commands/audioset.py:1388
-msgid "Lavalink cache:   [{lavalink_status}]\\n"
-msgstr "Lavalink önbelleği:   [{lavalink_status}]\\n"
+msgid "Lavalink cache:   [{lavalink_status}]\n"
+msgstr "Lavalink önbelleği:   [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 #, docstring
-msgid "Sets the cache max age.\\n\\n        This commands allows you to set the max number of days before an entry in the cache becomes\\n        invalid.\\n        "
-msgstr "Önbelleğin tutulma süresini ayarlar.\\n\\n        Bu komut, önbellekteki bir girişin geçersiz hale gelmeden önce maksimum gün sayısını\\n        ayarlamanıza olanak tanır.\\n        "
+msgid "Sets the cache max age.\n\n"
+"        This commands allows you to set the max number of days before an entry in the cache becomes\n"
+"        invalid.\n"
+"        "
+msgstr "Maksimum önbellek yaşını ayarlar.\n\n"
+"        Bu komut önbellekteki bir girdinin geçersiz sayılmadan önce kaç gün kalacağını ayarlamanızı\n"
+"        sağlar.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1410
-msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\\n"
-msgstr "Önbellekleme süresi 7 günden az olamaz. Önbelleklemeyi durdurmak istiyorsanız {prefix}audioset cache komutunu uygulayın.\\n"
+msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
+msgstr "Önbellek yaşı 7 günden az olamaz. Eğer kapamak istiyorsanız `{prefix}audioset cache` çalıştırın.\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1415
 msgid "I've set the cache age to {age} days"
@@ -980,8 +1143,12 @@ msgstr "Küresel API ayarlarını değiştir."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1426
 #, docstring
-msgid "Toggle the server settings.\\n\\n        Default is OFF\\n        "
-msgstr "Sunucu ayarlarını aç veya kapa.\\n\\n        Varsayılan olarak kapalıdır.\\n        "
+msgid "Toggle the server settings.\n\n"
+"        Default is OFF\n"
+"        "
+msgstr "Sunucu ayarlarını aç/kapa.\n\n"
+"        Varsayılan olarak kapalıdır\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1435
 msgid "Global DB is {status}"
@@ -997,8 +1164,12 @@ msgstr "deaktif"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1442
 #, docstring
-msgid "Set GET request timeout.\\n\\n        Example: 0.1 = 100ms 1 = 1 second\\n        "
-msgstr "GET isteği zaman aşımını ayarla.\\n\\n        Örnek: 0.1 = 100ms 1 = 1 saniye\\n        "
+msgid "Set GET request timeout.\n\n"
+"        Example: 0.1 = 100ms 1 = 1 second\n"
+"        "
+msgstr "GET isteği zaman aşımını ayarla.\n\n"
+"        Örnek: 0.1 = 100ms 1 = 1 saniye\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
@@ -1006,8 +1177,12 @@ msgstr "İstek zaman aşımı {time} saniyeye ayarlandı"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1453
 #, docstring
-msgid "Toggle persistent queues.\\n\\n        Persistent queues allows the current queue to be restored when the queue closes.\\n        "
-msgstr "Kalıcı sıraları aç veya kapa.\\n\\n        Kalıcı sıraralar mevcut sıranın sıra durdurulduğunda devam ettirilmesini sağlar.\\n        "
+msgid "Toggle persistent queues.\n\n"
+"        Persistent queues allows the current queue to be restored when the queue closes.\n"
+"        "
+msgstr "Kalıcı sıraları aç/kapa.\n\n"
+"        Kalıcı sıralar mevcut sıranın sıra durdurulduğunda devam ettirilmesin sağlar.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1465
 msgid "Persisting queues: {true_or_false}."
@@ -1046,11 +1221,11 @@ msgstr "Ses kanalından ayrılır"
 #: redbot/cogs/audio/core/commands/controller.py:715
 #: redbot/cogs/audio/core/commands/controller.py:770
 #: redbot/cogs/audio/core/commands/controller.py:846
-#: redbot/cogs/audio/core/commands/equalizer.py:33
-#: redbot/cogs/audio/core/commands/equalizer.py:158
-#: redbot/cogs/audio/core/commands/equalizer.py:188
-#: redbot/cogs/audio/core/commands/equalizer.py:221
-#: redbot/cogs/audio/core/commands/equalizer.py:309
+#: redbot/cogs/audio/core/commands/equalizer.py:39
+#: redbot/cogs/audio/core/commands/equalizer.py:164
+#: redbot/cogs/audio/core/commands/equalizer.py:194
+#: redbot/cogs/audio/core/commands/equalizer.py:227
+#: redbot/cogs/audio/core/commands/equalizer.py:315
 #: redbot/cogs/audio/core/commands/miscellaneous.py:64
 #: redbot/cogs/audio/core/commands/miscellaneous.py:95
 #: redbot/cogs/audio/core/commands/playlists.py:1142
@@ -1088,8 +1263,11 @@ msgid "Now playing."
 msgstr "Şimdi oynatılıyor."
 
 #: redbot/cogs/audio/core/commands/controller.py:105
-msgid "\\n Requested by: **{track.requester}**"
-msgstr "\\n Çalan: **{track.requester}**"
+#: redbot/cogs/audio/core/commands/queue.py:77
+msgid "\n"
+" Requested by: **{track.requester}**"
+msgstr "\n"
+" Talep eden: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:108
 msgid "Nothing."
@@ -1217,8 +1395,12 @@ msgstr "Şarkı tekrar oynatılıyor"
 
 #: redbot/cogs/audio/core/commands/controller.py:300
 #, docstring
-msgid "Seek ahead or behind on a track by seconds or a to a specific time.\\n\\n        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\\n        "
-msgstr "Belirli bir süreye veya ileri-geri sarar.\\n\\n        Belirtilen süre formatları kabul edilir 00:00:00 (`hh:mm:ss`) veya 00:00 (`mm:ss`).\\n        "
+msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
+"        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
+"        "
+msgstr "Bir parçada belirli bir noktaya veya belirli bir süre ileri veya geri atla.\n\n"
+"        Bu komut saniyeler veya 00:00:00 (`saat:dk:sn`) veya 00:00 (`dk:sn`) şeklinde biçimlendirilmiş bir değeri kabul eder.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:318
 #: redbot/cogs/audio/core/commands/controller.py:325
@@ -1284,8 +1466,14 @@ msgstr "Şarkıları tekrarla: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/controller.py:425
 #, docstring
-msgid "Toggle bumped track shuffle.\\n\\n        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\\n        over `[p]shuffle`.\\n        "
-msgstr "Öne alınan şarkıları karıştır.\\n\\n        Öne alınan şarkıların karıştırılmasını istemiyorsanız bu özelliği kapatınız.\\n        Bu ayar `[p]shuffle` ayarından önceliklidir.\\n        "
+msgid "Toggle bumped track shuffle.\n\n"
+"        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
+"        over `[p]shuffle`.\n"
+"        "
+msgstr "Sırada öne alınmış parçaları karıştırmayı ayarla.\n\n"
+"        Eğer sırada öne alınmış parçaların karıştırılmasını istemiyorsanız bu ayarı devre\n"
+"        dışı bırakın. Bu ayar `[p]shuffle` ayarına üstün gelir.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:457
 msgid "Shuffle bumped tracks: {true_or_false}."
@@ -1450,10 +1638,6 @@ msgstr "Tekrarlamayı değiştirebilmek için kanal da olman gerekli."
 msgid "Repeat tracks: {true_or_false}."
 msgstr "Şarkıları tekrarla: {true_or_false}."
 
-#: redbot/cogs/audio/core/commands/controller.py:753
-msgid "\\nAuto-play has been disabled."
-msgstr "\\nOto-oynatma devre dışı bırakıldı."
-
 #: redbot/cogs/audio/core/commands/controller.py:765
 #, docstring
 msgid "Remove a specific track number from the queue."
@@ -1526,145 +1710,160 @@ msgstr "Parça şarkı sırasının en üstüne taşındı."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:30
 #, docstring
-msgid "Equalizer management."
-msgstr "Equalizer yönetimi"
+msgid "Equalizer management.\n\n"
+"        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
+"        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz.\n"
+"        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
+"        "
+msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:66
+#: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring
 msgid "Delete a saved eq preset."
 msgstr "Hazır EQ presetini kaldır"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:75
-#: redbot/cogs/audio/core/commands/equalizer.py:82
-#: redbot/cogs/audio/core/commands/equalizer.py:95
+#: redbot/cogs/audio/core/commands/equalizer.py:81
+#: redbot/cogs/audio/core/commands/equalizer.py:88
+#: redbot/cogs/audio/core/commands/equalizer.py:101
 msgid "Unable To Delete Preset"
 msgstr "Hazır olan ayarlar silinemiyor"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:76
-#: redbot/cogs/audio/core/commands/equalizer.py:96
+#: redbot/cogs/audio/core/commands/equalizer.py:82
+#: redbot/cogs/audio/core/commands/equalizer.py:102
 msgid "You are not the author of that preset setting."
 msgstr "Bu hazır ayarı oluşturan kişi siz değilsiniz."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:105
+#: redbot/cogs/audio/core/commands/equalizer.py:111
 #, docstring
 msgid "List saved eq presets."
 msgstr "Kaydedilmiş EQ preset'lerini listeler"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:108
+#: redbot/cogs/audio/core/commands/equalizer.py:114
 msgid "No saved equalizer presets."
 msgstr "Kaydedilmiş EQ preset'i bulunamadı"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:111
+#: redbot/cogs/audio/core/commands/equalizer.py:117
 msgid "Preset Name"
 msgstr "Ön ayar adı"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:112
+#: redbot/cogs/audio/core/commands/equalizer.py:118
 msgid "Author"
 msgstr "Yapımcı"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:134
+#: redbot/cogs/audio/core/commands/equalizer.py:140
 msgid "{num} preset(s)"
 msgstr "{num} preset'ler"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:141
+#: redbot/cogs/audio/core/commands/equalizer.py:147
 #, docstring
 msgid "Load a saved eq preset."
 msgstr "Kaydedilmiş EQ Preset'ini yükle"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:149
+#: redbot/cogs/audio/core/commands/equalizer.py:155
 msgid "No Preset Found"
 msgstr "Ön Ayar Bulunamadı"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:167
+#: redbot/cogs/audio/core/commands/equalizer.py:173
 msgid "Unable To Load Preset"
 msgstr "Ön Ayar Yüklenemedi"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:168
+#: redbot/cogs/audio/core/commands/equalizer.py:174
 msgid "You need the DJ role to load equalizer presets."
 msgstr "Ekolayzer ön ayarlarını yüklemek için DJ rölüne ihtiyacınız var."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:186
+#: redbot/cogs/audio/core/commands/equalizer.py:192
 #, docstring
 msgid "Reset the eq to 0 across all bands."
 msgstr "EQ'daki tüm ayarları sıfırlar"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:195
+#: redbot/cogs/audio/core/commands/equalizer.py:201
 msgid "Unable To Modify Preset"
 msgstr "Ön Ayar Değiştirilemiyor"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:196
+#: redbot/cogs/audio/core/commands/equalizer.py:202
 msgid "You need the DJ role to reset the equalizer."
 msgstr "Ekolayzırı sıfırlamak için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:211
+#: redbot/cogs/audio/core/commands/equalizer.py:217
 msgid "Equalizer values have been reset."
 msgstr "EQ sıfırlandı."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:219
+#: redbot/cogs/audio/core/commands/equalizer.py:225
 #, docstring
 msgid "Save the current eq settings to a preset."
 msgstr "EQ'deki şuan ki ayarları preset olarak kaydet"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:229
-#: redbot/cogs/audio/core/commands/equalizer.py:247
-#: redbot/cogs/audio/core/commands/equalizer.py:262
+#: redbot/cogs/audio/core/commands/equalizer.py:235
+#: redbot/cogs/audio/core/commands/equalizer.py:253
+#: redbot/cogs/audio/core/commands/equalizer.py:268
 msgid "Unable To Save Preset"
 msgstr "Ön Ayar Kaydedilemedi"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:230
+#: redbot/cogs/audio/core/commands/equalizer.py:236
 msgid "You need the DJ role to save equalizer presets."
 msgstr "Ekolayzer ayarlarını kaydetmek için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:234
+#: redbot/cogs/audio/core/commands/equalizer.py:240
 msgid "Please enter a name for this equalizer preset."
 msgstr "Lütfen bu EQ Preset'i için bir isim girin"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:248
+#: redbot/cogs/audio/core/commands/equalizer.py:254
 msgid "No equalizer preset name entered, try the command again later."
 msgstr "EQ Preset ismi girilmedi, komutu tekrar deneyin."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:263
+#: redbot/cogs/audio/core/commands/equalizer.py:269
 msgid "Try the command again with a shorter name."
 msgstr "Daha kısa bir isimle tekrar deneyin."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:267
+#: redbot/cogs/audio/core/commands/equalizer.py:273
 msgid "Preset name already exists, do you want to replace it?"
 msgstr "EQ preset ismi zaten mevcut; var olan dosyayı değiştirmek istiyor musunuz?"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:275
+#: redbot/cogs/audio/core/commands/equalizer.py:281
 msgid "Not saving preset."
 msgstr "Kaydedilmiyor"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:287
+#: redbot/cogs/audio/core/commands/equalizer.py:293
 msgid "Current equalizer saved to the {preset_name} preset."
 msgstr "Geçerli ekolayzer ayarı {preset_name} olarak ayarlandı."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:301
+#: redbot/cogs/audio/core/commands/equalizer.py:307
 #, docstring
-msgid "Set an eq band with a band number or name and value.\\n\\n        Band positions are 1-15 and values have a range of -0.25 to 1.0.\\n        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\\n        6.3k, 10k, and 16k Hz.\\n        Setting a band value to -0.25 nullifies it while +0.25 is double.\\n        "
-msgstr "EQ bant genişliği sayısı ya da isim ve değer girin. Bant pozisyonları 1-15 ve aralığı -0.25 ile 1.0 arası değişmektedir.\\n       Bant isimleri 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k, 6.3k, 10k, ve 16k Hz'dir. Bir bant değerini -0,25'e ayarlamak geçersiz kılarken +0,25 iki katına çıkartır.\\n        "
+msgid "Set an eq band with a band number or name and value.\n\n"
+"        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
+"        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz.\n"
+"        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
+"        "
+msgstr "Bir bant numarası veya isim ve değer ile bir eq bandını ayarla.\n\n"
+"        Bant pozisyonları 1-15 dir ve değerler -0.25 ila 1.0 aralığındadır.\n"
+"        Bant adları ise 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, and 16k Hz dir.\n"
+"        Bir bantı -0.25 e almak etkisizleştirirken +0.25 ikiye katlar.\n"
+"        "
 
-#: redbot/cogs/audio/core/commands/equalizer.py:317
+#: redbot/cogs/audio/core/commands/equalizer.py:323
 msgid "Unable To Set Preset"
 msgstr "Ön Ayar Değiştirilemiyor"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:318
+#: redbot/cogs/audio/core/commands/equalizer.py:324
 msgid "You need the DJ role to set equalizer presets."
 msgstr "Ekolayzer ön ayarlarını kaydetmek için DJ rolüne ihtiyacın var."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:357
+#: redbot/cogs/audio/core/commands/equalizer.py:363
 msgid "Invalid Band"
 msgstr "Geçersiz Bant"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:358
+#: redbot/cogs/audio/core/commands/equalizer.py:364
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
 msgstr "Geçerli bant sayıları 1-15 veya bu komutla beraber listelenmiş olan isimlerdir."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:382
+#: redbot/cogs/audio/core/commands/equalizer.py:388
 msgid "Preset Modified"
 msgstr "Ön Ayar Değiştirildi"
 
-#: redbot/cogs/audio/core/commands/equalizer.py:383
+#: redbot/cogs/audio/core/commands/equalizer.py:389
 msgid "The {band_name}Hz band has been set to {band_value}."
 msgstr "{band_name}Hz band {band_value} olarak ayarlandı."
 
@@ -1675,8 +1874,12 @@ msgstr "Lavalink sunucu ayarlamaları"
 
 #: redbot/cogs/audio/core/commands/llset.py:26
 #, docstring
-msgid "Change your Java executable path\\n\\n        Enter nothing to reset to default.\\n        "
-msgstr "Java konumunu değiştir\\n\\n        Varsayılana ayarlamak için boş bırakın.\\n        "
+msgid "Change your Java executable path\n\n"
+"        Enter nothing to reset to default.\n"
+"        "
+msgstr "Java konumunu değiştir\n\n"
+"        Varsayılana ayarlamak için boş bırakın.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:35
 msgid "You cannot changed the Java executable path of external Lavalink instances from the Audio Cog."
@@ -1735,8 +1938,10 @@ msgid "External Lavalink server: {true_or_false}."
 msgstr "Harici Lavalink sunucusu: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:113
-msgid "External Lavalink server: {true_or_false}\\nFor it to take effect please reload Audio (`{prefix}reload audio`)."
-msgstr "Harici Lavalink sunucusu: {true_or_false}\\nAyarın kullanılabilmesi için Audio'yu yeniden başlatın (`{prefix}reload audio`)."
+msgid "External Lavalink server: {true_or_false}\n"
+"For it to take effect please reload Audio (`{prefix}reload audio`)."
+msgstr "Harici Lavalink sunucusu: {true_or_false}\n"
+"Etkiye girmesi için lütfen sesi yeniden başlatın (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
@@ -1781,20 +1986,20 @@ msgid "Connection Settings"
 msgstr "Bağlantı Ayarları"
 
 #: redbot/cogs/audio/core/commands/llset.py:224
-msgid "Host:             [{host}]\\n"
-msgstr "Sunucu:             [{host}]\\n"
+msgid "Host:             [{host}]\n"
+msgstr "Sunucu:             [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
-msgid "WS Port:          [{port}]\\n"
-msgstr "WS Portu:          [{port}]\\n"
+msgid "WS Port:          [{port}]\n"
+msgstr "WS Portu:          [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
-msgid "Rest Port:        [{port}]\\n"
-msgstr "Rest Portu:        [{port}]\\n"
+msgid "Rest Port:        [{port}]\n"
+msgstr "Rest Portu:        [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
-msgid "Password:         [{password}]\\n"
-msgstr "Parola:         [{password}]\\n"
+msgid "Password:         [{password}]\n"
+msgstr "Şifre:         [{password}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:232
 msgid "I need to be able to DM you to send you this info."
@@ -1942,8 +2147,12 @@ msgid "Only single tracks work with bump play."
 msgstr "Öne alarak çalma sadece tek bir parça için yapılabilir."
 
 #: redbot/cogs/audio/core/commands/player.py:250
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
+#: redbot/cogs/audio/core/commands/player.py:785
+#: redbot/cogs/audio/core/commands/player.py:905
+msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
+"This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
+msgstr "`Lavalink.jar` parçayı bulamazsa yerel parçalar çalışmaz.\n"
+"Bu izinler veya Lavalink.jar'ın parçaları bulundurandan farklı bir makinede çalıştırılmasından kaynaklanabilir."
 
 #: redbot/cogs/audio/core/commands/player.py:257
 #: redbot/cogs/audio/core/commands/player.py:792
@@ -1979,12 +2188,16 @@ msgid "Pick a Spotify playlist from a list of categories to start playing."
 msgstr "Çalmak için listeden bir Spotify şarkı listesi seçiniz."
 
 #: redbot/cogs/audio/core/commands/player.py:413
-msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi Spotify kullanıcı ID ve Spotify client secret ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset spotifyapi` komutunu kullanınız."
+msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
+"See `{prefix}audioset spotifyapi` for instructions."
+msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin Spotify istemci IDsi ve istemci sırrını ayarlaması gerekir. \n"
+"Yönergeler için `{prefix}audioset spotifyapi` komutunu kullanın."
 
 #: redbot/cogs/audio/core/commands/player.py:423
-msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr "Spotify URL ve kodlarını kullanabilmeniz için bot sahibi YouTube API anahtarı ayarlarını yapmalıdır.\\nDetaylı bilgi için `{prefix}audioset youtubeapi` komutunu kullanınız."
+msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
+"See `{prefix}audioset youtubeapi` for instructions."
+msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin YouTube API anahtarı ayarlaması gerekir.\n"
+"Yönergeler için `{prefix}audioset youtubeapi` komutunu kullanın."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2058,8 +2271,14 @@ msgstr "Parça sıraya ekleniyor."
 
 #: redbot/cogs/audio/core/commands/player.py:640
 #, docstring
-msgid "Pick a track with a search.\\n\\n        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\\n        <search term>` to search on SoundCloud instead of YouTube.\\n        "
-msgstr "Arama ile bir şarkı seçin.\\n\\n         `[p]search list <arama terimi>` komutunu YouTube sırasında arama yapmak için kullanın\\n         `[p]search sc <arama terimi>` komutu sadece SoundCloud'ı arayacaktır        "
+msgid "Pick a track with a search.\n\n"
+"        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\n"
+"        <search term>` to search on SoundCloud instead of YouTube.\n"
+"        "
+msgstr "Arama ile bir parça seçin.\n\n"
+"        Youtube'da bulunan tüm parçaları sıralamak için `[p]search list <search term>` kullanın. Youtube\n"
+"         yerine SoundCloud'da aramak için `[p]search sc <search term>` kullanın.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:692
 #: redbot/cogs/audio/core/commands/player.py:702
@@ -2076,10 +2295,6 @@ msgstr "Sıraya şarkı ekleyebilmek için kanal da olmanız gerekmektedir."
 #: redbot/cogs/audio/core/commands/player.py:903
 msgid "Nothing found."
 msgstr "Hiçbir şey bulunamadı."
-
-#: redbot/cogs/audio/core/commands/player.py:785
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
 
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
@@ -2102,19 +2317,85 @@ msgstr "ara"
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
 msgstr "{type} çalınması için kalan süre {time}: #{position}. sırada"
 
-#: redbot/cogs/audio/core/commands/player.py:905
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr "`Lavalink.jar` parçayı göremiyorsa yerel şarkılar çalınmayacaktır.\\nBunun nedeni; izinler olabilir ya da Lavalink.jar yerel şarkılardan farklı bir makinede çalıştırılıyor olabilir."
-
 #: redbot/cogs/audio/core/commands/playlists.py:44
 #, docstring
-msgid "Playlist configuration options.\\n\\n        Scope info:\\n        ​ ​ ​ ​ **Global**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\\n        ​ ​ ​ ​ **Guild**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\\n        ​ ​ ​ ​ **User**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\\n        "
-msgstr "Çalma listesi yapılandırma seçenekleri.\\n\\n        Kapsam bilgisi:\\n        ​ ​ ​ ​ **Küresel**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Bu botun tüm kullanıcıları tarafından görülebilir.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Sadece bot sahibi tarafından düzenlenebilir.\\n        ​ ​ ​ ​ **Sunucu**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Sunucudaki tüm kullanıcılar tarafından görünebilir.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Bot sahibi, sunucu sahibi, sunucu yöneticisi, sunucu moderatörü, DJ rolündeki kullanıcılar ve çalma listesini oluşturan tarafından düzenlenebilir.\\n        ​ ​ ​ ​ **Kullanıcı**:\\n        ​ ​ ​ ​ ​ ​ ​ ​ Eğer yaratıcısı izin verirse tüm bot kullanıcıları tarafından görünebilir.\\n        ​ ​ ​ ​ ​ ​ ​ ​ Bot sahibi ve listeyi yapan kişi tarafından düzenlenebilir.\\n\\n    "
+msgid "Playlist configuration options.\n\n"
+"        Scope info:\n"
+"        ​ ​ ​ ​ **Global**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.\n"
+"        ​ ​ ​ ​ **Guild**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\n"
+"        ​ ​ ​ ​ **User**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\n"
+"        "
+msgstr "Çalma listesi yapılandırma ayarları.\n\n"
+"        Kapsam bilgisi:\n"
+"        ​ ​ ​ ​ **Global**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Botu kullanan herkes tarafından görülebilir.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Sadece bot sahibi tarafından düzenlenebilir.\n"
+"        ​ ​ ​ ​ **Guild**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Sunucudaki herkes tarafından görülebilir.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Bot sahibi, sunucu sahibi, sunucu yöneticileri, sunucu moderatörleri, DJ rolü ve listenin yapımcısı tarafından düzenlenebilir.\n"
+"        ​ ​ ​ ​ **User**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Eğer --author verildiyse tüm bot kullanıcıları tarafından görülebilir.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Bot sahibi ve listenin yapımcısı tarafından düzenlenebilir.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:69
 #, docstring
-msgid "Add a track URL, playlist link, or quick search to a playlist.\\n\\n        The track(s) will be appended to the end of the playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\\n        "
-msgstr "Çalma listesine parça URL'si, çalma listesi linki ya da hızlı arama ekleme.\\n\\n        Parça(lar) çalma listesinin sonuna eklenecektir.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\\n\\n        **Değişkenler**:\\n        ​ ​ ​ ​ Tamamı opsiyoneldir:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Sunucu\\n        ​ ​ ​ ​ Kullanıcı\\n\\n        **Yazar** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı ID\\n        ​ ​ ​ ​ Kullanıcı Mention\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu ID\\n        ​ ​ ​ ​ Sunucunun tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist append SunucuCalmaListesi Hello by Adele`\\n        ​ ​ ​ ​ `[p]playlist append GlobalCalmaListem Hello by Adele --scope Global`\\n        ​ ​ ​ ​ `[p]playlist append GlobalCalmaListem Hello by Adele --scope Global --Author Draper#6666`\\n        "
+msgid "Add a track URL, playlist link, or quick search to a playlist.\n\n"
+"        The track(s) will be appended to the end of the playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\n"
+"        "
+msgstr "Bir çalma listesine parça URLsi, çalma listesi linki veya hızlı arama ekle.\n\n"
+"        Parça(lar) çalma listesinin sonuna eklenirler.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist append çalma_listesi_adı_VEYA_idsi parça_adı_VEYA_urlsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist append BenimÇalmaListem Hello by Adele`\n"
+"        ​ ​ ​ ​ `[p]playlist append BenimKüreselÇalmaListem Hello by Adele --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist append BenimKüreselÇalmaListem Hello by Adele --scope Global --Author Draper#6666`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:123
 #: redbot/cogs/audio/core/commands/playlists.py:307
@@ -2164,8 +2445,10 @@ msgid "{num} tracks appended to {playlist} (`{id}`) [**{scope}**]."
 msgstr "{num} adet parça {playlist} (`{id}`) [**{scope}**] çalma listesine eklendi."
 
 #: redbot/cogs/audio/core/commands/playlists.py:204
-msgid "\\n{existing} {plural} already in the playlist and were skipped."
-msgstr "\\n{existing} {plural} çalma listesinde zaten mevcut ve eklenmeden geçildi."
+msgid "\n"
+"{existing} {plural} already in the playlist and were skipped."
+msgstr "\n"
+"{existing} {plural} çalma listesinde zaten mevcut ve eklenmeden geçildi."
 
 #: redbot/cogs/audio/core/commands/playlists.py:206
 msgid "tracks are"
@@ -2209,8 +2492,54 @@ msgstr "{name} (`{from_id}`) çalma listesi {from_scope}'den {to_scope} (`{to_id
 
 #: redbot/cogs/audio/core/commands/playlists.py:362
 #, docstring
-msgid "Create an empty playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\\n        "
-msgstr "Boş çalma listesi oluştur.\\n\\n **Kullanım**:\\n ​ `[p]playlist create çalma_listesi_adı [args]`\\n\\n  **Seçenekler**:\\n     Bunların tamamı isteğe bağlıdır:\\n ​ ​ --scope <kapsam>\\n    ​ ​ --author [user]\\n ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n **Boyut** bunlardan biridir:\\n  ​ ​ Küresel\\n ​ ​ Sunucu\\n  ​ Kullanıcı\\n\\n    **Yapımcı** bunlardan her hangi biri olabilir::\\n   ​ ​ Kullanıcı ID'si\\n    ​ Kullanıcı Pingi\\n        ​ ​ Kullanıcı adı #123\\n\\n   **Sunucu** bunlardan her hangi biri olabilir::\\n  ​ ​ Sunucu IDsi\\n     ​ Sunucu tam adı\\n\\n     Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist create BenimSunucumunÇalmaListesi`\\n  ​ `[p]playlist create BenimKürselÇalmaListem --scope Global`\\n​ ​ ​ ​ `[p]playlist create BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Create an empty playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Boş bir çalma listesi oluştur.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist create çalma_listesi_adı [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist create BenimÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist create BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist create BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:416
 #: redbot/cogs/audio/core/commands/playlists.py:1134
@@ -2238,8 +2567,54 @@ msgstr "Boş çalma listesi {name} (`{id}`) [**{scope}**] oluşturuldu."
 
 #: redbot/cogs/audio/core/commands/playlists.py:441
 #, docstring
-msgid "Delete a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\\n        "
-msgstr "Kaydedilmiş çalma listesini sil.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist delete çalma_listesi_ismi_yada_idsi [seçenekler]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <kapsam>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [kullanıcı]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [sunucu] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan her hangi biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı pingi\\n        ​ ​ ​ ​ Kullanıcı Adı #123\\n\\n        **Sunucu** bunlardan her hangi biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu Tam Adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist delete BenimSunucuÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist delete BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist delete BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Delete a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Kaydedilmiş bir çalma listesini sil.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist delete çalma_listesi_adı_VEYA_idsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist delete BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist delete BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist delete BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:514
 msgid "Playlist Deleted"
@@ -2251,8 +2626,54 @@ msgstr "{name} (`{id}`) [**{scope}**] çalma listesi silindi."
 
 #: redbot/cogs/audio/core/commands/playlists.py:531
 #, docstring
-msgid "Remove duplicate tracks from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\\n        "
-msgstr "Kaydedilmiş çalma listesinden aynı parçaları kaldır.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist dedupe çalma_listesi_ismi_yada_idsi [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan her hangi biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı pingi\\n        ​ ​ ​ ​ Kullanıcı Adı #123\\n\\n        **Sunucu** bunlardan her hangi biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu Tam Adı\\n\\n        Örnek Kullanım:\\n        ​ ​ ​ ​ `[p]playlist dedupe BenimÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist dedupe BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist dedupe BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Remove duplicate tracks from a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Bir çalma listesinden tekrarlı parçaları sil.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe çalma_listesi_adı_VEYA_idsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist dedupe BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:627
 msgid "Removed {track_diff} duplicated tracks from {name} (`{id}`) [**{scope}**] playlist."
@@ -2269,8 +2690,60 @@ msgstr "{name} (`{id}`) [**{scope}**] çalma listesinde hiç aynı parça yok."
 
 #: redbot/cogs/audio/core/commands/playlists.py:662
 #, docstring
-msgid "Download a copy of a playlist.\\n\\n        These files can be used with the `[p]playlist upload` command.\\n        Red v2-compatible playlists can be generated by passing True\\n        for the v2 variable.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`\\n        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\\n        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\\n        "
-msgstr "Bir çalma listesinin kopyasını indir.\\n\\n        Bu dosyalar `[p]playlist upload` komutuyla kullanılabilir.\\n        Red v2-uyumlu çalma listelerini   v2 değişkeniniTrue\\n        seçeneğine ayarlayarak oluşturabilirsiniz.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist download çalma_listesi_adı_yada_IDsi [v2=True_VEYA_False] [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır::\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir::\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek Kullanım:\\n        ​ ​ ​ ​ `[p]playlist download BenimÇalmaListem True`\\n        ​ ​ ​ ​ `[p]playlist download BenimKüreselÇalmaListem False --scope Global`\\n        ​ ​ ​ ​ `[p]playlist download BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Download a copy of a playlist.\n\n"
+"        These files can be used with the `[p]playlist upload` command.\n"
+"        Red v2-compatible playlists can be generated by passing True\n"
+"        for the v2 variable.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`\n"
+"        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Çalma listesinin bir kopyasını indir.\n\n"
+"        Bu dosyalar `[p]playlist upload` komutu ile kullanılabilir.\n"
+"        Red v2 uyumlu çalma listeleri v2 seçeneğine True değeri\n"
+"        göndererek oluşturulabilir.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist download çalma_listesi_adı_VEYA_idsi [v2=True_VEYA_False] [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist download BenimSunucuÇalmaListem True`\n"
+"        ​ ​ ​ ​ `[p]playlist download BenimKüreselÇalmaListem False --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist download BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:731
 msgid "That playlist has no tracks."
@@ -2286,16 +2759,64 @@ msgstr "Çalma listesi çok büyük, burda gördüğünüz sıkıştırılmış 
 
 #: redbot/cogs/audio/core/commands/playlists.py:799
 #, docstring
-msgid "Retrieve information from a saved playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`\\n        "
-msgstr "Kaydedilmiş bir çalma listesinden bilgi alır.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist info çalma_listesi_adı_yada_IDsi [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır::\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu Sadece Bot Sahibi Kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir::\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist info BenimÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist info BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist info BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Retrieve information from a saved playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Kaydedilmiş bir çalma listesinden bilgi al.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist info çalma_listesi_adı_VEYA_idsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist info BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist info BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist info BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:891
-msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\\n"
-msgstr "Çalma listesi {playlist_name} (`{id}`) [**{scope}**] için bilgiler:\\n"
+msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
+msgstr "{playlist_name} (`{id}`) [**{scope}**] için çalma listesi bilgileri:\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:895
-msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\\nURL: {url}"
-msgstr "Çalma listesi {playlist_name} (`{id}`) [**{scope}**] için bilgiler:\\nURL: {url}"
+msgid "Playlist info for {playlist_name} (`{id}`) [**{scope}**]:\n"
+"URL: {url}"
+msgstr "{playlist_name} (`{id}`) [**{scope}**] için çalma listesi bilgileri:\n"
+"URL: {url}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:908
 #: redbot/cogs/audio/core/commands/playlists.py:1056
@@ -2308,8 +2829,54 @@ msgstr "Sayfa {page}/{pages} | Sahip: {author_name} | {num} parça(lar)"
 
 #: redbot/cogs/audio/core/commands/playlists.py:922
 #, docstring
-msgid "List saved playlists.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist list [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist list`\\n        ​ ​ ​ ​ `[p]playlist list --scope Global`\\n        ​ ​ ​ ​ `[p]playlist list --scope User`\\n        "
-msgstr "Kaydedilmiş çalma listelerini gösterir.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist list [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n       Örnek Kullanım:\\n        ​ ​ ​ ​ `[p]playlist list`\\n        ​ ​ ​ ​ `[p]playlist list --scope Global`\\n        ​ ​ ​ ​ `[p]playlist list --scope User`\\n        "
+msgid "List saved playlists.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist list [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist list`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope User`\n"
+"        "
+msgstr "Kaydedilmiş çalma listelerini listele.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist list [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist list`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist list --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:998
 msgid "No saved playlists available in this server."
@@ -2336,13 +2903,59 @@ msgid "Author: {name}"
 msgstr "Oluşturan: {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
-msgid "Scope: {scope}\\n"
-msgstr "Kapsam: {scope}\\n"
+msgid "Scope: {scope}\n"
+msgstr "Kapsam: {scope}\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1078
 #, docstring
-msgid "Save the queue to a playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`\\n        "
-msgstr "Bir sırayı çalma listesine kaydeder.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist queue çalma_listesi_adı [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı #123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist queue BenimÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist queue BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist queue BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Save the queue to a playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Sırayı bir çalma listesine kaydet.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist queue çalma_listesi_adı [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist queue BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist queue BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist queue BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1147
 #: redbot/cogs/audio/core/commands/queue.py:63
@@ -2372,8 +2985,54 @@ msgstr "Çalma listesi limitine ulaşıldı: {} parça eklenemiyor."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1188
 #, docstring
-msgid "Remove a track from a playlist by url.\\n\\n         **Usage**:\\n        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`\\n        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\\n        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\\n        "
-msgstr "URL ile bir çalma listesinden bir parçayı çıkarır.\\n\\n         **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist remove çalma_listesi_adı_yada_IDsi url [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist remove BenimÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU`\\n        ​ ​ ​ ​ `[p]playlist remove BenimKüreselÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\\n        ​ ​ ​ ​ `[p]playlist remove BenimKişiselÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\\n        "
+msgid "Remove a track from a playlist by url.\n\n"
+"         **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\n"
+"        "
+msgstr "Bir çalma listesinden URL ile bir parça çıkar.\n\n"
+"         **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist remove çalma_listesi_adı_VEYA_idsi url [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist remove BenimSunucuÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU`\n"
+"        ​ ​ ​ ​ `[p]playlist remove BenimKüreselÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist remove BenimKişiselÇalmaListem https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1254
 msgid "URL not in playlist."
@@ -2393,8 +3052,54 @@ msgstr "Parça {playlist_name} (`{id}`) [**{scope}**] çalma listesinden kaldır
 
 #: redbot/cogs/audio/core/commands/playlists.py:1306
 #, docstring
-msgid "Save a playlist from a url.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist save name url [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\\n        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\\n        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\\n        "
-msgstr "Bir URLden çalma listesi kaydeder.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist save isim url [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist save BenimSunucudakiÇalmaListem https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\\n        ​ ​ ​ ​ `[p]playlist save BenimKüreselÇalmaListem https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\\n        ​ ​ ​ ​ `[p]playlist save BenimKişiselÇalmaListem https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\\n        "
+msgid "Save a playlist from a url.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist save name url [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\n"
+"        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\n"
+"        "
+msgstr "Bir URLden bir çalma listesi kaydet.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist save isim url [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek Kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist save BenimSunucuÇalmaListem https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`\n"
+"        ​ ​ ​ ​ `[p]playlist save BenimKüreselÇalmaListem https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist save BenimKişiselÇalmaListem https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1397
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved: {num} tracks added."
@@ -2410,8 +3115,54 @@ msgstr "Çalma listeniz oluşturulamadı."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1432
 #, docstring
-msgid "Load a playlist into the queue.\\n\\n        **Usage**:\\n        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`\\n        "
-msgstr "Sıraya bir çalma listesi ekler.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​` [p]playlist start çalma_listesi_ismi_yada_IDsi [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist start BenimÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist start BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist start BenimKüreselÇalmaListem --scope User`\\n        "
+msgid "Load a playlist into the queue.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Sıraya bir çalma listesi ekle.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​` [p]playlist start çalma_listesi_adı_VEYA_idsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist start BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist start BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist start BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1482
 msgid "You need the DJ role to start playing playlists."
@@ -2422,13 +3173,61 @@ msgid "Playlist Enqueued"
 msgstr "Playlist sıraya alındı."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1567
-msgid "{name} - (`{id}`) [**{scope}**]\\nAdded {num} tracks to the queue.{maxlength_msg}"
-msgstr "{name} - (`{id}`) [**{scope}**]\\n{num} parça sıraya eklendi.{maxlength_msg}"
+msgid "{name} - (`{id}`) [**{scope}**]\n"
+"Added {num} tracks to the queue.{maxlength_msg}"
+msgstr "{name} - (`{id}`) [**{scope}**]\n"
+"{num} adet parça sıraya eklendi.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1613
 #, docstring
-msgid "Updates all tracks in a playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`\\n        "
-msgstr "Çalma listesindeki tüm parçaları günceller.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist update çalma_listesi_adı_yada_IDsi [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist update BenimSunucudakiÇalmaListem`\\n        ​ ​ ​ ​ `[p]playlist update BenimKüreselÇalmaListem --scope Global`\\n        ​ ​ ​ ​ `[p]playlist update BenimKişiselÇalmaListem --scope User`\\n        "
+msgid "Updates all tracks in a playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Bir çalma listesindeki tüm parçaları günceller.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist update çalma_listesi_adı_VEYA_idsi [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist update BenimSunucuÇalmaListem`\n"
+"        ​ ​ ​ ​ `[p]playlist update BenimKüreselÇalmaListem --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist update BenimKişiselÇalmaListem --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1690
 msgid "Invalid Playlist"
@@ -2457,8 +3256,58 @@ msgstr "{name} (`{id}`) [**{scope}**] üzerinde her hangi bir değişiklik yapı
 
 #: redbot/cogs/audio/core/commands/playlists.py:1779
 #, docstring
-msgid "Uploads a playlist file as a playlist for the bot.\\n\\n        V2 and old V3 playlist will be slow.\\n        V3 Playlist made with `[p]playlist download` will load a lot faster.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist upload [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist upload`\\n        ​ ​ ​ ​ `[p]playlist upload --scope Global`\\n        ​ ​ ​ ​ `[p]playlist upload --scope User`\\n        "
-msgstr "Bir dosyayı bot için çalma listesi olarak yükler.\\n\\n        V2 ve eski V3 çalma listeleri yavaş olacaktır.\\n        `[p]playlist download` ile oluşturulmuş V3 çalma listeleri çok daha hızlı yüklenecektir.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist upload [args]`\\n\\n        **Seçenekler**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist upload`\\n        ​ ​ ​ ​ `[p]playlist upload --scope Global`\\n        ​ ​ ​ ​ `[p]playlist upload --scope User`\\n        "
+msgid "Uploads a playlist file as a playlist for the bot.\n\n"
+"        V2 and old V3 playlist will be slow.\n"
+"        V3 Playlist made with `[p]playlist download` will load a lot faster.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist upload [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist upload`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope User`\n"
+"        "
+msgstr "Bir çalma listesi dosyasını bot için bir çalma listesi olarak yükler.\n\n"
+"        V2 ve eski V3 çalma listeleri yavaştır.\n"
+"        `[p]playlist download` ile oluşturulmuş V3 çalma listeleri çok daha hızlı yüklenir.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist upload [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist upload`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist upload --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:1836
 msgid "Please upload the playlist file. Any other message will cancel this operation."
@@ -2486,8 +3335,54 @@ msgstr "Bu çalma listesi çok büyük."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1948
 #, docstring
-msgid "Rename an existing playlist.\\n\\n        **Usage**:\\n        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ The following are all optional:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\\n\\n        **Scope** is one of the following:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** can be one of the following:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n        ​ ​ ​ ​ User Name#123\\n\\n        **Guild** can be one of the following:\\n        ​ ​ ​ ​ Guild ID\\n        ​ ​ ​ ​ Exact guild name\\n\\n        Example use:\\n        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`\\n        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`\\n        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`\\n        "
-msgstr "Var olan bir çalma listesinin adını değiştirir.\\n\\n        **Kullanım**:\\n        ​ ​ ​ ​ `[p]playlist rename çalma_listesi_adı_yada_IDsi yeni_ad [args]`\\n\\n        **Args**:\\n        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\\n\\n        **Kapsam** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Sahip** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Kullanıcı IDsi\\n        ​ ​ ​ ​ Kullanıcı Pingi\\n        ​ ​ ​ ​ Kullanıcı Adı#123\\n\\n        **Sunucu** bunlardan biri olabilir:\\n        ​ ​ ​ ​ Sunucu IDsi\\n        ​ ​ ​ ​ Sunucu tam adı\\n\\n        Örnek kullanım:\\n        ​ ​ ​ ​ `[p]playlist rename BenimSunucudakiÇalmaListem ListeminYeniİsmi`\\n        ​ ​ ​ ​ `[p]playlist rename BenimKüreselÇalmaListem ListeminYeniİsmi --scope Global`\\n        ​ ​ ​ ​ `[p]playlist rename BenimKişiselÇalmaListem ListeminYeniİsmi --scope User`\\n        "
+msgid "Rename an existing playlist.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`\n\n"
+"        **Args**:\n"
+"        ​ ​ ​ ​ The following are all optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**\n\n"
+"        **Scope** is one of the following:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Example use:\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`\n"
+"        "
+msgstr "Varolan bir çalma listesini yeniden adlandır.\n\n"
+"        **Kullanım**:\n"
+"        ​ ​ ​ ​ `[p]playlist rename çalma_listesi_adı_VEYA_idsi yeni_ad [args]`\n\n"
+"        **Seçenekler**:\n"
+"        ​ ​ ​ ​ Bunların hepsi isteğe bağlıdır:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Bunu sadece bot sahibi kullanabilir**\n\n"
+"        **Kapsam** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Global (Küresel)\n"
+"        ​ ​ ​ ​ Guild (Sunucu)\n"
+"        ​ ​ ​ ​ User (Kullanıcı)\n\n"
+"        **Yapımcı** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Kullanıcı IDsi\n"
+"        ​ ​ ​ ​ Kullanıcı etiketi\n"
+"        ​ ​ ​ ​ Kullanıcı adı#1234\n\n"
+"        **Sunucu** bunlardan biri olabilir:\n"
+"        ​ ​ ​ ​ Sunucu IDsi\n"
+"        ​ ​ ​ ​ Sunucu tam adı\n\n"
+"        Örnek kullanım:\n"
+"        ​ ​ ​ ​ `[p]playlist rename BenimSunucuÇalmaListem SunucuÇalmaListeminYeniAdı`\n"
+"        ​ ​ ​ ​ `[p]playlist rename BenimKüreselÇalmaListem KüreselÇalmaListeminYeniAdı --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist rename BenimKişiselÇalmaListem KişiselÇalmaListeminYeniAdı --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:2027
 msgid "'{old}' playlist has been renamed to '{new}' (`{id}`) [**{scope}**]"
@@ -2497,10 +3392,6 @@ msgstr "'{old}' çalma listesinin adı '{new}' (`{id}`) [**{scope}**] olarak de�
 #, docstring
 msgid "List the songs in the queue."
 msgstr "Sıradaki şarkıları listeler."
-
-#: redbot/cogs/audio/core/commands/queue.py:77
-msgid "\\n Requested by: **{track.requester}**"
-msgstr "\\n Çalan: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/queue.py:175
 #, docstring
