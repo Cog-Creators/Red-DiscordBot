@@ -623,8 +623,10 @@ class KickBanMixin(MixinMeta):
             msg = _("You have been temporarily banned from {server_name} until {date}.").format(
                 server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
             )
+            if reason:
+                msg += _("\nReason: {reason})").format(reason=reason)
             if invite:
-                msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
+                msg += _("\nHere is an invite for when your ban expires: {invite_link}").format(
                     invite_link=invite
                 )
             await user.send(msg)
