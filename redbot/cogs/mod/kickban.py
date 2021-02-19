@@ -618,20 +618,22 @@ class KickBanMixin(MixinMeta):
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
             current_tempbans.append(user.id)
 
-        with contextlib.suppress(discord.HTTPException):
-            # We don't want blocked DMs preventing us from banning
-            msg = _("You have been temporarily banned from {server_name} until {date}.").format(
-                server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
-            )
-            if reason:
-                msg += _("\n\n**Reason:** {reason})").format(
-                    reason=reason if reason else _("None was provided.")
+        toggled = await self.config.guild(guild).dm_on_kickban()
+        if toggled:
+            with contextlib.suppress(discord.HTTPException):
+                # We don't want blocked DMs preventing us from banning
+                msg = _("You have been temporarily banned from {server_name} until {date}.").format(
+                    server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
                 )
-            if invite:
-                msg += _("\n\nHere is an invite for when your ban expires: {invite_link}").format(
-                    invite_link=invite
-                )
-            await user.send(msg)
+                if reason:
+                    msg += _("\n\n**Reason:** {reason})").format(
+                        reason=reason if reason else _("None was provided.")
+                    )
+                if invite:
+                    msg += _("\n\nHere is an invite for when your ban expires: {invite_link}").format(
+                        invite_link=invite
+                    )
+                await user.send(msg)
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
