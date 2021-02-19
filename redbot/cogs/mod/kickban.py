@@ -624,7 +624,7 @@ class KickBanMixin(MixinMeta):
                 server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
             )
             if reason:
-                msg += _("\nReason: {reason})").format(reason=reason if reason else 'None was provided.')
+                msg += _("\nReason: {reason})").format(reason=reason if reason else _('None was provided.'))
             if invite:
                 msg += _("\nHere is an invite for when your ban expires: {invite_link}").format(
                     invite_link=invite
