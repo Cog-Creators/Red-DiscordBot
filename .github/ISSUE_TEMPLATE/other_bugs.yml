@@ -4,8 +4,8 @@ title: ''
 labels: 'Type: Bug'
 assignees: ''
 issue_body: true
-inputs:
-- type: description
+body:
+- type: markdown
   attributes:
     value: |
       Thank you for taking the time to fill out an issue. This template is meant for any issues not related to any existing command.
@@ -14,20 +14,24 @@ inputs:
   attributes:
     label: "What Red version are you using?"
     placeholder: 3.4.5
+  validations:
     required: true
 - type: textarea
   attributes:
     label: "What were you trying to do?"
+  validations:
     required: true
 - type: textarea
   attributes:
     label: "What did you expect to happen?"
+  validations:
     required: true
 - type: textarea
   attributes:
     label: "What actually happened?"
     description:  |
       If the issue is visual in nature, consider posting a screenshot.
+  validations:
     required: true
 - type: textarea
   attributes:
@@ -39,4 +43,5 @@ inputs:
       2.
       3.
       ...
+  validations:
     required: true
