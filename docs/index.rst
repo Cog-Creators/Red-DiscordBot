@@ -42,6 +42,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/economy
     cog_guides/filter
     cog_guides/streams
+    cog_guides/trivia
     red_core_data_statement
 
 .. toctree::
