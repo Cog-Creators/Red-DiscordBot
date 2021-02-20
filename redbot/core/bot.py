@@ -9,7 +9,7 @@ import contextlib
 import weakref
 import functools
 from collections import namedtuple
-from datetime import datetime_fetch
+from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
