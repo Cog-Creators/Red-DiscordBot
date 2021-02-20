@@ -2892,7 +2892,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             msg = _("User on the blocklist:")
         for user in curr_list:
-            msg += "\n\t- {}".format(user)
+            msg += "\n\t- {}".format(user) 
 
         for page in pagify(msg):
             await ctx.send(box(page))
