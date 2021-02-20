@@ -155,7 +155,7 @@ Play Rock Paper Scissors.
 
 * ``<your_choice>``: The choice that you choose.
 
-.. note:: Choices **must** be between ``rock``, ``paper``, or ``scizzors``.
+.. note:: Choices **must** be between ``rock``, ``paper``, or ``scissors``.
 
 .. _general-commands-serverinfo:
 
