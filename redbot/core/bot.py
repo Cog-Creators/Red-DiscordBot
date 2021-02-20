@@ -9,7 +9,7 @@ import contextlib
 import weakref
 import functools
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime_fetch
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
@@ -790,7 +790,10 @@ class RedBase(
 
         if (user := self.get_user(user_id)) is not None:
             return user
-        return await self.fetch_user(user_id)
+        try:
+            return await self.fetch_user(user_id)
+        except discord.NotFound:
+            return None
 
     async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> discord.Member:
         """
