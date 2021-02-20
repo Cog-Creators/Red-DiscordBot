@@ -3071,7 +3071,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for obj in curr_list:
             get_user = self.bot.get_user(obj)
             if not get_user:
-                get_user = _("Unknown or Deleted User")
+                get_user = _("[Unknown or Deleted User]")
             msg += "\n\t- {} ({})".format(get_user, obj)
 
         for page in pagify(msg):
