@@ -761,7 +761,7 @@ class RedBase(
 
         return self._color
 
-    async def get_or_fetch_user(self, user_id: int) -> discord.User:
+    async def get_or_fetch_user(self, user_id: int) -> Optional[discord.User]:
         """
         Retrieves a `discord.User` based on their ID.
         You do not have to share any guilds
@@ -780,12 +780,12 @@ class RedBase(
         Raises
         -------
         Errors
-            Please refer to `discord.Client.fetch_user`.
+            Please refer to `discord.Client.fetch_user`. `discord.NotFound` will return None.
 
         Returns
         --------
-        discord.User
-            The user you requested.
+        Optional[discord.User]
+            The user you requested. None if the user wasn't found by the API.
         """
 
         if (user := self.get_user(user_id)) is not None:
