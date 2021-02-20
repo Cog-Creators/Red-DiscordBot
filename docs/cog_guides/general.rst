@@ -73,7 +73,7 @@ Choose between multiple options.
 
 **Arguments**
 
-* ``<choices>``: The arguments for Red to randomly choose from.
+* ``[choices...]``: The arguments for Red to randomly choose from.
 
 .. _general-command-flip:
 
@@ -93,7 +93,7 @@ Flip a coin... or a user.
 
 **Arguments**
 
-* ``<user>``: The user to flip. Defaults to None.
+* ``[user]``: The user to flip. Defaults to flipping a coin if no user is provided.
 
 .. _general-command-lmgtfy:
 
@@ -133,12 +133,12 @@ Roll a random number. The result will be between 1 and ``<number>``.
 
 **Arguments**
 
-* ``<number>``: The maximum number that can be rolled. Defaults to 100.
+* ``[number]``: The maximum number that can be rolled. Defaults to 100.
 
 .. _general-command-rps:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-rps (Rock Paper Scizzors)
+rps (Rock Paper Scissors)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
@@ -149,7 +149,7 @@ rps (Rock Paper Scizzors)
 
 **Description**
 
-Play Rock Paper Scizzors.
+Play Rock Paper Scissors.
 
 **Arguments**
 
@@ -175,7 +175,7 @@ Show server information.
 
 **Arguments**
 
-* ``<details>``: Show extra details about the server when set to True. Defaults to False.
+* ``[details]``: Show extra details about the server when set to True. Defaults to False.
 
 .. _general-commands-stopwatch:
 
