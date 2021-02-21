@@ -40,7 +40,7 @@ gif
 
 .. code-block:: none
 
-    [p]gif <keywords>
+    [p]gif [keywords...]
 
 **Description**
 
@@ -49,7 +49,7 @@ to be set via the :ref:`giphycreds <image-command-giphycreds>` command.
 
 **Arguments**
 
-* ``<keywords>``: The keywords used to search Giphy.
+* ``[keywords...]``: The keywords used to search Giphy.
 
 .. _image-command-gifr:
 
@@ -61,7 +61,7 @@ gifr
 
 .. code-block:: none
 
-    [p]gifr <keywords>
+    [p]gifr [keywords...]
 
 **Description**
 
@@ -70,7 +70,7 @@ to be set via the :ref:`giphycreds <image-command-giphycreds>` command.
 
 **Arguments**
 
-* ``<keywords>``: The keywords used to generate a random GIF.
+* ``[keywords...]``: The keywords used to generate a random GIF.
 
 .. _image-command-imgur:
 
@@ -99,7 +99,7 @@ imgur search
 
 .. code-block:: none
 
-    [p]imgur search [count=1] <term>
+    [p]imgur search [count=1] [terms...]
 
 **Description**
 
@@ -110,7 +110,7 @@ via the :ref:`imgurcreds <image-command-imgurcreds>` command.
 
 * ``[count]``: How many images should be returned (maximum 5). Defaults to 1.
 
-* ``<term>``: The terms used to search Imgur.
+* ``[terms...]``: The terms used to search Imgur.
 
 .. _image-command-imgur-subreddit:
 
