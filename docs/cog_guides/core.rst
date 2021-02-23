@@ -19,7 +19,9 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Commands related to core functions.
+The Core cog has many commands related to core functions.
+
+These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.
 
 
 .. _core-commands:
