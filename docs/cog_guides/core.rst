@@ -69,7 +69,7 @@ allowlist add
 
 Adds users to the allowlist.
 
-Example:
+Examples:
     - ``[p]allowlist add @26 @Will`` - Adds two users to the allowlist
     - ``[p]allowlist add 262626262626262626`` - Adds a user by ID
 
@@ -135,7 +135,7 @@ Removes users from the allowlist.
 
 The allowlist will be disabled if all users are removed.
 
-Example:
+Examples:
     - ``[p]allowlist remove @26 @Will`` - Removes two users from the allowlist
     - ``[p]allowlist remove 262626262626262626`` - Removes a user by ID
 
@@ -159,7 +159,9 @@ autoimmune
 
 **Description**
 
-Server settings for immunity from automated actions.
+Commands to manage server settings for immunity from automated actions.
+
+This includes duplicate message deletion and mention spam from the Mod cog, and filters from the Filter cog.
 
 .. _core-command-autoimmune-add:
 
@@ -177,6 +179,14 @@ autoimmune add
 
 Makes a user or role immune from automated moderation actions.
 
+Examples:
+    - ``[p]autoimmune add @TwentySix`` - Adds a user
+    - ``[p]autoimmune add @Mods`` - Adds a role
+
+**Arguments:**
+
+- ``<user_or_role>`` The user or role to add immunity to.
+
 .. _core-command-autoimmune-isimmune:
 
 """""""""""""""""""
@@ -193,6 +203,14 @@ autoimmune isimmune
 
 Checks if a user or role would be considered immune from automated actions.
 
+Examples:
+    - ``[p]autoimmune isimmune @TwentySix``
+    - ``[p]autoimmune isimmune @Mods``
+
+**Arguments:**
+
+- ``<user_or_role>`` The user or role to check the immunity of.
+
 .. _core-command-autoimmune-list:
 
 """""""""""""""
@@ -207,8 +225,10 @@ autoimmune list
 
 **Description**
 
-Gets the current members and roles configured for automatic
-moderation action immunity.
+Gets the current members and roles configured for automatic moderation action immunity.
+
+Example:
+    - ``[p]autoimmune list``
 
 .. _core-command-autoimmune-remove:
 
@@ -225,6 +245,14 @@ autoimmune remove
 **Description**
 
 Makes a user or role immune from automated moderation actions.
+
+Examples:
+    - ``[p]autoimmune remove @TwentySix`` - Removes a user
+    - ``[p]autoimmune remove @Mods`` - Removes a role
+
+**Arguments:**
+
+- ``<user_or_role>`` The user or role to remove immunity from.
 
 .. _core-command-blocklist:
 
@@ -264,7 +292,7 @@ blocklist add
 
 Adds users to the blocklist.
 
-Example:
+Examples:
     - ``[p]blocklist add @26 @Will`` - Adds two users to the blocklist
     - ``[p]blocklist add 262626262626262626`` - Adds a user by ID
 
@@ -326,7 +354,7 @@ blocklist remove
 
 Removes users from the blocklist.
 
-Example:
+Examples:
     - ``[p]blocklist remove @26 @Will`` - Removes two users from the blocklist
     - ``[p]blocklist remove 262626262626262626`` - Removes a user by ID
 
@@ -350,7 +378,7 @@ command
 
 **Description**
 
-Commands to manage the bot's commands and cogs.
+Commands to enable and disable commands and cogs.
 
 .. _core-command-command-defaultdisablecog:
 
@@ -370,6 +398,20 @@ command defaultdisablecog
 
 Set the default state for a cog as disabled.
 
+This will disable the cog for all servers by default.
+To override it, use ``[p]command enablecog`` on the servers you want to allow usage.
+
+.. Note:: This will only work on loaded cogs, and must reference the title-case cog name.
+
+
+Examples:
+    - ``[p]command defaultdisablecog Economy``
+    - ``[p]command defaultdisablecog ModLog``
+
+**Arguments:**
+
+- ``<cogname>`` The name of the cog to make disabled by default. Must be title-case.
+
 .. _core-command-command-defaultenablecog:
 
 """"""""""""""""""""""""
@@ -388,6 +430,20 @@ command defaultenablecog
 
 Set the default state for a cog as enabled.
 
+This will re-enable the cog for all servers by default.
+To override it, use ``[p]command disablecog`` on the servers you want to disallow usage.
+
+.. Note:: This will only work on loaded cogs, and must reference the title-case cog name.
+
+
+Examples:
+    - ``[p]command defaultenablecog Economy``
+    - ``[p]command defaultenablecog ModLog``
+
+**Arguments:**
+
+- ``<cogname>`` The name of the cog to make enabled by default. Must be title-case.
+
 .. _core-command-command-disable:
 
 """""""""""""""
@@ -404,8 +460,16 @@ command disable
 
 Disable a command.
 
-If you're the bot owner, this will disable commands
-globally by default.
+If you're the bot owner, this will disable commands globally by default.
+Otherwise, this will disable commands on the current server.
+
+Examples:
+    - ``[p]command disable userinfo`` - Disables the ``userinfo`` command in the Mod cog.
+    - ``[p]command disable urban`` - Disables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to disable.
 
 .. _core-command-command-disable-global:
 
@@ -425,6 +489,14 @@ command disable global
 
 Disable a command globally.
 
+Examples:
+    - ``[p]command disable global userinfo`` - Disables the ``userinfo`` command in the Mod cog.
+    - ``[p]command disable global urban`` - Disables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to disable globally.
+
 .. _core-command-command-disable-server:
 
 """"""""""""""""""""""
@@ -443,6 +515,14 @@ command disable server
 
 Disable a command in this server only.
 
+Examples:
+    - ``[p]command disable server userinfo`` - Disables the ``userinfo`` command in the Mod cog.
+    - ``[p]command disable server urban`` - Disables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to disable for the current server.
+
 .. _core-command-command-disablecog:
 
 """"""""""""""""""
@@ -457,7 +537,18 @@ command disablecog
 
 **Description**
 
-Disable a cog in this guild.
+Disable a cog in this server.
+
+.. Note:: This will only work on loaded cogs, and must reference the title-case cog name.
+
+
+Examples:
+    - ``[p]command disablecog Economy``
+    - ``[p]command disablecog ModLog``
+
+**Arguments:**
+
+- ``<cogname>`` The name of the cog to disable on this server. Must be title-case.
 
 .. _core-command-command-disabledmsg:
 
@@ -479,8 +570,16 @@ Set the bot's response to disabled commands.
 
 Leave blank to send nothing.
 
-To include the command name in the message, include the
-``{command}`` placeholder.
+To include the command name in the message, include the ``{command}`` placeholder.
+
+Examples:
+    - ``[p]command disabledmsg This command is disabled``
+    - ``[p]command disabledmsg {command} is disabled``
+    - ``[p]command disabledmsg`` - Sends nothing when a disabled command is attempted.
+
+**Arguments:**
+
+- ``[message]`` The message to send when a disabled command is attempted.
 
 .. _core-command-command-enable:
 
@@ -498,8 +597,16 @@ command enable
 
 Enable a command.
 
-If you're a bot owner, this will try to enable a globally
-disabled command by default.
+If you're the bot owner, this will try to enable a globally disabled command by default.
+Otherwise, this will try to enable a command disabled on the current server.
+
+Examples:
+    - ``[p]command enable userinfo`` - Enables the ``userinfo`` command in the Mod cog.
+    - ``[p]command enable server urban`` - Enables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to enable.
 
 .. _core-command-command-enable-global:
 
@@ -519,6 +626,14 @@ command enable global
 
 Enable a command globally.
 
+Examples:
+    - ``[p]command enable global userinfo`` - Enables the ``userinfo`` command in the Mod cog.
+    - ``[p]command enable global urban`` - Enables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to enable globally.
+
 .. _core-command-command-enable-server:
 
 """""""""""""""""""""
@@ -537,6 +652,14 @@ command enable server
 
 Enable a command in this server.
 
+Examples:
+    - ``[p]command enable server userinfo`` - Enables the ``userinfo`` command in the Mod cog.
+    - ``[p]command enable server urban`` - Enables the ``urban`` command in the General cog.
+
+**Arguments:**
+
+- ``<command>`` The command to enable for the current server.
+
 .. _core-command-command-enablecog:
 
 """""""""""""""""
@@ -551,7 +674,18 @@ command enablecog
 
 **Description**
 
-Enable a cog in this guild.
+Enable a cog in this server.
+
+.. Note:: This will only work on loaded cogs, and must reference the title-case cog name.
+
+
+Examples:
+    - ``[p]command enablecog Economy``
+    - ``[p]command enablecog ModLog``
+
+**Arguments:**
+
+- ``<cogname>`` The name of the cog to enable on this server. Must be title-case.
 
 .. _core-command-command-listdisabled:
 
@@ -570,6 +704,10 @@ command listdisabled
 List disabled commands.
 
 If you're the bot owner, this will show global disabled commands by default.
+Otherwise, this will show disabled commands on the current server.
+
+Example:
+    - ``[p]command listdisabled``
 
 .. _core-command-command-listdisabled-global:
 
@@ -587,6 +725,9 @@ command listdisabled global
 
 List disabled commands globally.
 
+Example:
+    - ``[p]command listdisabled global``
+
 .. _core-command-command-listdisabled-guild:
 
 """"""""""""""""""""""""""
@@ -603,6 +744,9 @@ command listdisabled guild
 
 List disabled commands in this server.
 
+Example:
+    - ``[p]command listdisabled guild``
+
 .. _core-command-command-listdisabledcogs:
 
 """"""""""""""""""""""""
@@ -617,7 +761,10 @@ command listdisabledcogs
 
 **Description**
 
-List the cogs which are disabled in this guild.
+List the cogs which are disabled in this server.
+
+Example:
+    - ``[p]command listdisabledcogs``
 
 .. _core-command-contact:
 
@@ -982,6 +1129,25 @@ This resets Red's help settings to their defaults.
 
 This may not have an impact when using custom formatters from 3rd party cogs
 
+.. _core-command-helpset-showaliases:
+
+"""""""""""""""""""
+helpset showaliases
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]helpset showaliases [show_aliases]
+
+**Description**
+
+This allows the help command to show existing commands aliases if there is any.
+
+This defaults to True.
+Using this without a setting will toggle.
+
 .. _core-command-helpset-showhidden:
 
 """"""""""""""""""
@@ -1188,7 +1354,12 @@ ignore
 
 **Description**
 
-Add servers or channels to the ignore list.
+Commands to add servers or channels to the ignore list.
+
+The ignore list will prevent the bot from responding to commands in the configured locations.
+
+.. Note:: Owners and Admins override the ignore list.
+
 
 .. _core-command-ignore-channel:
 
@@ -1208,6 +1379,19 @@ Ignore commands in the channel or category.
 
 Defaults to the current channel.
 
+.. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+
+
+Examples:
+    - ``[p]ignore channel #general`` - Ignores commands in the #general channel.
+    - ``[p]ignore channel`` - Ignores commands in the current channel.
+    - ``[p]ignore channel "General Channels"`` - Use quotes for categories with spaces.
+    - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
+
+**Arguments:**
+
+- ``<channel>`` The channel to ignore. Can be a category channel.
+
 .. _core-command-ignore-list:
 
 """""""""""
@@ -1223,6 +1407,9 @@ ignore list
 **Description**
 
 List the currently ignored servers and channels.
+
+Example:
+    - ``[p]ignore list``
 
 .. _core-command-ignore-server:
 
@@ -1243,6 +1430,12 @@ ignore server
 **Description**
 
 Ignore commands in this server.
+
+.. Note:: Owners, Admins, and those with Manage Server permissions override ignored servers.
+
+
+Example:
+    - ``[p]ignore server`` - Ignores the current server
 
 .. _core-command-info:
 
@@ -1465,7 +1658,7 @@ localallowlist add
 
 Adds a user or role to the server allowlist.
 
-Example:
+Examples:
     - ``[p]localallowlist add @26 @Will`` - Adds two users to the local allowlist
     - ``[p]localallowlist add 262626262626262626`` - Adds a user by ID
 
@@ -1508,7 +1701,7 @@ localallowlist list
 
 **Description**
 
-Lists users and roles on the  server allowlist.
+Lists users and roles on the server allowlist.
 
 Example:
     - ``[p]localallowlist list``
@@ -1531,7 +1724,7 @@ Removes user or role from the allowlist.
 
 The local allowlist will be disabled if all users are removed.
 
-Example:
+Examples:
     - ``[p]localallowlist remove @26 @Will`` - Removes two users from the local allowlist
     - ``[p]localallowlist remove 262626262626262626`` - Removes a user by ID
 
@@ -1577,7 +1770,7 @@ localblocklist add
 
 Adds a user or role to the local blocklist.
 
-Example:
+Examples:
     - ``[p]blocklist add @26 @Will`` - Adds two users to the local blocklist
     - ``[p]blocklist add 262626262626262626`` - Adds a user by ID
 
@@ -1639,7 +1832,7 @@ localblocklist remove
 
 Removes user or role from blocklist.
 
-Example:
+Examples:
     - ``[p]localblocklist remove @26 @Will`` - Removes two users from the local blocklist
     - ``[p]localblocklist remove 262626262626262626`` - Removes a user by ID
 
@@ -2530,6 +2723,8 @@ set ownernotifications
 
 Commands for configuring owner notifications.
 
+Owner notifications include usage of ``[p]contact`` and available Red updates.
+
 .. _core-command-set-ownernotifications-adddestination:
 
 """""""""""""""""""""""""""""""""""""
@@ -2546,6 +2741,14 @@ set ownernotifications adddestination
 
 Adds a destination text channel to receive owner notifications.
 
+Examples:
+    - ``[p]ownernotifications adddestination #owner-notifications``
+    - ``[p]ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
+
+**Arguments:**
+
+- ``<channel>`` The channel to send owner notifications to.
+
 .. _core-command-set-ownernotifications-listdestinations:
 
 """""""""""""""""""""""""""""""""""""""
@@ -2561,6 +2764,9 @@ set ownernotifications listdestinations
 **Description**
 
 Lists the configured extra destinations for owner notifications.
+
+Example:
+    - ``[p]ownernotifications listdestinations``
 
 .. _core-command-set-ownernotifications-optin:
 
@@ -2580,6 +2786,13 @@ Opt-in on receiving owner notifications.
 
 This is the default state.
 
+.. Note:: This will only resume sending owner notifications to your DMs.
+
+    Additional owners and destinations will not be affected.
+
+Example:
+    - ``[p]ownernotifications optin``
+
 .. _core-command-set-ownernotifications-optout:
 
 """""""""""""""""""""""""""""
@@ -2595,6 +2808,13 @@ set ownernotifications optout
 **Description**
 
 Opt-out of receiving owner notifications.
+
+.. Note:: This will only stop sending owner notifications to your DMs.
+
+    Additional owners and destinations will still receive notifications.
+
+Example:
+    - ``[p]ownernotifications optout``
 
 .. _core-command-set-ownernotifications-removedestination:
 
@@ -2613,6 +2833,14 @@ set ownernotifications removedestination
 **Description**
 
 Removes a destination text channel from receiving owner notifications.
+
+Examples:
+    - ``[p]ownernotifications removedestination #owner-notifications``
+    - ``[p]ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
+
+**Arguments:**
+
+- ``<channel>`` The channel to stop sending owner notifications to.
 
 .. _core-command-set-playing:
 
@@ -2888,11 +3116,11 @@ set streaming
 
     [p]set streaming [(<streamer> <stream_title>)]
 
-.. tip:: Alias: ``set stream``
+.. tip:: Aliases: ``set stream``, ``set twitch``
 
 **Description**
 
-Sets Red's streaming status.
+Sets Red's streaming status to a twitch stream.
 
 This will appear as ``Streaming <stream_title>`` or ``LIVE ON TWITCH`` depending on the context.
 It will also include a ``Watch`` button with a twitch.tv url for the provided streamer.
@@ -3065,7 +3293,7 @@ unignore
 
 **Description**
 
-Remove servers or channels from the ignore list.
+Commands to remove servers or channels from the ignore list.
 
 .. _core-command-unignore-channel:
 
@@ -3084,6 +3312,16 @@ unignore channel
 Remove a channel or category from the ignore list.
 
 Defaults to the current channel.
+
+Examples:
+    - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
+    - ``[p]unignore channel`` - Unignores commands in the current channel.
+    - ``[p]ignore channel "General Channels"`` - Use quotes for categories with spaces.
+    - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to ignore categories.
+
+**Arguments:**
+
+- ``<channel>`` The channel to ignore. Can be a category channel.
 
 .. _core-command-unignore-server:
 
@@ -3104,6 +3342,9 @@ unignore server
 **Description**
 
 Remove this server from the ignore list.
+
+Example:
+    - ``[p]unignore server`` - Ignores the current server
 
 .. _core-command-unload:
 
