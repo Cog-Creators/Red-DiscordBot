@@ -4133,8 +4133,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):
         """
-        Gets the current members and roles configured for automatic
-        moderation action immunity.
+        Gets the current members and roles configured for automatic moderation action immunity.
+
+        Example:
+            - `[p]autoimmune list`
         """
         ai_ids = await ctx.bot._config.guild(ctx.guild).autoimmune_ids()
 
@@ -4163,6 +4165,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Makes a user or role immune from automated moderation actions.
+
+        Examples:
+            - `[p]autoimmune add @TwentySix` - Adds a user
+            - `[p]autoimmune add @Mods` - Adds a role
+
+        **Arguments:**
+
+        - `<user_or_role>` The user or role to add immunity to.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id in ai_ids:
@@ -4176,6 +4186,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Makes a user or role immune from automated moderation actions.
+
+        Examples:
+            - `[p]autoimmune remove @TwentySix` - Removes a user
+            - `[p]autoimmune remove @Mods` - Removes a role
+
+        **Arguments:**
+
+        - `<user_or_role>` The user or role to remove immunity from.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id not in ai_ids:
@@ -4189,6 +4207,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Checks if a user or role would be considered immune from automated actions.
+
+        Examples:
+            - `[p]autoimmune isimmune @TwentySix`
+            - `[p]autoimmune isimmune @Mods`
+
+        **Arguments:**
+
+        - `<user_or_role>` The user or role to check the immunity of.
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
@@ -4201,6 +4227,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def ownernotifications(self, ctx: commands.Context):
         """
         Commands for configuring owner notifications.
+
+        Owner notifications include usage of `[p]contact` and available Red updates.
         """
         pass
 
@@ -4210,6 +4238,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Opt-in on receiving owner notifications.
 
         This is the default state.
+
+        Note: This will only resume sending owner notifications to your DMs.
+            Additional owners and destinations will not be affected.
+
+        Example:
+            - `[p]ownernotifications optin`
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id in opt_outs:
@@ -4221,6 +4255,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def optout(self, ctx: commands.Context):
         """
         Opt-out of receiving owner notifications.
+
+        Note: This will only stop sending owner notifications to your DMs.
+            Additional owners and destinations will still receive notifications.
+
+        Example:
+            - `[p]ownernotifications optout`
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
             if ctx.author.id not in opt_outs:
@@ -4234,6 +4274,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Adds a destination text channel to receive owner notifications.
+
+        Examples:
+            - `[p]ownernotifications adddestination #owner-notifications`
+            - `[p]ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+
+        - `<channel>` The channel to send owner notifications to.
         """
 
         try:
@@ -4253,6 +4301,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     ):
         """
         Removes a destination text channel from receiving owner notifications.
+
+        Examples:
+            - `[p]ownernotifications removedestination #owner-notifications`
+            - `[p]ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+
+        - `<channel>` The channel to stop sending owner notifications to.
         """
 
         try:
@@ -4270,6 +4326,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def listdestinations(self, ctx: commands.Context):
         """
         Lists the configured extra destinations for owner notifications.
+
+        Example:
+            - `[p]ownernotifications listdestinations`
         """
 
         channel_ids = await ctx.bot._config.extra_owner_destinations()
@@ -4317,12 +4376,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
-        """Add servers or channels to the ignore list."""
+        """
+        Commands to add servers or channels to the ignore list.
+
+        The ignore list will prevent the bot from responding to commands in the configured locations.
+
+        Note: Owners and Admins override the ignore list.
+        """
 
     @ignore.command(name="list")
     async def ignore_list(self, ctx: commands.Context):
         """
         List the currently ignored servers and channels.
+
+        Example:
+            - `[p]ignore list`
         """
         for page in pagify(await self.count_ignored(ctx)):
             await ctx.maybe_send_embed(page)
@@ -4333,9 +4401,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ctx: commands.Context,
         channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
     ):
-        """Ignore commands in the channel or category.
+        """
+        Ignore commands in the channel or category.
 
         Defaults to the current channel.
+
+        Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+
+        Examples:
+            - `[p]ignore channel #general` - Ignores commands in the #general channel.
+            - `[p]ignore channel` - Ignores commands in the current channel.
+            - `[p]ignore channel "General Channels"` - Use quotes for categories with spaces.
+            - `[p]ignore channel 356236713347252226` - Also accepts IDs.
+
+        **Arguments:**
+
+        - `<channel>` The channel to ignore. Can be a category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4348,7 +4429,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @ignore.command(name="server", aliases=["guild"])
     @checks.admin_or_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: commands.Context):
-        """Ignore commands in this server."""
+        """
+        Ignore commands in this server.
+
+        Note: Owners, Admins, and those with Manage Server permissions override ignored servers.
+
+        Example:
+            - `[p]ignore server` - Ignores the current server
+        """
         guild = ctx.guild
         if not await self.bot._ignored_cache.get_ignored_guild(guild):
             await self.bot._ignored_cache.set_ignored_guild(guild, True)
@@ -4360,7 +4448,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):
-        """Remove servers or channels from the ignore list."""
+        """Commands to remove servers or channels from the ignore list."""
 
     @unignore.command(name="channel")
     async def unignore_channel(
@@ -4368,9 +4456,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ctx: commands.Context,
         channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
     ):
-        """Remove a channel or category from the ignore list.
+        """
+        Remove a channel or category from the ignore list.
 
         Defaults to the current channel.
+
+        Examples:
+            - `[p]unignore channel #general` - Unignores commands in the #general channel.
+            - `[p]unignore channel` - Unignores commands in the current channel.
+            - `[p]ignore channel "General Channels"` - Use quotes for categories with spaces.
+            - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to ignore categories.
+
+        **Arguments:**
+
+        - `<channel>` The channel to ignore. Can be a category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4384,7 +4483,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @unignore.command(name="server", aliases=["guild"])
     @checks.admin_or_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: commands.Context):
-        """Remove this server from the ignore list."""
+        """
+        Remove this server from the ignore list.
+
+        Example:
+            - `[p]unignore server` - Ignores the current server
+        """
         guild = ctx.message.guild
         if await self.bot._ignored_cache.get_ignored_guild(guild):
             await self.bot._ignored_cache.set_ignored_guild(guild, False)
