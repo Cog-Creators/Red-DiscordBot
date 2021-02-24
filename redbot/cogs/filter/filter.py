@@ -442,7 +442,7 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if isinstance(message.channel, discord.abc.PrivateChannel):
+        if isinstance(message.guild, discord.abc.PrivateChannel):
             return
 
         if await self.bot.cog_disabled_in_guild(self, message.guild):
