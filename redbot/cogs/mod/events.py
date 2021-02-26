@@ -161,6 +161,9 @@ class Events(MixinMeta):
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
         if before.name != after.name:
+            track_all_names = await self.config.track_all_names()
+            if not track_all_names:
+                return
             async with self.config.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
@@ -176,6 +179,10 @@ class Events(MixinMeta):
         if before.nick != after.nick and after.nick is not None:
             guild = after.guild
             if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
+                return
+            track_all_names = await self.config.track_all_names()
+            track_nicknames = await self.config.guild(guild).track_nicknames()
+            if (not track_all_names) or (not track_nicknames):
                 return
             async with self.config.member(before).past_nicks() as nick_list:
                 while None in nick_list:  # clean out null entries from a bug
