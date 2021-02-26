@@ -1,5 +1,25 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.7 (2021-02-26)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
+
+End-user changelog
+------------------
+
+- Added proper permission checks to ``[p]muteset senddm`` and ``[p]muteset showmoderator`` (:issue:`4849`)
+- Updated the ``[p]lmgtfy`` command to use the new domain (:issue:`4840`)
+- Updated the ``[p]info`` command to more clearly indicate that the instance is owned by a team (:issue:`4851`)
+- Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`, :issue:`4853`)
+
+Documentation changes
+---------------------
+
+- Added `cog guide for General cog <cog_guides/trivia>` (:issue:`4797`)
+- Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
+
+
 Redbot 3.4.6 (2021-02-16)
 =========================
 | Thanks to all these amazing people that contributed to this release:
