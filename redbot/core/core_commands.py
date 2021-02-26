@@ -434,7 +434,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ).format(red_repo, author_repo, org_repo, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name=_("Instance owned by"), value=str(owner))
+            embed.add_field(
+                name=_("Instance owned by team") if app_info.team else _("Instance owned by"),
+                value=str(owner),
+            )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
             embed.add_field(name=_("Red version"), value=red_version)
@@ -469,17 +472,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             about = box(about)
 
-            extras = _(
-                "Instance owned by: [{owner}]\n"
-                "Python:            [{python_version}] (5)\n"
-                "discord.py:        [{dpy_version}] (6)\n"
-                "Red version:       [{red_version}] (7)\n"
-            ).format(
-                owner=owner,
-                python_version=python_version,
-                dpy_version=dpy_version,
-                red_version=red_version,
-            )
+            if app_info.team:
+                extras = _(
+                    "Instance owned by team: [{owner}]\n"
+                    "Python:                 [{python_version}] (5)\n"
+                    "discord.py:             [{dpy_version}] (6)\n"
+                    "Red version:            [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
+            else:
+                extras = _(
+                    "Instance owned by: [{owner}]\n"
+                    "Python:            [{python_version}] (5)\n"
+                    "discord.py:        [{dpy_version}] (6)\n"
+                    "Red version:       [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
 
             if outdated in (True, None):
                 if outdated is True:
