@@ -411,7 +411,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         app_info = await self.bot.application_info()
         if app_info.team:
-            owner = f"Team {app_info.team.name}"
+            owner = app_info.team.name
         else:
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
@@ -434,7 +434,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ).format(red_repo, author_repo, org_repo, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name=_("Instance owned by"), value=str(owner))
+            embed.add_field(
+                name=_("Instance owned by team") if app_info.team else _("Instance owned by"),
+                value=str(owner)
+            )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
             embed.add_field(name=_("Red version"), value=red_version)
