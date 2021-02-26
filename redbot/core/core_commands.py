@@ -411,7 +411,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         app_info = await self.bot.application_info()
         if app_info.team:
-            owner = app_info.team.name
+            owner = f"Team {app_info.team.name}"
         else:
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
