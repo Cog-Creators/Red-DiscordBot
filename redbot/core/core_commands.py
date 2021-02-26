@@ -436,7 +436,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(
                 name=_("Instance owned by team") if app_info.team else _("Instance owned by"),
-                value=str(owner)
+                value=str(owner),
             )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
