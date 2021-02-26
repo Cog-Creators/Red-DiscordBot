@@ -472,17 +472,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             about = box(about)
 
-            extras = _(
-                "Instance owned by: [{owner}]\n"
-                "Python:            [{python_version}] (5)\n"
-                "discord.py:        [{dpy_version}] (6)\n"
-                "Red version:       [{red_version}] (7)\n"
-            ).format(
-                owner=owner,
-                python_version=python_version,
-                dpy_version=dpy_version,
-                red_version=red_version,
-            )
+            if app_info.team:
+                extras = _(
+                    "Instance owned by team: [{owner}]\n"
+                    "Python:                 [{python_version}] (5)\n"
+                    "discord.py:             [{dpy_version}] (6)\n"
+                    "Red version:            [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
+            else:
+                extras = _(
+                    "Instance owned by: [{owner}]\n"
+                    "Python:            [{python_version}] (5)\n"
+                    "discord.py:        [{dpy_version}] (6)\n"
+                    "Red version:       [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
 
             if outdated in (True, None):
                 if outdated is True:
