@@ -714,6 +714,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_channels=True)
     async def senddm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether mute notifications should be sent to users in DMs."""
         await self.config.guild(ctx.guild).dm.set(true_or_false)
@@ -724,6 +725,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_channels=True)
     async def showmoderator(self, ctx, true_or_false: bool):
         """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
         await self.config.guild(ctx.guild).show_mod.set(true_or_false)
