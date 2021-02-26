@@ -3,7 +3,7 @@
 Redbot 3.4.7 (2021-02-26)
 =========================
 | Thanks to all these amazing people that contributed to this release:
-| 
+| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
 
 End-user changelog
 ------------------
