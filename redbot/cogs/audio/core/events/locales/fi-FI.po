@@ -22,7 +22,8 @@ msgstr "Yrität Audion Lavalink-palvelinta arkkitehtuurilla jota ei tueta. Vain 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "Minulta puuttuu oikeuksia tällä palvelimella, korjaathan tämän mahdollisimman pian.\n\n"
+"Puuttuvat oikeudet:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -122,7 +123,8 @@ msgstr "Kappale jumissa"
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
-msgstr ""
+msgstr "Kappaleen toisto loppui odottamattoman virheen takia.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

@@ -25,5 +25,12 @@ msgid "Hello, this message brings you an important update regarding the core Aud
 "Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.\n\n"
 "On a related note, it is highly recommended that you enable your local cache if you haven't yet.\n"
 "To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."
-msgstr ""
+msgstr "Hei, denne meldingen gir deg en viktig oppdatering angående kjernen Audio Cog:\n\n"
+" Fra og med Audio v2.3.0 + kan du dra nytte av ** Global Audio API **, en ny tjeneste som tilbys av Cog-Creators organisasjonen som lar boten din redusere mengden forespørsler til YouTube / Spotify sterkt. Dette reduserer sannsynligheten for at YouTube begrenser boten din for å komme med forespørsler for ofte. \n"
+"Se `[p]help audioset globalapi` for mer informasjon.\n"
+"Tilgang til denne tjenesten er deaktivert som standard og ** krever at du eksplisitt melder deg på ** for å begynne å bruke den.\n\n"
+"Et tilgangstoken er ** nødvendig ** for å bruke dette API. For å få dette tokenet kan du bli med på <https://discord.gg/red> og kjøre '?audioapi register' i #testing kanalen.\n"
+"Merk: ved å bruke denne tjenesten godtar du at botens IP-adresse vil bli avslørt til Cog-Creators-organisasjon og brukes kun med det formål å tilby Global API-tjenesten.\n\n"
+"På et beslektet notat anbefales det på det sterkeste at du aktiverer din lokale cache hvis du ikke har det ennå.\n"
+"For å gjøre det, kjør `[p]audioset cache 5 '. Denne hurtigbufferen, som bare lagrer metadata, vil gjøre gjentatte lydforespørsler raskere og ytterligere redusere sannsynligheten for at YouTube begrenser bot. Siden det bare er metadata, forventes den nødvendige diskplassen for denne hurtigbufferen å være ubetydelig."
 

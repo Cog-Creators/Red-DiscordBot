@@ -24,7 +24,8 @@ msgstr "Gagal mendapatkan trek, melewatkan sisa."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\n"
+"Gunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,15 +63,19 @@ msgstr "{time} hingga dimulainya pemutaran playlist: dimulai dari #{position} da
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Tidak ada yang ditemukan. \n"
+"Kunci API YouTube mungkin tidak valid atau kecepatan Anda mungkin dibatasi di layanan penelusuran YouTube. \n"
+"Periksa lagi kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Token API Data YouTube Anda tidak valid. \n"
+"Periksa kembali kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Kode kesalahan API YouTube: 403\n"
+"Kunci API YouTube Anda mungkin telah mencapai batas kueri akun untuk hari ini. Periksa <https://developers.google.com/youtube/v3/getting-started#quota> untuk informasi lebih lanjut."
 

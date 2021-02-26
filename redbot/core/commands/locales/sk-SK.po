@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" nie je číslo."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"

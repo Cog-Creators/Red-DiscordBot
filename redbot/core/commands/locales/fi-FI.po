@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/core/commands/commands.py:532
 msgid "\"{argument}\" is not a number."
-msgstr ""
+msgstr "\"{argument}\" ei ole numero."
 
 #: redbot/core/commands/converter.py:112
 msgid "`{unit}` is not a valid unit of time for this command"
@@ -37,7 +37,7 @@ msgstr "Aika on liian pieni tälle komennolle. (Minimi: {minimum})"
 
 #: redbot/core/commands/converter.py:157
 msgid "Server \"{name}\" not found."
-msgstr ""
+msgstr "Palvelinta \"{name}\" ei löytynyt."
 
 #: redbot/core/commands/converter.py:192
 msgid "Unexpected key {key}"
@@ -62,7 +62,8 @@ msgstr "Ei käytössä"
 #: redbot/core/commands/help.py:118
 msgid "\n"
 "Custom Tagline: {tag}"
-msgstr ""
+msgstr "\n"
+"Mukautettu iskulause: {tag}"
 
 #: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\n"
@@ -73,7 +74,14 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Help shows unusable commands when asked directly: {verify_exists}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Maksimikirjainmäärä sivulla: {page_char_limit}\n"
+"Maksimi palvelinkohtainen sivumäärä (käytetään vain jos valikot eivät ole käytössä): {max_pages_in_guild}\n"
+"Apusivut ovat valikoita: {use_menus}\n"
+"Apusivut näyttävät piilotetut komennot: {show_hidden}\n"
+"Apusivu näyttää vain käytettävissä olevat komennot: {verify_checks}\n"
+"Apusivu näyttää komennot joita ei voi käyttää, kun niitä suoraan pyydetään: {verify_exists}\n"
+"Poistoviive: {delete_delay}\n"
+"Reagoi valmis-merkillä kun apusivut lähetetään yksityisviestillä: {use_tick}{tagline_info}"
 
 #: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
@@ -119,7 +127,8 @@ msgstr "{ctx.me.display_name} -apusivu"
 #: redbot/core/commands/help.py:500
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
-msgstr ""
+msgstr "*Sivu {page_num}/{page_count}*\n"
+"{content_description}"
 
 #: redbot/core/commands/help.py:551
 msgid "**__Commands:__**"

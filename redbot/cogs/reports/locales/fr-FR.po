@@ -77,7 +77,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report <text>` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "Envoyer un rapport.\n\n"
+"        Utiliser sans arguments pour le rapport interactif, ou faire\n"
+"        `[p]report <text>` pour l'utiliser non-interactivement.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
@@ -98,7 +101,8 @@ msgstr "Veuillez finir de faire votre rapport antérieur avant d'essayer d'en fa
 #: redbot/cogs/reports/reports.py:286
 msgid "Please respond to this message with your Report.\n"
 "Your report should be a single message"
-msgstr ""
+msgstr "Veuillez répondre à ce message avec votre rapport.\n"
+"Votre rapport doit être un message unique"
 
 #: redbot/cogs/reports/reports.py:292
 msgid "This requires DMs enabled."
@@ -139,7 +143,11 @@ msgid "Open a message tunnel.\n\n"
 "        to the ticket opener's direct messages.\n\n"
 "        Tunnels do not persist across bot restarts.\n"
 "        "
-msgstr ""
+msgstr "Ouvrir un tunnel de messagerie.\n\n"
+"        Ce tunnel transmettra ce que vous dites dans ce salon\n"
+"        aux messages privés de l'ouvreur de tickets.\n\n"
+"        Les tunnels ne persistent pas à travers lors des redémarrages du bot.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:409
 msgid "That ticket doesn't seem to exist"

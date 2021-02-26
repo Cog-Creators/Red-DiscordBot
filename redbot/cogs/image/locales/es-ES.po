@@ -25,7 +25,9 @@ msgstr "Comandos relacionados con la imagen."
 msgid "Retrieve pictures from Imgur.\n\n"
 "        Make sure to set the Client ID using `[p]imgurcreds`.\n"
 "        "
-msgstr ""
+msgstr "Recupera imágenes de Imgur.\n\n"
+"        Asegúrate de establecer el ID del cliente usando `[p]imgurcreds`.\n"
+"        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring
@@ -33,7 +35,10 @@ msgid "Search Imgur for the specified term.\n\n"
 "        Use `count` to choose how many images should be returned.\n"
 "        Command can return up to 5 images.\n"
 "        "
-msgstr ""
+msgstr "Buscar en Imgur para el término especificado.\n\n"
+"        Use `count` para elegir cuantas imágenes deben ser enviadas.\n"
+"        El comando puede devolver hasta 5 imágenes.\n"
+"        "
 
 #: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
 msgid "Image count has to be between 1 and 5."
@@ -49,7 +54,7 @@ msgstr "La búsqueda no tiene resultados."
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\n"
-msgstr ""
+msgstr "Resultados de la búsqueda...\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."
@@ -63,7 +68,12 @@ msgid "Get images from a subreddit.\n\n"
 "        - `<sort_type>`: new, top\n"
 "        - `<window>`: day, week, month, year, all\n"
 "        "
-msgstr ""
+msgstr "Obtener imágenes de un subreddit.\n\n"
+"        Puedes personalizar la búsqueda con las siguientes opciones:\n"
+"        - `<count>`: número de imágenes a devolver (hasta 5)\n"
+"        - `<sort_type>`: nuevo, top\n"
+"        - `<window>`: día, semana, mes, año, todos\n"
+"        "
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."
@@ -91,7 +101,17 @@ msgid "To get an Imgur Client ID:\n"
 "8. Check the captcha box and click next.\n"
 "9. Your Client ID will be on the next page.\n"
 "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-msgstr ""
+msgstr "Para obtener un ID de cliente de Imgur:\n"
+"1. Inicie sesión en una cuenta de Imgur\n"
+". Visita esta página https://api.imgur.com/oauth2/addclient.\n"
+"3. Introduce un nombre para tu aplicación.\n"
+"4. Selecciona *Uso anónimo sin autorización de usuario* para el tipo de autentificación.\n"
+"5. Establece la URL de devolución de llamada de autorización a `https://localhost`.\n"
+"6. Deje en blanco el sitio web de la aplicación.\n"
+"7. Introduzca una dirección de correo electrónico válida y una descripción.\n"
+"8. Marque la casilla captcha y haga clic en siguiente.\n"
+"9. Su ID de cliente estará en la siguiente página.\n"
+"10. Ejecutar el comando `{prefix}set api imgur client_id <your_client_id_here>`. \n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring
@@ -131,7 +151,16 @@ msgid "To get a GIPHY API Key:\n"
 "7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\n"
 "8. Copy the API Key.\n"
 "9. In Discord, run the command {command}.\n"
-msgstr ""
+msgstr "Para obtener una clave API de GIPHY:\n"
+"1. Inicie sesión (o cree) en una cuenta de GIPHY.\n"
+"2. Visite esta página: https://developers.giphy.com/dashboard.\n"
+"3. Pulse *Crear una aplicación*.\n"
+"4. Haga clic en *Seleccionar API*, luego *Próximo paso*.\n"
+"5. Añada un nombre de aplicación, por ejemplo *Rojo*.\n"
+"6. Añadir una descripción de la aplicación, por ejemplo *Utilizado para el cogazo de imagen del rojo*.\n"
+"7. Haga clic en *Crear aplicación*. Necesitarás aceptar los términos de la API de GIPHY.\n"
+"8. Copia la clave API.\n"
+"9. En Discord, ejecuta el comando {command}.\n"
 
 #: redbot/cogs/image/image.py:243
 msgid "<your_api_key_here>"

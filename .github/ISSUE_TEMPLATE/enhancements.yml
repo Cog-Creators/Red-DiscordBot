@@ -4,8 +4,8 @@ title: ''
 labels: 'Type: Enhancement'
 assignees: ''
 issue_body: true
-inputs:
-- type: description
+body:
+- type: markdown
   attributes:
     value: |
       Thank you for taking the time to fill out an issue. This template is meant for feature requests and improvements to already existing functionality.
@@ -14,10 +14,12 @@ inputs:
   attributes:
     label: "What component of Red (cog, command, API) would you like to see improvements on?"
     placeholder: Audio
+  validations:
     required: true
 - type: textarea
   attributes:
     label: "Describe the enhancement you're suggesting."
-    required: true
     description: |
       Feel free to describe in as much detail as you wish.
+  validations:
+    required: true

@@ -169,12 +169,14 @@ msgstr "{skip_to_track} 트랙들 스킵됨"
 #: redbot/cogs/audio/core/utilities/player.py:239
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "봇 관리자가 Spotify URL 또는 코드를 사용하기 전에 Spotify 클라이언트 ID 및 암호를 설정해 주어야 합니다. \n"
+" `{prefix}audioset spotifyapi`을 참조하세요."
 
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "봇 관리자가 Youtube URL 또는 코드를 사용하기 전에 Youtube API Key를 설정해 주어야 합니다. \n"
+" `{prefix}audioset youtubeapi`을 참조하세요."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -233,7 +235,8 @@ msgstr "지금은 라바링크를 통해 음악을 가져올 수 없습니다. �
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "You deleted the translation \"Spotify API 키 또는 client secret이 올바르게 설정되지 않았습니다. \n"
+"`{prefix}audioset spotifyapi`를 사용하여 명령어들을 확인하세요.\""
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -425,11 +428,11 @@ msgstr "사용자"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
-msgstr ""
+msgstr "__너무나 많은 음악이 대기열에 있습니다, 앞에서부터 500개만 표시됩니다__.\n\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**현재 라이브 스트리밍중.**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
@@ -442,7 +445,7 @@ msgstr "재생 중: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "신청자: **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
@@ -450,7 +453,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "{page_num}/{total_pages} 페이지 | {num_tracks}곡 , {num_remaining} 남음\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"

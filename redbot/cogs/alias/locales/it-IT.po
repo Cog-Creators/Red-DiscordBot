@@ -159,5 +159,5 @@ msgstr "Gli argomenti devono essere specificati con un numero."
 
 #: redbot/cogs/alias/alias_entry.py:205
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr ""
+msgstr "Gli argomenti devono essere consecutivi. Argomenti mancanti: "
 

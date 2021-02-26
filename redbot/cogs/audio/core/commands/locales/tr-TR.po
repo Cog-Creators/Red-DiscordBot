@@ -1716,7 +1716,12 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Ekolayzer yönetimi.\n\n"
+"        Bant pozisyonları 1-15 dir ve değerler -0.25 ila 1.0 aralığındadır.\n"
+"        Bant adları ise 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k, ve 16k Hz dir.\n"
+"        Bir bantı -0.25 e almak etkisizleştirirken +0.25 ikiye katlar.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring

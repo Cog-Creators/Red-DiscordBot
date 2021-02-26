@@ -4,22 +4,24 @@ title: ''
 labels: 'Type: Feature'
 assignees: ''
 issue_body: true
-inputs:
-- type: description
+body:
+- type: markdown
   attributes:
     value: |
       Thank you for taking the time to fill out an issue, this template is meant for any feature suggestions.
       If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
-- type: multi_select
+- type: dropdown
   attributes:
     label: "Type of feature request"
     description: "What type of feature would you like to request?"
-    required: true
-    choices:
+    multiple: true
+    options:
       - API functionality
       - Cog
       - Command
       - Other
+  validations:
+    required: true
 - type: textarea
   attributes:
     label: "Description of the feature you're suggesting"
@@ -41,5 +43,6 @@ inputs:
         - Include what cog it should be in and a name for the command
         - Describe the intended functionality for the command
         - Note any restrictions on who can use the command or where it can be used
+  validations:
     required: true
 

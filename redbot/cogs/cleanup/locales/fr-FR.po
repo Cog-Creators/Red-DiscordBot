@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,12 @@ msgid "This cog contains commands used for \"cleaning up\" (deleting) messages.\
 "    Messages older than two weeks cannot be mass deleted.\n"
 "    This is a limitation of the API.\n"
 "    "
-msgstr ""
+msgstr "Ce cog contient des commandes utilisées pour \"nettoyer\" (supprimer) des messages.\n\n"
+"    Il a été conçu comme un outil de modérateur et offre de nombreux cas d'usage.\n"
+"    Toutes les commandes de suppression s'appliquent seulement dans le salon dans lequel la commande est exécutée.\n\n"
+"    Les messages de plus de deux semaines ne peuvent pas être supprimés en masse.\n"
+"    Ceci est une limitation de l'API.\n"
+"    "
 
 #: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
@@ -73,7 +78,14 @@ msgid "Delete all messages after a specified message.\n\n"
 "        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Supprime tous les messages après un message spécifié.\n\n"
+"        Pour obtenir l'ID d'un message, activer le mode développeur dans les paramètres\n"
+"        de Discord, dans l'onglet \"Apparence\". Puis faites clic droit sur un message\n"
+"        et copier son ID.\n\n"
+"        **Arguments:**\n\n"
+"        - `<message_id>` L'ID du message à nettoyer après. Ce message ne sera pas supprimé.\n"
+"        - `<delete_pinned>` Si il faut supprimer les messages épinglés ou non. Par défaut sur Faux.\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."
@@ -142,14 +154,18 @@ msgid "Clean up messages owned by the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:612
+#: redbot/cogs/cleanup/cleanup.py:614
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
 "        **Arguments:**\n\n"
 "        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\n"
 "        "
-msgstr ""
+msgstr "Supprime les messages dupliquées dans le salon depuis les X derniers messages et garde une seule copie.\n\n"
+"        Par défaut à 50.\n\n"
+"**Arguments:**\n\n"
+"        - `<number>` Le nombre de message à vérifier comme doublon. Doit être un nombre positif.\n"
+"        "
 
 #: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."

@@ -17,15 +17,15 @@ msgstr ""
 
 #: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:341
 msgid "There is no ongoing trivia session in this channel."
-msgstr ""
+msgstr "هناك بالفعل جلسة ثلاثية مستمرة في هذه القناة."
 
 #: redbot/cogs/trivia/converters.py:15
 msgid "`{arg}` is not a number."
-msgstr ""
+msgstr "`{arg}` ليس رقماً."
 
 #: redbot/cogs/trivia/converters.py:17
 msgid "`{arg}` is not a finite number."
-msgstr ""
+msgstr "`{arg}` ليس رقماً محدوداً."
 
 #: redbot/cogs/trivia/session.py:20
 msgid "I know this one! {answer}!"
@@ -78,15 +78,15 @@ msgstr ""
 
 #: redbot/cogs/trivia/session.py:203
 msgid "Guys...? Well, I guess I'll stop then."
-msgstr ""
+msgstr "رفاق...؟ حسنًا، أعتقد أنني سوف أتوقف عندئذ."
 
 #: redbot/cogs/trivia/session.py:211
 msgid " **+1** for me!"
-msgstr ""
+msgstr " **+1** بالنسبة لي!"
 
 #: redbot/cogs/trivia/session.py:216
 msgid "You got it {user}! **+1** to you!"
-msgstr ""
+msgstr "لقد حصلت على {user}! **+1** لك!"
 
 #: redbot/cogs/trivia/session.py:319
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
@@ -99,12 +99,12 @@ msgstr ""
 #: redbot/cogs/trivia/trivia.py:41
 #, docstring
 msgid "Play trivia with friends!"
-msgstr ""
+msgstr "لعب الرحلة مع الأصدقاء!"
 
 #: redbot/cogs/trivia/trivia.py:79
 #, docstring
 msgid "Manage Trivia settings."
-msgstr ""
+msgstr "إدارة إعدادات تريفيا."
 
 #: redbot/cogs/trivia/trivia.py:83
 #, docstring
@@ -120,70 +120,79 @@ msgid "Current settings\n"
 "Reveal answer on timeout: {reveal_answer}\n"
 "Payout multiplier: {payout_multiplier}\n"
 "Allow lists to override settings: {allow_override}"
-msgstr ""
+msgstr "الإعدادات الحالية\n"
+"بوت يكسب نقاط: {bot_plays}\n"
+"الحد الزمني للإجابة: {delay} ثوان\n"
+"عدم مهلة الاستجابة: {timeout} ثوان\n"
+"نقاط للفوز: {max_score}\n"
+"كشف الإجابة في المهلة: {reveal_answer}\n"
+"مضاعف الدفع: {payout_multiplier}\n"
+"السماح للقوائم بتجاوز الإعدادات: {allow_override}"
 
 #: redbot/cogs/trivia/trivia.py:103
 #, docstring
 msgid "Set the total points required to win."
-msgstr ""
+msgstr "تعيين مجموع النقاط المطلوبة للفوز. (Automatic Translation)."
 
 #: redbot/cogs/trivia/trivia.py:105
 msgid "Score must be greater than 0."
-msgstr ""
+msgstr "النتيجة يجب أن تكون أكبر من 0."
 
 #: redbot/cogs/trivia/trivia.py:109
 msgid "Done. Points required to win set to {num}."
-msgstr ""
+msgstr "تم. النقاط المطلوبة للفوز بتعيين إلى {num}."
 
 #: redbot/cogs/trivia/trivia.py:113
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
-msgstr ""
+msgstr "تعيين الحد الأقصى من الثواني المسموح بها للإجابة على سؤال."
 
 #: redbot/cogs/trivia/trivia.py:115
 msgid "Must be at least 4 seconds."
-msgstr ""
+msgstr "يجب أن يكون 4 ثوان على الأقل."
 
 #: redbot/cogs/trivia/trivia.py:119
 msgid "Done. Maximum seconds to answer set to {num}."
-msgstr ""
+msgstr "تم. الحد الأقصى للثوان للإجابة المحددة إلى {num}."
 
 #: redbot/cogs/trivia/trivia.py:123
 #, docstring
 msgid "Set how long until trivia stops due to no response."
-msgstr ""
+msgstr "تعيين طول الوقت حتى يتوقف التروفيا بسبب عدم وجود استجابة."
 
 #: redbot/cogs/trivia/trivia.py:126
 msgid "Must be larger than the answer time limit."
-msgstr ""
+msgstr "يجب أن يكون أكبر من الحد الزمني للإجابة."
 
 #: redbot/cogs/trivia/trivia.py:130
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
-msgstr ""
+msgstr "تم. سوف تنتهي جلسات تريفيا بعد {num} ثانية من عدم الردود."
 
 #: redbot/cogs/trivia/trivia.py:137
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
-msgstr ""
+msgstr "السماح / عدم السماح لقوائم ثلاثية لتجاوز الإعدادات."
 
 #: redbot/cogs/trivia/trivia.py:142
 msgid "Done. Trivia lists can now override the trivia settings for this server."
-msgstr ""
+msgstr "تم. يمكن لقوائم تريفيا الآن تجاوز إعدادات ثلاثية لهذا الخادم."
 
 #: redbot/cogs/trivia/trivia.py:146
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
-msgstr ""
+msgstr "تم. لم يعد من الممكن تجاوز قوائم تريفيا إعدادات ثلاثية لهذا الخادم."
 
 #: redbot/cogs/trivia/trivia.py:154
 #, docstring
 msgid "Set whether or not the bot gains points.\n\n"
 "        If enabled, the bot will gain a point if no one guesses correctly.\n"
 "        "
-msgstr ""
+msgstr "تعيين ما إذا كان البوت يحصل على نقاط أم لا.\n\n"
+"        في حالة التمكين، البوت سيحصل على نقطة إذا لم يخمن أحد بشكل صحيح.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:161
 msgid "Done. I'll now gain a point if users don't answer in time."
-msgstr ""
+msgstr "تم. سأحصل الآن على نقطة إذا لم يجيب المستخدمون في الوقت المناسب."
 
 #: redbot/cogs/trivia/trivia.py:163
 msgid "Alright, I won't embarrass you at trivia anymore."
@@ -195,15 +204,18 @@ msgid "Set whether or not the answer is revealed.\n\n"
 "        If enabled, the bot will reveal the answer if no one guesses correctly\n"
 "        in time.\n"
 "        "
-msgstr ""
+msgstr "تعيين ما إذا كان قد تم الكشف عن الإجابة أم لا.\n\n"
+"        إذا تم تفعيله، سوف يكشف البوت الإجابة إذا لم يخمن أحد بشكل صحيح\n"
+"        في الوقت المناسب.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:175
 msgid "Done. I'll reveal the answer if no one knows it."
-msgstr ""
+msgstr "تم. سأفصح عن الإجابة إذا لم يكن أحد يعرف ذلك."
 
 #: redbot/cogs/trivia/trivia.py:177
 msgid "Alright, I won't reveal the answer to the questions anymore."
-msgstr ""
+msgstr "حسناً، لن أكشف الإجابة على الأسئلة بعد الآن."
 
 #: redbot/cogs/trivia/trivia.py:183
 #, docstring
@@ -214,19 +226,25 @@ msgid "Set the payout multiplier.\n\n"
 "        The number of credits is determined by multiplying their total score by\n"
 "        this multiplier.\n"
 "        "
-msgstr ""
+msgstr "تعيين مضاعف الدفع.\n\n"
+"        يمكن أن يكون هذا أي رقم عشري موجب. إذا فاز المستخدم بثلاثية عندما يلعب\n"
+"        على الأقل 3 أعضاء، فإنهم سيحصلون على رصيد. تعيين إلى 0 إلى\n"
+"        تعطيل.\n\n"
+"        يتم تحديد عدد الأرصدة بضرب مجموع نقاطها في\n"
+"        هذا المضاعف.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:194
 msgid "Multiplier must be at least 0."
-msgstr ""
+msgstr "يجب أن يكون المضاعف صفر على الأقل."
 
 #: redbot/cogs/trivia/trivia.py:198
 msgid "Done. Payout multiplier set to {num}."
-msgstr ""
+msgstr "تم. تم تعيين مضاعف الدفع إلى {num}."
 
 #: redbot/cogs/trivia/trivia.py:200
 msgid "Done. I will no longer reward the winner with a payout."
-msgstr ""
+msgstr "تم. لن أكافئ الفائز بعد الآن بالدفع."
 
 #: redbot/cogs/trivia/trivia.py:205
 #, docstring
@@ -290,41 +308,44 @@ msgid "Start trivia session on the specified category.\n\n"
 "        You may list multiple categories, in which case the trivia will involve\n"
 "        questions from all of them.\n"
 "        "
-msgstr ""
+msgstr "بدء جلسة ثلاثية في الفئة المحددة.\n\n"
+"        يمكنك قائمة فئات متعددة، وفي هذه الحالة ستشمل هذه الرحلة\n"
+"        أسئلةً من جميعها.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:293
 msgid "There is already an ongoing trivia session in this channel."
-msgstr ""
+msgstr "هناك بالفعل جلسة ثلاثية مستمرة في هذه القناة."
 
 #: redbot/cogs/trivia/trivia.py:304
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
-msgstr ""
+msgstr "الفئة '{name}`. انظر '{prefix}trivia list` لقائمة فئات ثلاثية غير صالحة."
 
 #: redbot/cogs/trivia/trivia.py:311
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
-msgstr ""
+msgstr "حدث خطأ أثناء تحليل قائمة ثلاثية لفئة `{name}`. قد يتم تنسيقها بشكل غير صحيح."
 
 #: redbot/cogs/trivia/trivia.py:323
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
-msgstr ""
+msgstr "تم تحليل قائمة ثلاثية بنجاح ، ولكن يبدو أنها فارغة!"
 
 #: redbot/cogs/trivia/trivia.py:338
 #, docstring
 msgid "Stop an ongoing trivia session."
-msgstr ""
+msgstr "أوقفوا دورة ثلاثية مستمرة."
 
 #: redbot/cogs/trivia/trivia.py:345
 msgid "Trivia stopped."
-msgstr ""
+msgstr "توقفت تريفيا."
 
 #: redbot/cogs/trivia/trivia.py:349
 #, docstring
 msgid "List available trivia categories."
-msgstr ""
+msgstr "قائمة الفئات الثلاثية المتاحة."
 
 #: redbot/cogs/trivia/trivia.py:354 redbot/cogs/trivia/trivia.py:360
 msgid "Available trivia lists"
-msgstr ""
+msgstr "قوائم ثلاثية متاحة"
 
 #: redbot/cogs/trivia/trivia.py:370
 #, docstring
@@ -332,7 +353,10 @@ msgid "Leaderboard for trivia.\n\n"
 "        Defaults to the top 10 of this server, sorted by total wins. Use\n"
 "        subcommands for a more customised leaderboard.\n"
 "        "
-msgstr ""
+msgstr "مجلس إدارة ثلاثية.\n\n"
+"        الافتراضي لأعلى 10 من هذا الخادم، مرتبة حسب مجموع الفوز. استخدم\n"
+"        أوامر فرعية للوحة تصادق أكثر تخصيصا.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:385
 #, docstring
@@ -344,11 +368,18 @@ msgid "Leaderboard for this server.\n\n"
 "         - `games` : total games played\n\n"
 "        `<top>` is the number of ranks to show on the leaderboard.\n"
 "        "
-msgstr ""
+msgstr "لائحة المتصدرين لهذا الخادم.\n\n"
+"        `<sort_by>` يمكن أن يكون أي من الحقول التالية:\n"
+"         - `الفوز`: مجموع الفوز\n"
+"         - `متوسط`: متوسط النتيجة\n"
+"         - `المجموع`: مجموع الإجابات الصحيحة\n"
+"         - `الألعاب`: مجموع الألعاب اللعبة\n\n"
+"<top>هو عدد الرتب التي تريد عرضها على لوحة المتصدرين.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:398 redbot/cogs/trivia/trivia.py:427
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
-msgstr ""
+msgstr "حقل غير معروف '{field_name}`، راجع `{prefix}مساعدة ثلاثية المتصدرين خادم` للحقول الصالحة للفرز."
 
 #: redbot/cogs/trivia/trivia.py:414
 #, docstring
@@ -360,11 +391,18 @@ msgid "Global trivia leaderboard.\n\n"
 "         - `games` : total games played\n\n"
 "        `<top>` is the number of ranks to show on the leaderboard.\n"
 "        "
-msgstr ""
+msgstr "لائحة المتصدرين لهذا الخادم.\n\n"
+"        `<sort_by>` يمكن أن يكون أي من الحقول التالية:\n"
+"         - `الفوز`: مجموع الفوز\n"
+"         - `متوسط`: متوسط النتيجة\n"
+"         - `المجموع`: مجموع الإجابات الصحيحة\n"
+"         - `الألعاب`: مجموع الألعاب اللعبة\n\n"
+"<top>هو عدد الرتب التي تريد عرضها على لوحة المتصدرين.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:482
 msgid "There are no scores on record!"
-msgstr ""
+msgstr "لا توجد أي نقاط في التسجيل!"
 
 #: redbot/cogs/trivia/trivia.py:512
 msgid "Rank"
@@ -372,11 +410,11 @@ msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:513
 msgid "Member"
-msgstr ""
+msgstr "عضو"
 
 #: redbot/cogs/trivia/trivia.py:514
 msgid "Wins"
-msgstr ""
+msgstr "الفائزون"
 
 #: redbot/cogs/trivia/trivia.py:515
 msgid "Games Played"

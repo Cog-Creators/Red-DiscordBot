@@ -22,7 +22,8 @@ msgstr "Ha intentado ejecutar el servidor Lavalink de audio en una arquitectura 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "No tengo permisos en este servidor, por favor solucione esto tan pronto como sea posible.\n\n"
+"Permisos esperados:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
@@ -122,7 +123,8 @@ msgstr "Rastreo atascado"
 #: redbot/cogs/audio/core/events/lavalink.py:227
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
-msgstr ""
+msgstr "La reproducción de la canción se ha detenido debido a un error sin excepción.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:233
 msgid "Track Error"

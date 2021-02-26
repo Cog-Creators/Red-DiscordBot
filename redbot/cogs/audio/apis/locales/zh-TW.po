@@ -24,7 +24,8 @@ msgstr "無法取得歌曲，跳過剩餘的歌曲。"
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Spotify API key 或 client secret 未正確設定。\n"
+"請使用`{prefix} audioset spotifyapi`取得指示。"
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,15 +63,19 @@ msgstr "{time} 後開始播放: 從佇列的第 #{position} 首開始"
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "找不到任何內容。\n"
+"您的YouTube API key可能是無效的，或是您在 YouTube 的搜尋服務上受到速率限制。\n"
+"請檢查 YouTube API key，然後依照`{prefix}audioset youtubeapi`中的指示操作。"
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "您的YouTube API token無效。\n"
+"請再次檢查YouTube API key，然後依照`{prefix} audioset youtubeapi`上的說明進行操作。"
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "YouTube API錯誤代碼：403\n"
+"您今天的YouTube API key可能已達到帳戶的每日配額。 請查看<https://developers.google.com/youtube/v3/getting-started#quota>來了解更多信息。"
 

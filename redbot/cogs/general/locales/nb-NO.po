@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Velg mellom flere alternativer.\n\n"
+"        For å angi valg som inkluderer «whiteace» bør du bruke\n"
+"        doble tilbud.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -118,7 +121,10 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Rull et tilfeldig tall.\n\n"
+"        Resultatet vil være mellom 1 og `<number>`.\n\n"
+"        `<number>standard 100.\n"
+"        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -133,12 +139,15 @@ msgstr "{author.mention} Maks tillatt nummer er {maxamount}."
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Vend en mynt... eller en bruker.\n\n"
+"        Standard til en mynt.\n"
+"        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Godt forsøk. Tror du dette er morsomt?\n"
+" Hva med *this* i stedet:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -178,7 +187,9 @@ msgstr "{choice} Du vinner {author.mention}!"
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "Still 8 ball et spørsmål.\n\n"
+"        Spørsmålet må slutte med et spørsmålstegn.\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -207,7 +218,9 @@ msgstr "Lag en lmgtfy lenke."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Fordi alle liker klemmer!\n\n"
+"        Opp til 10 intensitetsnivåer.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
@@ -216,7 +229,11 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vis serverinformasjon.\n\n"
+"        `details`: Viser mer informasjon når det er satt til `True`.\n"
+"        Standard til False.\n"
+"        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
@@ -257,7 +274,8 @@ msgstr "  • Bruk {command} for mer informasjon på serveren."
 #: redbot/cogs/general/general.py:303
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\n"
+"Bart ID: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
@@ -269,7 +287,7 @@ msgstr " • boter: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Brukere på nettet: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "
@@ -470,7 +488,8 @@ msgstr "Kanaler:"
 #: redbot/cogs/general/general.py:425
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
-msgstr ""
+msgstr "💬 Tekst: {text}\n"
+": speaker_high_volum: Stemme: {voice}"
 
 #: redbot/cogs/general/general.py:431
 msgid "Utility:"
@@ -481,7 +500,10 @@ msgid "Owner: {owner}\n"
 "Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr ""
+msgstr "Eier: {owner}\n"
+"Stemmeområde: {region}\n"
+"Verif. level: {verif}\n"
+"Server ID: {id}{shard_info}"
 
 #: redbot/cogs/general/general.py:444
 msgid "Misc:"
@@ -492,7 +514,10 @@ msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
 "Roles: {role_count}"
-msgstr ""
+msgstr "AFK-kanal: {afk_chan}\n"
+"AFK tidsavbrudd: {afk_timeout}\n"
+"Tilpasset emojis: {emoji_count}\n"
+"Roller: {role_count}"
 
 #: redbot/cogs/general/general.py:450
 msgid "Not set"
@@ -507,7 +532,10 @@ msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "Nivå {boostlevel} med {nitroboosters} boosts\n"
+"Filstørrelsegrens: {filelimit}\n"
+"Emoji-grense: {emojis_limit}\n"
+"VCs maks bitrate: {bitrate}"
 
 #: redbot/cogs/general/general.py:472
 msgid "Nitro Boost:"
@@ -518,7 +546,9 @@ msgstr "Nitro Boost:"
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
 "        "
-msgstr ""
+msgstr "Søk i byordlisten.\n\n"
+"        Dette bruker den uoffisielle urbane ordlisten API.\n"
+"        "
 
 #: redbot/cogs/general/general.py:499 redbot/cogs/general/general.py:568
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
@@ -535,7 +565,8 @@ msgstr "{word} av {author}"
 #: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Eksempel:** {example}"
 
 #: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
@@ -546,5 +577,8 @@ msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
 "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\n"
+" {word} av {author}\n\n"
+"{description}\n\n"
+"{thumbs_down} Ned / {thumbs_up} Opp, Drevet av Urban Dictionary."
 

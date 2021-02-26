@@ -18,14 +18,16 @@ msgstr ""
 #: redbot/cogs/image/image.py:15
 #, docstring
 msgid "Image related commands."
-msgstr ""
+msgstr "الأوامر ذات الصلة بالصورة."
 
 #: redbot/cogs/image/image.py:44
 #, docstring
 msgid "Retrieve pictures from Imgur.\n\n"
 "        Make sure to set the Client ID using `[p]imgurcreds`.\n"
 "        "
-msgstr ""
+msgstr "استرداد الصور من Imgur.\n\n"
+"        تأكد من تعيين معرف العميل باستخدام `[p]imgurcreds`.\n"
+"        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring
@@ -41,19 +43,19 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:65 redbot/cogs/image/image.py:127
 msgid "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
-msgstr ""
+msgstr "لم يتم تعيين معرف العميل! الرجاء تعيين معرف واحد مع `{prefix}imgurcreds'."
 
 #: redbot/cogs/image/image.py:77
 msgid "Your search returned no results."
-msgstr ""
+msgstr "لم يسفر بحثك عن أي نتائج."
 
 #: redbot/cogs/image/image.py:80
 msgid "Search results...\n"
-msgstr ""
+msgstr "نتائج البحث...\n"
 
 #: redbot/cogs/image/image.py:87 redbot/cogs/image/image.py:153
 msgid "Something went wrong. Error code is {code}."
-msgstr ""
+msgstr "حدث خطأ ما. رمز الخطأ هو {code}."
 
 #: redbot/cogs/image/image.py:99
 #, docstring
@@ -67,17 +69,17 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."
-msgstr ""
+msgstr "فقط 'جديد' و 'أعلى' نوع ترتيب صالح."
 
 #: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:197
 #: redbot/cogs/image/image.py:221
 msgid "No results found."
-msgstr ""
+msgstr "لا توجد نتائج."
 
 #: redbot/cogs/image/image.py:159
 #, docstring
 msgid "Explain how to set imgur API tokens."
-msgstr ""
+msgstr "اشرح كيفية تعيين عملة API المميزة."
 
 #: redbot/cogs/image/image.py:161
 msgid "To get an Imgur Client ID:\n"
@@ -91,29 +93,39 @@ msgid "To get an Imgur Client ID:\n"
 "8. Check the captcha box and click next.\n"
 "9. Your Client ID will be on the next page.\n"
 "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-msgstr ""
+msgstr "للحصول على معرف عميل Imgur :\n"
+"1. تسجيل الدخول إلى حساب Imgur\n"
+". قم بزيارة هذه الصفحة https://api.imgur.com/oauth2/addclient\n"
+"3. أدخل اسم لتطبيقك.\n"
+"4. حدد *استخدام مجهول الهوية بدون إذن المستخدم* لنوع المصادقة.\n"
+"5. عيّن عنوان URL الخاص باستدعاء التفويض إلى 'https://localhost`.\n"
+"6. اترك موقع التطبيق فارغاً.\n"
+"7. أدخل عنوان بريد إلكتروني صالح ووصف.\n"
+"8. تحقق من مربع كلمة التحقق ثم اضغط التالي.\n"
+"9 معرف العميل الخاص بك سيكون في الصفحة التالية.\n"
+"10. تشغيل الأمر `{prefix}تعيين Api imgur client_id <your_client_id_here>`. \n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring
 msgid "Retrieve the first search result from Giphy."
-msgstr ""
+msgstr "استرداد أول نتيجة بحث من Giphy."
 
 #: redbot/cogs/image/image.py:184 redbot/cogs/image/image.py:208
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
-msgstr ""
+msgstr "لم يتم تعيين معرف العميل! الرجاء تعيين معرف واحد مع `{prefix}imgurcreds'."
 
 #: redbot/cogs/image/image.py:199
 msgid "Error contacting the Giphy API."
-msgstr ""
+msgstr "خطأ في الاتصال بـ GGiphy API."
 
 #: redbot/cogs/image/image.py:204
 #, docstring
 msgid "Retrieve a random GIF from a Giphy search."
-msgstr ""
+msgstr "استرداد صورة GIF عشوائية من البحث عن Giphy."
 
 #: redbot/cogs/image/image.py:223
 msgid "Error contacting the API."
-msgstr ""
+msgstr "خطأ في الاتصال بـ GGiphy API."
 
 #: redbot/cogs/image/image.py:228
 #, docstring

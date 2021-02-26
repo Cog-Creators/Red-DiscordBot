@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -27,11 +27,11 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
-msgstr ""
+msgstr "Ești sigur că vrei să ștergi {number} mesaje? (y/n)"
 
 #: redbot/cogs/cleanup/cleanup.py:68
 msgid "Cancelled."
-msgstr ""
+msgstr "Anulat."
 
 #: redbot/cogs/cleanup/cleanup.py:127
 #, docstring
@@ -77,7 +77,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
 msgid "Message not found."
-msgstr ""
+msgstr "Mesajul nu a fost găsit."
 
 #: redbot/cogs/cleanup/cleanup.py:307
 #, docstring
@@ -142,7 +142,7 @@ msgid "Clean up messages owned by the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:612
+#: redbot/cogs/cleanup/cleanup.py:614
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -153,7 +153,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."
-msgstr ""
+msgstr "{} nu pare a fi un ID de mesaj valid."
 
 #: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not an integer."

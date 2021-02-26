@@ -178,7 +178,9 @@ msgstr ""
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "問八號球一個問題。\n\n"
+"        問題必須以問號結尾。\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."

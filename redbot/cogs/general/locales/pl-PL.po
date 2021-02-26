@@ -106,7 +106,10 @@ msgid "Choose between multiple options.\n\n"
 "        To denote options which include whitespace, you should use\n"
 "        double quotes.\n"
 "        "
-msgstr ""
+msgstr "Wybierz spośród wielu opcji.\n\n"
+"        Aby określić opcje, które zawierają spację, powinieneś użyć\n"
+"        cudzysłowów.\n"
+"        "
 
 #: redbot/cogs/general/general.py:92
 msgid "Not enough options to pick from."
@@ -118,7 +121,10 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Rzuć losową liczbę.\n\n"
+"        Wynik będzie między 1 a `<number>`.\n\n"
+"        `<number>` <number> ` domyślnie 100.\n"
+"        "
 
 #: redbot/cogs/general/general.py:113
 msgid "{author.mention} Maybe higher than 1? ;P"
@@ -133,12 +139,15 @@ msgstr "{author.mention} Maksymalna liczba to {maxamount}."
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Odwróć monetę... lub użytkownika.\n\n"
+"        Domyślnie moneta.\n"
+"        "
 
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Niezła próba. Myślisz, że jesteś śmieszny?\n"
+" Patrz na to:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -178,7 +187,9 @@ msgstr "{choice} Remis {author.mention}!"
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
-msgstr ""
+msgstr "Zadaj pytanie 8-ball.\n\n"
+"        Pytanie musi kończyć się znakiem zapytania.\n"
+"        "
 
 #: redbot/cogs/general/general.py:198
 msgid "That doesn't look like a question."
@@ -207,7 +218,9 @@ msgstr "Utwórz link do lmgtfy."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Ponieważ wszyscy lubią przytulasy!\n\n"
+"        Do 10 poziomów.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring
@@ -257,7 +270,8 @@ msgstr "  • Użyj {command}, aby uzyskać więcej informacji o serwerze."
 #: redbot/cogs/general/general.py:303
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\n"
+"ID Sharda: **{shard_id}/{shard_count}**"
 
 #: redbot/cogs/general/general.py:312
 msgid "Humans: "
@@ -269,7 +283,7 @@ msgstr " • Boty: "
 
 #: redbot/cogs/general/general.py:325
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr ""
+msgstr "Użytkowników online: **{online}/{total_users}**\n"
 
 #: redbot/cogs/general/general.py:342
 msgid "__VIP__ US East "

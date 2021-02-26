@@ -233,7 +233,8 @@ msgstr "Je ne parviens actuellement pas à me connecter à Lavalink pour l'insta
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "La clé API de Spotify ou le secret client n'ont pas étés correctement définis. \n"
+"Utilisez `{prefix}audioset spotifyapi` pour connaître la marche à suivre."
 
 #: redbot/cogs/audio/core/utilities/player.py:355
 msgid "Unable To Find Tracks"
@@ -250,11 +251,12 @@ msgstr "{query} n'est pas une requête autorisée."
 #: redbot/cogs/audio/core/utilities/player.py:418
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+msgstr "Les pistes locales ne fonctionneront pas si `Lavalink.jar` ne peut pas voir la piste.\n"
+"Cela peut être dû à des permissions ou parce que Lavalink.jar est exécuté sur une machine différente de celle des pistes locales."
 
 #: redbot/cogs/audio/core/utilities/player.py:491
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} pistes ne peuvent pas être mises en attente."
 
 #: redbot/cogs/audio/core/utilities/player.py:497
 msgid "No Title"
@@ -442,7 +444,7 @@ msgstr "Joue à : "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "demandé par **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"

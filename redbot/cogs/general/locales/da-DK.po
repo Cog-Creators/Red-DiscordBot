@@ -138,7 +138,8 @@ msgstr ""
 #: redbot/cogs/general/general.py:131
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Godt forsøgt. Du tror rigtig at det er sjov hva?\n"
+" hvad så med *det her* istedet:\n\n"
 
 #: redbot/cogs/general/general.py:142
 msgid "*flips a coin and... "
@@ -207,7 +208,9 @@ msgstr "Lav et lmgtfy link."
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Fordi alle elsker krammere!\n\n"
+"        Op til niveau 10 i intensitet.\n"
+"        "
 
 #: redbot/cogs/general/general.py:248
 #, docstring

@@ -68,7 +68,7 @@ msgstr "отключен"
 
 #: redbot/cogs/modlog/modlog.py:84
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Текущие настройки:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
@@ -135,7 +135,12 @@ msgid "Specify a reason for a modlog case.\n\n"
 "        the owner of unless you are a mod, admin or server owner.\n\n"
 "        If no case number is specified, the latest case will be used.\n"
 "        "
-msgstr ""
+msgstr "Укажите причину для случая журнала модерации.\n\n"
+"        Обратите внимание, что вы можете редактировать только\n"
+"        те случаи, владельцем которых вы являетесь, если вы не\n"
+"        являетесь владельцем сервера, администратором, модератором.\n\n"
+"        Если номер случая не указан, будет использован последний случай\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."

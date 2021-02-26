@@ -18,7 +18,8 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:78
 msgid "Welcome to the interactive random {cc} maker!\n"
 "Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr ""
+msgstr "Velkommen til den interaktive tilfældigheds {cc} skaber!\n"
+"Hver besked som du sender vil blive tilføjet som et af de tilfældige svar at vælge imellem så snart {cc} er aktiveret. For at afslutte denne interaktive menu, skriv `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:89
 msgid "Add a random response:"

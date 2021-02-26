@@ -77,7 +77,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report <text>` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "送出回報。\n\n"
+"        若不帶參數時則啟用互動式回報，或使用\n"
+"        `[p]report <文字>` 來非互動式的回報。\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
@@ -98,7 +101,8 @@ msgstr ""
 #: redbot/cogs/reports/reports.py:286
 msgid "Please respond to this message with your Report.\n"
 "Your report should be a single message"
-msgstr ""
+msgstr "請將回報內容回應於此訊息。\n"
+"您的回報須為單一訊息"
 
 #: redbot/cogs/reports/reports.py:292
 msgid "This requires DMs enabled."

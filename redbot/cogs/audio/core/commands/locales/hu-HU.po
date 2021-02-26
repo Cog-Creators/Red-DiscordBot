@@ -293,7 +293,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Disabled"
-msgstr ""
+msgstr "Letiltva"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
@@ -868,7 +868,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1345
 #: redbot/cogs/audio/core/commands/audioset.py:1390
 msgid "days"
-msgstr ""
+msgstr "nap"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1094
 msgid "User Settings"

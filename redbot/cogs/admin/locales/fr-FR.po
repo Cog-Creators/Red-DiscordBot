@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -79,7 +79,11 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ajouter un rôle à un utilisateur.\n\n"
+"        Utilisez des guillemets si le rôle contient des espaces.\n"
+"        Si l'utilisateur est laissé vide, c'est par défaut l'auteur de la commande.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
@@ -88,7 +92,11 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Retirer un rôle d'un utilisateur.\n\n"
+"        Utilisez des guillemets doubles si le rôle contient des espaces.\n"
+"        Si l'utilisateur est laissé vide, c'est par défaut l'auteur de la commande.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
@@ -106,7 +114,15 @@ msgid "\n"
 "            `[p]editrole colour \"The Transistor\" #ff0000`\n"
 "            `[p]editrole colour Test #ff9900`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Modifiez la couleur d'un rôle.\n\n"
+"        Utilisez des guillemets doubles si le rôle contient des espaces.\n"
+"        La couleur doit être au format hexadécimal.\n"
+"        [Sélecteur de couleurs en ligne](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Exemples:\n"
+"            `[p]editrole color \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
@@ -120,7 +136,12 @@ msgid "\n"
 "        Example:\n"
 "            `[p]editrole name \"The Transistor\" Test`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Modifier le nom d'un rôle.\n\n"
+"        Utiliser des guillemets si le rôle ou le nom contient des espaces.\n\n"
+"        Exemple:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
@@ -155,7 +176,10 @@ msgid "\n"
 "        Change the channel where the bot will send announcements.\n\n"
 "        If channel is left blank it defaults to the current channel.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Change le salon où le bot enverra les annonces.\n\n"
+"        Si le champ salon est laissé vide, il utilisera, par défaut, le salon actuel.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -168,90 +192,111 @@ msgstr "Désactive le salon pour les annonces."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
-msgid "Apply selfroles."
-msgstr "Appliquer auto-rôles."
+msgid "\n"
+"        Add or remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:401
+#: redbot/cogs/admin/admin.py:409
 #, docstring
 msgid "\n"
 "        Add a selfrole to yourself.\n\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ajouter un auto-rôle à vous-même.\n\n"
+"        Les administrateurs du serveur doivent avoir configuré le rôle en tant qu'utilisable par les utilisateurs.\n"
+"        NOTE : Le rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:420
 #, docstring
 msgid "\n"
 "        Remove a selfrole from yourself.\n\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Supprimez un auto-rôle de vous-même.\n\n"
+"        Les administrateurs du serveur doivent avoir configuré le rôle en tant qu'utilisable par les utilisateurs.\n"
+"        NOTE : Le rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:431
 #, docstring
 msgid "\n"
 "        Lists all available selfroles.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Liste de tous les auto-rôles disponibles.\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:433
+#: redbot/cogs/admin/admin.py:441
 msgid "Available Selfroles:\n"
 "{selfroles}"
-msgstr ""
+msgstr "Auto-rôles disponibles :\n"
+"{selfroles}"
 
-#: redbot/cogs/admin/admin.py:439
+#: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
 msgstr "Gérer les auto-roles."
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:452
 #, docstring
 msgid "\n"
 "        Add a role to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Ajouter un rôle à la liste des auto-rôles disponibles.\n\n"
+"        NOTE : Le nom du rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:451
+#: redbot/cogs/admin/admin.py:459
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce rôle est supérieur ou égal à votre rôle le plus haut dans la hiérarchie Discord."
 
-#: redbot/cogs/admin/admin.py:459
+#: redbot/cogs/admin/admin.py:467
 msgid "Added."
 msgstr "Ajouté."
 
-#: redbot/cogs/admin/admin.py:462
+#: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
 msgstr "Ce rôle est déjà un selfrole."
 
-#: redbot/cogs/admin/admin.py:466
+#: redbot/cogs/admin/admin.py:474
 #, docstring
 msgid "\n"
 "        Remove a role from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Supprimer un rôle de la liste des auto-rôles.\n\n"
+"        REMARQUE : Le nom du rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:473
+#: redbot/cogs/admin/admin.py:481
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce rôle est supérieur ou égal à votre rôle le plus haut dans la hiérarchie Discord."
 
-#: redbot/cogs/admin/admin.py:481
+#: redbot/cogs/admin/admin.py:489
 msgid "Removed."
 msgstr "Retiré."
 
-#: redbot/cogs/admin/admin.py:486
+#: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Verrouiller un bot sur ses serveurs actuels uniquement."
 
-#: redbot/cogs/admin/admin.py:491
+#: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
 msgstr "Le bot n'est plus verrouillé sur ses serveurs actuels."
 
-#: redbot/cogs/admin/admin.py:493
+#: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
 msgstr "Le bot est maintenant verrouillé sur ses serveurs actuels."
 

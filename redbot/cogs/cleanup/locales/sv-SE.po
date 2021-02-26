@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
-msgstr ""
+msgstr "Är du säker på att du vill ta bort {number} meddelanden? (y/n)"
 
 #: redbot/cogs/cleanup/cleanup.py:68
 msgid "Cancelled."
@@ -142,7 +142,7 @@ msgid "Clean up messages owned by the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:612
+#: redbot/cogs/cleanup/cleanup.py:614
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -153,7 +153,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."
-msgstr ""
+msgstr "{} ser inte ut som ett giltigt meddelande-ID."
 
 #: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not an integer."

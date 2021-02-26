@@ -21,7 +21,7 @@ msgstr "¡No he podido encontrar ningún comando para tu respuesta!"
 
 #: redbot/cogs/warnings/helpers.py:77
 msgid "That command requires bot owner. I can't allow you to use that for an action"
-msgstr ""
+msgstr "Este comando requiere ser el dueño del bot. No puedo permitirte usarlo para una acción"
 
 #: redbot/cogs/warnings/helpers.py:86
 msgid "Enter the command to be run when the user **exceeds the points for this action to occur.**\n"
@@ -200,7 +200,7 @@ msgstr ""
 #: redbot/cogs/warnings/warnings.py:316 redbot/cogs/warnings/warnings.py:341
 #: redbot/cogs/warnings/warnings.py:447 redbot/cogs/warnings/warnings.py:476
 msgid "Points"
-msgstr ""
+msgstr "Puntos"
 
 #: redbot/cogs/warnings/warnings.py:320
 msgid "Name: {reason_name}\n"
@@ -210,7 +210,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:327
 msgid "There are no reasons configured!"
-msgstr ""
+msgstr "¡No hay razones configuradas!"
 
 #: redbot/cogs/warnings/warnings.py:333
 #, docstring
@@ -252,7 +252,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn yourself."
-msgstr ""
+msgstr "No puedes advertirte a ti mismo."
 
 #: redbot/cogs/warnings/warnings.py:383
 msgid "You cannot warn other bots."
@@ -268,7 +268,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:398
 msgid "That is not a registered reason!"
-msgstr ""
+msgstr "¡Esa no es una razón registrada!"
 
 #: redbot/cogs/warnings/warnings.py:413
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
@@ -284,7 +284,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:450
 msgid "You have received a warning in {guild_name}."
-msgstr ""
+msgstr "Has recibido un aviso en {guild_name}."
 
 #: redbot/cogs/warnings/warnings.py:460
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
@@ -311,7 +311,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:535
 msgid "That user has no warnings!"
-msgstr ""
+msgstr "¡El usuario no tiene ningún aviso!"
 
 #: redbot/cogs/warnings/warnings.py:540 redbot/cogs/warnings/warnings.py:574
 msgid "Deleted Moderator"
@@ -345,7 +345,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:616
 msgid "You cannot remove warnings from yourself."
-msgstr ""
+msgstr "No puedes quitarte avisos a ti mismo."
 
 #: redbot/cogs/warnings/warnings.py:623
 msgid "That warning doesn't exist!"

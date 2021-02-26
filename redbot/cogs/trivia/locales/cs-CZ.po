@@ -29,15 +29,15 @@ msgstr ""
 
 #: redbot/cogs/trivia/session.py:20
 msgid "I know this one! {answer}!"
-msgstr ""
+msgstr "Vím to! {answer}!"
 
 #: redbot/cogs/trivia/session.py:21
 msgid "Easy: {answer}."
-msgstr ""
+msgstr "Jednoduché: {answer}."
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr ""
+msgstr "Opravdu? Je to samozřejmě {answer}."
 
 #: redbot/cogs/trivia/session.py:25
 msgid "To the next one I guess..."
@@ -45,7 +45,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/session.py:26
 msgid "Moving on..."
-msgstr ""
+msgstr "Přesouvání na..."
 
 #: redbot/cogs/trivia/session.py:27
 msgid "I'm sure you'll know the answer of the next one."
@@ -66,7 +66,7 @@ msgstr "Otázka č. {num}!"
 
 #: redbot/cogs/trivia/session.py:144
 msgid "There are no more questions!"
-msgstr ""
+msgstr "Nebyly nalezeny žádné otázky!"
 
 #: redbot/cogs/trivia/session.py:152
 msgid "{trivia_list} (by {author})"
@@ -265,7 +265,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:264
 msgid "Invalid syntax: "
-msgstr ""
+msgstr "Neplatný syntax: "
 
 #: redbot/cogs/trivia/trivia.py:267
 msgid "There was an error parsing the trivia list. See logs for more info."

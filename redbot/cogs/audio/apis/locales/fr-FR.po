@@ -24,7 +24,8 @@ msgstr "Impossible d'obtenir les pistes, pistes ignorées."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "La clé API de Spotify ou le secret client n'ont pas étés correctement définis. \n"
+"Utilisez `{prefix}audioset spotifyapi` pour connaître la marche à suivre."
 
 #: redbot/cogs/audio/apis/interface.py:346
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
@@ -62,15 +63,19 @@ msgstr "{time} avant le début de la lecture de la playlist : commence à #{pos
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Rien n'a été trouvé.\n"
+"La clé de l'API YouTube peut être invalide ou vous pouvez être limité sur le service de recherche de YouTube.\n"
+"Vérifiez à nouveau la clé de l'API YouTube et suivez les instructions à `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Votre jeton d'API YouTube Data n'est pas valide.\n"
+"Vérifiez, de nouveau, la clé de l'API YouTube et suivez les instructions données par `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Code d'erreur de l'API YouTube : 403\n"
+"Votre clé API YouTube peut avoir atteint la limite de requêtes du compte pour aujourd'hui. Veuillez consulter <https://developers.google.com/youtube/v3/getting-started#quota> pour plus d'informations."
 

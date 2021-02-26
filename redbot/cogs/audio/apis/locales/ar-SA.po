@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/audio/apis/interface.py:273
 #: redbot/cogs/audio/apis/interface.py:595
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "فشل في الحصول على المسارات ، التخطي المتبقي."
 
 #: redbot/cogs/audio/apis/interface.py:304
 #: redbot/cogs/audio/apis/spotify.py:175
@@ -32,15 +32,15 @@ msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:471
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "لا يبدو أن هذا عنوان URL أو رمز Spotify مدعوم."
 
 #: redbot/cogs/audio/apis/interface.py:558
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "تم إعادة تعيين الاتصال أثناء تحميل قائمة التشغيل."
 
 #: redbot/cogs/audio/apis/interface.py:569
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "مهلة اللاعب، تخطي المسارات المتبقية."
 
 #: redbot/cogs/audio/apis/interface.py:661
 msgid " {bad_tracks} tracks cannot be queued."
@@ -48,21 +48,23 @@ msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:669
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "قائمة التشغيل قائمة الانتظار"
 
 #: redbot/cogs/audio/apis/interface.py:670
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "أضاف {num} مسارات إلى قائمة الانتظار.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:676
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "أضاف {num} مسارات إلى قائمة الانتظار.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:687
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "لم يتم العثور على أي شيء.\n"
+"قد يكون مفتاح واجهة برمجة التطبيقات على اليوتيوب غير صالح أو قد تكون مقيدا على خدمة البحث على اليوتيوب.\n"
+"تحقق من مفتاح API على اليوتيوب مرة أخرى واتبع الإرشادات في '{prefix}مجموعة سمعية Youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"

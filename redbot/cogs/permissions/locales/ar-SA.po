@@ -294,7 +294,7 @@ msgstr ""
 #: redbot/cogs/permissions/permissions.py:700
 #: redbot/cogs/permissions/permissions.py:713
 msgid "Response timed out."
-msgstr ""
+msgstr "انتهت مهلة الرد."
 
 #: redbot/cogs/permissions/permissions.py:708
 msgid "Are you sure? (y/n)"

@@ -743,7 +743,7 @@ msgstr "Nastavení serveru"
 
 #: redbot/cogs/audio/core/commands/audioset.py:991
 msgid "Auto-disconnect:  [{dc}]\n"
-msgstr ""
+msgstr "Automatické odpojení: [{dc}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:992
 msgid "Auto-play:        [{autoplay}]\n"
@@ -751,7 +751,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:996
 msgid "Disconnect timer: [{num_seconds}]\n"
-msgstr ""
+msgstr "Odpojit časovač: [{num_seconds}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1000
 msgid "Auto Pause timer: [{num_seconds}]\n"
@@ -767,7 +767,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1007
 msgid "Command price:    [{jukebox_price}]\n"
-msgstr ""
+msgstr "Cena příkazu: [{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1011
 msgid "Max track length: [{tracklength}]\n"
@@ -786,7 +786,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1034
 msgid "Thumbnails:       [{0}]\n"
-msgstr ""
+msgstr "Náhledy: [{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1038
 msgid "Vote skip:        [{vote_enabled}]\n"
@@ -2184,7 +2184,7 @@ msgstr "Nic nenalezeno."
 #: redbot/cogs/audio/core/commands/player.py:852
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} skladby nemůžou být zařazeny do fronty."
 
 #: redbot/cogs/audio/core/commands/player.py:858
 msgid "Queued {num} track(s).{maxlength_msg}"
