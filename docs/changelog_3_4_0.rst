@@ -10,7 +10,7 @@ End-user changelog
 
 - Added proper permission checks to ``[p]muteset senddm`` and ``[p]muteset showmoderator`` (:issue:`4849`)
 - Updated the ``[p]lmgtfy`` command to use the new domain (:issue:`4840`)
-- Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`)
+- Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`, :issue:`4853`)
 
 Documentation changes
 ---------------------
