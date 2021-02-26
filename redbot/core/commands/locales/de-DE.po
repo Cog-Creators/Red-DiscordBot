@@ -81,23 +81,23 @@ msgstr "Geben Sie {ctx.clean_prefix}help <command> für weitere Informationen zu
 
 #: redbot/core/commands/help.py:303
 msgid "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
-msgstr ""
+msgstr "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
 
 #: redbot/core/commands/help.py:309
 msgid "Aliases"
-msgstr ""
+msgstr "Aliase"
 
 #: redbot/core/commands/help.py:309
 msgid "Alias"
-msgstr ""
+msgstr "Alias"
 
 #: redbot/core/commands/help.py:330
 msgid "{aliases} and {number} more aliases."
-msgstr ""
+msgstr "{aliases} und {number} weitere Aliase."
 
 #: redbot/core/commands/help.py:334
 msgid "{aliases} and one more alias."
-msgstr ""
+msgstr "{aliases} und ein weiteres Alias."
 
 #: redbot/core/commands/help.py:376
 msgid "**__Subcommands:__**"
@@ -166,5 +166,10 @@ msgid "\n"
 "    (Help) you know I need someone\n"
 "    (Help!)\n"
 "    "
-msgstr ""
+msgstr "\n"
+"    Ich brauche jemanden\n"
+"    (Hilfe) nicht nur jemanden\n"
+"    (Hilfe) Sie wissen, dass ich jemanden brauche\n"
+"    (Hilfe!)\n"
+"    "
 

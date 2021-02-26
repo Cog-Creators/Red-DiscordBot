@@ -200,7 +200,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Legg til eller fjern en selvrolle fra deg selv.\n\n"
+"        Serveradministratorer må ha konfigurert rollen som brukersettabell.\n"
+"        MERK: Rollen skiller mellom små og store bokstaver!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:409
 #, docstring

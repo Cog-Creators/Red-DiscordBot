@@ -375,7 +375,7 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "Playlist für die Automatische Wiedergabe eisntellen.\\n\\n        **Verwendung**:\\n        ​ ​ ​ ​`[p]audioset autoplay name_ODER_id_der_playlist  [args]`\\n\\n        **Argumente**:\\n        ​ ​ ​ ​ Optionale Argumente:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Nur der Botbesitzer kann dieses Argument verwenden**\\n\\n        **Scope** hat einen der folgenden Werte:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** hat einen der folgenden Werte:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n User Name#123\\n\\n        **Guild** hat einen der folgenden Werte:\\n        Guild ID\\n        Exact guild name\\n\\n        Beispiel:\\n        `[p]audioset autoplay MeineGuildPlaylist`\\n        `[p]audioset autoplay MeineGlobalePlaylist --scope Global`\\n        `[p]audioset autoplay MeinePersoenlichePlaylist --scope User --author Draper`\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -686,7 +686,9 @@ msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
 "        input will turn the max length setting off.\n"
 "        "
-msgstr ""
+msgstr "Maximale länge für einen Track in der Playlist in Sekunden, 0 um dies zu deaktivieren.\n\n"
+"        Akzeptiert Sekunden oder einen Wert Formatiert wie 00:00:00 (`hh:mm:ss`) oder 00:00 (`mm:ss`).\n"
+"        Ungültige Eingaben werden diese Einstellung ausschalten.        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:867
 msgid "Invalid length"
@@ -729,7 +731,9 @@ msgid "Toggle the domain restriction on Audio.\n\n"
 "        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and\n"
 "        Bandcamp links.\n"
 "        "
-msgstr ""
+msgstr "Schalte die Domain-Beschränkung auf Audio ein.\n\n"
+"        Wenn du ausgeschaltet bist, können Benutzer Lieder von nicht-kommerziellen Websites und Links abspielen.\n"
+"        Wenn du eingeschaltet bist, sind Benutzer auf YouTube, SoundCloud, Mixer, Vimeo, Twitch und Bandcamp-Links beschränkt.        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:928
 msgid "Commercial links only: {true_or_false}."
@@ -875,7 +879,7 @@ msgstr "Lokale Lavalink-Cache: [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
 msgid "Global cache status:    [{global_cache}]\n"
-msgstr ""
+msgstr "Globaler Cache-Status: [{global_cache}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1083
 msgid "Global timeout:         [{num_seconds}]\n"
@@ -905,7 +909,7 @@ msgstr "Cog Version:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1104
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
-msgstr ""
+msgstr "Red-Lavalink:           [{lavalink_version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "External server:        [{use_external_lavalink}]\n"
@@ -963,7 +967,7 @@ msgstr "Miniaturansicht: {true_or_false}."
 #: redbot/cogs/audio/core/commands/audioset.py:1209
 #, docstring
 msgid "Percentage needed for non-mods to skip tracks, 0 to disable."
-msgstr ""
+msgstr "Benötigte Stimmen in Prozent für Nicht-Mods, um Titel zu überspringen, 0 um zum Deaktivieren."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1221
 msgid "Voting disabled. All users can use queue management commands."
@@ -992,7 +996,14 @@ msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "5. Accept the terms and conditions.\n"
 "6. Copy your client ID and your client secret into:\n"
 "`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
-msgstr ""
+msgstr "1. Gehen Sie zu Spotify-Entwicklern und loggen Sie sich mit Ihrem Spotify-Konto ein.\n"
+"(https://developer.spotify.com/Dashboard/applications)\n"
+"2. Klicken Sie auf \"Eine App erstellen\".\n"
+"3. Füllen Sie das Formular aus, das mit Ihrem App-Namen, etc. bereitgestellt wird.\n"
+"4. Wenn Sie gefragt werden, ob Sie kommerzielle Integration entwickeln, wählen Sie \"Nein\".\n"
+"5. Akzeptieren Sie die Bedingungen und Bedingungen.\n"
+"6. Kopiere deine Client-ID und dein Client-Geheimes in:\n"
+"`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1274
 #: redbot/cogs/audio/core/commands/audioset.py:1296
@@ -1098,7 +1109,9 @@ msgstr "deaktiviert"
 msgid "Set GET request timeout.\n\n"
 "        Example: 0.1 = 100ms 1 = 1 second\n"
 "        "
-msgstr ""
+msgstr "GET-Anfrage-Timeout.\n\n"
+"        Beispiel: 0.1 = 100ms 1 = 1 Sekunde\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1448
 msgid "Request timeout set to {time} second(s)"
@@ -1118,7 +1131,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1473
 #, docstring
 msgid "Restarts the lavalink connection."
-msgstr ""
+msgstr "Startet die lavalink-Verbindung neu."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1483
 msgid "Restarting Lavalink"
@@ -1325,7 +1338,8 @@ msgstr "Titel wird wiederholt"
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "Spule um Sekunden oder zu einer bestimmten Zeit vorwärts oder rückwärts.\n\n"
+"        Akzeptiert Sekunden oder einen Wert, der wie 00:00:00 (`hh:mm:ss`) oder 00:00 (`mm:ss`) formatiert ist.        "
 
 #: redbot/cogs/audio/core/commands/controller.py:318
 #: redbot/cogs/audio/core/commands/controller.py:325
@@ -1701,7 +1715,7 @@ msgstr "Setzen Sie den Equalizer für alle Bands auf 0 zurück."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:201
 msgid "Unable To Modify Preset"
-msgstr ""
+msgstr "Kann Preset nicht ändern"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:202
 msgid "You need the DJ role to reset the equalizer."
@@ -1720,7 +1734,7 @@ msgstr "Speichern Sie die aktuellen EQ-Einstellungen in einer Voreinstellung."
 #: redbot/cogs/audio/core/commands/equalizer.py:253
 #: redbot/cogs/audio/core/commands/equalizer.py:268
 msgid "Unable To Save Preset"
-msgstr ""
+msgstr "Voreinstellung kann nicht gespeichert werden"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:236
 msgid "You need the DJ role to save equalizer presets."
@@ -1758,7 +1772,12 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Lege einen EQ-Regler mit einer Reglernummer oder einem Namen und Wert fest.\n\n"
+"        Regler Positionen sind 1-15 und Werte haben einen Bereich von -0.25 bis 1.0.\n"
+"        Reglernamen sind 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k und 16k Hz.\n"
+"        Einen Reglerwert auf -0.25 setzen hebt diesen auf, während +0.25 verdoppelt.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:323
 msgid "Unable To Set Preset"
@@ -1770,7 +1789,7 @@ msgstr "Du benötigst die DJ-Rolle, um Equalizer-Voreinstellungen zu speichern."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:363
 msgid "Invalid Band"
-msgstr ""
+msgstr "Ungültiges Band"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:364
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
@@ -1840,17 +1859,17 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:185
 #: redbot/cogs/audio/core/commands/llset.py:210
 msgid "Please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Bitte laden Sie Audio neu (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:93
 #, docstring
 msgid "Toggle using external Lavalink servers."
-msgstr ""
+msgstr "Schalte Benutzung von externem Lavalink Server um."
 
 #: redbot/cogs/audio/core/commands/llset.py:100
 #: redbot/cogs/audio/core/commands/llset.py:126
 msgid "External Lavalink server: {true_or_false}."
-msgstr ""
+msgstr "Externer Lavalink Server: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:113
 msgid "External Lavalink server: {true_or_false}\n"
@@ -1860,13 +1879,13 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:143
 #, docstring
 msgid "Set the Lavalink server host."
-msgstr ""
+msgstr "Lege den Lavalink Server Host fest."
 
 #: redbot/cogs/audio/core/commands/llset.py:147
 #: redbot/cogs/audio/core/commands/llset.py:171
 #: redbot/cogs/audio/core/commands/llset.py:196
 msgid "External Lavalink server set to True."
-msgstr ""
+msgstr "Externer Lavalink Server gesetzt auf Wahr."
 
 #: redbot/cogs/audio/core/commands/llset.py:151
 msgid "Host set to {host}."
@@ -1884,7 +1903,7 @@ msgstr "Server Passwort auf {password} gesetzt."
 #: redbot/cogs/audio/core/commands/llset.py:192
 #, docstring
 msgid "Set the Lavalink websocket server port."
-msgstr ""
+msgstr "Lege den Lavalink Websocket Server Port fest."
 
 #: redbot/cogs/audio/core/commands/llset.py:200
 msgid "Websocket port set to {port}."
@@ -1897,19 +1916,19 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:223
 msgid "Connection Settings"
-msgstr ""
+msgstr "Verbindungseinstellungen"
 
 #: redbot/cogs/audio/core/commands/llset.py:224
 msgid "Host:             [{host}]\n"
-msgstr ""
+msgstr "Host:             [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\n"
-msgstr ""
+msgstr "WS Port:          [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
 msgid "Rest Port:        [{port}]\n"
-msgstr ""
+msgstr "Rest Port:        [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\n"
@@ -2110,7 +2129,8 @@ msgstr "Der Besitzer muss die Spotify client ID und Spotify client secret festle
 #: redbot/cogs/audio/core/commands/player.py:423
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Der Besitzer muss der YouTube API schlüssel festlegen, bevor Spotify URLs oder Codes verwendet werden können. \n"
+"Siehe `{prefix}audioset youtubeapi` für eine Anleitung."
 
 #: redbot/cogs/audio/core/commands/player.py:481
 msgid "You must be in the voice channel to use the genre command."
@@ -2172,7 +2192,7 @@ msgstr "Tracks können nicht abgerufen werden"
 #: redbot/cogs/audio/core/commands/player.py:893
 #: redbot/cogs/audio/core/commands/playlists.py:1927
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Ich bin momentan nicht in der Lage, einen Track von Lavalink zu bekommen. Versuchen Sie es in ein paar Minuten erneut."
 
 #: redbot/cogs/audio/core/commands/player.py:632
 msgid "Auto play started."
@@ -2225,7 +2245,7 @@ msgstr "suche"
 
 #: redbot/cogs/audio/core/commands/player.py:869
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} bis zum Start der {type} Wiedergabe: startet an #{position} in der Warteschlange"
 
 #: redbot/cogs/audio/core/commands/playlists.py:44
 #, docstring
@@ -2317,7 +2337,7 @@ msgstr "{track} wurde an {playlist} (`{id}`) [**{scope} **] angehängt."
 
 #: redbot/cogs/audio/core/commands/playlists.py:199
 msgid "{num} tracks appended to {playlist} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "{num} Tracks angehängt an {playlist} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/commands/playlists.py:204
 msgid "\n"

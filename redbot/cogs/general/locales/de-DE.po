@@ -406,7 +406,7 @@ msgstr "Banner Bild"
 
 #: redbot/cogs/general/general.py:377
 msgid "Commerce"
-msgstr ""
+msgstr "Handel"
 
 #: redbot/cogs/general/general.py:378
 msgid "Community"
@@ -466,7 +466,7 @@ msgstr "VIP Sprach-Server"
 
 #: redbot/cogs/general/general.py:392
 msgid "Welcome Screen enabled"
-msgstr ""
+msgstr "Willkommens Bildschirm aktiviert"
 
 #: redbot/cogs/general/general.py:400
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"

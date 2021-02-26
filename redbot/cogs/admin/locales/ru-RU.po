@@ -197,7 +197,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Удалить свою роль у себя.\n\n"
+"        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к размерчикам!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:409
 #, docstring

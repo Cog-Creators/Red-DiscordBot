@@ -179,7 +179,8 @@ msgstr "Der Besitzer muss die Spotify client ID und Spotify client secret festle
 #: redbot/cogs/audio/core/utilities/player.py:249
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Der Besitzer muss der YouTube API schlüssel festlegen, bevor Spotify URLs oder Codes verwendet werden können. \n"
+"Siehe `{prefix}audioset youtubeapi` für eine Anleitung."
 
 #: redbot/cogs/audio/core/utilities/player.py:258
 #: redbot/cogs/audio/core/utilities/player.py:367
@@ -233,7 +234,7 @@ msgstr "Tracks können nicht abgerufen werden"
 #: redbot/cogs/audio/core/utilities/playlists.py:603
 #: redbot/cogs/audio/core/utilities/playlists.py:632
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Ich bin momentan nicht in der Lage, einen Track von Lavalink zu bekommen. Versuchen Sie es in ein paar Minuten erneut."
 
 #: redbot/cogs/audio/core/utilities/player.py:331
 msgid "The Spotify API key or client secret has not been set properly. \n"
@@ -323,7 +324,7 @@ msgstr "Du hast nicht die Berechtigung, die Playlist von {user} zu verwalten."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:100
 msgid "You do not have the permissions to manage playlists in {scope} scope."
-msgstr ""
+msgstr "Du hast nicht die Berechtigung, diese Wiedergabeliste im Bereich {scope} zu verwalten."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:104
 msgid "No access to playlist."
@@ -331,7 +332,7 @@ msgstr "Kein Zugriff auf Playlist."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:212
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
-msgstr ""
+msgstr "{match_count} Wiedergabelisten stimmen {original_input} zu: Bitte versuchen Sie, spezifischer zu sein oder verwenden Sie die Playlist-ID."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:229
 msgid "{number}.    <{playlist.name}>\n"
@@ -339,7 +340,11 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}.    <{playlist.name}>\n"
+" - Bereich:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Titel: < {tracks} >\n"
+" - Autor: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:246
 msgid "{playlists} playlists found, which one would you like?"
@@ -360,7 +365,7 @@ msgstr "Playlists für {scope}:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:306
 msgid "Page {page_num}/{total_pages} | {num} playlists."
-msgstr ""
+msgstr "Seite {page_num}/{total_pages} | {num} Wiedergabelisten."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:322
 #: redbot/cogs/audio/core/utilities/playlists.py:400

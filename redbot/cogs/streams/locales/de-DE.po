@@ -36,11 +36,11 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_id_here>"
-msgstr ""
+msgstr "<your_client_id_here>"
 
 #: redbot/cogs/streams/streams.py:155 redbot/cogs/streams/streams.py:489
 msgid "<your_client_secret_here>"
-msgstr ""
+msgstr "<your_client_secret_here>"
 
 #: redbot/cogs/streams/streams.py:208
 #, docstring
@@ -55,7 +55,7 @@ msgstr "Prüfe ob ein YouTube Kanal Live ist."
 #: redbot/cogs/streams/streams.py:234
 #, docstring
 msgid "Check if a smashcast channel is live."
-msgstr ""
+msgstr "Prüfe ob ein Smashcast Kanal Live ist."
 
 #: redbot/cogs/streams/streams.py:240
 #, docstring
@@ -72,11 +72,11 @@ msgstr "Dieser Kanal scheint nicht zu existieren."
 
 #: redbot/cogs/streams/streams.py:257 redbot/cogs/streams/streams.py:416
 msgid "The Twitch token is either invalid or has not been set. See {command}."
-msgstr ""
+msgstr "Der Twitch Token ist entweder ungültig oder wurde noch nicht eingestellt. Siehe {command}."
 
 #: redbot/cogs/streams/streams.py:263 redbot/cogs/streams/streams.py:423
 msgid "The YouTube API key is either invalid or has not been set. See {command}."
-msgstr ""
+msgstr "Der YouTube API schlüssel ist entweder ungültig oder wurde noch nicht eingestellt. Siehe {command}."
 
 #: redbot/cogs/streams/streams.py:269 redbot/cogs/streams/streams.py:431
 msgid "YouTube quota has been exceeded. Try again later or contact the owner if this continues."
@@ -113,7 +113,7 @@ msgstr "Schalte die Alarme in diesem Kanal für YouTube Streams um."
 #: redbot/cogs/streams/streams.py:323
 #, docstring
 msgid "Toggle alerts in this channel for a Smashcast stream."
-msgstr ""
+msgstr "Schalte die Alarme in diesem Kanal für Smashcast Streams um."
 
 #: redbot/cogs/streams/streams.py:328
 #, docstring
@@ -207,12 +207,12 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:514
 msgid "<your_api_key_here>"
-msgstr ""
+msgstr "<your_api_key_here>"
 
 #: redbot/cogs/streams/streams.py:523
 #, docstring
 msgid "Manage custom messages for stream alerts."
-msgstr ""
+msgstr "Benutzerdefinierte Nachrichten für Stream-Alarme verwalten."
 
 #: redbot/cogs/streams/streams.py:529
 #, docstring
@@ -221,7 +221,11 @@ msgid "Set stream alert message when mentions are enabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message mention {mention}, {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Stream-Warnmeldung setzen, wenn Erwähnungen aktiviert sind.\n\n"
+"        Benutze `{mention}` in der Nachricht um die ausgewählten Erwähnungen einzufügen.\n"
+"        Benutze `{stream}` in der Nachricht um den Kanal oder den Benutzernamen einzufügen.\n\n"
+"        Zum Beispiel: `[p]Streamset message mention {mention}, {stream} is live!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:551
 msgid "Stream alert message set!"
@@ -233,7 +237,10 @@ msgid "Set stream alert message when mentions are disabled.\n\n"
 "        Use `{stream}` in the message to insert the channel or user name.\n\n"
 "        For example: `[p]streamset message nomention {stream} is live!`\n"
 "        "
-msgstr ""
+msgstr "Stream-Warnmeldung festlegen, wenn Erwähnungen deaktiviert sind.\n\n"
+"        Verwenden Sie `{stream}` in der Nachricht, um den Kanal oder den Benutzernamen einzufügen.\n\n"
+"        Zum Beispiel: `[p]streamset message nomention {stream} is live!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:556
 #, docstring
@@ -349,7 +356,7 @@ msgstr "{stream} ist live!"
 
 #: redbot/cogs/streams/streamtypes.py:198
 msgid "This stream will start in {time}"
-msgstr ""
+msgstr "Dieser Stream wird in {time} beginnen"
 
 #: redbot/cogs/streams/streamtypes.py:204
 msgid "This stream was scheduled for {min} minutes ago"
