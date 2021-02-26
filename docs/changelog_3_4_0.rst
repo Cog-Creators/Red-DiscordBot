@@ -16,7 +16,7 @@ End-user changelog
 Documentation changes
 ---------------------
 
-- Added `cog guide for General cog <cog_guides/trivia>` (:issue:`4797`)
+- Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
 - Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
 
