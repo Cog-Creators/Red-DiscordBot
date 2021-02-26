@@ -1162,7 +1162,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         reasons = {}
         reason_msg = issue_list["reason"] + "\n" if issue_list["reason"] else None
         channel_msg = ""
-        error_msg = _("{member} could not be unmuted for the following reasons:\n").format(
+        error_msg = _("{member} could not be (un)muted for the following reasons:\n").format(
             member=issue_list["user"]
         )
         if issue_list["channels"]:
