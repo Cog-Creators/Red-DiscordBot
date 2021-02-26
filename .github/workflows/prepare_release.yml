@@ -22,7 +22,11 @@ jobs:
           echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update -qq
           sudo apt-get install -y crowdin
+          pip install redgettext==3.3
 
+      - name: Generate source files
+        run: |
+          make gettext
       - name: Download translations
         run: |
           make download_translations
