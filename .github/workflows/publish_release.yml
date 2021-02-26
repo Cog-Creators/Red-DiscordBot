@@ -30,6 +30,12 @@ jobs:
     needs: release_to_pypi
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
       # Version bump to development version
       - name: Update Red version number to dev
         id: bump_version_dev
