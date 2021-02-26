@@ -31,7 +31,7 @@ MUTE_UNMUTE_ISSUES = {
     "assigned_role_hierarchy_problem": _(
         "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
     ),
-    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
+    "is_admin": _("That user cannot be (un)muted, as they have the Administrator permission."),
     "permissions_issue_role": _(
         "Failed to mute or unmute user. I need the Manage Roles "
         "permission and the user I'm muting must be "
