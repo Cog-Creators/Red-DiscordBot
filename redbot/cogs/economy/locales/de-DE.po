@@ -17,23 +17,23 @@ msgstr ""
 
 #: redbot/cogs/economy/converters.py:19
 msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{arg} ist keine ganze Zahl."
 
 #: redbot/cogs/economy/converters.py:21
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} ist keine positive ganze Zahl."
 
 #: redbot/cogs/economy/economy.py:48
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
-msgstr ""
+msgstr "JACKPOT! 226! Dein Gebot wurde multipliziert * 50!"
 
 #: redbot/cogs/economy/economy.py:52
 msgid "4LC! Your bid has been multiplied * 25!"
-msgstr ""
+msgstr "4LC! Dein Gebot wurde multipliziert * 25!"
 
 #: redbot/cogs/economy/economy.py:56
 msgid "Three cherries! Your bid has been multiplied * 20!"
-msgstr ""
+msgstr "Drei Kirschen! Dein Gebot wurde multipliziert * 20!"
 
 #: redbot/cogs/economy/economy.py:60
 msgid "2 6! Your bid has been multiplied * 4!"
@@ -45,7 +45,7 @@ msgstr "Zwei Kirschen! Dein Gebot wurde multipliziert * 3!"
 
 #: redbot/cogs/economy/economy.py:68
 msgid "Three symbols! Your bid has been multiplied * 10!"
-msgstr ""
+msgstr "Drei Symbole! Dein Gebot wurde multipliziert * 10!"
 
 #: redbot/cogs/economy/economy.py:72
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
@@ -60,7 +60,14 @@ msgid "Slot machine payouts:\n"
 "{cherries.value} {cherries.value} Bet * 3\n\n"
 "Three symbols: Bet * 10\n"
 "Two symbols: Bet * 2"
-msgstr ""
+msgstr "Spielautomaten Auszahlungen:\n"
+"{two.value} {two.value} {six.value} Gebot * 50\n"
+"{flc.value} {flc.value} {flc.value} Gebot * 25\n"
+"{cherries.value} {cherries.value} {cherries.value} Gebot * 20\n"
+"{two.value} {six.value} Gebot * 4\n"
+"{cherries.value}{cherries.value} Gebot * 3\n\n"
+"Drei Symbole: Gebot * 10\n"
+"Zwei Symbole: Gebot * 2"
 
 #: redbot/cogs/economy/economy.py:121
 #, docstring
@@ -301,7 +308,7 @@ msgstr "Punkte"
 
 #: redbot/cogs/economy/economy.py:663
 msgid "No balances found."
-msgstr ""
+msgstr "Keine Bilanzen gefunden."
 
 #: redbot/cogs/economy/economy.py:668
 #, docstring
@@ -346,12 +353,13 @@ msgstr "Nichts!"
 
 #: redbot/cogs/economy/economy.py:784
 msgid "Your bid: {bid}"
-msgstr ""
+msgstr "Dein Gebot: {bid}"
 
 #: redbot/cogs/economy/economy.py:785
 msgid "\n"
 "{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!"
-msgstr ""
+msgstr "\n"
+"{old_balance} - {bid} (Dein Gebot) + {pay} (Gewinn) → {new_balance}!"
 
 #: redbot/cogs/economy/economy.py:802
 #, docstring
@@ -374,7 +382,14 @@ msgid "----Economy Settings---\n"
 "Payday cooldown: {payday_time}\n"
 "Amount given at account registration: {register_amount}\n"
 "Maximum allowed balance: {maximum_bal}"
-msgstr ""
+msgstr "----Economy Einstellungen---\n"
+"Mindesteinsatz Spielautomat: {slot_min}\n"
+"Maximaleinsatz Spielautomat: {slot_max}\n"
+"Spielautomat Abklingzeit: {slot_time}\n"
+"Zahltag Summe: {payday_amount}\n"
+"Zahltag Abklingzeit: {payday_time}\n"
+"Ausgezahlte Summe bei Kontoeröffnung: {register_amount}\n"
+"Maximal zulässige Balance: {maximum_bal}"
 
 #: redbot/cogs/economy/economy.py:839
 #, docstring
@@ -456,7 +471,7 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:972
 msgid "Amount must be greater than zero and less than {maxbal}."
-msgstr ""
+msgstr "Der Betrag muss größer als null und kleiner als {maxbal} sein."
 
 #: redbot/cogs/economy/economy.py:982
 msgid "Every payday will now give {num} {currency}."

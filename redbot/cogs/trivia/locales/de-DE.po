@@ -91,11 +91,11 @@ msgstr "Du hast es raus, {user}! **+1** für dich!"
 
 #: redbot/cogs/trivia/session.py:319
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
-msgstr ""
+msgstr "Glückwunsch, {users}! Sie erhälten jeweils {num} {currency} für Ihren Sieg erhalten!"
 
 #: redbot/cogs/trivia/session.py:327
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
-msgstr ""
+msgstr "Glückwunsch, {user}! Du erhältst {num} {currency} weil du Erster gewesen bist!"
 
 #: redbot/cogs/trivia/trivia.py:41
 #, docstring
@@ -197,7 +197,7 @@ msgstr "Erledigt. Ich erhalte jetzt einen Punkt wenn Benutzer nicht rechtzeitig 
 
 #: redbot/cogs/trivia/trivia.py:163
 msgid "Alright, I won't embarrass you at trivia anymore."
-msgstr ""
+msgstr "Na gut, ich werde euch nicht länger bei Trivia vorführen."
 
 #: redbot/cogs/trivia/trivia.py:167
 #, docstring

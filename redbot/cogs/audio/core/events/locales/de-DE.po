@@ -42,16 +42,16 @@ msgstr "`{user_input}` ist kein gültiger Wert für `{command}`"
 
 #: redbot/cogs/audio/core/events/dpy.py:142
 msgid "Unable To Parse Argument"
-msgstr ""
+msgstr "Argument kann nicht analysiert werden"
 
 #: redbot/cogs/audio/core/events/dpy.py:154
 #: redbot/cogs/audio/core/events/dpy.py:163
 msgid "Invalid Argument"
-msgstr ""
+msgstr "Ungültiges Argument"
 
 #: redbot/cogs/audio/core/events/dpy.py:155
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-msgstr ""
+msgstr "Das Argument, das du für `{}` angegeben hast, ist ungültig: Ich erwartete ein `{}`."
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
@@ -59,15 +59,15 @@ msgstr "Ungültige Umgebung"
 
 #: redbot/cogs/audio/core/events/dpy.py:176
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Die Verbindung zu Lavalink hat verloren."
 
 #: redbot/cogs/audio/core/events/dpy.py:184
 msgid "No Player Available"
-msgstr ""
+msgstr "Keine Player verfügbar"
 
 #: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
-msgstr ""
+msgstr "Die Bot ist nicht mit einem Sprachkanal verbunden."
 
 #: redbot/cogs/audio/core/events/dpy.py:193
 #: redbot/cogs/audio/core/events/lavalink.py:105
@@ -77,7 +77,7 @@ msgstr "Tracks können nicht abgerufen werden"
 #: redbot/cogs/audio/core/events/dpy.py:194
 #: redbot/cogs/audio/core/events/lavalink.py:106
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Ich bin momentan nicht in der Lage, einen Track von Lavalink zu bekommen. Versuchen Sie es in ein paar Minuten erneut."
 
 #: redbot/cogs/audio/core/events/dpy.py:205
 msgid "There was an issue communicating with Discord."
@@ -93,7 +93,7 @@ msgstr "Kein gültiger Track gefunden."
 
 #: redbot/cogs/audio/core/events/lavalink.py:128
 msgid "Auto Play started."
-msgstr ""
+msgstr "Automatische Wiedergabe gestartet."
 
 #: redbot/cogs/audio/core/events/lavalink.py:143
 msgid "Now Playing"
@@ -109,7 +109,7 @@ msgstr "Warteschlange beendet."
 
 #: redbot/cogs/audio/core/events/lavalink.py:211
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Mehrere Fehler erkannt"
 
 #: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."

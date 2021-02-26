@@ -576,7 +576,7 @@ msgstr "Vis gjeldende innstillinger for server administrasjon."
 
 #: redbot/cogs/mod/settings.py:31
 msgid "Track name changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Spornavn endringer: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:32 redbot/cogs/mod/settings.py:55
 #: redbot/cogs/mod/settings.py:83 redbot/cogs/mod/settings.py:91
@@ -594,11 +594,11 @@ msgstr "Nei"
 
 #: redbot/cogs/mod/settings.py:53
 msgid "Overridden by another setting"
-msgstr ""
+msgstr "Overstyrt av en annen innstilling"
 
 #: redbot/cogs/mod/settings.py:56
 msgid "Track nickname changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Spor kallenavn endrer: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:57
 msgid "Delete repeats: {num_repeats}\n"
@@ -979,23 +979,26 @@ msgid "\n"
 "        Toggle whether nickname changes should be tracked.\n\n"
 "        This setting will be overridden if trackallnames is disabled.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Slå på om endringer i kallenavn skal spores eller ikke.\n\n"
+"        Denne innstillingen overstyres hvis spornavn er deaktivert.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:430
 msgid "Nickname changes are currently being tracked."
-msgstr ""
+msgstr "Kallenavn endringer spores for øyeblikket."
 
 #: redbot/cogs/mod/settings.py:432
 msgid "Nickname changes are not currently being tracked."
-msgstr ""
+msgstr "Kallenavn endringer blir ikke sporet."
 
 #: redbot/cogs/mod/settings.py:437
 msgid "Nickname changes will now be tracked."
-msgstr ""
+msgstr "Navnendringer vil nå bli sporet."
 
 #: redbot/cogs/mod/settings.py:439
 msgid "Nickname changes will no longer be tracked."
-msgstr ""
+msgstr "Kallenavn endringer vil ikke lenger spores."
 
 #: redbot/cogs/mod/settings.py:446
 #, docstring
@@ -1003,24 +1006,28 @@ msgid "\n"
 "        Toggle whether all name changes should be tracked.\n\n"
 "        Toggling this off also overrides the tracknicknames setting.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Veksle om alle navneendringer skal spores.\n\n"
+"        Hvis du slår på dette overstyrer også innstillingen for sporekallenavn.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:454
 msgid "Name changes are currently being tracked."
-msgstr ""
+msgstr "Navneendringer spores for øyeblikket."
 
 #: redbot/cogs/mod/settings.py:456
 msgid "All name changes are currently not being tracked."
-msgstr ""
+msgstr "Alle navneendringer blir ikke sporet."
 
 #: redbot/cogs/mod/settings.py:461
 msgid "Name changes will now be tracked."
-msgstr ""
+msgstr "Navnendringer vil nå bli sporet."
 
 #: redbot/cogs/mod/settings.py:463
 msgid "All name changes will no longer be tracked.\n"
 "To delete existing name data, use {command}."
-msgstr ""
+msgstr "Alle navneendringer vil ikke lenger spores.\n"
+"For å slette eksisterende navnedata, bruk {command}."
 
 #: redbot/cogs/mod/settings.py:474
 #, docstring
@@ -1031,16 +1038,23 @@ msgid "Delete all stored usernames and nicknames.\n\n"
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "Slett alle lagrede brukernavn og kallenavn.\n\n"
+"        Eksempler:\n"
+"            - `[p]modset deletenames` - Ikke bekreftet. Viser en hjelp-melding.\n"
+"            - `[p]modset deletenames yes` - Sletter alle lagrede brukernavn og kallenavn.\n\n"
+"        **Argumenter**\n\n"
+"        - `<confirmation>` som standard er unikt med mindre det er angitt.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:486
 msgid "This will delete all stored usernames and nicknames the bot has stored.\n"
 "If you're sure, type {command}"
-msgstr ""
+msgstr "Dette vil slette alle lagrede brukernavn og kallenavn boten er butikk.\n"
+"Hvis du er sikker, skriv {command}"
 
 #: redbot/cogs/mod/settings.py:527
 msgid "Usernames and nicknames have been deleted from Mod config."
-msgstr ""
+msgstr "Brukernavn og kallenavn er slettet fra Mod konfigurasjon."
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring

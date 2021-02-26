@@ -193,11 +193,11 @@ msgstr "Burada eksik bilgiler var info.json"
 
 #: redbot/cogs/downloader/downloader.py:625
 msgid "Repo url: {repo_url}\n"
-msgstr ""
+msgstr "Depo adresi: {repo_url}\n"
 
 #: redbot/cogs/downloader/downloader.py:627
 msgid "Branch: {branch_name}\n"
-msgstr ""
+msgstr "Depo branşı: {branch_name}\n"
 
 #: redbot/cogs/downloader/downloader.py:628
 msgid "Made by: {author}\n"

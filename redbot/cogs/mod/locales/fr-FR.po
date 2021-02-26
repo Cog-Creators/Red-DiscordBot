@@ -25,19 +25,19 @@ msgstr "Spam de mention (Autoban)"
 
 #: redbot/cogs/mod/events.py:80
 msgid "Mention Spam (Autokick)"
-msgstr ""
+msgstr "Spam de mention (Autokick)"
 
 #: redbot/cogs/mod/events.py:95
 msgid "Mention spam (Autokick)"
-msgstr ""
+msgstr "Spam de mention (Autokick)"
 
 #: redbot/cogs/mod/events.py:104
 msgid "Please do not mass mention people!"
-msgstr ""
+msgstr "Veuillez ne pas abuser des mentions!"
 
 #: redbot/cogs/mod/events.py:108
 msgid "{member}, Please do not mass mention people!"
-msgstr ""
+msgstr "{member}, Merci de ne pas abuser des mentions!"
 
 #: redbot/cogs/mod/events.py:127
 msgid "Mention spam (Autowarn)"
@@ -127,7 +127,16 @@ msgid "\n"
 "        If a reason is specified, it will be the reason that shows up\n"
 "        in the audit log.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kick un utilisateur.\n\n"
+"        Exemples :\n"
+"           - `[p]kick 428675506947227648 voulait se faire kick.`\n"
+"            Cela aura pour effet de kick Twentysix du serveur.\n"
+"           - `[p]kick @Twentysix voulait se faire kick.`\n"
+"            Cela aura pour effet de kick Twentysix du serveur.\n\n"
+"        Si une raison est précisée, ce sera la raison qui apparaîtra\n"
+"        dans les logs.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:291 redbot/cogs/mod/kickban.py:664
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
@@ -150,7 +159,17 @@ msgid "Ban a user from this server and optionally delete days of messages.\n\n"
 "        If days is not a number, it's treated as the first word of the reason.\n"
 "        Minimum 0 days, maximum 7. If not specified, the defaultdays setting will be used instead.\n"
 "        "
-msgstr ""
+msgstr "Bannir un utilisateur de ce serveur et éventuellement supprimer des jours de messages.\n\n"
+"        `days` est le nombre de jours de messages à supprimer en cas de ban.\n\n"
+"        Exemples :\n"
+"           - `[p]ban 428675506947227648 7 A continué de spam malgré qu'on lui ait dit d'arrêter.`\n"
+"            Cela bannira Twentysix et supprimera 7 jours de messages.\n"
+"           - `[p]ban @Twentysix 7 A continué de spam malgré qu'on lui ait dit d'arrêter.`\n"
+"            Cela bannira Twentysix et supprimera 7 jours de messages.\n\n"
+"        Un identifiant doit être fourni si l'utilisateur n'est pas membre de ce serveur.\n"
+"        Si \"days\" n'est pas un nombre, il est traité comme le premier mot de la raison.\n"
+"        Minimum 0 jour, maximum 7. S'il n'est pas spécifié, le paramètre \"Default Days\" sera utilisé à la place.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:397
 #, docstring
@@ -162,7 +181,14 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr ""
+msgstr "Mass bans des utilisateur(s) sur le serveur.\n\n"
+"        `days` est le nombre de jours de messages à supprimer en cas de ban.\n\n"
+"        Exemple :\n"
+"           - `[p]massban 345628097929936898 57287406247743488 7 ils ont enfreint toutes les règles.`\n"
+"            Cela permettra de ban tous les userids ajoutés et de supprimer 7 jours de messages de valeur.\n\n"
+"        Les identifiants des utilisateurs doivent être fournis afin de ban\n"
+"        lors de l'utilisation de cette commande.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:413
 msgid "Banned {num} users from the server."
@@ -177,7 +203,8 @@ msgstr "\n"
 #: redbot/cogs/mod/kickban.py:420
 msgid "\n"
 "Following user IDs have been upgraded from a temporary to a permanent ban:\n"
-msgstr ""
+msgstr "\n"
+"Les identifiants d'utilisateur suivants ont été mis à jour et sont passés d'un ban temporaire à un ban permanent : \n"
 
 #: redbot/cogs/mod/kickban.py:448
 msgid "I lack the permissions to do this."
@@ -189,7 +216,7 @@ msgstr "Impossible de bannir l'utilisateur {user_id}: {reason}"
 
 #: redbot/cogs/mod/kickban.py:536
 msgid "Could not ban user with ID {user_id}: missing permissions."
-msgstr ""
+msgstr "Impossible de ban cet utilisateur avec l'ID {user_id} : Permissions manquantes."
 
 #: redbot/cogs/mod/kickban.py:569
 #, docstring
@@ -204,15 +231,25 @@ msgid "Temporarily ban a user from this server.\n\n"
 "           - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`\n"
 "            This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.\n"
 "        "
-msgstr ""
+msgstr "Bannir temporairement un utilisateur de ce serveur.\n\n"
+"        `duration` est la durée pendant laquelle l'utilisateur doit être banni temporaire.\n"
+"        `days` est le nombre de jours de messages à nettoyer lors du bannissement temporaire.\n\n"
+"        Exemples :\n"
+"           - `[p]tempban @Twentysix Parce que je le dis`\n"
+"            Cela permettra de bannir temporairement Twentysix pour la durée par défaut fixée par un administrateur.\n"
+"           - `[p]tempban @Twentysix 15m Vous avez besoin d'une pause`\n"
+"            Cela bannira Twentysix pendant 15 minutes.\n"
+"           - `[p]tempban 428675506947227648 1d2h15m 5 Personne diabolique`\n"
+"            L'utilisateur sera ainsi banni pendant 1 jour 2 heures 15 minutes et les 5 derniers jours de ses messages seront supprimés.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:623
 msgid "You have been temporarily banned from {server_name} until {date}."
-msgstr ""
+msgstr "Tu as été banni temporairement de {server_name} jusqu'au {date}."
 
 #: redbot/cogs/mod/kickban.py:627
 msgid " Here is an invite for when your ban expires: {invite_link}"
-msgstr ""
+msgstr " Voici l'invitation qui vous permettra de rejoindre le serveur après l'expiration de votre ban : {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:637
 msgid "I can't do that for some reason."
@@ -265,11 +302,11 @@ msgstr "Débannir un utilisateur de parler et d'écouter dans les salon vocaux d
 
 #: redbot/cogs/mod/kickban.py:805
 msgid "That user isn't muted or deafened by the server."
-msgstr ""
+msgstr "Cet utilisateur n'est pas mute ou mit en sourdine par le serveur."
 
 #: redbot/cogs/mod/kickban.py:821
 msgid "User is now allowed to speak and listen in voice channels."
-msgstr ""
+msgstr "L'utilisateur est désormais autorisé à parler et écouter dans les salons vocaux."
 
 #: redbot/cogs/mod/kickban.py:827
 #, docstring
@@ -278,11 +315,11 @@ msgstr "Bannir un utilisateur de parler et d'écouter les salon vocaux du serveu
 
 #: redbot/cogs/mod/kickban.py:848
 msgid "That user is already muted and deafened server-wide."
-msgstr ""
+msgstr "Cet utilisateur est déjà mute et rendu sourd sur l'ensemble du serveur."
 
 #: redbot/cogs/mod/kickban.py:862
 msgid "User has been banned from speaking or listening in voice channels."
-msgstr ""
+msgstr "L'utilisateur a été banni de parler ou bien d'entendre dans les salons vocaux."
 
 #: redbot/cogs/mod/kickban.py:869
 #, docstring

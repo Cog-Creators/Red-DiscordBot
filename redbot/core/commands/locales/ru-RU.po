@@ -85,19 +85,19 @@ msgstr ""
 
 #: redbot/core/commands/help.py:309
 msgid "Aliases"
-msgstr ""
+msgstr "Алиасы"
 
 #: redbot/core/commands/help.py:309
 msgid "Alias"
-msgstr ""
+msgstr "Алиас"
 
 #: redbot/core/commands/help.py:330
 msgid "{aliases} and {number} more aliases."
-msgstr ""
+msgstr "{aliases} и {number} псевдонимов."
 
 #: redbot/core/commands/help.py:334
 msgid "{aliases} and one more alias."
-msgstr ""
+msgstr "{aliases} и еще один псевдоним."
 
 #: redbot/core/commands/help.py:376
 msgid "**__Subcommands:__**"
@@ -109,7 +109,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:389
 msgid "Subcommands:"
-msgstr ""
+msgstr "Подкоманды:"
 
 #: redbot/core/commands/help.py:453 redbot/core/commands/help.py:708
 #: redbot/core/commands/help.py:721 redbot/core/commands/help.py:740
@@ -131,7 +131,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:563
 msgid "Commands:"
-msgstr ""
+msgstr "Команды:"
 
 #: redbot/core/commands/help.py:605
 msgid "**__No Category:__**"
@@ -139,19 +139,19 @@ msgstr ""
 
 #: redbot/core/commands/help.py:618
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (продолжение)"
 
 #: redbot/core/commands/help.py:634 redbot/core/commands/help.py:648
 msgid "No Category:"
-msgstr ""
+msgstr "Нет Категории:"
 
 #: redbot/core/commands/help.py:717
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Тема справки для *{command_name}* не найдена."
 
 #: redbot/core/commands/help.py:734
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Команда *{command_name}* не имеет субкоманды с именем *{not_found}*."
 
 #: redbot/core/commands/help.py:809
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
