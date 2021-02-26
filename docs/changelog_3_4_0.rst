@@ -48,7 +48,7 @@ Core Bot
     - The colors used have been adjusted to be readable on many more terminal applications
     - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
     - Tracebacks will now use the full width of the terminal again
-    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``-rich-traceback-extra-lines``)
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``--rich-traceback-extra-lines``)
     - Disabled syntax highlighting on the log messages
     - Dev cog no longer captures logging output
     - Added some cool features for developers
