@@ -1,4 +1,4 @@
-name: Publish the release
+name: Publish Release
 on:
   push:
     tags:
@@ -45,6 +45,19 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
           DEV_BUMP: '1'
 
+      # Get milestone number of the milestone for the old version
+      - name: Get milestone number
+        id: get_milestone_number
+        uses: actions/github-script@v3
+        env:
+          MILESTONE_TITLE: ${{ steps.bump_version_dev.outputs.old_version }}
+        with:
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/get_milestone_number_by_exact_title.js`
+            );
+            return await script({github, context});
+
       - name: Create Pull Request
         id: cpr_bump_dev
         uses: peter-evans/create-pull-request@v3
@@ -58,6 +71,7 @@ jobs:
           labels: "Automated PR, Changelog Entry: Skipped"
           branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          milestone: ${{ steps.get_milestone_number.outputs.result }}
 
       - name: Close and reopen the PR with different token to trigger CI
         uses: actions/github-script@v3

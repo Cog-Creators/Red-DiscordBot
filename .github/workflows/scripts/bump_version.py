@@ -12,6 +12,8 @@ version_info = None
 def repl(match: Match[str]) -> str:
     global version_info
 
+    print(f"::set-output name=old_version::{match.group('version')}")
+
     new_stable_version = os.environ.get("NEW_STABLE_VERSION", "auto")
     if new_stable_version == "auto":
         version_info = redbot.VersionInfo.from_str(match.group("version"))

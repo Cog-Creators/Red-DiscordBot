@@ -1,4 +1,4 @@
-name: Prepare release
+name: Prepare Release
 on:
   workflow_dispatch:
     inputs:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   crowdin_download_translations:
+    needs: pr_stable_bump
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -42,11 +43,12 @@ jobs:
           commit-message: Automated Crowdin downstream
           title: "[i18n] Automated Crowdin downstream"
           body: |
-            This is an automated PR.
+            This is an automated PR that is part of Prepare Release automated workflow (2 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
           labels: "Automated PR, Category: i18n, Changelog Entry: Skipped"
           branch: "automated/i18n"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          milestone: ${{ needs.pr_stable_bump.outputs.milestone_number }}
 
       - name: Close and reopen the PR with different token to trigger CI
         uses: actions/github-script@v3
@@ -63,6 +65,8 @@ jobs:
 
   pr_stable_bump:
     runs-on: ubuntu-latest
+    outputs:
+      milestone_number: ${{ steps.get_milestone_number.outputs.result }}
     steps:
       # Checkout repository and install Python
       - uses: actions/checkout@v2
@@ -80,6 +84,19 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
           NEW_STABLE_VERSION: ${{ github.event.inputs.new_stable_version }}
 
+      # Get milestone number of the milestone for the new stable version
+      - name: Get milestone number
+        id: get_milestone_number
+        uses: actions/github-script@v3
+        env:
+          MILESTONE_TITLE: ${{ steps.bump_version_stable.outputs.new_version }}
+        with:
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/get_milestone_number_by_exact_title.js`
+            );
+            return await script({github, context});
+
       - name: Create Pull Request
         id: cpr_bump_stable
         uses: peter-evans/create-pull-request@v3
@@ -88,11 +105,12 @@ jobs:
           commit-message: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
           title: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
           body: |
-            This is an automated PR.
+            This is an automated PR that is part of Prepare Release automated workflow (1 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
           labels: "Automated PR, Changelog Entry: Skipped"
           branch: "automated/pr_bumps/${{ steps.bump_version_stable.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          milestone: ${{ steps.get_milestone_number.outputs.result }}
 
       - name: Close and reopen the PR with different token to trigger CI
         uses: actions/github-script@v3
