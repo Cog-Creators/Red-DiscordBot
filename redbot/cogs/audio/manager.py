@@ -234,6 +234,7 @@ class ServerManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")

@@ -107,8 +107,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     except KeyError:
                         player = None
                 vc = 0
+                guild_data = await self.config.guild_from_id(guild.id).all()
+                shuffle = guild_data["shuffle"]
+                repeat = guild_data["repeat"]
+                volume = guild_data["volume"]
+                shuffle_bumped = guild_data["shuffle_bumped"]
+                auto_deafen = guild_data["auto_deafen"]
+
                 if player is None:
-                    auto_deafen = await self.config.guild_from_id(guild.id).auto_deafen()
                     while tries < 5 and vc is not None:
                         try:
                             notify_channel_id, vc_id = metadata.pop(
@@ -142,10 +148,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
-                shuffle = await self.config.guild(guild).shuffle()
-                repeat = await self.config.guild(guild).repeat()
-                volume = await self.config.guild(guild).volume()
-                shuffle_bumped = await self.config.guild(guild).shuffle_bumped()
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
@@ -178,7 +180,13 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except KeyError:
                     player = None
             if player is None:
-                auto_deafen = await self.config.guild_from_id(guild.id).auto_deafen()
+                guild_data = await self.config.guild_from_id(guild.id).all()
+                shuffle = guild_data["shuffle"]
+                repeat = guild_data["repeat"]
+                volume = guild_data["volume"]
+                shuffle_bumped = guild_data["shuffle_bumped"]
+                auto_deafen = guild_data["auto_deafen"]
+
                 while tries < 5 and vc is not None:
                     try:
                         vc = guild.get_channel(vc_id)
@@ -206,10 +214,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             await asyncio.sleep(1)
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
-                shuffle = await self.config.guild(guild).shuffle()
-                repeat = await self.config.guild(guild).repeat()
-                volume = await self.config.guild(guild).volume()
-                shuffle_bumped = await self.config.guild(guild).shuffle_bumped()
+
+
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
@@ -234,8 +240,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                                 notify_channel,
                                 title=_("Unable to Get Track"),
                                 description=_(
-                                    "I'm unable to get a track from Lavalink at the moment, try again in a few "
-                                    "minutes."
+                                    "I'm unable to get a track from Lavalink at the moment, "
+                                    "try again in a few minutes."
                                 ),
                             )
                         return
