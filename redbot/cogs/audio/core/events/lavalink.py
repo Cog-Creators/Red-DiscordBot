@@ -370,7 +370,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
                     []
                 )
-        elif code in (42069,):
+        elif code in (42069,) and has_perm and player.current and player.is_playing:
             player.store("resumes", player.fetch("resumes", 0) + 1)
             await player.connect(deafen=deafen)
             await player.resume(player.current, start=player.position)
