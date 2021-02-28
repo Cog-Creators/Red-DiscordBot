@@ -673,7 +673,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _build_bundled_playlist(self):
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(
-                CURRATED_DATA+f"?timestamp={int(time.time())}", headers={"content-type": "application/json"}
+                CURRATED_DATA + f"?timestamp={int(time.time())}",
+                headers={"content-type": "application/json"},
             ) as response:
                 if response.status != 200:
                     return
