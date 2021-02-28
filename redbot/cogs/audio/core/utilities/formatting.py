@@ -243,24 +243,24 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
-                        track.title,
-                        LocalPath(track.uri, self.local_folder_current_path).to_string_user(),
+                        discord.utils.escape_markdown(track.title),
+                        discord.utils.escape_markdown(LocalPath(track.uri, self.local_folder_current_path).to_string_user()),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
-                        search_track_num, track.title, track.uri
+                        search_track_num, discord.utils.escape_markdown(track.title), track.uri
                     )
             except AttributeError:
                 track = Query.process_input(track, self.local_folder_current_path)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
                     if track.is_album:
                         folder = True
                 else:
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
