@@ -244,7 +244,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
                         discord.utils.escape_markdown(track.title),
-                        discord.utils.escape_markdown(LocalPath(track.uri, self.local_folder_current_path).to_string_user()),
+                        discord.utils.escape_markdown(
+                            LocalPath(track.uri, self.local_folder_current_path).to_string_user()
+                        ),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
