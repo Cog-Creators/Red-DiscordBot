@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -74,13 +74,29 @@ msgstr "{role.name} rolünü {member.display_name} kullanıcısından başarıl�
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
-msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Kullanıcıya rol ekle.\\n\\n        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\\n        Kullanıcı boş bırakılırsa, varsayılan olarak komutun yazarıdır.\\n        "
+msgid "\n"
+"        Add a role to a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "\n"
+"        Kullanıcıya rol ekle.\n\n"
+"        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\n"
+"        Kullanıcı boş bırakılırsa, varsayılan olarak komutu yazan kabul edilir.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
-msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Kullanıcıdan rol sil.\\n\\n        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\\n        Kullanıcı boş bırakılırsa, varsayılan olarak komutun yazarıdır.\\n        "
+msgid "\n"
+"        Remove a role from a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "\n"
+"        Kullanıcıdan rol sil.\n\n"
+"        Rol boşluk içeriyorsa çift tırnak işareti kullanın.\n"
+"        Kullanıcı boş bırakılırsa, varsayılan olarak komutu yazan kabul edilir.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
@@ -89,8 +105,23 @@ msgstr "Rol ayarlarını düzenle."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
-msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "Rol rengini düzenler.\\n\\n        Rol boşluk içeriyorsa çift tırnak kulanın.\\n        Renk hexadecimal formatında olmalıdır.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Örneğin:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
+msgid "\n"
+"        Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
+msgstr "\n"
+"Rol rengini düzenler.\n\n"
+"        Rol boşluk içeriyorsa çift tırnak kulanın.\n"
+"        Renk onaltılık formatında olmalıdır.\n"
+"        [Online renk seçme aracı](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Örneğin:\n"
+"            `[p]editrole colour \"Rol adı\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`        "
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
@@ -98,8 +129,17 @@ msgstr "Tamamlandı."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
-msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "Rolün ismini düzenler.\\n\\n        Rol boşluk içeriyorsa çift tırnak kulanın.\\n\\n        Örneğin:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
+msgid "\n"
+"        Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Example:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
+msgstr "\n"
+"Rolün ismini düzenler.\n\n"
+"        Rol veya ad boşluk içeriyorsa çift tırnak kulanın.\n\n"
+"        Örneğin:\n"
+"            `[p]editrole name \"Rol adı\" Test`        "
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
@@ -130,8 +170,14 @@ msgstr "Anonsların sunucuya nasıl gönderileceğini belirleyin."
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
-msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n        Botun yollaması için bir duyuru kanalı ayarlayın.\\n\\n        Eğer kanal boş bırakılırsa mevcut kanal ayarlanır.\\n        "
+msgid "\n"
+"        Change the channel where the bot will send announcements.\n\n"
+"        If channel is left blank it defaults to the current channel.\n"
+"        "
+msgstr "\n"
+"        Botun duyuru göndereceği kanalı değiştir.\n\n"
+"        Boş bırakılırsa şu anki kanal kabul edilir.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -144,73 +190,115 @@ msgstr "Kanalı duyuru ayarından kaldır."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
-msgid "Apply selfroles."
-msgstr "Kişisel rol ekle."
+msgid "\n"
+"        Add or remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Kendinden bir selfrole kaldır.\n\n"
+"        Sunucu yöneticilerinin bu rolü kullanıcı tarafından alınabilir ayarlaması gerekir.\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:401
+#: redbot/cogs/admin/admin.py:409
 #, docstring
-msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Kişisel rol ekler.\\n\\n        Sunucu yöneticileri kullanıcının kullanabileceği şekilde ayarlamalıdır.\\n\\n        NOT: Rol büyük küçük harf duyarlıdır!\\n        "
+msgid "\n"
+"        Add a selfrole to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Kendine bir selfrole ekle.\n\n"
+"        Sunucu yöneticilerinin rolü kullanıcı tarafından alınabilir ayarlaması gerekir.\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:420
 #, docstring
-msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "Kişisel rol siler.\\n\\n        Sunucu yöneticileri kullanıcının kullanabileceği şekilde ayarlamalıdır.\\n\\n        NOT: Rol büyük küçük harf duyarlıdır!\\n        "
+msgid "\n"
+"        Remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Kendinden bir selfrole kaldır.\n\n"
+"        Sunucu yöneticilerinin rolü kullanıcı tarafından alınabilir ayarlaması gerekir.\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:431
 #, docstring
-msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "\\n        Kullanılabilir kişisel rolleri listeler.\\n        "
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
+msgstr "\n"
+"        Kullanılabilir tüm selfroleleri listeler.\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:433
-msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Kullanılabilir kişisel roller:\\n{selfroles}"
+#: redbot/cogs/admin/admin.py:441
+msgid "Available Selfroles:\n"
+"{selfroles}"
+msgstr "Kullanılabilir Selfroleler:\n"
+"{selfroles}"
 
-#: redbot/cogs/admin/admin.py:439
+#: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
 msgstr "Kişisel rolleri düzenle."
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:452
 #, docstring
-msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Kullanılabilir kişisel roller listesine rol ekler.\\n\\n        NOT: Rol büyük küçük harf duyarlıdır!\\n        "
+msgid "\n"
+"        Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Kullanılabilir selfroleler listesine bir rol ekle.\n\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:451
+#: redbot/cogs/admin/admin.py:459
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "{role.name} kullanıcısına belirttiğin rolü vermene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
-#: redbot/cogs/admin/admin.py:459
+#: redbot/cogs/admin/admin.py:467
 msgid "Added."
 msgstr "Eklendi."
 
-#: redbot/cogs/admin/admin.py:462
+#: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
 msgstr "Bu rol zaten bir kişisel rol."
 
-#: redbot/cogs/admin/admin.py:466
+#: redbot/cogs/admin/admin.py:474
 #, docstring
-msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Kullanılabilir kişisel roller listesinden rol siler.\\n\\n        NOT: Rol büyük küçük harf duyarlıdır!\\n        "
+msgid "\n"
+"        Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Kullanılabilir selfroleler listesinden rol siler.\n\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:473
+#: redbot/cogs/admin/admin.py:481
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "{role.name} kullanıcısından belirttiğin rolü silmene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
-#: redbot/cogs/admin/admin.py:481
+#: redbot/cogs/admin/admin.py:489
 msgid "Removed."
 msgstr "Kaldırıldı."
 
-#: redbot/cogs/admin/admin.py:486
+#: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Botu şu an bulunduğu sunucularda kilitler."
 
-#: redbot/cogs/admin/admin.py:491
+#: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
 msgstr "Botun sunucu kilidi aktif değil."
 
-#: redbot/cogs/admin/admin.py:493
+#: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
 msgstr "Botun sunucu kilidi aktif."
 

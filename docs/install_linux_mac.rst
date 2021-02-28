@@ -217,42 +217,6 @@ Continue by `creating-venv-linux`.
 
 ----
 
-.. _install-ubuntu-1604:
-
-~~~~~~~~~~~~~~~~
-Ubuntu 16.04 LTS
-~~~~~~~~~~~~~~~~
-
-We recommend adding the ``openjdk-r`` ppa to install Java 11:
-
-.. code-block:: none
-
-    sudo apt update
-    sudo apt -y install software-properties-common
-    sudo add-apt-repository -yu ppa:openjdk-r/ppa
-
-We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
-
-.. code-block:: none
-
-    sudo add-apt-repository -yu ppa:git-core/ppa
-
-We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
-
-.. code-block:: none
-
-    sudo add-apt-repository -yu ppa:deadsnakes/ppa
-
-Now install the pre-requirements with apt:
-
-.. code-block:: none
-
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
-
-Continue by `creating-venv-linux`.
-
-----
-
 .. _install-ubuntu-1804:
 
 ~~~~~~~~~~~~~~~~
@@ -359,7 +323,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.6 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.7 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -371,7 +335,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.6
+    pyenv global 3.8.7
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
@@ -480,7 +444,7 @@ Or, to install with PostgreSQL support:
 .. code-block:: none
 
     python -m pip install -U pip setuptools wheel
-    python -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U "Red-DiscordBot[postgres]"
 
 
 .. note::

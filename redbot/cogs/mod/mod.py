@@ -44,7 +44,10 @@ class Mod(
 ):
     """Moderation tools."""
 
-    default_global_settings = {"version": ""}
+    default_global_settings = {
+        "version": "",
+        "track_all_names": True,
+    }
 
     default_guild_settings = {
         "mention_spam": {"ban": None, "kick": None, "warn": None, "strict": False},
@@ -57,6 +60,7 @@ class Mod(
         "dm_on_kickban": False,
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
+        "track_nicknames": True,
     }
 
     default_channel_settings = {"ignored": False}

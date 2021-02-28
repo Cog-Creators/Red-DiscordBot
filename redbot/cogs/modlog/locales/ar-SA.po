@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-20 12:25+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -32,7 +32,9 @@ msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:44
 #, docstring
-msgid "Set a channel as the modlog.\\n\\n        Omit `<channel>` to disable the modlog.\\n        "
+msgid "Set a channel as the modlog.\n\n"
+"        Omit `<channel>` to disable the modlog.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:53
@@ -58,85 +60,100 @@ msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "enabled"
-msgstr ""
+msgstr "مفعّل"
 
 #: redbot/cogs/modlog/modlog.py:81 redbot/cogs/modlog/modlog.py:95
 msgid "disabled"
-msgstr ""
+msgstr "معطل"
 
 #: redbot/cogs/modlog/modlog.py:84
-msgid "Current settings:\\n"
-msgstr ""
+msgid "Current settings:\n"
+msgstr "الإعدادات الحالية:\n"
 
 #: redbot/cogs/modlog/modlog.py:89
 msgid "That action is not registered."
-msgstr ""
+msgstr "وهذا الإجراء غير مسجل."
 
 #: redbot/cogs/modlog/modlog.py:94
 msgid "Case creation for {action_name} actions is now {enabled}."
-msgstr ""
+msgstr "إنشاء حالة لإجراءات {action_name} هو الآن {enabled}."
 
 #: redbot/cogs/modlog/modlog.py:102
 #, docstring
 msgid "Reset all modlog cases in this server."
-msgstr ""
+msgstr "إعادة تعيين جميع حالات modlog في هذا الخادم."
 
 #: redbot/cogs/modlog/modlog.py:105
 msgid "Cases have been reset."
-msgstr ""
+msgstr "وقد أعيد تعيين القضايا."
 
 #: redbot/cogs/modlog/modlog.py:110
 #, docstring
 msgid "Show the specified case."
-msgstr ""
+msgstr "إظهار الحالة المحددة."
 
 #: redbot/cogs/modlog/modlog.py:114
 msgid "That case does not exist for that server."
-msgstr ""
+msgstr "هذه الحالة غير موجودة لهذا السيرفر."
 
-#: redbot/cogs/modlog/modlog.py:120
-msgid "{case}\\n**Timestamp:** {timestamp}"
+#: redbot/cogs/modlog/modlog.py:120 redbot/cogs/modlog/modlog.py:158
+msgid "{case}\n"
+"**Timestamp:** {timestamp}"
 msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:131
 #, docstring
 msgid "Display cases for the specified member."
-msgstr ""
+msgstr "عرض الحالات للعضو المحدد."
 
-#: redbot/cogs/modlog/modlog.py:142
+#: redbot/cogs/modlog/modlog.py:143 redbot/cogs/modlog/modlog.py:183
 msgid "That user does not exist."
-msgstr ""
+msgstr "ذالك المستخدم غير موجود."
 
-#: redbot/cogs/modlog/modlog.py:145
+#: redbot/cogs/modlog/modlog.py:146 redbot/cogs/modlog/modlog.py:186
 msgid "Something unexpected went wrong while fetching that user by ID."
-msgstr ""
+msgstr "حدث خطأ ما غير متوقع أثناء جلب هذا المستخدم بواسطة المعرف الشخصي."
 
-#: redbot/cogs/modlog/modlog.py:149
+#: redbot/cogs/modlog/modlog.py:150 redbot/cogs/modlog/modlog.py:189
 msgid "That user does not have any cases."
-msgstr ""
+msgstr "هذا المستخدم ليس لديه أي حالات."
 
-#: redbot/cogs/modlog/modlog.py:157
-msgid "{case}\\n**Timestamp:** {timestamp}"
-msgstr ""
-
-#: redbot/cogs/modlog/modlog.py:170
+#: redbot/cogs/modlog/modlog.py:171
 #, docstring
-msgid "Specify a reason for a modlog case.\\n\\n        Please note that you can only edit cases you are\\n        the owner of unless you are a mod, admin or server owner.\\n\\n        If no case number is specified, the latest case will be used.\\n        "
+msgid "List cases for the specified member."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:183
+#: redbot/cogs/modlog/modlog.py:194
+msgid "{case}\n"
+"**Timestamp:** {timestamp}\n\n"
+msgstr ""
+
+#: redbot/cogs/modlog/modlog.py:207
+#, docstring
+msgid "Specify a reason for a modlog case.\n\n"
+"        Please note that you can only edit cases you are\n"
+"        the owner of unless you are a mod, admin or server owner.\n\n"
+"        If no case number is specified, the latest case will be used.\n"
+"        "
+msgstr "حدد سببا لحالة مودلوغ.\n\n"
+"        يرجى ملاحظة أنه يمكنك فقط تعديل الحالات التي أنت\n"
+"        مالك ما لم تكن هناك تعديل، المشرف أو مالك الخادم.\n\n"
+"        إذا لم يتم تحديد رقم الدعوى، سيتم استخدام آخر حالة.\n"
+"        "
+
+#: redbot/cogs/modlog/modlog.py:220
 msgid "There are no modlog cases in this server."
-msgstr ""
+msgstr "لا توجد حالات modlog في هذا الخادم."
 
-#: redbot/cogs/modlog/modlog.py:189
+#: redbot/cogs/modlog/modlog.py:226
 msgid "That case does not exist!"
-msgstr ""
+msgstr "هذه الحالة غير موجودة!"
 
-#: redbot/cogs/modlog/modlog.py:196
+#: redbot/cogs/modlog/modlog.py:233
 msgid "You are not authorized to modify that case!"
-msgstr ""
+msgstr "أنت لست مخولاً بتعديل هذه الحالة!"
 
-#: redbot/cogs/modlog/modlog.py:204
+#: redbot/cogs/modlog/modlog.py:241
 msgid "Reason for case #{num} has been updated."
-msgstr ""
+msgstr "سبب الحالة #{num} تم تحديثه."
 

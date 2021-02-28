@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -17,44 +17,44 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "Jeg forsøgte på noget som Discord har nægtet mig adgang til. Din kommando blev ikke gennemført."
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke give {role.name} til {member.display_name} da denne rolle er højere eller tilsvarende til min tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke fjerne {role.name} fra {member.display_name} da denne rolle er højere eller tilsvarende til min tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke redigere {role.name} da denne rolle er højere eller tilsvarende til min tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke lade dig tildele {role.name} til {member.display_name} da denne rolle er højere eller tilsvarende til din tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke lade dig fjerne {role.name} fra {member.display_name} da denne rolle er højere eller tilsvarende til din tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Jeg kan ikke lade dig redigere {role.name} da denne rolle er højere eller tilsvarende til din tildelte rolle i hierarkiet."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "Jeg mangler evnen til at kunne administere roller for at kunne gøre dette."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "Jeg annoncere allerede noget. Hvis du ønsker at annoncere noget andet, benyt dig af '{prefix} annoncere annuller' først."
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr ""
+msgstr "En samling af server administrations værktøjer."
 
 #: redbot/cogs/admin/admin.py:162
 msgid "{member.display_name} already has the role {role.name}."
@@ -62,7 +62,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:182
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "Jeg gennemførte tilføjelsen af {role.name} til {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:192
 msgid "{member.display_name} does not have the role {role.name}."
@@ -70,72 +70,96 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:212
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "Jeg gennemførte fjernelsen af {role.name} fra {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
-msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
+msgid "\n"
+"        Add a role to a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
-msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
+msgid "\n"
+"        Remove a role from a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "Rediger rolle indstillinger."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
-msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
+msgid "\n"
+"        Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
-msgstr ""
+msgstr "Færdig."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
-msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
+msgid "\n"
+"        Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Example:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
 msgid "Announce a message to all servers the bot is in."
-msgstr ""
+msgstr "Annoncer en besked til alle serverne botten er i."
 
 #: redbot/cogs/admin/admin.py:334
 msgid "The announcement has begun."
-msgstr ""
+msgstr "Annonceringen er påbegyndt."
 
 #: redbot/cogs/admin/admin.py:341
 #, docstring
 msgid "Cancel a running announce."
-msgstr ""
+msgstr "Afbryd en kørende annonce."
 
 #: redbot/cogs/admin/admin.py:343
 msgid "There is no currently running announcement."
-msgstr ""
+msgstr "Der er i øjeblikket ikke nogen kørende annonceringer."
 
 #: redbot/cogs/admin/admin.py:346
 msgid "The current announcement has been cancelled."
-msgstr ""
+msgstr "Den nuværende annoncering er blevet afbrudt."
 
 #: redbot/cogs/admin/admin.py:352
 #, docstring
 msgid "Change how announcements are sent in this guild."
-msgstr ""
+msgstr "Ændre hvordan annonceringer er udsendt i denne server."
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
-msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
+msgid "\n"
+"        Change the channel where the bot will send announcements.\n\n"
+"        If channel is left blank it defaults to the current channel.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
-msgstr ""
+msgstr "Annoncerings kanalen er blevet sat til {channel.mention}"
 
 #: redbot/cogs/admin/admin.py:371
 #, docstring
@@ -144,89 +168,110 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
-msgid "Apply selfroles."
+msgid "\n"
+"        Add or remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:401
+#: redbot/cogs/admin/admin.py:409
 #, docstring
-msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
+msgid "\n"
+"        Add a selfrole to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:420
 #, docstring
-msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
+msgid "\n"
+"        Remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:431
 #, docstring
-msgid "\\n        Lists all available selfroles.\\n        "
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:433
-msgid "Available Selfroles:\\n{selfroles}"
+#: redbot/cogs/admin/admin.py:441
+msgid "Available Selfroles:\n"
+"{selfroles}"
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:439
+#: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:452
 #, docstring
-msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
-
-#: redbot/cogs/admin/admin.py:451
-msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+msgid "\n"
+"        Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:459
-msgid "Added."
+msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:462
+#: redbot/cogs/admin/admin.py:467
+msgid "Added."
+msgstr "Tilføjet."
+
+#: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:466
+#: redbot/cogs/admin/admin.py:474
 #, docstring
-msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr ""
-
-#: redbot/cogs/admin/admin.py:473
-msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+msgid "\n"
+"        Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/admin/admin.py:481
-msgid "Removed."
+msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:486
+#: redbot/cogs/admin/admin.py:489
+msgid "Removed."
+msgstr "Fjernet."
+
+#: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Lås en bot til dens nuværende server."
 
-#: redbot/cogs/admin/admin.py:491
+#: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "Botten er ikke længere låst til serveren."
 
-#: redbot/cogs/admin/admin.py:493
+#: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "Botten er nu låst til serveren."
 
 #: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "Jeg kunne ikke annoncere til den følgende server: "
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "Jeg kunne ikke annoncere til de følgende servere: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "Admin cog er ikke indlæst."
 
 #: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
-msgstr ""
+msgstr "Den vedlagte rolle er ikke en valid selvrolle."
 

@@ -55,7 +55,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                         java_path=exc_absolute
                     ),
                 )
-            await self.config.java_exc_path.set(exc_absolute)
+            await self.config.java_exc_path.set(str(exc_absolute))
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Changed"),

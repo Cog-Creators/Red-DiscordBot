@@ -47,7 +47,6 @@ from .utils.chat_formatting import (
 )
 from .commands.requires import PrivilegeLevel
 
-
 _entities = {
     "*": "&midast;",
     "\\": "&bsol;",
@@ -91,7 +90,6 @@ if TYPE_CHECKING:
 __all__ = ["Core"]
 
 log = logging.getLogger("red")
-
 
 _ = i18n.Translator("Core", __file__)
 
@@ -174,6 +172,20 @@ class CoreLogic:
             except errors.CogLoadError as e:
                 failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
+                if isinstance(e, commands.CommandRegistrationError):
+                    if e.alias_conflict:
+                        error_message = _(
+                            "Alias {alias_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(alias_name=inline(e.name))
+                    else:
+                        error_message = _(
+                            "Command {command_name} is already an existing command"
+                            " or alias in one of the loaded cogs."
+                        ).format(command_name=inline(e.name))
+                    failed_with_reason_packages.append((name, error_message))
+                    continue
+
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of package\n"
@@ -422,7 +434,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ).format(red_repo, author_repo, org_repo, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name=_("Instance owned by"), value=str(owner))
+            embed.add_field(
+                name=_("Instance owned by team") if app_info.team else _("Instance owned by"),
+                value=str(owner),
+            )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
             embed.add_field(name=_("Red version"), value=red_version)
@@ -457,17 +472,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             about = box(about)
 
-            extras = _(
-                "Instance owned by: [{owner}]\n"
-                "Python:            [{python_version}] (5)\n"
-                "discord.py:        [{dpy_version}] (6)\n"
-                "Red version:       [{red_version}] (7)\n"
-            ).format(
-                owner=owner,
-                python_version=python_version,
-                dpy_version=dpy_version,
-                red_version=red_version,
-            )
+            if app_info.team:
+                extras = _(
+                    "Instance owned by team: [{owner}]\n"
+                    "Python:                 [{python_version}] (5)\n"
+                    "discord.py:             [{dpy_version}] (6)\n"
+                    "Red version:            [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
+            else:
+                extras = _(
+                    "Instance owned by: [{owner}]\n"
+                    "Python:            [{python_version}] (5)\n"
+                    "discord.py:        [{dpy_version}] (6)\n"
+                    "Red version:       [{red_version}] (7)\n"
+                ).format(
+                    owner=owner,
+                    python_version=python_version,
+                    dpy_version=dpy_version,
+                    red_version=red_version,
+                )
 
             if outdated in (True, None):
                 if outdated is True:
@@ -1185,7 +1213,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "you can invite me on new servers.\n\n"
                 "You can change this by ticking `Public bot` in "
                 "your token settings: "
-                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+                "https://discord.com/developers/applications/{0}/bot".format(self.bot.user.id)
             )
             return
         if not confirm:
@@ -1282,12 +1310,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         except asyncio.TimeoutError:
             await ctx.send(_("Response timed out."))
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1393,12 +1419,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     page = page[2:]
                 await ctx.send(page)
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
 
@@ -1431,12 +1455,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
-    @commands.command(name="reload")
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages."""
-        if not cogs:
-            return await ctx.send_help()
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
             (
@@ -1848,7 +1870,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if game:
             if len(game) > 128:
-                await ctx.send("The maximum length of game descriptions is 128 characters.")
+                await ctx.send(_("The maximum length of game descriptions is 128 characters."))
                 return
             game = discord.Game(name=game)
         else:
@@ -1868,6 +1890,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
+            if len(listening) > 128:
+                await ctx.send(
+                    _("The maximum length of listening descriptions is 128 characters.")
+                )
+                return
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
             activity = None
@@ -1887,6 +1914,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
+            if len(watching) > 128:
+                await ctx.send(_("The maximum length of watching descriptions is 128 characters."))
+                return
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
             activity = None
@@ -1895,6 +1925,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
         else:
             await ctx.send(_("Watching cleared."))
+
+    @_set.command(name="competing")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _competing(self, ctx: commands.Context, *, competing: str = None):
+        """Sets [botname]'s competing status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if competing:
+            if len(competing) > 128:
+                await ctx.send(
+                    _("The maximum length of competing descriptions is 128 characters.")
+                )
+                return
+            activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to ``Competing in {competing}``.").format(competing=competing)
+            )
+        else:
+            await ctx.send(_("Competing cleared."))
 
     @_set.command()
     @checks.bot_in_a_guild()
@@ -1925,11 +1979,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to {}.").format(status))
 
-    @_set.command(name="streaming", aliases=["stream"])
+    @_set.command(
+        name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
+    )
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
-        """Sets [botname]'s streaming status.
+        """Sets [botname]'s streaming status to a twitch stream.
 
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -1939,6 +1995,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
+            if len(streamer) > 511:
+                await ctx.send(_("The maximum length of the streamer url is 511 characters."))
+                return
+            if len(stream_title) > 128:
+                await ctx.send(_("The maximum length of the stream title is 128 characters."))
+                return
             activity = discord.Streaming(url=streamer, name=stream_title)
             await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
@@ -2007,13 +2069,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set.command(aliases=["prefixes"])
+    @_set.command(aliases=["prefixes"], require_var_positional=True)
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es)."""
-        if not prefixes:
-            await ctx.send_help()
-            return
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
 
@@ -2233,7 +2292,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
-    @api.command(name="remove")
+    @api.command(name="remove", require_var_positional=True)
     async def api_remove(self, ctx: commands.Context, *services: str):
         """Remove the given services with all their keys and tokens."""
         bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
@@ -2336,6 +2395,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Help will not filter hidden commands."))
         else:
             await ctx.send(_("Help will filter hidden commands."))
+
+    @helpset.command(name="showaliases")
+    async def helpset_showaliases(self, ctx: commands.Context, show_aliases: bool = None):
+        """
+        This allows the help command to show existing commands aliases if there is any.
+
+        This defaults to True.
+        Using this without a setting will toggle.
+        """
+        if show_aliases is None:
+            show_aliases = not await ctx.bot._config.help.show_aliases()
+        await ctx.bot._config.help.show_aliases.set(show_aliases)
+        if show_aliases:
+            await ctx.send(_("Help will show commands aliases."))
+        else:
+            await ctx.send(_("Help will not show commands aliases."))
 
     @helpset.command(name="usetick")
     async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
@@ -2737,19 +2812,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @allowlist.command(name="add", usage="<user>...")
+    @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
-
-        await ctx.send(_("Users added to allowlist."))
+        if len(uids) > 1:
+            await ctx.send(_("Users have been added to the allowlist."))
+        else:
+            await ctx.send(_("User has been added to the allowlist."))
 
     @allowlist.command(name="list")
     async def allowlist_list(self, ctx: commands.Context):
@@ -2761,27 +2834,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not curr_list:
             await ctx.send("Allowlist is empty.")
             return
-
-        msg = _("Users on allowlist:")
+        if len(curr_list) > 1:
+            msg = _("Users on the allowlist:")
+        else:
+            msg = _("User on the allowlist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @allowlist.command(name="remove", usage="<user>...")
+    @allowlist.command(name="remove", require_var_positional=True)
     async def allowlist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the allowlist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
-
-        await ctx.send(_("Users have been removed from the allowlist."))
+        if len(uids) > 1:
+            await ctx.send(_("Users have been removed from the allowlist."))
+        else:
+            await ctx.send(_("User has been removed from the allowlist."))
 
     @allowlist.command(name="clear")
     async def allowlist_clear(self, ctx: commands.Context):
@@ -2799,15 +2872,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @blocklist.command(name="add", usage="<user>...")
+    @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Adds a user to the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         for user in users:
             if isinstance(user, int):
                 user_obj = discord.Object(id=user)
@@ -2819,8 +2888,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
-
-        await ctx.send(_("User added to blocklist."))
+        if len(uids) > 1:
+            await ctx.send(_("Users have been added to the blocklist."))
+        else:
+            await ctx.send(_("User has been added to the blocklist."))
 
     @blocklist.command(name="list")
     async def blocklist_list(self, ctx: commands.Context):
@@ -2832,27 +2903,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not curr_list:
             await ctx.send("Blocklist is empty.")
             return
-
-        msg = _("Users on blocklist:")
+        if len(curr_list) > 1:
+            msg = _("Users on the blocklist:")
+        else:
+            msg = _("User on the blocklist:")
         for user in curr_list:
             msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blocklist.command(name="remove", usage="<user>...")
+    @blocklist.command(name="remove", require_var_positional=True)
     async def blocklist_remove(self, ctx: commands.Context, *users: Union[discord.Member, int]):
         """
         Removes user from the blocklist.
         """
-        if not users:
-            await ctx.send_help()
-            return
-
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
-
-        await ctx.send(_("Users have been removed from blocklist."))
+        if len(uids) > 1:
+            await ctx.send(_("Users have been removed from the blocklist."))
+        else:
+            await ctx.send(_("User has been removed from the blocklist."))
 
     @blocklist.command(name="clear")
     async def blocklist_clear(self, ctx: commands.Context):
@@ -2871,17 +2942,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localallowlist.command(name="add", usage="<user_or_role>...")
+    @localallowlist.command(name="add", require_var_positional=True)
     async def localallowlist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the server allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2898,37 +2965,38 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
         await self.bot._whiteblacklist_cache.add_to_whitelist(ctx.guild, uids)
 
-        await ctx.send(_("{names} added to allowlist.").format(names=humanize_list(names)))
+        if len(uids) > 1:
+            await ctx.send(_("Users and/or roles have been added to the allowlist."))
+        else:
+            await ctx.send(_("User or role has been added to the allowlist."))
 
     @localallowlist.command(name="list")
     async def localallowlist_list(self, ctx: commands.Context):
         """
-        Lists users and roles on the  server allowlist.
+        Lists users and roles on the server allowlist.
         """
         curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Server allowlist is empty.")
             return
-
-        msg = _("Whitelisted Users and roles:")
+        if len(curr_list) > 1:
+            msg = _("Allowed users and/or roles:")
+        else:
+            msg = _("Allowed user or role:")
         for obj in curr_list:
             msg += "\n\t- {}".format(obj)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localallowlist.command(name="remove", usage="<user_or_role>...")
+    @localallowlist.command(name="remove", require_var_positional=True)
     async def localallowlist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from the allowlist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
@@ -2944,9 +3012,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
         await self.bot._whiteblacklist_cache.remove_from_whitelist(ctx.guild, uids)
 
-        await ctx.send(
-            _("{names} removed from the server allowlist.").format(names=humanize_list(names))
-        )
+        if len(uids) > 1:
+            await ctx.send(_("Users and/or roles have been removed from the server allowlist."))
+        else:
+            await ctx.send(_("User or role has been removed from the server allowlist."))
 
     @localallowlist.command(name="clear")
     async def localallowlist_clear(self, ctx: commands.Context):
@@ -2965,17 +3034,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         pass
 
-    @localblocklist.command(name="add", usage="<user_or_role>...")
+    @localblocklist.command(name="add", require_var_positional=True)
     async def localblocklist_add(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Adds a user or role to the blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
             if uid.id == ctx.author.id:
@@ -2991,9 +3056,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.add_to_blacklist(ctx.guild, uids)
 
-        await ctx.send(
-            _("{names} added to the server blocklist.").format(names=humanize_list(names))
-        )
+        if len(uids) > 1:
+            await ctx.send(_("Users and/or roles have been added from the server blocklist."))
+        else:
+            await ctx.send(_("User or role has been added from the server blocklist."))
 
     @localblocklist.command(name="list")
     async def localblocklist_list(self, ctx: commands.Context):
@@ -3005,32 +3071,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not curr_list:
             await ctx.send("Server blocklist is empty.")
             return
-
-        msg = _("Blacklisted Users and Roles:")
+        if len(curr_list) > 1:
+            msg = _("Blocked users and/or roles:")
+        else:
+            msg = _("Blocked user or role:")
         for obj in curr_list:
             msg += "\n\t- {}".format(obj)
 
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @localblocklist.command(name="remove", usage="<user_or_role>...")
+    @localblocklist.command(name="remove", require_var_positional=True)
     async def localblocklist_remove(
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
         Removes user or role from blocklist.
         """
-        if not users_or_roles:
-            await ctx.send_help()
-            return
-
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(ctx.guild, uids)
 
-        await ctx.send(
-            _("{names} removed from the server blocklist.").format(names=humanize_list(names))
-        )
+        if len(uids) > 1:
+            await ctx.send(_("Users and/or roles have been removed from the server blocklist."))
+        else:
+            await ctx.send(_("User or role has been removed from the server blocklist."))
 
     @localblocklist.command(name="clear")
     async def localblocklist_clear(self, ctx: commands.Context):
@@ -3150,6 +3215,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         paged[0] = header + paged[0]
         await ctx.send_interactive(paged)
 
+    @commands.guild_only()
     @list_disabled.command(name="guild")
     async def list_disabled_guild(self, ctx: commands.Context):
         """List disabled commands in this server."""
