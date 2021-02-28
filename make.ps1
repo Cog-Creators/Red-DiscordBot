@@ -41,32 +41,38 @@ param (
 )
 
 function reformat() {
-    black $PSScriptRoot
+    & $script:venvPython -m black $PSScriptRoot
 }
 
 function stylecheck() {
-    black --check $PSScriptRoot
+    & $script:venvPython -m black --check $PSScriptRoot
 }
 
 function stylediff() {
-    black --check --diff $PSScriptRoot
+    & $script:venvPython -m black --check --diff $PSScriptRoot
 }
 
 function newenv() {
     py -3.8 -m venv --clear .venv
-    .\.venv\Scripts\python.exe -m pip install -U pip setuptools
+    & $PSScriptRoot\.venv\Scripts\python.exe -m pip install -U pip setuptools
     syncenv
 }
 
 function syncenv() {
-    .\.venv\Scripts\python.exe -m pip install -Ur .\tools\dev-requirements.txt
+    & $PSScriptRoot\.venv\Scripts\python.exe -m pip install -Ur .\tools\dev-requirements.txt
 }
 
 function activateenv() {
-    .\.venv\Scripts\Activate.ps1
+    & $PSScriptRoot\.venv\Scripts\Activate.ps1
 }
 
 $script:availableCommands = @("reformat", "stylecheck", "stylediff", "newenv", "syncenv", "activateenv")
+
+if (Test-Path -LiteralPath "$PSScriptRoot\.venv" -PathType Container) {
+    $script:venvPython = "$PSScriptRoot\.venv\Scripts\python.exe"
+} else {
+    $script:venvPython = "python"
+}
 
 if ($help -or !$command) {
     Get-Help $MyInvocation.InvocationName
