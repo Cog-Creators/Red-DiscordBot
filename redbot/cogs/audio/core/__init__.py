@@ -92,6 +92,7 @@ class Audio(
 
         default_global = dict(
             schema_version=1,
+            bundled_playlist_version=0,
             owner_notification=0,
             cache_level=0,
             cache_age=365,
@@ -112,7 +113,12 @@ class Audio(
             auto_play=False,
             currently_auto_playing_in=None,
             auto_deafen=True,
-            autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
+            autoplaylist=dict(
+                enabled=True,
+                id=42069,
+                name="Aikaterna's curated tracks",
+                scope=PlaylistScope.GLOBAL.value,
+            ),
             persist_queue=True,
             disconnect=False,
             dj_enabled=False,

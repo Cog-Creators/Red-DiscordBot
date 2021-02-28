@@ -4,10 +4,12 @@ import datetime
 import json
 import logging
 import math
+import random
 from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Tuple, Union
 
+import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
@@ -19,7 +21,7 @@ from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
 
-from ...apis.playlist_interface import Playlist, create_playlist
+from ...apis.playlist_interface import Playlist, PlaylistCompat23, create_playlist
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
 from ...audio_logging import debug_exc_log
 from ...errors import TooManyMatches, TrackEnqueueError
@@ -29,6 +31,9 @@ from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
+CURRATED_DATA = (
+    "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/json"
+)
 
 
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -663,3 +668,45 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return ctx.name if ctx else _("the Server") if the else _("Server")
         elif scope == PlaylistScope.USER.value:
             return str(ctx) if ctx else _("the User") if the else _("User")
+
+    async def _build_bundled_playlist(self):
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
+            async with session.get(
+                CURRATED_DATA, headers={"content-type": "application/json"}
+            ) as response:
+                if response.status != 200:
+                    return
+                try:
+                    data = json.loads(await response.read())
+                except Exception:
+                    log.exception("Curated playlist couldn't be parsed, report this error.")
+                    data = {}
+                web_version = data.get("version", 0)
+                entries = data.get("entries", [])
+                if entries:
+                    random.shuffle(entries)
+        current_version = await self.config.bundled_playlist_version()
+        if current_version >= web_version:
+            return
+
+        tracks = []
+
+        async for entry in AsyncIter(entries, steps=25):
+            tracks.append(self.decode_track(entry))
+
+        playlist_data = dict()
+        playlist_data["name"] = "Aikaterna's curated tracks"
+        playlist_data["tracks"] = tracks
+
+        playlist = await PlaylistCompat23.from_json(
+            bot=self.bot,
+            playlist_api=self.playlist_api,
+            scope=PlaylistScope.GLOBAL.value,
+            playlist_number=42069,
+            data=playlist_data,
+            guild=None,
+            author=self.bot.user.id,
+        )
+        await playlist.save()
+        await self.config.bundled_playlist_version.set(web_version)
+        log.info("Curated playlist has been updated.")

@@ -54,6 +54,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             )
             await self.playlist_api.delete_scheduled()
             await self.api_interface.persistent_queue_api.delete_scheduled()
+            await self._build_bundled_playlist()
             self.lavalink_restart_connect()
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()
