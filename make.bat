@@ -2,18 +2,24 @@
 
 if [%1] == [] goto help
 
+if exist "%~dp0.venv\" (
+    set "VENV_PYTHON=%~dp0.venv\Scripts\python"
+) else (
+    set VENV_PYTHON=python
+)
+
 goto %1
 
 :reformat
-"%~dp0.venv\Scripts\black" "%~dp0."
+"%VENV_PYTHON%" -m black "%~dp0."
 goto:eof
 
 :stylecheck
-"%~dp0.venv\Scripts\black" --check "%~dp0."
+"%VENV_PYTHON%" -m black --check "%~dp0."
 goto:eof
 
 :stylediff
-"%~dp0.venv\Scripts\black" --check --diff "%~dp0."
+"%VENV_PYTHON%" -m black --check --diff "%~dp0."
 goto:eof
 
 :newenv
