@@ -5,6 +5,7 @@ import json
 import logging
 import math
 import random
+import time
 from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Tuple, Union
@@ -672,7 +673,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _build_bundled_playlist(self):
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(
-                CURRATED_DATA, headers={"content-type": "application/json"}
+                CURRATED_DATA+f"?timestamp={int(time.time())}", headers={"content-type": "application/json"}
             ) as response:
                 if response.status != 200:
                     return
@@ -692,7 +693,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         tracks = []
 
         async for entry in AsyncIter(entries, steps=25):
-            tracks.append(self.decode_track(entry))
+            with contextlib.suppress(Exception):
+                tracks.append(self.decode_track(entry))
 
         playlist_data = dict()
         playlist_data["name"] = "Aikaterna's curated tracks"
