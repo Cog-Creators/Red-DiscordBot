@@ -120,7 +120,7 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 31 and above has all required packages available in official repositories. Install
+Fedora Linux 32 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
@@ -165,10 +165,10 @@ Continue by `creating-venv-linux`.
 openSUSE
 ~~~~~~~~
 
-openSUSE Leap 15.1+
+openSUSE Leap 15.2+
 *******************
 
-We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.1+. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.2+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
