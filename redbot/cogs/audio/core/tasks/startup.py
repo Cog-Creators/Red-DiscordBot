@@ -215,7 +215,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
 
-
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped

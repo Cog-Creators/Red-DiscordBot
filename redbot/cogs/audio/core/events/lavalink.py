@@ -190,7 +190,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
-                    await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set([])
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
