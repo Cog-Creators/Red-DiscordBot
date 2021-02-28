@@ -476,6 +476,18 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _maybe_update_playlist(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
+        if playlist.id == 42069:
+            _, updated_tracks = await self._get_bundled_playlist_tracks()
+            results = {}
+            old_tracks = playlist.tracks_obj
+            new_tracks = [lavalink.Track(data=track) for track in updated_tracks]
+            removed = list(set(old_tracks) - set(new_tracks))
+            added = list(set(new_tracks) - set(old_tracks))
+            if removed or added:
+                await playlist.edit(results)
+
+            return added, removed, playlist
+
         if playlist.url is None:
             return [], [], playlist
         results = {}
@@ -670,14 +682,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif scope == PlaylistScope.USER.value:
             return str(ctx) if ctx else _("the User") if the else _("User")
 
-    async def _build_bundled_playlist(self):
+    async def _get_bundled_playlist_tracks(self):
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(
                 CURRATED_DATA + f"?timestamp={int(time.time())}",
                 headers={"content-type": "application/json"},
             ) as response:
                 if response.status != 200:
-                    return
+                    return 0, []
                 try:
                     data = json.loads(await response.read())
                 except Exception:
@@ -687,15 +699,18 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 entries = data.get("entries", [])
                 if entries:
                     random.shuffle(entries)
-        current_version = await self.config.bundled_playlist_version()
-        if current_version >= web_version:
-            return
-
         tracks = []
-
         async for entry in AsyncIter(entries, steps=25):
             with contextlib.suppress(Exception):
                 tracks.append(self.decode_track(entry))
+        return web_version, tracks
+
+    async def _build_bundled_playlist(self, forced=False):
+        current_version = await self.config.bundled_playlist_version()
+        web_version, tracks = await self._get_bundled_playlist_tracks()
+
+        if not forced and current_version >= web_version:
+            return
 
         playlist_data = dict()
         playlist_data["name"] = "Aikaterna's curated tracks"
