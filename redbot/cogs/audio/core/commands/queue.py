@@ -143,16 +143,16 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             react = reacts[r.emoji]
             if react == "prev":
                 await self._clear_react(message, emoji)
-                await self.bot.invoke(self.command_prev)
+                await ctx.invoke(self.command_prev)
             elif react == "stop":
                 await self._clear_react(message, emoji)
-                await self.bot.invoke(self.command_stop)
+                await ctx.invoke(self.command_stop)
             elif react == "pause":
                 await self._clear_react(message, emoji)
-                await self.bot.invoke(self.command_pause)
+                await ctx.invoke(self.command_pause)
             elif react == "next":
                 await self._clear_react(message, emoji)
-                await self.bot.invoke(self.command_skip)
+                await ctx.invoke(self.command_skip)
             elif react == "close":
                 await message.delete()
             return

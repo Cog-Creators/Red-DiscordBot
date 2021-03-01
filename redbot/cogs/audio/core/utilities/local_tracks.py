@@ -84,7 +84,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 self.local_folder_current_path,
                 invoked_from="local folder",
             )
-        await self.bot.invoke(self.command_search, query=query)
+        await ctx.invoke(self.command_search, query=query)
 
     async def get_all_localtrack_folder_tracks(
         self, ctx: commands.Context, query: Query
