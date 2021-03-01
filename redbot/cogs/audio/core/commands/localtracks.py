@@ -32,7 +32,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not folder:
-            await ctx.invoke(self.command_local_play)
+            await self.bot.invoke(self.command_local_play)
         else:
             folder = folder.strip()
             _dir = LocalPath.joinpath(self.local_folder_current_path, folder)
@@ -117,4 +117,4 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_list = await self._build_local_search_list(all_tracks, search_words)
         if not search_list:
             return await self.send_embed_msg(ctx, title=_("No matches."))
-        return await ctx.invoke(self.command_search, query=search_list)
+        return await self.bot.invoke(self.command_search, query=search_list)

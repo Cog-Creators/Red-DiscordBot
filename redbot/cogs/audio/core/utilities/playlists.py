@@ -564,7 +564,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if query.is_spotify:
             try:
-                if self.play_lock[ctx.message.guild.id]:
+                if self.play_lock[ctx.guild.id]:
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Tracks"),

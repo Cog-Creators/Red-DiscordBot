@@ -625,7 +625,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             raise e
 
         if not guild_data["auto_play"]:
-            await ctx.invoke(self.command_audioset_autoplay_toggle)
+            await self.bot.invoke(self.command_audioset_autoplay_toggle)
         if not guild_data["notify"] and (
             (player.current and not player.current.extras.get("autoplay")) or not player.current
         ):

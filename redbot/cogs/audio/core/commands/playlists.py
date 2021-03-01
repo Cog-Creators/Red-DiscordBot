@@ -1597,7 +1597,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except TypeError:
                 if playlist:
-                    return await ctx.invoke(self.command_play, query=playlist.url)
+                    return await self.bot.invoke(self.command_play, query=playlist.url)
 
     @commands.cooldown(1, 60, commands.BucketType.member)
     @command_playlist.command(
@@ -1913,7 +1913,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         author,
                         guild,
                     )
-                return await ctx.invoke(
+                return await self.bot.invoke(
                     self.command_playlist_save,
                     playlist_name=uploaded_playlist_name,
                     playlist_url=uploaded_playlist_url,

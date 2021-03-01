@@ -36,7 +36,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             "f9O2Rjn1azc",
         )
         url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
-        await ctx.invoke(self.command_play, query=url)
+        await self.bot.invoke(self.command_play, query=url)
 
     @commands.command(name="audiostats")
     @commands.guild_only()
