@@ -6,6 +6,14 @@ Setting up auto-restart using systemd on Linux
 
 .. note:: This guide is for setting up systemd on a Linux environment. This guide assumes that you already have a working Red instance.
 
+--------------
+Installing Nano
+--------------
+
+If you don't already have nano on your server, install it by using:
+
+:code:`sudo apt install -y nano`
+
 -------------------------
 Creating the service file
 -------------------------
