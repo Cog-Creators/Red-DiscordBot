@@ -106,7 +106,7 @@ Set a playlist to auto-play songs from.
 ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
 **Scope** is one of the following:
-    ​Global
+​ ​ ​ ​ Global
 ​ ​ ​ ​ Guild
 ​ ​ ​ ​ User
 
@@ -2004,6 +2004,7 @@ playlist remove
 Remove a track from a playlist by url.
 
  **Usage**:
+
 ​ ​ ​ ​ ``[p]playlist remove playlist_name_OR_id url [args]``
 
 **Args**:

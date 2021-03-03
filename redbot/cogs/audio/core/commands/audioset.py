@@ -473,7 +473,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-            ​Global
+        ​ ​ ​ ​ Global
         ​ ​ ​ ​ Guild
         ​ ​ ​ ​ User
 
