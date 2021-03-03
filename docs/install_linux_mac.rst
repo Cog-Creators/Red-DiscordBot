@@ -43,7 +43,7 @@ Arch Linux
 
 .. code-block:: none
 
-    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel
+    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel nano
 
 Continue by `creating-venv-linux`.
 
@@ -59,7 +59,7 @@ CentOS and RHEL 7
 .. code-block:: none
 
     sudo yum -y groupinstall development
-    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
     sudo yum -y install centos-release-scl
     sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
     echo "source scl_source enable devtoolset-8" >> ~/.bashrc
@@ -88,7 +88,7 @@ CentOS and RHEL 8
     sudo yum -y install epel-release
     sudo yum -y update
     sudo yum -y groupinstall development
-    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -153,6 +153,7 @@ one-by-one:
     echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
     source ~/.profile
     brew install git
+    brew install nano
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
@@ -183,8 +184,8 @@ Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
-    sudo zypper -n install -t pattern devel_basis
+    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless nano
+    sudo zypper -n install -t pattern devel_basis 
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
@@ -210,7 +211,7 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless
+    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
