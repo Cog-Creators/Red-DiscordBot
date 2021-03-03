@@ -265,7 +265,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev nano python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
 
