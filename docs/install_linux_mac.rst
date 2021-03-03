@@ -184,7 +184,7 @@ Now install the pre-requirements with zypper:
 .. code-block:: none
 
     sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless nano
-    sudo zypper -n install -t pattern devel_basis 
+    sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
