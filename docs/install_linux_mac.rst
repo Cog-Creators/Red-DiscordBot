@@ -107,7 +107,7 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 .. code-block:: none
 
     sudo apt update
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils nano tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
