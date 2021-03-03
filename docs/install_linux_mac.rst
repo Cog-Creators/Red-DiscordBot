@@ -22,9 +22,7 @@ The pre-requirements are:
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
 
-We also recommend installing some basic compiler tools, in case our dependencies don't provide
-pre-built "wheels" for your architecture.
-
+We recommend installing the nano text editor as our guides may instruct you to create or edit some files. We also recommend installing some basic compiler tools in case our dependencies don't provide pre-built "wheels" for your architecture.
 
 *****************
 Operating systems
