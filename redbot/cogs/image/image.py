@@ -47,7 +47,7 @@ class Image(commands.Cog):
         """
         pass
 
-    @_imgur.command(name="search")
+    @_imgur.command(name="search", usage="[count] <terms...>")
     async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
@@ -175,7 +175,7 @@ class Image(commands.Cog):
         await ctx.maybe_send_embed(message)
 
     @commands.guild_only()
-    @commands.command()
+    @commands.command(usage="<keywords...>")
     async def gif(self, ctx, *, keywords):
         """Retrieve the first search result from Giphy.
         
@@ -202,7 +202,7 @@ class Image(commands.Cog):
                 await ctx.send(_("Error contacting the Giphy API."))
 
     @commands.guild_only()
-    @commands.command()
+    @commands.command(usage="<keywords...>")
     async def gifr(self, ctx, *, keywords):
         """Retrieve a random GIF from a Giphy search.
 
