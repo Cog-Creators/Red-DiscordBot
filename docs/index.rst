@@ -34,6 +34,7 @@ Welcome to Red - Discord Bot's documentation!
     getting_started
     cog_guides/admin
     cog_guides/alias
+    cog_guides/audio
     cog_guides/bank
     cog_guides/cleanup
     cog_guides/cog_manager_ui
