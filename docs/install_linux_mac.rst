@@ -24,6 +24,7 @@ The pre-requirements are:
 
 We recommend installing the nano text editor as our guides may instruct you to create or edit some files. We also recommend installing some basic compiler tools in case our dependencies don't provide pre-built "wheels" for your architecture.
 
+
 *****************
 Operating systems
 *****************
