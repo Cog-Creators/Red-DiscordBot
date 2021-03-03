@@ -1187,8 +1187,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Remove a track from a playlist by url.
 
-         **Usage**:
-
+        **Usage**:
         ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`
 
         **Args**:
