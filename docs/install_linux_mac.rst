@@ -107,7 +107,7 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 .. code-block:: none
 
     sudo apt update
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils nano tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -125,7 +125,7 @@ them with dnf:
 
 .. code-block:: none
 
-    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools nano
 
 Continue by `creating-venv-linux`.
 
@@ -241,7 +241,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
+    sudo apt -y install python3.8 python3.8-dev nano python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
 
 Continue by `creating-venv-linux`.
 
@@ -265,7 +265,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
+    sudo apt -y install python3.8 python3.8-dev nano python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
 
 Continue by `creating-venv-linux`.
 
@@ -290,7 +290,7 @@ installing pyenv. To do this, first run the following commands:
 
 .. code-block:: none
 
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    sudo apt -y install make build-essential libssl-dev nano zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
     CXX=/usr/bin/g++
 
 And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
