@@ -99,9 +99,9 @@ class Image(commands.Cog):
         """Get images from a subreddit.
 
         You can customize the search with the following options:
-        - `<count>`: number of images to return (up to 5)
-        - `<sort_type>`: new, top
-        - `<window>`: day, week, month, year, all
+        - `[count]`: number of images to return (up to 5)
+        - `[sort_type]`: new, top
+        - `[window]`: day, week, month, year, all
         """
         if count < 1 or count > 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
