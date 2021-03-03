@@ -178,7 +178,7 @@ class Image(commands.Cog):
     @commands.command(usage="<keywords...>")
     async def gif(self, ctx, *, keywords):
         """Retrieve the first search result from Giphy.
-        
+
         - `<keywords...>`: The keywords used to search Giphy.
         """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
@@ -206,7 +206,7 @@ class Image(commands.Cog):
     async def gifr(self, ctx, *, keywords):
         """Retrieve a random GIF from a Giphy search.
 
-        - `<keywords...>`: The keywords used to generate a random GIF.  
+        - `<keywords...>`: The keywords used to generate a random GIF.
         """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
