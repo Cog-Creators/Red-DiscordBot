@@ -153,7 +153,6 @@ one-by-one:
     echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
     source ~/.profile
     brew install git
-    brew install nano
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
