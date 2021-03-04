@@ -21,7 +21,6 @@ Usage
 
 Mute users temporarily or indefinitely.
 
-
 .. _mutes-commands:
 
 --------
