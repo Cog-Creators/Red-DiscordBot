@@ -262,6 +262,17 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self.skip_votes[before.channel.guild].remove(member.id)
             except (ValueError, KeyError, AttributeError):
                 pass
+
+        if member == member.guild.me and before.channel and after.channel != before.channel:
+            try:
+                player = lavalink.get_player(member.guild.id)
+                if player.is_playing:
+                    await player.resume(player.current, start=player.position)
+                    log.debug("Bot changed channel - Resume playback")
+            except:
+                log.debug("Bot changed channel - Unable to resume playback")
+
+
         channel = self.rgetattr(member, "voice.channel", None)
         bot_voice_state = self.rgetattr(member, "guild.me.voice.self_deaf", None)
         if (
