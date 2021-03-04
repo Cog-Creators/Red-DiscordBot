@@ -68,6 +68,8 @@ Examples:
 * ``[p]mute @member1 @member2 spam 5 hours``
 * ``[p]mute @member1 3 days``
 
+**Arguments**
+
 * ``<users...>``: A space separated list of usernames, ID's, or mentions.
 * ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
 
