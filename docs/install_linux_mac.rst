@@ -22,8 +22,7 @@ The pre-requirements are:
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
 
-We also recommend installing some basic compiler tools, in case our dependencies don't provide
-pre-built "wheels" for your architecture.
+We recommend installing the nano text editor as our guides may instruct you to create or edit some files. We also recommend installing some basic compiler tools in case our dependencies don't provide pre-built "wheels" for your architecture.
 
 
 *****************
@@ -43,7 +42,7 @@ Arch Linux
 
 .. code-block:: none
 
-    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel
+    sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel nano
 
 Continue by `creating-venv-linux`.
 
@@ -59,7 +58,7 @@ CentOS and RHEL 7
 .. code-block:: none
 
     sudo yum -y groupinstall development
-    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
     sudo yum -y install centos-release-scl
     sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
     echo "source scl_source enable devtoolset-8" >> ~/.bashrc
@@ -88,7 +87,7 @@ CentOS and RHEL 8
     sudo yum -y install epel-release
     sudo yum -y update
     sudo yum -y groupinstall development
-    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless
+    sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
@@ -107,7 +106,7 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 .. code-block:: none
 
     sudo apt update
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -120,12 +119,12 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 31 and above has all required packages available in official repositories. Install
+Fedora Linux 32 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. code-block:: none
 
-    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools
+    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools nano
 
 Continue by `creating-venv-linux`.
 
@@ -153,7 +152,7 @@ one-by-one:
     echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
     source ~/.profile
     brew install git
-    brew cask install adoptopenjdk/openjdk/adoptopenjdk11
+    brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
 
 Continue by `creating-venv-linux`.
 
@@ -165,10 +164,10 @@ Continue by `creating-venv-linux`.
 openSUSE
 ~~~~~~~~
 
-openSUSE Leap 15.1+
+openSUSE Leap 15.2+
 *******************
 
-We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.1+. This package will
+We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.2+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -183,7 +182,7 @@ Now install the pre-requirements with zypper:
 
 .. code-block:: none
 
-    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless
+    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
@@ -210,7 +209,7 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless
+    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
@@ -241,7 +240,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
 
@@ -265,7 +264,7 @@ Now install the pre-requirements with apt:
 
 .. code-block:: none
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential
+    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
 
@@ -290,7 +289,7 @@ installing pyenv. To do this, first run the following commands:
 
 .. code-block:: none
 
-    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless
+    sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
 And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
@@ -323,7 +322,7 @@ Then run the following command:
 
 .. code-block:: none
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.7 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.8 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -335,7 +334,7 @@ After that is finished, run:
 
 .. code-block:: none
 
-    pyenv global 3.8.7
+    pyenv global 3.8.8
 
 Pyenv is now installed and your system should be configured to run Python 3.8.
 
