@@ -64,8 +64,9 @@ mute
 Mute users.
 
 Examples:
-``[p]mute @member1 @member2 spam 5 hours``
-``[p]mute @member1 3 days``
+
+* ``[p]mute @member1 @member2 spam 5 hours``
+* ``[p]mute @member1 3 days``
 
 * ``<users...>``: A space separated list of usernames, ID's, or mentions.
 * ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
@@ -91,8 +92,9 @@ mutechannel
 Mute a user in the current text channel.
 
 Examples:
-``[p]mutechannel @member1 @member2 spam 5 hours``
-``[p]mutechannel @member1 3 days``
+
+* ``[p]mutechannel @member1 @member2 spam 5 hours``
+* ``[p]mutechannel @member1 3 days``
 
 * ``<users...>``: A space separated list of usernames, ID's, or mentions.
 * ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
@@ -372,8 +374,9 @@ voicemute
 Mute a user in their current voice channel.
 
 Examples:
-``[p]voicemute @member1 @member2 spam 5 hours``
-``[p]voicemute @member1 3 days``
+
+* ``[p]voicemute @member1 @member2 spam 5 hours``
+* ``[p]voicemute @member1 3 days``
 
 **Arguments**
 
