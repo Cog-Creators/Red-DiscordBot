@@ -744,7 +744,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command(name="forcerole")
     @commands.is_owner()
-    async def force_role_mutes(self, ctx: commands.Context, force_role_mutes: bool):
+    async def force_role_mutes(self, ctx: commands.Context, true_or_false: bool):
         """
         Whether or not to force role only mutes on the bot
         """

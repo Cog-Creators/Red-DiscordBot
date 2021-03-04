@@ -152,7 +152,7 @@ muteset forcerole
 
 .. code-block:: none
 
-    [p]muteset forcerole <force_role_mutes>
+    [p]muteset forcerole <true_or_false>
 
 **Description**
 
@@ -160,7 +160,7 @@ Whether or not to force role only mutes on the bot.
 
 **Arguments**
 
-* ``<force_role_mutes>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
+* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
 
 .. _mutes-command-muteset-makerole:
 
