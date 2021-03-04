@@ -272,7 +272,6 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             except:
                 log.debug("Bot changed channel - Unable to resume playback")
 
-
         channel = self.rgetattr(member, "voice.channel", None)
         bot_voice_state = self.rgetattr(member, "guild.me.voice.self_deaf", None)
         if (

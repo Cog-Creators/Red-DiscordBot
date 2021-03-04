@@ -202,5 +202,11 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 return
 
         if notify_channel and not player.fetch("autoplay_notified", False):
-            await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
+            if (
+                len(player.manager.players) < 10
+                or not player._last_resume
+                and player._last_resume + datetime.timedelta(seconds=60)
+                > datetime.datetime.now(tz=datetime.timezone.utc)
+            ):
+                await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
             player.store("autoplay_notified", True)
