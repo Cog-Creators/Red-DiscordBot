@@ -64,14 +64,12 @@ mute
 
 Mute users.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[time_and_reason]`` is the time to mute for and reason. Time is
-any valid time length such as ``30 minutes`` or ``2 days``. If nothing
-is provided the mute will use the set default time or indefinite if not set.
-
 Examples:
 ``[p]mute @member1 @member2 spam 5 hours``
 ``[p]mute @member1 3 days``
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
 
 .. _mutes-command-mutechannel:
 
@@ -93,14 +91,12 @@ mutechannel
 
 Mute a user in the current text channel.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[time_and_reason]`` is the time to mute for and reason. Time is
-any valid time length such as ``30 minutes`` or ``2 days``. If nothing
-is provided the mute will use the set default time or indefinite if not set.
-
 Examples:
 ``[p]mutechannel @member1 @member2 spam 5 hours``
 ``[p]mutechannel @member1 3 days``
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
 
 .. _mutes-command-muteset:
 
@@ -140,6 +136,10 @@ Set the default mute time for the mute command.
 
 If no time interval is provided this will be cleared.
 
+**Arguments**
+
+* ``[time]``: The length of time for a default mute.
+
 .. _mutes-command-muteset-forcerole:
 
 """""""""""""""""
@@ -156,7 +156,11 @@ muteset forcerole
 
 **Description**
 
-Whether or not to force role only mutes on the bot
+Whether or not to force role only mutes on the bot.
+
+**Arguments**
+
+* ``<force_role_mutes>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
 
 .. _mutes-command-muteset-makerole:
 
@@ -182,6 +186,10 @@ to more easily setup muting a user.
 If you already have a muted role created on the server use
 ``[p]muteset role ROLE_NAME_HERE``
 
+**Arguments**
+
+* ``<name>``: The name of the muted role to create.
+
 .. _mutes-command-muteset-notification:
 
 """"""""""""""""""""
@@ -202,6 +210,10 @@ Set the notification channel for automatic unmute issues.
 
 If no channel is provided this will be cleared and notifications
 about issues when unmuting users will not be sent anywhere.
+
+**Arguments**
+
+* ``[channel]``: The channel to receive unmute issue updates. |channel-input|
 
 .. _mutes-command-muteset-role:
 
@@ -228,6 +240,10 @@ channel overwrites in all channels to prevent the user from sending messages.
 
 and rejoin no longer being muted.
 
+**Arguments**
+
+* ``[role]``: The role for muted users to receive. |role-input|
+
 .. _mutes-command-muteset-senddm:
 
 """"""""""""""
@@ -245,6 +261,10 @@ muteset senddm
 **Description**
 
 Set whether mute notifications should be sent to users in DMs.
+
+**Arguments**
+
+* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
 
 .. _mutes-command-muteset-settings:
 
@@ -284,6 +304,10 @@ muteset showmoderator
 
 Decide whether the name of the moderator muting a user should be included in the DM to that user.
 
+**Arguments**
+
+* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
+
 .. _mutes-command-unmute:
 
 ^^^^^^
@@ -302,8 +326,10 @@ unmute
 
 Unmute users.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[reason]`` is the reason for the unmute.
+**Arguments**
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[reason]``: The reason for the unmute.
 
 .. _mutes-command-unmutechannel:
 
@@ -325,8 +351,10 @@ unmutechannel
 
 Unmute a user in this channel.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[reason]`` is the reason for the unmute.
+**Arguments**
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[reason]``: The reason for the unmute.
 
 .. _mutes-command-voicemute:
 
@@ -344,14 +372,14 @@ voicemute
 
 Mute a user in their current voice channel.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[time_and_reason]`` is the time to mute for and reason. Time is
-any valid time length such as ``30 minutes`` or ``2 days``. If nothing
-is provided the mute will use the set default time or indefinite if not set.
-
 Examples:
 ``[p]voicemute @member1 @member2 spam 5 hours``
 ``[p]voicemute @member1 3 days``
+
+**Arguments**
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or indefinite if this hasn't been configured.
 
 .. _mutes-command-voiceunmute:
 
@@ -369,5 +397,7 @@ voiceunmute
 
 Unmute a user in their current voice channel.
 
-``<users...>`` is a space separated list of usernames, ID's, or mentions.
-``[reason]`` is the reason for the unmute.
+**Arguments**
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[reason]``: The reason for the unmute.
