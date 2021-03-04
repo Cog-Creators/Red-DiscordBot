@@ -281,7 +281,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect: bool,
     ) -> None:
         guild_id = guild.id
-        self._ws_resume[guild_id].set()
         node = player.node
         voice_ws: DiscordWebSocket = node.get_voice_ws(guild_id)
         code = extra.get("code")
@@ -308,6 +307,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
             return
+        self._ws_resume[guild_id].set()
 
         if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
             if player._con_delay:
@@ -392,7 +392,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Player resumed in channel {channel_id} in guild: {guild_id} | "
                 f"Reason: Error code {code} & {reason}."
             )
-        elif code in (4015, 4009, 4006, 1006):
+        elif code in (4015, 4009, 4006, 4000, 1006):
             if (
                 code == 4006
                 and has_perm
@@ -464,6 +464,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     []
                 )
         else:
+            if not player.paused:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
+                await player.resume(player.current, start=player.position)
             ws_audio_log.info(
                 "WS EVENT - IGNORED (Healthy Socket) | "
                 f"Voice websocket closed event for guild {guild_id} -> "
