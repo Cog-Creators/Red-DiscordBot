@@ -4,6 +4,8 @@
 Setting up auto-restart using systemd on Linux
 ==============================================
 
+.. note:: This guide is for setting up systemd on a Linux environment. This guide assumes that you already have a working Red instance.
+
 -------------------------
 Creating the service file
 -------------------------
@@ -30,7 +32,7 @@ Next, your python :code:`path` can be fetched with the following commands:
 
 Then create the new service file:
 
-:code:`sudo -e /etc/systemd/system/red@.service`
+:code:`sudo nano /etc/systemd/system/red@.service`
 
 Paste the following in the file, and replace all instances of :code:`username` with the Linux username you retrieved above, and :code:`path` with the python path you retrieved above.
 

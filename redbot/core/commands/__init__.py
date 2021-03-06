@@ -15,6 +15,7 @@ from .commands import (
     GroupMixin as GroupMixin,
     command as command,
     group as group,
+    RedUnhandledAPI as RedUnhandledAPI,
     RESERVED_COMMAND_NAMES as RESERVED_COMMAND_NAMES,
 )
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
@@ -28,7 +29,6 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
-    __getattr__ as _converter__getattr__,  # this contains deprecation of APIToken
 )
 from .errors import (
     ConversionFailure as ConversionFailure,
@@ -52,6 +52,7 @@ from .requires import (
     Requires as Requires,
     permissions_check as permissions_check,
     bot_has_permissions as bot_has_permissions,
+    bot_in_a_guild as bot_in_a_guild,
     has_permissions as has_permissions,
     has_guild_permissions as has_guild_permissions,
     is_owner as is_owner,
@@ -75,6 +76,8 @@ from ._dpy_reimplements import (
     when_mentioned_or as when_mentioned_or,
     when_mentioned as when_mentioned,
     bot_has_any_role as bot_has_any_role,
+    before_invoke as before_invoke,
+    after_invoke as after_invoke,
 )
 
 ### DEP-WARN: Check this *every* discord.py update
@@ -125,6 +128,7 @@ from discord.ext.commands import (
     Greedy as Greedy,
     ExpectedClosingQuoteError as ExpectedClosingQuoteError,
     ColourConverter as ColourConverter,
+    ColorConverter as ColorConverter,
     VoiceChannelConverter as VoiceChannelConverter,
     NSFWChannelRequired as NSFWChannelRequired,
     IDConverter as IDConverter,
@@ -142,15 +146,16 @@ from discord.ext.commands import (
     MaxConcurrency as MaxConcurrency,
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
+    CommandRegistrationError as CommandRegistrationError,
+    MessageNotFound as MessageNotFound,
+    MemberNotFound as MemberNotFound,
+    UserNotFound as UserNotFound,
+    ChannelNotFound as ChannelNotFound,
+    ChannelNotReadable as ChannelNotReadable,
+    BadColourArgument as BadColourArgument,
+    RoleNotFound as RoleNotFound,
+    BadInviteArgument as BadInviteArgument,
+    EmojiNotFound as EmojiNotFound,
+    PartialEmojiConversionFailure as PartialEmojiConversionFailure,
+    BadBoolArgument as BadBoolArgument,
 )
-
-
-def __getattr__(name):
-    try:
-        return _converter__getattr__(name, stacklevel=3)
-    except AttributeError:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
-
-
-def __dir__():
-    return [*globals().keys(), "APIToken"]

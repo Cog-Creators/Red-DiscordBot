@@ -1,6 +1,6 @@
 import logging
 import asyncio
-from typing import Union, List
+from typing import Union, List, Literal
 from datetime import timedelta
 from copy import copy
 import contextlib
@@ -11,7 +11,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
@@ -27,7 +27,7 @@ class Reports(commands.Cog):
 
     Users can open reports using `[p]report`. These are then sent
     to a channel in the server for staff, and the report creator
-    gets a DM. Both can be used to communicate. 
+    gets a DM. Both can be used to communicate.
     """
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
@@ -59,6 +59,39 @@ class Reports(commands.Cog):
         self.tunnel_store = {}
         # (guild, ticket#):
         #   {'tun': Tunnel, 'msgs': List[int]}
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        all_reports = await self.config.custom("REPORT").all()
+
+        steps = 0
+        paths = []
+
+        # this doesn't use async iter intentionally due to the nested iterations
+        for guild_id_str, tickets in all_reports.items():
+            for ticket_number, ticket in tickets.items():
+                steps += 1
+                if not steps % 100:
+                    await asyncio.sleep(0)  # yield context
+
+            if ticket.get("report", {}).get("user_id", 0) == user_id:
+                paths.append((guild_id_str, ticket_number))
+
+        async with self.config.custom("REPORT").all() as all_reports:
+            async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
+                r = all_reports[guild_id_str][ticket_number]["report"]
+                r["user_id"] = 0xDE1
+                # this might include EUD, and a report of a deleted user
+                # that's been unhandled for long enough for the
+                # user to be deleted and the bot receive a request like this...
+                r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
     def tunnels(self):
@@ -159,7 +192,7 @@ class Reports(commands.Cog):
         else:
             return guild
 
-    async def send_report(self, msg: discord.Message, guild: discord.Guild):
+    async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
 
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
@@ -175,7 +208,7 @@ class Reports(commands.Cog):
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
         if await self.bot.embed_requested(channel, author):
-            em = discord.Embed(description=report)
+            em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
@@ -246,7 +279,7 @@ class Reports(commands.Cog):
             _m = copy(ctx.message)
             _m.content = _report
             _m.content = _m.clean_content
-            val = await self.send_report(_m, guild)
+            val = await self.send_report(ctx, _m, guild)
         else:
             try:
                 await author.send(
@@ -267,13 +300,20 @@ class Reports(commands.Cog):
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:
-                val = await self.send_report(message, guild)
+                val = await self.send_report(ctx, message, guild)
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
-                await author.send(
-                    _("There was an error sending your report, please contact a server admin.")
-                )
+                if await self.config.guild(ctx.guild).output_channel() is None:
+                    await author.send(
+                        _(
+                            "This server has no reports channel set up. Please contact a server admin."
+                        )
+                    )
+                else:
+                    await author.send(
+                        _("There was an error sending your report, please contact a server admin.")
+                    )
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
                 self.antispam[guild.id][author.id].stamp()
@@ -293,10 +333,11 @@ class Reports(commands.Cog):
                     pass
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """
         oh dear....
         """
+
         if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
             return
 
@@ -305,8 +346,10 @@ class Reports(commands.Cog):
 
         if t is None:
             return
+        guild = t[0][0]
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
+            await set_contextual_locales_from_guild(self.bot, guild)
             await tun.react_close(
                 uid=payload.user_id, message=_("{closer} has closed the correspondence")
             )
@@ -314,12 +357,36 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+
+        to_remove = []
+
         for k, v in self.tunnel_store.items():
-            topic = _("Re: ticket# {1} in {0.name}").format(*k)
+
+            guild, ticket_number = k
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                to_remove.append(k)
+                continue
+
+            await set_contextual_locales_from_guild(self.bot, guild)
+            topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
+                ticket_number=ticket_number, guild=guild
+            )
             # Tunnels won't forward unintended messages, this is safe
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
+
+        for key in to_remove:
+            if tun := self.tunnel_store.pop(key, None):
+                guild, ticket = key
+                await set_contextual_locales_from_guild(self.bot, guild)
+                await tun["tun"].close_because_disabled(
+                    _(
+                        "Correspondence about ticket# {ticket_number} in "
+                        "{guild.name} has been ended due "
+                        "to reports being disabled in that server."
+                    ).format(ticket_number=ticket, guild=guild)
+                )
 
     @commands.guild_only()
     @checks.mod_or_permissions(manage_roles=True)
@@ -359,8 +426,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
-            "Any message succesfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
+            "Any message successfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )

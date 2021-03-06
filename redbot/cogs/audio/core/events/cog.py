@@ -2,12 +2,15 @@ import asyncio
 import datetime
 import logging
 import time
+from pathlib import Path
+
 from typing import Optional
 
 import discord
 import lavalink
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 
 from ...apis.playlist_interface import Playlist, delete_playlist, get_playlist
 from ...audio_logging import debug_exc_log
@@ -16,6 +19,7 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.audio")
+_ = Translator("Audio", Path(__file__))
 
 
 class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -25,6 +29,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
+
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            player = lavalink.get_player(guild.id)
+            await player.stop()
+            await player.disconnect()
+            return
+
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
             daily_cache = self._daily_playlist_cache.setdefault(
@@ -123,6 +134,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except Exception as err:
                 debug_exc_log(log, err, f"Failed to delete global daily playlist ID: {too_old_id}")
+        persist_cache = self._persist_queue_cache.setdefault(
+            guild.id, await self.config.guild(guild).persist_queue()
+        )
+        if persist_cache:
+            await self.api_interface.persistent_queue_api.played(
+                guild_id=guild.id, track_id=track_identifier
+            )
 
     @commands.Cog.listener()
     async def on_red_audio_queue_end(
@@ -134,6 +152,21 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
             await asyncio.sleep(5)
             await self.playlist_api.delete_scheduled()
+            await self.api_interface.persistent_queue_api.drop(guild.id)
+            await asyncio.sleep(5)
+            await self.api_interface.persistent_queue_api.delete_scheduled()
+
+    @commands.Cog.listener()
+    async def on_red_audio_track_enqueue(self, guild: discord.Guild, track, requester):
+        if not (track and guild):
+            return
+        persist_cache = self._persist_queue_cache.setdefault(
+            guild.id, await self.config.guild(guild).persist_queue()
+        )
+        if persist_cache:
+            await self.api_interface.persistent_queue_api.enqueued(
+                guild_id=guild.id, room_id=track.extras["vc"], track=track
+            )
 
     @commands.Cog.listener()
     async def on_red_audio_track_end(
@@ -145,3 +178,6 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.local_cache_api.youtube.clean_up_old_entries()
             await asyncio.sleep(5)
             await self.playlist_api.delete_scheduled()
+            await self.api_interface.persistent_queue_api.drop(guild.id)
+            await asyncio.sleep(5)
+            await self.api_interface.persistent_queue_api.delete_scheduled()

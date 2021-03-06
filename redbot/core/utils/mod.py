@@ -1,4 +1,5 @@
 import asyncio
+import warnings
 from datetime import timedelta
 from typing import List, Iterable, Union, TYPE_CHECKING, Dict
 
@@ -66,7 +67,7 @@ async def slow_deletion(messages: Iterable[discord.Message]):
             pass
 
 
-def get_audit_reason(author: discord.Member, reason: str = None):
+def get_audit_reason(author: discord.Member, reason: str = None, *, shorten: bool = False):
     """Construct a reason to appear in the audit log.
 
     Parameters
@@ -75,6 +76,9 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The author behind the audit log action.
     reason : str
         The reason behind the audit log action.
+    shorten : bool
+        When set to ``True``, the returned audit reason string will be
+        shortened to fit the max length allowed by Discord audit logs.
 
     Returns
     -------
@@ -82,20 +86,29 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The formatted audit log reason.
 
     """
-    return (
+    audit_reason = (
         "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
         if reason
         else "Action requested by {} (ID {}).".format(author, author.id)
     )
+    if shorten and len(audit_reason) > 512:
+        audit_reason = f"{audit_reason[:509]}..."
+    return audit_reason
 
 
 async def is_allowed_by_hierarchy(
     bot: "Red", settings: "Config", guild: discord.Guild, mod: discord.Member, user: discord.Member
 ):
+    warnings.warn(
+        "`is_allowed_by_hierarchy()` is deprecated since Red 3.4.1"
+        " and will be removed in the first minor release after 2020-11-31.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if not await settings.guild(guild).respect_hierarchy():
         return True
     is_special = mod == guild.owner or await bot.is_owner(mod)
-    return mod.top_role.position > user.top_role.position or is_special
+    return mod.top_role > user.top_role or is_special
 
 
 async def is_mod_or_superior(
@@ -233,7 +246,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
     Parameters
     ----------
     ctx : Context
-        The command invokation context to check.
+        The command invocation context to check.
     perms : Dict[str, bool]
         A dictionary mapping permissions to their required states.
         Valid permission names are those listed as properties of

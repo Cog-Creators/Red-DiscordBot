@@ -1,36 +1,58 @@
 import asyncio
 import contextlib
+import datetime
 import logging
+from pathlib import Path
 
 import discord
 import lavalink
 
-from ...errors import DatabaseError
+from redbot.core.i18n import Translator, set_contextual_locales_from_guild
+from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
+_ = Translator("Audio", Path(__file__))
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+    ):
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
+        self._ll_guild_updates.add(int(extra.get("guildId", 0)))
+
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
         current_track = player.current
         current_channel = player.channel
+        if not current_channel:
+            return
         guild = self.rgetattr(current_channel, "guild", None)
+        if await self.bot.cog_disabled_in_guild(self, guild):
+            await player.stop()
+            await player.disconnect()
+            return
         guild_id = self.rgetattr(guild, "id", None)
+        if not guild:
+            return
+        await set_contextual_locales_from_guild(self.bot, guild)
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)
         current_length = self.rgetattr(current_track, "length", None)
         current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
         current_extras = self.rgetattr(current_track, "extras", {})
+        current_id = self.rgetattr(current_track, "_info", {}).get("identifier")
         guild_data = await self.config.guild(guild).all()
         repeat = guild_data["repeat"]
         notify = guild_data["notify"]
         disconnect = guild_data["disconnect"]
         autoplay = guild_data["auto_play"]
-        description = self.get_track_description(current_track, self.local_folder_current_path)
+        description = await self.get_track_description(
+            current_track, self.local_folder_current_path
+        )
         status = await self.config.status()
         log.debug(f"Received a new lavalink event for {guild_id}: {event_type}: {extra}")
         prev_song: lavalink.Track = player.fetch("prev_song")
@@ -45,12 +67,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("playing_song", current_track)
             player.store("requester", current_requester)
             self.bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
+            if guild_id and current_track:
+                await self.api_interface.persistent_queue_api.played(
+                    guild_id=guild_id, track_id=current_track.track_identifier
+                )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
+            if guild_id:
+                await self.api_interface.persistent_queue_api.drop(guild_id)
             if (
                 autoplay
                 and not player.queue
@@ -62,10 +90,23 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
                     notify_channel = player.fetch("channel")
+                    notify_channel = self.bot.get_channel(notify_channel)
                     if notify_channel:
-                        notify_channel = self.bot.get_channel(notify_channel)
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
+                        )
+                    return
+                except TrackEnqueueError:
+                    notify_channel = player.fetch("channel")
+                    notify_channel = self.bot.get_channel(notify_channel)
+                    if notify_channel:
+                        await self.send_embed_msg(
+                            notify_channel,
+                            title=_("Unable to Get Track"),
+                            description=_(
+                                "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                                "minutes."
+                            ),
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
@@ -108,13 +149,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            player_check = self.get_active_player_count()
+            player_check = await self.get_active_player_count()
             await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                player_check = self.get_active_player_count()
+                player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
@@ -126,8 +167,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await player.disconnect()
+                    self._ll_guild_updates.discard(guild.id)
             if status:
-                player_check = self.get_active_player_count()
+                player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
 
         if event_type in [
@@ -144,6 +186,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.current = None
             if not guild_id:
                 return
+            guild_id = int(guild_id)
             self._error_counter.setdefault(guild_id, 0)
             if guild_id not in self._error_counter:
                 self._error_counter[guild_id] = 0
@@ -158,6 +201,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
+                self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
@@ -180,7 +224,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
-                            description="{}".format(description),
+                            description=_(
+                                "Playback of the song has stopped due to an unexcepted error.\n{error}"
+                            ).format(error=description),
                         )
                     else:
                         embed = discord.Embed(
@@ -188,5 +234,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             colour=await self.bot.get_embed_color(message_channel),
                             description="{}\n{}".format(extra.replace("\n", ""), description),
                         )
+                        if current_id:
+                            asyncio.create_task(
+                                self.api_interface.global_cache_api.report_invalid(current_id)
+                            )
                     await message_channel.send(embed=embed)
             await player.skip()

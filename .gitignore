@@ -1,4 +1,3 @@
-*.json
 *.exe
 *.dll
 *.pot
@@ -15,6 +14,7 @@ Pipfile.lock
 # User-specific stuff:
 .idea/
 *.iws
+.vscode/
 
 ## Plugin-specific files:
 

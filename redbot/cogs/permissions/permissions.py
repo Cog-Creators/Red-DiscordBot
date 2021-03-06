@@ -2,7 +2,7 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, Literal, cast
 
 import discord
 import yaml
@@ -113,6 +113,56 @@ class Permissions(commands.Cog):
         self.config.register_custom(COG)
         self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        count = 0
+
+        _uid = str(user_id)
+
+        # The dict as returned here as string keys. Above is for comparison,
+        # there's a below recast to int where needed for guild ids
+
+        for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+
+            obj_type_rules = await self.config.custom(typename).all()
+
+            count += 1
+            if not count % 100:
+                await asyncio.sleep(0)
+
+            for obj_name, rules_dict in obj_type_rules.items():
+
+                count += 1
+                if not count % 100:
+                    await asyncio.sleep(0)
+
+                obj = getter(obj_name)
+
+                for guild_id, guild_rules in rules_dict.items():
+
+                    count += 1
+                    if not count % 100:
+                        await asyncio.sleep(0)
+
+                    if _uid in guild_rules:
+                        if obj:
+                            # delegate to remove rule here
+                            await self._remove_rule(
+                                CogOrCommand(typename, obj.qualified_name, obj),
+                                user_id,
+                                int(guild_id),
+                            )
+                        else:
+                            grp = self.config.custom(typename, obj_name)
+                            await grp.clear_raw(guild_id, user_id)
 
     async def __permissions_hook(self, ctx: commands.Context) -> Optional[bool]:
         """
@@ -282,7 +332,8 @@ class Permissions(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to DM you."))
         else:
-            await ctx.send(_("I've just sent the file to you via DM."))
+            if not isinstance(ctx.channel, discord.DMChannel):
+                await ctx.send(_("I've just sent the file to you via DM."))
         finally:
             file.close()
 
@@ -323,9 +374,7 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
     @checks.is_owner()
-    @permissions.command(
-        name="addglobalrule", usage="<allow_or_deny> <cog_or_command> <who_or_what>..."
-    )
+    @permissions.command(name="addglobalrule", require_var_positional=True)
     async def permissions_addglobalrule(
         self,
         ctx: commands.Context,
@@ -340,19 +389,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -365,9 +403,7 @@ class Permissions(commands.Cog):
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(
-        name="addserverrule",
-        usage="<allow_or_deny> <cog_or_command> <who_or_what>...",
-        aliases=["addguildrule"],
+        name="addserverrule", aliases=["addguildrule"], require_var_positional=True
     )
     async def permissions_addguildrule(
         self,
@@ -383,19 +419,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         for w in who_or_what:
             await self._add_rule(
                 rule=cast(bool, allow_or_deny),
@@ -406,7 +431,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule added."))
 
     @checks.is_owner()
-    @permissions.command(name="removeglobalrule", usage="<cog_or_command> <who_or_what>...")
+    @permissions.command(name="removeglobalrule", require_var_positional=True)
     async def permissions_removeglobalrule(
         self,
         ctx: commands.Context,
@@ -418,11 +443,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-       `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._remove_rule(cog_or_cmd=cog_or_command, model_id=w.id, guild_id=GLOBAL)
         await ctx.send(_("Rule removed."))
@@ -430,9 +452,7 @@ class Permissions(commands.Cog):
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(
-        name="removeserverrule",
-        usage="<cog_or_command> <who_or_what>...",
-        aliases=["removeguildrule"],
+        name="removeserverrule", aliases=["removeguildrule"], require_var_positional=True
     )
     async def permissions_removeguildrule(
         self,
@@ -445,11 +465,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
 
-        `<who_or_what>` is one or more users, channels or roles the rule is for.
+        `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
-        if not who_or_what:
-            await ctx.send_help()
-            return
         for w in who_or_what:
             await self._remove_rule(
                 cog_or_cmd=cog_or_command, model_id=w.id, guild_id=ctx.guild.id
@@ -473,14 +490,6 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny),
             cog_or_cmd=cog_or_command,
@@ -504,14 +513,6 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        if isinstance(cog_or_command.obj, commands.commands._AlwaysAvailableCommand):
-            await ctx.send(
-                _(
-                    "This command is designated as being always available and "
-                    "cannot be modified by permission rules."
-                )
-            )
-            return
         await self._set_default_rule(
             rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )

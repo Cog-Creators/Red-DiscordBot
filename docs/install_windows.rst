@@ -11,7 +11,7 @@ Installing the pre-requirements
 Please install the pre-requirements by following instructions from one of the following subsections.
 
 The pre-requirements are:
- - Python 3.8.1 or greater
+ - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -29,17 +29,18 @@ Using PowerShell and Chocolatey (recommended)
 *********************************************
 
 To install via PowerShell, search "powershell" in the Windows start menu,
-right-click on it and then click "Run as administrator"
+right-click on it and then click "Run as administrator".
 
 Then run each of the following commands:
 
 .. code-block:: none
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2019-workload-vctools -y
-    choco upgrade python3 -y
+    choco upgrade python3 -y --version 3.8.8
 
 For Audio support, you should also run the following command before exiting:
 
@@ -63,7 +64,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 <https://www.python.org/downloads/>`_ - Red needs Python 3.8.1 or greater
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_; **Python 3.9 is currently not supported!**
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -86,7 +87,7 @@ Creating a Virtual Environment
 
 .. tip::
 
-    If you want to learn more about virtual environments, see page: `about-venvs`
+    If you want to learn more about virtual environments, see page: `about-venvs`.
 
 We require installing Red into a virtual environment. Don't be scared, it's very
 straightforward.
@@ -95,7 +96,12 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``redenv`` and it will be located in your home directory.
 
-Start with opening a command prompt (open Start, search for "command prompt", then click it)
+Start with opening a command prompt (open Start, search for "command prompt", then click it).
+
+.. note:: 
+
+    You shouldn't run command prompt as administrator when creating your virtual environment, or
+    running Red.
 
 .. warning::
 
@@ -144,11 +150,6 @@ Run **one** of the following set of commands, depending on what extras you want 
         python -m pip install -U pip setuptools wheel
         python -m pip install -U Red-DiscordBot[postgres]
 
-
-.. note::
-
-    These commands are also used for updating Red
-
 --------------------------
 Setting Up and Running Red
 --------------------------
@@ -171,8 +172,7 @@ Once done setting up the instance, run the following command to run Red:
 
 It will walk through the initial setup, asking for your token and a prefix.
 You can find out how to obtain a token with
-:dpy_docs:`this guide <discord.html#creating-a-bot-account>`,
-section "Creating a Bot Account".
+`this guide <bot_application_guide>`.
 
 .. tip::
    If it's the first time you're using Red, you should check our `getting-started` guide

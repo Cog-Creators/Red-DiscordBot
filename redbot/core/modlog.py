@@ -2,20 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
-from typing import List, Union, Optional, cast, TYPE_CHECKING
+from datetime import datetime, timedelta, timezone
+from typing import List, Literal, Union, Optional, cast, TYPE_CHECKING
 
 import discord
 
 from redbot.core import Config
-
+from .utils import AsyncIter
 from .utils.common_filters import (
     filter_invites,
     filter_mass_mentions,
     filter_urls,
     escape_spoilers,
 )
-from .i18n import Translator
+from .utils.chat_formatting import pagify
+from .i18n import Translator, set_contextual_locales_from_guild
 
 from .generic_casetypes import all_generics
 
@@ -47,8 +48,39 @@ _CASETYPES = "CASETYPES"
 _CASES = "CASES"
 _SCHEMA_VERSION = 4
 
+_data_deletion_lock = asyncio.Lock()
 
 _ = Translator("ModLog", __file__)
+
+
+async def _process_data_deletion(
+    *, requester: Literal["discord_deleted_user", "owner", "user", "user_strict"], user_id: int
+):
+    if requester != "discord_deleted_user":
+        return
+
+    # Oh, how I wish it was as simple as I wanted...
+
+    key_paths = []
+
+    async with _data_deletion_lock:
+        all_cases = await _config.custom(_CASES).all()
+        async for guild_id_str, guild_cases in AsyncIter(all_cases.items(), steps=100):
+            async for case_num_str, case in AsyncIter(guild_cases.items(), steps=100):
+                for keyname in ("user", "moderator", "amended_by"):
+                    if (case.get(keyname, 0) or 0) == user_id:  # this could be None...
+                        key_paths.append((guild_id_str, case_num_str))
+
+        async with _config.custom(_CASES).all() as all_cases:
+            for guild_id_str, case_num_str in key_paths:
+                case = all_cases[guild_id_str][case_num_str]
+                if (case.get("user", 0) or 0) == user_id:
+                    case["user"] = 0xDE1
+                    case.pop("last_known_username", None)
+                if (case.get("moderator", 0) or 0) == user_id:
+                    case["moderator"] = 0xDE1
+                if (case.get("amended_by", 0) or 0) == user_id:
+                    case["amended_by"] = 0xDE1
 
 
 async def _init(bot: Red):
@@ -96,7 +128,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
@@ -132,7 +165,8 @@ async def _init(bot: Red):
                 if entry:
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        mod, reason, date = entry.user, entry.reason, entry.created_at
+                        mod, reason = entry.user, entry.reason
+                        date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -207,13 +241,13 @@ class Case:
         guild: discord.Guild,
         created_at: int,
         action_type: str,
-        user: Union[discord.User, int],
-        moderator: Optional[Union[discord.User, int]],
+        user: Union[discord.Object, discord.abc.User, int],
+        moderator: Optional[Union[discord.Object, discord.abc.User, int]],
         case_number: int,
         reason: str = None,
         until: int = None,
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
-        amended_by: Optional[Union[discord.User, int]] = None,
+        amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -223,12 +257,18 @@ class Case:
         self.created_at = created_at
         self.action_type = action_type
         self.user = user
+        if isinstance(user, discord.Object):
+            self.user = user.id
         self.last_known_username = last_known_username
         self.moderator = moderator
+        if isinstance(moderator, discord.Object):
+            self.moderator = moderator.id
         self.reason = reason
         self.until = until
         self.channel = channel
         self.amended_by = amended_by
+        if isinstance(amended_by, discord.Object):
+            self.amended_by = amended_by.id
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
@@ -247,9 +287,12 @@ class Case:
         data.pop("case_number", None)
         # last username is set based on passed user object
         data.pop("last_known_username", None)
-
-        for item in list(data.keys()):
-            setattr(self, item, data[item])
+        for item, value in data.items():
+            if isinstance(value, discord.Object):
+                # probably expensive to call but meh should capture all cases
+                setattr(self, item, value.id)
+            else:
+                setattr(self, item, value)
 
         # update last known username
         if not isinstance(self.user, int):
@@ -300,26 +343,25 @@ class Case:
         title = "{}".format(
             _("Case #{} | {} {}").format(self.case_number, casetype.case_str, casetype.image)
         )
-
-        if self.reason:
-            reason = _("**Reason:** {}").format(self.reason)
-        else:
-            reason = _("**Reason:** Use the `reason` command to add it")
+        reason = _("**Reason:** Use the `reason` command to add it")
 
         if self.moderator is None:
             moderator = _("Unknown")
         elif isinstance(self.moderator, int):
             # can't use _() inside f-string expressions, see bpo-36310 and red#3818
-            translated = _("Unknown or Deleted User")
-            moderator = f"[{translated}] ({self.moderator})"
+            if self.moderator == 0xDE1:
+                moderator = _("Deleted User.")
+            else:
+                translated = _("Unknown or Deleted User")
+                moderator = f"[{translated}] ({self.moderator})"
         else:
             moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
         until = None
         duration = None
         if self.until:
-            start = datetime.fromtimestamp(self.created_at)
-            end = datetime.fromtimestamp(self.until)
-            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S")
+            start = datetime.utcfromtimestamp(self.created_at)
+            end = datetime.utcfromtimestamp(self.until)
+            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -329,32 +371,48 @@ class Case:
             amended_by = None
         elif isinstance(self.amended_by, int):
             # can't use _() inside f-string expressions, see bpo-36310 and red#3818
-            translated = _("Unknown or Deleted User")
-            amended_by = f"[{translated}] ({self.amended_by})"
+            if self.amended_by == 0xDE1:
+                amended_by = _("Deleted User.")
+            else:
+                translated = _("Unknown or Deleted User")
+                amended_by = f"[{translated}] ({self.amended_by})"
         else:
             amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
 
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
+                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S UTC")
             )
 
         if isinstance(self.user, int):
-            if self.last_known_username is None:
+            if self.user == 0xDE1:
+                user = _("Deleted User.")
+            elif self.last_known_username is None:
                 # can't use _() inside f-string expressions, see bpo-36310 and red#3818
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
                 user = f"{self.last_known_username} ({self.user})"
-            avatar_url = None
         else:
             user = escape_spoilers(
                 filter_invites(f"{self.user} ({self.user.id})")
             )  # Invites and spoilers get rendered even in embeds.
-            avatar_url = self.user.avatar_url
 
         if embed:
+            if self.reason:
+                reason = _("**Reason:** {}").format(self.reason)
+                if len(reason) > 2048:
+                    reason = (
+                        next(
+                            pagify(
+                                reason,
+                                delims=[" ", "\n"],
+                                page_length=2000,
+                            )
+                        )
+                        + "..."
+                    )
             emb = discord.Embed(title=title, description=reason)
             emb.set_author(name=user)
             emb.add_field(name=_("Moderator"), value=moderator, inline=False)
@@ -374,9 +432,22 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.fromtimestamp(self.created_at)
+            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
             return emb
         else:
+            if self.reason:
+                reason = _("**Reason:** {}").format(self.reason)
+                if len(reason) > 1000:
+                    reason = (
+                        next(
+                            pagify(
+                                reason,
+                                delims=[" ", "\n"],
+                                page_length=1000,
+                            )
+                        )
+                        + "..."
+                    )
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
@@ -386,7 +457,10 @@ class Case:
             if until and duration:
                 case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
             if self.channel:
-                case_text += _("**Channel**: {}\n").format(self.channel.name)
+                if isinstance(self.channel, int):
+                    case_text += _("**Channel**: {} (Deleted)\n").format(self.channel)
+                else:
+                    case_text += _("**Channel**: {}\n").format(self.channel.name)
             if amended_by:
                 case_text += _("**Amended by:** {}\n").format(amended_by)
             if last_modified:
@@ -472,15 +546,11 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                try:
-                    message = discord.utils.get(bot.cached_messages, id=message_id)
-                except AttributeError:
-                    # bot.cached_messages didn't exist prior to discord.py 1.1.0
-                    message = None
+                message = discord.utils.get(bot.cached_messages, id=message_id)
                 if message is None:
                     try:
                         message = await mod_channel.fetch_message(message_id)
-                    except (discord.NotFound, AttributeError):
+                    except discord.HTTPException:
                         message = None
             else:
                 message = None
@@ -759,11 +829,12 @@ async def create_case(
     guild: discord.Guild,
     created_at: datetime,
     action_type: str,
-    user: Union[discord.User, discord.Member],
-    moderator: Optional[Union[discord.User, discord.Member]] = None,
+    user: Union[discord.Object, discord.abc.User, int],
+    moderator: Optional[Union[discord.Object, discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
     channel: Optional[discord.TextChannel] = None,
+    last_known_username: Optional[str] = None,
 ) -> Optional[Case]:
     """
     Creates a new case.
@@ -777,19 +848,27 @@ async def create_case(
     guild: discord.Guild
         The guild the action was taken in
     created_at: datetime
-        The time the action occurred at
+        The time the action occurred at.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     action_type: str
         The type of action that was taken
-    user: Union[discord.User, discord.Member]
+    user: Union[discord.Object, discord.abc.User, int]
         The user target by the action
-    moderator: Optional[Union[discord.User, discord.Member]]
+    moderator: Optional[Union[discord.Object, discord.abc.User, int]]
         The moderator who took the action
     reason: Optional[str]
         The reason the action was taken
     until: Optional[datetime]
-        The time the action is in effect until
+        The time the action is in effect until.
+        If naive `datetime` object is passed, it's treated as a local time
+        (similarly to how Python treats naive `datetime` objects).
     channel: Optional[discord.TextChannel]
         The channel the action was taken in
+    last_known_username: Optional[str]
+        The last known username of the user
+        Note: This is ignored if a Member or User object is provided
+        in the user field
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -820,10 +899,12 @@ async def create_case(
             amended_by=None,
             modified_at=None,
             message=None,
+            last_known_username=last_known_username,
         )
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)
 
+    await set_contextual_locales_from_guild(bot, guild)
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
