@@ -14,6 +14,8 @@ from contextvars import ContextVar
 import babel.localedata
 from babel.core import Locale
 
+from . import commands
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -336,12 +338,6 @@ def get_babel_regional_format(regional_format: Optional[str] = None) -> babel.co
     if regional_format is None:
         regional_format = get_regional_format()
     return _get_babel_locale(regional_format)
-
-
-# This import to be down here to avoid circular import issues.
-# This will be cleaned up at a later date
-# noinspection PyPep8
-from . import commands
 
 
 def cog_i18n(translator: Translator):
