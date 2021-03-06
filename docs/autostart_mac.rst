@@ -8,9 +8,21 @@ Setting up auto-restart on Mac
 Creating the plist file
 -----------------------
 
-:code:`sudo -e /Library/LaunchDaemons/red.plist`
+Start by activating your venv. Then run the following command:
 
-Paste the following and replace all instances of :code:`username` with the username your bot is running under (hopefully not root) and replace :code:`/path/to/redbot` with the path to :code:`redbot` and :code:`instance-name` with your instance name:
+.. code-block:: none
+
+    which python
+
+Copy the output of that command.
+
+Now run :code:`sudo nano /Library/LaunchDaemons/red.plist`
+
+Paste the following and replace the following: 
+
+- all instances of :code:`username` with your Mac username 
+- :code:`path` with the path you copied earlier
+- :code:`instance-name` with your instance name:
 
 .. code-block:: none
 
@@ -22,7 +34,10 @@ Paste the following and replace all instances of :code:`username` with the usern
             <string>red</string>
             <key>ProgramArguments</key>
             <array>
-                <string>/path/to/redbot</string>
+                <string>path</string>
+                <string>-O</string>
+                <string>-m</string>
+                <string>redbot</string>
                 <string>instance-name</string>
                 <string>--no-prompt</string>
             </array>
@@ -33,16 +48,23 @@ Paste the following and replace all instances of :code:`username` with the usern
                 <key>SuccessfulExit</key>
                 <false/>
             </dict>
+            <key>StandardOutPath</key>
+            <string>/tmp/red_out.log</string>
+            <key>StandardErrorPath</key>
+            <string>/tmp/red_err.log</string>
             <key>UserName</key>
-            <string>username</string>
-            <key>GroupName</key>
             <string>username</string>
             <key>InitGroups</key>
             <true/>
         </dict>
     </plist>
 
-Save and exit.
+.. note::
+
+    You may add any additional arguments you need to add to the :code:`redbot` command by 
+    adding them to the end of the array under :code:`ProgramArguments`
+
+Save and exit :code:`ctrl + O; enter; ctrl + x`
 
 -----------------
 Loading the plist
