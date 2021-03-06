@@ -28,7 +28,7 @@ from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
 from .utils import chat_formatting
-from .utils.chat_formatting import pagify
+from .utils.chat_formatting import inline, pagify
 from .utils.predicates import MessagePredicate
 
 _ = Translator("Dev", __file__)
@@ -263,8 +263,9 @@ class Dev(commands.Cog):
             else:
                 await ctx.send(
                     _(
-                        "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
-                    ).format(ctx.prefix)
+                        "Already running a REPL session in this channel."
+                        " Resume the REPL with {command}."
+                    ).format(inline(f"{ctx.clean_prefix}repl resume"))
                 )
             return
 
@@ -274,8 +275,9 @@ class Dev(commands.Cog):
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
-                "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
-            ).format(ctx.prefix)
+                "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+                " {command} to pause."
+            ).format(inline(f"{ctx.clean_prefix}repl pause"))
         )
 
         while True:
