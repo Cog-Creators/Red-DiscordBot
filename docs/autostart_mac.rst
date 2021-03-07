@@ -64,6 +64,12 @@ Paste the following and replace the following:
     You may add any additional arguments you need to add to the :code:`redbot` command by 
     adding them to the end of the array under :code:`ProgramArguments`
 
+.. note::
+
+    Should you need to view the output from Red (for example: to find error messages that 
+    are output to the console to help with support), you can run :code:`nano /tmp/red_out.log` 
+    and :code:`nano /tmp/red_err.log` to do so
+
 Save and exit :code:`ctrl + O; enter; ctrl + x`
 
 -----------------
