@@ -312,6 +312,7 @@ class Warnings(commands.Cog):
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r),
                         description=v["description"],
+                        color=await ctx.embed_colour()
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
