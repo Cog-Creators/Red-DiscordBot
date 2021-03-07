@@ -340,7 +340,7 @@ class Warnings(commands.Cog):
                 if await ctx.embed_requested():
                     em = discord.Embed(
                          title=_("Action: {name}").format(
-                             name=_r["action_name"]
+                             name=r["action_name"]
                          ), color=await ctx.embed_colour()
                      )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
