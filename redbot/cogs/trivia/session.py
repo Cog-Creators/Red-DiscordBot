@@ -211,7 +211,7 @@ class TriviaSession:
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
-                if self.settings['use_spoilers']:
+                if self.settings["use_spoilers"]:
                     reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)).format(answer=answers[0])
                 else:
                     reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
