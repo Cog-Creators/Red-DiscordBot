@@ -339,12 +339,10 @@ class Warnings(commands.Cog):
             for r in registered_actions:
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                         title=("Action: {name}").format(
-                             name=r["action_name"]
+                         title=_("Action: {name}").format(
+                             name=_r["action_name"]
                          ), color=await ctx.embed_colour()
                      )
-                        )
-                    )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
                         name=_("Exceed command"),
