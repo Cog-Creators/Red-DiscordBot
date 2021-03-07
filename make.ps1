@@ -41,16 +41,32 @@ param (
 )
 
 function reformat() {
+    Write-Host "- black:"
     & $script:venvPython -m black $PSScriptRoot
+    Write-Host "- ruff:"
+    & $script:venvPython -m ruff --fix-only $PSScriptRoot
 }
 
 function stylecheck() {
+    Write-Host "- black:"
     & $script:venvPython -m black --check $PSScriptRoot
+    if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
+    }
+    Write-Host "- ruff:"
+    & $script:venvPython -m ruff --select I001 --no-fix $PSScriptRoot
     Exit $LASTEXITCODE
 }
 
 function stylediff() {
+    Write-Host "WARNING: black and ruff diffs aren't combined! Consider using pre-commit instead."
+    Write-Host "- black:"
     & $script:venvPython -m black --check --diff $PSScriptRoot
+    if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
+    }
+    Write-Host "- ruff:"
+    & $script:venvPython -m ruff --fix-only --diff $PSScriptRoot
     Exit $LASTEXITCODE
 }
 
