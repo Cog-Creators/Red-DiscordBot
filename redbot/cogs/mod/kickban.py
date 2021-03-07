@@ -39,7 +39,14 @@ class KickBanMixin(MixinMeta):
         if my_perms.manage_guild or my_perms.administrator:
             if "VANITY_URL" in guild.features:
                 # guild has a vanity url so use it as the one to send
-                return await guild.vanity_invite()
+                try:
+                    return await guild.vanity_invite()
+                except discord.NotFound:
+                    # If a guild has the vanity url feature,
+                    # but does not have it set up,
+                    # this prevents the command from failing
+                    # and defaults back to another regular invite.
+                    pass
             invites = await guild.invites()
         else:
             invites = []
@@ -146,7 +153,8 @@ class KickBanMixin(MixinMeta):
             if toggle:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=bold(_("You have been banned from {guild}.").format(guild=guild))
+                        title=bold(_("You have been banned from {guild}.").format(guild=guild)),
+                        color=await self.bot.get_embed_color(user),
                     )
                     em.add_field(
                         name=_("**Reason**"),
@@ -263,7 +271,14 @@ class KickBanMixin(MixinMeta):
     @commands.bot_has_permissions(kick_members=True)
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Kick a user.
+        """
+        Kick a user.
+
+        Examples:
+           - `[p]kick 428675506947227648 wanted to be kicked.`
+            This will kick Twentysix from the server.
+           - `[p]kick @Twentysix wanted to be kicked.`
+            This will kick Twentysix from the server.
 
         If a reason is specified, it will be the reason that shows up
         in the audit log.
@@ -295,7 +310,8 @@ class KickBanMixin(MixinMeta):
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild)),
+                    color=await self.bot.get_embed_color(user),
                 )
                 em.add_field(
                     name=_("**Reason**"),
@@ -342,11 +358,18 @@ class KickBanMixin(MixinMeta):
     ):
         """Ban a user from this server and optionally delete days of messages.
 
+        `days` is the amount of days of messages to cleanup on ban.
+
+        Examples:
+           - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
+            This will ban Twentysix and it will delete 7 days worth of messages.
+           - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
+            This will ban Twentysix and it will delete 7 days worth of messages.
+
         A user ID should be provided if the user is not a member of this server.
-
         If days is not a number, it's treated as the first word of the reason.
-
-        Minimum 0 days, maximum 7. If not specified, defaultdays setting will be used instead."""
+        Minimum 0 days, maximum 7. If not specified, the defaultdays setting will be used instead.
+        """
         guild = ctx.guild
         if days is None:
             days = await self.config.guild(guild).default_days()
@@ -373,8 +396,15 @@ class KickBanMixin(MixinMeta):
     ):
         """Mass bans user(s) from the server.
 
+        `days` is the amount of days of messages to cleanup on massban.
+
+        Example:
+           - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`
+            This will ban all the added userids and delete 7 days of worth messages.
+
         User IDs need to be provided in order to ban
-        using this command."""
+        using this command.
+        """
         banned = []
         errors = {}
         upgrades = []
@@ -536,7 +566,19 @@ class KickBanMixin(MixinMeta):
         *,
         reason: str = None,
     ):
-        """Temporarily ban a user from this server."""
+        """Temporarily ban a user from this server.
+
+        `duration` is the amount of time the user should be banned for.
+        `days` is the amount of days of messages to cleanup on tempban.
+
+        Examples:
+           - `[p]tempban @Twentysix Because I say so`
+            This will ban Twentysix for the default amount of time set by an administrator.
+           - `[p]tempban @Twentysix 15m You need a timeout`
+            This will ban Twentysix for 15 minutes.
+           - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
+            This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
+        """
         guild = ctx.guild
         author = ctx.author
 
