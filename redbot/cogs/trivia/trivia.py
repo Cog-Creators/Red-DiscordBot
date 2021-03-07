@@ -53,7 +53,7 @@ class Trivia(commands.Cog):
             reveal_answer=True,
             payout_multiplier=0.0,
             allow_override=True,
-            use_spoilers=False
+            use_spoilers=False,
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
