@@ -919,7 +919,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Delete data [botname] has about a user for a user.
 
         This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user.
-        Users have access to different command for this unless they can't interact with the bot at all.
+        Users have access to a different command for this unless they can't interact with the bot at all.
         This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
 
         **Arguments:**
@@ -1272,7 +1272,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggles if `[p]invite` should be accessible for the average user.
 
-        Bot must me made into a `Public bot` in the developer dashboard for public invites to work.
+        The bot must be made into a `Public bot` in the developer dashboard for public invites to work.
 
         Example:
             - `[p]inviteset public yes` - Toggles the public invite setting.
@@ -1780,7 +1780,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Set to -1 to disable this feature.
 
-        This is applied only the current server and not globally.
+        This is only applied to the current server and not globally.
 
         Examples:
             - `[p]set deletedelay` - Shows the current delete delay setting.
@@ -2241,7 +2241,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `invisible`
 
         Examples:
-            - `[p]set status online` - Clears the activity status.
+            - `[p]set status online` - Clears the status.
             - `[p]set status invisible`
 
         **Arguments:**
@@ -2281,8 +2281,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Leaving both streamer and stream_title empty will clear it.
 
         Examples:
-            - `[p]set competing` - Clears the activity status.
-            - `[p]set competing London 2012 Olympic Games`
+            - `[p]set stream` - Clears the activity status.
+            - `[p]set stream London 2012 Olympic Games`
 
         **Arguments:**
 
@@ -2726,7 +2726,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_showsettings(self, ctx: commands.Context):
         """Show the current help settings.
 
-        Warning: These setting may not be accurate if the default formatter is not in use.
+        Warning: These settings may not be accurate if the default formatter is not in use.
         """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
