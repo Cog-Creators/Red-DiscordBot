@@ -577,7 +577,7 @@ msgstr "Şu anki sunucu yönetim ayarlarını gösterir."
 
 #: redbot/cogs/mod/settings.py:31
 msgid "Track name changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Ad değişikliklerini takip et: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:32 redbot/cogs/mod/settings.py:55
 #: redbot/cogs/mod/settings.py:83 redbot/cogs/mod/settings.py:91
@@ -595,11 +595,11 @@ msgstr "Hayır"
 
 #: redbot/cogs/mod/settings.py:53
 msgid "Overridden by another setting"
-msgstr ""
+msgstr "Başka bir ayar bu ayara üstün geliyor"
 
 #: redbot/cogs/mod/settings.py:56
 msgid "Track nickname changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Nick değişikliklerini takip et: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:57
 msgid "Delete repeats: {num_repeats}\n"
@@ -978,23 +978,26 @@ msgid "\n"
 "        Toggle whether nickname changes should be tracked.\n\n"
 "        This setting will be overridden if trackallnames is disabled.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Nick değişikliklerinin takip edilip edilmemesini ayarla.\n\n"
+"        trackallnames ayarının kapatılması bu ayara üstün gelir.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:430
 msgid "Nickname changes are currently being tracked."
-msgstr ""
+msgstr "Nick değişiklikleri şu anda takip ediliyor."
 
 #: redbot/cogs/mod/settings.py:432
 msgid "Nickname changes are not currently being tracked."
-msgstr ""
+msgstr "Nick değişiklikleri şu anda takip edilmiyor."
 
 #: redbot/cogs/mod/settings.py:437
 msgid "Nickname changes will now be tracked."
-msgstr ""
+msgstr "Nick değişiklikleri artık takip edilecek."
 
 #: redbot/cogs/mod/settings.py:439
 msgid "Nickname changes will no longer be tracked."
-msgstr ""
+msgstr "Nick değişiklikleri artık takip edilmeyecek."
 
 #: redbot/cogs/mod/settings.py:446
 #, docstring
@@ -1002,24 +1005,28 @@ msgid "\n"
 "        Toggle whether all name changes should be tracked.\n\n"
 "        Toggling this off also overrides the tracknicknames setting.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Tüm isim değişikliklerinin takip edilip edilmemesini ayarla.\n\n"
+"        Bunu kapalı ayarlamak tracknicknames ayarına üstün gelir.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:454
 msgid "Name changes are currently being tracked."
-msgstr ""
+msgstr "Ad değişiklikleri şu anda takip ediliyor."
 
 #: redbot/cogs/mod/settings.py:456
 msgid "All name changes are currently not being tracked."
-msgstr ""
+msgstr "Tüm işim değişiklikleri şu anda takip edilmiyor."
 
 #: redbot/cogs/mod/settings.py:461
 msgid "Name changes will now be tracked."
-msgstr ""
+msgstr "Ad değişiklikleri artık takip edilecek."
 
 #: redbot/cogs/mod/settings.py:463
 msgid "All name changes will no longer be tracked.\n"
 "To delete existing name data, use {command}."
-msgstr ""
+msgstr "Tüm isim değişiklikleri artık takip edilmeyecek.\n"
+"Varolan ad verilerini silmek için {command} kullanın."
 
 #: redbot/cogs/mod/settings.py:474
 #, docstring
@@ -1030,16 +1037,23 @@ msgid "Delete all stored usernames and nicknames.\n\n"
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "Depolanmış tüm kullanıcı adları ve nickleri sil.\n\n"
+"        Örnekler:\n"
+"            - `[p]modset deletenames` - Onaylanmadığından yardım mesajını gösterir.\n"
+"            - `[p]modset deletenames yes` - Depolanmış tüm kullanıcı adları ve nickleri siler.\n\n"
+"        **Seçenekler**\n\n"
+"        - `<onaylama>` Aksi belirtilmezse varsayılan olarak olumsuzdur.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:486
 msgid "This will delete all stored usernames and nicknames the bot has stored.\n"
 "If you're sure, type {command}"
-msgstr ""
+msgstr "Bu botun depoladığı tüm kullanıcı adları ve nickleri siler.\n"
+"Bunu yapmak istediğinize eminseniz {command} yazın."
 
 #: redbot/cogs/mod/settings.py:527
 msgid "Usernames and nicknames have been deleted from Mod config."
-msgstr ""
+msgstr "Kullanıcı adları ve nickler veri tabanından silindi."
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring

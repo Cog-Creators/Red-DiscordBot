@@ -31,7 +31,7 @@ MUTE_UNMUTE_ISSUES = {
     "assigned_role_hierarchy_problem": _(
         "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
     ),
-    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
+    "is_admin": _("That user cannot be (un)muted, as they have the Administrator permission."),
     "permissions_issue_role": _(
         "Failed to mute or unmute user. I need the Manage Roles "
         "permission and the user I'm muting must be "
@@ -714,6 +714,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_channels=True)
     async def senddm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether mute notifications should be sent to users in DMs."""
         await self.config.guild(ctx.guild).dm.set(true_or_false)
@@ -724,6 +725,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
+    @checks.mod_or_permissions(manage_channels=True)
     async def showmoderator(self, ctx, true_or_false: bool):
         """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
         await self.config.guild(ctx.guild).show_mod.set(true_or_false)
@@ -1160,7 +1162,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         reasons = {}
         reason_msg = issue_list["reason"] + "\n" if issue_list["reason"] else None
         channel_msg = ""
-        error_msg = _("{member} could not be unmuted for the following reasons:\n").format(
+        error_msg = _("{member} could not be (un)muted for the following reasons:\n").format(
             member=issue_list["user"]
         )
         if issue_list["channels"]:

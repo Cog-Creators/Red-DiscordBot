@@ -101,7 +101,17 @@ msgid "To get an Imgur Client ID:\n"
 "8. Check the captcha box and click next.\n"
 "9. Your Client ID will be on the next page.\n"
 "10. Run the command `{prefix}set api imgur client_id <your_client_id_here>`.\n"
-msgstr ""
+msgstr "Um die Imgur Client ID zu bekommen:\n"
+"1. Logge dich in einen Imgur Account ein.\n"
+"2. Öffne diese Seite: https://api.imgur.com/oauth2/addclient.\n"
+"3. Trage einen Namen ein.\n"
+"4. Wähle *Anonymous usage without user authorization* aus für den auth type.\n"
+"5. Setze die Autorisierung callback URL zu `https://localhost`.\n"
+"6. Lasse die App Website leer.\n"
+"7. Trage eine gültige Email Addresse ein und eine Beschreibung.\n"
+"8. Kontrolliere die Captcha Box and klicke auf weiter.\n"
+"9. Deine Client ID sollte auf der nächsten Seite sein.\n"
+"10. mache `{prefix}set api imgur client_id <your_client_id_here>`.\n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring

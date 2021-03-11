@@ -45,7 +45,12 @@ msgid "Bank settings:\n\n"
 "Currency: {currency_name}\n"
 "Default balance: {default_balance}\n"
 "Maximum allowed balance: {maximum_bal}\n"
-msgstr ""
+msgstr "Bankeinstellungen:\n\n"
+"Bankname: {bank_name}\n"
+"Bank bereich: {bank_scope}\n"
+"Währung: {currency_name}\n"
+"Standardbilanze: {default_balance}\n"
+"Maximal zulässiger Bilanzen: {maximum_bal}\n"
 
 #: redbot/cogs/bank/bank.py:83
 #, docstring

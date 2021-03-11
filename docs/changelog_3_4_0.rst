@@ -1,5 +1,25 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.7 (2021-02-26)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
+
+End-user changelog
+------------------
+
+- Added proper permission checks to ``[p]muteset senddm`` and ``[p]muteset showmoderator`` (:issue:`4849`)
+- Updated the ``[p]lmgtfy`` command to use the new domain (:issue:`4840`)
+- Updated the ``[p]info`` command to more clearly indicate that the instance is owned by a team (:issue:`4851`)
+- Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`, :issue:`4853`)
+
+Documentation changes
+---------------------
+
+- Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
+- Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
+
+
 Redbot 3.4.6 (2021-02-16)
 =========================
 | Thanks to all these amazing people that contributed to this release:
@@ -28,7 +48,7 @@ Core Bot
     - The colors used have been adjusted to be readable on many more terminal applications
     - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
     - Tracebacks will now use the full width of the terminal again
-    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``-rich-traceback-extra-lines``)
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``--rich-traceback-extra-lines``)
     - Disabled syntax highlighting on the log messages
     - Dev cog no longer captures logging output
     - Added some cool features for developers

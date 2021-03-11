@@ -157,9 +157,9 @@ msgstr "{} scheint keine gültige Nachrichten-ID zu sein."
 
 #: redbot/cogs/cleanup/converters.py:29
 msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{arg} ist keine ganze Zahl."
 
 #: redbot/cogs/cleanup/converters.py:31
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} ist keine positive ganze Zahl."
 
