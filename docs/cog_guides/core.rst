@@ -1193,7 +1193,7 @@ helpset showsettings
 
 Show the current help settings.
 
-.. Warning:: These setting may not be accurate if the default formatter is not in use.
+.. Warning:: These settings may not be accurate if the default formatter is not in use.
 
 
 .. _core-command-helpset-tagline:
@@ -1541,7 +1541,7 @@ inviteset public
 
 Toggles if ``[p]invite`` should be accessible for the average user.
 
-Bot must me made into a ``Public bot`` in the developer dashboard for public invites to work.
+The bot must be made into a ``Public bot`` in the developer dashboard for public invites to work.
 
 Example:
     - ``[p]inviteset public yes`` - Toggles the public invite setting.
@@ -1969,7 +1969,7 @@ mydata ownermanagement deleteforuser
 Delete data Red has about a user for a user.
 
 This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user.
-Users have access to different command for this unless they can't interact with the bot at all.
+Users have access to a different command for this unless they can't interact with the bot at all.
 This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
 
 **Arguments:**
@@ -2485,7 +2485,7 @@ Must be between -1 and 60.
 
 Set to -1 to disable this feature.
 
-This is applied only the current server and not globally.
+This is only applied to the current server and not globally.
 
 Examples:
     - ``[p]set deletedelay`` - Shows the current delete delay setting.
@@ -3097,7 +3097,7 @@ Available statuses:
     - ``invisible``
 
 Examples:
-    - ``[p]set status online`` - Clears the activity status.
+    - ``[p]set status online`` - Clears the status.
     - ``[p]set status invisible``
 
 **Arguments:**
@@ -3132,13 +3132,14 @@ Maximum length for a stream title is 128 characters.
 Leaving both streamer and stream_title empty will clear it.
 
 Examples:
-    - ``[p]set competing`` - Clears the activity status.
-    - ``[p]set competing London 2012 Olympic Games``
+    - ``[p]set stream`` - Clears the activity status.
+    - ``[p]set stream 26 Twentysix is streaming`` - Sets the stream to ``https://www.twitch.tv/26``.
+    - ``[p]set stream https://twitch.tv/26 Twentysix is streaming`` - Sets the URL manually.
 
 **Arguments:**
 
-- ``[streamer]`` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
-- ``[stream_title]`` The text to follow ``Streaming`` in the status.
+- ``<streamer>`` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+- ``<stream_title>`` The text to follow ``Streaming`` in the status.
 
 .. _core-command-set-usebotcolour:
 
@@ -3318,12 +3319,12 @@ Defaults to the current channel.
 Examples:
     - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
     - ``[p]unignore channel`` - Unignores commands in the current channel.
-    - ``[p]ignore channel "General Channels"`` - Use quotes for categories with spaces.
-    - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to ignore categories.
+    - ``[p]unignore channel "General Channels"`` - Use quotes for categories with spaces.
+    - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
 
-- ``<channel>`` The channel to ignore. Can be a category channel.
+- ``<channel>`` The channel to unignore. This can be a category channel.
 
 .. _core-command-unignore-server:
 
@@ -3346,7 +3347,7 @@ unignore server
 Remove this server from the ignore list.
 
 Example:
-    - ``[p]unignore server`` - Ignores the current server
+    - ``[p]unignore server`` - Stops ignoring the current server
 
 .. _core-command-unload:
 
