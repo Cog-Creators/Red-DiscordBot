@@ -2298,12 +2298,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Examples:
             - `[p]set stream` - Clears the activity status.
-            - `[p]set stream London 2012 Olympic Games`
+            - `[p]set stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
+            - `[p]set stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
 
         **Arguments:**
 
-        - `[streamer]` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
-        - `[stream_title]` The text to follow `Streaming` in the status."""
+        - `<streamer>` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+        - `<stream_title>` The text to follow `Streaming` in the status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
 
@@ -4484,12 +4485,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Examples:
             - `[p]unignore channel #general` - Unignores commands in the #general channel.
             - `[p]unignore channel` - Unignores commands in the current channel.
-            - `[p]ignore channel "General Channels"` - Use quotes for categories with spaces.
-            - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to ignore categories.
+            - `[p]unignore channel "General Channels"` - Use quotes for categories with spaces.
+            - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to unignore categories.
 
         **Arguments:**
 
-        - `<channel>` The channel to ignore. Can be a category channel.
+        - `<channel>` The channel to unignore. This can be a category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4507,7 +4508,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Remove this server from the ignore list.
 
         Example:
-            - `[p]unignore server` - Ignores the current server
+            - `[p]unignore server` - Stops ignoring the current server
         """
         guild = ctx.message.guild
         if await self.bot._ignored_cache.get_ignored_guild(guild):
