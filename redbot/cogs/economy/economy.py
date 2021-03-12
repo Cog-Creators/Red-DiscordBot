@@ -11,12 +11,13 @@ import discord
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import Config, bank, commands, errors, checks
+from redbot.core.commands.converter import TimedeltaConverter
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
-
-from redbot.core.bot import Red
+from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
 
@@ -834,7 +835,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmin(self, ctx: commands.Context, bid: int):
+    async def slotmin(self, ctx: commands.Context, bid: positive_int):
         """Set the minimum slot machine bid.
 
         Example:
@@ -844,11 +845,20 @@ class Economy(commands.Cog):
 
         - `<bid>` The new minimum bid for using the slot machine. Default is 5.
         """
-        if bid < 1:
-            await ctx.send(_("Invalid min bid amount."))
-            return
         guild = ctx.guild
-        if await bank.is_global():
+        is_global = await bank.is_global()
+        if is_global:
+            slot_max = await self.config.SLOT_MAX()
+        else:
+            slot_max = await self.config.guild(guild).SLOT_MAX()
+        if bid > slot_max:
+            await ctx.send(
+                _(
+                    "Warning: Minimum bid is greater than the maximum bid ({max_bid}). "
+                    "Slots will not work."
+                ).format(max_bid=humanize_number(slot_max))
+            )
+        if is_global:
             await self.config.SLOT_MIN.set(bid)
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
@@ -860,7 +870,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slotmax(self, ctx: commands.Context, bid: int):
+    async def slotmax(self, ctx: commands.Context, bid: positive_int):
         """Set the maximum slot machine bid.
 
         Example:
@@ -870,15 +880,21 @@ class Economy(commands.Cog):
 
         - `<bid>` The new maximum bid for using the slot machine. Default is 100.
         """
-        slot_min = await self.config.SLOT_MIN()
-        if bid < 1 or bid < slot_min:
-            await ctx.send(
-                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
-            )
-            return
         guild = ctx.guild
+        is_global = await bank.is_global()
+        if is_global:
+            slot_min = await self.config.SLOT_MIN()
+        else:
+            slot_min = await self.config.guild(guild).SLOT_MIN()
+        if bid < slot_min:
+            await ctx.send(
+                _(
+                    "Warning: Maximum bid is less than the minimum bid ({min_bid}). "
+                    "Slots will not work."
+                ).format(min_bid=humanize_number(slot_min))
+            )
         credits_name = await bank.get_currency_name(guild)
-        if await bank.is_global():
+        if is_global:
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
@@ -889,16 +905,21 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(self, ctx: commands.Context, seconds: int):
+    async def slottime(
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the slot machine.
 
-        Example:
+        Examples:
             - `[p]economyset slottime 10`
+            - `[p]economyset slottime 10m`
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of the slot machine. Default is 5.
+        - `<duration>` The new duration to wait in between uses of the slot machine. Default is 5 seconds.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
@@ -907,16 +928,21 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(self, ctx: commands.Context, seconds: int):
+    async def paydaytime(
+        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
+    ):
         """Set the cooldown for the payday command.
 
-        Example:
+        Examples:
             - `[p]economyset paydaytime 86400`
+            - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
-        - `<seconds>` The new number of seconds to wait in between uses of payday. Default is 300.
+        - `<duration>` The new duration to wait in between uses of payday. Default is 5 minutes.
+        Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
         """
+        seconds = int(duration.total_seconds())
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
@@ -961,6 +987,7 @@ class Economy(commands.Cog):
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role.
+        Set to `0` to remove the payday amount you set for that role.
 
         Only available when not using a global bank.
 
@@ -974,23 +1001,37 @@ class Economy(commands.Cog):
         """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
-        if creds <= 0 or creds > max_balance:
+        if creds >= max_balance:
             return await ctx.send(
-                _("Amount must be greater than zero and less than {maxbal}.").format(
-                    maxbal=humanize_number(max_balance)
-                )
+                _(
+                    "The bank requires that you set the payday to be less than"
+                    " its maximum balance of {maxbal}."
+                ).format(maxbal=humanize_number(max_balance))
             )
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await ctx.send(_("The bank must be per-server for per-role paydays to work."))
         else:
-            await self.config.role(role).PAYDAY_CREDITS.set(creds)
-            await ctx.send(
-                _(
-                    "Every payday will now give {num} {currency} "
-                    "to people with the role {role_name}."
-                ).format(num=humanize_number(creds), currency=credits_name, role_name=role.name)
-            )
+            if creds <= 0:  # Because I may as well...
+                default_creds = await self.config.guild(guild).PAYDAY_CREDITS()
+                await self.config.role(role).clear()
+                await ctx.send(
+                    _(
+                        "The payday value attached to role has been removed. "
+                        "Users with this role will now receive the default pay "
+                        "of {num} {currency}."
+                    ).format(num=humanize_number(default_creds), currency=credits_name)
+                )
+            else:
+                await self.config.role(role).PAYDAY_CREDITS.set(creds)
+                await ctx.send(
+                    _(
+                        "Every payday will now give {num} {currency} "
+                        "to people with the role {role_name}."
+                    ).format(
+                        num=humanize_number(creds), currency=credits_name, role_name=role.name
+                    )
+                )
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):

@@ -27,7 +27,13 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_equalizer(self, ctx: commands.Context):
-        """Equalizer management."""
+        """Equalizer management.
+
+        Band positions are 1-15 and values have a range of -0.25 to 1.0.
+        Band names are 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,
+        6.3k, 10k, and 16k Hz.
+        Setting a band value to -0.25 nullifies it while +0.25 is double.
+        """
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))

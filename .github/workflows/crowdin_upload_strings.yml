@@ -1,0 +1,32 @@
+name: Crowdin - Upload strings
+on:
+  push:
+    branches:
+      - V3/develop
+
+jobs:
+  deploy:
+    if: github.repository == 'Cog-Creators/Red-DiscordBot'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
+        echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
+        sudo apt-get update -qq
+        sudo apt-get install -y crowdin
+        pip install redgettext==3.3
+    - name: Generate source files
+      run: |
+        make gettext
+    - name: Upload source files
+      run: |
+        make upload_translations
+      env:
+        CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+        CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}

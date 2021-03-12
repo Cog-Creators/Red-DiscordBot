@@ -192,7 +192,7 @@ class Reports(commands.Cog):
         else:
             return guild
 
-    async def send_report(self, msg: discord.Message, guild: discord.Guild):
+    async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
 
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
@@ -208,7 +208,7 @@ class Reports(commands.Cog):
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
         if await self.bot.embed_requested(channel, author):
-            em = discord.Embed(description=report)
+            em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
@@ -279,7 +279,7 @@ class Reports(commands.Cog):
             _m = copy(ctx.message)
             _m.content = _report
             _m.content = _m.clean_content
-            val = await self.send_report(_m, guild)
+            val = await self.send_report(ctx, _m, guild)
         else:
             try:
                 await author.send(
@@ -300,7 +300,7 @@ class Reports(commands.Cog):
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:
-                val = await self.send_report(message, guild)
+                val = await self.send_report(ctx, message, guild)
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:

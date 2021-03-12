@@ -1,10 +1,11 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
 import discord
 from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils.chat_formatting import (
+    bold,
     humanize_timedelta,
     humanize_list,
     pagify,
@@ -121,7 +122,7 @@ class VoiceMutes(MixinMeta):
                 guild = ctx.guild
                 author = ctx.author
                 channel = user_voice_state.channel
-                audit_reason = get_audit_reason(author, reason)
+                audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_mute_user(
                     guild, channel, author, user, until, audit_reason
@@ -142,6 +143,9 @@ class VoiceMutes(MixinMeta):
                         reason,
                         until=until,
                         channel=channel,
+                    )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Voice mute"), reason, duration
                     )
                     async with self.config.member(user).perms_cache() as cache:
                         cache[channel.id] = success["old_overs"]
@@ -194,7 +198,7 @@ class VoiceMutes(MixinMeta):
                 guild = ctx.guild
                 author = ctx.author
                 channel = user_voice_state.channel
-                audit_reason = get_audit_reason(author, reason)
+                audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_unmute_user(
                     guild, channel, author, user, audit_reason
@@ -215,6 +219,9 @@ class VoiceMutes(MixinMeta):
                         reason,
                         until=None,
                         channel=channel,
+                    )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Voice unmute"), reason
                     )
                 else:
                     issue_list.append((user, success["reason"]))

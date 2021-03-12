@@ -54,6 +54,7 @@ class Trivia(commands.Cog):
             payout_multiplier=0.0,
             ignore_special=False,
             allow_override=True,
+            use_spoilers=False,
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
@@ -94,7 +95,8 @@ class Trivia(commands.Cog):
                 "Reveal answer on timeout: {reveal_answer}\n"
                 "Payout multiplier: {payout_multiplier}\n"
                 "Ignoring special characters: {ignore_special}\n"
-                "Allow lists to override settings: {allow_override}"
+                "Allow lists to override settings: {allow_override}\n"
+                "Use Spoilers in answers: {use_spoilers}"
             ).format(**settings_dict),
             lang="py",
         )
@@ -160,6 +162,19 @@ class Trivia(commands.Cog):
                     "server."
                 )
             )
+
+    @triviaset.command(name="usespoilers", usage="<true_or_false>")
+    async def trivaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
+        """Set if bot will display the answers in spoilers.
+
+        If enabled, the bot will use spoilers to hide answers.
+        """
+        settings = self.config.guild(ctx.guild)
+        await settings.use_spoilers.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll put the answers in spoilers next time."))
+        else:
+            await ctx.send(_("Alright, I won't use spoilers to hide answers anymore."))
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
     async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):
@@ -291,7 +306,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Trivia file was not found."))
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, require_var_positional=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
         """Start trivia session on the specified category.
@@ -299,9 +314,6 @@ class Trivia(commands.Cog):
         You may list multiple categories, in which case the trivia will involve
         questions from all of them.
         """
-        if not categories:
-            await ctx.send_help()
-            return
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
