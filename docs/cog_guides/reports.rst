@@ -53,7 +53,7 @@ Use without arguments for interactive reporting, or do
 
 **Arguments**
 
-* `<text>`: The content included within the report.
+* ``<text>``: The content included within the report.
 
 .. _reports-command-report-interact:
 
@@ -80,7 +80,7 @@ Tunnels do not persist across bot restarts.
 
 **Arguments**
 
-* `<ticket_number>`: The ticket number to open the tunnel in.
+* ``<ticket_number>``: The ticket number to open the tunnel in.
 
 .. _reports-command-reportset:
 
@@ -120,7 +120,7 @@ Set the channel where reports will be sent.
 
 **Arguments**
 
-* `<channel>`: |channel-input|
+* ``<channel>``: |channel-input|
 
 .. _reports-command-reportset-toggle:
 
