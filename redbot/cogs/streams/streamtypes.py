@@ -310,23 +310,29 @@ class TwitchStream(Stream):
             header["Authorization"] = f"Bearer {self._bearer}"
         await self.wait_for_rate_limit_reset()
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                url, headers=header, params=params, timeout=aiohttp.ClientTimeout(total=None)
-            ) as resp:
-                remaining = resp.headers.get("Ratelimit-Remaining")
-                if remaining:
-                    self._rate_limit_remaining = int(remaining)
-                reset = resp.headers.get("Ratelimit-Reset")
-                if reset:
-                    self._rate_limit_resets.add(int(reset))
+            try:
+                async with session.get(
+                    url, headers=header, params=params, timeout=aiohttp.ClientTimeout(total=None)
+                ) as resp:
+                    remaining = resp.headers.get("Ratelimit-Remaining")
+                    if remaining:
+                        self._rate_limit_remaining = int(remaining)
+                    reset = resp.headers.get("Ratelimit-Reset")
+                    if reset:
+                        self._rate_limit_resets.add(int(reset))
 
-                if resp.status == 429:
-                    log.info(
-                        "Ratelimited. Trying again at %s.", datetime.fromtimestamp(int(reset))
-                    )
-                    return await self.get_data(url)
+                    if resp.status == 429:
+                        log.info(
+                            "Ratelimited. Trying again at %s.", datetime.fromtimestamp(int(reset))
+                        )
+                        return await self.get_data(url)
 
-                return resp.status, await resp.json(encoding="utf-8")
+                    if resp.status != 200:
+                        return None, {}
+
+                    return resp.status, await resp.json(encoding="utf-8")
+            except aiohttp.ClientConnectionError:
+                return None, {}
 
     async def is_online(self):
         if not self.id:
