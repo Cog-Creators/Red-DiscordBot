@@ -85,7 +85,7 @@ Kick a user.
 
 **Arguments**
 
-* ``<user>``: The user to kick. |member-or-user-input-quotes|
+* ``<user>``: The user to kick. |user-input-quotes|
 * ``[reason]``: The reason why the user was kicked (optional).
 
 **Example Usage**
