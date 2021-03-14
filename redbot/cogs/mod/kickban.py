@@ -596,7 +596,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif guild.me.top_role <= user.top_role or member == guild.owner:
+        elif guild.me.top_role <= member.top_role or member == guild.owner:
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
