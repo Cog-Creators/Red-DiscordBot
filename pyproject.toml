@@ -2,19 +2,9 @@
     line-length = 99
     target-version = ['py38']
     include = '\.py$'
-    exclude = '''
+    force-exclude = '''
     /(
-          \.eggs
-        | \.git
-        | \.hg
-        | \.mypy_cache
-        | \.tox
-        | \.venv
-        | _build
-        | buck-out
-        | build
-        | dist
-        | redbot\/vendored
+        redbot\/vendored
     )/
     '''
 
