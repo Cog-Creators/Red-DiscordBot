@@ -77,7 +77,7 @@ kick
 
 .. code-block:: none
 
-    [p]kick <user> [reason]
+    [p]kick <member> [reason]
 
 **Description**
 
@@ -85,7 +85,7 @@ Kick a user.
 
 **Arguments**
 
-* ``<user>``: The user to kick. |member-input-quotes|
+* ``<member>``: The member to kick. |member-input-quotes|
 * ``[reason]``: The reason why the user was kicked (optional).
 
 **Example Usage**
@@ -606,7 +606,7 @@ Kick a member and delete 1 day's worth of their messages.
 
 **Arguments**
 
-* ``<member>``: |member-input|
+* ``<member>``: The member to softban. |member-input-quotes|
 * ``[reason]``: Reason for the kick (optional).
 
 .. _mod-command-tempban:
@@ -621,7 +621,7 @@ tempban
 
 .. code-block:: none
 
-    [p]tempban <user> [duration] [days] [reason]
+    [p]tempban <member> [duration] [days] [reason]
 
 **Description**
 
@@ -629,6 +629,7 @@ Temporarily ban a user from this server.
 
 **Arguments**
 
+* ``<member>``: The member to temporarily ban. |member-input-quotes|
 * ``[duration]``: The amount of time the user should be banned for.
 * ``[days]``: The amount of days of messages to cleanup on tempban.
 * ``[reason]``: The reason for the tempban (optional).
@@ -711,7 +712,7 @@ Ban a user from speaking and listening in the server's voice channels.
 
 **Arguments**
 
-* ``<member>``: |member-input|
+* ``<member>``: The member to ban from voice. |member-input|
 * ``[reason]``: The reason for the voiceban (optional).
 
 .. _mod-command-voicekick:
@@ -757,5 +758,5 @@ Unban a user from speaking and listening in the server's voice channels.
 
 **Arguments**
 
-* ``<member>``: |member-input|
+* ``<member>``: The member to unban from voice. |member-input-quotes|
 * ``[reason]``: The reason for the voiceunban (optional).
