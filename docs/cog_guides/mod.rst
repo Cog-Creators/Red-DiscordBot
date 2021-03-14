@@ -50,7 +50,7 @@ Ban a user from this server and optionally delete days of messages.
 
 **Arguments**
 
-* ``<user>``: |user-input|
+* ``<user>``: The user to ban. |member-or-user-input-quotes|
 * ``[days]``: The amount of days of messages to cleanup on ban. This parameter default to no days.
 * ``[reason]``: The reason why the user was banned (optional).
 
@@ -83,10 +83,16 @@ kick
 
 Kick a user.
 
-Examples:
-   - ``[p]kick 428675506947227648 wanted to be kicked.``
+**Arguments**
+
+* ``<user>``: The user to kick. |member-or-user-input-quotes|
+* ``[reason]``: The reason why the user was kicked (optional).
+
+**Example Usage**
+
+* ``[p]kick 428675506947227648 wanted to be kicked.``
     This will kick Twentysix from the server.
-   - ``[p]kick @Twentysix wanted to be kicked.``
+* ``[p]kick @Twentysix wanted to be kicked.``
     This will kick Twentysix from the server.
 
 If a reason is specified, it will be the reason that shows up
@@ -112,14 +118,16 @@ massban
 
 Mass bans user(s) from the server.
 
-``days`` is the amount of days of messages to cleanup on massban.
+**Arguments**
 
-Example:
-   - ``[p]massban 345628097929936898 57287406247743488 7 they broke all rules.``
+* ``<user_ids...>``: The users to ban. This must be a list of user IDs seperated by spaces.
+* ``[days]``: The amount of days of messages to cleanup on massban.
+* ``[reason]``: The reason why this user was banned.
+
+**Example Usage**
+
+* ``[p]massban 345628097929936898 57287406247743488 7 they broke all rules.``
     This will ban all the added userids and delete 7 days of worth messages.
-
-User IDs need to be provided in order to ban
-using this command.
 
 .. _mod-command-modset:
 
@@ -156,6 +164,12 @@ modset defaultdays
 Set the default number of days worth of messages to be deleted when a user is banned.
 
 The number of days must be between 0 and 7.
+
+**Arguments**
+
+* ``[days=0]``: The default number of days of messages to be deleted when a user is banned.
+
+.. note:: This value must be between 0 and 7.
 
 .. _mod-command-modset-defaultduration:
 
