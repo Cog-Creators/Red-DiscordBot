@@ -94,6 +94,9 @@ parameters.
 
     Arguments followed by ``=value`` means that, if not specified,
     the argument will be equal to ``value``.
+    
+    Arguments followed by an ellipsis ``...`` means that you may provide
+    multiple arguments for the command.
 
     For example, the command ``[p]cleanup messages`` in the cleanup cog has
     the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
