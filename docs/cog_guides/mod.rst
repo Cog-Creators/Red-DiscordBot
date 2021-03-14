@@ -188,11 +188,15 @@ modset defaultduration
 Set the default time to be used when a user is tempbanned.
 
 Accepts: seconds, minutes, hours, days, weeks
-``duration`` must be greater than zero.
 
-Examples:
-    ``[p]modset defaultduration 7d12h10m``
-    ``[p]modset defaultduration 7 days 12 hours 10 minutes``
+**Arguments**
+
+* ``<duration>``: The default duration for when a user is temporarily banned. Accepts seconds, minutes, hours, days or weeks.
+
+**Example Usage**
+
+* ``[p]modset defaultduration 7d12h10m``
+* ``[p]modset defaultduration 7 days 12 hours 10 minutes``
 
 .. _mod-command-modset-deletenames:
 
@@ -212,13 +216,9 @@ modset deletenames
 
 Delete all stored usernames and nicknames.
 
-Examples:
-    - ``[p]modset deletenames`` - Did not confirm. Shows the help message.
-    - ``[p]modset deletenames yes`` - Deletes all stored usernames and nicknames.
-
 **Arguments**
 
-- ``<confirmation>`` This will default to false unless specified.
+- ``<confirmation>`` Whether to delete all stored usernames and nicknames. |bool-input|
 
 .. _mod-command-modset-deleterepeats:
 

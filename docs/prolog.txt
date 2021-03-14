@@ -56,3 +56,7 @@
 
 .. |color-input| replace:: You can either provide the hexadecimal code of the color, or one of the
     colors listed here: :class:`discord.Color`.
+
+.. These are the comments for parameter types such as `bool`.
+
+.. |bool-input| replace:: You must provide either 'true' or 'false'.
