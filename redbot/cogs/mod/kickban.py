@@ -560,7 +560,7 @@ class KickBanMixin(MixinMeta):
     async def tempban(
         self,
         ctx: commands.Context,
-        user: discord.Member,
+        member: discord.Member,
         duration: Optional[commands.TimedeltaConverter] = None,
         days: Optional[int] = None,
         *,
@@ -582,12 +582,12 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         author = ctx.author
 
-        if author == user:
+        if author == member:
             await ctx.send(
                 _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
-        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, member):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
@@ -596,7 +596,7 @@ class KickBanMixin(MixinMeta):
                 )
             )
             return
-        elif guild.me.top_role <= user.top_role or user == guild.owner:
+        elif guild.me.top_role <= user.top_role or member == guild.owner:
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
@@ -614,9 +614,9 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        await self.config.member(user).banned_until.set(unban_time.timestamp())
+        await self.config.member(member).banned_until.set(unban_time.timestamp())
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
-            current_tempbans.append(user.id)
+            current_tempbans.append(member.id)
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
@@ -627,12 +627,12 @@ class KickBanMixin(MixinMeta):
                 msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
                     invite_link=invite
                 )
-            await user.send(msg)
+            await member.send(msg)
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
         try:
-            await guild.ban(user, reason=audit_reason, delete_message_days=days)
+            await guild.ban(member, reason=audit_reason, delete_message_days=days)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
@@ -643,7 +643,7 @@ class KickBanMixin(MixinMeta):
                 guild,
                 ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "tempban",
-                user,
+                member,
                 author,
                 reason,
                 unban_time,
