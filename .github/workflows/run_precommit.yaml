@@ -2,6 +2,8 @@ name: Run pre-commit
 on:
   pull_request:
   push:
+env:
+  RUFF_FORMAT: github
 
 jobs:
   run_precommit:
@@ -26,6 +28,14 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      # Register problem matchers
+      - name: Register problem matchers
+        run: |
+          echo "::add-matcher::.github/workflows/matchers/check-json.json"
+          echo "::add-matcher::.github/workflows/matchers/check-toml.json"
+          echo "::add-matcher::.github/workflows/matchers/check-yaml.json"
+          echo "::add-matcher::.github/workflows/matchers/codespell.json"
 
       # Run pre-commit
       - name: Run pre-commit

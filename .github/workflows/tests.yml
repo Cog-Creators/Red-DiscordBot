@@ -52,6 +52,9 @@ jobs:
           run: |
             python -m pip install --upgrade pip
             pip install tox
+        - name: Register problem matcher
+          run: |
+            echo "::add-matcher::.github/workflows/matchers/sphinx.json"
         - name: Tox test
           env:
             TOXENV: ${{ matrix.tox_env }}

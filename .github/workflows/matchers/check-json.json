@@ -1,0 +1,17 @@
+{
+    "__comment": "Credits to: https://github.com/home-assistant/core/blob/d32c364d7f9e138e0dd9363b34b3cb39f4afcd06/.github/workflows/matchers/check-json.json",
+    "problemMatcher": [
+        {
+            "owner": "check-json",
+            "pattern": [
+                {
+                    "regexp": "^(.+):\\s(Failed to json decode\\s.+\\sline\\s(\\d+)\\scolumn\\s(\\d+).+)$",
+                    "file": 1,
+                    "message": 2,
+                    "line": 3,
+                    "column": 4
+                }
+            ]
+        }
+    ]
+}
