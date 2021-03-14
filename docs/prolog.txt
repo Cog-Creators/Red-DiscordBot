@@ -59,4 +59,4 @@
 
 .. These are the comments for parameter types such as `bool`.
 
-.. |bool-input| replace:: You must provide either 'true' or 'false'.
+.. |bool-input| replace:: You should provide either 'true' or 'false'.
