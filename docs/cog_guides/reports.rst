@@ -42,18 +42,18 @@ report
 
 .. code-block:: none
 
-    [p]report <text>
+    [p]report [text]
 
 **Description**
 
 Send a report.
 
 Use without arguments for interactive reporting, or do
-``[p]report <text>`` to use it non-interactively.
+``[p]report [text]`` to use it non-interactively.
 
 **Arguments**
 
-* ``<text>``: The content included within the report.
+* ``[text]>``: The content included within the report.
 
 .. _reports-command-report-interact:
 
