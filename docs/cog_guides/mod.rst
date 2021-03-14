@@ -393,7 +393,7 @@ Users will be warned if they send any messages which contain more than
 
 **Arguments**
 
-* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+* ``<max_mentions>``: Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-reinvite:
 
