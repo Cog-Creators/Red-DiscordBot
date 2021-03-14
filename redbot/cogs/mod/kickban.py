@@ -567,7 +567,7 @@ class KickBanMixin(MixinMeta):
 
         `duration` is the amount of time the user should be banned for.
         `days` is the amount of days of messages to cleanup on tempban.
-        
+
         Examples:
            - `[p]tempban @Twentysix Because I say so`
             This will ban Twentysix for the default amount of time set by an administrator.
