@@ -236,9 +236,11 @@ modset deleterepeats
 
 Enable auto-deletion of repeated messages.
 
-Must be between 2 and 20.
+**Arguments**
 
-Set to -1 to disable this feature.
+* ``[repeats]``: The number of repeated messages to auto-delete.
+
+.. note:: Must be between 2 and 20. Set to -1 to disable this feature.
 
 .. _mod-command-modset-dm:
 
@@ -259,6 +261,10 @@ Toggle whether a message should be sent to a user when they are kicked/banned.
 If this option is enabled, the bot will attempt to DM the user with the guild name
 and reason as to why they were kicked/banned.
 
+**Arguments**
+
+* ``[enabled]``: Whether a message should be sent to a user when they are kicked/banned. |bool-input|
+
 .. _mod-command-modset-hierarchy:
 
 """"""""""""""""
@@ -275,8 +281,7 @@ modset hierarchy
 
 Toggle role hierarchy check for mods and admins.
 
-**WARNING**: Disabling this setting will allow mods to take
-actions on users above them in the role hierarchy!
+..warning:: Disabling this setting will allow mods to take actions on users above them in the role hierarchy!
 
 This is enabled by default.
 
@@ -315,7 +320,9 @@ Set the autoban conditions for mention spam.
 Users will be banned if they send any message which contains more than
 ``<max_mentions>`` mentions.
 
-``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+**Arguments**
+
+* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-mentionspam-kick:
 
@@ -331,12 +338,14 @@ modset mentionspam kick
 
 **Description**
 
-Sets the autokick conditions for mention spam.
+Set the autokick conditions for mention spam.
 
-Users will be kicked if they send any messages which contain more than
+Users will be kicked if they send any message which contains more than
 ``<max_mentions>`` mentions.
 
-``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+**Arguments**
+
+* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-mentionspam-strict:
 
@@ -359,6 +368,10 @@ If disabled only unique mentions will count.
 
 Use this command without any parameter to see current setting.
 
+**Arguments**
+
+* ``[enabled]``: Whether all mentions will count, including duplicated mentions. |bool-input|
+
 .. _mod-command-modset-mentionspam-warn:
 
 """""""""""""""""""""""
@@ -378,7 +391,9 @@ Sets the autowarn conditions for mention spam.
 Users will be warned if they send any messages which contain more than
 ``<max_mentions>`` mentions.
 
-``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+**Arguments**
+
+* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-reinvite:
 
@@ -435,6 +450,10 @@ Toggle whether all name changes should be tracked.
 
 Toggling this off also overrides the tracknicknames setting.
 
+**Arguments**
+
+* ``[enabled]``: Whether all name changes should be tracked. |bool-input|
+
 .. _mod-command-modset-tracknicknames:
 
 """""""""""""""""""""
@@ -452,6 +471,10 @@ modset tracknicknames
 Toggle whether nickname changes should be tracked.
 
 This setting will be overridden if trackallnames is disabled.
+
+**Arguments**
+
+* ``[enabled]``: Whether all nickname changes should be tracked. |bool-input|
 
 .. _mod-command-movedeletedelay:
 
@@ -505,6 +528,10 @@ names
 
 Show previous names and nicknames of a user.
 
+**Arguments**
+
+* ``<user>``: |user-input|
+
 .. _mod-command-rename:
 
 ^^^^^^
@@ -524,6 +551,11 @@ rename
 Change a user's nickname.
 
 Leaving the nickname empty will remove it.
+
+**Arguments**
+
+* ``<user>``: |user-input|
+* ``[nickname]``: The new nickname for the user.
 
 .. _mod-command-slowmode:
 
@@ -546,6 +578,14 @@ Changes channel's slowmode setting.
 Interval can be anything from 0 seconds to 6 hours.
 Use without parameters to disable.
 
+**Arguments**
+
+* ``[interval=0:00:00]``: The time for the channel's slowmode settings.
+
+.. note::
+    Interval can be anything from 0 seconds to 6 hours.
+    Use without parameters to disable.
+
 .. _mod-command-softban:
 
 ^^^^^^^
@@ -563,6 +603,11 @@ softban
 **Description**
 
 Kick a user and delete 1 day's worth of their messages.
+
+**Arguments**
+
+* ``<user>``: |user-input|
+* ``[reason]``: Reason for the kick (optional).
 
 .. _mod-command-tempban:
 
