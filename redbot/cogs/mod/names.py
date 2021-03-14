@@ -28,7 +28,7 @@ class ModInfo(MixinMeta):
             nicks = [escape_spoilers_and_mass_mentions(nick) for nick in nicks if nick]
         return names, nicks
 
-    @commands.command()
+    @commands.command(usage="<member> [nickname]")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
@@ -157,7 +157,7 @@ class ModInfo(MixinMeta):
             string += f"{status_string}\n"
         return string
 
-    @commands.command()
+    @commands.command(usage="<member>")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def userinfo(self, ctx, *, user: discord.Member = None):
@@ -291,7 +291,7 @@ class ModInfo(MixinMeta):
 
         await ctx.send(embed=data)
 
-    @commands.command()
+    @commands.command(usage="<member>")
     async def names(self, ctx: commands.Context, *, user: discord.Member):
         """Show previous names and nicknames of a user."""
         names, nicks = await self.get_names_and_nicks(user)
