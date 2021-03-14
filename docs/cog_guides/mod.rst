@@ -218,7 +218,7 @@ Delete all stored usernames and nicknames.
 
 **Arguments**
 
-- ``<confirmation>`` Whether to delete all stored usernames and nicknames. |bool-input|
+- ``<confirmation>``: Whether to delete all stored usernames and nicknames. |bool-input|
 
 .. _mod-command-modset-deleterepeats:
 
@@ -322,7 +322,7 @@ Users will be banned if they send any message which contains more than
 
 **Arguments**
 
-* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+* ``<max_mentions>``: Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-mentionspam-kick:
 
@@ -345,7 +345,7 @@ Users will be kicked if they send any message which contains more than
 
 **Arguments**
 
-* ``<max_mentions>`` Must be 0 or greater. Set to 0 to disable this feature.
+* ``<max_mentions>``: Must be 0 or greater. Set to 0 to disable this feature.
 
 .. _mod-command-modset-mentionspam-strict:
 
@@ -522,15 +522,15 @@ names
 
 .. code-block:: none
 
-    [p]names <user>
+    [p]names <member>
 
 **Description**
 
-Show previous names and nicknames of a user.
+Show previous names and nicknames of a member.
 
 **Arguments**
 
-* ``<user>``: |user-input|
+* ``<member>``: |member-input|
 
 .. _mod-command-rename:
 
@@ -544,18 +544,18 @@ rename
 
 .. code-block:: none
 
-    [p]rename <user> [nickname]
+    [p]rename <member> [nickname]
 
 **Description**
 
-Change a user's nickname.
+Change a member's nickname.
 
 Leaving the nickname empty will remove it.
 
 **Arguments**
 
-* ``<user>``: |user-input|
-* ``[nickname]``: The new nickname for the user.
+* ``<member>``: |member-input|
+* ``[nickname]``: The new nickname for the member.
 
 .. _mod-command-slowmode:
 
@@ -598,15 +598,15 @@ softban
 
 .. code-block:: none
 
-    [p]softban <user> [reason]
+    [p]softban <member> [reason]
 
 **Description**
 
-Kick a user and delete 1 day's worth of their messages.
+Kick a member and delete 1 day's worth of their messages.
 
 **Arguments**
 
-* ``<user>``: |user-input|
+* ``<member>``: |member-input|
 * ``[reason]``: Reason for the kick (optional).
 
 .. _mod-command-tempban:
@@ -675,7 +675,7 @@ userinfo
 
 .. code-block:: none
 
-    [p]userinfo [user]
+    [p]userinfo [member]
 
 **Description**
 
@@ -689,7 +689,7 @@ these fields will be omitted.
 
 **Arguments**
 
-* ``[user]``: |user-input|
+* ``[member]``: |member-input|
 
 .. _mod-command-voiceban:
 
@@ -703,7 +703,7 @@ voiceban
 
 .. code-block:: none
 
-    [p]voiceban <user> [reason]
+    [p]voiceban <member> [reason]
 
 **Description**
 
@@ -711,7 +711,7 @@ Ban a user from speaking and listening in the server's voice channels.
 
 **Arguments**
 
-* ``<user_id>``: |user-input|
+* ``<member>``: |member-input|
 * ``[reason]``: The reason for the voiceban (optional).
 
 .. _mod-command-voicekick:
@@ -749,7 +749,7 @@ voiceunban
 
 .. code-block:: none
 
-    [p]voiceunban <user> [reason]
+    [p]voiceunban <member> [reason]
 
 **Description**
 

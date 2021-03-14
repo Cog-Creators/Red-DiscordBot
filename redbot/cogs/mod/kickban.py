@@ -270,7 +270,7 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def kick(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """
         Kick a user.
 
@@ -654,7 +654,7 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def softban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def softban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Kick a user and delete 1 day's worth of their messages."""
         guild = ctx.guild
         author = ctx.author
@@ -782,7 +782,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(mute_members=True, deafen_members=True)
-    async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def voiceunban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
         if (
@@ -823,7 +823,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(mute_members=True, deafen_members=True)
-    async def voiceban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+    async def voiceban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Ban a user from speaking and listening in the server's voice channels."""
         user_voice_state: discord.VoiceState = user.voice
         if (
