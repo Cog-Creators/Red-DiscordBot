@@ -627,15 +627,19 @@ tempban
 
 Temporarily ban a user from this server.
 
-``duration`` is the amount of time the user should be banned for.
-``days`` is the amount of days of messages to cleanup on tempban.
+**Arguments**
 
-Examples:
-   - ``[p]tempban @Twentysix Because I say so``
+* ``[duration]``: The amount of time the user should be banned for.
+* ``[days]``: The amount of days of messages to cleanup on tempban.
+* ``[reason]``: The reason for the tempban (optional).
+
+**Example Usage**
+
+* ``[p]tempban @Twentysix Because I say so``
     This will ban Twentysix for the default amount of time set by an administrator.
-   - ``[p]tempban @Twentysix 15m You need a timeout``
+* ``[p]tempban @Twentysix 15m You need a timeout``
     This will ban Twentysix for 15 minutes.
-   - ``[p]tempban 428675506947227648 1d2h15m 5 Evil person``
+* ``[p]tempban 428675506947227648 1d2h15m 5 Evil person``
     This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
 
 .. _mod-command-unban:
@@ -656,10 +660,10 @@ unban
 
 Unban a user from this server.
 
-Requires specifying the target user's ID. To find this, you may either:
- 1. Copy it from the mod log case (if one was created), or
- 2. enable developer mode, go to Bans in this server's settings, right-
-click the user and select 'Copy ID'.
+**Arguments**
+
+* ``<user_id>``: |user-input|
+* ``[reason]``: The reason for the unban (optional).
 
 .. _mod-command-userinfo:
 
@@ -683,6 +687,10 @@ join date, voice state and previous names/nicknames.
 If the user has no roles, previous names or previous nicknames,
 these fields will be omitted.
 
+**Arguments**
+
+* ``[user]``: |user-input|
+
 .. _mod-command-voiceban:
 
 ^^^^^^^^
@@ -700,6 +708,11 @@ voiceban
 **Description**
 
 Ban a user from speaking and listening in the server's voice channels.
+
+**Arguments**
+
+* ``<user_id>``: |user-input|
+* ``[reason]``: The reason for the voiceban (optional).
 
 .. _mod-command-voicekick:
 
@@ -719,6 +732,11 @@ voicekick
 
 Kick a member from a voice channel.
 
+**Arguments**
+
+* ``<member>``: |member-input|
+* ``[reason]``: The reason for the voicekick (optional).
+
 .. _mod-command-voiceunban:
 
 ^^^^^^^^^^
@@ -736,3 +754,8 @@ voiceunban
 **Description**
 
 Unban a user from speaking and listening in the server's voice channels.
+
+**Arguments**
+
+* ``<member>``: |member-input|
+* ``[reason]``: The reason for the voiceunban (optional).
