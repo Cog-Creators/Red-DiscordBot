@@ -78,13 +78,16 @@ class KickBanMixin(MixinMeta):
         ctx: commands.Context, user_voice_state: Optional[discord.VoiceState], **perms: bool
     ) -> bool:
         """Check if the bot and user have sufficient permissions for voicebans.
+
         This also verifies that the user's voice state and connected
         channel are not ``None``.
+
         Returns
         -------
         bool
             ``True`` if the permissions are sufficient and the user has
             a valid voice state.
+
         """
         if user_voice_state is None or user_voice_state.channel is None:
             await ctx.send(_("That user is not in a voice channel."))
@@ -270,11 +273,13 @@ class KickBanMixin(MixinMeta):
     async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """
         Kick a user.
+
         Examples:
            - `[p]kick 428675506947227648 wanted to be kicked.`
             This will kick Twentysix from the server.
            - `[p]kick @Twentysix wanted to be kicked.`
             This will kick Twentysix from the server.
+
         If a reason is specified, it will be the reason that shows up
         in the audit log.
         """
@@ -352,12 +357,15 @@ class KickBanMixin(MixinMeta):
         reason: str = None,
     ):
         """Ban a user from this server and optionally delete days of messages.
+
         `days` is the amount of days of messages to cleanup on ban.
+
         Examples:
            - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
            - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
+
         A user ID should be provided if the user is not a member of this server.
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. If not specified, the defaultdays setting will be used instead.
@@ -556,8 +564,10 @@ class KickBanMixin(MixinMeta):
         reason: str = None,
     ):
         """Temporarily ban a user from this server.
+
         `duration` is the amount of time the user should be banned for.
         `days` is the amount of days of messages to cleanup on tempban.
+        
         Examples:
            - `[p]tempban @Twentysix Because I say so`
             This will ban Twentysix for the default amount of time set by an administrator.
