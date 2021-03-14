@@ -336,7 +336,7 @@ class KickBanMixin(MixinMeta):
                 guild,
                 ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "kick",
-                user,
+                member,
                 author,
                 reason,
                 until=None,
@@ -683,7 +683,7 @@ class KickBanMixin(MixinMeta):
             invite = ""
 
         try:  # We don't want blocked DMs preventing us from banning
-            msg = await user.send(
+            msg = await member.send(
                 _(
                     "You have been banned and "
                     "then unbanned as a quick way to delete your messages.\n"
