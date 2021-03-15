@@ -2460,11 +2460,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Examples:**
             - `[p]set serverprefix !`
-            - `[p]set serverprefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
+            - `[p]set serverprefix "! "` - Quotes are needed to use spaces in prefixes.
+            - `[p]set serverprefix "@[botname] "` - This uses a mention as the prefix.
             - `[p]set serverprefix ! ? .` - Sets multiple prefixes.
 
         **Arguments:**
-            - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes
+            - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
         """
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
@@ -2652,8 +2653,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Link example: `[My link](https://example.com)`
 
         **Examples:**
-            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines`
-            - `[p]set custominfo Join my [support server](discord.gg/discord)`
+            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+            - `[p]set custominfo Join my [support server](discord.gg/discord)!`
             - `[p]set custominfo` - Removes custom info text.
 
         **Arguments:**
@@ -3369,8 +3370,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds users to the allowlist.
 
         **Examples:**
-            - `[p]allowlist add @26 @Will` - Adds two users to the allowlist
-            - `[p]allowlist add 262626262626262626` - Adds a user by ID
+            - `[p]allowlist add @26 @Will` - Adds two users to the allowlist.
+            - `[p]allowlist add 262626262626262626` - Adds a user by ID.
 
         **Arguments:**
             - `<users...>` - The user or users to add to the allowlist.
@@ -3413,8 +3414,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The allowlist will be disabled if all users are removed.
 
         **Examples:**
-            - `[p]allowlist remove @26 @Will` - Removes two users from the allowlist
-            - `[p]allowlist remove 262626262626262626` - Removes a user by ID
+            - `[p]allowlist remove @26 @Will` - Removes two users from the allowlist.
+            - `[p]allowlist remove 262626262626262626` - Removes a user by ID.
 
         **Arguments:**
             - `<users...>` - The user or users to remove from the allowlist.
@@ -3455,8 +3456,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds users to the blocklist.
 
         **Examples:**
-            - `[p]blocklist add @26 @Will` - Adds two users to the blocklist
-            - `[p]blocklist add 262626262626262626` - Adds a user by ID
+            - `[p]blocklist add @26 @Will` - Adds two users to the blocklist.
+            - `[p]blocklist add 262626262626262626` - Blocks a user by ID.
 
         **Arguments:**
             - `<users...>` - The user or users to add to the blocklist.
@@ -3506,8 +3507,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Removes users from the blocklist.
 
         **Examples:**
-            - `[p]blocklist remove @26 @Will` - Removes two users from the blocklist
-            - `[p]blocklist remove 262626262626262626` - Removes a user by ID
+            - `[p]blocklist remove @26 @Will` - Removes two users from the blocklist.
+            - `[p]blocklist remove 262626262626262626` - Removes a user by ID.
 
         **Arguments:**
             - `<users...>` - The user or users to remove from the blocklist.
@@ -3551,9 +3552,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds a user or role to the server allowlist.
 
         **Examples:**
-            - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist
-            - `[p]localallowlist add 262626262626262626` - Adds a user by ID
-            - `[p]localallowlist add "Super Admins"` - Adds a role with a space in the name without mentioning
+            - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist.
+            - `[p]localallowlist add 262626262626262626` - Allows a user by ID.
+            - `[p]localallowlist add "Super Admins"` - Allows a role with a space in the name without mentioning.
 
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
@@ -3612,9 +3613,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The local allowlist will be disabled if all users are removed.
 
         **Examples:**
-            - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist
-            - `[p]localallowlist remove 262626262626262626` - Removes a user by ID
-            - `[p]localallowlist remove "Super Admins"` - Removes a role with a space in the name without mentioning
+            - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist.
+            - `[p]localallowlist remove 262626262626262626` - Removes a user by ID.
+            - `[p]localallowlist remove "Super Admins"` - Removes a role with a space in the name without mentioning.
 
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
@@ -3671,9 +3672,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds a user or role to the local blocklist.
 
         **Examples:**
-            - `[p]localblocklist add @26 @Will` - Adds two users to the local blocklist
-            - `[p]localblocklist add 262626262626262626` - Blocks a user by ID
-            - `[p]localblocklist add "Bad Apples"` - Blocks a role with a space in the name without mentioning
+            - `[p]localblocklist add @26 @Will` - Adds two users to the local blocklist.
+            - `[p]localblocklist add 262626262626262626` - Blocks a user by ID.
+            - `[p]localblocklist add "Bad Apples"` - Blocks a role with a space in the name without mentioning.
 
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to add to the local blocklist.
@@ -3729,9 +3730,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Removes user or role from blocklist.
 
         **Examples:**
-            - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist
-            - `[p]localblocklist remove 262626262626262626` - Unblocks a user by ID
-            - `[p]localblocklist remove "Bad Apples"` - Unblocks a role with a space in the name without mentioning
+            - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist.
+            - `[p]localblocklist remove 262626262626262626` - Unblocks a user by ID.
+            - `[p]localblocklist remove "Bad Apples"` - Unblocks a role with a space in the name without mentioning.
 
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local blocklist.
@@ -4207,8 +4208,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Makes a user or role immune from automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune add @TwentySix` - Adds a user
-            - `[p]autoimmune add @Mods` - Adds a role
+            - `[p]autoimmune add @TwentySix` - Adds a user.
+            - `[p]autoimmune add @Mods` - Adds a role.
 
         **Arguments:**
             - `<user_or_role>` - The user or role to add immunity to.
@@ -4227,8 +4228,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Makes a user or role immune from automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune remove @TwentySix` - Removes a user
-            - `[p]autoimmune remove @Mods` - Removes a role
+            - `[p]autoimmune remove @TwentySix` - Removes a user.
+            - `[p]autoimmune remove @Mods` - Removes a role.
 
         **Arguments:**
             - `<user_or_role>` - The user or role to remove immunity from.
