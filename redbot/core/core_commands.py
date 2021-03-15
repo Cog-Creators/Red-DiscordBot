@@ -1591,7 +1591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This will unload and then load the specified cogs.
 
-        Cogs that were not loaded will be loaded.
+        Cogs that were not loaded will only be loaded.
 
         Examples:
             - `[p]reload general` - Unloads then loads the `general` cog.
