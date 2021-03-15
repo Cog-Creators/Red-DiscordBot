@@ -92,6 +92,13 @@ parameters.
     Sometimes (especially for the last argument) these double quotes are not
     required.
 
+    Arguments followed by an ellipsis ``...`` means that you may provide
+    multiple arguments for the command.
+
+    For example, the command ``[p]cog install`` in the downloader cog has
+    the syntax ``cog install <repo> <cogs...>``, meaning that you can provide
+    1 or more ``cogs`` to install from the ``repo``.
+
     Arguments followed by ``=value`` means that, if not specified,
     the argument will be equal to ``value``.
 
