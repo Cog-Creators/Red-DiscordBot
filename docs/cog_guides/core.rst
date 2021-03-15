@@ -68,11 +68,11 @@ allowlist add
 Adds users to the allowlist.
 
 **Examples:**
-    - ``[p]allowlist add @26 @Will`` - Adds two users to the allowlist
-    - ``[p]allowlist add 262626262626262626`` - Adds a user by ID
+    - ``[p]allowlist add @26 @Will`` - Adds two users to the allowlist.
+    - ``[p]allowlist add 262626262626262626`` - Adds a user by ID.
 
 **Arguments:**
-    - ``<users...>`` The user or users to add to the allowlist.
+    - ``<users...>`` - The user or users to add to the allowlist.
 
 .. _core-command-allowlist-clear:
 
@@ -133,11 +133,11 @@ Removes users from the allowlist.
 The allowlist will be disabled if all users are removed.
 
 **Examples:**
-    - ``[p]allowlist remove @26 @Will`` - Removes two users from the allowlist
-    - ``[p]allowlist remove 262626262626262626`` - Removes a user by ID
+    - ``[p]allowlist remove @26 @Will`` - Removes two users from the allowlist.
+    - ``[p]allowlist remove 262626262626262626`` - Removes a user by ID.
 
 **Arguments:**
-    - ``<users...>`` The user or users to remove from the allowlist.
+    - ``<users...>`` - The user or users to remove from the allowlist.
 
 .. _core-command-autoimmune:
 
@@ -176,11 +176,11 @@ autoimmune add
 Makes a user or role immune from automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune add @TwentySix`` - Adds a user
-    - ``[p]autoimmune add @Mods`` - Adds a role
+    - ``[p]autoimmune add @TwentySix`` - Adds a user.
+    - ``[p]autoimmune add @Mods`` - Adds a role.
 
 **Arguments:**
-    - ``<user_or_role>`` The user or role to add immunity to.
+    - ``<user_or_role>`` - The user or role to add immunity to.
 
 .. _core-command-autoimmune-isimmune:
 
@@ -203,7 +203,7 @@ Checks if a user or role would be considered immune from automated actions.
     - ``[p]autoimmune isimmune @Mods``
 
 **Arguments:**
-    - ``<user_or_role>`` The user or role to check the immunity of.
+    - ``<user_or_role>`` - The user or role to check the immunity of.
 
 .. _core-command-autoimmune-list:
 
@@ -241,11 +241,11 @@ autoimmune remove
 Makes a user or role immune from automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune remove @TwentySix`` - Removes a user
-    - ``[p]autoimmune remove @Mods`` - Removes a role
+    - ``[p]autoimmune remove @TwentySix`` - Removes a user.
+    - ``[p]autoimmune remove @Mods`` - Removes a role.
 
 **Arguments:**
-    - ``<user_or_role>`` The user or role to remove immunity from.
+    - ``<user_or_role>`` - The user or role to remove immunity from.
 
 .. _core-command-blocklist:
 
@@ -286,11 +286,11 @@ blocklist add
 Adds users to the blocklist.
 
 **Examples:**
-    - ``[p]blocklist add @26 @Will`` - Adds two users to the blocklist
-    - ``[p]blocklist add 262626262626262626`` - Adds a user by ID
+    - ``[p]blocklist add @26 @Will`` - Adds two users to the blocklist.
+    - ``[p]blocklist add 262626262626262626`` - Blocks a user by ID.
 
 **Arguments:**
-    - ``<users...>`` The user or users to add to the blocklist.
+    - ``<users...>`` - The user or users to add to the blocklist.
 
 .. _core-command-blocklist-clear:
 
@@ -347,11 +347,11 @@ blocklist remove
 Removes users from the blocklist.
 
 **Examples:**
-    - ``[p]blocklist remove @26 @Will`` - Removes two users from the blocklist
-    - ``[p]blocklist remove 262626262626262626`` - Removes a user by ID
+    - ``[p]blocklist remove @26 @Will`` - Removes two users from the blocklist.
+    - ``[p]blocklist remove 262626262626262626`` - Removes a user by ID.
 
 **Arguments:**
-    - ``<users...>`` The user or users to remove from the blocklist.
+    - ``<users...>`` - The user or users to remove from the blocklist.
 
 .. _core-command-command:
 
@@ -400,7 +400,7 @@ To override it, use ``[p]command enablecog`` on the servers you want to allow us
     - ``[p]command defaultdisablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` The name of the cog to make disabled by default. Must be title-case.
+    - ``<cogname>`` - The name of the cog to make disabled by default. Must be title-case.
 
 .. _core-command-command-defaultenablecog:
 
@@ -431,7 +431,7 @@ To override it, use ``[p]command disablecog`` on the servers you want to disallo
     - ``[p]command defaultenablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` The name of the cog to make enabled by default. Must be title-case.
+    - ``<cogname>`` - The name of the cog to make enabled by default. Must be title-case.
 
 .. _core-command-command-disable:
 
@@ -457,7 +457,7 @@ Otherwise, this will disable commands on the current server.
     - ``[p]command disable urban`` - Disables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to disable.
+    - ``<command>`` - The command to disable.
 
 .. _core-command-command-disable-global:
 
@@ -482,7 +482,7 @@ Disable a command globally.
     - ``[p]command disable global urban`` - Disables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to disable globally.
+    - ``<command>`` - The command to disable globally.
 
 .. _core-command-command-disable-server:
 
@@ -507,7 +507,7 @@ Disable a command in this server only.
     - ``[p]command disable server urban`` - Disables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to disable for the current server.
+    - ``<command>`` - The command to disable for the current server.
 
 .. _core-command-command-disablecog:
 
@@ -533,7 +533,7 @@ Disable a cog in this server.
     - ``[p]command disablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` The name of the cog to disable on this server. Must be title-case.
+    - ``<cogname>`` - The name of the cog to disable on this server. Must be title-case.
 
 .. _core-command-command-disabledmsg:
 
@@ -563,7 +563,7 @@ To include the command name in the message, include the ``{command}`` placeholde
     - ``[p]command disabledmsg`` - Sends nothing when a disabled command is attempted.
 
 **Arguments:**
-    - ``[message]`` The message to send when a disabled command is attempted.
+    - ``[message]`` - The message to send when a disabled command is attempted.
 
 .. _core-command-command-enable:
 
@@ -589,7 +589,7 @@ Otherwise, this will try to enable a command disabled on the current server.
     - ``[p]command enable server urban`` - Enables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to enable.
+    - ``<command>`` - The command to enable.
 
 .. _core-command-command-enable-global:
 
@@ -614,7 +614,7 @@ Enable a command globally.
     - ``[p]command enable global urban`` - Enables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to enable globally.
+    - ``<command>`` - The command to enable globally.
 
 .. _core-command-command-enable-server:
 
@@ -639,7 +639,7 @@ Enable a command in this server.
     - ``[p]command enable server urban`` - Enables the ``urban`` command in the General cog.
 
 **Arguments:**
-    - ``<command>`` The command to enable for the current server.
+    - ``<command>`` - The command to enable for the current server.
 
 .. _core-command-command-enablecog:
 
@@ -665,7 +665,7 @@ Enable a cog in this server.
     - ``[p]command enablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` The name of the cog to enable on this server. Must be title-case.
+    - ``<cogname>`` - The name of the cog to enable on this server. Must be title-case.
 
 .. _core-command-command-listdisabled:
 
@@ -768,7 +768,7 @@ This is limited to one message every 60 seconds per person.
     - ``[p]contact Help! The bot has become sentient!``
 
 **Arguments:**
-    - ``[message]`` The message to send to the owner.
+    - ``[message]`` - The message to send to the owner.
 
 .. _core-command-dm:
 
@@ -797,7 +797,7 @@ Enable 'Developer Mode', then right click a user and click on 'Copy ID'.
     - ``[p]dm 262626262626262626 Do you like me? Yes / No``
 
 **Arguments:**
-    - ``[message]`` The message to dm to the user.
+    - ``[message]`` - The message to dm to the user.
 
 .. _core-command-embedset:
 
@@ -846,7 +846,7 @@ This is used for all commands done in a channel except for help commands.
     - ``[p]embedset channel`` - Resets value to use guild default.
 
 **Arguments:**
-    - ``[enabled]`` Whether to use embeds in this channel. Leave blank to reset to default.
+    - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
 
 .. _core-command-embedset-global:
 
@@ -902,7 +902,7 @@ This is used for all commands done in a guild channel except for help commands.
     - ``[p]embedset server`` - Resets value to use global default.
 
 **Arguments:**
-    - ``[enabled]`` Whether to use embeds on this server. Leave blank to reset to default.
+    - ``[enabled]`` - Whether to use embeds on this server. Leave blank to reset to default.
 
 .. _core-command-embedset-showsettings:
 
@@ -949,7 +949,7 @@ This is used for all commands executed in a DM with the bot.
     - ``[p]embedset user`` - Resets value to use global default.
 
 **Arguments:**
-    - ``[enabled]`` Whether to use embeds in your DMs. Leave blank to reset to default.
+    - ``[enabled]`` - Whether to use embeds in your DMs. Leave blank to reset to default.
 
 .. _core-command-helpset:
 
@@ -1000,7 +1000,7 @@ The bot has to have MANAGE_MESSAGES permission for this to work.
     - ``[p]helpset deletedelay 0`` - Disable deleting help pages.
 
 **Arguments:**
-    - ``<seconds>`` The seconds to wait before deleting help pages.
+    - ``<seconds>`` - The seconds to wait before deleting help pages.
 
 .. _core-command-helpset-maxpages:
 
@@ -1032,7 +1032,7 @@ The default value is 2 pages.
     - ``[p]helpset maxpages 0`` - Always send help to DMs.
 
 **Arguments:**
-    - ``<limit>`` The max pages allowed to send per help in a server.
+    - ``<limit>`` - The max pages allowed to send per help in a server.
 
 .. _core-command-helpset-pagecharlimit:
 
@@ -1063,7 +1063,7 @@ mean some pages will exceed this limit.
     - ``[p]helpset pagecharlimit 1500``
 
 **Arguments:**
-    - ``<limit>`` The max amount of characters to show per page in the help message.
+    - ``<limit>`` - The max amount of characters to show per page in the help message.
 
 .. _core-command-helpset-resetformatter:
 
@@ -1129,7 +1129,7 @@ Using this without a setting will toggle.
     - ``[p]helpset showaliases`` - Toggles the value.
 
 **Arguments:**
-    - ``[show_aliases]`` Whether to include aliases in help. Leave blank to toggle.
+    - ``[show_aliases]`` - Whether to include aliases in help. Leave blank to toggle.
 
 .. _core-command-helpset-showhidden:
 
@@ -1155,7 +1155,7 @@ Using this without a setting will toggle.
     - ``[p]helpset showhidden`` - Toggles the value.
 
 **Arguments:**
-    - ``[show_hidden]`` Whether to use show hidden commands in help. Leave blank to toggle.
+    - ``[show_hidden]`` - Whether to use show hidden commands in help. Leave blank to toggle.
 
 .. _core-command-helpset-showsettings:
 
@@ -1203,7 +1203,7 @@ This setting only applies to embedded help. If no tagline is specified, the defa
     - ``[p]helpset tagline`` - Resets the tagline to the default.
 
 **Arguments:**
-    - ``[tagline]`` The tagline to appear at the bottom of help embeds. Leave blank to reset.
+    - ``[tagline]`` - The tagline to appear at the bottom of help embeds. Leave blank to reset.
 
 .. _core-command-helpset-usemenus:
 
@@ -1232,7 +1232,7 @@ Using this without a setting will toggle.
     - ``[p]helpset usemenues`` - Toggles the value.
 
 **Arguments:**
-    - ``[use_menus]`` Whether to use menus. Leave blank to toggle.
+    - ``[use_menus]`` - Whether to use menus. Leave blank to toggle.
 
 .. _core-command-helpset-usetick:
 
@@ -1263,7 +1263,7 @@ Using this without a setting will toggle.
     - ``[p]helpset usetick`` - Toggles the value.
 
 **Arguments:**
-    - ``[use_tick]`` Whether to tick the help command when help is sent to DMs. Leave blank to toggle.
+    - ``[use_tick]`` - Whether to tick the help command when help is sent to DMs. Leave blank to toggle.
 
 .. _core-command-helpset-verifychecks:
 
@@ -1289,7 +1289,7 @@ Using this without a setting will toggle.
     - ``[p]helpset verifychecks`` - Toggles the value.
 
 **Arguments:**
-    - ``[verify]`` Whether to hide unusable commands in help. Leave blank to toggle.
+    - ``[verify]`` - Whether to hide unusable commands in help. Leave blank to toggle.
 
 .. _core-command-helpset-verifyexists:
 
@@ -1318,7 +1318,7 @@ Using this without a setting will toggle.
     - ``[p]helpset verifyexists`` - Toggles the value.
 
 **Arguments:**
-    - ``[verify]`` Whether to hide unusable commands in help. Leave blank to toggle.
+    - ``[verify]`` - Whether to hide unusable commands in help. Leave blank to toggle.
 
 .. _core-command-ignore:
 
@@ -1371,7 +1371,7 @@ Defaults to the current channel.
     - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
 
 **Arguments:**
-    - ``<channel>`` The channel to ignore. Can be a category channel.
+    - ``<channel>`` - The channel to ignore. Can be a category channel.
 
 .. _core-command-ignore-list:
 
@@ -1504,7 +1504,7 @@ Please note that you might need two factor authentication for some permissions.
     - ``[p]inviteset perms 134217728`` - Adds a "Manage Nicknames" permission requirement to the invite.
 
 **Arguments:**
-    - ``<level>`` The permission level to require for the bot in the generated invite.
+    - ``<level>`` - The permission level to require for the bot in the generated invite.
 
 .. _core-command-inviteset-public:
 
@@ -1528,7 +1528,7 @@ The bot must be made into a ``Public bot`` in the developer dashboard for public
     - ``[p]inviteset public yes`` - Toggles the public invite setting.
 
 **Arguments:**
-    - ``[confirm]`` Required to set to public. Not required to toggle back to private.
+    - ``[confirm]`` - Required to set to public. Not required to toggle back to private.
 
 .. _core-command-leave:
 
@@ -1596,7 +1596,7 @@ Additional cogs can be added using Downloader, or from local paths using ``[p]ad
     - ``[p]load admin mod mutes`` - Loads multiple cogs.
 
 **Arguments:**
-    - ``<cogs...>`` The cog packages to load.
+    - ``<cogs...>`` - The cog packages to load.
 
 .. _core-command-localallowlist:
 
@@ -1640,12 +1640,12 @@ localallowlist add
 Adds a user or role to the server allowlist.
 
 **Examples:**
-    - ``[p]localallowlist add @26 @Will`` - Adds two users to the local allowlist
-    - ``[p]localallowlist add 262626262626262626`` - Adds a user by ID
-    - ``[p]localallowlist add "Super Admins"`` - Adds a role with a space in the name without mentioning
+    - ``[p]localallowlist add @26 @Will`` - Adds two users to the local allowlist.
+    - ``[p]localallowlist add 262626262626262626`` - Allows a user by ID.
+    - ``[p]localallowlist add "Super Admins"`` - Allows a role with a space in the name without mentioning.
 
 **Arguments:**
-    - ``<users_or_roles...>`` The users or roles to remove from the local allowlist.
+    - ``<users_or_roles...>`` - The users or roles to remove from the local allowlist.
 
 .. _core-command-localallowlist-clear:
 
@@ -1706,12 +1706,12 @@ Removes user or role from the allowlist.
 The local allowlist will be disabled if all users are removed.
 
 **Examples:**
-    - ``[p]localallowlist remove @26 @Will`` - Removes two users from the local allowlist
-    - ``[p]localallowlist remove 262626262626262626`` - Removes a user by ID
-    - ``[p]localallowlist remove "Super Admins"`` - Removes a role with a space in the name without mentioning
+    - ``[p]localallowlist remove @26 @Will`` - Removes two users from the local allowlist.
+    - ``[p]localallowlist remove 262626262626262626`` - Removes a user by ID.
+    - ``[p]localallowlist remove "Super Admins"`` - Removes a role with a space in the name without mentioning.
 
 **Arguments:**
-    - ``<users_or_roles...>`` The users or roles to remove from the local allowlist.
+    - ``<users_or_roles...>`` - The users or roles to remove from the local allowlist.
 
 .. _core-command-localblocklist:
 
@@ -1752,12 +1752,12 @@ localblocklist add
 Adds a user or role to the local blocklist.
 
 **Examples:**
-    - ``[p]localblocklist add @26 @Will`` - Adds two users to the local blocklist
-    - ``[p]localblocklist add 262626262626262626`` - Blocks a user by ID
-    - ``[p]localblocklist add "Bad Apples"`` - Blocks a role with a space in the name without mentioning
+    - ``[p]localblocklist add @26 @Will`` - Adds two users to the local blocklist.
+    - ``[p]localblocklist add 262626262626262626`` - Blocks a user by ID.
+    - ``[p]localblocklist add "Bad Apples"`` - Blocks a role with a space in the name without mentioning.
 
 **Arguments:**
-    - ``<users_or_roles...>`` The users or roles to add to the local blocklist.
+    - ``<users_or_roles...>`` - The users or roles to add to the local blocklist.
 
 .. _core-command-localblocklist-clear:
 
@@ -1816,12 +1816,12 @@ localblocklist remove
 Removes user or role from blocklist.
 
 **Examples:**
-    - ``[p]localblocklist remove @26 @Will`` - Removes two users from the local blocklist
-    - ``[p]localblocklist remove 262626262626262626`` - Unblocks a user by ID
-    - ``[p]localblocklist remove "Bad Apples"`` - Unblocks a role with a space in the name without mentioning
+    - ``[p]localblocklist remove @26 @Will`` - Removes two users from the local blocklist.
+    - ``[p]localblocklist remove 262626262626262626`` - Unblocks a user by ID.
+    - ``[p]localblocklist remove "Bad Apples"`` - Unblocks a role with a space in the name without mentioning.
 
 **Arguments:**
-    - ``<users_or_roles...>`` The users or roles to remove from the local blocklist.
+    - ``<users_or_roles...>`` - The users or roles to remove from the local blocklist.
 
 .. _core-command-mydata:
 
@@ -1963,7 +1963,7 @@ Users have access to a different command for this unless they can't interact wit
 This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
 
 **Arguments:**
-    - ``<user_id>`` The id of the user whose data would be deleted.
+    - ``<user_id>`` - The id of the user whose data would be deleted.
 
 .. _core-command-mydata-ownermanagement-deleteuserasowner:
 
@@ -1985,7 +1985,7 @@ This will cause the bot to get rid of or disassociate a lot of data about the sp
 This may include more than just end user data, including anti abuse records.
 
 **Arguments:**
-    - ``<user_id>`` The id of the user whose data would be deleted.
+    - ``<user_id>`` - The id of the user whose data would be deleted.
 
 .. _core-command-mydata-ownermanagement-disallowuserdeletions:
 
@@ -2030,7 +2030,7 @@ This will remove the user from various anti-abuse measures.
 If you are processing a manual request from a user, you may want ``[p]mydata ownermanagement deleteforuser`` instead.
 
 **Arguments:**
-    - ``<user_id>`` The id of the user whose data would be deleted.
+    - ``<user_id>`` - The id of the user whose data would be deleted.
 
 .. _core-command-mydata-ownermanagement-setuserdeletionlevel:
 
@@ -2052,7 +2052,7 @@ Sets how user deletions are treated.
     - ``[p]mydata ownermanagement setuserdeletionlevel 1``
 
 **Arguments:**
-    - ``<level>`` The strictness level for user deletion. See Level guide below.
+    - ``<level>`` - The strictness level for user deletion. See Level guide below.
 
 Level:
     - ``0``: What users can delete is left entirely up to each cog.
@@ -2104,7 +2104,7 @@ Cogs that were not loaded will only be loaded.
     - ``[p]reload admin mod mutes`` - Unloads then loads multiple cogs.
 
 **Arguments:**
-    - ``<cogs...>`` The cog packages to reload.
+    - ``<cogs...>`` - The cog packages to reload.
 
 .. _core-command-restart:
 
@@ -2132,7 +2132,7 @@ The restart is not guaranteed: it must be dealt with by the process manager in u
     - ``[p]restart True`` - Restarts silently.
 
 **Arguments:**
-    - ``[silently]`` - Whether to skip sending the shutdown message. Defaults to False.
+    - ``[silently]`` - Whether to skip sending the restart message. Defaults to False.
 
 .. _core-command-servers:
 
@@ -2202,7 +2202,7 @@ Admins have all the same access and Mods, plus additional admin level commands l
     - ``[p]set addadminrole Super Admins``
 
 **Arguments:**
-    - ``<role>`` The role to add as an admin.
+    - ``<role>`` - The role to add as an admin.
 
 .. _core-command-set-addmodrole:
 
@@ -2234,7 +2234,7 @@ This grants access to moderator level commands like:
     - ``[p]set addmodrole Loyal Helpers``
 
 **Arguments:**
-    - ``<role>`` The role to add as a moderator.
+    - ``<role>`` - The role to add as a moderator.
 
 .. _core-command-set-api:
 
@@ -2267,8 +2267,8 @@ list of key,values as described by the cog requesting this command.
     - ``[p]set api github client_id,whoops client_secret,whoops``
 
 **Arguments:**
-    - ``<service>`` The service you're adding tokens to.
-    - ``<tokens>`` Pairs of token keys and values. The key and value should be separated by one of `` ``, ``,``, or ``;``.
+    - ``<service>`` - The service you're adding tokens to.
+    - ``<tokens>`` - Pairs of token keys and values. The key and value should be separated by one of `` ``, ``,``, or ``;``.
 
 .. _core-command-set-api-list:
 
@@ -2312,7 +2312,7 @@ Remove the given services with all their keys and tokens.
     - ``[p]set api remove github audiodb``
 
 **Arguments:**
-    - ``<services...>`` The services to remove.
+    - ``<services...>`` - The services to remove.
 
 .. _core-command-set-avatar:
 
@@ -2340,7 +2340,7 @@ Supports either an attachment or an image URL.
     - ``[p]set avatar https://links.flaree.xyz/k95`` - Sets the avatar to the provided url.
 
 **Arguments:**
-    - ``[url]`` An image url to be used as an avatar. Leave blank when uploading an attachment.
+    - ``[url]`` - An image url to be used as an avatar. Leave blank when uploading an attachment.
 
 .. _core-command-set-avatar-remove:
 
@@ -2397,7 +2397,7 @@ https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.com
     - ``[p]set color #7F8C8D``
 
 **Arguments:**
-    - ``[colour]`` The colour to use for embeds. Leave blank to set to the default value (red).
+    - ``[colour]`` - The colour to use for embeds. Leave blank to set to the default value (red).
 
 .. _core-command-set-competing:
 
@@ -2426,7 +2426,7 @@ Maximum length for a competing status is 128 characters.
     - ``[p]set competing London 2012 Olympic Games``
 
 **Arguments:**
-    - ``[competing]`` The text to follow ``Competing in``. Leave blank to clear the current activity status.
+    - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
 
 .. _core-command-set-custominfo:
 
@@ -2452,12 +2452,12 @@ Supports markdown, links and "mentions".
 Link example: ``[My link](https://example.com)``
 
 **Examples:**
-    - ``[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines``
-    - ``[p]set custominfo Join my [support server](discord.gg/discord)``
+    - ``[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.``
+    - ``[p]set custominfo Join my [support server](discord.gg/discord)!``
     - ``[p]set custominfo`` - Removes custom info text.
 
 **Arguments:**
-    - ``[text]`` The custom info text.
+    - ``[text]`` - The custom info text.
 
 .. _core-command-set-deletedelay:
 
@@ -2489,7 +2489,7 @@ This is only applied to the current server and not globally.
     - ``[p]set deletedelay -1`` - Disables deleting command messages.
 
 **Arguments:**
-    - ``[time]`` The seconds to wait before deleting the command message. Use -1 to disable.
+    - ``[time]`` - The seconds to wait before deleting the command message. Use -1 to disable.
 
 .. _core-command-set-description:
 
@@ -2521,7 +2521,7 @@ The default is "Red V3".
     - ``[p]set description MyBot: A Red V3 Bot``
 
 **Arguments:**
-    - ``[description]`` The description to use for this bot. Leave blank to reset to the default.
+    - ``[description]`` - The description to use for this bot. Leave blank to reset to the default.
 
 .. _core-command-set-fuzzy:
 
@@ -2579,7 +2579,7 @@ To reset to English, use "en-US".
     - ``[p]set locale pl-PL``
 
 **Arguments:**
-    - ``<language_code>`` The default locale to use for the bot. This can be any language code with country code included.
+    - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
 
 .. _core-command-set-globalregionalformat:
 
@@ -2610,7 +2610,7 @@ Leave ``language_code`` empty to base regional formatting on bot's locale.
     - ``[p]set globalregionalformat`` - Resets to the locale.
 
 **Arguments:**
-    - ``[language_code]`` The default region format to use for the bot.
+    - ``[language_code]`` - The default region format to use for the bot.
 
 .. _core-command-set-listening:
 
@@ -2639,7 +2639,7 @@ Maximum length for a listening status is 128 characters.
     - ``[p]set listening jams``
 
 **Arguments:**
-    - ``[listening]`` The text to follow ``Listening to``. Leave blank to clear the current activity status.
+    - ``[listening]`` - The text to follow ``Listening to``. Leave blank to clear the current activity status.
 
 .. _core-command-set-locale:
 
@@ -2672,7 +2672,7 @@ To reset to English, use "en-US".
     - ``[p]set locale default`` - Resets to the global default locale.
 
 **Arguments:**
-    - ``<language_code>`` The default locale to use for the bot. This can be any language code with country code included.
+    - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
 
 .. _core-command-set-nickname:
 
@@ -2698,7 +2698,7 @@ Maximum length for a nickname is 32 characters.
     - ``[p]set nickname 🎃 SpookyBot 🎃``
 
 **Arguments:**
-    - ``[nickname]`` The nickname to give the bot. Leave blank to clear the current nickname.
+    - ``[nickname]`` - The nickname to give the bot. Leave blank to clear the current nickname.
 
 .. _core-command-set-ownernotifications:
 
@@ -2741,7 +2741,7 @@ Adds a destination text channel to receive owner notifications.
     - ``[p]ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
-    - ``<channel>`` The channel to send owner notifications to.
+    - ``<channel>`` - The channel to send owner notifications to.
 
 .. _core-command-set-ownernotifications-listdestinations:
 
@@ -2833,7 +2833,7 @@ Removes a destination text channel from receiving owner notifications.
     - ``[p]ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
-    - ``<channel>`` The channel to stop sending owner notifications to.
+    - ``<channel>`` - The channel to stop sending owner notifications to.
 
 .. _core-command-set-playing:
 
@@ -2864,7 +2864,7 @@ Maximum length for a playing status is 128 characters.
     - ``[p]set playing the keyboard``
 
 **Arguments:**
-    - ``[game]`` The text to follow ``Playing``. Leave blank to clear the current activity status.
+    - ``[game]`` - The text to follow ``Playing``. Leave blank to clear the current activity status.
 
 .. _core-command-set-prefix:
 
@@ -2898,7 +2898,7 @@ See also the ``--mentionable`` flag to enable mentioning the bot as the prefix.
     - ``[p]set prefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
-    - ``<prefixes...>`` The prefixes the bot will respond to globally.
+    - ``<prefixes...>`` - The prefixes the bot will respond to globally.
 
 .. _core-command-set-regionalformat:
 
@@ -2929,7 +2929,7 @@ Leave ``language_code`` empty to base regional formatting on bot's locale in thi
     - ``[p]set regionalformat`` - Resets to the locale.
 
 **Arguments:**
-    - ``[language_code]`` The region format to use for the bot in this server.
+    - ``[language_code]`` - The region format to use for the bot in this server.
 
 .. _core-command-set-removeadminrole:
 
@@ -2956,7 +2956,7 @@ Removes an admin role for this guild.
     - ``[p]set removeadminrole Super Admins``
 
 **Arguments:**
-    - ``<role>`` The role to remove from being an admin.
+    - ``<role>`` - The role to remove from being an admin.
 
 .. _core-command-set-removemodrole:
 
@@ -2983,7 +2983,7 @@ Removes a mod role for this guild.
     - ``[p]set removemodrole Loyal Helpers``
 
 **Arguments:**
-    - ``<role>`` The role to remove from being a moderator.
+    - ``<role>`` - The role to remove from being a moderator.
 
 .. _core-command-set-serverfuzzy:
 
@@ -3039,11 +3039,12 @@ Sets Red's server prefix(es).
 
 **Examples:**
     - ``[p]set serverprefix !``
-    - ``[p]set serverprefix "@Red "`` - Quotes are needed to use spaces. This uses a mention as the prefix.
+    - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.
+    - ``[p]set serverprefix "@Red "`` - This uses a mention as the prefix.
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
-    - ``[prefixes...]`` The prefixes the bot will respond to on this server. Leave blank to clear server prefixes
+    - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
 
@@ -3090,7 +3091,7 @@ Available statuses:
     - ``[p]set status invisible``
 
 **Arguments:**
-    - ``<status>`` One of the available statuses.
+    - ``<status>`` - One of the available statuses.
 
 .. _core-command-set-streaming:
 
@@ -3125,8 +3126,8 @@ Leaving both streamer and stream_title empty will clear it.
     - ``[p]set stream https://twitch.tv/26 Twentysix is streaming`` - Sets the URL manually.
 
 **Arguments:**
-    - ``<streamer>`` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
-    - ``<stream_title>`` The text to follow ``Streaming`` in the status.
+    - ``<streamer>`` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+    - ``<stream_title>`` - The text to follow ``Streaming`` in the status.
 
 .. _core-command-set-usebotcolour:
 
@@ -3184,7 +3185,7 @@ Maximum length for a username is 32 characters.
     - ``[p]set username BaguetteBot``
 
 **Arguments:**
-    - ``<username>`` The username to give the bot.
+    - ``<username>`` - The username to give the bot.
 
 .. _core-command-set-watching:
 
@@ -3213,7 +3214,7 @@ Maximum length for a watching status is 128 characters.
     - ``[p]set watching [p]help``
 
 **Arguments:**
-    - ``[watching]`` The text to follow ``Watching``. Leave blank to clear the current activity status.
+    - ``[watching]`` - The text to follow ``Watching``. Leave blank to clear the current activity status.
 
 .. _core-command-shutdown:
 
@@ -3272,7 +3273,7 @@ If public (yes is specified), it will be sent to the chat instead.
     - ``[p]traceback True`` - Sends the last traceback in the current context.
 
 **Arguments:**
-    - ``[public]`` Whether to send the traceback to the current context. Leave blank to send to your DMs.
+    - ``[public]`` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
 
 .. _core-command-unignore:
 
@@ -3317,7 +3318,7 @@ Defaults to the current channel.
     - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
-    - ``<channel>`` The channel to unignore. This can be a category channel.
+    - ``<channel>`` - The channel to unignore. This can be a category channel.
 
 .. _core-command-unignore-server:
 
@@ -3367,7 +3368,7 @@ See packages available to unload with ``[p]cogs``.
     - ``[p]unload admin mod mutes`` - Unloads multiple cogs.
 
 **Arguments:**
-    - ``<cogs...>`` The cog packages to unload.
+    - ``<cogs...>`` - The cog packages to unload.
 
 .. _core-command-uptime:
 
