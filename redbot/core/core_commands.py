@@ -403,7 +403,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def info(self, ctx: commands.Context):
         """Shows info about [botname].
 
-        See `[p]custominfo` to customize.
+        See `[p]set custominfo` to customize.
         """
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
@@ -591,7 +591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def mydata_3rd_party(self, ctx: commands.Context):
         """View the End User Data statements of each 3rd-party module.
 
-        This will send an attachment with the End User Data statements of all loaded 3rd party cog.
+        This will send an attachment with the End User Data statements of all loaded 3rd party cogs.
         """
 
         # Can't check this as a command check, and want to prompt DMs as an option.
@@ -1240,7 +1240,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[public]` Whether to send traceback to the current context. Leave blank to send to DMs.
+        - `[public]` Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
         if not public:
             destination = ctx.author
@@ -1326,15 +1326,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Make the bot create its own role with permissions on join.
 
-        The bot will create its own role with the desired permissions\
-        when it joins a new server. This is a special role that can't be\
-        deleted or removed from the bot.
+        The bot will create its own role with the desired permissions when it joins a new server. This is a special role that can't be deleted or removed from the bot.
 
         For that, you need to provide a valid permissions level.
         You can generate one here: https://discordapi.com/permissions.html
 
-        Please note that you might need two factor authentication for\
-        some permissions.
+        Please note that you might need two factor authentication for some permissions.
 
         Example:
             - `[p]inviteset perms 134217728` - Adds a "Manage Nicknames" permission requirement to the invite.
@@ -1602,7 +1599,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `<cogs...>` The cog packages to unload.
+        - `<cogs...>` The cog packages to reload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -1833,6 +1830,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def setdescription(self, ctx: commands.Context, *, description: str = ""):
         """
         Sets the bot's description.
+
         Use without a description to reset.
         This is shown in a few locations, including the help menu.
 
@@ -1846,7 +1844,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
 
-        - `[time]` The seconds to wait before deleting the command message. Use -1 to disable.
+        - `[description]` The description to use for this bot. Leave blank to reset to the default.
         """
         if not description:
             await ctx.bot._config.description.clear()
@@ -2666,7 +2664,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         To add the keys provide the service name and the tokens as a comma separated
         list of key,values as described by the cog requesting this command.
 
-        Note: API tokens are sensitive and should only be used in a private channel or in DM with the bot.
+        Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
 
         Examples:
             - `[p]set api Spotify redirect_uri localhost`
@@ -2793,18 +2791,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
-        When enabled, `[p]help` will only show one page at a time and use reactions to navigate to other pages.
+        When enabled, `[p]help` will only show one page at a time and will use reactions to navigate between pages.
 
         This defaults to False.
         Using this without a setting will toggle.
 
          Examples:
-            - `[p]helpset usemenues False` - Disables using menus on this server.
+            - `[p]helpset usemenues True` - Enables using menus.
             - `[p]helpset usemenues` - Toggles the value.
 
         **Arguments:**
 
-        - `[use_menus]` Whether to use menus on this server. Leave blank to toggle.
+        - `[use_menus]` Whether to use menus. Leave blank to toggle.
         """
         if use_menus is None:
             use_menus = not await ctx.bot._config.help.use_menus()
@@ -2823,12 +2821,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Using this without a setting will toggle.
 
         Examples:
-            - `[p]helpset showhidden False` - Disables embeds on this server.
+            - `[p]helpset showhidden True` - Enables showing hidden commands.
             - `[p]helpset showhidden` - Toggles the value.
 
         **Arguments:**
 
-        - `[show_hidden]` Whether to use embeds on this server. Leave blank to toggle.
+        - `[show_hidden]` Whether to use show hidden commands in help. Leave blank to toggle.
         """
         if show_hidden is None:
             show_hidden = not await ctx.bot._config.help.show_hidden()
@@ -2845,6 +2843,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This defaults to True.
         Using this without a setting will toggle.
+
+        Examples:
+            - `[p]helpset showaliases False` - Disables showing aliases on this server.
+            - `[p]helpset showaliases` - Toggles the value.
+
+        **Arguments:**
+
+        - `[show_aliases]` Whether to include aliases in help. Leave blank to toggle.
         """
         if show_aliases is None:
             show_aliases = not await ctx.bot._config.help.show_aliases()
@@ -2857,7 +2863,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @helpset.command(name="usetick")
     async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
         """
-        This allows the help command message to be ticked if help is sent in a DM.
+        This allows the help command message to be ticked if help is sent to a DM.
+
+        Ticking is reacting to the help message with a ✅.
 
         Defaults to False.
         Using this without a setting will toggle.
@@ -2865,12 +2873,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This is only used when the bot is not using menus.
 
         Examples:
-            - `[p]helpset usetick False` - Disables ticking in DMs.
+            - `[p]helpset usetick False` - Disables ticking when help is sent to DMs.
             - `[p]helpset usetick` - Toggles the value.
 
         **Arguments:**
 
-        - `[use_tick]` Whether to tick the help command in DMs. Leave blank to toggle.
+        - `[use_tick]` Whether to tick the help command when help is sent to DMs. Leave blank to toggle.
         """
         if use_tick is None:
             use_tick = not await ctx.bot._config.help.use_tick()
@@ -2909,7 +2917,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         This allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
 
-        Note: This setting on it's own does not fully prevent command enumeration.
+        Note: This setting on its own does not fully prevent command enumeration.
 
         Defaults to False.
         Using this without a setting will toggle.
@@ -3526,10 +3534,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Examples:
             - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist
             - `[p]localallowlist add 262626262626262626` - Adds a user by ID
+            - `[p]localallowlist add "Super Admins" - Adds a role with a space in the name without mentioning
 
         **Arguments:**
 
-        - `<users...>` The user or users to remove from the local allowlist.
+        - `<users_or_roles...>` The users or roles to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3587,10 +3596,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Examples:
             - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist
             - `[p]localallowlist remove 262626262626262626` - Removes a user by ID
+            - `[p]localallowlist remove "Super Admins" - Removes a role with a space in the name without mentioning
 
         **Arguments:**
 
-        - `<users...>` The user or users to remove from the local allowlist.
+        - `<users_or_roles...>` The users or roles to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3617,7 +3627,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the allowlist.
 
-        This disables the local allowlist.
+        This disables the local allowlist and clears all entires.
 
         Example:
             - `[p]localallowlist clear`
@@ -3644,12 +3654,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Adds a user or role to the local blocklist.
 
         Examples:
-            - `[p]blocklist add @26 @Will` - Adds two users to the local blocklist
-            - `[p]blocklist add 262626262626262626` - Adds a user by ID
+            - `[p]localblocklist add @26 @Will` - Adds two users to the local blocklist
+            - `[p]localblocklist add 262626262626262626` - Blocks a user by ID
+            - `[p]localblocklist add "Bad Apples" - Blocks a role with a space in the name without mentioning
 
         **Arguments:**
 
-        - `<users...>` The user or users to add to the local blocklist.
+        - `<users_or_roles...>` The users or roles to add to the local blocklist.
         """
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
@@ -3674,7 +3685,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @localblocklist.command(name="list")
     async def localblocklist_list(self, ctx: commands.Context):
         """
-        Lists users and roles on the blocklist.
+        Lists users and roles on the server blocklist.
 
         Example:
             - `[p]localblocklist list`
@@ -3703,11 +3714,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Examples:
             - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist
-            - `[p]localblocklist remove 262626262626262626` - Removes a user by ID
+            - `[p]localblocklist remove 262626262626262626` - Unblocks a user by ID
+            - `[p]localblocklist remove "Bad Apples" - Unblocks a role with a space in the name without mentioning
 
         **Arguments:**
 
-        - `<users...>` The user or users to remove from the local blocklist.
+        - `<users_or_roles...>` The users or roles to remove from the local blocklist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3722,6 +3734,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def localblocklist_clear(self, ctx: commands.Context):
         """
         Clears the server blocklist.
+
+        This disabled the server blocklist and clears all entries.
 
         Example:
             - `[p]blocklist clear`
