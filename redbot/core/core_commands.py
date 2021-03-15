@@ -555,7 +555,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(cls=commands.commands._AlwaysAvailableGroup)
     async def mydata(self, ctx: commands.Context):
-        """Commands which interact with the data [botname] has about you.
+        """
+        Commands which interact with the data [botname] has about you.
 
         More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)
         """
@@ -565,7 +566,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.cooldown(1, 600, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="whatdata")
     async def mydata_whatdata(self, ctx: commands.Context):
-        """Find out what type of data [botname] stores and why."""
+        """
+        Find out what type of data [botname] stores and why.
+
+        **Example:**
+            - `[p]mydata whatdata`
+        """
 
         ver = "latest" if red_version_info.dev_release else "stable"
         link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
@@ -592,6 +598,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """View the End User Data statements of each 3rd-party module.
 
         This will send an attachment with the End User Data statements of all loaded 3rd party cogs.
+
+        **Example:**
+            - `[p]mydata 3rdparty`
         """
 
         # Can't check this as a command check, and want to prompt DMs as an option.
@@ -684,6 +693,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         such as command cooldowns will be kept until no longer necessary.
 
         Further interactions with [botname] may cause it to learn about you again.
+
+        **Example:**
+            - `[p]mydata forgetme`
         """
         if ctx.assume_yes:
             # lol, no, we're not letting users schedule deletions every day to thrash the bot.
@@ -794,6 +806,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This is on by default.
         Opposite of `[p]mydata ownermanagement disallowuserdeletions`
+
+        **Example:**
+            - `[p]mydata ownermanagement allowuserdeletions`
         """
         await ctx.bot._config.datarequests.allow_user_requests.set(True)
         await ctx.send(
@@ -809,6 +824,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Set the bot to not allow users to request a data deletion.
 
         Opposite of `[p]mydata ownermanagement allowuserdeletions`
+
+        **Example:**
+            - `[p]mydata ownermanagement disallowuserdeletions`
         """
         await ctx.bot._config.datarequests.allow_user_requests.set(False)
         await ctx.send(_("User can not delete their own data."))
@@ -818,12 +836,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Sets how user deletions are treated.
 
-        Example:
+        **Example:**
             - `[p]mydata ownermanagement setuserdeletionlevel 1`
 
         **Arguments:**
-
-        - `<level>` The strictness level for user deletion. See Level guide below.
+            - `<level>` The strictness level for user deletion. See Level guide below.
 
         Level:
             - `0`: What users can delete is left entirely up to each cog.
@@ -861,8 +878,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you are processing a manual request from a user, you may want `[p]mydata ownermanagement deleteforuser` instead.
 
         **Arguments:**
-
-        - `<user_id>` The id of the user whose data would be deleted.
+            - `<user_id>` The id of the user whose data would be deleted.
         """
 
         if not await self.get_serious_confirmation(
@@ -939,8 +955,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot.
 
         **Arguments:**
-
-        - `<user_id>` The id of the user whose data would be deleted.
+            - `<user_id>` The id of the user whose data would be deleted.
         """
         if not await self.get_serious_confirmation(
             ctx,
@@ -1025,8 +1040,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This may include more than just end user data, including anti abuse records.
 
         **Arguments:**
-
-        - `<user_id>` The id of the user whose data would be deleted.
+            - `<user_id>` The id of the user whose data would be deleted.
         """
         if not await self.get_serious_confirmation(
             ctx,
@@ -1100,7 +1114,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @embedset.command(name="showsettings")
     async def embedset_showsettings(self, ctx: commands.Context):
-        """Show the current embed settings."""
+        """
+        Show the current embed settings.
+
+        **Example:**
+            - `[p]embedset showsettings`
+        """
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
         text += _("Global default: {}\n").format(global_default)
@@ -1122,6 +1141,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This is used as a fallback if the user or guild hasn't set a preference.
         The default is to use embeds.
+
+        **Example:**
+            - `[p]embedset global`
         """
         current = await self.bot._config.embeds()
         await self.bot._config.embeds.set(not current)
@@ -1136,21 +1158,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggle the guild's embed setting.
 
-        If enabled is None, the setting will be unset and
-        the global default will be used instead.
+        If enabled is None, the setting will be unset and the global default will be used instead.
 
-        If set, this is used instead of the global default
-        to determine whether or not to use embeds. This is
-        used for all commands done in a guild channel except
-        for help commands.
+        If set, this is used instead of the global default to determine whether or not to use embeds.
+        This is used for all commands done in a guild channel except for help commands.
 
-        Examples:
+        **Examples:**
             - `[p]embedset server False` - Disables embeds on this server.
             - `[p]embedset server` - Resets value to use global default.
 
         **Arguments:**
-
-        - `[enabled]` Whether to use embeds on this server. Leave blank to reset to default.
+            - `[enabled]` Whether to use embeds on this server. Leave blank to reset to default.
         """
         await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
@@ -1169,21 +1187,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggle the channel's embed setting.
 
-        If enabled is None, the setting will be unset and
-        the guild default will be used instead.
+        If enabled is None, the setting will be unset and the guild default will be used instead.
 
-        If set, this is used instead of the guild default
-        to determine whether or not to use embeds. This is
-        used for all commands done in a channel except
-        for help commands.
+        If set, this is used instead of the guild default to determine whether or not to use embeds.
+        This is used for all commands done in a channel except for help commands.
 
-        Examples:
+        **Examples:**
             - `[p]embedset channel False` - Disables embeds in this channel.
             - `[p]embedset channel` - Resets value to use guild default.
 
         **Arguments:**
-
-        - `[enabled]` Whether to use embeds in this channel. Leave blank to reset to default.
+            - `[enabled]` Whether to use embeds in this channel. Leave blank to reset to default.
         """
         await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
@@ -1200,20 +1214,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Toggle the user's embed setting for DMs.
 
-        If enabled is None, the setting will be unset and
-        the global default will be used instead.
+        If enabled is None, the setting will be unset and the global default will be used instead.
 
-        If set, this is used instead of the global default
-        to determine whether or not to use embeds. This is
-        used for all commands executed in a DM with the bot.
+        If set, this is used instead of the global default to determine whether or not to use embeds.
+        This is used for all commands executed in a DM with the bot.
 
-        Examples:
+        **Examples:**
             - `[p]embedset user False` - Disables embeds in your DMs.
             - `[p]embedset user` - Resets value to use global default.
 
         **Arguments:**
-
-        - `[enabled]` Whether to use embeds in your DMs. Leave blank to reset to default.
+            - `[enabled]` Whether to use embeds in your DMs. Leave blank to reset to default.
         """
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
@@ -1234,13 +1245,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: Sending the traceback publicly can accidentally reveal sensitive information about your computer or configuration.
 
-        Examples:
+        **Examples:**
             - `[p]traceback` - Sends the traceback to your DMs.
             - `[p]traceback True` - Sends the last traceback in the current context.
 
         **Arguments:**
-
-        - `[public]` Whether to send the traceback to the current context. Leave blank to send to your DMs.
+            - `[public]` Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
         if not public:
             destination = ctx.author
@@ -1268,6 +1278,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This will always send the invite to DMs to keep it private.
 
         This command is locked to the owner unless `[p]inviteset public` is set to True.
+
+        **Example:**
+            - `[p]invite`
         """
         try:
             await ctx.author.send(await self._invite_url())
@@ -1290,12 +1303,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The bot must be made into a `Public bot` in the developer dashboard for public invites to work.
 
-        Example:
+        **Example:**
             - `[p]inviteset public yes` - Toggles the public invite setting.
 
         **Arguments:**
-
-        - `[confirm]` Required to set to public. Not required to toggle back to private.
+            - `[confirm]` Required to set to public. Not required to toggle back to private.
         """
         if await self.bot._config.invite_public():
             await self.bot._config.invite_public.set(False)
@@ -1333,12 +1345,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Please note that you might need two factor authentication for some permissions.
 
-        Example:
+        **Example:**
             - `[p]inviteset perms 134217728` - Adds a "Manage Nicknames" permission requirement to the invite.
 
         **Arguments:**
-
-        - `<level>` The permission level to require for the bot in the generated invite.
+            - `<level>` The permission level to require for the bot in the generated invite.
         """
         await self.bot._config.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
@@ -1424,13 +1435,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Additional cogs can be added using Downloader, or from local paths using `[p]addpath`.
 
-        Examples:
+        **Examples:**
             - `[p]load general` - Loads the `general` cog.
             - `[p]load admin mod mutes` - Loads multiple cogs.
 
         **Arguments:**
-
-        - `<cogs...>` The cog packages to load.
+            - `<cogs...>` The cog packages to load.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -1544,13 +1554,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         See packages available to unload with `[p]cogs`.
 
-        Examples:
+        **Examples:**
             - `[p]unload general` - Unloads the `general` cog.
             - `[p]unload admin mod mutes` - Unloads multiple cogs.
 
         **Arguments:**
-
-        - `<cogs...>` The cog packages to unload.
+            - `<cogs...>` The cog packages to unload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         unloaded, failed = await self._unload(cogs)
@@ -1593,13 +1602,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Cogs that were not loaded will only be loaded.
 
-        Examples:
+        **Examples:**
             - `[p]reload general` - Unloads then loads the `general` cog.
             - `[p]reload admin mod mutes` - Unloads then loads multiple cogs.
 
         **Arguments:**
-
-        - `<cogs...>` The cog packages to reload.
+            - `<cogs...>` The cog packages to reload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
@@ -1699,6 +1707,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Allows [botname] to shut down gracefully.
 
         This is the recommended method for shutting down the bot.
+
+        **Examples:**
+            - `[p]shutdown`
+            - `[p]shutdown True` - Shutdowns silently.
+
+        **Arguments:**
+            - `[silently]` - Whether to skip sending the shutdown message. Defaults to False.
         """
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
@@ -1714,6 +1729,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Makes [botname] quit with exit code 26.
         The restart is not guaranteed: it must be dealt with by the process manager in use.
+
+        **Examples:**
+            - `[p]restart`
+            - `[p]restart True` - Restarts silently.
+
+        **Arguments:**
+            - `[silently]` - Whether to skip sending the shutdown message. Defaults to False.
         """
         with contextlib.suppress(discord.HTTPException):
             if not silently:
@@ -1795,14 +1817,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This is only applied to the current server and not globally.
 
-        Examples:
+        **Examples:**
             - `[p]set deletedelay` - Shows the current delete delay setting.
             - `[p]set deletedelay 60` - Sets the delete delay to the max of 60 seconds.
             - `[p]set deletedelay -1` - Disables deleting command messages.
 
         **Arguments:**
-
-        - `[time]` The seconds to wait before deleting the command message. Use -1 to disable.
+            - `[time]` The seconds to wait before deleting the command message. Use -1 to disable.
         """
         guild = ctx.guild
         if time is not None:
@@ -1838,13 +1859,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The default is "Red V3".
 
-        Examples:
+        **Examples:**
             - `[p]set description` - Resets the description to the default setting.
             - `[p]set description MyBot: A Red V3 Bot`
 
         **Arguments:**
-
-        - `[description]` The description to use for this bot. Leave blank to reset to the default.
+            - `[description]` The description to use for this bot. Leave blank to reset to the default.
         """
         if not description:
             await ctx.bot._config.description.clear()
@@ -1877,13 +1897,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
          And more.
 
-         Examples:
+         **Examples:**
             - `[p]set addadminrole @Admins`
             - `[p]set addadminrole Super Admins`
 
         **Arguments:**
-
-        - `<role>` The role to add as an admin.
+            - `<role>` The role to add as an admin.
         """
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id in roles:
@@ -1905,13 +1924,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
          And more.
 
-         Examples:
+         **Examples:**
             - `[p]set addmodrole @Mods`
             - `[p]set addmodrole Loyal Helpers`
 
         **Arguments:**
-
-        - `<role>` The role to add as a moderator.
+            - `<role>` The role to add as a moderator.
         """
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id in roles:
@@ -1926,13 +1944,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes an admin role for this guild.
 
-        Examples:
+        **Examples:**
             - `[p]set removeadminrole @Admins`
             - `[p]set removeadminrole Super Admins`
 
         **Arguments:**
-
-        - `<role>` The role to remove from being an admin.
+            - `<role>` The role to remove from being an admin.
         """
         async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
             if role.id not in roles:
@@ -1947,13 +1964,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes a mod role for this guild.
 
-        Examples:
+        **Examples:**
             - `[p]set removemodrole @Mods`
             - `[p]set removemodrole Loyal Helpers`
 
         **Arguments:**
-
-        - `<role>` The role to remove from being a moderator.
+            - `<role>` The role to remove from being a moderator.
         """
         async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
             if role.id not in roles:
@@ -1970,6 +1986,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Default is to use the bot's configured colour.
         Otherwise, the colour used will be the colour of the bot's top role.
+
+        **Example:**
+            - `[p]set usebotcolour`
         """
         current_setting = await ctx.bot._config.guild(ctx.guild).use_bot_color()
         await ctx.bot._config.guild(ctx.guild).use_bot_color.set(not current_setting)
@@ -1991,6 +2010,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This can be processor intensive and may be unsuitable for larger servers.
 
         Default is for fuzzy command search to be disabled.
+
+        **Example:**
+            - `[p]set serverfuzzy`
         """
         current_setting = await ctx.bot._config.guild(ctx.guild).fuzzy()
         await ctx.bot._config.guild(ctx.guild).fuzzy.set(not current_setting)
@@ -2009,6 +2031,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This allows the bot to identify potential misspelled commands and offer corrections.
 
         Default is for fuzzy command search to be disabled.
+
+        **Example:**
+            - `[p]set fuzzy`
         """
         current_setting = await ctx.bot._config.fuzzy()
         await ctx.bot._config.fuzzy.set(not current_setting)
@@ -2028,7 +2053,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
 
-        Examples:
+        **Examples:**
             - `[p]set colour dark red`
             - `[p]set colour blurple`
             - `[p]set colour 0x5DADE2`
@@ -2036,8 +2061,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set color #7F8C8D`
 
         **Arguments:**
-
-        - `[colour]` The colour to use for embeds. Leave blank to set to the default value (red).
+            - `[colour]` The colour to use for embeds. Leave blank to set to the default value (red).
         """
         if colour is None:
             ctx.bot._color = discord.Color.red()
@@ -2054,14 +2078,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Supports either an attachment or an image URL.
 
-        Examples:
+        **Examples:**
             - `[p]set avatar` - With an image attachment, this will set the avatar.
             - `[p]set avatar` - Without an attachment, this will show the command help.
             - `[p]set avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
 
         **Arguments:**
-
-        - `[url]` An image url to be used as an avatar. Leave blank when uploading an attachment.
+            - `[url]` An image url to be used as an avatar. Leave blank when uploading an attachment.
         """
         if len(ctx.message.attachments) > 0:  # Attachments take priority
             data = await ctx.message.attachments[0].read()
@@ -2100,7 +2123,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @avatar.command(name="remove", aliases=["clear"])
     @checks.is_owner()
     async def avatar_remove(self, ctx: commands.Context):
-        """Removes [botname]'s avatar."""
+        """
+        Removes [botname]'s avatar.
+
+        **Example:**
+            - `[p]set avatar remove`
+        """
         async with ctx.typing():
             await ctx.bot.user.edit(avatar=None)
         await ctx.send(_("Avatar removed."))
@@ -2115,13 +2143,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Maximum length for a playing status is 128 characters.
 
-        Examples:
+        **Examples:**
             - `[p]set playing` - Clears the activity status.
             - `[p]set playing the keyboard`
 
         **Arguments:**
-
-        - `[game]` The text to follow `Playing`. Leave blank to clear the current activity status.
+            - `[game]` The text to follow `Playing`. Leave blank to clear the current activity status.
         """
 
         if game:
@@ -2148,13 +2175,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Maximum length for a listening status is 128 characters.
 
-        Examples:
+        **Examples:**
             - `[p]set listening` - Clears the activity status.
             - `[p]set listening jams`
 
         **Arguments:**
-
-        - `[listening]` The text to follow `Listening to`. Leave blank to clear the current activity status."""
+            - `[listening]` The text to follow `Listening to`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -2184,13 +2210,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Maximum length for a watching status is 128 characters.
 
-        Examples:
+        **Examples:**
             - `[p]set watching` - Clears the activity status.
             - `[p]set watching [p]help`
 
         **Arguments:**
-
-        - `[watching]` The text to follow `Watching`. Leave blank to clear the current activity status."""
+            - `[watching]` The text to follow `Watching`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -2216,13 +2241,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Maximum length for a competing status is 128 characters.
 
-        Examples:
+        **Examples:**
             - `[p]set competing` - Clears the activity status.
             - `[p]set competing London 2012 Olympic Games`
 
         **Arguments:**
-
-        - `[competing]` The text to follow `Competing in`. Leave blank to clear the current activity status."""
+            - `[competing]` The text to follow `Competing in`. Leave blank to clear the current activity status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
@@ -2254,13 +2278,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `dnd`
             - `invisible`
 
-        Examples:
+        **Examples:**
             - `[p]set status online` - Clears the status.
             - `[p]set status invisible`
 
         **Arguments:**
-
-        - `<status>` One of the available statuses.
+            - `<status>` One of the available statuses.
         """
 
         statuses = {
@@ -2294,15 +2317,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Leaving both streamer and stream_title empty will clear it.
 
-        Examples:
+        **Examples:**
             - `[p]set stream` - Clears the activity status.
             - `[p]set stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
             - `[p]set stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
 
         **Arguments:**
-
-        - `<streamer>` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
-        - `<stream_title>` The text to follow `Streaming` in the status."""
+            - `<streamer>` The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+            - `<stream_title>` The text to follow `Streaming` in the status."""
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
 
@@ -2335,12 +2357,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: The username of a verified bot cannot be manually changed.
             Please contact Discord support to change it.
 
-        Example:
+        **Example:**
             - `[p]set username BaguetteBot`
 
         **Arguments:**
-
-        - `<username>` The username to give the bot.
+            - `<username>` The username to give the bot.
         """
         try:
             if self.bot.user.public_flags.verified_bot:
@@ -2390,12 +2411,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Maximum length for a nickname is 32 characters.
 
-        Example:
-            - `[p]set username 🎃 SpookyBot 🎃`
+        **Example:**
+            - `[p]set nickname 🎃 SpookyBot 🎃`
 
         **Arguments:**
-
-        - `[nickname]` The nickname to give the bot. Leave blank to clear the current nickname.
+            - `[nickname]` The nickname to give the bot. Leave blank to clear the current nickname.
         """
         try:
             if nickname and len(nickname) > 32:
@@ -2416,14 +2436,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         See also the `--mentionable` flag to enable mentioning the bot as the prefix.
 
-        Examples:
+        **Examples:**
             - `[p]set prefix !`
-            - `[p]set prefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
+            - `[p]set prefix "! "` - Quotes are needed to use spaces in prefixes.
+            - `[p]set prefix "@[botname] "` - This uses a mention as the prefix. See also the `--mentionable` flag.
             - `[p]set prefix ! ? .` - Sets multiple prefixes.
 
         **Arguments:**
-
-        - `<prefixes...>` The prefixes the bot will respond to globally.
+            - `<prefixes...>` The prefixes the bot will respond to globally.
         """
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         await ctx.send(_("Prefix set."))
@@ -2432,19 +2452,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     async def serverprefix(self, ctx: commands.Context, *prefixes: str):
-        """Sets [botname]'s server prefix(es).
+        """
+        Sets [botname]'s server prefix(es).
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
 
-        Examples:
+        **Examples:**
             - `[p]set serverprefix !`
             - `[p]set serverprefix "@[botname] "` - Quotes are needed to use spaces. This uses a mention as the prefix.
             - `[p]set serverprefix ! ? .` - Sets multiple prefixes.
 
         **Arguments:**
-
-        - `[prefixes...]` The prefixes the bot will respond to on this server. Leave blank to clear server prefixes"""
+            - `[prefixes...]` The prefixes the bot will respond to on this server. Leave blank to clear server prefixes
+        """
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Guild prefixes have been reset."))
@@ -2465,15 +2486,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         To reset to English, use "en-US".
 
-        Examples:
+        **Examples:**
             - `[p]set locale en-US`
             - `[p]set locale de-DE`
             - `[p]set locale fr-FR`
             - `[p]set locale pl-PL`
 
         **Arguments:**
-
-        - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
+            - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
         """
         try:
             locale = BabelLocale.parse(language_code, sep="-")
@@ -2503,7 +2523,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Use "default" to return to the bot's default set language.
         To reset to English, use "en-US".
 
-        Examples:
+        **Examples:**
             - `[p]set locale en-US`
             - `[p]set locale de-DE`
             - `[p]set locale fr-FR`
@@ -2511,8 +2531,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set locale default` - Resets to the global default locale.
 
         **Arguments:**
-
-        - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
+            - `<language_code>` The default locale to use for the bot. This can be any language code with country code included.
         """
         if language_code.lower() == "default":
             global_locale = await self.bot._config.locale()
@@ -2545,14 +2564,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale.
 
-        Examples:
+        **Examples:**
             - `[p]set globalregionalformat en-US`
             - `[p]set globalregion de-DE`
             - `[p]set globalregionalformat` - Resets to the locale.
 
         **Arguments:**
-
-        - `[language_code]` The default region format to use for the bot.
+            - `[language_code]` The default region format to use for the bot.
         """
         if language_code is None:
             i18n.set_regional_format(None)
@@ -2588,14 +2606,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale in this server.
 
-        Examples:
+        **Examples:**
             - `[p]set regionalformat en-US`
             - `[p]set region de-DE`
             - `[p]set regionalformat` - Resets to the locale.
 
         **Arguments:**
-
-        - `[language_code]` The region format to use for the bot in this server.
+            - `[language_code]` The region format to use for the bot in this server.
         """
         if language_code is None:
             i18n.set_contextual_regional_format(None)
@@ -2634,14 +2651,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Link example: `[My link](https://example.com)`
 
-        Examples:
+        **Examples:**
             - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines`
             - `[p]set custominfo Join my [support server](discord.gg/discord)`
             - `[p]set custominfo` - Removes custom info text.
 
         **Arguments:**
-
-        - `[text]` The custom info text.
+            - `[text]` The custom info text.
         """
         if not text:
             await ctx.bot._config.custom_info.clear()
@@ -2657,7 +2673,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """Commands to set, list or remove various external API tokens.
+        """
+        Commands to set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
 
@@ -2666,14 +2683,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
 
-        Examples:
+        **Examples:**
             - `[p]set api Spotify redirect_uri localhost`
             - `[p]set api github client_id,whoops client_secret,whoops`
 
         **Arguments:**
-
-        - `<service>` The service you're adding tokens to.
-        - `<tokens>` Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
+            - `<service>` The service you're adding tokens to.
+            - `<tokens>` Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
@@ -2682,9 +2698,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @api.command(name="list")
     async def api_list(self, ctx: commands.Context):
-        """Show all external API services along with their keys that have been set.
+        """
+        Show all external API services along with their keys that have been set.
 
-        Secrets are not shown."""
+        Secrets are not shown.
+
+        **Example:**
+            - `[p]set api list``
+        """
 
         services: dict = await ctx.bot.get_shared_api_tokens()
         if not services:
@@ -2703,15 +2724,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @api.command(name="remove", require_var_positional=True)
     async def api_remove(self, ctx: commands.Context, *services: str):
-        """Remove the given services with all their keys and tokens.
+        """
+        Remove the given services with all their keys and tokens.
 
-        Examples:
+        **Examples:**
             - `[p]set api remove Spotify`
             - `[p]set api remove github audiodb`
 
         **Arguments:**
-
-        - `<services...>` The services to remove."""
+            - `<services...>` The services to remove."""
         bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
         services = [s for s in services if s in bot_services]
 
@@ -2732,16 +2753,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
-        """Commands to manage settings for the help command.
+        """
+        Commands to manage settings for the help command.
 
-        All help settings are applied globally."""
+        All help settings are applied globally.
+        """
         pass
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
-        """Show the current help settings.
+        """
+        Show the current help settings.
 
         Warning: These settings may not be accurate if the default formatter is not in use.
+
+        **Example:**
+            - `[p]helpset showsettings``
         """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
@@ -2759,7 +2786,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
-        """This resets [botname]'s help formatter to the default formatter."""
+        """
+        This resets [botname]'s help formatter to the default formatter.
+
+        **Example:**
+            - `[p]helpset resetformatter``
+        """
 
         ctx.bot.reset_help_formatter()
         await ctx.send(
@@ -2776,6 +2808,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This resets [botname]'s help settings to their defaults.
 
         This may not have an impact when using custom formatters from 3rd party cogs
+
+        **Example:**
+            - `[p]helpset resetsettings``
         """
         await ctx.bot._config.help.clear()
         await ctx.send(
@@ -2796,13 +2831,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to False.
         Using this without a setting will toggle.
 
-         Examples:
+         **Examples:**
             - `[p]helpset usemenues True` - Enables using menus.
             - `[p]helpset usemenues` - Toggles the value.
 
         **Arguments:**
-
-        - `[use_menus]` Whether to use menus. Leave blank to toggle.
+            - `[use_menus]` Whether to use menus. Leave blank to toggle.
         """
         if use_menus is None:
             use_menus = not await ctx.bot._config.help.use_menus()
@@ -2820,13 +2854,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to False.
         Using this without a setting will toggle.
 
-        Examples:
+        **Examples:**
             - `[p]helpset showhidden True` - Enables showing hidden commands.
             - `[p]helpset showhidden` - Toggles the value.
 
         **Arguments:**
-
-        - `[show_hidden]` Whether to use show hidden commands in help. Leave blank to toggle.
+            - `[show_hidden]` Whether to use show hidden commands in help. Leave blank to toggle.
         """
         if show_hidden is None:
             show_hidden = not await ctx.bot._config.help.show_hidden()
@@ -2844,13 +2877,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to True.
         Using this without a setting will toggle.
 
-        Examples:
+        **Examples:**
             - `[p]helpset showaliases False` - Disables showing aliases on this server.
             - `[p]helpset showaliases` - Toggles the value.
 
         **Arguments:**
-
-        - `[show_aliases]` Whether to include aliases in help. Leave blank to toggle.
+            - `[show_aliases]` Whether to include aliases in help. Leave blank to toggle.
         """
         if show_aliases is None:
             show_aliases = not await ctx.bot._config.help.show_aliases()
@@ -2872,13 +2904,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This is only used when the bot is not using menus.
 
-        Examples:
+        **Examples:**
             - `[p]helpset usetick False` - Disables ticking when help is sent to DMs.
             - `[p]helpset usetick` - Toggles the value.
 
         **Arguments:**
-
-        - `[use_tick]` Whether to tick the help command when help is sent to DMs. Leave blank to toggle.
+            - `[use_tick]` Whether to tick the help command when help is sent to DMs. Leave blank to toggle.
         """
         if use_tick is None:
             use_tick = not await ctx.bot._config.help.use_tick()
@@ -2896,13 +2927,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Defaults to True.
         Using this without a setting will toggle.
 
-        Examples:
+        **Examples:**
             - `[p]helpset verifychecks False` - Enables showing unusable commands.
             - `[p]helpset verifychecks` - Toggles the value.
 
         **Arguments:**
-
-        - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
+            - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
         """
         if verify is None:
             verify = not await ctx.bot._config.help.verify_checks()
@@ -2922,13 +2952,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Defaults to False.
         Using this without a setting will toggle.
 
-        Examples:
+        **Examples:**
             - `[p]helpset verifyexists False` - Enables showing unusable commands.
             - `[p]helpset verifyexists` - Toggles the value.
 
         **Arguments:**
-
-        - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
+            - `[verify]` Whether to hide unusable commands in help. Leave blank to toggle.
         """
         if verify is None:
             verify = not await ctx.bot._config.help.verify_exists()
@@ -2955,12 +2984,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Please note that setting a relatively small character limit may
         mean some pages will exceed this limit.
 
-        Example:
+        **Example:**
             - `[p]helpset pagecharlimit 1500`
 
         **Arguments:**
-
-        - `<limit>` The max amount of characters to show per page in the help message.
+            - `<limit>` The max amount of characters to show per page in the help message.
         """
         if limit < 500:
             await ctx.send(_("You must give a value of at least 500 characters."))
@@ -2981,13 +3009,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The default value is 2 pages.
 
-        Examples:
+        **Examples:**
             - `[p]helpset maxpages 50` - Basically never send help to DMs.
             - `[p]helpset maxpages 0` - Always send help to DMs.
 
         **Arguments:**
-
-        - `<limit>` The max pages allowed to send per help in a server.
+            - `<limit>` The max pages allowed to send per help in a server.
         """
         if pages < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
@@ -3007,15 +3034,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The bot has to have MANAGE_MESSAGES permission for this to work.
 
-        Examples:
+        **Examples:**
             - `[p]helpset deletedelay 60` - Delete the help pages after a minute.
             - `[p]helpset deletedelay 1` - Delete the help pages as quickly as possible.
             - `[p]helpset deletedelay 1209600` - Max time to wait before deleting (14 days).
             - `[p]helpset deletedelay 0` - Disable deleting help pages.
 
         **Arguments:**
-
-        - `<seconds>` The seconds to wait before deleting help pages.
+            - `<seconds>` The seconds to wait before deleting help pages.
         """
         if seconds < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
@@ -3038,13 +3064,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The maximum tagline length is 2048 characters.
         This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
-        Examples:
+        **Examples:**
             - `[p]helpset tagline Thanks for using the bot!`
             - `[p]helpset tagline` - Resets the tagline to the default.
 
         **Arguments:**
-
-        - `[tagline]` The tagline to appear at the bottom of help embeds. Leave blank to reset.
+            - `[tagline]` The tagline to appear at the bottom of help embeds. Leave blank to reset.
         """
         if tagline is None:
             await ctx.bot._config.help.tagline.set("")
@@ -3069,12 +3094,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This is limited to one message every 60 seconds per person.
 
-        Example:
+        **Example:**
             - `[p]contact Help! The bot has become sentient!`
 
         **Arguments:**
-
-        - `[message]` The message to send to the owner.
+            - `[message]` The message to send to the owner.
         """
         guild = ctx.message.guild
         author = ctx.message.author
@@ -3181,12 +3205,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         To get a user ID, go to Discord's settings and open the 'Appearance' tab.
         Enable 'Developer Mode', then right click a user and click on 'Copy ID'.
 
-        Example:
+        **Example:**
             - `[p]dm 262626262626262626 Do you like me? Yes / No`
 
         **Arguments:**
-
-        - `[message]` The message to dm to the user.
+            - `[message]` The message to dm to the user.
         """
         destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
@@ -3345,13 +3368,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds users to the allowlist.
 
-        Examples:
+        **Examples:**
             - `[p]allowlist add @26 @Will` - Adds two users to the allowlist
             - `[p]allowlist add 262626262626262626` - Adds a user by ID
 
         **Arguments:**
-
-        - `<users...>` The user or users to add to the allowlist.
+            - `<users...>` The user or users to add to the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
@@ -3365,7 +3387,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Lists users on the allowlist.
 
-        Example:
+        **Example:**
             - `[p]allowlist list`
         """
         curr_list = await ctx.bot._config.whitelist()
@@ -3390,13 +3412,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The allowlist will be disabled if all users are removed.
 
-        Examples:
+        **Examples:**
             - `[p]allowlist remove @26 @Will` - Removes two users from the allowlist
             - `[p]allowlist remove 262626262626262626` - Removes a user by ID
 
         **Arguments:**
-
-        - `<users...>` The user or users to remove from the allowlist.
+            - `<users...>` The user or users to remove from the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
@@ -3412,7 +3433,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This disables the allowlist.
 
-        Example:
+        **Example:**
             - `[p]allowlist clear`
         """
         await self.bot._whiteblacklist_cache.clear_whitelist()
@@ -3433,13 +3454,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds users to the blocklist.
 
-        Examples:
+        **Examples:**
             - `[p]blocklist add @26 @Will` - Adds two users to the blocklist
             - `[p]blocklist add 262626262626262626` - Adds a user by ID
 
         **Arguments:**
-
-        - `<users...>` The user or users to add to the blocklist.
+            - `<users...>` The user or users to add to the blocklist.
         """
         for user in users:
             if isinstance(user, int):
@@ -3462,7 +3482,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Lists users on the blocklist.
 
-        Example:
+        **Example:**
             - `[p]blocklist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
@@ -3485,13 +3505,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes users from the blocklist.
 
-        Examples:
+        **Examples:**
             - `[p]blocklist remove @26 @Will` - Removes two users from the blocklist
             - `[p]blocklist remove 262626262626262626` - Removes a user by ID
 
         **Arguments:**
-
-        - `<users...>` The user or users to remove from the blocklist.
+            - `<users...>` The user or users to remove from the blocklist.
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
@@ -3505,7 +3524,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the blocklist.
 
-        Example:
+        **Example:**
             - `[p]blocklist clear`
         """
         await self.bot._whiteblacklist_cache.clear_blacklist()
@@ -3531,14 +3550,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds a user or role to the server allowlist.
 
-        Examples:
+        **Examples:**
             - `[p]localallowlist add @26 @Will` - Adds two users to the local allowlist
             - `[p]localallowlist add 262626262626262626` - Adds a user by ID
-            - `[p]localallowlist add "Super Admins" - Adds a role with a space in the name without mentioning
+            - `[p]localallowlist add "Super Admins"` - Adds a role with a space in the name without mentioning
 
         **Arguments:**
-
-        - `<users_or_roles...>` The users or roles to remove from the local allowlist.
+            - `<users_or_roles...>` The users or roles to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3566,7 +3584,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Lists users and roles on the server allowlist.
 
-        Example:
+        **Example:**
             - `[p]localallowlist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
@@ -3593,14 +3611,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The local allowlist will be disabled if all users are removed.
 
-        Examples:
+        **Examples:**
             - `[p]localallowlist remove @26 @Will` - Removes two users from the local allowlist
             - `[p]localallowlist remove 262626262626262626` - Removes a user by ID
-            - `[p]localallowlist remove "Super Admins" - Removes a role with a space in the name without mentioning
+            - `[p]localallowlist remove "Super Admins"` - Removes a role with a space in the name without mentioning
 
         **Arguments:**
-
-        - `<users_or_roles...>` The users or roles to remove from the local allowlist.
+            - `<users_or_roles...>` The users or roles to remove from the local allowlist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3629,7 +3646,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This disables the local allowlist and clears all entires.
 
-        Example:
+        **Example:**
             - `[p]localallowlist clear`
         """
         await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
@@ -3653,14 +3670,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds a user or role to the local blocklist.
 
-        Examples:
+        **Examples:**
             - `[p]localblocklist add @26 @Will` - Adds two users to the local blocklist
             - `[p]localblocklist add 262626262626262626` - Blocks a user by ID
-            - `[p]localblocklist add "Bad Apples" - Blocks a role with a space in the name without mentioning
+            - `[p]localblocklist add "Bad Apples"` - Blocks a role with a space in the name without mentioning
 
         **Arguments:**
-
-        - `<users_or_roles...>` The users or roles to add to the local blocklist.
+            - `<users_or_roles...>` The users or roles to add to the local blocklist.
         """
         for user_or_role in users_or_roles:
             uid = discord.Object(id=getattr(user_or_role, "id", user_or_role))
@@ -3687,7 +3703,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Lists users and roles on the server blocklist.
 
-        Example:
+        **Example:**
             - `[p]localblocklist list`
         """
         curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
@@ -3712,14 +3728,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes user or role from blocklist.
 
-        Examples:
+        **Examples:**
             - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist
             - `[p]localblocklist remove 262626262626262626` - Unblocks a user by ID
-            - `[p]localblocklist remove "Bad Apples" - Unblocks a role with a space in the name without mentioning
+            - `[p]localblocklist remove "Bad Apples"` - Unblocks a role with a space in the name without mentioning
 
         **Arguments:**
-
-        - `<users_or_roles...>` The users or roles to remove from the local blocklist.
+            - `<users_or_roles...>` The users or roles to remove from the local blocklist.
         """
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
@@ -3737,7 +3752,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This disabled the server blocklist and clears all entries.
 
-        Example:
+        **Example:**
             - `[p]blocklist clear`
         """
         await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
@@ -3759,13 +3774,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Examples:
+        **Examples:**
             - `[p]command defaultdisablecog Economy`
             - `[p]command defaultdisablecog ModLog`
 
         **Arguments:**
-
-        - `<cogname>` The name of the cog to make disabled by default. Must be title-case.
+            - `<cogname>` The name of the cog to make disabled by default. Must be title-case.
         """
         cog = self.bot.get_cog(cogname)
         if not cog:
@@ -3785,13 +3799,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Examples:
+        **Examples:**
             - `[p]command defaultenablecog Economy`
             - `[p]command defaultenablecog ModLog`
 
         **Arguments:**
-
-        - `<cogname>` The name of the cog to make enabled by default. Must be title-case.
+            - `<cogname>` The name of the cog to make enabled by default. Must be title-case.
         """
         cog = self.bot.get_cog(cogname)
         if not cog:
@@ -3806,13 +3819,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Examples:
+        **Examples:**
             - `[p]command disablecog Economy`
             - `[p]command disablecog ModLog`
 
         **Arguments:**
-
-        - `<cogname>` The name of the cog to disable on this server. Must be title-case.
+            - `<cogname>` The name of the cog to disable on this server. Must be title-case.
         """
         cog = self.bot.get_cog(cogname)
         if not cog:
@@ -3833,13 +3845,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
 
-        Examples:
+        **Examples:**
             - `[p]command enablecog Economy`
             - `[p]command enablecog ModLog`
 
         **Arguments:**
-
-        - `<cogname>` The name of the cog to enable on this server. Must be title-case."""
+            - `<cogname>` The name of the cog to enable on this server. Must be title-case.
+        """
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
@@ -3857,7 +3869,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_list_disabled_cogs(self, ctx: commands.Context):
         """List the cogs which are disabled in this server.
 
-        Example:
+        **Example:**
             - `[p]command listdisabledcogs`
         """
         disabled = [
@@ -3884,7 +3896,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you're the bot owner, this will show global disabled commands by default.
         Otherwise, this will show disabled commands on the current server.
 
-        Example:
+        **Example:**
             - `[p]command listdisabled`
         """
         # Select the scope based on the author's privileges
@@ -3897,7 +3909,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def list_disabled_global(self, ctx: commands.Context):
         """List disabled commands globally.
 
-        Example:
+        **Example:**
             - `[p]command listdisabled global`
         """
         disabled_list = await self.bot._config.disabled_commands()
@@ -3919,7 +3931,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def list_disabled_guild(self, ctx: commands.Context):
         """List disabled commands in this server.
 
-        Example:
+        **Example:**
             - `[p]command listdisabled guild`
         """
         disabled_list = await self.bot._config.guild(ctx.guild).disabled_commands()
@@ -3943,13 +3955,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you're the bot owner, this will disable commands globally by default.
         Otherwise, this will disable commands on the current server.
 
-        Examples:
+        **Examples:**
             - `[p]command disable userinfo` - Disables the `userinfo` command in the Mod cog.
             - `[p]command disable urban` - Disables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to disable.
+            - `<command>` The command to disable.
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
@@ -3962,13 +3973,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_disable_global(self, ctx: commands.Context, *, command: str):
         """Disable a command globally.
 
-        Examples:
+        **Examples:**
             - `[p]command disable global userinfo` - Disables the `userinfo` command in the Mod cog.
             - `[p]command disable global urban` - Disables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to disable globally.
+            - `<command>` The command to disable globally.
         """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4005,13 +4015,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """Disable a command in this server only.
 
-        Examples:
+        **Examples:**
             - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
             - `[p]command disable server urban` - Disables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to disable for the current server.
+            - `<command>` The command to disable for the current server.
         """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4054,13 +4063,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you're the bot owner, this will try to enable a globally disabled command by default.
         Otherwise, this will try to enable a command disabled on the current server.
 
-        Examples:
+        **Examples:**
             - `[p]command enable userinfo` - Enables the `userinfo` command in the Mod cog.
             - `[p]command enable server urban` - Enables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to enable.
+            - `<command>` The command to enable.
         """
         if await ctx.bot.is_owner(ctx.author):
             await ctx.invoke(self.command_enable_global, command=command)
@@ -4072,13 +4080,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """Enable a command globally.
 
-        Examples:
+        **Examples:**
             - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
             - `[p]command enable global urban` - Enables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to enable globally.
+            - `<command>` The command to enable globally.
         """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4103,13 +4110,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
         """Enable a command in this server.
 
-        Examples:
+        **Examples:**
             - `[p]command enable server userinfo` - Enables the `userinfo` command in the Mod cog.
             - `[p]command enable server urban` - Enables the `urban` command in the General cog.
 
         **Arguments:**
-
-        - `<command>` The command to enable for the current server.
+            - `<command>` The command to enable for the current server.
         """
         command_obj: commands.Command = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4142,14 +4148,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         To include the command name in the message, include the `{command}` placeholder.
 
-        Examples:
+        **Examples:**
             - `[p]command disabledmsg This command is disabled`
             - `[p]command disabledmsg {command} is disabled`
             - `[p]command disabledmsg` - Sends nothing when a disabled command is attempted.
 
         **Arguments:**
-
-        - `[message]` The message to send when a disabled command is attempted.
+            - `[message]` The message to send when a disabled command is attempted.
         """
         await ctx.bot._config.disabled_command_msg.set(message)
         await ctx.tick()
@@ -4170,7 +4175,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Gets the current members and roles configured for automatic moderation action immunity.
 
-        Example:
+        **Example:**
             - `[p]autoimmune list`
         """
         ai_ids = await ctx.bot._config.guild(ctx.guild).autoimmune_ids()
@@ -4201,13 +4206,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Makes a user or role immune from automated moderation actions.
 
-        Examples:
+        **Examples:**
             - `[p]autoimmune add @TwentySix` - Adds a user
             - `[p]autoimmune add @Mods` - Adds a role
 
         **Arguments:**
-
-        - `<user_or_role>` The user or role to add immunity to.
+            - `<user_or_role>` The user or role to add immunity to.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id in ai_ids:
@@ -4222,13 +4226,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Makes a user or role immune from automated moderation actions.
 
-        Examples:
+        **Examples:**
             - `[p]autoimmune remove @TwentySix` - Removes a user
             - `[p]autoimmune remove @Mods` - Removes a role
 
         **Arguments:**
-
-        - `<user_or_role>` The user or role to remove immunity from.
+            - `<user_or_role>` The user or role to remove immunity from.
         """
         async with ctx.bot._config.guild(ctx.guild).autoimmune_ids() as ai_ids:
             if user_or_role.id not in ai_ids:
@@ -4243,13 +4246,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Checks if a user or role would be considered immune from automated actions.
 
-        Examples:
+        **Examples:**
             - `[p]autoimmune isimmune @TwentySix`
             - `[p]autoimmune isimmune @Mods`
 
         **Arguments:**
-
-        - `<user_or_role>` The user or role to check the immunity of.
+            - `<user_or_role>` The user or role to check the immunity of.
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
@@ -4277,7 +4279,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This will only resume sending owner notifications to your DMs.
             Additional owners and destinations will not be affected.
 
-        Example:
+        **Example:**
             - `[p]ownernotifications optin`
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
@@ -4294,7 +4296,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This will only stop sending owner notifications to your DMs.
             Additional owners and destinations will still receive notifications.
 
-        Example:
+        **Example:**
             - `[p]ownernotifications optout`
         """
         async with ctx.bot._config.owner_opt_out_list() as opt_outs:
@@ -4310,13 +4312,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds a destination text channel to receive owner notifications.
 
-        Examples:
+        **Examples:**
             - `[p]ownernotifications adddestination #owner-notifications`
             - `[p]ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
 
         **Arguments:**
-
-        - `<channel>` The channel to send owner notifications to.
+            - `<channel>` The channel to send owner notifications to.
         """
 
         try:
@@ -4337,13 +4338,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Removes a destination text channel from receiving owner notifications.
 
-        Examples:
+        **Examples:**
             - `[p]ownernotifications removedestination #owner-notifications`
             - `[p]ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
 
         **Arguments:**
-
-        - `<channel>` The channel to stop sending owner notifications to.
+            - `<channel>` The channel to stop sending owner notifications to.
         """
 
         try:
@@ -4362,7 +4362,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Lists the configured extra destinations for owner notifications.
 
-        Example:
+        **Example:**
             - `[p]ownernotifications listdestinations`
         """
 
@@ -4424,7 +4424,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         List the currently ignored servers and channels.
 
-        Example:
+        **Example:**
             - `[p]ignore list`
         """
         for page in pagify(await self.count_ignored(ctx)):
@@ -4443,15 +4443,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
-        Examples:
+        **Examples:**
             - `[p]ignore channel #general` - Ignores commands in the #general channel.
             - `[p]ignore channel` - Ignores commands in the current channel.
             - `[p]ignore channel "General Channels"` - Use quotes for categories with spaces.
             - `[p]ignore channel 356236713347252226` - Also accepts IDs.
 
         **Arguments:**
-
-        - `<channel>` The channel to ignore. Can be a category channel.
+            - `<channel>` The channel to ignore. Can be a category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4469,7 +4468,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Note: Owners, Admins, and those with Manage Server permissions override ignored servers.
 
-        Example:
+        **Example:**
             - `[p]ignore server` - Ignores the current server
         """
         guild = ctx.guild
@@ -4496,15 +4495,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Defaults to the current channel.
 
-        Examples:
+        **Examples:**
             - `[p]unignore channel #general` - Unignores commands in the #general channel.
             - `[p]unignore channel` - Unignores commands in the current channel.
             - `[p]unignore channel "General Channels"` - Use quotes for categories with spaces.
             - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to unignore categories.
 
         **Arguments:**
-
-        - `<channel>` The channel to unignore. This can be a category channel.
+            - `<channel>` The channel to unignore. This can be a category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4521,7 +4519,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Remove this server from the ignore list.
 
-        Example:
+        **Example:**
             - `[p]unignore server` - Stops ignoring the current server
         """
         guild = ctx.message.guild
