@@ -53,8 +53,23 @@ force-exclude = '''
 )/
 '''
 
+[tool.isort]
+profile = "black"
+line_length = 99
+combine_as_imports = true
+skip_gitignore = true
+skip_glob = [
+    "redbot/vendored/*"
+]
+filter_files = true
+atomic = true
+
 [tool.ruff]
-select = ["E", "F", "PGH004"]
+select = ["E", "F", "I001", "PGH004"]
+fix = true
+fixable = ["I001"]
+isort.combine-as-imports = true
+isort.known-third-party = ["schema"]
 line-length = 99
 ignore = [
     # line too long
@@ -73,10 +88,12 @@ extend-exclude = [
     "venvs",
     # Exclude vendored packages from getting linted.
     "redbot/vendored/*",
-    # Exclude tests due to pytest's magic with available names.
-    # Might fix at some point by importing fixtures in conftest.py.
-    "tests/*",
 ]
+
+[tool.ruff.per-file-ignores]
+# Exclude tests due to pytest's magic with available names.
+# Might fix at some point by importing fixtures in conftest.py.
+"tests/*" = ["E", "F", "PGH004"]
 
 [tool.pytest.ini_options]
 asyncio_mode = 'auto'
