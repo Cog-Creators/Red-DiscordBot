@@ -53,7 +53,7 @@ Use without arguments for interactive reporting, or do
 
 **Arguments**
 
-* ``[text]>``: The content included within the report.
+* ``[text]``: The content included within the report.
 
 .. _reports-command-report-interact:
 
