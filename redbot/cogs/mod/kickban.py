@@ -395,10 +395,13 @@ class KickBanMixin(MixinMeta):
         reason: str = None,
     ):
         """Mass bans user(s) from the server.
+
         `days` is the amount of days of messages to cleanup on massban.
+
         Example:
            - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`
             This will ban all the added userids and delete 7 days of worth messages.
+            
         User IDs need to be provided in order to ban
         using this command.
         """
