@@ -867,6 +867,7 @@ class KickBanMixin(MixinMeta):
     @checks.admin_or_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: RawUserIds, *, reason: str = None):
         """Unban a user from this server.
+        
         Requires specifying the target user's ID. To find this, you may either:
          1. Copy it from the mod log case (if one was created), or
          2. enable developer mode, go to Bans in this server's settings, right-
