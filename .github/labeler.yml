@@ -74,6 +74,7 @@
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
   - redbot/cogs/mutes/*
+  - docs/cog_guides/mutes.rst
 "Category: Permissions":
   - redbot/cogs/permissions/*
 "Category: Reports Cog":
