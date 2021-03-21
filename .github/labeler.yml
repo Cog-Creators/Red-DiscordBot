@@ -1,17 +1,30 @@
 "Category: Admin":
+  # Source
   - redbot/cogs/admin/*
+  # Docs
+  - docs/cog_guides/admin.rst
 "Category: Alias":
+  # Source
   - redbot/cogs/alias/*
+  # Docs
+  - docs/cog_guides/alias.rst
 "Category: Audio Cog":
   - any:
       - redbot/cogs/audio/**/*
     all:
       - "!redbot/cogs/audio/**/locales/*"
 "Category: Bank API":
+  # Source
   - redbot/core/bank.py
+  # Docs
+  - docs/framework_bank.rst
 "Category: Bank Cog":
+  # Source
   - redbot/cogs/bank/*
+  # Docs
+  - docs/cog_guides/bank.rst
 "Category: Bot Core":
+  # Source
   - redbot/*
   - redbot/core/__init__.py
   - redbot/core/_sharedlibdeprecation.py
@@ -25,39 +38,80 @@
   - redbot/core/events.py
   - redbot/core/global_checks.py
   - redbot/core/settings_caches.py
+  # Docs
+  - docs/framework_apikeys.rst
+  - docs/framework_bot.rst
+  - docs/framework_cogmanager.rst
+  - docs/framework_datamanager.rst
+  - docs/framework_events.rst
+  - docs/cog_guides/cog_manager_ui.rst
 "Category: CI":
   - .github/workflows/*
 "Category: Cleanup Cog":
+  # Source
   - redbot/cogs/cleanup/*
+  # Docs
+  - docs/cog_guides/cleanup.rst
 "Category: Command Module":
+  # Source
   - any:
+      # Source
       - redbot/core/commands/*
+      # Docs
+      - docs/framework_checks.rst
+      - docs/framework_commands.rst
     all:
       - "!redbot/core/commands/help.py"
 "Category: Config":
+  # Source
   - redbot/core/drivers/*
   - redbot/core/config.py
+  # Docs
+  - docs/framework_config.rst
 "Category: CustomCom":
+  # Source
   - redbot/cogs/customcom/*
+  # Docs
+  - docs/cog_customcom.rst
+  - docs/cog_guides/customcommands.rst
 "Category: Dev Cog":
   - redbot/core/dev_commands.py
 "Category: Docs":
   - docs/**/*
 "Category: Downloader":
+  # Source
   - redbot/cogs/downloader/*
+  # Docs
+  - docs/cog_guides/downloader.rst
 "Category: Economy Cog":
+  # Source
   - redbot/cogs/economy/*
+  # Docs
+  - docs/cog_guides/economy.rst
 "Category: Filter":
+  # Source
   - redbot/cogs/filter/*
+  # Docs
+  - docs/cog_guides/filter.rst
 "Category: General Cog":
+  # Source
   - redbot/cogs/general/*
+  # Docs
+  - docs/cog_guides/general.rst
 "Category: Help":
   - redbot/core/commands/help.py
 "Category: i18n":
+  # Source
   - redbot/core/i18n.py
+  # Locale files
   - redbot/**/locales/*
+  # Docs
+  - docs/framework_i18n.rst
 "Category: Image":
+  # Source
   - redbot/cogs/image/*
+  # Docs
+  - docs/cog_guides/image.rst
 "Category: Meta":
   - ./*
   - .github/*
@@ -68,28 +122,46 @@
 "Category: Mod Cog":
   - redbot/cogs/mod/*
 "Category: Modlog API":
+  # Source
   - redbot/core/generic_casetypes.py
   - redbot/core/modlog.py
+  # Docs
+  - docs/framework_modlog.rst
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
   - redbot/cogs/mutes/*
 "Category: Permissions":
+  # Source
   - redbot/cogs/permissions/*
+  # Docs
+  - docs/cog_permissions.rst
 "Category: Reports Cog":
   - redbot/cogs/reports/*
 "Category: RPC/ZMQ API":
+  # Source
   - redbot/core/rpc.py
+  # Docs
+  - docs/framework_rpc.rst
 "Category: Streams":
+  # Source
   - redbot/cogs/streams/*
+  # Docs
+  - docs/cog_guides/streams.rst
 "Category: Tests":
   - redbot/pytest/*
   - tests/**/*
 "Category: Trivia Cog":
+  # Source
   - redbot/cogs/trivia/*
+  # Docs
+  - docs/cog_guides/trivia.rst
 "Category: Trivia Lists":
   - redbot/cogs/trivia/data/lists/*
 "Category: Utility Functions":
+  # Source
   - redbot/core/utils/*
+  # Docs
+  - docs/framework_utils.rst
 "Category: Warnings":
   - redbot/cogs/warnings/*
