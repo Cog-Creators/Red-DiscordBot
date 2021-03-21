@@ -81,7 +81,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "dm": False,
             "show_mod": False,
         }
-        self.config.register_global(force_role_mutes=True, version="")
+        self.config.register_global(force_role_mutes=True, version=0)
         # Tbh I would rather force everyone to use role mutes.
         # I also honestly think everyone would agree they're the
         # way to go. If for whatever reason someone wants to
@@ -101,6 +101,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # this is a dict of guild ID's and asyncio.Events
         # to wait for a guild to finish channel unmutes before
         # checking for manual overwrites
+
+        self._init_task = self.bot.loop.create_task(self._initialize())
 
     async def red_delete_data_for_user(
         self,
@@ -123,7 +125,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if m_id == user_id:
                     await self.config.member_from_ids(g_id, m_id).clear()
 
-    async def initialize(self):
+    async def _initialize(self):
+        await self.bot.wait_until_red_ready()
         await self._maybe_update_config()
 
         guild_data = await self.config.all_guilds()
@@ -142,9 +145,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._ready.set()
 
     async def _maybe_update_config(self):
-        if not await self.config.version():
+        schema_version = await self.config.schema_version()
+
+        if schema_version == 0:
             start = datetime.now()
-            log.info("Config conversion to 1.0.0 started.")
+            log.info("Config conversion to schema_version 1 started.")
             all_channels = await self.config.all_channels()
             async for channel_id, channel_data in AsyncIter(all_channels.items()):
                 try:
@@ -159,15 +164,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 except (discord.NotFound, discord.Forbidden):
                     await self.config.channel_from_id(channel_id).clear()
 
-            await self.config.version.set("1.0.0")
+            schema_version += 1
+            await self.config.version.set(schema_version)
             log.info(
-                "Config conversion to 1.0.0 done. It took %s to proceed.", datetime.now() - start
+                "Config conversion to schema_version 1 done. It took %s to proceed.",
+                datetime.now() - start,
             )
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
 
     def cog_unload(self):
+        self._init_task.cancel()
         self._unmute_task.cancel()
         for task in self._unmute_tasks.values():
             task.cancel()
