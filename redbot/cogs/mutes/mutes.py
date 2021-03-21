@@ -12,7 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
-from redbot.core.utils import bounded_gather
+from redbot.core.utils import AsyncIter, bounded_gather
 from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
@@ -81,7 +81,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "dm": False,
             "show_mod": False,
         }
-        self.config.register_global(force_role_mutes=True)
+        self.config.register_global(force_role_mutes=True, version="")
         # Tbh I would rather force everyone to use role mutes.
         # I also honestly think everyone would agree they're the
         # way to go. If for whatever reason someone wants to
@@ -124,6 +124,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await self.config.member_from_ids(g_id, m_id).clear()
 
     async def initialize(self):
+        await self._maybe_update_config()
+
         guild_data = await self.config.all_guilds()
         for g_id, mutes in guild_data.items():
             self._server_mutes[g_id] = {}
@@ -138,6 +140,26 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 self._channel_mutes[c_id][int(user_id)] = mute
         self._unmute_task = asyncio.create_task(self._handle_automatic_unmute())
         self._ready.set()
+
+    async def _maybe_update_config(self):
+        if not await self.config.version():
+            start = datetime.now()
+            log.info("Config conversion to 1.0.0 started.")
+            all_channels = await self.config.all_channels()
+            async for channel_id, channel_data in AsyncIter(all_channels.items()):
+                try:
+                    if (channel := self.bot.get_channel(channel_id)) is None:
+                        channel = await self.bot.fetch_channel(channel_id)
+                    for user_id, mute_data in channel_data[channel_id]["muted_users"]:
+                        mute_data["guild"] = channel.guild.id
+                        await self.config.channel_from_id(channel_id).muted_users.set(mute_data)
+                except (discord.NotFound, discord.Forbidden):
+                    await self.config.channel_from_id(channel_id).clear()
+
+            await self.config.version.set("1.0.0")
+            log.info(
+                "Config conversion to 1.0.0 done. It took %s to proceed.", datetime.now() - start
+            )
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
@@ -282,38 +304,34 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """This is where the logic for handling channel unmutes is taken care of"""
         log.debug("Checking channel unmutes")
         multiple_mutes = {}
-        for c_id in self._channel_mutes:
-            channel = self.bot.get_channel(c_id)
-            if channel is None or await self.bot.cog_disabled_in_guild(self, channel.guild):
+        for c_id, c_data in self._channel_mutes.items():
+            guild = self.bot.get_guild(c_data["guild"])
+            if guild is None or await self.bot.cog_disabled_in_guild(guild):
                 continue
-            for u_id in self._channel_mutes[channel.id]:
+
+            for u_id in self._channel_mutes[c_id]:
                 if (
-                    not self._channel_mutes[channel.id][u_id]
-                    or not self._channel_mutes[channel.id][u_id]["until"]
+                    not self._channel_mutes[c_id][u_id]
+                    or not self._channel_mutes[c_id][u_id]["until"]
                 ):
                     continue
                 time_to_unmute = (
-                    self._channel_mutes[channel.id][u_id]["until"]
+                    self._channel_mutes[c_id][u_id]["until"]
                     - datetime.now(timezone.utc).timestamp()
                 )
                 if time_to_unmute < 60.0:
-                    if channel.guild.id not in multiple_mutes:
-                        multiple_mutes[channel.guild.id] = {}
-                    if u_id not in multiple_mutes[channel.guild.id]:
-                        multiple_mutes[channel.guild.id][u_id] = {
-                            channel.id: self._channel_mutes[channel.id][u_id]
-                        }
+                    if guild not in multiple_mutes:
+                        multiple_mutes[guild] = {}
+                    if u_id not in multiple_mutes[guild]:
+                        multiple_mutes[guild][u_id] = {c_id: self._channel_mutes[c_id][u_id]}
                     else:
-                        multiple_mutes[channel.guild.id][u_id][channel.id] = self._channel_mutes[
-                            channel.id
-                        ][u_id]
+                        multiple_mutes[guild][u_id][c_id] = self._channel_mutes[c_id][u_id]
 
-        for guild_id, users in multiple_mutes.items():
-            guild = self.bot.get_guild(guild_id)
+        for guild, users in multiple_mutes.items():
             await i18n.set_contextual_locales_from_guild(self.bot, guild)
             for user, channels in users.items():
                 if len(channels) > 1:
-                    task_name = f"server-unmute-channels-{guild_id}-{user}"
+                    task_name = f"server-unmute-channels-{guild.id}-{user}"
                     if task_name in self._unmute_tasks:
                         continue
                     log.debug(f"Creating task: {task_name}")
@@ -331,6 +349,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         self._unmute_tasks[task_name] = asyncio.create_task(
                             self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
                         )
+
+        del multiple_mutes
 
     async def _auto_channel_unmute_user_multi(
         self, member: discord.Member, guild: discord.Guild, channels: Dict[int, dict]
@@ -1641,6 +1661,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             }
         self._channel_mutes[channel.id][user.id] = {
             "author": author.id,
+            "guild": guild.id,
             "member": user.id,
             "until": until.timestamp() if until else None,
         }
