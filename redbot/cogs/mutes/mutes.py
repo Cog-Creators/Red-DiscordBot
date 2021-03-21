@@ -150,9 +150,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 try:
                     if (channel := self.bot.get_channel(channel_id)) is None:
                         channel = await self.bot.fetch_channel(channel_id)
-                    for user_id, mute_data in channel_data[channel_id]["muted_users"]:
+                    for user_id, mute_data in channel_data["muted_users"].items():
                         mute_data["guild"] = channel.guild.id
-                        await self.config.channel_from_id(channel_id).muted_users.set(mute_data)
+                        async with self.config.channel_from_id(
+                            channel_id
+                        ).muted_users() as muted_users:
+                            muted_users[str(user_id)] = mute_data
                 except (discord.NotFound, discord.Forbidden):
                     await self.config.channel_from_id(channel_id).clear()
 
@@ -305,15 +308,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         log.debug("Checking channel unmutes")
         multiple_mutes = {}
         for c_id, c_data in self._channel_mutes.items():
-            guild = self.bot.get_guild(c_data["guild"])
-            if guild is None or await self.bot.cog_disabled_in_guild(guild):
-                continue
-
             for u_id in self._channel_mutes[c_id]:
                 if (
                     not self._channel_mutes[c_id][u_id]
                     or not self._channel_mutes[c_id][u_id]["until"]
                 ):
+                    continue
+                guild = self.bot.get_guild(self._channel_mutes[c_id][u_id]["guild"])
+                if guild is None or await self.bot.cog_disabled_in_guild(guild):
                     continue
                 time_to_unmute = (
                     self._channel_mutes[c_id][u_id]["until"]
