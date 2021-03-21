@@ -73,15 +73,14 @@
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
+  # Source
   - redbot/cogs/mutes/*
+  # Docs
   - docs/cog_guides/mutes.rst
 "Category: Permissions":
   - redbot/cogs/permissions/*
 "Category: Reports Cog":
-  # Source
   - redbot/cogs/reports/*
-  # Docs
-  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   - redbot/core/rpc.py
 "Category: Streams":
