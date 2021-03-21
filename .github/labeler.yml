@@ -78,6 +78,7 @@
   - redbot/cogs/permissions/*
 "Category: Reports Cog":
   - redbot/cogs/reports/*
+  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   - redbot/core/rpc.py
 "Category: Streams":
