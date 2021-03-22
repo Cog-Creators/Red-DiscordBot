@@ -158,7 +158,7 @@ def init_events(bot, cli_flags):
                     )
                     extra_update += _(
                         "\nOnce you've started up your bot again, if you've installed some cogs "
-                        "we then highly recommend you update them with this command: "
+                        "we then highly recommend you update them with this command in Discord: "
                         "`[p]cog update`"
                     )
 
