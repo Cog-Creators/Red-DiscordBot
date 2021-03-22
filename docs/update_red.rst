@@ -53,6 +53,8 @@ If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 
 4. Start your bot.
 
+5. If you've installed some cogs, we highly recommend you update them with this command: ``[p]cog update``
+
 Linux & Mac
 -----------
 
@@ -85,6 +87,8 @@ If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
     If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
 
 4. Start your bot.
+
+5. If you've installed some cogs, we highly recommend you update them with this command: ``[p]cog update``
 
 Red 3.1.X
 *********
