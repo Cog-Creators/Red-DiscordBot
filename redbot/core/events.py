@@ -156,6 +156,11 @@ def init_events(bot, cli_flags):
                             python=sys.executable, package_extras=package_extras
                         )
                     )
+                    extra_update += _(
+                        "\nOnce you've started up your bot again, if you've installed some cogs "
+                        "we then highly recommend you update your cogs with this command: "
+                        "`[p]cog update`"
+                    )
 
                 else:
                     extra_update += _(
