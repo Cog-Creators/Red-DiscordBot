@@ -551,11 +551,13 @@ class RedBase(
         guild : Optional[discord.Guild]
             When used in conjunction with a provided value for ``who_id``, checks
             the lists for the corresponding guild as well.
+            This is ignored when ``who`` is passed.
         guild_id : Optional[int]
             When used in conjunction with a provided value for ``who_id``, checks
             the lists for the corresponding guild as well. This should not be used
             as it has unfixable bug that can cause it to raise an exception when
             the guild with the given ID couldn't have been found.
+            This is ignored when ``who`` is passed.
 
             .. deprecated-removed:: 3.4.8 30
                 Use ``guild`` parameter instead.
@@ -563,6 +565,7 @@ class RedBase(
         role_ids : Optional[List[int]]
             When used with both ``who_id`` and ``guild_id``, checks the role ids provided.
             This is required for accurate checking of members in a guild if providing ids.
+            This is ignored when ``who`` is passed.
 
         Raises
         ------
