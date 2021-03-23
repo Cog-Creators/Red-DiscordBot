@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import tarfile
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
@@ -46,6 +47,7 @@ __all__ = (
     "send_to_owners_with_prefix_replaced",
     "expected_version",
     "fetch_latest_red_version_info",
+    "deprecated_removed",
 )
 
 
@@ -317,3 +319,19 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+def deprecated_removed(
+    deprecation_target: str,
+    deprecation_version: str,
+    minimum_days: int,
+    message: str = "",
+    stacklevel: int = 1,
+) -> None:
+    warnings.warn(
+        f"{deprecation_target} is deprecated since version {deprecation_version}"
+        " and will be removed in the first minor version that gets released"
+        f" after {minimum_days} days since deprecation. {message}",
+        DeprecationWarning,
+        stacklevel=stacklevel + 1,
+    )
