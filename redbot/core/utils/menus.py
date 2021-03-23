@@ -19,6 +19,7 @@ async def menu(
     pages: Union[List[str], List[discord.Embed]],
     controls: dict,
     message: discord.Message = None,
+    user: discord.User = None,
     page: int = 0,
     timeout: float = 30.0,
 ):
@@ -46,6 +47,8 @@ async def menu(
     message: discord.Message
         The message representing the menu. Usually :code:`None` when first opening
         the menu
+    user: discord.User
+        The user allowed to interact with the menu. Defaults to ctx.author
     page: int
         The current page number of the menu
     timeout: float
@@ -90,7 +93,9 @@ async def menu(
     try:
         react, user = await ctx.bot.wait_for(
             "reaction_add",
-            check=ReactionPredicate.with_emojis(tuple(controls.keys()), message, ctx.author),
+            check=ReactionPredicate.with_emojis(
+                tuple(controls.keys()), message, user or ctx.author
+            ),
             timeout=timeout,
         )
     except asyncio.TimeoutError:
