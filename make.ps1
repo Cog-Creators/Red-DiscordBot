@@ -46,10 +46,12 @@ function reformat() {
 
 function stylecheck() {
     & $script:venvPython -m black --check $PSScriptRoot
+    Exit $LASTEXITCODE
 }
 
 function stylediff() {
     & $script:venvPython -m black --check --diff $PSScriptRoot
+    Exit $LASTEXITCODE
 }
 
 function newenv() {
