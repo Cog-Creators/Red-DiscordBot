@@ -323,7 +323,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 ):
                     continue
                 guild = self.bot.get_guild(self._channel_mutes[c_id][u_id]["guild"])
-                if guild is None or await self.bot.cog_disabled_in_guild(guild):
+                if guild is None or await self.bot.cog_disabled_in_guild(self, guild):
                     continue
                 time_to_unmute = (
                     self._channel_mutes[c_id][u_id]["until"]
