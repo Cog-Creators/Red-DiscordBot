@@ -21,7 +21,7 @@ You can add additional Red based arguments after the instance name, such as :cod
 
 .. prompt:: bash
 
-    pm2 start "<path> -O -m redbot <instance_name> --no-prompt" --name "<app_name>"
+    pm2 start "<path>" --name "<app_name>" -- -O -m redbot <instance_name> --no-prompt
 
 **Arguments to replace**
 
