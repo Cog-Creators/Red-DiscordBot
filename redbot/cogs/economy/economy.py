@@ -100,22 +100,30 @@ def guild_only_check():
 class SetParser:
     def __init__(self, argument):
         allowed = ("+", "-")
-        if argument.isdigit():
+        try:
             self.sum = int(argument)
+        except ValueError:
+            raise commands.BadArgument(
+                _(
+                    "Invalid value, the argument must be an integer,"
+                    " optionally preceded with a `+` or `-` sign."
+                )
+            )
         if argument and argument[0] in allowed:
             if self.sum < 0:
                 self.operation = "withdraw"
             elif self.sum > 0:
                 self.operation = "deposit"
             else:
-                raise RuntimeError
+                raise commands.BadArgument(
+                    _(
+                        "Invalid value, the amount of currency to increase or decrease"
+                        " must be an integer different from zero."
+                    )
+                )
             self.sum = abs(self.sum)
-        elif argument.isdigit():
-            self.operation = "set"
-        elif not argument.isdigit():
-            self.operation = "error"
         else:
-            raise RuntimeError
+            self.operation = "set"
 
 
 @cog_i18n(_)
@@ -269,7 +277,7 @@ class Economy(commands.Cog):
                     currency=currency,
                     user=to.display_name,
                 )
-            elif creds.operation == "set":
+            else:
                 await bank.set_balance(to, creds.sum)
                 msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
                     author=author.display_name,
@@ -277,8 +285,6 @@ class Economy(commands.Cog):
                     currency=currency,
                     user=to.display_name,
                 )
-            elif creds.operation == "error":
-                msg = "Can't see bank balance to a non-integer value . Try using a valid argument , for example: `+100` , `-100` , or `100` ."
         except (ValueError, errors.BalanceTooHigh) as e:
             await ctx.send(str(e))
         else:
