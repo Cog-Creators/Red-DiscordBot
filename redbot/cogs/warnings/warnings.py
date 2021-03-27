@@ -488,7 +488,7 @@ class Warnings(commands.Cog):
                     await ctx.tick()
                 else:
                     await ctx.send(
-                        _("{member} has been warned.").format(member=umemberser.mention), embed=em
+                        _("{member} has been warned.").format(member=member.mention), embed=em
                     )
         else:
             if not dm_failed:
