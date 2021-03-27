@@ -23,13 +23,13 @@
 **Welcome!** First off, thank you for contributing to the further development of Red. We're always looking for new ways to improve our project and we appreciate any help you can give us.
 
 ### 1.1 Why do these guidelines exist?
-Red is an open source project. This means that each and every one of the developers and contributors who have helped make Red what it is today have done so by volunteering their time and effort. It takes a lot of time to coordinate and organize issues and new features and to review and test pull requests. By following these guidelines you will help the developers streamline the contribution process and save them time. In doing so we hope to get back to each and every issue and pull request in a timely manner.
+Red is an open-source project. This means that each and every one of the developers and contributors who have helped make Red what it is today have done so by volunteering their time and effort. It takes a lot of time to coordinate and organize issues and new features and to review and test pull requests. By following these guidelines you will help the developers streamline the contribution process and save them time. In doing so we hope to get back to each and every issue and pull request in a timely manner.
 
 ### 1.2 What kinds of contributions are we looking for?
-We love receiving contributions from our community. Any assistance you can provide with regards to bug fixes, feature enhancements, and documentation is more than welcome.
+We love receiving contributions from our community. Any assistance you can provide with regard to bug fixes, feature enhancements, and documentation is more than welcome.
 
 # 2. Ground Rules
-1. Ensure cross compatibility for Windows, Mac OS and Linux.
+1. Ensure cross-compatibility for Windows, Mac OS, and Linux.
 2. Ensure all Python features used in contributions exist and work in Python 3.8.1 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
@@ -40,18 +40,18 @@ We love receiving contributions from our community. Any assistance you can provi
 Unsure of how to get started contributing to Red? Please take a look at the Issues section of this repo and sort by the following labels:
 
 * beginner - issues that can normally be fixed in just a few lines of code and maybe a test or two.
-* help-wanted - issues that are currently unassigned to anyone and may be a bit more involved/complex than issues tagged with beginner.
+* help-wanted - issues that are currently unassigned to anyone and maybe a bit more involved/complex than issues tagged with beginner.
 
 **Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
 
-At this point you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
+At this point, you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
 
 # 4. Getting Started
 
 Red's repository is configured to follow a particular development workflow, using various reputable tools. We kindly ask that you stick to this workflow when contributing to Red, by following the guides below. This will help you to easily produce quality code, identify errors early, and streamline the code review process.
 
 ### 4.1 Setting up your development environment
-The following requirements must be installed prior to setting up:
+The following requirements must be installed before setting up:
  - Python 3.8.1 or greater
  - git
  - pip
@@ -63,7 +63,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
     ```bash
     make newenv
     ```
-    Red, its dependencies, and all required development tools, are now installed to a virtual environment located in the `.venv` subdirectory. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
+    Red, its dependencies, and all required development tools are now installed to a virtual environment located in the `.venv` subdirectory. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
 3. Activate the new virtual environment with one of the following commands:
     - Posix:
         ```bash
@@ -78,7 +78,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
 **Note:** If you're comfortable with setting up virtual environments yourself and would rather do it manually, just run `pip install -Ur tools/dev-requirements.txt` after setting it up.
 
 ### 4.2 Testing
-We're using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
+We're using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed in your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
 - Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.8 (test environment `py38`)
@@ -108,7 +108,7 @@ The other make recipes are most likely for project maintainers rather than contr
 You can specify the Python executable used in the make recipes with the `PYTHON` environment variable, e.g. `make PYTHON=/usr/bin/python3.8 newenv`.
 
 ### 4.5 Keeping your dependencies up to date
-Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them to a clean new virtual environment.
+Whenever you pull from upstream (V3/develop on the main repository) and you notice either of the files `setup.cfg` or `tools/dev-requirements.txt` have been changed, it can often mean some package dependencies have been updated, added, or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `make syncenv`. You could also simply do `make newenv` to install them in a clean new virtual environment.
 
 ### 4.6 To contribute changes
 
@@ -134,10 +134,10 @@ If you find yourself wanting a feature that Red does not already have, you're pr
 
 We have a core team working tirelessly to implement new features and fix bugs for the Red community. This core team looks at and evaluates new issues and PRs on a daily basis.
 
-The decisions we make are based on a simple majority of that team or by decree of the project owner.
+The decisions we make are based on a simple majority of that team or by the decree of the project owner.
 
 ### 5.1 Issues
-Any new issues will be looked at and evaluated for validity of a bug or for the usefulness of a suggested feature. If we have questions about your issue we will get back as soon as we can (usually in a day or two) and will try to make a decision within a week.
+Any new issues will be looked at and evaluated for the validity of a bug or the usefulness of a suggested feature. If we have questions about your issue we will get back as soon as we can (usually in a day or two) and will try to decide within a week.
 
 ### 5.2 Pull Requests
 Pull requests are evaluated by their quality and how effectively they solve their corresponding issue. The process for reviewing pull requests is as follows:
@@ -153,7 +153,7 @@ Pull requests are evaluated by their quality and how effectively they solve thei
 ### 5.3 Differences between "new features" and "improvements"
 The difference between a new feature and improvement can be quite fuzzy and the project owner reserves all rights to decide under which category your PR falls.
 
-At a very basic level a PR is a new feature if it changes the intended way any part of the Red project currently works or if it modifies the user experience (UX) in any significant way. Otherwise, it is likely to be considered an improvement.
+At a very basic level, a PR is a new feature if it changes the intended way any part of the Red project currently works or if it modifies the user experience (UX) in any significant way. Otherwise, it is likely to be considered an improvement.
 
 # 6. Community
 You can chat with the core team and other community members about issues or pull requests in the #coding channel of the Red support server located [here](https://discord.gg/red).
