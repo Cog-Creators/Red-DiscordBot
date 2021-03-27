@@ -23,5 +23,6 @@
       "type": "string",
       "description": "A short description of the cog or repo. For cogs, this info is displayed when a user executes [p]cog list"
     }
-  }
+  },
+  "additionalProperties": false
 }
