@@ -165,3 +165,4 @@
   - docs/framework_utils.rst
 "Category: Warnings":
   - redbot/cogs/warnings/*
+  - docs/cog_guides/warnings.rst
