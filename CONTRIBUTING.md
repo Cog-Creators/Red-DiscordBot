@@ -23,13 +23,13 @@
 **Welcome!** First off, thank you for contributing to the further development of Red. We're always looking for new ways to improve our project and we appreciate any help you can give us.
 
 ### 1.1 Why do these guidelines exist?
-Red is an open-source project. This means that each and every one of the developers and contributors who have helped make Red what it is today have done so by volunteering their time and effort. It takes a lot of time to coordinate and organize issues and new features and to review and test pull requests. By following these guidelines you will help the developers streamline the contribution process and save them time. In doing so we hope to get back to each and every issue and pull request in a timely manner.
+Red is an open source project. This means that each and every one of the developers and contributors who have helped make Red what it is today have done so by volunteering their time and effort. It takes a lot of time to coordinate and organize issues and new features and to review and test pull requests. By following these guidelines you will help the developers streamline the contribution process and save them time. In doing so we hope to get back to each and every issue and pull request in a timely manner.
 
 ### 1.2 What kinds of contributions are we looking for?
-We love receiving contributions from our community. Any assistance you can provide with regard to bug fixes, feature enhancements, and documentation is more than welcome.
+We love receiving contributions from our community. Any assistance you can provide with regards to bug fixes, feature enhancements, and documentation is more than welcome.
 
 # 2. Ground Rules
-1. Ensure cross-compatibility for Windows, Mac OS, and Linux.
+1. Ensure cross-compatibility for Windows, Mac OS and Linux.
 2. Ensure all Python features used in contributions exist and work in Python 3.8.1 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
@@ -51,7 +51,7 @@ At this point, you're ready to start making changes. Feel free to ask for help; 
 Red's repository is configured to follow a particular development workflow, using various reputable tools. We kindly ask that you stick to this workflow when contributing to Red, by following the guides below. This will help you to easily produce quality code, identify errors early, and streamline the code review process.
 
 ### 4.1 Setting up your development environment
-The following requirements must be installed before setting up:
+The following requirements must be installed prior to setting up:
  - Python 3.8.1 or greater
  - git
  - pip
