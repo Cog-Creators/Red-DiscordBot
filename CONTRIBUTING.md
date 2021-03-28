@@ -137,7 +137,7 @@ We have a core team working tirelessly to implement new features and fix bugs fo
 The decisions we make are based on a simple majority of that team or by the decree of the project owner.
 
 ### 5.1 Issues
-Any new issues will be looked at and evaluated for the validity of a bug or the usefulness of a suggested feature. If we have questions about your issue we will get back as soon as we can (usually in a day or two) and will try to decide within a week.
+Any new issues will be looked at and evaluated for the validity of a bug or for the usefulness of a suggested feature. If we have questions about your issue we will get back as soon as we can (usually in a day or two) and will try to decide within a week.
 
 ### 5.2 Pull Requests
 Pull requests are evaluated by their quality and how effectively they solve their corresponding issue. The process for reviewing pull requests is as follows:
