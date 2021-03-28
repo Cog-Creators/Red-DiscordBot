@@ -167,7 +167,12 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
     return "||{}||".format(text)
 
 
-def shorten_string(text: str, length: int, suffix: str = '...', escape_formatting: bool = True) -> str:
+def shorten_string(
+    text: str,
+    length: int,
+    suffix: str = "\N{HORIZONTAL ELLIPSIS}",
+    escape_formatting: bool = True,
+) -> str:
     """Returns the given text as a shortened string.
 
     Note: By default, this function will escape ``text`` prior to making the text a spoiler.
@@ -191,7 +196,7 @@ def shorten_string(text: str, length: int, suffix: str = '...', escape_formattin
     """
     text = next(pagify(escape(text, formatting=escape_formatting)))
     if suffix is None:
-        suffix = ''
+        suffix = ""
     if len(text) > length:
         return text[:length].strip() + suffix
     return text
