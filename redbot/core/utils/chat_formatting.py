@@ -194,6 +194,8 @@ def shorten_string(
         The shortened text.
 
     """
+    if not text:
+        return text
     text = next(pagify(escape(text, formatting=escape_formatting)))
     if suffix is None:
         suffix = ""
