@@ -1587,7 +1587,7 @@ class Downloader(commands.Cog):
                         )
                     )
                 else:
-                    message += _("End user data statements for {cog} have been changed.").format(
+                    message += _("End user data statement for {cog} has been changed.").format(
                         cog=tuple(cogs_with_changed_eud_statement)[0]
                     ) + _("\nYou can use {command} to see the updated statement.\n").format(
                         command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
