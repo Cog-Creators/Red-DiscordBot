@@ -614,7 +614,7 @@ class Downloader(commands.Cog):
         repos = self._repo_manager.repos
         sorted_repos = sorted(repos, key=lambda r: str.lower(r.name))
         if len(repos) == 0:
-            joined = _("There is no repo installed.")
+            joined = _("There are no repos installed.")
         else:
             if len(repos) > 1:
                 joined = _("Installed Repos:\n\n")
