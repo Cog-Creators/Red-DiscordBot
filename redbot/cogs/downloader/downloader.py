@@ -934,8 +934,10 @@ class Downloader(commands.Cog):
                         + _(
                             "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
                             "You may need to remove those files manually if the cogs are still usable."
-                            " If so, ensure the cogs have been unloaded with `{prefix}unload {cogs}`."
-                        ).format(prefix=ctx.clean_prefix, cogs=" ".join(failed_cogs))
+                            " If so, ensure the cogs have been unloaded with {command}."
+                        ).format(
+                            command=inline(f"{ctx.clean_prefix}unload {' '.join(failed_cogs)}")
+                        )
                     )
                 else:
                     message += _(
