@@ -945,7 +945,7 @@ class Downloader(commands.Cog):
                         " but it wasn't able to find his files."
                     ).format(cog=inline(failed_cogs[0])) + _(
                         "\nIt was most likely removed without using `{prefix}cog uninstall`.\n"
-                        "You may need to remove those files manually if the cog are still usable."
+                        "You may need to remove those files manually if the cog is still usable."
                         " If so, ensure the cog has been unloaded with {command}."
                     ).format(command=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}"))
                     )
