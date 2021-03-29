@@ -40,6 +40,11 @@ Operating systems
 Arch Linux
 ~~~~~~~~~~
 
+.. warning::
+
+    Latest Python packages for Arch Linux provide Python 3.9 which Red does not currently support.
+    To use Red on Arch Linux, you will need to install latest version of Python 3.8 on your own.
+
 .. code-block:: none
 
     sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel nano
@@ -209,7 +214,7 @@ with zypper:
 
 .. code-block:: none
 
-    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless nano
+    sudo zypper -n install python38-base python38-pip git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
