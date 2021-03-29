@@ -947,7 +947,8 @@ class Downloader(commands.Cog):
                         "\nIt was most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cog is still usable."
                         " If so, ensure the cog has been unloaded with {command}."
-                    ).format(command=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}")
+                    ).format(
+                        command=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}")
                     )
         await self.send_pagified(ctx, message)
 
@@ -1270,11 +1271,7 @@ class Downloader(commands.Cog):
         - `<repo>` The repo to list cogs from.
         """
         all_installed_cogs = await self.installed_cogs()
-        installed_cogs_in_repo = [
-            cog
-            for cog in all_installed_cogs
-            if cog.repo_name == repo.name
-        ]
+        installed_cogs_in_repo = [cog for cog in all_installed_cogs if cog.repo_name == repo.name]
         installed_str = "\n".join(
             "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
             for i in installed_cogs_in_repo
@@ -1283,19 +1280,14 @@ class Downloader(commands.Cog):
         if not installed_str:
             installed_str = _("No cogs installed.")
         elif len(installed_cogs_in_repo) > 1:
-            installed_str = (
-                _("Installed Cogs:\n{text}").format(text=installed_str)
-            )
+            installed_str = _("Installed Cogs:\n{text}").format(text=installed_str)
         else:
-            installed_str = (
-                _("Installed Cog:\n{text}").format(text=installed_str)
-            )
+            installed_str = _("Installed Cog:\n{text}").format(text=installed_str)
         available_str = "\n".join(
             "+ {}{}".format(cog.name, ": {}".format(cog.short) if cog.short else "")
             for cog in repo.available_cogs
             if not (cog.hidden or cog in installed_cogs_in_repo)
         )
-
 
         available_cogs = sum(
             not cog.hidden and cog not in installed_cogs_in_repo for cog in repo.available_cogs
@@ -1304,13 +1296,9 @@ class Downloader(commands.Cog):
         if not available_str:
             cogs = _("No cogs available.")
         elif available_cogs > 1:
-            cogs = (
-                _("Available Cogs:\n{text}").format(text=available_str)
-            )
+            cogs = _("Available Cogs:\n{text}").format(text=available_str)
         else:
-            cogs = (
-                _("Available Cog:\n{text}").format(text=available_str)
-            )
+            cogs = _("Available Cog:\n{text}").format(text=available_str)
         cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
