@@ -1497,7 +1497,7 @@ class Downloader(commands.Cog):
                 ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
             else:
                 message += _(
-                    "{cog} require different Red version than you currently "
+                    "{cog} requires different Red version than you currently "
                     "have ({current_version})"
                 ).format(cog=outdated_bot_version, current_version=red_version_info)
 
