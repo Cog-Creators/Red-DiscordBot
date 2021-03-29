@@ -4,6 +4,12 @@ PYTHON ?= python3.8
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+ifneq ($(wildcard $(ROOT_DIR)/.venv/.),)
+	VENV_PYTHON = $(ROOT_DIR)/.venv/bin/python
+else
+	VENV_PYTHON = $(PYTHON)
+endif
+
 define HELP_BODY
 Usage:
   make <command>
@@ -25,11 +31,11 @@ export HELP_BODY
 
 # Python Code Style
 reformat:
-	$(PYTHON) -m black $(ROOT_DIR)
+	$(VENV_PYTHON) -m black $(ROOT_DIR)
 stylecheck:
-	$(PYTHON) -m black --check $(ROOT_DIR)
+	$(VENV_PYTHON) -m black --check $(ROOT_DIR)
 stylediff:
-	$(PYTHON) -m black --check --diff $(ROOT_DIR)
+	$(VENV_PYTHON) -m black --check --diff $(ROOT_DIR)
 
 # Translations
 gettext:

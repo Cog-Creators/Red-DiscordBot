@@ -21,6 +21,13 @@ _REVEAL_MESSAGES = (
     _("Easy: {answer}."),
     _("Oh really? It's {answer} of course."),
 )
+
+SPOILER_REVEAL_MESSAGES = (
+    _("I know this one! ||{answer}!||"),
+    _("Easy: ||{answer}.||"),
+    _("Oh really? It's ||{answer}|| of course."),
+)
+
 _FAIL_MESSAGES = (
     _("To the next one I guess..."),
     _("Moving on..."),
@@ -204,7 +211,10 @@ class TriviaSession:
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
-                reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
+                if self.settings["use_spoilers"]:
+                    reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)).format(answer=answers[0])
+                else:
+                    reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
             else:
                 reply = T_(random.choice(_FAIL_MESSAGES))
             if self.settings["bot_plays"]:

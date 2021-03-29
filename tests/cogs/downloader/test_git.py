@@ -5,6 +5,7 @@ import pytest
 
 from redbot.cogs.downloader.repo_manager import ProcessFormatter, Repo
 from redbot.pytest.downloader import (
+    GIT_VERSION,
     cloned_git_repo,
     git_repo,
     git_repo_with_remote,
@@ -314,8 +315,57 @@ async def test_git_get_full_sha1_from_invalid_ref(git_repo):
     assert p.stderr.decode().strip() == "fatal: Needed a single revision"
 
 
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 31), reason="This is test for output from Git 2.31 and newer."
+)
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
+    # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="95da0b57"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID 95da0b57 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   95da0b576 commit 2019-10-22 - Ambiguous commit 16955\n"
+        "hint:   95da0b57a commit 2019-10-22 - Ambiguous commit 44414\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 31), reason="This is test for output from Git 2.31 and newer."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID c6f0 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   c6f028f tag ambiguous_tag_66387\n"
+        "hint:   c6f0e5e commit 2019-10-24 - Commit ambiguous with tag.\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 31), reason="This is test for output from Git older than 2.31."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_commits_pre_2_31(git_repo):
     # 2 ambiguous refs:
     # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
     # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
@@ -334,8 +384,11 @@ async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
     )
 
 
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 31), reason="This is test for output from Git older than 2.31."
+)
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit_pre_2_31(git_repo):
     # 2 ambiguous refs:
     # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
     # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
