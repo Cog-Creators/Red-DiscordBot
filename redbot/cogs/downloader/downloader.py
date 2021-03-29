@@ -1486,7 +1486,7 @@ class Downloader(commands.Cog):
                     "\nThese cogs require higher python version than you have: "
                 ) + humanize_list(outdated_python_version)
             else:
-                message += _("{cog} require higher python version than you have.").format(
+                message += _("{cog} requires higher python version than you have.").format(
                     outdated_python_version[0]
                 )
         if outdated_bot_version:
