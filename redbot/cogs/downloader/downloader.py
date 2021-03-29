@@ -946,9 +946,8 @@ class Downloader(commands.Cog):
                     ).format(cog=inline(failed_cogs[0])) + _(
                         "\nIt was most likely removed without using `{prefix}cog uninstall`.\n"
                         "You may need to remove those files manually if the cog are still usable."
-                        " If so, ensure the cog have been unloaded with `{prefix}unload {cog}`."
-                    ).format(
-                        prefix=ctx.clean_prefix, cog=failed_cogs[0]
+                        " If so, ensure the cog has been unloaded with {command}."
+                    ).format(command=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}"))
                     )
         await self.send_pagified(ctx, message)
 
