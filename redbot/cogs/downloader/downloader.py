@@ -922,7 +922,7 @@ class Downloader(commands.Cog):
                         uninstalled_cogs
                     )
                 else:
-                    message += _("Successfully uninstalled cog ") + uninstalled_cogs[0]
+                    message += _("Successfully uninstalled the cog: ") + uninstalled_cogs[0]
             if failed_cogs:
                 if len(failed_cogs) > 1:
                     message += (
