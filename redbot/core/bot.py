@@ -75,6 +75,10 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
+class _NoOwnerSet(RuntimeError):
+    """Raised when there is no owner set for the instance that is trying to start."""
+
+
 # Order of inheritance here matters.
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
@@ -221,8 +225,8 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info in `is_owner()`
-        self._app_owners_fetched = False
+        # to prevent multiple calls to app info during startup
+        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -1193,13 +1197,32 @@ class RedBase(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
+    async def _fetch_owners(self) -> None:
+        app_info = await self.application_info()
+
+        if app_info.team:
+            if self._use_team_features:
+                self.owner_ids.update(m.id for m in app_info.team.members)
+        elif self._owner_id_overwrite is None:
+            self.owner_ids.add(app_info.owner.id)
+
+        self._app_info = app_info
+
+    async def _pre_fetch_owners(self) -> None:
+        await self._fetch_owners()
+
+        if not self.owner_ids:
+            raise _NoOwnerSet("Bot doesn't have any owner set!")
+
     async def start(self, *args, **kwargs):
         """
         Overridden start which ensures cog load and other pre-connection tasks are handled
         """
         cli_flags = kwargs.pop("cli_flags")
         await self.pre_flight(cli_flags=cli_flags)
-        return await super().start(*args, **kwargs)
+        await self.login(*args)
+        await self._pre_fetch_owners()
+        await self.connect()
 
     async def send_help_for(
         self,
@@ -1286,21 +1309,11 @@ class RedBase(
         if user.id in self.owner_ids:
             return True
 
-        ret = False
-        if not self._app_owners_fetched:
-            app = await self.application_info()
-            if app.team:
-                if self._use_team_features:
-                    ids = {m.id for m in app.team.members}
-                    self.owner_ids.update(ids)
-                    ret = user.id in ids
-            elif self._owner_id_overwrite is None:
-                owner_id = app.owner.id
-                self.owner_ids.add(owner_id)
-                ret = user.id == owner_id
-            self._app_owners_fetched = True
+        if self._app_info is None:
+            await self._fetch_owners()
+            return user.id in self.owner_ids
 
-        return ret
+        return False
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
