@@ -221,7 +221,7 @@ def init_events(bot, cli_flags):
                 return
 
             if ctx.cog:
-                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                if ctx.cog.has_error_handler():
                     return
         if not isinstance(error, commands.CommandNotFound):
             asyncio.create_task(bot._delete_delay(ctx))
