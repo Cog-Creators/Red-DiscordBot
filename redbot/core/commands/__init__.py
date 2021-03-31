@@ -103,6 +103,7 @@ from discord.ext.commands import (
     ExtensionError as ExtensionError,
     Cooldown as Cooldown,
     CheckFailure as CheckFailure,
+    PartialMessageConverter as PartialMessageConverter,
     MessageConverter as MessageConverter,
     MissingPermissions as MissingPermissions,
     BadUnionArgument as BadUnionArgument,
