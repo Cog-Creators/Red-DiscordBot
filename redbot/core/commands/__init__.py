@@ -21,7 +21,6 @@ from .commands import (
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
 from .converter import (
     DictConverter as DictConverter,
-    GuildConverter as GuildConverter,
     TimedeltaConverter as TimedeltaConverter,
     get_dict_converter as get_dict_converter,
     get_timedelta_converter as get_timedelta_converter,
@@ -84,6 +83,7 @@ from ._dpy_reimplements import (
 from discord.ext.commands import (
     BadArgument as BadArgument,
     EmojiConverter as EmojiConverter,
+    GuildConverter as GuildConverter,
     InvalidEndOfQuotedStringError as InvalidEndOfQuotedStringError,
     MemberConverter as MemberConverter,
     BotMissingRole as BotMissingRole,
@@ -147,6 +147,7 @@ from discord.ext.commands import (
     MaxConcurrencyReached as MaxConcurrencyReached,
     bot_has_guild_permissions as bot_has_guild_permissions,
     CommandRegistrationError as CommandRegistrationError,
+    GuildNotFound as GuildNotFound,
     MessageNotFound as MessageNotFound,
     MemberNotFound as MemberNotFound,
     UserNotFound as UserNotFound,
