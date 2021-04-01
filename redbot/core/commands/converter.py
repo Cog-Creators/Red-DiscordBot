@@ -46,7 +46,7 @@ __all__ = [
 
 _ = Translator("commands.converter", __file__)
 
-ID_REGEX = re.compile(r"([0-9]{15,21})")
+ID_REGEX = re.compile(r"([0-9]{15,20})")
 
 
 # Taken with permission from
