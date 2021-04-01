@@ -151,21 +151,18 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             start = datetime.now()
             log.info("Config conversion to schema_version 1 started.")
             all_channels = await self.config.all_channels()
-            async for channel_id, channel_data in AsyncIter(all_channels.items()):
+            async for channel_id in AsyncIter(all_channels.keys()):
                 try:
                     if (channel := self.bot.get_channel(channel_id)) is None:
                         channel = await self.bot.fetch_channel(channel_id)
-                    for user_id, mute_data in channel_data["muted_users"].items():
-                        mute_data["guild"] = channel.guild.id
-                        async with self.config.channel_from_id(
-                            channel_id
-                        ).muted_users() as muted_users:
-                            muted_users[str(user_id)] = mute_data
+                    async with self.config.channel_from_id(channel_id) as muted_users:
+                        for user_id, mute_data in muted_users.items():
+                            mute_data["guild"] = channel.guild.id
                 except (discord.NotFound, discord.Forbidden):
                     await self.config.channel_from_id(channel_id).clear()
 
             schema_version += 1
-            await self.config.version.set(schema_version)
+            await self.config.schema_version.set(schema_version)
             log.info(
                 "Config conversion to schema_version 1 done. It took %s to proceed.",
                 datetime.now() - start,
