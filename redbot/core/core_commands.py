@@ -2838,8 +2838,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Users on the allowlist:")
         else:
             msg = _("User on the allowlist:")
-        for user in curr_list:
-            msg += "\n\t- {}".format(user)
+        for user_id in curr_list:
+            user = self.bot.get_user(user_id)
+            if not user:
+                user = _("Unknown or Deleted User")
+            msg += f"\n\t- {user_id} ({user})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -2907,8 +2910,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Users on the blocklist:")
         else:
             msg = _("User on the blocklist:")
-        for user in curr_list:
-            msg += "\n\t- {}".format(user)
+        for user_id in curr_list:
+            user = self.bot.get_user(user_id)
+            if not user:
+                user = _("Unknown or Deleted User")
+            msg += f"\n\t- {user_id} ({user})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -2984,8 +2990,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Allowed users and/or roles:")
         else:
             msg = _("Allowed user or role:")
-        for obj in curr_list:
-            msg += "\n\t- {}".format(obj)
+        for obj_id in curr_list:
+            user_or_role = self.bot.get_user(obj_id) or ctx.guild.get_role(obj_id)
+            if not user_or_role:
+                user_or_role = _("Unknown or Deleted User/Role")
+            msg += f"\n\t- {obj_id} ({user_or_role})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3075,8 +3084,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Blocked users and/or roles:")
         else:
             msg = _("Blocked user or role:")
-        for obj in curr_list:
-            msg += "\n\t- {}".format(obj)
+        for obj_id in curr_list:
+            user_or_role = self.bot.get_user(obj_id) or ctx.guild.get_role(obj_id)
+            if not user_or_role:
+                user_or_role = _("Unknown or Deleted User/Role")
+            msg += f"\n\t- {obj_id} ({user_or_role})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
