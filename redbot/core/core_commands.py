@@ -2975,10 +2975,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             msg = _("Allowed user or role:")
         for obj in curr_list:
-            get_user = self.bot.get_user(obj)
-            if not get_user:
-                get_user = _("Unknown or Deleted User")
-            msg += "\n\t- {} ({})".format(obj, get_user)
+            get_user_or_role = self.bot.get_user(obj) or ctx.guild.get_role(obj)
+            if not get_user_or_role:
+                get_user_or_role = _("Unknown or Deleted User")
+            msg += "\n\t- {} ({})".format(obj, get_user_or_role)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3069,10 +3069,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             msg = _("Blocked user or role:")
         for obj in curr_list:
-            get_user = self.bot.get_user(obj)
-            if not get_user:
-                get_user = _("Unknown or Deleted User")
-            msg += "\n\t- {} ({})".format(obj, get_user)
+            get_user_or_role = self.bot.get_user(obj) or ctx.guild.get_role(obj)
+            if not get_user_or_role:
+                get_user_or_role = _("Unknown or Deleted User")
+            msg += "\n\t- {} ({})".format(obj, get_user_or_role)
 
         for page in pagify(msg):
             await ctx.send(box(page))
