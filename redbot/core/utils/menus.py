@@ -19,9 +19,9 @@ async def menu(
     pages: Union[List[str], List[discord.Embed]],
     controls: dict,
     message: discord.Message = None,
-    user: discord.User = None,
     page: int = 0,
     timeout: float = 30.0,
+    user: discord.User = None,
 ):
     """
     An emoji-based menu
@@ -47,12 +47,12 @@ async def menu(
     message: discord.Message
         The message representing the menu. Usually :code:`None` when first opening
         the menu
-    user: discord.User
-        The user allowed to interact with the menu. Defaults to ctx.author
     page: int
         The current page number of the menu
     timeout: float
         The time (in seconds) to wait for a reaction
+    user: discord.User
+        The user allowed to interact with the menu. Defaults to ctx.author
 
     Raises
     ------
@@ -118,7 +118,7 @@ async def menu(
             return
     else:
         return await controls[react.emoji](
-            ctx, pages, controls, message, page, timeout, react.emoji
+            ctx, pages, controls, message, page, timeout, user, react.emoji
         )
 
 
@@ -129,6 +129,7 @@ async def next_page(
     message: discord.Message,
     page: int,
     timeout: float,
+    user: discord.User,
     emoji: str,
 ):
     perms = message.channel.permissions_for(ctx.me)
@@ -139,7 +140,7 @@ async def next_page(
         page = 0  # Loop around to the first item
     else:
         page = page + 1
-    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
+    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout, user=user)
 
 
 async def prev_page(
@@ -149,6 +150,7 @@ async def prev_page(
     message: discord.Message,
     page: int,
     timeout: float,
+    user: discord.User,
     emoji: str,
 ):
     perms = message.channel.permissions_for(ctx.me)
@@ -159,7 +161,7 @@ async def prev_page(
         page = len(pages) - 1  # Loop around to the last item
     else:
         page = page - 1
-    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
+    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout, user=user)
 
 
 async def close_menu(
@@ -169,6 +171,7 @@ async def close_menu(
     message: discord.Message,
     page: int,
     timeout: float,
+    user: discord.User,
     emoji: str,
 ):
     with contextlib.suppress(discord.NotFound):
