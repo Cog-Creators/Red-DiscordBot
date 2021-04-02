@@ -2977,7 +2977,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for obj in curr_list:
             get_user_or_role = self.bot.get_user(obj) or ctx.guild.get_role(obj)
             if not get_user_or_role:
-                get_user_or_role = _("Unknown or Deleted User")
+                get_user_or_role = _("Unknown or Deleted User/Role")
             msg += "\n\t- {} ({})".format(obj, get_user_or_role)
 
         for page in pagify(msg):
@@ -3071,7 +3071,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for obj in curr_list:
             get_user_or_role = self.bot.get_user(obj) or ctx.guild.get_role(obj)
             if not get_user_or_role:
-                get_user_or_role = _("Unknown or Deleted User")
+                get_user_or_role = _("Unknown or Deleted User/Role")
             msg += "\n\t- {} ({})".format(obj, get_user_or_role)
 
         for page in pagify(msg):
