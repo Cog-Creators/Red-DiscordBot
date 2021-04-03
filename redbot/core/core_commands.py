@@ -2074,7 +2074,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es)."""
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
-        await ctx.send(_("Prefix set."))
+        if len(prefixes) == 1:
+            await ctx.send(_("Prefix set."))
+        else:
+            await ctx.send(_("Prefixes set."))
 
     @_set.command(aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
@@ -2083,11 +2086,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Sets [botname]'s server prefix(es)."""
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
-            await ctx.send(_("Guild prefixes have been reset."))
+            await ctx.send(_("Server prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
-        await ctx.send(_("Prefix set."))
+        if len(prefixes) == 1:
+            await ctx.send(_("Server prefix set."))
+        else:
+            await ctx.send(_("Server prefixes set."))
 
     @_set.command()
     @checks.is_owner()
