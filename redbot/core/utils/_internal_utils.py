@@ -373,7 +373,7 @@ class _AsyncTqdm(AsyncIterator[_T], tqdm):
             next(self.iterator)
             return result
 
-    def __aiter__(self) -> "_AsyncTqdm[_T]":
+    def __aiter__(self) -> _AsyncTqdm[_T]:
         return self
 
 
