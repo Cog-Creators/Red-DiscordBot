@@ -294,6 +294,8 @@ def init_events(bot, cli_flags):
             await ctx.send(_("That command is not available in DMs."))
         elif isinstance(error, commands.PrivateMessageOnly):
             await ctx.send(_("That command is only available in DMs."))
+        elif isinstance(error, commands.NSFWChannelRequired):
+            await ctx.send(_("That command is only available in NSFW channels."))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
