@@ -43,6 +43,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx-prompt",
     "deprecated_removed",
 ]
 

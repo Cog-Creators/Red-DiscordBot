@@ -14,21 +14,23 @@ In order to create the service file, you will first need to know two things, you
 
 First, your Linux :code:`username` can be fetched with the following command:
 
-.. code-block:: bash
+.. prompt:: bash
 
     whoami
 
 Next, your python :code:`path` can be fetched with the following commands:
 
-.. code-block:: bash
+.. prompt:: bash
+    :prompts: $,(redenv) $
+    :modifiers: auto
 
     # If redbot is installed in a venv
-    source ~/redenv/bin/activate
-    which python
+    $ source ~/redenv/bin/activate
+    (redenv) $ which python
 
     # If redbot is installed in a pyenv virtualenv
-    pyenv shell <virtualenv_name>
-    pyenv which python
+    $ pyenv shell <virtualenv_name>
+    (redenv) $ pyenv which python
 
 Then create the new service file:
 
@@ -67,20 +69,28 @@ Starting and enabling the service
 
 To start the bot, run the service and add the instance name after the **@**:
 
-:code:`sudo systemctl start red@instancename`
+.. prompt:: bash
+
+    sudo systemctl start red@instancename
 
 To set the bot to start on boot, you must enable the service, again adding the instance name after the **@**:
 
-:code:`sudo systemctl enable red@instancename`
+.. prompt:: bash
+
+    sudo systemctl enable red@instancename
 
 If you need to shutdown the bot, you can use the ``[p]shutdown`` command or
 type the following command in the terminal, still by adding the instance name after the **@**:
 
-:code:`sudo systemctl stop red@instancename`
+.. prompt:: bash
+
+    sudo systemctl stop red@instancename
 
 .. warning:: If the service doesn't stop in the next 10 seconds, the process is killed.
     Check your logs to know the cause of the error that prevents the shutdown.
 
 To view Red’s log, you can acccess through journalctl:
 
-:code:`sudo journalctl -eu red@instancename`
+.. prompt:: bash
+
+    sudo journalctl -eu red@instancename
