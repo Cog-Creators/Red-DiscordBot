@@ -596,7 +596,9 @@ class RedBase(
                     stacklevel=2,
                 )
                 if guild:
-                    raise ValueError("`guild_id` should not be passed when `guild` is already passed.")
+                    raise ValueError(
+                        "`guild_id` should not be passed when `guild` is already passed."
+                    )
         else:
             guild = getattr(who, "guild", None)
 
