@@ -1151,6 +1151,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await self.embedset_command_guild(ctx, command_name, enabled)
 
+    def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
+        for command in itertools.chain((command_obj,), command_obj.parents):
+            if command_obj.requires.bot_perms.embed_links:
+                raise commands.BadArgument(
+                    "The passed command requires Embed Links permission"
+                    " and therefore cannot be set to not use embeds."
+                )
+
     @commands.is_owner()
     @embedset_command.command(name="global")
     async def embedset_command_global(
@@ -1171,6 +1179,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
             return
+        self._check_if_command_requires_embed_links(command_obj)
         # qualified name might be different if alias was passed to this command
         command_name = command_obj.qualified_name
 
@@ -1210,6 +1219,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("I couldn't find that command. Please note that it is case sensitive.")
             )
             return
+        self._check_if_command_requires_embed_links(command_obj)
         # qualified name might be different if alias was passed to this command
         command_name = command_obj.qualified_name
 
