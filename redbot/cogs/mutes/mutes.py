@@ -148,30 +148,34 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         schema_version = await self.config.schema_version()
 
         if schema_version == 0:
-            if all_channels := await self.config.all_channels():
-                start = datetime.now()
-                log.info(
-                    "Config conversion to schema_version 1 started. This may take a while to proceed..."
-                )
-                async for channel_id in AsyncIter(all_channels.keys()):
-                    try:
-                        if (channel := self.bot.get_channel(channel_id)) is None:
-                            channel = await self.bot.fetch_channel(channel_id)
-                        async with self.config.channel_from_id(
-                            channel_id
-                        ).muted_users() as muted_users:
-                            for mute_id, mute_data in muted_users.items():
-                                mute_data["guild"] = channel.guild.id
-                    except (discord.NotFound, discord.Forbidden):
-                        await self.config.channel_from_id(channel_id).clear()
+            all_channels = await self.config.all_channels()
+            if not all_channels["muted_users"]:
+                schema_version += 1
+                await self.config.schema_version.set(schema_version)
+                return
+
+            start = datetime.now()
+            log.info(
+                "Config conversion to schema_version 1 started. This may take a while to proceed..."
+            )
+            async for channel_id in AsyncIter(all_channels.keys()):
+                try:
+                    if (channel := self.bot.get_channel(channel_id)) is None:
+                        channel = await self.bot.fetch_channel(channel_id)
+                    async with self.config.channel_from_id(
+                        channel_id
+                    ).muted_users() as muted_users:
+                        for mute_id, mute_data in muted_users.items():
+                            mute_data["guild"] = channel.guild.id
+                except (discord.NotFound, discord.Forbidden):
+                    await self.config.channel_from_id(channel_id).clear()
 
             schema_version += 1
             await self.config.schema_version.set(schema_version)
-            if all_channels:
-                log.info(
-                    "Config conversion to schema_version 1 done. It took %s to proceed.",
-                    datetime.now() - start,
-                )
+            log.info(
+                "Config conversion to schema_version 1 done. It took %s to proceed.",
+                datetime.now() - start,
+            )
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
