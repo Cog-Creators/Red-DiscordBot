@@ -1137,7 +1137,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @embedset.group(name="command", invoke_without_command=True)
     async def embedset_command(
-        self, ctx: commands.Context, command: str, enabled: bool = None
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
     ) -> None:
         """
         Toggle the command's embed setting.
@@ -1147,9 +1147,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
-            await ctx.invoke(self.embedset_command_global, command=command, enabled=enabled)
+            await self.embedset_command_global(command_name, enabled)
         else:
-            await ctx.invoke(self.embedset_command_guild, command=command, enabled=enabled)
+            await self.embedset_command_guild(command_name, enabled)
 
     @commands.is_owner()
     @embedset_command.command(name="global")
