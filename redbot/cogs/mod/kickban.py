@@ -252,12 +252,13 @@ class KickBanMixin(MixinMeta):
             if not guild_tempbans:
                 continue
             async with self.config.guild(guild).current_tempbans.get_lock():
-                await self._check_guild_tempban_expirations(guild, guild_tempbans)
-                await self.config.guild(guild).current_tempbans.set(guild_tempbans)
+                if await self._check_guild_tempban_expirations(guild, guild_tempbans):
+                    await self.config.guild(guild).current_tempbans.set(guild_tempbans)
 
     async def _check_guild_tempban_expirations(
         self, guild: discord.Guild, guild_tempbans: List[int]
-    ) -> None:
+    ) -> bool:
+        changed = False
         for uid in guild_tempbans.copy():
             unban_time = datetime.fromtimestamp(
                 await self.config.member_from_ids(guild.id, uid).banned_until(),
@@ -271,6 +272,7 @@ class KickBanMixin(MixinMeta):
                 except discord.NotFound:
                     # user is not banned anymore
                     guild_tempbans.remove(uid)
+                    changed = True
                 except discord.HTTPException as e:
                     # 50013: Missing permissions error code or 403: Forbidden status
                     if e.code == 50013 or e.status == 403:
@@ -283,6 +285,8 @@ class KickBanMixin(MixinMeta):
                 else:
                     # user unbanned successfully
                     guild_tempbans.remove(uid)
+                    changed = True
+        return changed
 
     @commands.command()
     @commands.guild_only()
