@@ -1,9 +1,6 @@
 import abc
-import asyncio
 import enum
-from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type, NoReturn
-
-from tqdm import tqdm
+from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
 
 from redbot.core.utils._internal_utils import async_tqdm
 
@@ -384,9 +381,3 @@ class BaseDriver(abc.ABC):
                     *ConfigCategory.get_pkey_info(category, custom_group_data),
                 )
                 await self.set(ident_data, data)
-
-
-async def _update_progress(progress_bar: tqdm) -> NoReturn:
-    while True:
-        await asyncio.sleep(0.5)
-        progress_bar.refresh()
