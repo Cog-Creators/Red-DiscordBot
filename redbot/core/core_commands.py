@@ -1082,7 +1082,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if command_name is not None:
                 scope = self.bot._config.custom("COMMAND", command_name, ctx.guild.id)
                 command_setting = await scope.embeds()
-                text += _("Server command setting for {command} command: {}\n").format(
+                text += _("Server command setting for {command} command: {value}\n").format(
                     command=inline(command_name), value=command_setting
                 )
 
