@@ -1122,7 +1122,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
-        used for all commands done in a guild channel.
+        used for all commands done in a server channel.
         """
         await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
@@ -1192,7 +1192,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.guild_only()
     @embedset_command.command(name="server", aliases=["guild"])
-    async def embedset_command_server(
+    async def embedset_command_guild(
         self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
     ):
         """
