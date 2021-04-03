@@ -515,14 +515,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "Can't skip to a specific track in vote mode without the DJ role."
                         ),
                     )
-                if ctx.author.id in self.skip_votes[ctx.message.guild]:
-                    self.skip_votes[ctx.message.guild].remove(ctx.author.id)
+                if ctx.author.id in self.skip_votes[ctx.guild.id]:
+                    self.skip_votes[ctx.guild.id].remove(ctx.author.id)
                     reply = _("I removed your vote to skip.")
                 else:
-                    self.skip_votes[ctx.message.guild].append(ctx.author.id)
+                    self.skip_votes[ctx.guild.id].append(ctx.author.id)
                     reply = _("You voted to skip.")
 
-                num_votes = len(self.skip_votes[ctx.message.guild])
+                num_votes = len(self.skip_votes[ctx.guild.id])
                 vote_mods = []
                 for member in player.channel.members:
                     can_skip = await self._can_instaskip(ctx, member)
@@ -532,7 +532,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 vote = int(100 * num_votes / num_members)
                 percent = await self.config.guild(ctx.guild).vote_percent()
                 if vote >= percent:
-                    self.skip_votes[ctx.message.guild] = []
+                    self.skip_votes[ctx.guild.id] = []
                     await self.send_embed_msg(ctx, title=_("Vote threshold met."))
                     return await self._skip_action(ctx)
                 else:
