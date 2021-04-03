@@ -1082,7 +1082,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if command_name is not None:
                 scope = self.bot._config.custom("COMMAND", command_name, ctx.guild.id)
                 command_setting = await scope.embeds()
-                text += _("Guild command setting for {command} command: {}\n").format(
+                text += _("Server command setting for {command} command: {}\n").format(
                     command=inline(command_name), value=command_setting
                 )
 
@@ -1191,17 +1191,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @commands.guild_only()
-    @embedset_command.command(name="guild")
-    async def embedset_command_guild(
+    @embedset_command.command(name="server", aliases=["guild"])
+    async def embedset_command_server(
         self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
     ):
         """
         Toggle the commmand's embed setting.
 
         If enabled is None, the setting will be unset and
-        the guild default will be used instead.
+        the server default will be used instead.
 
-        If set, this is used instead of the guild default
+        If set, this is used instead of the server default
         to determine whether or not to use embeds.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
@@ -1215,7 +1215,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
         if enabled is None:
-            await ctx.send(_("Embeds will now fall back to the guild setting."))
+            await ctx.send(_("Embeds will now fall back to the server setting."))
         elif enabled:
             await ctx.send(
                 _("Embeds are now enabled for {command_name} command.").format(
