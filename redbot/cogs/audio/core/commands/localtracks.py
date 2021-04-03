@@ -27,7 +27,17 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_local.command(name="folder", aliases=["start"])
     async def command_local_folder(self, ctx: commands.Context, *, folder: str = None):
-        """Play all songs in a localtracks folder."""
+        """Play all songs in a localtracks folder.
+
+        To set up your localtracks folders, please see the documentation at: `placeholder`
+
+        Examples:
+            [p]local folder
+            Open a menu to pick a folder to queue.
+
+            [p]local folder folder_name
+            Queues all of the tracks inside the folder_name folder.
+        """
         if not await self.localtracks_folder_exists(ctx):
             return
 
@@ -47,14 +57,25 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             query = Query.process_input(
                 _dir, self.local_folder_current_path, search_subfolders=True
             )
-            await self._local_play_all(ctx, query, from_search=False if not folder else True)
+            await self._local_play_all(ctx, query, from_search=bool(folder))
 
     @command_local.command(name="play")
     async def command_local_play(self, ctx: commands.Context):
         """Play a local track.
 
-        If there's no album folders, and instead a regular .mp3 file, use the play command instead of
-        local play. For more help, check the help documentation for the play command.
+        To set up your localtracks folders, please see the documentation at: `placeholder`
+        To play a local track, either use the menu to choose a track or enter in the
+        localtracks path directly with the play command.
+        To play an entire local folder, use [p]help local folder for instructions.
+
+        Examples:
+        [p]local play
+        Open a menu to pick a file.
+
+        [p]play localtracks/album_folder/song_name.mp3
+        OR
+        [p]play album_folder/song_name.mp3
+        Use a direct link relative to the localtracks folder.
         """
         if not await self.localtracks_folder_exists(ctx):
             return

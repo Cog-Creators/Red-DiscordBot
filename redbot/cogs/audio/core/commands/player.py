@@ -39,8 +39,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_play(self, ctx: commands.Context, *, query: str):
         """Play a URL or search for a track.
 
-        To play a local track/file, the query should be (your localtrack folder)/(mp3 file).
-        To check what your localtrack folder is, check your audio settings using the audioset command..
+        To play a local track/file, the query should be <parentfolder>/<filename>.
+        If you are the bot owner, use [p]audioset info to display your localtracks path.
         """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
@@ -66,7 +66,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
+                msg = _("Connection to Lavalink has failed.")
                 desc = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
