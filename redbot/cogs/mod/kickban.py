@@ -266,9 +266,7 @@ class KickBanMixin(MixinMeta):
             )
             if datetime.now(timezone.utc) > unban_time:
                 try:
-                    await guild.unban(
-                        discord.Object(id=uid), reason=_("Tempban finished")
-                    )
+                    await guild.unban(discord.Object(id=uid), reason=_("Tempban finished"))
                 except discord.NotFound:
                     # user is not banned anymore
                     guild_tempbans.remove(uid)
