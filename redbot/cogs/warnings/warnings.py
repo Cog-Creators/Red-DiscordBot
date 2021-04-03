@@ -312,6 +312,7 @@ class Warnings(commands.Cog):
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r),
                         description=v["description"],
+                        color=await ctx.embed_colour(),
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -337,7 +338,10 @@ class Warnings(commands.Cog):
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
                 if await ctx.embed_requested():
-                    em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
+                    em = discord.Embed(
+                        title=_("Action: {name}").format(name=r["action_name"]),
+                        color=await ctx.embed_colour(),
+                    )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
                         name=_("Exceed command"),
@@ -441,8 +445,7 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title,
-                description=reason_type["description"],
+                title=title, description=reason_type["description"], color=await ctx.embed_colour()
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             try:
@@ -470,8 +473,7 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title,
-                description=reason_type["description"],
+                title=title, description=reason_type["description"], color=await ctx.embed_colour()
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
