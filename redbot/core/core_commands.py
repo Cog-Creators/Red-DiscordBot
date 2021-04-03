@@ -1154,7 +1154,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
         for command in itertools.chain((command_obj,), command_obj.parents):
             if command_obj.requires.bot_perms.embed_links:
-                raise commands.BadArgument(
+                # a slight abuse of this exception to save myself two lines later...
+                raise commands.UserFeedbackCheckFailure(
                     _(
                         "The passed command requires Embed Links permission"
                         " and therefore cannot be set to not use embeds."
