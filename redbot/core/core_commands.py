@@ -1105,10 +1105,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         default is to use embeds.
         """
         current = await self.bot._config.embeds()
-        await self.bot._config.embeds.set(not current)
-        await ctx.send(
-            _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
-        )
+        if current:
+            await self.bot._config.embeds.set(False)
+            await ctx.send(_("Embeds are now disabled by default."))
+        else:
+            await self.bot._config.embeds.clear()
+            await ctx.send(_("Embeds are now enabled by default."))
 
     @embedset.command(name="server", aliases=["guild"])
     @checks.guildowner_or_permissions(administrator=True)
@@ -1124,15 +1126,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to determine whether or not to use embeds. This is
         used for all commands done in a server channel.
         """
-        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.guild(ctx.guild).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now {} for this guild.").format(
-                    _("enabled") if enabled else _("disabled")
-                )
-            )
+            return
+
+        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for this guild.")
+            if enabled
+            else _("Embeds are now disabled for this guild.")
+        )
 
     @checks.guildowner_or_permissions(administrator=True)
     @embedset.group(name="command", invoke_without_command=True)
@@ -1186,10 +1190,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # qualified name might be different if alias was passed to this command
         command_name = command_obj.qualified_name
 
-        await self.bot._config.custom("COMMAND", command_name, 0).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, 0).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        elif enabled:
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, 0).embeds.set(enabled)
+        if enabled:
             await ctx.send(
                 _("Embeds are now enabled for {command_name} command.").format(
                     command_name=inline(command_name)
@@ -1226,10 +1233,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # qualified name might be different if alias was passed to this command
         command_name = command_obj.qualified_name
 
-        await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the server setting."))
-        elif enabled:
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
+        if enabled:
             await ctx.send(
                 _("Embeds are now enabled for {command_name} command.").format(
                     command_name=inline(command_name)
@@ -1256,15 +1266,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to determine whether or not to use embeds. This is
         used for all commands done in a channel.
         """
-        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.channel(ctx.channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now {} for this channel.").format(
-                    _("enabled") if enabled else _("disabled")
-                )
+            return
+
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now {} for this channel.").format(
+                _("enabled") if enabled else _("disabled")
             )
+        )
 
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
@@ -1278,15 +1290,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to determine whether or not to use embeds. This is
         used for all commands executed in a DM with the bot.
         """
-        await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.user(ctx.author).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now enabled for you in DMs.")
-                if enabled
-                else _("Embeds are now disabled for you in DMs.")
-            )
+
+        await self.bot._config.user(ctx.author).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for you in DMs.")
+            if enabled
+            else _("Embeds are now disabled for you in DMs.")
+        )
 
     @commands.command()
     @checks.is_owner()
