@@ -1147,9 +1147,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
-            await self.embedset_command_global(command_name, enabled)
+            await self.embedset_command_global(ctx, command_name, enabled)
         else:
-            await self.embedset_command_guild(command_name, enabled)
+            await self.embedset_command_guild(ctx, command_name, enabled)
 
     @commands.is_owner()
     @embedset_command.command(name="global")
