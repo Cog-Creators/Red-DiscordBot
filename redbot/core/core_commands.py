@@ -1155,8 +1155,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for command in itertools.chain((command_obj,), command_obj.parents):
             if command_obj.requires.bot_perms.embed_links:
                 raise commands.BadArgument(
-                    "The passed command requires Embed Links permission"
-                    " and therefore cannot be set to not use embeds."
+                    _(
+                        "The passed command requires Embed Links permission"
+                        " and therefore cannot be set to not use embeds."
+                    )
                 )
 
     @commands.is_owner()
