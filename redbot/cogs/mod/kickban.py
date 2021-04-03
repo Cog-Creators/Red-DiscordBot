@@ -229,53 +229,60 @@ class KickBanMixin(MixinMeta):
 
         return True, success_message
 
-    async def check_tempban_expirations(self):
+    async def tempban_expirations_task(self) -> None:
         while True:
             try:
-                guilds_data = await self.config.all_guilds()
-                async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
-                    if not (guild := self.bot.get_guild(guild_id)):
-                        continue
-                    if not guild.me.guild_permissions.ban_members:
-                        continue
-                    if await self.bot.cog_disabled_in_guild(self, guild):
-                        continue
-
-                    guild_tempbans = guild_data["current_tempbans"]
-                    if guild_tempbans:
-                        async with self.config.guild(guild).current_tempbans.get_lock():
-                            for uid in guild_tempbans.copy():
-                                unban_time = datetime.fromtimestamp(
-                                    await self.config.member_from_ids(
-                                        guild.id, uid
-                                    ).banned_until(),
-                                    timezone.utc,
-                                )
-                                if datetime.now(timezone.utc) > unban_time:
-                                    try:
-                                        await guild.unban(
-                                            discord.Object(id=uid), reason=_("Tempban finished")
-                                        )
-                                    except discord.NotFound:
-                                        # user is not banned anymore
-                                        guild_tempbans.remove(uid)
-                                    except discord.HTTPException as e:
-                                        # 50013: Missing permissions error code or 403: Forbidden status
-                                        if e.code == 50013 or e.status == 403:
-                                            log.info(
-                                                f"Failed to unban ({uid}) user from "
-                                                f"{guild.name}({guild.id}) guild due to permissions."
-                                            )
-                                            break  # skip the rest of this guild
-                                        log.info(f"Failed to unban member: error code: {e.code}")
-                                    else:
-                                        # user unbanned successfully
-                                        guild_tempbans.remove(uid)
-                            await self.config.guild(guild).current_tempbans.set(guild_tempbans)
+                await self._check_tempban_expirations()
             except Exception:
                 log.exception("Something went wrong in check_tempban_expirations:")
 
             await asyncio.sleep(60)
+
+    async def _check_tempban_expirations(self) -> None:
+        guilds_data = await self.config.all_guilds()
+        async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
+            if not (guild := self.bot.get_guild(guild_id)):
+                continue
+            if not guild.me.guild_permissions.ban_members:
+                continue
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                continue
+
+            guild_tempbans = guild_data["current_tempbans"]
+            if not guild_tempbans:
+                continue
+            async with self.config.guild(guild).current_tempbans.get_lock():
+                await self._check_guild_tempban_expirations(guild, guild_tempbans)
+                await self.config.guild(guild).current_tempbans.set(guild_tempbans)
+
+    async def _check_guild_tempban_expirations(
+        self, guild: discord.Guild, guild_tempbans: List[int]
+    ) -> None:
+        for uid in guild_tempbans.copy():
+            unban_time = datetime.fromtimestamp(
+                await self.config.member_from_ids(guild.id, uid).banned_until(),
+                timezone.utc,
+            )
+            if datetime.now(timezone.utc) > unban_time:
+                try:
+                    await guild.unban(
+                        discord.Object(id=uid), reason=_("Tempban finished")
+                    )
+                except discord.NotFound:
+                    # user is not banned anymore
+                    guild_tempbans.remove(uid)
+                except discord.HTTPException as e:
+                    # 50013: Missing permissions error code or 403: Forbidden status
+                    if e.code == 50013 or e.status == 403:
+                        log.info(
+                            f"Failed to unban ({uid}) user from "
+                            f"{guild.name}({guild.id}) guild due to permissions."
+                        )
+                        break  # skip the rest of this guild
+                    log.info(f"Failed to unban member: error code: {e.code}")
+                else:
+                    # user unbanned successfully
+                    guild_tempbans.remove(uid)
 
     @commands.command()
     @commands.guild_only()
