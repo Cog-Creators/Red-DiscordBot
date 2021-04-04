@@ -945,11 +945,12 @@ class Downloader(commands.Cog):
                         "\nDownloader has removed the cog {cog} from the installed cogs list"
                         " but it wasn't able to find his files."
                     ).format(cog=inline(failed_cogs[0])) + _(
-                        "\nIt was most likely removed without using `{prefix}cog uninstall`.\n"
+                        "\nIt was most likely removed without using {command_1}.\n"
                         "You may need to remove those files manually if the cog is still usable."
-                        " If so, ensure the cog has been unloaded with {command}."
+                        " If so, ensure the cog has been unloaded with {command_2}."
                     ).format(
-                        command=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}")
+                        command_1=inline(f"{ctx.clean_prefix}cog uninstall"),
+                        command_2=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}"),
                     )
         await self.send_pagified(ctx, message)
 
