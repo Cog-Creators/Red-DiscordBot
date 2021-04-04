@@ -499,7 +499,7 @@ class Downloader(commands.Cog):
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
-            if deps > 1:
+            if len(deps) > 1:
                 await ctx.send(_("Libraries installed."))
             else:
                 await ctx.send(_("Library installed."))
