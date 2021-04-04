@@ -303,7 +303,8 @@ class Cleanup(commands.Cog):
                 return await ctx.send(_("Message not found."))
         elif ref := ctx.message.reference:
             after = await self.get_message_from_reference(channel, ref)
-        else:
+
+        if after is None:
             raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
@@ -347,6 +348,7 @@ class Cleanup(commands.Cog):
 
         channel = ctx.channel
         author = ctx.author
+        before = None
 
         if message_id:
             try:
@@ -355,7 +357,8 @@ class Cleanup(commands.Cog):
                 return await ctx.send(_("Message not found."))
         elif ref := ctx.message.reference:
             before = await self.get_message_from_reference(channel, ref)
-        else:
+        
+        if before is None:
             raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
