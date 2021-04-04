@@ -63,6 +63,7 @@ class MixinMeta(ABC):
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
     _ws_resume: defaultdict[Any, asyncio.Event]
+    _ws_op_codes: defaultdict[int, asyncio.LifoQueue]
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
 

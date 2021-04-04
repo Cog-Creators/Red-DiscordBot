@@ -78,6 +78,7 @@ class Audio(
         self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.cog_ready_event = asyncio.Event()
         self._ws_resume = defaultdict(asyncio.Event)
+        self._ws_op_codes = defaultdict(asyncio.LifoQueue)
 
         self.cog_init_task = None
         self.global_api_user = {

@@ -61,6 +61,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
             deafen = guild_data["auto_deafen"]
+            event_channel_id = extra.get("channelID")
+            code = extra.get("code")
+            self._ws_op_codes[event_channel_id].put_nowait(code)
             await self._websocket_closed_handler(
                 guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
             )
@@ -286,12 +289,34 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         code = extra.get("code")
         by_remote = extra.get("byRemote", "")
         reason = extra.get("reason", "No Specified Reason").strip()
+        event_channel_id = extra.get("channelID")
+        channel_id = player.channel.id
+        try:
+            to_handle_code = self._ws_op_codes[event_channel_id].get_nowait()
+        except asyncio.QueueEmpty:
+            return
+
+        if code != to_handle_code:
+            try:
+                second_last_code = self._ws_op_codes[event_channel_id].get_nowait()
+            except asyncio.QueueEmpty:
+                pass
+            else:
+                if second_last_code == 1000:
+                    return
+
+        if event_channel_id != channel_id:
+            ws_audio_log.info(
+                f"Received an op code for a channel that is no longer valid; {event_channel_id} "
+                f"in guild: {guild_id}  - Active channel {channel_id} | "
+                f"Reason: Error code {code} & {reason}."
+            )
+            return
         if player.channel:
             current_perms = player.channel.permissions_for(player.channel.guild.me)
             has_perm = current_perms.speak and current_perms.connect
         else:
             has_perm = False
-        channel_id = player.channel.id
         if code in (1000,) and has_perm and player.current and player.is_playing:
             player.store("resumes", player.fetch("resumes", 0) + 1)
             await player.resume(player.current, start=player.position)
@@ -300,13 +325,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Reason: Error code {code} & {reason}."
             )
             return
-        if self._ws_resume[guild_id].is_set():
-            ws_audio_log.debug(
-                f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
-                f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                f"Code: {code} -- Remote: {by_remote} -- {reason}"
-            )
-            return
+        # if self._ws_resume[guild_id].is_set():
+        #     ws_audio_log.debug(
+        #         f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
+        #         f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
+        #         f"Code: {code} -- Remote: {by_remote} -- {reason}"
+        #     )
+        #     return
         self._ws_resume[guild_id].set()
 
         if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
