@@ -1065,7 +1065,7 @@ class Downloader(commands.Cog):
             message = ""
             if cogs_to_update:
                 cognames = [cog.name for cog in cogs_to_update]
-                if len(cogs_to_update) > 1:
+                if len(cognames) > 1:
                     message += _("These cogs can be updated: ") + humanize_list(
                         tuple(map(inline, cognames))
                     )
