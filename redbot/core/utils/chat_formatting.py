@@ -1,16 +1,31 @@
+from __future__ import annotations
 import datetime
 import itertools
 import re
 import textwrap
 from io import BytesIO
-from typing import Iterator, List, Optional, Sequence, SupportsInt, Union, Pattern, Dict, Any
+from typing import (
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    SupportsInt,
+    Union,
+    Pattern,
+    Dict,
+    Any,
+    TYPE_CHECKING,
+)
 
 import discord
 from babel.lists import format_list as babel_list
 from babel.numbers import format_decimal
 
-from redbot.core.commands import Context
+
 from redbot.core.i18n import Translator, get_babel_locale, get_babel_regional_format
+
+if TYPE_CHECKING:
+    from redbot.core.commands import Context
 
 _ = Translator("UtilsChatFormatting", __file__)
 
