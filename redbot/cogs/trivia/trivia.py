@@ -53,6 +53,7 @@ class Trivia(commands.Cog):
             reveal_answer=True,
             payout_multiplier=0.0,
             allow_override=True,
+            use_spoilers=False,
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
@@ -92,7 +93,8 @@ class Trivia(commands.Cog):
                 "Points to win: {max_score}\n"
                 "Reveal answer on timeout: {reveal_answer}\n"
                 "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}"
+                "Allow lists to override settings: {allow_override}\n"
+                "Use Spoilers in answers: {use_spoilers}"
             ).format(**settings_dict),
             lang="py",
         )
@@ -148,6 +150,19 @@ class Trivia(commands.Cog):
                     "server."
                 )
             )
+
+    @triviaset.command(name="usespoilers", usage="<true_or_false>")
+    async def trivaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
+        """Set if bot will display the answers in spoilers.
+
+        If enabled, the bot will use spoilers to hide answers.
+        """
+        settings = self.config.guild(ctx.guild)
+        await settings.use_spoilers.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll put the answers in spoilers next time."))
+        else:
+            await ctx.send(_("Alright, I won't use spoilers to hide answers anymore."))
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
     async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):

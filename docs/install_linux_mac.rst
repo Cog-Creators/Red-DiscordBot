@@ -40,7 +40,12 @@ Operating systems
 Arch Linux
 ~~~~~~~~~~
 
-.. code-block:: none
+.. warning::
+
+    Latest Python packages for Arch Linux provide Python 3.9 which Red does not currently support.
+    To use Red on Arch Linux, you will need to install latest version of Python 3.8 on your own.
+
+.. prompt:: bash
 
     sudo pacman -Syu python python-pip git jre11-openjdk-headless base-devel nano
 
@@ -55,7 +60,7 @@ Continue by `creating-venv-linux`.
 CentOS and RHEL 7
 ~~~~~~~~~~~~~~~~~
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo yum -y groupinstall development
     sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
@@ -66,7 +71,7 @@ CentOS and RHEL 7
 
 In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
     sudo yum -y swap git git224
@@ -82,7 +87,7 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 CentOS and RHEL 8
 ~~~~~~~~~~~~~~~~~
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo yum -y install epel-release
     sudo yum -y update
@@ -103,7 +108,7 @@ Debian and Raspbian Buster
 We recommend installing pyenv as a method of installing non-native versions of python on
 Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt update
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
@@ -122,7 +127,7 @@ Fedora Linux
 Fedora Linux 32 and above has all required packages available in official repositories. Install
 them with dnf:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo dnf -y install python38 git java-11-openjdk-headless @development-tools nano
 
@@ -139,14 +144,14 @@ Mac
 Install Brew: in Finder or Spotlight, search for and open *Terminal*. In the terminal, paste the
 following, then press Enter:
 
-.. code-block:: none
+.. prompt:: bash
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
 
-.. code-block:: none
+.. prompt:: bash
 
     brew install python@3.8
     echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
@@ -172,7 +177,7 @@ be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
 
-.. code-block:: none
+.. prompt:: bash
 
     source /etc/os-release
     sudo zypper -n ar -f https://download.opensuse.org/repositories/home:/Rotkraut:/Opt-Python/openSUSE_Leap_${VERSION_ID}/ Opt-Python
@@ -180,7 +185,7 @@ First, add the Opt-Python community repository:
 
 Now install the pre-requirements with zypper:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
@@ -188,14 +193,14 @@ Now install the pre-requirements with zypper:
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
 ``/etc/profile.d/`` to do this:
 
-.. code-block:: none
+.. prompt:: bash
 
     echo 'export PATH="/opt/python/bin:$PATH"' | sudo tee /etc/profile.d/opt-python.sh
     source /etc/profile.d/opt-python.sh
 
 Now, install pip with easy_install:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo /opt/python/bin/easy_install-3.8 pip
 
@@ -207,9 +212,9 @@ openSUSE Tumbleweed
 openSUSE Tumbleweed has all required dependencies available in official repositories. Install them
 with zypper:
 
-.. code-block:: none
+.. prompt:: bash
 
-    sudo zypper -n install python3-base python3-pip git-core java-11-openjdk-headless nano
+    sudo zypper -n install python38-base python38-pip git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
@@ -224,7 +229,7 @@ Ubuntu 18.04 LTS
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt update
     sudo apt -y install software-properties-common
@@ -232,13 +237,13 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo add-apt-repository -y ppa:deadsnakes/ppa
 
 Now install the pre-requirements with apt:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
@@ -254,7 +259,7 @@ Ubuntu 20.04 LTS
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt update
     sudo apt -y install software-properties-common
@@ -262,7 +267,7 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
 Now install the pre-requirements with apt:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
@@ -278,7 +283,7 @@ Ubuntu non-LTS versions
 
 We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt update
     sudo apt -y install software-properties-common
@@ -287,7 +292,7 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
 Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
 installing pyenv. To do this, first run the following commands:
 
-.. code-block:: none
+.. prompt:: bash
 
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
@@ -311,7 +316,7 @@ On distributions where Python 3.8 needs to be compiled from source, we recommend
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
-.. code-block:: none
+.. prompt:: bash
 
     command -v pyenv && pyenv update || curl https://pyenv.run | bash
 
@@ -320,7 +325,7 @@ instructions given to fix that, then close and reopen your shell.**
 
 Then run the following command:
 
-.. code-block:: none
+.. prompt:: bash
 
     CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.8 -v
 
@@ -332,7 +337,7 @@ slower.
 
 After that is finished, run:
 
-.. code-block:: none
+.. prompt:: bash
 
     pyenv global 3.8.8
 
@@ -372,11 +377,15 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``redenv`` and it will be located in your home directory.
 
-Create your virtual environment with the following command::
+Create your virtual environment with the following command:
+
+.. prompt:: bash
 
     python3.8 -m venv ~/redenv
 
-And activate it with the following command::
+And activate it with the following command:
+
+.. prompt:: bash
 
     source ~/redenv/bin/activate
 
@@ -398,18 +407,24 @@ Using ``pyenv virtualenv``
 Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
 environments. This option is only available if you installed Python with pyenv.
 
-First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command::
+First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command:
+
+.. prompt:: bash
 
     pyenv version
 
-Now, create a virtual environment with the following command::
+Now, create a virtual environment with the following command:
+
+.. prompt:: bash
 
     pyenv virtualenv <name>
 
 Replace ``<name>`` with whatever you like. If you ever forget what you named it,
 you can always use the command ``pyenv versions`` to list all virtual environments.
 
-Now activate your virtualenv with the following command::
+Now activate your virtualenv with the following command:
+
+.. prompt:: bash
 
     pyenv shell <name>
 
@@ -433,14 +448,16 @@ Choose one of the following commands to install Red.
 
 To install without additional config backend support:
 
-.. code-block:: none
+.. prompt:: bash
+    :prompts: (redenv) $
 
     python -m pip install -U pip setuptools wheel
     python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
 
-.. code-block:: none
+.. prompt:: bash
+    :prompts: (redenv) $
 
     python -m pip install -U pip setuptools wheel
     python -m pip install -U "Red-DiscordBot[postgres]"
@@ -456,7 +473,8 @@ Setting Up and Running Red
 
 After installation, set up your instance with the following command:
 
-.. code-block:: none
+.. prompt:: bash
+    :prompts: (redenv) $
 
     redbot-setup
 
@@ -466,7 +484,8 @@ running the bot).
 
 Once done setting up the instance, run the following command to run Red:
 
-.. code-block:: none
+.. prompt:: bash
+    :prompts: (redenv) $
 
     redbot <your instance name>
 
