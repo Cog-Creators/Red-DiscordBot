@@ -1116,6 +1116,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This is used as a fallback if the user
         or guild hasn't set a preference. The
         default is to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         current = await self.bot._config.embeds()
         if current:
@@ -1138,6 +1140,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands done in a server channel.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         if enabled is None:
             await self.bot._config.guild(ctx.guild).embeds.clear()
@@ -1161,6 +1165,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If you're the bot owner, this will change command's embed setting
         globally by default.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
@@ -1192,6 +1198,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If set, this is used instead of the global default
         to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
         if command_obj is None:
@@ -1235,6 +1243,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If set, this is used instead of the server default
         to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
         if command_obj is None:
@@ -1278,6 +1288,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the guild and command default
         to determine whether or not to use embeds. This is
         used for all commands done in a channel.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         if enabled is None:
             await self.bot._config.channel(ctx.channel).embeds.clear()
@@ -1302,6 +1314,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands executed in a DM with the bot.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         if enabled is None:
             await self.bot._config.user(ctx.author).embeds.clear()
