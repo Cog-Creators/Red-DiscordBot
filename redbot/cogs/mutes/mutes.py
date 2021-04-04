@@ -149,11 +149,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if schema_version == 0:
             all_channels = await self.config.all_channels()
-            if not all_channels["muted_users"]:
-                schema_version += 1
-                await self.config.schema_version.set(schema_version)
-                return
-
             start = datetime.now()
             log.info(
                 "Config conversion to schema_version 1 started. This may take a while to proceed..."
