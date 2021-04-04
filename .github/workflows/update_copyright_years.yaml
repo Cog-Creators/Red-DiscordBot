@@ -1,0 +1,48 @@
+name: Update copyright years
+on:
+  schedule:
+    - cron: '0 0 1 1 *'
+
+jobs:
+  update_copyright_years:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Update copyright years
+        run: |
+          NEW_YEAR=$(date +%Y)
+          PREV_YEAR=$((NEW_YEAR-1))
+          sed -i 's/2021/2022/g' LICENSE
+          sed -i 's/2021/2022/g' docs/conf.py
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Automated copyright years bump
+          title: Automated copyright years bump
+          body: |
+            This is an automated PR.
+            Please ensure that there are no errors or invalid files are in the PR.
+          labels: "Automated PR, Category: Meta, Changelog Entry: Skipped"
+          branch: "automated/bump_copyright_year"
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+      - name: Close and reopen the PR with different token to trigger CI
+        uses: actions/github-script@v3
+        env:
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          PR_OPERATION: ${{ steps.cpr.outputs.pull-request-operation }}
+        with:
+          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
+            );
+            console.log(script({github, context}));
