@@ -1627,7 +1627,7 @@ class Downloader(commands.Cog):
                 message = _("Would you like to reload the updated cogs?")
             else:
                 message = _("Would you like to reload {cog}?").format(
-                    cog=humanize_list(tuple(map(inline, updated_cognames)))
+                    cog=inline(updated_cognames[0])
                 )
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if not can_react:
