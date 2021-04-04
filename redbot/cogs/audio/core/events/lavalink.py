@@ -437,6 +437,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         "Player resumed too recently and no human members connected."
                     )
                     self._ws_resume[guild_id].clear()
+                    self._ws_op_codes[event_channel_id]._init(self._ws_op_codes[event_channel_id]._maxsize)
                     return
 
             if player._con_delay:
@@ -489,7 +490,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     []
                 )
         else:
-            if not player.paused:
+            if not player.paused and player.current:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.resume(player.current, start=player.position)
             ws_audio_log.info(
@@ -498,3 +499,4 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 f"Code: {code} -- Remote: {by_remote} -- {reason}"
             )
         self._ws_resume[guild_id].clear()
+        self._ws_op_codes[event_channel_id]._init(self._ws_op_codes[event_channel_id]._maxsize)
