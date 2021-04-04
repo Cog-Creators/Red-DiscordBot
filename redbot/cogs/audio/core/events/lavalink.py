@@ -62,11 +62,21 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
             deafen = guild_data["auto_deafen"]
             event_channel_id = extra.get("channelID")
-            code = extra.get("code")
-            self._ws_op_codes[event_channel_id].put_nowait(code)
-            await self._websocket_closed_handler(
-                guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
-            )
+            _error_code = extra.get("code")
+            if _error_code in [1000, 4014] or not guild:
+                if _error_code == 1000:
+                    await player.resume(player.current, start=player.position, replace=False)
+                return
+            await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
+            try:
+                if guild_id not in self._ws_resume:
+                    self._ws_resume[guild_id].set()
+
+                await self._websocket_closed_handler(
+                    guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
+                )
+            except Exception:
+                log.exception("error")
             return
 
         await set_contextual_locales_from_guild(self.bot, guild)
@@ -284,219 +294,197 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect: bool,
     ) -> None:
         guild_id = guild.id
-        node = player.node
-        voice_ws: DiscordWebSocket = node.get_voice_ws(guild_id)
-        code = extra.get("code")
-        by_remote = extra.get("byRemote", "")
-        reason = extra.get("reason", "No Specified Reason").strip()
         event_channel_id = extra.get("channelID")
-        channel_id = player.channel.id
         try:
-            to_handle_code = self._ws_op_codes[event_channel_id].get_nowait()
-        except asyncio.QueueEmpty:
-            return
-
-        if code != to_handle_code:
+            if not self._ws_resume[guild_id].is_set():
+                await self._ws_resume[guild_id].wait()
+            else:
+                self._ws_resume[guild_id].clear()
+            node = player.node
+            voice_ws: DiscordWebSocket = node.get_voice_ws(guild_id)
+            code = extra.get("code")
+            by_remote = extra.get("byRemote", "")
+            reason = extra.get("reason", "No Specified Reason").strip()
+            channel_id = player.channel.id
             try:
-                second_last_code = self._ws_op_codes[event_channel_id].get_nowait()
+                event_channel_id, to_handle_code = await self._ws_op_codes[guild_id].get()
             except asyncio.QueueEmpty:
-                pass
-            else:
-                if second_last_code == 1000:
-                    return
+                log.debug("Empty queue - Resuming Processor - Early exit")
+                return
 
-        if event_channel_id != channel_id:
-            ws_audio_log.info(
-                f"Received an op code for a channel that is no longer valid; {event_channel_id} "
-                f"in guild: {guild_id}  - Active channel {channel_id} | "
-                f"Reason: Error code {code} & {reason}."
-            )
-            return
-        if player.channel:
-            current_perms = player.channel.permissions_for(player.channel.guild.me)
-            has_perm = current_perms.speak and current_perms.connect
-        else:
-            has_perm = False
-        if code in (1000,) and has_perm and player.current and player.is_playing:
-            player.store("resumes", player.fetch("resumes", 0) + 1)
-            await player.resume(player.current, start=player.position)
-            ws_audio_log.info(
-                f"Player resumed in channel {channel_id} in guild: {guild_id} | "
-                f"Reason: Error code {code} & {reason}."
-            )
-            return
-        # if self._ws_resume[guild_id].is_set():
-        #     ws_audio_log.debug(
-        #         f"WS EVENT | Discarding WS Closed event for guild {guild_id} -> "
-        #         f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-        #         f"Code: {code} -- Remote: {by_remote} -- {reason}"
-        #     )
-        #     return
-        self._ws_resume[guild_id].set()
-
-        if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
-            if player._con_delay:
-                delay = player._con_delay.delay()
+            if code != to_handle_code:
+                code = to_handle_code
+                if player.channel.id != event_channel_id:
+                    code = 4014
+            if event_channel_id != channel_id:
+                ws_audio_log.info(
+                    f"Received an op code for a channel that is no longer valid; {event_channel_id} "
+                    f"in guild: {guild_id}  - Active channel {channel_id} | "
+                    f"Reason: Error code {code} & {reason}."
+                )
+                self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+                return
+            if player.channel:
+                current_perms = player.channel.permissions_for(player.channel.guild.me)
+                has_perm = current_perms.speak and current_perms.connect
             else:
-                player._con_delay = ExponentialBackoff(base=1)
-                delay = player._con_delay.delay()
-            ws_audio_log.warning(
-                "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
-                f"Voice websocket closed for guild {guild_id} -> "
-                f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                f"Code: {code} -- Remote: {by_remote} -- {reason}"
-            )
-            ws_audio_log.debug(
-                f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
-            )
-            await asyncio.sleep(delay)
-            while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
-                voice_ws = node.get_voice_ws(guild_id)
-                await asyncio.sleep(0.1)
+                has_perm = False
+            if code in (1000,) and has_perm and player.current and player.is_playing:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
+                await player.resume(player.current, start=player.position, replace=False)
+                ws_audio_log.info(
+                    f"Player resumed in channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & {reason}."
+                )
+                self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+                return
 
-            if has_perm and player.current and player.is_playing:
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
-                await player.resume(player.current, start=player.position)
-                ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Currently playing."
+            if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
+                if player._con_delay:
+                    delay = player._con_delay.delay()
+                else:
+                    player._con_delay = ExponentialBackoff(base=1)
+                    delay = player._con_delay.delay()
+                ws_audio_log.warning(
+                    "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
+                    f"Voice websocket closed for guild {guild_id} -> "
+                    f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
+                    f"Code: {code} -- Remote: {by_remote} -- {reason}"
                 )
-            elif has_perm and player.paused and player.current:
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
-                await player.pause(pause=True)
-                ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Currently Paused."
+                ws_audio_log.debug(
+                    f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
                 )
-            elif has_perm and (not disconnect) and (not player.is_playing):
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
-                ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Not playing, but auto disconnect disabled."
-                )
-                self._ll_guild_updates.discard(guild_id)
-            elif not has_perm:
-                self.bot.dispatch("red_audio_audio_disconnect", guild)
-                ws_audio_log.info(
-                    "Voice websocket disconnected "
-                    f"from channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Missing permissions."
-                )
-                self._ll_guild_updates.discard(guild_id)
-                player.store("autoplay_notified", False)
-                await player.stop()
-                await player.disconnect()
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
-                )
-            else:
-                self.bot.dispatch("red_audio_audio_disconnect", guild)
-                ws_audio_log.info(
-                    "Voice websocket disconnected "
-                    f"from channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Unknown."
-                )
-                self._ll_guild_updates.discard(guild_id)
-                player.store("autoplay_notified", False)
-                await player.stop()
-                await player.disconnect()
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
-                )
-        elif code in (42069,) and has_perm and player.current and player.is_playing:
-            player.store("resumes", player.fetch("resumes", 0) + 1)
-            await player.connect(deafen=deafen)
-            await player.resume(player.current, start=player.position)
-            ws_audio_log.info(
-                f"Player resumed in channel {channel_id} in guild: {guild_id} | "
-                f"Reason: Error code {code} & {reason}."
-            )
-        elif code in (4015, 4009, 4006, 4000, 1006):
-            if (
-                code == 4006
-                and has_perm
-                and player._last_resume
-                and player._last_resume + datetime.timedelta(seconds=5)
-                > datetime.datetime.now(tz=datetime.timezone.utc)
-            ):
-                attempts = player.fetch("resume_attempts", 0)
-                player.store("resume_attempts", attempts + 1)
-                channel = self.bot.get_channel(player.channel.id)
-                should_skip = not channel.members or all(m.bot for m in channel.members)
-                if should_skip:
+                await asyncio.sleep(delay)
+                while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
+                    voice_ws = node.get_voice_ws(guild_id)
+                    await asyncio.sleep(0.1)
+
+                if has_perm and player.current and player.is_playing:
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.connect(deafen=deafen)
+                    await player.resume(player.current, start=player.position, replace=False)
                     ws_audio_log.info(
-                        "Voice websocket reconnected skipped "
-                        f"for channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & "
-                        "Player resumed too recently and no human members connected."
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Currently playing."
                     )
-                    self._ws_resume[guild_id].clear()
-                    self._ws_op_codes[event_channel_id]._init(self._ws_op_codes[event_channel_id]._maxsize)
-                    return
-
-            if player._con_delay:
-                delay = player._con_delay.delay()
+                elif has_perm and player.paused and player.current:
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.connect(deafen=deafen)
+                    await player.pause(pause=True)
+                    ws_audio_log.info(
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Currently Paused."
+                    )
+                elif has_perm and (not disconnect) and (not player.is_playing):
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.connect(deafen=deafen)
+                    ws_audio_log.info(
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Not playing, but auto disconnect disabled."
+                    )
+                    self._ll_guild_updates.discard(guild_id)
+                elif not has_perm:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    ws_audio_log.info(
+                        "Voice websocket disconnected "
+                        f"from channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Missing permissions."
+                    )
+                    self._ll_guild_updates.discard(guild_id)
+                    player.store("autoplay_notified", False)
+                    await player.stop()
+                    await player.disconnect()
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
+                else:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    ws_audio_log.info(
+                        "Voice websocket disconnected "
+                        f"from channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Unknown."
+                    )
+                    self._ll_guild_updates.discard(guild_id)
+                    player.store("autoplay_notified", False)
+                    await player.stop()
+                    await player.disconnect()
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
+            elif code in (42069,) and has_perm and player.current and player.is_playing:
+                player.store("resumes", player.fetch("resumes", 0) + 1)
+                await player.connect(deafen=deafen)
+                await player.resume(player.current, start=player.position, replace=False)
+                ws_audio_log.info(
+                    f"Player resumed in channel {channel_id} in guild: {guild_id} | "
+                    f"Reason: Error code {code} & {reason}."
+                )
+            elif code in (4015, 4009, 4006, 4000, 1006):
+                if player._con_delay:
+                    delay = player._con_delay.delay()
+                else:
+                    player._con_delay = ExponentialBackoff(base=1)
+                    delay = player._con_delay.delay()
+                ws_audio_log.debug(
+                    f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
+                )
+                await asyncio.sleep(delay)
+                if has_perm and player.current and player.is_playing:
+                    await player.connect(deafen=deafen)
+                    await player.resume(player.current, start=player.position, replace=False)
+                    ws_audio_log.info(
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Player is active."
+                    )
+                elif has_perm and player.paused and player.current:
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.connect(deafen=deafen)
+                    await player.resume(
+                        player.current, start=player.position, replace=False, pause=True
+                    )
+                    ws_audio_log.info(
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Player is paused."
+                    )
+                elif has_perm and (not disconnect) and (not player.is_playing):
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.connect(deafen=deafen)
+                    ws_audio_log.info(
+                        "Voice websocket reconnected "
+                        f"to channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Not playing."
+                    )
+                    self._ll_guild_updates.discard(guild_id)
+                elif not has_perm:
+                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    ws_audio_log.info(
+                        "Voice websocket disconnected "
+                        f"from channel {channel_id} in guild: {guild_id} | "
+                        f"Reason: Error code {code} & Missing permissions."
+                    )
+                    self._ll_guild_updates.discard(guild_id)
+                    player.store("autoplay_notified", False)
+                    await player.stop()
+                    await player.disconnect()
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
             else:
-                player._con_delay = ExponentialBackoff(base=1)
-                delay = player._con_delay.delay()
-            ws_audio_log.debug(
-                f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
-            )
-            await asyncio.sleep(delay)
-            if has_perm and player.current and player.is_playing:
-                await player.connect(deafen=deafen)
-                await player.resume(player.current, start=player.position)
+                if not player.paused and player.current:
+                    player.store("resumes", player.fetch("resumes", 0) + 1)
+                    await player.resume(player.current, start=player.position, replace=False)
                 ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Player is active."
+                    "WS EVENT - IGNORED (Healthy Socket) | "
+                    f"Voice websocket closed event for guild {guild_id} -> "
+                    f"Code: {code} -- Remote: {by_remote} -- {reason}"
                 )
-            elif has_perm and player.paused and player.current:
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
-                await player.pause(pause=True)
-                ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Player is paused."
-                )
-            elif has_perm and (not disconnect) and (not player.is_playing):
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
-                ws_audio_log.info(
-                    "Voice websocket reconnected "
-                    f"to channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Not playing."
-                )
-                self._ll_guild_updates.discard(guild_id)
-            elif not has_perm:
-                self.bot.dispatch("red_audio_audio_disconnect", guild)
-                ws_audio_log.info(
-                    "Voice websocket disconnected "
-                    f"from channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & Missing permissions."
-                )
-                self._ll_guild_updates.discard(guild_id)
-                player.store("autoplay_notified", False)
-                await player.stop()
-                await player.disconnect()
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
-                )
-        else:
-            if not player.paused and player.current:
-                player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.resume(player.current, start=player.position)
-            ws_audio_log.info(
-                "WS EVENT - IGNORED (Healthy Socket) | "
-                f"Voice websocket closed event for guild {guild_id} -> "
-                f"Code: {code} -- Remote: {by_remote} -- {reason}"
-            )
-        self._ws_resume[guild_id].clear()
-        self._ws_op_codes[event_channel_id]._init(self._ws_op_codes[event_channel_id]._maxsize)
+        except Exception:
+            log.exception("Error in task")
+        finally:
+            self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+            self._ws_resume[guild_id].set()
