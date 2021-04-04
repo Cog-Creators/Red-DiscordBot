@@ -504,7 +504,7 @@ class Downloader(commands.Cog):
             else:
                 await ctx.send(_("Library installed."))
         else:
-            if deps > 1:
+            if len(deps) > 1:
                 await ctx.send(
                     _(
                         "Some libraries failed to install. Please check"
