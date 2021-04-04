@@ -932,11 +932,12 @@ class Downloader(commands.Cog):
                         )
                         + humanize_list(tuple(map(inline, failed_cogs)))
                         + _(
-                            "\nThey were most likely removed without using `{prefix}cog uninstall`.\n"
+                            "\nThey were most likely removed without using {command_1}.\n"
                             "You may need to remove those files manually if the cogs are still usable."
-                            " If so, ensure the cogs have been unloaded with {command}."
+                            " If so, ensure the cogs have been unloaded with {command_2}."
                         ).format(
-                            command=inline(f"{ctx.clean_prefix}unload {' '.join(failed_cogs)}")
+                            command_1=inline(f"{ctx.clean_prefix}cog uninstall"),
+                            command_2=inline(f"{ctx.clean_prefix}unload {' '.join(failed_cogs)}"),
                         )
                     )
                 else:
