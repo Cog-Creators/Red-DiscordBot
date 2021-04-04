@@ -131,6 +131,8 @@ from discord.ext.commands import (
     ColourConverter as ColourConverter,
     ColorConverter as ColorConverter,
     VoiceChannelConverter as VoiceChannelConverter,
+    StageChannelConverter as StageChannelConverter,
+    StoreChannelConverter as StoreChannelConverter,
     NSFWChannelRequired as NSFWChannelRequired,
     IDConverter as IDConverter,
     MissingRequiredArgument as MissingRequiredArgument,
