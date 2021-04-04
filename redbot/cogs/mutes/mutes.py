@@ -154,11 +154,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     async def _schema_0_to_1(self):
         """This contains conversion that adds guild ID to channel mutes data."""
+        all_channels = await self.config.all_channels()
+        if not all_channels:
+            return
+
         start = datetime.now()
         log.info(
             "Config conversion to schema_version 1 started. This may take a while to proceed..."
         )
-        all_channels = await self.config.all_channels()
         async for channel_id in AsyncIter(all_channels.keys()):
             try:
                 if (channel := self.bot.get_channel(channel_id)) is None:
