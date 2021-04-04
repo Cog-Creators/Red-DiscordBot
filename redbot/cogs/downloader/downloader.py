@@ -1294,7 +1294,7 @@ class Downloader(commands.Cog):
         )
 
         if not available_str:
-            cogs = _("No cogs available.")
+            cogs = _("Available Cogs:\nNo cogs are available.")
         elif available_cogs > 1:
             cogs = _("Available Cogs:\n{text}").format(text=available_str)
         else:
