@@ -1,13 +1,15 @@
 import datetime
 import itertools
+import re
 import textwrap
 from io import BytesIO
-from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
+from typing import Iterator, List, Optional, Sequence, SupportsInt, Union, Pattern, Dict, Any
 
 import discord
 from babel.lists import format_list as babel_list
 from babel.numbers import format_decimal
 
+from redbot.core.commands import Context
 from redbot.core.i18n import Translator, get_babel_locale, get_babel_regional_format
 
 _ = Translator("UtilsChatFormatting", __file__)
@@ -583,3 +585,74 @@ def text_to_file(
     """
     file = BytesIO(text.encode(encoding))
     return discord.File(file, filename, spoiler=spoiler)
+
+
+async def convert_ctx_parameters(ctx: Context, raw_response: str) -> str:
+    """
+    Converts parameter fields in a string into safe attributes from context
+
+    Parameters
+    ----------
+    ctx: Context
+        A context object containing the attributes we want.
+    raw_response: str
+        The raw string containing fields we may want to transform.
+
+    Returns
+    -------
+    str
+        The raw string with replaced attributes from ctx.
+    """
+    RE_CTX: Pattern = re.compile(r"{([^}]+)\}")
+    results = RE_CTX.findall(raw_response)
+    for result in results:
+        param = await _transform_parameter(result, ctx)
+        raw_response = raw_response.replace("{" + result + "}", param)
+
+    if hasattr(ctx, "guild"):
+        prefixes = await ctx.bot.get_prefix(ctx.channel)
+        raw_response = raw_response.replace("{p}", prefixes[0])
+        raw_response = raw_response.replace("{pp}", humanize_list(prefixes))
+    return raw_response
+    # await ctx.send(raw_response)
+
+
+async def _transform_parameter(result: str, ctx: Context) -> str:
+    """
+    For security reasons only specific objects are allowed
+    Internals are ignored
+
+    Parameters
+    ----------
+    result: str
+        The found replacement parameter
+    ctx: Context
+        The context object containing attributes we want to pull from.
+
+    Returns
+    -------
+    str
+        The replaced attribute string if possible otherwise the raw string.
+    """
+    raw_result = "{" + result + "}"
+    objects: Dict[str, Any] = {
+        "message": ctx.message,
+        "author": ctx.message.author,
+        "channel": ctx.channel,
+        "guild": ctx.guild,
+        "server": ctx.guild,
+    }
+    if ctx.message.attachments:
+        objects["attachment"] = ctx.message.attachments[0]
+        # we can only reasonably support one attachment at a time
+    if result in objects:
+        return str(objects[result])
+    try:
+        first, second = result.split(".")
+    except ValueError:
+        return raw_result
+    if first in objects and not second.startswith("_"):
+        first = objects[first]
+    else:
+        return raw_result
+    return str(getattr(first, second, raw_result))
