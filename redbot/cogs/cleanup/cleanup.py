@@ -357,7 +357,7 @@ class Cleanup(commands.Cog):
                 return await ctx.send(_("Message not found."))
         elif ref := ctx.message.reference:
             before = await self.get_message_from_reference(channel, ref)
-        
+
         if before is None:
             raise commands.BadArgument
 
