@@ -1049,22 +1049,62 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         use embeds as a response to a command (for
         commands that support it). The default is to
         use embeds.
+
+        The embed settings are checked until the first True/False in this order:
+        - In guild context:
+        1. Channel override ([p]embedset channel)
+        2. Server command override ([p]embedset command server)
+        3. Server override ([p]embedset server)
+        4. Global command override ([p]embedset command global)
+        5. Global setting ([p]embedset global)
+
+        - In DM context:
+        1. User override ([p]embedset user)
+        2. Global command override ([p]embedset command global)
+        3. Global setting ([p]embedset global)
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(self, ctx: commands.Context):
+    async def embedset_showsettings(self, ctx: commands.Context, command_name: str = None) -> None:
         """Show the current embed settings."""
+        if command_name is not None:
+            command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+            if command_obj is None:
+                await ctx.send(
+                    _("I couldn't find that command. Please note that it is case sensitive.")
+                )
+                return
+            # qualified name might be different if alias was passed to this command
+            command_name = command_obj.qualified_name
+
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
-        text += _("Global default: {}\n").format(global_default)
+        text += _("Global default: {value}\n").format(value=global_default)
+
+        if command_name is not None:
+            scope = self.bot._config.custom("COMMAND", command_name, 0)
+            global_command_setting = await scope.embeds()
+            text += _("Global command setting for {command} command: {value}\n").format(
+                command=inline(command_name), value=global_command_setting
+            )
+
         if ctx.guild:
             guild_setting = await self.bot._config.guild(ctx.guild).embeds()
-            text += _("Guild setting: {}\n").format(guild_setting)
+            text += _("Guild setting: {value}\n").format(value=guild_setting)
+
+            if command_name is not None:
+                scope = self.bot._config.custom("COMMAND", command_name, ctx.guild.id)
+                command_setting = await scope.embeds()
+                text += _("Server command setting for {command} command: {value}\n").format(
+                    command=inline(command_name), value=command_setting
+                )
+
         if ctx.channel:
             channel_setting = await self.bot._config.channel(ctx.channel).embeds()
-            text += _("Channel setting: {}\n").format(channel_setting)
+            text += _("Channel setting: {value}\n").format(value=channel_setting)
+
         user_setting = await self.bot._config.user(ctx.author).embeds()
-        text += _("User setting: {}").format(user_setting)
+        text += _("User setting: {value}").format(value=user_setting)
         await ctx.send(box(text))
 
     @embedset.command(name="global")
@@ -1076,12 +1116,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This is used as a fallback if the user
         or guild hasn't set a preference. The
         default is to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
         current = await self.bot._config.embeds()
-        await self.bot._config.embeds.set(not current)
-        await ctx.send(
-            _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
-        )
+        if current:
+            await self.bot._config.embeds.set(False)
+            await ctx.send(_("Embeds are now disabled by default."))
+        else:
+            await self.bot._config.embeds.clear()
+            await ctx.send(_("Embeds are now enabled by default."))
 
     @embedset.command(name="server", aliases=["guild"])
     @checks.guildowner_or_permissions(administrator=True)
@@ -1095,16 +1139,139 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
-        used for all commands done in a guild channel except
-        for help commands.
+        used for all commands done in a server channel.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
-        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.guild(ctx.guild).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
+
+        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for this guild.")
+            if enabled
+            else _("Embeds are now disabled for this guild.")
+        )
+
+    @checks.guildowner_or_permissions(administrator=True)
+    @embedset.group(name="command", invoke_without_command=True)
+    async def embedset_command(
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
+    ) -> None:
+        """
+        Toggle the command's embed setting.
+
+        If you're the bot owner, this will change command's embed setting
+        globally by default.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await self.embedset_command_global(ctx, command_name, enabled)
+        else:
+            await self.embedset_command_guild(ctx, command_name, enabled)
+
+    def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
+        for command in itertools.chain((command_obj,), command_obj.parents):
+            if command_obj.requires.bot_perms.embed_links:
+                # a slight abuse of this exception to save myself two lines later...
+                raise commands.UserFeedbackCheckFailure(
+                    _(
+                        "The passed command requires Embed Links permission"
+                        " and therefore cannot be set to not use embeds."
+                    )
+                )
+
+    @commands.is_owner()
+    @embedset_command.command(name="global")
+    async def embedset_command_global(
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
+    ):
+        """
+        Toggle the commmand's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
+        if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, 0).embeds.clear()
+            await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, 0).embeds.set(enabled)
+        if enabled:
+            await ctx.send(
+                _("Embeds are now enabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
         else:
             await ctx.send(
-                _("Embeds are now {} for this guild.").format(
-                    _("enabled") if enabled else _("disabled")
+                _("Embeds are now disabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
+
+    @commands.guild_only()
+    @embedset_command.command(name="server", aliases=["guild"])
+    async def embedset_command_guild(
+        self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
+    ):
+        """
+        Toggle the commmand's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the server default will be used instead.
+
+        If set, this is used instead of the server default
+        to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
+        if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.clear()
+            await ctx.send(_("Embeds will now fall back to the server setting."))
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
+        if enabled:
+            await ctx.send(
+                _("Embeds are now enabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now disabled for {command_name} command.").format(
+                    command_name=inline(command_name)
                 )
             )
 
@@ -1118,20 +1285,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If enabled is None, the setting will be unset and
         the guild default will be used instead.
 
-        If set, this is used instead of the guild default
+        If set, this is used instead of the guild and command default
         to determine whether or not to use embeds. This is
-        used for all commands done in a channel except
-        for help commands.
+        used for all commands done in a channel.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
-        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.channel(ctx.channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now {} for this channel.").format(
-                    _("enabled") if enabled else _("disabled")
-                )
+            return
+
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now {} for this channel.").format(
+                _("enabled") if enabled else _("disabled")
             )
+        )
 
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
@@ -1144,16 +1314,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default
         to determine whether or not to use embeds. This is
         used for all commands executed in a DM with the bot.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
         """
-        await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.user(ctx.author).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now enabled for you in DMs.")
-                if enabled
-                else _("Embeds are now disabled for you in DMs.")
-            )
+
+        await self.bot._config.user(ctx.author).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for you in DMs.")
+            if enabled
+            else _("Embeds are now disabled for you in DMs.")
+        )
 
     @commands.command()
     @checks.is_owner()
@@ -3268,7 +3441,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="global")
     async def command_disable_global(self, ctx: commands.Context, *, command: str):
         """Disable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3302,7 +3475,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """Disable a command in this server only."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3352,7 +3525,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """Enable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -3374,7 +3547,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="server", aliases=["guild"])
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
         """Enable a command in this server."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
