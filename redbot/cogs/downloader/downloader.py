@@ -1017,7 +1017,7 @@ class Downloader(commands.Cog):
             else:
                 message += _("Unpinned {cog}").format(cognames[0])
         if not_pinned:
-            if len(unpinned) > 1:
+            if len(not_pinned) > 1:
                 message += _("\nThese cogs weren't pinned: ") + humanize_list(not_pinned)
             else:
                 message += _("\n{cog} was already not pinned.").format(cog=not_pinned[0])
