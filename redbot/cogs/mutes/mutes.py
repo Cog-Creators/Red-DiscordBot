@@ -148,11 +148,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         schema_version = await self.config.schema_version()
 
         if schema_version == 0:
-            all_channels = await self.config.all_channels()
             start = datetime.now()
             log.info(
                 "Config conversion to schema_version 1 started. This may take a while to proceed..."
             )
+            all_channels = await self.config.all_channels()
             async for channel_id in AsyncIter(all_channels.keys()):
                 try:
                     if (channel := self.bot.get_channel(channel_id)) is None:
