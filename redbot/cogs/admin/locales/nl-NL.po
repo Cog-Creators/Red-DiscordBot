@@ -140,7 +140,7 @@ msgstr "\n"
 "        Bewerk de rolnaam.\n\n"
 "        Gebruik dubbele aanhalingstekens als de rol of de naam spaties bevat.\n\n"
 "        Voorbeeld:\n"
-"            `[p]bewerkrole naam \"The Transistor\" Test`\n"
+"            `[p]editrole naam \"The Transistor\" Test`\n"
 "        "
 
 #: redbot/cogs/admin/admin.py:327

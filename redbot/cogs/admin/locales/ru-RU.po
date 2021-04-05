@@ -33,7 +33,7 @@ msgstr "Я не могу редактировать роль {role.name}, пот
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу вам дать {role.name}, {member.display_name}, поскольку эта роль выше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Я не могу дать {role.name} пользователю {member.display_name}, поскольку эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."

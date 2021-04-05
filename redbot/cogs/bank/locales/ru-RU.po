@@ -28,7 +28,7 @@ msgstr "Базовая команда для настройки банка."
 #: redbot/cogs/bank/bank.py:52
 #, docstring
 msgid "Show the current bank settings."
-msgstr ""
+msgstr "Показать текущие настройки банка."
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"
@@ -45,7 +45,12 @@ msgid "Bank settings:\n\n"
 "Currency: {currency_name}\n"
 "Default balance: {default_balance}\n"
 "Maximum allowed balance: {maximum_bal}\n"
-msgstr ""
+msgstr "Настройки банка:\n\n"
+"Название банка: {bank_name}\n"
+"Сфера деятельности банка: {bank_scope}\n"
+"Валюта: {currency_name}\n"
+"Баланс по умолчанию: {default_balance}\n"
+"Максимально допустимый баланс: {maximum_bal}\n"
 
 #: redbot/cogs/bank/bank.py:83
 #, docstring

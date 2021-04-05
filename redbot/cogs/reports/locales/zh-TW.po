@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-03-15 04:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -75,12 +75,9 @@ msgstr "由 {author.mention} 提出的回報 (回報 #{number})"
 #, docstring
 msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
-"        `[p]report <text>` to use it non-interactively.\n"
+"        `[p]report [text]` to use it non-interactively.\n"
 "        "
-msgstr "送出回報。\n\n"
-"        若不帶參數時則啟用互動式回報，或使用\n"
-"        `[p]report <文字>` 來非互動式的回報。\n"
-"        "
+msgstr ""
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
