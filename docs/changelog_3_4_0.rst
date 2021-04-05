@@ -26,6 +26,7 @@ Core Bot
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4898`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Fixed command signature for subcommands with group args that is shown in help (:issue:`4928`)
 
 Alias
 *****
@@ -75,6 +76,11 @@ Warnings
 
 Developer changelog
 -------------------
+
+- Bumped discord.py version to 1.7.0 (:issue:`4928`)
+- Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
+
+    - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
 
 
 Documentation changes
