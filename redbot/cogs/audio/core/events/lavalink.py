@@ -98,7 +98,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         await self.maybe_reset_error_counter(player)
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
-            self.skip_votes[guild] = []
+            self.skip_votes[guild_id.id] = []
             playing_song = player.fetch("playing_song")
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
