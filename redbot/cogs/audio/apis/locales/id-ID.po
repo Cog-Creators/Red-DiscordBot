@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -15,51 +15,51 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: id_ID\n"
 
-#: redbot/cogs/audio/apis/interface.py:273
-#: redbot/cogs/audio/apis/interface.py:595
+#: redbot/cogs/audio/apis/interface.py:274
+#: redbot/cogs/audio/apis/interface.py:602
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Gagal mendapatkan trek, melewatkan sisa."
 
-#: redbot/cogs/audio/apis/interface.py:304
+#: redbot/cogs/audio/apis/interface.py:307
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
 msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\n"
 "Gunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
 
-#: redbot/cogs/audio/apis/interface.py:346
+#: redbot/cogs/audio/apis/interface.py:349
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "Tampaknya ini bukan URL atau kode playlist/album Spotify yang valid."
 
-#: redbot/cogs/audio/apis/interface.py:471
+#: redbot/cogs/audio/apis/interface.py:475
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Tampaknya ini bukan URL atau kode Spotify yang didukung."
 
-#: redbot/cogs/audio/apis/interface.py:558
+#: redbot/cogs/audio/apis/interface.py:563
 msgid "The connection was reset while loading the playlist."
 msgstr "Sambungan disetel ulang saat memuat daftar putar."
 
-#: redbot/cogs/audio/apis/interface.py:569
+#: redbot/cogs/audio/apis/interface.py:574
 msgid "Player timeout, skipping remaining tracks."
 msgstr "Waktu tunggu pemain, melewatkan trek yang tersisa."
 
-#: redbot/cogs/audio/apis/interface.py:661
+#: redbot/cogs/audio/apis/interface.py:668
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} lagu tidak dapat diantrekan."
 
-#: redbot/cogs/audio/apis/interface.py:669
+#: redbot/cogs/audio/apis/interface.py:676
 msgid "Playlist Enqueued"
 msgstr "Antrean Daftar Putar"
 
-#: redbot/cogs/audio/apis/interface.py:670
+#: redbot/cogs/audio/apis/interface.py:677
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "Menambahkan {num} trek ke antrian. {maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:676
+#: redbot/cogs/audio/apis/interface.py:683
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "{time} hingga dimulainya pemutaran playlist: dimulai dari #{position} dalam antrian"
 
-#: redbot/cogs/audio/apis/interface.py:687
+#: redbot/cogs/audio/apis/interface.py:694
 msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-03-07 21:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 45\n"
 "Language: nb_NO\n"
 
-#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:341
+#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:356
 msgid "There is no ongoing trivia session in this channel."
 msgstr "Det er ingen pågående trivia sesjon i denne kanalen."
 
@@ -39,61 +39,73 @@ msgstr "Lett: {answer}."
 msgid "Oh really? It's {answer} of course."
 msgstr "Åh virkelig? Det er {answer} selvfølgelig."
 
-#: redbot/cogs/trivia/session.py:25
+#: redbot/cogs/trivia/session.py:26
+msgid "I know this one! ||{answer}!||"
+msgstr "Jeg kan dette! ||{answer}!||"
+
+#: redbot/cogs/trivia/session.py:27
+msgid "Easy: ||{answer}.||"
+msgstr "Lett: ||{answer}.||"
+
+#: redbot/cogs/trivia/session.py:28
+msgid "Oh really? It's ||{answer}|| of course."
+msgstr "Å? Det er selvfølgelig ||{answer}||."
+
+#: redbot/cogs/trivia/session.py:32
 msgid "To the next one I guess..."
 msgstr "Til den neste jeg gjetter..."
 
-#: redbot/cogs/trivia/session.py:26
+#: redbot/cogs/trivia/session.py:33
 msgid "Moving on..."
 msgstr "Flytter på..."
 
-#: redbot/cogs/trivia/session.py:27
+#: redbot/cogs/trivia/session.py:34
 msgid "I'm sure you'll know the answer of the next one."
 msgstr "Jeg er sikker på at du vet svaret av det neste."
 
-#: redbot/cogs/trivia/session.py:28
+#: redbot/cogs/trivia/session.py:35
 msgid "😔 Next one."
 msgstr "😔 Neste."
 
-#: redbot/cogs/trivia/session.py:114
+#: redbot/cogs/trivia/session.py:121
 msgid "An unexpected error occurred in the trivia session.\n"
 "Check your console or logs for details."
 msgstr "En uventet feil oppstod i trivia økten.\n"
 "Sjekk konsollen eller loggene din for detaljer."
 
-#: redbot/cogs/trivia/session.py:135
+#: redbot/cogs/trivia/session.py:142
 msgid "Question number {num}!"
 msgstr "Spørsmålsnummer {num}!"
 
-#: redbot/cogs/trivia/session.py:144
+#: redbot/cogs/trivia/session.py:151
 msgid "There are no more questions!"
 msgstr "Det er ingen flere spørsmål!"
 
-#: redbot/cogs/trivia/session.py:152
+#: redbot/cogs/trivia/session.py:159
 msgid "{trivia_list} (by {author})"
 msgstr "{trivia_list} (ved {author})"
 
-#: redbot/cogs/trivia/session.py:157
+#: redbot/cogs/trivia/session.py:164
 msgid "Starting Trivia: {list_names}"
 msgstr "Starter Trivia: {list_names}"
 
-#: redbot/cogs/trivia/session.py:203
+#: redbot/cogs/trivia/session.py:210
 msgid "Guys...? Well, I guess I'll stop then."
 msgstr "Gjeter...? Vel, jeg gjetter jeg vil stoppe da."
 
-#: redbot/cogs/trivia/session.py:211
+#: redbot/cogs/trivia/session.py:221
 msgid " **+1** for me!"
 msgstr " **+1** for meg!"
 
-#: redbot/cogs/trivia/session.py:216
+#: redbot/cogs/trivia/session.py:226
 msgid "You got it {user}! **+1** to you!"
 msgstr "Du fikk det {user}! **+1** til deg!"
 
-#: redbot/cogs/trivia/session.py:319
+#: redbot/cogs/trivia/session.py:329
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
 msgstr "Gratulerer {users}! Du har mottatt hver {num} {currency} for å vinne!"
 
-#: redbot/cogs/trivia/session.py:327
+#: redbot/cogs/trivia/session.py:337
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr "Gratulerer {user}! Du har mottatt {num} {currency} for å vinne!"
 
@@ -102,17 +114,17 @@ msgstr "Gratulerer {user}! Du har mottatt {num} {currency} for å vinne!"
 msgid "Play trivia with friends!"
 msgstr "Spill trivia med venner!"
 
-#: redbot/cogs/trivia/trivia.py:79
+#: redbot/cogs/trivia/trivia.py:80
 #, docstring
 msgid "Manage Trivia settings."
 msgstr "Administrer trivia innstillinger."
 
-#: redbot/cogs/trivia/trivia.py:83
+#: redbot/cogs/trivia/trivia.py:84
 #, docstring
 msgid "Show the current trivia settings."
 msgstr "Vis nåværende trivia innstillinger."
 
-#: redbot/cogs/trivia/trivia.py:87
+#: redbot/cogs/trivia/trivia.py:88
 msgid "Current settings\n"
 "Bot gains points: {bot_plays}\n"
 "Answer time limit: {delay} seconds\n"
@@ -120,69 +132,88 @@ msgid "Current settings\n"
 "Points to win: {max_score}\n"
 "Reveal answer on timeout: {reveal_answer}\n"
 "Payout multiplier: {payout_multiplier}\n"
-"Allow lists to override settings: {allow_override}"
-msgstr "Nåværende innstillinger\n"
+"Allow lists to override settings: {allow_override}\n"
+"Use Spoilers in answers: {use_spoilers}"
+msgstr "Nåværende instillinger\n"
 "Bot får poeng: {bot_plays}\n"
-"Svar tidsgrense: {delay} sekunder\n"
-"Mangel på svar timeout: {timeout} sekunder\n"
-"Poeng å vinne: {max_score}\n"
-"Reveal svar ved timeout: {reveal_answer}\n"
-"Payout multiplier: {payout_multiplier}\n"
-"Tillat at lister overstyrer innstillinger: {allow_override}"
+"Svarfrist: {delay} sekunder\n"
+"Manglende responstid: {timeout} sekunder\n"
+"Poeng for å vinne: {max_score}\n"
+"Avslør svaret på etter tid: {reveal_answer}\n"
+"Utbetalings multiplikasjon: {payout_multiplier}\n"
+"Tilat at listen overstyrer innstillinger: {allow_override}\n"
+"Bruk spoilere i svarene: {use_spoilers}"
 
-#: redbot/cogs/trivia/trivia.py:103
+#: redbot/cogs/trivia/trivia.py:105
 #, docstring
 msgid "Set the total points required to win."
 msgstr "Setter totalt poeng som kreves for å vinne."
 
-#: redbot/cogs/trivia/trivia.py:105
+#: redbot/cogs/trivia/trivia.py:107
 msgid "Score must be greater than 0."
 msgstr "Poengsummen må være større enn 0."
 
-#: redbot/cogs/trivia/trivia.py:109
+#: redbot/cogs/trivia/trivia.py:111
 msgid "Done. Points required to win set to {num}."
 msgstr "Ferdig. Poeng kreves for å vinne satt til {num}."
 
-#: redbot/cogs/trivia/trivia.py:113
+#: redbot/cogs/trivia/trivia.py:115
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
 msgstr "Angi maksimalt antall sekunder tillatt å svare på spørsmål."
 
-#: redbot/cogs/trivia/trivia.py:115
+#: redbot/cogs/trivia/trivia.py:117
 msgid "Must be at least 4 seconds."
 msgstr "Må være minst 4 sekunder."
 
-#: redbot/cogs/trivia/trivia.py:119
+#: redbot/cogs/trivia/trivia.py:121
 msgid "Done. Maximum seconds to answer set to {num}."
 msgstr "Ferdig. Maksimalt antall sekunder å svare angir {num}."
 
-#: redbot/cogs/trivia/trivia.py:123
+#: redbot/cogs/trivia/trivia.py:125
 #, docstring
 msgid "Set how long until trivia stops due to no response."
 msgstr "Angi hvor lenge det skal gis til reisen stopper på grunn av ingen respons."
 
-#: redbot/cogs/trivia/trivia.py:126
+#: redbot/cogs/trivia/trivia.py:128
 msgid "Must be larger than the answer time limit."
 msgstr "Må være større enn svarenes tidsgrense."
 
-#: redbot/cogs/trivia/trivia.py:130
+#: redbot/cogs/trivia/trivia.py:132
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
 msgstr "Ferdig. Start økter vil nå utløpe etter {num} sekunder med ingen svar."
 
-#: redbot/cogs/trivia/trivia.py:137
+#: redbot/cogs/trivia/trivia.py:139
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
 msgstr "Tillatt / ikke tillate turvia lister for å overstyre innstillinger."
 
-#: redbot/cogs/trivia/trivia.py:142
+#: redbot/cogs/trivia/trivia.py:144
 msgid "Done. Trivia lists can now override the trivia settings for this server."
 msgstr "Ferdig. Trivia lister kan nå overstyre trivia innstillingene for denne serveren."
 
-#: redbot/cogs/trivia/trivia.py:146
+#: redbot/cogs/trivia/trivia.py:148
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
 msgstr "Ferdig. Trivia lister kan ikke lenger overstyre trivia innstillinger for denne serveren."
 
-#: redbot/cogs/trivia/trivia.py:154
+#: redbot/cogs/trivia/trivia.py:156
+#, docstring
+msgid "Set if bot will display the answers in spoilers.\n\n"
+"        If enabled, the bot will use spoilers to hide answers.\n"
+"        "
+msgstr "Velg om bot vil vise svarene på spoilere.\n\n"
+"        Hvis aktivert, vil boten bruke spoilere for å skjule svar.\n"
+"        "
+
+#: redbot/cogs/trivia/trivia.py:163
+msgid "Done. I'll put the answers in spoilers next time."
+msgstr "Ferdig. Jeg legger svarene i spoilere neste gang."
+
+#: redbot/cogs/trivia/trivia.py:165
+msgid "Alright, I won't use spoilers to hide answers anymore."
+msgstr "Ok, jeg vil ikke bruke spoilere for å skjule svar lenger."
+
+#: redbot/cogs/trivia/trivia.py:169
 #, docstring
 msgid "Set whether or not the bot gains points.\n\n"
 "        If enabled, the bot will gain a point if no one guesses correctly.\n"
@@ -191,15 +222,15 @@ msgstr "Angi om bot skal gevinst punktene.\n\n"
 "        Hvis dette er aktivert, får boten et poeng hvis ingen gjetter riktig.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:161
+#: redbot/cogs/trivia/trivia.py:176
 msgid "Done. I'll now gain a point if users don't answer in time."
 msgstr "Ferdig. Jeg får nå et poeng hvis brukere ikke svarer i tide."
 
-#: redbot/cogs/trivia/trivia.py:163
+#: redbot/cogs/trivia/trivia.py:178
 msgid "Alright, I won't embarrass you at trivia anymore."
 msgstr "Ok, jeg kommer ikke lenger til å flettes deg."
 
-#: redbot/cogs/trivia/trivia.py:167
+#: redbot/cogs/trivia/trivia.py:182
 #, docstring
 msgid "Set whether or not the answer is revealed.\n\n"
 "        If enabled, the bot will reveal the answer if no one guesses correctly\n"
@@ -210,15 +241,15 @@ msgstr "Angi om svaret blir avslørt eller ikke.\n\n"
 "        i tide.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:175
+#: redbot/cogs/trivia/trivia.py:190
 msgid "Done. I'll reveal the answer if no one knows it."
 msgstr "Ferdig. Jeg vil se svaret hvis ingen vet det."
 
-#: redbot/cogs/trivia/trivia.py:177
+#: redbot/cogs/trivia/trivia.py:192
 msgid "Alright, I won't reveal the answer to the questions anymore."
 msgstr "Ok, jeg får ikke lenger svar på spørsmålene."
 
-#: redbot/cogs/trivia/trivia.py:183
+#: redbot/cogs/trivia/trivia.py:198
 #, docstring
 msgid "Set the payout multiplier.\n\n"
 "        This can be any positive decimal number. If a user wins trivia when at\n"
@@ -235,75 +266,75 @@ msgstr "Angi utbetalingsmultiplikatoren.\n\n"
 "denne multiplikatoren.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:194
+#: redbot/cogs/trivia/trivia.py:209
 msgid "Multiplier must be at least 0."
 msgstr "Multiplikator må være minst 0."
 
-#: redbot/cogs/trivia/trivia.py:198
+#: redbot/cogs/trivia/trivia.py:213
 msgid "Done. Payout multiplier set to {num}."
 msgstr "Ferdig. Utbetaling multiplikator satt til {num}."
 
-#: redbot/cogs/trivia/trivia.py:200
+#: redbot/cogs/trivia/trivia.py:215
 msgid "Done. I will no longer reward the winner with a payout."
 msgstr "Ferdig. Jeg vil ikke lenger belønne vinneren ved en utbetaling."
 
-#: redbot/cogs/trivia/trivia.py:205
+#: redbot/cogs/trivia/trivia.py:220
 #, docstring
 msgid "Manage Custom Trivia lists."
 msgstr "Behandle egendefinerte trivia lister."
 
-#: redbot/cogs/trivia/trivia.py:210
+#: redbot/cogs/trivia/trivia.py:225
 #, docstring
 msgid "List uploaded custom trivia."
 msgstr "Vis opplastede egendefinerte trivia."
 
-#: redbot/cogs/trivia/trivia.py:212
+#: redbot/cogs/trivia/trivia.py:227
 msgid "No custom Trivia lists uploaded."
 msgstr "Ingen egendefinerte trivia lister lastet opp."
 
-#: redbot/cogs/trivia/trivia.py:228 redbot/cogs/trivia/trivia.py:235
+#: redbot/cogs/trivia/trivia.py:243 redbot/cogs/trivia/trivia.py:250
 msgid "Uploaded trivia lists"
 msgstr "Opplastede trivia lister"
 
-#: redbot/cogs/trivia/trivia.py:245
+#: redbot/cogs/trivia/trivia.py:260
 #, docstring
 msgid "Upload a trivia file."
 msgstr "Last opp trivia-fil."
 
-#: redbot/cogs/trivia/trivia.py:247
+#: redbot/cogs/trivia/trivia.py:262
 msgid "Supply a file with next message or type anything to cancel."
 msgstr "Leverer en fil med neste melding eller skriv noe for å avbryte."
 
-#: redbot/cogs/trivia/trivia.py:253
+#: redbot/cogs/trivia/trivia.py:268
 msgid "You took too long to upload a list."
 msgstr "Du tok for lang tid å laste opp en liste."
 
-#: redbot/cogs/trivia/trivia.py:256
+#: redbot/cogs/trivia/trivia.py:271
 msgid "You have cancelled the upload process."
 msgstr "Du har avbrutt opplastingsprosessen."
 
-#: redbot/cogs/trivia/trivia.py:264
+#: redbot/cogs/trivia/trivia.py:279
 msgid "Invalid syntax: "
 msgstr "Ugyldig syntaks: "
 
-#: redbot/cogs/trivia/trivia.py:267
+#: redbot/cogs/trivia/trivia.py:282
 msgid "There was an error parsing the trivia list. See logs for more info."
 msgstr "Det oppstod en feil ved analysering av trivia listen. Se loggene for mer info."
 
-#: redbot/cogs/trivia/trivia.py:274
+#: redbot/cogs/trivia/trivia.py:289
 #, docstring
 msgid "Delete a trivia file."
 msgstr "Slette en trivia fil."
 
-#: redbot/cogs/trivia/trivia.py:278
+#: redbot/cogs/trivia/trivia.py:293
 msgid "Trivia {filename} was deleted."
 msgstr "Trivia {filename} ble slettet."
 
-#: redbot/cogs/trivia/trivia.py:280
+#: redbot/cogs/trivia/trivia.py:295
 msgid "Trivia file was not found."
 msgstr "Trivia-filen ble ikke funnet."
 
-#: redbot/cogs/trivia/trivia.py:285
+#: redbot/cogs/trivia/trivia.py:300
 #, docstring
 msgid "Start trivia session on the specified category.\n\n"
 "        You may list multiple categories, in which case the trivia will involve\n"
@@ -314,41 +345,41 @@ msgstr "Start trivia økt på spesifisert kategori.\n\n"
 "        spørsmål fra alle dem.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:293
+#: redbot/cogs/trivia/trivia.py:308
 msgid "There is already an ongoing trivia session in this channel."
 msgstr "Det finnes allerede en pågående prøvesøkt på denne kanalen."
 
-#: redbot/cogs/trivia/trivia.py:304
+#: redbot/cogs/trivia/trivia.py:319
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
 msgstr "Ugyldig kategori `{name}`. Se `{prefix}trivia list` for en liste over trivia kategorier."
 
-#: redbot/cogs/trivia/trivia.py:311
+#: redbot/cogs/trivia/trivia.py:326
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
 msgstr "Det oppstod en feil under lesingen av trivia listen for kategorien{name}'. Det kan bli formatert feil."
 
-#: redbot/cogs/trivia/trivia.py:323
+#: redbot/cogs/trivia/trivia.py:338
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
 msgstr "Turvia listen ble vellykket analysert men det ser ut til å være tom!"
 
-#: redbot/cogs/trivia/trivia.py:338
+#: redbot/cogs/trivia/trivia.py:353
 #, docstring
 msgid "Stop an ongoing trivia session."
 msgstr "Stopp en pågående trivia økten."
 
-#: redbot/cogs/trivia/trivia.py:345
+#: redbot/cogs/trivia/trivia.py:360
 msgid "Trivia stopped."
 msgstr "Trivia stoppet."
 
-#: redbot/cogs/trivia/trivia.py:349
+#: redbot/cogs/trivia/trivia.py:364
 #, docstring
 msgid "List available trivia categories."
 msgstr "Liste tilgjengelig stammekategorier."
 
-#: redbot/cogs/trivia/trivia.py:354 redbot/cogs/trivia/trivia.py:360
+#: redbot/cogs/trivia/trivia.py:369 redbot/cogs/trivia/trivia.py:375
 msgid "Available trivia lists"
 msgstr "Tilgjengelige trivia lister"
 
-#: redbot/cogs/trivia/trivia.py:370
+#: redbot/cogs/trivia/trivia.py:385
 #, docstring
 msgid "Leaderboard for trivia.\n\n"
 "        Defaults to the top 10 of this server, sorted by total wins. Use\n"
@@ -359,7 +390,7 @@ msgstr "Ledertavle for trivia.\n\n"
 "        underkommandoer for et mer tilpasset lederskap.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:385
+#: redbot/cogs/trivia/trivia.py:400
 #, docstring
 msgid "Leaderboard for this server.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -378,11 +409,11 @@ msgstr "Ledertavle for denne serveren.\n\n"
 "        `<top>` er antallet rangeringer som vises på ledertavlen.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:398 redbot/cogs/trivia/trivia.py:427
+#: redbot/cogs/trivia/trivia.py:413 redbot/cogs/trivia/trivia.py:442
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr "Ukjent felt `{field_name}`, se `{prefix}help trivia leaderboard server` for gyldige felt å sortere etter."
 
-#: redbot/cogs/trivia/trivia.py:414
+#: redbot/cogs/trivia/trivia.py:429
 #, docstring
 msgid "Global trivia leaderboard.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -401,53 +432,53 @@ msgstr "Ledertavle for denne serveren.\n\n"
 "        `<top>` er antallet rangeringer som vises på ledertavlen.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:482
+#: redbot/cogs/trivia/trivia.py:497
 msgid "There are no scores on record!"
 msgstr "Det finnes ingen resultater i posten!"
 
-#: redbot/cogs/trivia/trivia.py:512
+#: redbot/cogs/trivia/trivia.py:527
 msgid "Rank"
 msgstr "Rank"
 
-#: redbot/cogs/trivia/trivia.py:513
+#: redbot/cogs/trivia/trivia.py:528
 msgid "Member"
 msgstr "Medlem"
 
-#: redbot/cogs/trivia/trivia.py:514
+#: redbot/cogs/trivia/trivia.py:529
 msgid "Wins"
 msgstr "Seire"
 
-#: redbot/cogs/trivia/trivia.py:515
+#: redbot/cogs/trivia/trivia.py:530
 msgid "Games Played"
 msgstr "Spillede partier"
 
-#: redbot/cogs/trivia/trivia.py:516
+#: redbot/cogs/trivia/trivia.py:531
 msgid "Total Score"
 msgstr "Samlet Poengsum"
 
-#: redbot/cogs/trivia/trivia.py:517
+#: redbot/cogs/trivia/trivia.py:532
 msgid "Average Score"
 msgstr "Gjennomsnittlig poengsum"
 
-#: redbot/cogs/trivia/trivia.py:632
+#: redbot/cogs/trivia/trivia.py:647
 msgid "{filename} is a reserved trivia name and cannot be replaced.\n"
 "Choose another name."
 msgstr "{filename} er en reservert stammenavn og kan ikke erstattes.\n"
 "Velg et annet navn."
 
-#: redbot/cogs/trivia/trivia.py:641
+#: redbot/cogs/trivia/trivia.py:656
 msgid "{filename} already exists. Do you wish to overwrite?"
 msgstr "{filename} finnes allerede. Vil du overskrive?"
 
-#: redbot/cogs/trivia/trivia.py:663
+#: redbot/cogs/trivia/trivia.py:678
 msgid "You took too long answering."
 msgstr "Du tok for lang svar."
 
-#: redbot/cogs/trivia/trivia.py:667
+#: redbot/cogs/trivia/trivia.py:682
 msgid "I am not replacing the existing file."
 msgstr "Jeg erstatter ikke den eksisterende filen."
 
-#: redbot/cogs/trivia/trivia.py:676
+#: redbot/cogs/trivia/trivia.py:691
 msgid "Saved Trivia list as {filename}."
 msgstr "Lagret stamme via listen som {filename}."
 
