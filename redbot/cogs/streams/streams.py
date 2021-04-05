@@ -778,6 +778,10 @@ class Streams(commands.Cog):
 
                     stream.messages.clear()
                     await self.save_streams()
+                except StreamNotFound:
+                    self.streams.remove(stream)
+                    await self.save_streams()
+                    continue
                 else:
                     if stream.messages:
                         continue
