@@ -1438,8 +1438,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 + " (y/n)"
             )
         else:
-            msg = _("Are you sure you want me to leave these servers?") + " (y/n):\n" + "\n".join(
-                f"- {guild.name} (`{guild.id}`)" for guild in guilds
+            msg = (
+                _("Are you sure you want me to leave these servers?")
+                + " (y/n):\n"
+                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
             )
 
         for guild in guilds:
@@ -1480,10 +1482,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def servers(self, ctx: commands.Context):
         """Lists the servers [botname] is currently in."""
         guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
-        msg = "\n".join(
-            f"{guild.name} (`{guild.id}`)\n"
-            for guild in guilds
-        )
+        msg = "\n".join(f"{guild.name} (`{guild.id}`)\n" for guild in guilds)
 
         pages = list(pagify(msg, ["\n"], page_length=1000))
 
