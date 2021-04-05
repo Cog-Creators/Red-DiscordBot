@@ -727,7 +727,7 @@ class Streams(commands.Cog):
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
         )
-        message_data = {"channel": m.channel.id, "message": m.id}
+        message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
             message_data["is_schedule"] = True
         stream.messages.append(message_data)

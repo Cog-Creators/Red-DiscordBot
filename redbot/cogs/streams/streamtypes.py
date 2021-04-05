@@ -72,7 +72,12 @@ class Stream:
     def iter_messages(self):
         for msg_data in self.messages:
             data = msg_data.copy()
-            channel = self._bot.get_channel(msg_data["channel"])
+            # "guild" key might not exist for old config data (available since GH-4742)
+            if guild_id := msg_data.get("guild"):
+                guild = self._bot.get_guild(guild_id)
+                channel = guild and guild.get_channel(msg_data["channel"])
+            else:
+                channel = self._bot.get_channel(msg_data["channel"])
             if channel is not None:
                 data["partial_message"] = channel.get_partial_message(data["message"])
             yield data
