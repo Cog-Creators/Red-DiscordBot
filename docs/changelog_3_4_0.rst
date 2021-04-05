@@ -53,6 +53,7 @@ Filter
 Mod
 ***
 
+- Improved performance of checking tempban expirations (:issue:`4907`)
 - Fixed tracking of nicknames that were set just before nick reset (:issue:`4830`)
 
 Streams
