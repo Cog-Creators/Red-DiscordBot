@@ -11,6 +11,7 @@ End-user changelog
 Core Bot
 ********
 
+- Added more singular and plural forms in a bunch of commands in the bot (:issue:`4898`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
 Filter
