@@ -757,7 +757,7 @@ class Streams(commands.Cog):
                             continue
                         if await self.bot.cog_disabled_in_guild(self, partial_msg.guild):
                             continue
-                        if not await self._config.guild(partial_msg.guild).autodelete():
+                        if not await self.config.guild(partial_msg.guild).autodelete():
                             continue
 
                         with contextlib.suppress(discord.NotFound):
