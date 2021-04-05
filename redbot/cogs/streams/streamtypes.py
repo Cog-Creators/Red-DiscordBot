@@ -293,9 +293,9 @@ class TwitchStream(Stream):
         https://github.com/tsifrer/python-twitch-client/blob/master/twitch/helix/base.py
         https://github.com/TrustyJAID/Trusty-cogs/blob/master/twitch/twitch_api.py
         """
+        current_time = int(time.time())
+        self._rate_limit_resets = {x for x in self._rate_limit_resets if x > current_time}
         if self._rate_limit_remaining == 0:
-            current_time = int(time.time())
-            self._rate_limit_resets = set(x for x in self._rate_limit_resets if x > current_time)
 
             if self._rate_limit_resets:
                 reset_time = next(iter(self._rate_limit_resets))
