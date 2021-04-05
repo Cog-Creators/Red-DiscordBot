@@ -888,7 +888,7 @@ class Streams(commands.Cog):
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config
                     raw_stream["token"] = token
-            raw_stream["bot"] = self.bot
+            raw_stream["_bot"] = self.bot
             streams.append(_class(**raw_stream))
 
         return streams

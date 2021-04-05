@@ -56,7 +56,7 @@ class Stream:
     token_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
-        self.bot = kwargs.pop("bot")
+        self._bot = kwargs.pop("_bot")
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
         # self.already_online = kwargs.pop("already_online", False)
@@ -72,7 +72,7 @@ class Stream:
     def iter_messages(self):
         for msg_data in self.messages:
             data = msg_data.copy()
-            channel = self.bot.get_channel(msg_data["channel"])
+            channel = self._bot.get_channel(msg_data["channel"])
             if channel is not None:
                 data["partial_message"] = channel.get_partial_message(data["message"])
             yield data
