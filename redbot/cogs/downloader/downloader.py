@@ -1279,11 +1279,9 @@ class Downloader(commands.Cog):
             for i in installed_cogs_in_repo
         )
 
-        if not installed_str:
-            installed_str = _("No cogs installed.")
-        elif len(installed_cogs_in_repo) > 1:
+        if len(installed_cogs_in_repo) > 1:
             installed_str = _("Installed Cogs:\n{text}").format(text=installed_str)
-        else:
+        elif installed_cogs_in_repo:
             installed_str = _("Installed Cog:\n{text}").format(text=installed_str)
         available_str = "\n".join(
             "+ {}{}".format(cog.name, ": {}".format(cog.short) if cog.short else "")
