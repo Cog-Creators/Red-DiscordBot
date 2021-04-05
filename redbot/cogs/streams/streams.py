@@ -401,7 +401,7 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token, config=self.config)
+                stream = _class(_bot=self.bot, id=channel_name, token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
