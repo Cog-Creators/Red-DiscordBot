@@ -350,13 +350,15 @@ class TwitchStream(Stream):
 
             if user_profile_data is None:
                 __, user_profile_data = await self._fetch_user_profile()
-            final_data = {
-                "game_name": None,
-                "followers": None,
-                "login": user_profile_data["login"],
-                "profile_image_url": user_profile_data["profile_image_url"],
-                "view_count": user_profile_data["view_count"],
-            }
+
+            final_data = dict.fromkeys(
+                ("game_name", "followers", "login", "profile_image_url", "view_count")
+            )
+
+            if user_profile_data is not None:
+                final_data["login"] = user_profile_data["login"]
+                final_data["profile_image_url"] = user_profile_data["profile_image_url"]
+                final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
             self.name = stream_data["user_name"]
