@@ -211,6 +211,7 @@ class AudioAPIInterface:
         time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         youtube_api_error = None
+        global_api = self.cog.global_api_user.get("can_read")
         async for track in AsyncIter(tracks):
             if isinstance(track, str):
                 break
@@ -267,13 +268,15 @@ class AudioAPIInterface:
             track_count += 1
             if notifier is not None and ((track_count % 2 == 0) or (track_count == total_tracks)):
                 await notifier.notify_user(current=track_count, total=total_tracks, key="youtube")
-            if notifier is not None and youtube_api_error:
+            if notifier is not None and (youtube_api_error and not global_api):
                 error_embed = discord.Embed(
                     colour=await ctx.embed_colour(),
                     title=_("Failing to get tracks, skipping remaining."),
                 )
                 await notifier.update_embed(error_embed)
                 break
+            elif notifier is not None and (youtube_api_error and global_api):
+                continue
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             task = ("insert", ("spotify", database_entries))
             self.append_task(ctx, *task)
@@ -447,11 +450,12 @@ class AudioAPIInterface:
             List of Youtube URLs.
         """
         await self.global_cache_api._get_api_key()
-        globaldb_toggle = await self.config.global_db_enabled()
+        globaldb_toggle = self.cog.global_api_user.get("can_read")
         global_entry = globaldb_toggle and query_global
         track_list: List = []
         has_not_allowed = False
         youtube_api_error = None
+        skip_youtube_api = False
         try:
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
@@ -518,7 +522,7 @@ class AudioAPIInterface:
                             llresponse["loadType"] = "V2_COMPAT"
                         llresponse = LoadResult(llresponse)
                     val = llresponse or None
-                if val is None:
+                if val is None and not skip_youtube_api:
                     try:
                         val = await self.fetch_youtube_query(
                             ctx, track_info, current_cache_level=current_cache_level
@@ -526,6 +530,7 @@ class AudioAPIInterface:
                     except YouTubeApiError as err:
                         val = None
                         youtube_api_error = err.message
+                        skip_youtube_api = True
                 if not youtube_api_error:
                     if youtube_cache and val and llresponse is None:
                         task = ("update", ("youtube", {"track": track_info}))
@@ -589,7 +594,9 @@ class AudioAPIInterface:
                             seconds=seconds,
                         )
 
-                if youtube_api_error or consecutive_fails >= (20 if global_entry else 10):
+                if (youtube_api_error and not global_entry) or consecutive_fails >= (
+                    20 if global_entry else 10
+                ):
                     error_embed = discord.Embed(
                         colour=await ctx.embed_colour(),
                         title=_("Failing to get tracks, skipping remaining."),
@@ -793,7 +800,7 @@ class AudioAPIInterface:
         val = None
         query = Query.process_input(query, self.cog.local_folder_current_path)
         query_string = str(query)
-        globaldb_toggle = await self.config.global_db_enabled()
+        globaldb_toggle = self.cog.global_api_user.get("can_read")
         valid_global_entry = False
         results = None
         called_api = False
@@ -925,6 +932,7 @@ class AudioAPIInterface:
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
+        notify_channel_id = player.fetch("channel")
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:
@@ -973,7 +981,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                notify_channel = self.bot.get_channel(player.fetch("channel"))
+                notify_channel = self.bot.get_channel(notify_channel_id)
                 if not await self.cog.is_query_allowed(
                     self.config,
                     notify_channel,
@@ -997,8 +1005,20 @@ class AudioAPIInterface:
             )
             player.add(player.channel.guild.me, track)
             self.bot.dispatch(
-                "red_audio_track_auto_play", player.channel.guild, track, player.channel.guild.me
+                "red_audio_track_auto_play",
+                player.channel.guild,
+                track,
+                player.channel.guild.me,
+                player,
             )
+            if notify_channel_id:
+                await self.config.guild_from_id(
+                    guild_id=player.channel.guild.id
+                ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
+            else:
+                await self.config.guild_from_id(
+                    guild_id=player.channel.guild.id
+                ).currently_auto_playing_in.set([])
             if not player.current:
                 await player.play()
 

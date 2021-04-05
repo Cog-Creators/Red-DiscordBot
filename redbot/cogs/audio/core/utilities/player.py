@@ -218,10 +218,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
-        channel_id = player.channel.id
-        node = player.manager.node
-        voice_ws = node.get_voice_ws(guild_id)
-        await voice_ws.voice_state(guild_id, channel_id, self_deaf=True)
+        await player.channel.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
     async def _get_spotify_tracks(
         self, ctx: commands.Context, query: Query, forced: bool = False
@@ -646,7 +643,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 lock=self.update_player_lock,
                 notifier=notifier,
                 forced=forced,
-                query_global=await self.config.global_db_enabled(),
+                query_global=self.global_api_user.get("can_read"),
             )
         except SpotifyFetchError as error:
             self.update_player_lock(ctx, False)
@@ -716,8 +713,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 and player.position == 0
                 and len(player.queue) == 0
             ):
-                await player.move_to(user_channel)
-                await self.self_deafen(player)
+                await player.move_to(
+                    user_channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 return True
         else:
             return False
