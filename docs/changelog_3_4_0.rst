@@ -69,7 +69,7 @@ Documentation changes
 - `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
 
     - Instructions for all Linux-based operating systems now recommend to install ``nano``
-- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
 
 
 Miscellaneous
