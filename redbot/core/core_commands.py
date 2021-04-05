@@ -1421,21 +1421,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def leave(self, ctx: commands.Context, *server_ids: GuildConverter):
+    async def leave(self, ctx: commands.Context, *servers: GuildConverter):
         """Leaves servers.
 
         If no server IDs are passed the local server will be left instead."""
-        guilds = list(server_ids)
+        guilds = servers
         if ctx.guild is None and not guilds:
             return await ctx.send(_("You need to specify at least one server ID."))
 
-        leaving_local_guild = not len(guilds) >= 1
+        leaving_local_guild = not guilds
 
         if leaving_local_guild:
-            guilds.append(ctx.guild)
-            msg = _("You haven't passed any server ID. Do you want me to leave this server? (y/n)")
+            guilds = (ctx.guild,)
+            msg = (
+                _("You haven't passed any server ID. Do you want me to leave this server?")
+                + " (y/n)"
+            )
         else:
-            msg = _("Are you sure you want me to leave {} servers? (y/n)".format(len(guilds)))
+            msg = _("Are you sure you want me to leave these servers?") + " (y/n):" + "\n".join(
+                f"- {guild.name} (`{guild.id}`)" for guild in guilds
+            )
 
         for guild in guilds:
             if guild.owner.id == ctx.me.id:
@@ -1445,7 +1450,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     )
                 )
 
-        await ctx.send(msg)
+        for page in pagify(msg):
+            await ctx.send(page)
         pred = MessagePredicate.yes_or_no(ctx)
         try:
             await self.bot.wait_for("message", check=pred, timeout=30)
@@ -1458,7 +1464,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await ctx.send(_("Alright. Bye :wave:"))
                 else:
                     await ctx.send(
-                        _("Alright. Leaving {number} servers...").format(number=len(guilds)))
+                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
                     )
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
@@ -1474,10 +1480,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def servers(self, ctx: commands.Context):
         """Lists the servers [botname] is currently in."""
         guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
-        msg = ""
-
-        for guild in guilds:
-            msg += "{} (`{}`)\n".format(guild.name, guild.id)
+        msg = "\n".join(
+            f"{guild.name} (`{guild.id}`)\n"
+            for guild in guilds
+        )
 
         pages = list(pagify(msg, ["\n"], page_length=1000))
 
