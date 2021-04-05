@@ -337,28 +337,29 @@ class TwitchStream(Stream):
                 return None, {}
 
     async def is_online(self):
-        user_profile_data = await self._fetch_user_profile()
-        final_data = {
-            "game_name": None,
-            "followers": None,
-            "view_count": None,
-            "profile_image_url": None,
-            "login": None,
-            **user_profile_data,
-        }
-
         stream_code, stream_data = await self.get_data(
             TWITCH_STREAMS_ENDPOINT, {"user_id": self.id}
         )
         if stream_code == 200:
             if not stream_data["data"]:
                 raise OfflineStream()
+
+            user_profile_data = await self._fetch_user_profile()
+            final_data = {
+                "game_name": None,
+                "followers": None,
+                "login": user_profile_data["login"],
+                "profile_image_url": user_profile_data["profile_image_url"],
+                "view_count": user_profile_data["view_count"],
+            }
+
             stream_data = stream_data["data"][0]
             self.name = stream_data["user_name"]
-            final_data = {**final_data, **stream_data}
+            final_data["game_name"] = stream_data["game_name"]
 
-            follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
-            final_data["followers"] = follows_data[1]["total"]
+            __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
+            if follows_data:
+                final_data["followers"] = follows_data["total"]
 
             return self.make_embed(final_data), final_data["type"] == "rerun"
         elif stream_code == 400:
@@ -366,7 +367,7 @@ class TwitchStream(Stream):
         elif stream_code == 404:
             raise StreamNotFound()
         else:
-            raise APIError(final_data)
+            raise APIError(stream_data)
 
     async def _fetch_user_profile(self):
         code, data = await self.get_data(TWITCH_ID_ENDPOINT, {"login": self.name})
