@@ -35,6 +35,13 @@ Streams
 - Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
 - Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
 
+Trivia
+******
+
+- Added a new option for hiding the answer to the Trivia answer in a spoiler (:issue:`4700`, :issue:`4877`)
+
+    - ``[p]triviaset usespoilers`` command can be used to enable/disable this option
+
 Warnings
 ********
 
