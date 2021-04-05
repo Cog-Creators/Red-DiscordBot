@@ -33,6 +33,7 @@ Streams
 Warnings
 ********
 
+- Fixed output of ``[p]warnings`` command for members that are no longer in the server (:issue:`4900`, :issue:`4904`)
 - Embeds in Warnings cog now use the default embed color of the bot (:issue:`4878`)
 
 
