@@ -592,7 +592,7 @@ class RedBase(
                     "`guild_id` parameter",
                     "3.4.8",
                     30,
-                    "Use `guild_id` parameter instead.",
+                    "Use `guild` parameter instead.",
                     stacklevel=2,
                 )
                 if guild:
