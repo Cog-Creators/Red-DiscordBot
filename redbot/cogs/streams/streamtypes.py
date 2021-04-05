@@ -330,7 +330,8 @@ class TwitchStream(Stream):
                         return resp.status, {}
 
                     return resp.status, await resp.json(encoding="utf-8")
-            except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError) as exc:
+                log.warning("Connection error occurred when fetching Twitch stream", exc_info=exc)
                 return None, {}
 
     async def is_online(self):
