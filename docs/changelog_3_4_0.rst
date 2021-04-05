@@ -43,6 +43,11 @@ Alias
 Audio
 *****
 
+- Fixed stuttering (:issue:`4565`)
+- Fixed random disconnects (:issue:`4565`)
+- Fixed the issues with player being stuck on 00:00 (:issue:`4565`)
+- Fixed ghost players (:issue:`4565`)
+- Audio will no longer stop playing after a while (:issue:`4565`)
 - Fixed playlist loading for playlists with over 100 songs (:issue:`4932`)
 - Fixed an issue with alerts causing errors in playlists being loaded (:issue:`4932`)
 - Improved playlist extraction (:issue:`4932`)
