@@ -14,6 +14,11 @@ Core Bot
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4898`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 
+Alias
+*****
+
+- Fixed issues with command aliases for commands that take arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
+
 Filter
 ******
 
