@@ -19,6 +19,11 @@ Alias
 
 - Fixed issues with command aliases for commands that take arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
 
+Downloader
+**********
+
+- Improved compatibility with Git 2.31 and newer (:issue:`4897`)
+
 Filter
 ******
 
