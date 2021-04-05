@@ -16,6 +16,8 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -1418,70 +1420,76 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send("The new permissions level has been set.")
 
     @commands.command()
-    @commands.guild_only()
     @checks.is_owner()
-    async def leave(self, ctx: commands.Context):
-        """Leaves the current server."""
-        await ctx.send(_("Are you sure you want me to leave this server? (y/n)"))
+    async def leave(self, ctx: commands.Context, *servers: GuildConverter):
+        """Leaves servers.
 
+        If no server IDs are passed the local server will be left instead."""
+        guilds = servers
+        if ctx.guild is None and not guilds:
+            return await ctx.send(_("You need to specify at least one server ID."))
+
+        leaving_local_guild = not guilds
+
+        if leaving_local_guild:
+            guilds = (ctx.guild,)
+            msg = (
+                _("You haven't passed any server ID. Do you want me to leave this server?")
+                + " (y/n)"
+            )
+        else:
+            msg = (
+                _("Are you sure you want me to leave these servers?")
+                + " (y/n):\n"
+                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
+            )
+
+        for guild in guilds:
+            if guild.owner.id == ctx.me.id:
+                return await ctx.send(
+                    _("I cannot leave the server `{server_name}`: I am the owner of it.").format(
+                        server_name=guild.name
+                    )
+                )
+
+        for page in pagify(msg):
+            await ctx.send(page)
         pred = MessagePredicate.yes_or_no(ctx)
         try:
-            await self.bot.wait_for("message", check=pred)
+            await self.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send(_("Response timed out."))
             return
         else:
             if pred.result is True:
-                await ctx.send(_("Alright. Bye :wave:"))
-                log.debug(_("Leaving guild '{}'").format(ctx.guild.name))
-                await ctx.guild.leave()
+                if leaving_local_guild is True:
+                    await ctx.send(_("Alright. Bye :wave:"))
+                else:
+                    await ctx.send(
+                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                    )
+                for guild in guilds:
+                    log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
+                    await guild.leave()
             else:
-                await ctx.send(_("Alright, I'll stay then. :)"))
+                if leaving_local_guild is True:
+                    await ctx.send(_("Alright, I'll stay then. :)"))
+                else:
+                    await ctx.send(_("Alright, I'm not leaving those servers."))
 
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx: commands.Context):
-        """Lists and allows [botname] to leave servers."""
-        guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
-        msg = ""
-        responses = []
-        for i, server in enumerate(guilds, 1):
-            msg += "{}: {} (`{}`)\n".format(i, server.name, server.id)
-            responses.append(str(i))
+        """Lists the servers [botname] is currently in."""
+        guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
+        msg = "\n".join(f"{guild.name} (`{guild.id}`)\n" for guild in guilds)
 
-        for page in pagify(msg, ["\n"]):
-            await ctx.send(page)
+        pages = list(pagify(msg, ["\n"], page_length=1000))
 
-        query = await ctx.send(_("To leave a server, just type its number."))
-
-        pred = MessagePredicate.contained_in(responses, ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=15)
-        except asyncio.TimeoutError:
-            try:
-                await query.delete()
-            except discord.errors.NotFound:
-                pass
+        if len(pages) == 1:
+            await ctx.send(pages[0])
         else:
-            await self.leave_confirmation(guilds[pred.result], ctx)
-
-    async def leave_confirmation(self, guild, ctx):
-        if guild.owner.id == ctx.bot.user.id:
-            await ctx.send(_("I cannot leave a guild I am the owner of."))
-            return
-
-        await ctx.send(_("Are you sure you want me to leave {}? (yes/no)").format(guild.name))
-        pred = MessagePredicate.yes_or_no(ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=15)
-            if pred.result is True:
-                await guild.leave()
-                if guild != ctx.guild:
-                    await ctx.send(_("Done."))
-            else:
-                await ctx.send(_("Alright then."))
-        except asyncio.TimeoutError:
-            await ctx.send(_("Response timed out."))
+            await menu(ctx, pages, DEFAULT_CONTROLS)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
