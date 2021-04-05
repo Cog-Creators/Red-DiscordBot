@@ -23,6 +23,7 @@ Core Bot
 
 - ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
 - ``[p]leave`` accepts server IDs now (:issue:`4831`)
+- Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
 - An error message will now be shown when a command only available in NSFW channels is used in non-NSFW channel (:issue:`4933`)
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
