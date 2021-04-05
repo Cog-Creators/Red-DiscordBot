@@ -57,6 +57,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
 - `getting-started` now contains an explanation of parameters that can take arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
 - Added a warning to Arch Linux install guide about the instructions being out-of-date (:issue:`4866`)
 - `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
