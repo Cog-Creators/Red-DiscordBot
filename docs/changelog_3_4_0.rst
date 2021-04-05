@@ -30,6 +30,11 @@ Streams
 - Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
 - Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
 
+Warnings
+********
+
+- Embeds in Warnings cog now use the default embed color of the bot (:issue:`4878`)
+
 
 Developer changelog
 -------------------
