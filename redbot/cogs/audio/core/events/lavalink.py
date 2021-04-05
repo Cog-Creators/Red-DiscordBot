@@ -63,7 +63,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             deafen = guild_data["auto_deafen"]
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
-            if _error_code in [1000, 4014] or not guild:
+            if _error_code in [1000] or not guild:
                 if _error_code == 1000:
                     await player.resume(player.current, start=player.position, replace=False)
                 return
@@ -76,7 +76,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
                 )
             except Exception:
-                log.exception("error")
+                log.exception(
+                    f"Error in WEBSOCKET_CLOSED handling for guild: {player.channel.guild.id}"
+                )
             return
 
         await set_contextual_locales_from_guild(self.bot, guild)
@@ -331,7 +333,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 has_perm = False
             if code in (1000,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.resume(player.current, start=player.position, replace=False)
+                await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info(
                     f"Player resumed in channel {channel_id} in guild: {guild_id} | "
                     f"Reason: Error code {code} & {reason}."
@@ -362,7 +364,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if has_perm and player.current and player.is_playing:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
                     await player.connect(deafen=deafen)
-                    await player.resume(player.current, start=player.position, replace=False)
+                    await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         f"to channel {channel_id} in guild: {guild_id} | "
@@ -371,7 +373,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 elif has_perm and player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
                     await player.connect(deafen=deafen)
-                    await player.pause(pause=True)
+                    await player.resume(
+                        player.current, start=player.position, replace=True, pause=True
+                    )
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         f"to channel {channel_id} in guild: {guild_id} | "
@@ -417,7 +421,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             elif code in (42069,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
-                await player.resume(player.current, start=player.position, replace=False)
+                await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info(
                     f"Player resumed in channel {channel_id} in guild: {guild_id} | "
                     f"Reason: Error code {code} & {reason}."
@@ -434,7 +438,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(delay)
                 if has_perm and player.current and player.is_playing:
                     await player.connect(deafen=deafen)
-                    await player.resume(player.current, start=player.position, replace=False)
+                    await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         f"to channel {channel_id} in guild: {guild_id} | "
@@ -444,7 +448,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("resumes", player.fetch("resumes", 0) + 1)
                     await player.connect(deafen=deafen)
                     await player.resume(
-                        player.current, start=player.position, replace=False, pause=True
+                        player.current, start=player.position, replace=True, pause=True
                     )
                     ws_audio_log.info(
                         "Voice websocket reconnected "
