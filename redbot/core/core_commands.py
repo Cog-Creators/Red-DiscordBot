@@ -3703,7 +3703,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
     # Otherwise interfering with the ability for this command to be accessible is also a violation.
-    @commands.cooldown(1, 180, lambda msg: (msg.channel_id, msg.author.id))
+    @commands.cooldown(1, 180, lambda msg: (msg.channel.id, msg.author.id))
     @commands.command(
         cls=commands.commands._AlwaysAvailableCommand,
         name="licenseinfo",
