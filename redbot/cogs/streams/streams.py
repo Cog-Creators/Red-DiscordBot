@@ -405,15 +405,18 @@ class Streams(commands.Cog):
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
+                    _bot=self.bot,
                     name=channel_name,
                     token=token.get("client_id"),
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
             else:
                 if is_yt:
-                    stream = _class(name=channel_name, token=token, config=self.config)
+                    stream = _class(
+                        _bot=self.bot, name=channel_name, token=token, config=self.config
+                    )
                 else:
-                    stream = _class(name=channel_name, token=token)
+                    stream = _class(_bot=self.bot, name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
