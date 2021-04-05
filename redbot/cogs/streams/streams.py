@@ -715,10 +715,7 @@ class Streams(commands.Cog):
     async def _stream_alerts(self):
         await self.bot.wait_until_ready()
         while True:
-            try:
-                await self.check_streams()
-            except asyncio.CancelledError:
-                pass
+            await self.check_streams()
             await asyncio.sleep(await self.config.refresh_timer())
 
     async def _send_stream_alert(
