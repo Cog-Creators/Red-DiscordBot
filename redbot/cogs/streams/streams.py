@@ -209,6 +209,7 @@ class Streams(commands.Cog):
         await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(
+            bot=self.bot,
             name=channel_name,
             token=token,
             bearer=self.ttv_bearer_cache.get("access_token", None),
@@ -224,21 +225,25 @@ class Streams(commands.Cog):
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                bot=self.bot, name=channel_id_or_name, token=apikey, config=self.config
+            )
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                bot=self.bot, id=channel_id_or_name, token=apikey, config=self.config
+            )
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def smashcast(self, ctx: commands.Context, channel_name: str):
         """Check if a smashcast channel is live."""
-        stream = HitboxStream(name=channel_name)
+        stream = HitboxStream(bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
-        stream = PicartoStream(name=channel_name)
+        stream = PicartoStream(bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
     async def check_online(
