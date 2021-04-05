@@ -1422,7 +1422,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command()
     @checks.is_owner()
     async def leave(self, ctx: commands.Context, *server_ids: GuildConverter):
-        """Leaves a server.
+        """Leaves servers.
 
         If no server IDs are passed the local server will be left instead."""
         guilds = list(server_ids)
@@ -1440,7 +1440,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for guild in guilds:
             if guild.owner.id == ctx.me.id:
                 return await ctx.send(
-                    _("I cannot leave the server `{}`: I am the owner of it.".format(guild.name))
+                    _("I cannot leave the server `{server_name}`: I am the owner of it.").format(
+                        server_name=guild.name
+                    )
                 )
 
         await ctx.send(msg)
@@ -1455,9 +1457,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright. Bye :wave:"))
                 else:
-                    await ctx.send(_("Alright. Leaving {} servers...".format(len(guilds))))
+                    await ctx.send(
+                        _("Alright. Leaving {number} servers...").format(number=len(guilds)))
+                    )
                 for guild in guilds:
-                    log.debug(_("Leaving guild '{}'").format(guild.name))
+                    log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
                     await guild.leave()
             else:
                 if leaving_local_guild is True:
@@ -1469,7 +1473,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def servers(self, ctx: commands.Context):
         """Lists the servers [botname] is currently in."""
-        guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
+        guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
         msg = ""
 
         for guild in guilds:
