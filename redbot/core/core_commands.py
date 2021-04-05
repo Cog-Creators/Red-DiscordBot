@@ -1438,7 +1438,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 + " (y/n)"
             )
         else:
-            msg = _("Are you sure you want me to leave these servers?") + " (y/n):" + "\n".join(
+            msg = _("Are you sure you want me to leave these servers?") + " (y/n):\n" + "\n".join(
                 f"- {guild.name} (`{guild.id}`)" for guild in guilds
             )
 
