@@ -36,6 +36,11 @@ Filter
 
 - Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 
+Mod
+***
+
+- Fixed tracking of nicknames that were set just before nick reset (:issue:`4830`)
+
 Streams
 *******
 
