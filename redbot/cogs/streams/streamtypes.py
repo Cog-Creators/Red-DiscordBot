@@ -337,6 +337,10 @@ class TwitchStream(Stream):
                 return None, {}
 
     async def is_online(self):
+        user_profile_data = None
+        if self.id is None:
+            user_profile_data = await self._fetch_user_profile()
+
         stream_code, stream_data = await self.get_data(
             TWITCH_STREAMS_ENDPOINT, {"user_id": self.id}
         )
@@ -344,7 +348,8 @@ class TwitchStream(Stream):
             if not stream_data["data"]:
                 raise OfflineStream()
 
-            user_profile_data = await self._fetch_user_profile()
+            if user_profile_data is None:
+                user_profile_data = await self._fetch_user_profile()
             final_data = {
                 "game_name": None,
                 "followers": None,
