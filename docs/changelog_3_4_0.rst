@@ -24,7 +24,7 @@ Core Bot
 - ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
 - ``[p]leave`` accepts server IDs now (:issue:`4831`)
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
-- Added more singular and plural forms in a bunch of commands in the bot (:issue:`4898`)
+- Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
 - Fixed command signature for subcommands with group args that is shown in help (:issue:`4928`)
 
