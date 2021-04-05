@@ -26,6 +26,11 @@ Alias
 
 - Fixed issues with command aliases for commands that take arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
 
+Cleanup
+*******
+
+- ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without message ID if the invocation message replies to some message (:issue:`4790`)
+
 Downloader
 **********
 
