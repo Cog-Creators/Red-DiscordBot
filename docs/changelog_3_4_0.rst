@@ -25,27 +25,27 @@ Core Bot
 
     - See help of ``[p]embedset`` and ``[p]embedset command`` command group for more information
 
-- ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
+- The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
 - ``[p]leave`` accepts server IDs now (:issue:`4831`)
 - Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
-- An error message will now be shown when a command only available in NSFW channels is used in non-NSFW channel (:issue:`4933`)
+- An error message will now be shown when a command that is only available in NSFW channels is used in a non-NSFW channel (:issue:`4933`)
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
-- Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
-- Added progress bar to ``redbot-setup convert`` (:issue:`2952`)
-- Fixed command signature for subcommands with group args that is shown in help (:issue:`4928`)
+- Removed the option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
+- Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
 
 Alias
 *****
 
-- Fixed issues with command aliases for commands that take arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
+- Fixed issues with command aliases for commands that take an arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
 
 Audio
 *****
 
 - Fixed stuttering (:issue:`4565`)
 - Fixed random disconnects (:issue:`4565`)
-- Fixed the issues with player being stuck on 00:00 (:issue:`4565`)
+- Fixed the issues causing the player to be stuck on 00:00 (:issue:`4565`)
 - Fixed ghost players (:issue:`4565`)
 - Audio will no longer stop playing after a while (:issue:`4565`)
 - Fixed playlist loading for playlists with over 100 songs (:issue:`4932`)
@@ -56,7 +56,7 @@ Audio
 Cleanup
 *******
 
-- ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without message ID if the invocation message replies to some message (:issue:`4790`)
+- ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without a message ID if the invocation message replies to some message (:issue:`4790`)
 
 Downloader
 **********
@@ -66,7 +66,7 @@ Downloader
 Filter
 ******
 
-- Added meaningful error messages for incorrect arguments in ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
+- Added meaningful error messages for incorrect arguments in the ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 
 Mod
 ***
@@ -100,7 +100,7 @@ Warnings
 ********
 
 - Fixed output of ``[p]warnings`` command for members that are no longer in the server (:issue:`4900`, :issue:`4904`)
-- Embeds in Warnings cog now use the default embed color of the bot (:issue:`4878`)
+- Embeds now use the default embed color of the bot (:issue:`4878`)
 
 
 Developer changelog
@@ -122,7 +122,7 @@ Documentation changes
 - Added a note about updating cogs in update message and documentation (:issue:`4910`)
 - Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
 - Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
-- `getting-started` now contains an explanation of parameters that can take arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
+- `getting-started` now contains an explanation of parameters that can take an arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
 - Added a warning to Arch Linux install guide about the instructions being out-of-date (:issue:`4866`)
 - All shell commands in the documentation are now prefixed with an unselectable prompt (:issue:`4908`)
 - `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
