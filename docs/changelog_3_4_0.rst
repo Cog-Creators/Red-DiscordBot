@@ -17,6 +17,10 @@ End-user changelog
 Core Bot
 ********
 
+- Added per-command embed settings (:issue:`4049`)
+
+    - See help of ``[p]embedset`` and ``[p]embedset command`` command group for more information
+
 - ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
 - ``[p]leave`` accepts server IDs now (:issue:`4831`)
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
