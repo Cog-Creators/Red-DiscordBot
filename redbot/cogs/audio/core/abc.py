@@ -41,7 +41,7 @@ class MixinMeta(ABC):
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
 
-    skip_votes: MutableMapping[int, List[discord.Member]]
+    skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
     _daily_global_playlist_cache: MutableMapping[int, bool]

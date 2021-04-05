@@ -199,9 +199,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def update_player_lock(self, ctx: commands.Context, true_or_false: bool) -> None:
         if true_or_false:
-            self.play_lock[ctx.message.guild.id] = True
+            self.play_lock[ctx.guild.id] = True
         else:
-            self.play_lock[ctx.message.guild.id] = False
+            self.play_lock[ctx.guild.id] = False
 
     def _player_check(self, ctx: commands.Context) -> bool:
         if self.lavalink_connection_aborted:
@@ -249,7 +249,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(prefix=ctx.prefix),
             )
         try:
-            if self.play_lock[ctx.message.guild.id]:
+            if self.play_lock[ctx.guild.id]:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Tracks"),
@@ -358,7 +358,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         player = lavalink.get_player(ctx.guild.id)
         try:
-            if self.play_lock[ctx.message.guild.id]:
+            if self.play_lock[ctx.guild.id]:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Tracks"),

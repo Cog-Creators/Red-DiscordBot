@@ -259,7 +259,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         await self.cog_ready_event.wait()
         if after.channel != before.channel:
             try:
-                self.skip_votes[before.channel.guild.id].remove(member.id)
+                self.skip_votes[before.channel.guild.id].discard(member.id)
             except (ValueError, KeyError, AttributeError):
                 pass
 
