@@ -361,8 +361,11 @@ class TwitchStream(Stream):
                 final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
-            self.name = stream_data["user_name"]
+            final_data["user_name"] = self.name = stream_data["user_name"]
             final_data["game_name"] = stream_data["game_name"]
+            final_data["thumbnail_url"] = stream_data["thumbnail_url"]
+            final_data["title"] = stream_data["title"]
+            final_data["type"] = stream_data["type"]
 
             __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
             if follows_data:
