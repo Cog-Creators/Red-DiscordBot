@@ -57,6 +57,11 @@ Mod
 - Improved performance of checking tempban expirations (:issue:`4907`)
 - Fixed tracking of nicknames that were set just before nick reset (:issue:`4830`)
 
+Mutes
+*****
+
+- Vastly improved performance of automatic unmute handling (:issue:`4906`)
+
 Streams
 *******
 
