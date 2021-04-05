@@ -3876,6 +3876,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
     # Otherwise interfering with the ability for this command to be accessible is also a violation.
+    @commands.cooldown(1, 180, lambda msg: (msg.channel.id, msg.author.id))
     @commands.command(
         cls=commands.commands._AlwaysAvailableCommand,
         name="licenseinfo",
@@ -3895,24 +3896,3 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.
-
-
-# DEP-WARN: CooldownMapping should have a method `from_cooldown`
-# which accepts (number, number, bucket)
-# the bucket should only be used for the method `_bucket_key`
-# and `_bucket_key` should be used to determine the grouping
-# of ratelimit consumption.
-class LicenseCooldownMapping(commands.CooldownMapping):
-    """
-    This is so that a single user can't spam a channel with this
-    it's used below as 1 per 3 minutes per user-channel combination.
-    """
-
-    def _bucket_key(self, msg):
-        return (msg.channel.id, msg.author.id)
-
-
-# DEP-WARN: command objects should store a single cooldown mapping as `._buckets`
-Core.license_info_command._buckets = LicenseCooldownMapping.from_cooldown(
-    1, 180, commands.BucketType.member  # pick a random bucket,it wont get used.
-)
