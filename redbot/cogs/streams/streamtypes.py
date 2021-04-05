@@ -298,22 +298,20 @@ class TwitchStream(Stream):
             self._rate_limit_resets = set(x for x in self._rate_limit_resets if x > current_time)
 
             if len(self._rate_limit_resets) > 0:
-                reset_time = list(self._rate_limit_resets)[0]
+                reset_time = next(self._rate_limit_resets)
                 # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset
                 # their counter
                 wait_time = reset_time - current_time + 0.1
                 await asyncio.sleep(wait_time)
 
-    async def get_data(self, url: str, params: dict = {}) -> Tuple[int, dict]:
+    async def get_data(self, url: str, params: dict = {}) -> Tuple[Optional[int], dict]:
         header = {"Client-ID": str(self._client_id)}
         if self._bearer is not None:
             header["Authorization"] = f"Bearer {self._bearer}"
         await self.wait_for_rate_limit_reset()
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(
-                    url, headers=header, params=params, timeout=aiohttp.ClientTimeout(total=None)
-                ) as resp:
+                async with session.get(url, headers=header, params=params, timeout=60) as resp:
                     remaining = resp.headers.get("Ratelimit-Remaining")
                     if remaining:
                         self._rate_limit_remaining = int(remaining)
@@ -325,13 +323,14 @@ class TwitchStream(Stream):
                         log.info(
                             "Ratelimited. Trying again at %s.", datetime.fromtimestamp(int(reset))
                         )
+                        resp.release()
                         return await self.get_data(url)
 
                     if resp.status != 200:
-                        return None, {}
+                        return resp.status, {}
 
                     return resp.status, await resp.json(encoding="utf-8")
-            except aiohttp.ClientConnectionError:
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
                 return None, {}
 
     async def is_online(self):
