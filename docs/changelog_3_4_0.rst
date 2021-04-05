@@ -60,6 +60,7 @@ Streams
 - Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
 - Streamer accounts that no longer exist are now properly handled (:issue:`4735`, :issue:`4746`)
 - Fixed stream alerts being sent even after unloading Streams cog (:issue:`4940`)
+- Checking Twitch streams will now make less API calls (:issue:`4938`)
 
 Trivia
 ******
