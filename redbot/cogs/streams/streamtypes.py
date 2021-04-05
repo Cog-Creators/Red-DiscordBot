@@ -297,7 +297,7 @@ class TwitchStream(Stream):
             current_time = int(time.time())
             self._rate_limit_resets = set(x for x in self._rate_limit_resets if x > current_time)
 
-            if len(self._rate_limit_resets) > 0:
+            if self._rate_limit_resets:
                 reset_time = next(self._rate_limit_resets)
                 # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset
                 # their counter
