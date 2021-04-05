@@ -58,10 +58,11 @@ class Stream:
     token_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
+        self._bot = kwargs.pop("_bot")
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
         # self.already_online = kwargs.pop("already_online", False)
-        self._messages_cache = kwargs.pop("_messages_cache", [])
+        self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
 
     async def is_online(self):
@@ -70,14 +71,24 @@ class Stream:
     def make_embed(self):
         raise NotImplementedError()
 
+    def iter_messages(self):
+        for msg_data in self.messages:
+            data = msg_data.copy()
+            # "guild" key might not exist for old config data (available since GH-4742)
+            if guild_id := msg_data.get("guild"):
+                guild = self._bot.get_guild(guild_id)
+                channel = guild and guild.get_channel(msg_data["channel"])
+            else:
+                channel = self._bot.get_channel(msg_data["channel"])
+            if channel is not None:
+                data["partial_message"] = channel.get_partial_message(data["message"])
+            yield data
+
     def export(self):
         data = {}
         for k, v in self.__dict__.items():
             if not k.startswith("_"):
                 data[k] = v
-        data["messages"] = []
-        for m in self._messages_cache:
-            data["messages"].append({"channel": m.channel.id, "message": m.id})
         return data
 
     def __repr__(self):
@@ -211,17 +222,21 @@ class YoutubeStream(Stream):
                 embed.timestamp = start_time
                 is_schedule = True
             else:
-                # repost message
+                # delete the message(s) about the stream schedule
                 to_remove = []
-                for message in self._messages_cache:
-                    if message.embeds[0].description is discord.Embed.Empty:
+                for msg_data in self.iter_messages():
+                    if not msg_data.get("is_schedule", False):
                         continue
-                    with contextlib.suppress(Exception):
-                        autodelete = await self._config.guild(message.guild).autodelete()
+                    partial_msg = msg_data["partial_message"]
+                    if partial_msg is not None:
+                        autodelete = await self._config.guild(partial_msg.guild).autodelete()
                         if autodelete:
-                            await message.delete()
-                    to_remove.append(message.id)
-                self._messages_cache = [x for x in self._messages_cache if x.id not in to_remove]
+                            with contextlib.suppress(discord.NotFound):
+                                await partial_msg.delete()
+                    to_remove.append(msg_data["message"])
+                self.messages = [
+                    data for data in self.messages if data["message"] not in to_remove
+                ]
         embed.set_author(name=channel_title)
         embed.set_image(url=rnd(thumbnail))
         embed.colour = 0x9255A5
@@ -337,6 +352,10 @@ class TwitchStream(Stream):
                 return None, {}
 
     async def is_online(self):
+        user_profile_data = None
+        if self.id is None:
+            user_profile_data = await self._fetch_user_profile()
+
         stream_code, stream_data = await self.get_data(
             TWITCH_STREAMS_ENDPOINT, {"user_id": self.id}
         )
@@ -344,18 +363,24 @@ class TwitchStream(Stream):
             if not stream_data["data"]:
                 raise OfflineStream()
 
-            user_profile_data = await self._fetch_user_profile()
-            final_data = {
-                "game_name": None,
-                "followers": None,
-                "login": user_profile_data["login"],
-                "profile_image_url": user_profile_data["profile_image_url"],
-                "view_count": user_profile_data["view_count"],
-            }
+            if user_profile_data is None:
+                user_profile_data = await self._fetch_user_profile()
+
+            final_data = dict.fromkeys(
+                ("game_name", "followers", "login", "profile_image_url", "view_count")
+            )
+
+            if user_profile_data is not None:
+                final_data["login"] = user_profile_data["login"]
+                final_data["profile_image_url"] = user_profile_data["profile_image_url"]
+                final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
-            self.name = stream_data["user_name"]
+            final_data["user_name"] = self.name = stream_data["user_name"]
             final_data["game_name"] = stream_data["game_name"]
+            final_data["thumbnail_url"] = stream_data["thumbnail_url"]
+            final_data["title"] = stream_data["title"]
+            final_data["type"] = stream_data["type"]
 
             __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
             if follows_data:
