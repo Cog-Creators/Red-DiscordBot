@@ -51,6 +51,7 @@ Streams
 
 - Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
 - Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
+- Streamer accounts that no longer exist are now properly handled (:issue:`4735`, :issue:`4746`)
 
 Trivia
 ******
