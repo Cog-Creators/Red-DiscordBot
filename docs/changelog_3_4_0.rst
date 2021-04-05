@@ -131,10 +131,6 @@ Documentation changes
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
 
 
-Miscellaneous
--------------
-
-
 Redbot 3.4.7 (2021-02-26)
 =========================
 | Thanks to all these amazing people that contributed to this release:
