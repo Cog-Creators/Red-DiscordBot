@@ -95,6 +95,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added a note about updating cogs in update message and documentation (:issue:`4910`)
 - Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
 - Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
 - `getting-started` now contains an explanation of parameters that can take arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
