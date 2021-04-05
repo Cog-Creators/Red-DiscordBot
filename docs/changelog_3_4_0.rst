@@ -5,6 +5,12 @@ Redbot 3.4.8 (Unreleased)
 | Thanks to all these amazing people that contributed to this release:
 | 
 
+Read before updating
+--------------------
+
+1. Fedora 31 and OpenSUSE Leap 15.1 are no longer supported as they have already reached end of life.
+
+
 End-user changelog
 ------------------
 
@@ -63,6 +69,7 @@ Documentation changes
 - `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
 
     - Instructions for all Linux-based operating systems now recommend to install ``nano``
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`)
 
 
 Miscellaneous
