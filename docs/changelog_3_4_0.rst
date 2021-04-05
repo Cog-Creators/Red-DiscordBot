@@ -49,6 +49,8 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- `getting-started` now contains an explanation of parameters that can take arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
+
 
 Miscellaneous
 -------------
