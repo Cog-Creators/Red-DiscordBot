@@ -27,6 +27,7 @@ Core Bot
 - An error message will now be shown when a command only available in NSFW channels is used in non-NSFW channel (:issue:`4933`)
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
 - Removed option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Added progress bar to ``redbot-setup convert`` (:issue:`2952`)
 - Fixed command signature for subcommands with group args that is shown in help (:issue:`4928`)
 
 Alias
