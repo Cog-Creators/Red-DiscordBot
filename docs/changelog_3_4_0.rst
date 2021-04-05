@@ -81,6 +81,9 @@ Developer changelog
 - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
 
     - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+
+    - Read the method's documentation for more information
 
 
 Documentation changes
