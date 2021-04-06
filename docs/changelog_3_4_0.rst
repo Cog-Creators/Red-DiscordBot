@@ -4,7 +4,9 @@ Redbot 3.4.9 (2021-04-06)
 =========================
 
 This is a hotfix release fixing an issue with command error handling.
+
 discord.py version has been bumped to 1.7.1.
+
 Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 
 
