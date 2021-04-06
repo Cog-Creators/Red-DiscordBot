@@ -1115,16 +1115,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The embed settings are checked until the first True/False in this order:
             - In guild context:
-                1. Channel override ([p]embedset channel)
-                2. Server command override ([p]embedset command server)
-                3. Server override ([p]embedset server)
-                4. Global command override ([p]embedset command global)
-                5. Global setting ([p]embedset global)
+                1. Channel override - `[p]embedset channel`
+                2. Server command override - `[p]embedset command server`
+                3. Server override - `[p]embedset server`
+                4. Global command override - `[p]embedset command global`
+                5. Global setting  -`[p]embedset global`
 
             - In DM context:
-                1. User override ([p]embedset user)
-                2. Global command override ([p]embedset command global)
-                3. Global setting ([p]embedset global)
+                1. User override - `[p]embedset user`
+                2. Global command override - `[p]embedset command global`
+                3. Global setting - `[p]embedset global`
         """
 
     @embedset.command(name="showsettings")
