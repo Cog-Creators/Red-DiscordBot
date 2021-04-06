@@ -4230,14 +4230,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """
-Disable a command in this server only.
+        Disable a command in this server only.
 
-        **Examples:**
-            - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
-            - `[p]command disable server urban` - Disables the `urban` command in the General cog.
+                **Examples:**
+                    - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
+                    - `[p]command disable server urban` - Disables the `urban` command in the General cog.
 
-        **Arguments:**
-            - `<command>` - The command to disable for the current server.
+                **Arguments:**
+                    - `<command>` - The command to disable for the current server.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
