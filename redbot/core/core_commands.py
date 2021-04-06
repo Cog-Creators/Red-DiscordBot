@@ -240,7 +240,11 @@ class CoreLogic:
         for m in modules:
             maybe_reload(m)
 
-        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        children = {
+            name: lib
+            for name, lib in sys.modules.items()
+            if name == module_name or name.startswith(f"{module_name}.")
+        }
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
