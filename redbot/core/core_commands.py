@@ -2929,7 +2929,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Using this without a setting will toggle.
 
         **Examples:**
-            - `[p]helpset verifychecks False` - Enables showing unusable commands.
+            - `[p]helpset verifychecks False` - Enables showing unusable commands in help.
             - `[p]helpset verifychecks` - Toggles the value.
 
         **Arguments:**
@@ -2946,7 +2946,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @helpset.command(name="verifyexists")
     async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
         """
-        This allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
+        Sets whether the bot should respond to help commands for nonexistent topics.
+
+        When enabled, this will indicate the existence of help topics, even if the user can't use it.
 
         Note: This setting on its own does not fully prevent command enumeration.
 
@@ -2954,11 +2956,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Using this without a setting will toggle.
 
         **Examples:**
-            - `[p]helpset verifyexists False` - Enables showing unusable commands.
+            - `[p]helpset verifyexists True` - Enables sending help for nonexistent topics.
             - `[p]helpset verifyexists` - Toggles the value.
 
         **Arguments:**
-            - `[verify]` - Whether to hide unusable commands in help. Leave blank to toggle.
+            - `[verify]` - Whether to respond to help for nonexistent topics. Leave blank to toggle.
         """
         if verify is None:
             verify = not await ctx.bot._config.help.verify_exists()
