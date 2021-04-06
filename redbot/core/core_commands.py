@@ -1538,10 +1538,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Leaves servers.
 
         If no server IDs are passed the local server will be left instead.
-        
+
         Note: This command is interactive.
-        
-        """  # TODO: Example and arguments
+
+        **Examples:**
+            - `[p]leave` - Leave the current server.
+            - `[p]leave "Red - Discord Bot"` - Quotes are necessary when there are spaces in the name.
+            - `[p]leave 133049272517001216 240154543684321280` - Leaves multiple servers, using IDs.
+
+        **Arguments:**
+            - `[servers...]` - The servers to leave. When blank, attempts to leave the current server.
+        """
         guilds = servers
         if ctx.guild is None and not guilds:
             return await ctx.send(_("You need to specify at least one server ID."))
@@ -4223,7 +4230,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """
-        Disable a command in this server only.
+Disable a command in this server only.
 
         **Examples:**
             - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
@@ -4289,7 +4296,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """
-        Enable a command globally.
+                Enable a command globally.
 
         **Examples:**
             - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
@@ -4320,7 +4327,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="server", aliases=["guild"])
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
         """
-        Enable a command in this server.
+            Enable a command in this server.
 
         **Examples:**
             - `[p]command enable server userinfo` - Enables the `userinfo` command in the Mod cog.
