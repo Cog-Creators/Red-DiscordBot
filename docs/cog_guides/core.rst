@@ -1285,7 +1285,7 @@ Defaults to True.
 Using this without a setting will toggle.
 
 **Examples:**
-    - ``[p]helpset verifychecks False`` - Enables showing unusable commands.
+    - ``[p]helpset verifychecks False`` - Enables showing unusable commands in help.
     - ``[p]helpset verifychecks`` - Toggles the value.
 
 **Arguments:**
@@ -1305,7 +1305,9 @@ helpset verifyexists
 
 **Description**
 
-This allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
+Sets whether the bot should respond to help commands for nonexistent topics.
+
+When enabled, this will indicate the existence of help topics, even if the user can't use it.
 
 .. Note:: This setting on its own does not fully prevent command enumeration.
 
@@ -1314,11 +1316,11 @@ Defaults to False.
 Using this without a setting will toggle.
 
 **Examples:**
-    - ``[p]helpset verifyexists False`` - Enables showing unusable commands.
+    - ``[p]helpset verifyexists True`` - Enables sending help for nonexistent topics.
     - ``[p]helpset verifyexists`` - Toggles the value.
 
 **Arguments:**
-    - ``[verify]`` - Whether to hide unusable commands in help. Leave blank to toggle.
+    - ``[verify]`` - Whether to respond to help for nonexistent topics. Leave blank to toggle.
 
 .. _core-command-ignore:
 
