@@ -1423,7 +1423,7 @@ class Downloader(commands.Cog):
                 _("\nCouldn't find these cogs in {repo.name}: ")
                 if len(unavailable_cogs) > 1
                 else _("\nCouldn't find this cog in {repo.name}: ")
-            ) + humanize_list(unavailable_cogs)
+            ).format(repo=repo) + humanize_list(unavailable_cogs)
         if already_installed:
             message += (
                 _("\nThese cogs were already installed: ")
