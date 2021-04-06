@@ -508,7 +508,6 @@ Disable a command in this server only.
 
         **Arguments:**
             - ``<command>`` - The command to disable for the current server.
-        
 
 .. _core-command-command-disablecog:
 
