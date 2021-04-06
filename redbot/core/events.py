@@ -29,6 +29,7 @@ from .utils._internal_utils import (
     format_fuzzy_results,
     expected_version,
     fetch_latest_red_version_info,
+    send_to_owners_with_prefix_replaced,
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
@@ -156,6 +157,11 @@ def init_events(bot, cli_flags):
                             python=sys.executable, package_extras=package_extras
                         )
                     )
+                    extra_update += _(
+                        "\nOnce you've started up your bot again, if you have any 3rd-party cogs"
+                        " installed we then highly recommend you update them with this command"
+                        " in Discord: `[p]cog update`"
+                    )
 
                 else:
                     extra_update += _(
@@ -201,7 +207,7 @@ def init_events(bot, cli_flags):
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
-            await bot.send_to_owners(outdated_red_message)
+            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):
@@ -215,7 +221,7 @@ def init_events(bot, cli_flags):
                 return
 
             if ctx.cog:
-                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                if ctx.cog.has_error_handler():
                     return
         if not isinstance(error, commands.CommandNotFound):
             asyncio.create_task(bot._delete_delay(ctx))
@@ -288,6 +294,8 @@ def init_events(bot, cli_flags):
             await ctx.send(_("That command is not available in DMs."))
         elif isinstance(error, commands.PrivateMessageOnly):
             await ctx.send(_("That command is only available in DMs."))
+        elif isinstance(error, commands.NSFWChannelRequired):
+            await ctx.send(_("That command is only available in NSFW channels."))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):

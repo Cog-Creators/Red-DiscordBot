@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 20:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -32,12 +32,12 @@ msgstr "Imgur'dan resim alır.\n\n"
 #: redbot/cogs/image/image.py:52
 #, docstring
 msgid "Search Imgur for the specified term.\n\n"
-"        Use `count` to choose how many images should be returned.\n"
-"        Command can return up to 5 images.\n"
+"        - `[count]`: How many images should be returned (maximum 5). Defaults to 1.\n"
+"        - `<terms...>`: The terms used to search Imgur.\n"
 "        "
-msgstr "Belirtilen terim için Imgur da arama yapar.\n\n"
-"        Kaç resim alınacağını seçmek için `count` kullanın.\n"
-"        Komut en fazla 5 resim getirebilir.\n"
+msgstr "Imgur'da belirtilen terimi ara.\n\n"
+"        - `[sayı]`: En fazla kaç resmin getirileceği, (en fazla 5). Varsayılan olarak 1.\n"
+"        - `<terimler...>`: Imgur'da aranacak terimler.\n"
 "        "
 
 #: redbot/cogs/image/image.py:58 redbot/cogs/image/image.py:107
@@ -63,24 +63,24 @@ msgstr "Bir şeyler ters gitti. Hata kodu {code} ' dır."
 #: redbot/cogs/image/image.py:99
 #, docstring
 msgid "Get images from a subreddit.\n\n"
-"        You can customize the search with the following options:\n"
-"        - `<count>`: number of images to return (up to 5)\n"
-"        - `<sort_type>`: new, top\n"
-"        - `<window>`: day, week, month, year, all\n"
+"        - `<subreddit>`: The subreddit to get images from.\n"
+"        - `[count]`: The number of images to return (maximum 5). Defaults to 1.\n"
+"        - `[sort_type]`: New, or top results. Defaults to top.\n"
+"        - `[window]`: The timeframe, can be the past day, week, month, year or all. Defaults to day.\n"
 "        "
-msgstr "Bir subredditten fotoğraf getirir.\n\n"
-"        Aramayı bu seçenekler ile özelleştirebilirsiniz:\n"
-"        - `<count>`: kaç fotoğraf getirileceği (en fazla 5)\n"
-"        - `<sort_type>`: yeni, üst\n"
-"        - `<window>`: day (gün), week (hafta), month (ay), year (yıl), all (hepsi)\n"
+msgstr "Bir subreddit'ten resimler göster.\n\n"
+"        - `<subreddit>`: içinden resimler alınacak subreddit.\n"
+"        - `[sayı]`: Alınacak resim sayısı (en fazla 5). Varsayılan olarak 1.\n"
+"        - `[ayırma_türü]`: New (yeni) veya top (en üst) sonuçlar. Varsayılan olarak top.\n"
+"        - `[zaman_zarfı]`: Zaman zarfı, geçtiğimiz gün (day), hafta (week), ay (month), yıl (year) veya hepsi olabilir. Varsayılan olarak day.\n"
 "        "
 
 #: redbot/cogs/image/image.py:117
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr "Sadece 'yeni' ve 'üst' geçerli bir sıralama türüdür."
 
-#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:197
-#: redbot/cogs/image/image.py:221
+#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:200
+#: redbot/cogs/image/image.py:227
 msgid "No results found."
 msgstr "Hiçbir sonuç bulunamadı."
 
@@ -115,32 +115,40 @@ msgstr "Bir Imgur istemci Kimliği almak için:\n"
 
 #: redbot/cogs/image/image.py:180
 #, docstring
-msgid "Retrieve the first search result from Giphy."
-msgstr "İlk arama sonucu Giphy almak."
+msgid "Retrieve the first search result from Giphy.\n\n"
+"        - `<keywords...>`: The keywords used to search Giphy.\n"
+"        "
+msgstr "Giphy'den ilk arama sonucunu getir.\n\n"
+"        - `<anahtar_kelimeler...>`: Giphy'de aranacak anahtar kelimeler.\n"
+"        "
 
-#: redbot/cogs/image/image.py:184 redbot/cogs/image/image.py:208
+#: redbot/cogs/image/image.py:187 redbot/cogs/image/image.py:214
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
 msgstr "Hiç API anahtarı ayarlanmamış. Lütfen `{prefix}giphycreds` komutu ile bir tane ayarlayın."
 
-#: redbot/cogs/image/image.py:199
+#: redbot/cogs/image/image.py:202
 msgid "Error contacting the Giphy API."
 msgstr "Giphy API'sı ile iletişim kurulurken hata oluştu."
 
-#: redbot/cogs/image/image.py:204
+#: redbot/cogs/image/image.py:207
 #, docstring
-msgid "Retrieve a random GIF from a Giphy search."
-msgstr "Rastgele bir GIF Giphy aramanın almak."
+msgid "Retrieve a random GIF from a Giphy search.\n\n"
+"        - `<keywords...>`: The keywords used to generate a random GIF.\n"
+"        "
+msgstr "Bir Giphy aramasından rastegele GIF göster.\n\n"
+"        - `<anahtar_kelimeler...>`: Rastgele bir GIF bulmada kullanılacak anahtar kelimeler.\n"
+"        "
 
-#: redbot/cogs/image/image.py:223
+#: redbot/cogs/image/image.py:229
 msgid "Error contacting the API."
 msgstr "Giphy API'sı ile iletişim kurulurken hata oluştu."
 
-#: redbot/cogs/image/image.py:228
+#: redbot/cogs/image/image.py:234
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
 msgstr "GIPHY API anahtarlarının nasıl alınacağını açıklar."
 
-#: redbot/cogs/image/image.py:230
+#: redbot/cogs/image/image.py:236
 msgid "To get a GIPHY API Key:\n"
 "1. Login to (or create) a GIPHY account.\n"
 "2. Visit this page: https://developers.giphy.com/dashboard.\n"
@@ -162,7 +170,7 @@ msgstr "GIPHY API Anahtarı almak için:\n"
 "8. API anahtarını kopyalayın.\n"
 "9. Discord içinde {command} komutunu çalıştırın.\n"
 
-#: redbot/cogs/image/image.py:243
+#: redbot/cogs/image/image.py:249
 msgid "<your_api_key_here>"
 msgstr "<buraya_api_anahtarınızı_yazın>"
 

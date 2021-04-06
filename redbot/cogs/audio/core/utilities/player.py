@@ -199,9 +199,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def update_player_lock(self, ctx: commands.Context, true_or_false: bool) -> None:
         if true_or_false:
-            self.play_lock[ctx.message.guild.id] = True
+            self.play_lock[ctx.guild.id] = True
         else:
-            self.play_lock[ctx.message.guild.id] = False
+            self.play_lock[ctx.guild.id] = False
 
     def _player_check(self, ctx: commands.Context) -> bool:
         if self.lavalink_connection_aborted:
@@ -218,10 +218,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
-        channel_id = player.channel.id
-        node = player.manager.node
-        voice_ws = node.get_voice_ws(guild_id)
-        await voice_ws.voice_state(guild_id, channel_id, self_deaf=True)
+        await player.channel.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
     async def _get_spotify_tracks(
         self, ctx: commands.Context, query: Query, forced: bool = False
@@ -252,7 +249,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(prefix=ctx.prefix),
             )
         try:
-            if self.play_lock[ctx.message.guild.id]:
+            if self.play_lock[ctx.guild.id]:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Tracks"),
@@ -361,7 +358,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
         player = lavalink.get_player(ctx.guild.id)
         try:
-            if self.play_lock[ctx.message.guild.id]:
+            if self.play_lock[ctx.guild.id]:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Tracks"),
@@ -646,7 +643,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 lock=self.update_player_lock,
                 notifier=notifier,
                 forced=forced,
-                query_global=await self.config.global_db_enabled(),
+                query_global=self.global_api_user.get("can_read"),
             )
         except SpotifyFetchError as error:
             self.update_player_lock(ctx, False)
@@ -716,8 +713,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 and player.position == 0
                 and len(player.queue) == 0
             ):
-                await player.move_to(user_channel)
-                await self.self_deafen(player)
+                await player.move_to(
+                    user_channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 return True
         else:
             return False

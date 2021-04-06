@@ -16,6 +16,8 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -1110,27 +1112,67 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This setting determines whether or not to use embeds as a response to a command (for commands that support it).
         The default is to use embeds.
+
+        The embed settings are checked until the first True/False in this order:
+        - In guild context:
+        1. Channel override ([p]embedset channel)
+        2. Server command override ([p]embedset command server)
+        3. Server override ([p]embedset server)
+        4. Global command override ([p]embedset command global)
+        5. Global setting ([p]embedset global)
+
+        - In DM context:
+        1. User override ([p]embedset user)
+        2. Global command override ([p]embedset command global)
+        3. Global setting ([p]embedset global)
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(self, ctx: commands.Context):
+    async def embedset_showsettings(self, ctx: commands.Context, command_name: str = None) -> None:
         """
         Show the current embed settings.
 
         **Example:**
             - `[p]embedset showsettings`
         """
+        if command_name is not None:
+            command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+            if command_obj is None:
+                await ctx.send(
+                    _("I couldn't find that command. Please note that it is case sensitive.")
+                )
+                return
+            # qualified name might be different if alias was passed to this command
+            command_name = command_obj.qualified_name
+
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
-        text += _("Global default: {}\n").format(global_default)
+        text += _("Global default: {value}\n").format(value=global_default)
+
+        if command_name is not None:
+            scope = self.bot._config.custom("COMMAND", command_name, 0)
+            global_command_setting = await scope.embeds()
+            text += _("Global command setting for {command} command: {value}\n").format(
+                command=inline(command_name), value=global_command_setting
+            )
+
         if ctx.guild:
             guild_setting = await self.bot._config.guild(ctx.guild).embeds()
-            text += _("Guild setting: {}\n").format(guild_setting)
+            text += _("Guild setting: {value}\n").format(value=guild_setting)
+
+            if command_name is not None:
+                scope = self.bot._config.custom("COMMAND", command_name, ctx.guild.id)
+                command_setting = await scope.embeds()
+                text += _("Server command setting for {command} command: {value}\n").format(
+                    command=inline(command_name), value=command_setting
+                )
+
         if ctx.channel:
             channel_setting = await self.bot._config.channel(ctx.channel).embeds()
-            text += _("Channel setting: {}\n").format(channel_setting)
+            text += _("Channel setting: {value}\n").format(value=channel_setting)
+
         user_setting = await self.bot._config.user(ctx.author).embeds()
-        text += _("User setting: {}").format(user_setting)
+        text += _("User setting: {value}").format(value=user_setting)
         await ctx.send(box(text))
 
     @embedset.command(name="global")
@@ -1142,14 +1184,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This is used as a fallback if the user or guild hasn't set a preference.
         The default is to use embeds.
 
+        To see full evaluation order of embed settings, run `[p]help embedset`.
+
         **Example:**
             - `[p]embedset global`
         """
         current = await self.bot._config.embeds()
-        await self.bot._config.embeds.set(not current)
-        await ctx.send(
-            _("Embeds are now {} by default.").format(_("disabled") if current else _("enabled"))
-        )
+        if current:
+            await self.bot._config.embeds.set(False)
+            await ctx.send(_("Embeds are now disabled by default."))
+        else:
+            await self.bot._config.embeds.clear()
+            await ctx.send(_("Embeds are now enabled by default."))
 
     @embedset.command(name="server", aliases=["guild"])
     @checks.guildowner_or_permissions(administrator=True)
@@ -1161,7 +1207,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If enabled is None, the setting will be unset and the global default will be used instead.
 
         If set, this is used instead of the global default to determine whether or not to use embeds.
-        This is used for all commands done in a guild channel except for help commands.
+        This is used for all commands done in a server.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`.
 
         **Examples:**
             - `[p]embedset server False` - Disables embeds on this server.
@@ -1170,13 +1218,135 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds on this server. Leave blank to reset to default.
         """
-        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.guild(ctx.guild).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
+
+        await self.bot._config.guild(ctx.guild).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for this guild.")
+            if enabled
+            else _("Embeds are now disabled for this guild.")
+        )
+
+    @checks.guildowner_or_permissions(administrator=True)
+    @embedset.group(name="command", invoke_without_command=True)
+    async def embedset_command(
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
+    ) -> None:
+        """
+        Toggle the command's embed setting.
+
+        If you're the bot owner, this will change command's embed setting
+        globally by default.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await self.embedset_command_global(ctx, command_name, enabled)
+        else:
+            await self.embedset_command_guild(ctx, command_name, enabled)
+
+    def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
+        for command in itertools.chain((command_obj,), command_obj.parents):
+            if command_obj.requires.bot_perms.embed_links:
+                # a slight abuse of this exception to save myself two lines later...
+                raise commands.UserFeedbackCheckFailure(
+                    _(
+                        "The passed command requires Embed Links permission"
+                        " and therefore cannot be set to not use embeds."
+                    )
+                )
+
+    @commands.is_owner()
+    @embedset_command.command(name="global")
+    async def embedset_command_global(
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
+    ):
+        """
+        Toggle the commmand's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
+        if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, 0).embeds.clear()
+            await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, 0).embeds.set(enabled)
+        if enabled:
+            await ctx.send(
+                _("Embeds are now enabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
         else:
             await ctx.send(
-                _("Embeds are now {} for this guild.").format(
-                    _("enabled") if enabled else _("disabled")
+                _("Embeds are now disabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
+
+    @commands.guild_only()
+    @embedset_command.command(name="server", aliases=["guild"])
+    async def embedset_command_guild(
+        self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
+    ):
+        """
+        Toggle the commmand's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the server default will be used instead.
+
+        If set, this is used instead of the server default
+        to determine whether or not to use embeds.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
+        # qualified name might be different if alias was passed to this command
+        command_name = command_obj.qualified_name
+
+        if enabled is None:
+            await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.clear()
+            await ctx.send(_("Embeds will now fall back to the server setting."))
+            return
+
+        await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.set(enabled)
+        if enabled:
+            await ctx.send(
+                _("Embeds are now enabled for {command_name} command.").format(
+                    command_name=inline(command_name)
+                )
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now disabled for {command_name} command.").format(
+                    command_name=inline(command_name)
                 )
             )
 
@@ -1189,8 +1359,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         If enabled is None, the setting will be unset and the guild default will be used instead.
 
-        If set, this is used instead of the guild default to determine whether or not to use embeds.
-        This is used for all commands done in a channel except for help commands.
+        If set, this is used instead of the guild and command defaults to determine whether or not to use embeds.
+        This is used for all commands done in a channel.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`.
 
         **Examples:**
             - `[p]embedset channel False` - Disables embeds in this channel.
@@ -1199,15 +1371,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
-        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.channel(ctx.channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now {} for this channel.").format(
-                    _("enabled") if enabled else _("disabled")
-                )
+            return
+
+        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now {} for this channel.").format(
+                _("enabled") if enabled else _("disabled")
             )
+        )
 
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
@@ -1219,6 +1393,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If set, this is used instead of the global default to determine whether or not to use embeds.
         This is used for all commands executed in a DM with the bot.
 
+        To see full evaluation order of embed settings, run `[p]help embedset`.
+
         **Examples:**
             - `[p]embedset user False` - Disables embeds in your DMs.
             - `[p]embedset user` - Resets value to use global default.
@@ -1226,15 +1402,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds in your DMs. Leave blank to reset to default.
         """
-        await self.bot._config.user(ctx.author).embeds.set(enabled)
         if enabled is None:
+            await self.bot._config.user(ctx.author).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
-        else:
-            await ctx.send(
-                _("Embeds are now enabled for you in DMs.")
-                if enabled
-                else _("Embeds are now disabled for you in DMs.")
-            )
+
+        await self.bot._config.user(ctx.author).embeds.set(enabled)
+        await ctx.send(
+            _("Embeds are now enabled for you in DMs.")
+            if enabled
+            else _("Embeds are now disabled for you in DMs.")
+        )
 
     @commands.command()
     @checks.is_owner()
@@ -1355,76 +1532,85 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send("The new permissions level has been set.")
 
     @commands.command()
-    @commands.guild_only()
     @checks.is_owner()
-    async def leave(self, ctx: commands.Context):
-        """Leaves the current server.
-
-        Note: This command is interactive.
+    async def leave(self, ctx: commands.Context, *servers: GuildConverter):
         """
-        await ctx.send(_("Are you sure you want me to leave this server? (y/n)"))
+        Leaves servers.
 
+        If no server IDs are passed the local server will be left instead.
+        
+        Note: This command is interactive.
+        
+        """  # TODO: Example and arguments
+        guilds = servers
+        if ctx.guild is None and not guilds:
+            return await ctx.send(_("You need to specify at least one server ID."))
+
+        leaving_local_guild = not guilds
+
+        if leaving_local_guild:
+            guilds = (ctx.guild,)
+            msg = (
+                _("You haven't passed any server ID. Do you want me to leave this server?")
+                + " (y/n)"
+            )
+        else:
+            msg = (
+                _("Are you sure you want me to leave these servers?")
+                + " (y/n):\n"
+                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
+            )
+
+        for guild in guilds:
+            if guild.owner.id == ctx.me.id:
+                return await ctx.send(
+                    _("I cannot leave the server `{server_name}`: I am the owner of it.").format(
+                        server_name=guild.name
+                    )
+                )
+
+        for page in pagify(msg):
+            await ctx.send(page)
         pred = MessagePredicate.yes_or_no(ctx)
         try:
-            await self.bot.wait_for("message", check=pred)
+            await self.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send(_("Response timed out."))
             return
         else:
             if pred.result is True:
-                await ctx.send(_("Alright. Bye :wave:"))
-                log.debug(_("Leaving guild '{}'").format(ctx.guild.name))
-                await ctx.guild.leave()
+                if leaving_local_guild is True:
+                    await ctx.send(_("Alright. Bye :wave:"))
+                else:
+                    await ctx.send(
+                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                    )
+                for guild in guilds:
+                    log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
+                    await guild.leave()
             else:
-                await ctx.send(_("Alright, I'll stay then. :)"))
+                if leaving_local_guild is True:
+                    await ctx.send(_("Alright, I'll stay then. :)"))
+                else:
+                    await ctx.send(_("Alright, I'm not leaving those servers."))
 
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx: commands.Context):
-        """Lists and allows [botname] to leave servers.
+        """
+        Lists the servers [botname] is currently in.
 
         Note: This command is interactive.
         """
-        guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
-        msg = ""
-        responses = []
-        for i, server in enumerate(guilds, 1):
-            msg += "{}: {} (`{}`)\n".format(i, server.name, server.id)
-            responses.append(str(i))
+        guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
+        msg = "\n".join(f"{guild.name} (`{guild.id}`)\n" for guild in guilds)
 
-        for page in pagify(msg, ["\n"]):
-            await ctx.send(page)
+        pages = list(pagify(msg, ["\n"], page_length=1000))
 
-        query = await ctx.send(_("To leave a server, just type its number."))
-
-        pred = MessagePredicate.contained_in(responses, ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=15)
-        except asyncio.TimeoutError:
-            try:
-                await query.delete()
-            except discord.errors.NotFound:
-                pass
+        if len(pages) == 1:
+            await ctx.send(pages[0])
         else:
-            await self.leave_confirmation(guilds[pred.result], ctx)
-
-    async def leave_confirmation(self, guild, ctx):
-        if guild.owner.id == ctx.bot.user.id:
-            await ctx.send(_("I cannot leave a guild I am the owner of."))
-            return
-
-        await ctx.send(_("Are you sure you want me to leave {}? (yes/no)").format(guild.name))
-        pred = MessagePredicate.yes_or_no(ctx)
-        try:
-            await self.bot.wait_for("message", check=pred, timeout=15)
-            if pred.result is True:
-                await guild.leave()
-                if guild != ctx.guild:
-                    await ctx.send(_("Done."))
-            else:
-                await ctx.send(_("Alright then."))
-        except asyncio.TimeoutError:
-            await ctx.send(_("Response timed out."))
+            await menu(ctx, pages, DEFAULT_CONTROLS)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
@@ -2446,7 +2632,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<prefixes...>` - The prefixes the bot will respond to globally.
         """
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
-        await ctx.send(_("Prefix set."))
+        if len(prefixes) == 1:
+            await ctx.send(_("Prefix set."))
+        else:
+            await ctx.send(_("Prefixes set."))
 
     @_set.command(aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
@@ -2469,11 +2658,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
-            await ctx.send(_("Guild prefixes have been reset."))
+            await ctx.send(_("Server prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
-        await ctx.send(_("Prefix set."))
+        if len(prefixes) == 1:
+            await ctx.send(_("Server prefix set."))
+        else:
+            await ctx.send(_("Server prefixes set."))
 
     @_set.command()
     @checks.is_owner()
@@ -3402,8 +3594,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Users on the allowlist:")
         else:
             msg = _("User on the allowlist:")
-        for user in curr_list:
-            msg += "\n\t- {}".format(user)
+        for user_id in curr_list:
+            user = self.bot.get_user(user_id)
+            if not user:
+                user = _("Unknown or Deleted User")
+            msg += f"\n\t- {user_id} ({user})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3497,8 +3692,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Users on the blocklist:")
         else:
             msg = _("User on the blocklist:")
-        for user in curr_list:
-            msg += "\n\t- {}".format(user)
+        for user_id in curr_list:
+            user = self.bot.get_user(user_id)
+            if not user:
+                user = _("Unknown or Deleted User")
+            msg += f"\n\t- {user_id} ({user})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3599,8 +3797,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Allowed users and/or roles:")
         else:
             msg = _("Allowed user or role:")
-        for obj in curr_list:
-            msg += "\n\t- {}".format(obj)
+        for obj_id in curr_list:
+            user_or_role = self.bot.get_user(obj_id) or ctx.guild.get_role(obj_id)
+            if not user_or_role:
+                user_or_role = _("Unknown or Deleted User/Role")
+            msg += f"\n\t- {obj_id} ({user_or_role})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3718,8 +3919,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             msg = _("Blocked users and/or roles:")
         else:
             msg = _("Blocked user or role:")
-        for obj in curr_list:
-            msg += "\n\t- {}".format(obj)
+        for obj_id in curr_list:
+            user_or_role = self.bot.get_user(obj_id) or ctx.guild.get_role(obj_id)
+            if not user_or_role:
+                user_or_role = _("Unknown or Deleted User/Role")
+            msg += f"\n\t- {obj_id} ({user_or_role})"
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -3953,7 +4157,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
-        """Disable a command.
+        """
+        Disable a command.
 
         If you're the bot owner, this will disable commands globally by default.
         Otherwise, this will disable commands on the current server.
@@ -3974,7 +4179,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     @command_disable.command(name="global")
     async def command_disable_global(self, ctx: commands.Context, *, command: str):
-        """Disable a command globally.
+        """
+        Disable a command globally.
 
         **Examples:**
             - `[p]command disable global userinfo` - Disables the `userinfo` command in the Mod cog.
@@ -3983,7 +4189,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable globally.
         """
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -4016,7 +4222,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_disable.command(name="server", aliases=["guild"])
     async def command_disable_guild(self, ctx: commands.Context, *, command: str):
-        """Disable a command in this server only.
+        """
+        Disable a command in this server only.
 
         **Examples:**
             - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
@@ -4025,7 +4232,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable for the current server.
         """
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -4081,7 +4288,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.is_owner()
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
-        """Enable a command globally.
+        """
+        Enable a command globally.
 
         **Examples:**
             - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
@@ -4090,7 +4298,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable globally.
         """
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -4111,7 +4319,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @command_enable.command(name="server", aliases=["guild"])
     async def command_enable_guild(self, ctx: commands.Context, *, command: str):
-        """Enable a command in this server.
+        """
+        Enable a command in this server.
 
         **Examples:**
             - `[p]command enable server userinfo` - Enables the `userinfo` command in the Mod cog.
@@ -4120,7 +4329,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable for the current server.
         """
-        command_obj: commands.Command = ctx.bot.get_command(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
@@ -4555,6 +4764,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
     # Otherwise interfering with the ability for this command to be accessible is also a violation.
+    @commands.cooldown(1, 180, lambda msg: (msg.channel.id, msg.author.id))
     @commands.command(
         cls=commands.commands._AlwaysAvailableCommand,
         name="licenseinfo",
@@ -4574,24 +4784,3 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.
-
-
-# DEP-WARN: CooldownMapping should have a method `from_cooldown`
-# which accepts (number, number, bucket)
-# the bucket should only be used for the method `_bucket_key`
-# and `_bucket_key` should be used to determine the grouping
-# of ratelimit consumption.
-class LicenseCooldownMapping(commands.CooldownMapping):
-    """
-    This is so that a single user can't spam a channel with this
-    it's used below as 1 per 3 minutes per user-channel combination.
-    """
-
-    def _bucket_key(self, msg):
-        return (msg.channel.id, msg.author.id)
-
-
-# DEP-WARN: command objects should store a single cooldown mapping as `._buckets`
-Core.license_info_command._buckets = LicenseCooldownMapping.from_cooldown(
-    1, 180, commands.BucketType.member  # pick a random bucket,it wont get used.
-)

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgid "tracks"
 msgstr "parçalar"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:85
-#: redbot/cogs/audio/core/utilities/formatting.py:274
+#: redbot/cogs/audio/core/utilities/formatting.py:280
 msgid "Page {page_num}/{total_pages}"
 msgstr "{page_num}/{total_pages} sayfa"
 
@@ -29,81 +29,81 @@ msgid "Connection to Lavalink has failed."
 msgstr "Lavalink bağlantısı başarısız."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:99
-#: redbot/cogs/audio/core/utilities/player.py:596
-#: redbot/cogs/audio/core/utilities/playlists.py:505
+#: redbot/cogs/audio/core/utilities/player.py:593
+#: redbot/cogs/audio/core/utilities/playlists.py:523
 msgid "Please check your console or logs for details."
 msgstr "Console veya loglarınızı kontrol edin."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:107
-#: redbot/cogs/audio/core/utilities/playlists.py:535
+#: redbot/cogs/audio/core/utilities/formatting.py:111
+#: redbot/cogs/audio/core/utilities/playlists.py:557
 msgid "Connect to a voice channel first."
 msgstr "Önce bir sesli bir kanala katılın."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:110
-#: redbot/cogs/audio/core/utilities/playlists.py:528
+#: redbot/cogs/audio/core/utilities/formatting.py:114
+#: redbot/cogs/audio/core/utilities/playlists.py:550
 msgid "Connection to Lavalink has not yet been established."
 msgstr "Lavalink ile bağlantı henüz sağlanmadı."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:116
-#: redbot/cogs/audio/core/utilities/player.py:444
-#: redbot/cogs/audio/core/utilities/player.py:528
+#: redbot/cogs/audio/core/utilities/formatting.py:120
+#: redbot/cogs/audio/core/utilities/player.py:441
+#: redbot/cogs/audio/core/utilities/player.py:525
 msgid "Queue size limit reached."
 msgstr "Sıraya alma limitine ulaşıldı."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:116
+#: redbot/cogs/audio/core/utilities/formatting.py:120
 msgid "Unable To Play Tracks"
 msgstr "Parçalar Çalınamıyor"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:154
-#: redbot/cogs/audio/core/utilities/player.py:604
+#: redbot/cogs/audio/core/utilities/formatting.py:158
+#: redbot/cogs/audio/core/utilities/player.py:601
 msgid "Track Enqueued"
 msgstr "Şarkı sıraya eklendi"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:169
-#: redbot/cogs/audio/core/utilities/player.py:553
+#: redbot/cogs/audio/core/utilities/formatting.py:173
+#: redbot/cogs/audio/core/utilities/player.py:550
 msgid "This track is not allowed in this server."
 msgstr "Bu şarkının sunucuda çalınmasına izin verilmiyor."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:187
-#: redbot/cogs/audio/core/utilities/player.py:575
+#: redbot/cogs/audio/core/utilities/formatting.py:191
+#: redbot/cogs/audio/core/utilities/player.py:572
 msgid "Track exceeds maximum length."
 msgstr "Şarkı izin verilen uzunluğu aşıyor."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:204
-#: redbot/cogs/audio/core/utilities/player.py:607
+#: redbot/cogs/audio/core/utilities/formatting.py:208
+#: redbot/cogs/audio/core/utilities/player.py:604
 msgid "{time} until track playback: #{position} in queue"
 msgstr "Şarkının başlamasına {time} kadar süre var. #{position} sırada."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:262
+#: redbot/cogs/audio/core/utilities/formatting.py:268
 msgid "Tracks Found:"
 msgstr "Bulunan şarkılar:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:263
+#: redbot/cogs/audio/core/utilities/formatting.py:269
 msgid "search results"
 msgstr "arama sonuçları"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:265
+#: redbot/cogs/audio/core/utilities/formatting.py:271
 msgid "Folders Found:"
 msgstr "Bulunan klasörler:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:266
+#: redbot/cogs/audio/core/utilities/formatting.py:272
 msgid "local folders"
 msgstr "Yerel Klasörler"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:268
+#: redbot/cogs/audio/core/utilities/formatting.py:274
 msgid "Files Found:"
 msgstr "Bulunan klasörler:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:269
+#: redbot/cogs/audio/core/utilities/formatting.py:275
 msgid "local tracks"
 msgstr "Yerel şarkılar"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:381
-#: redbot/cogs/audio/core/utilities/playlists.py:228
+#: redbot/cogs/audio/core/utilities/formatting.py:387
+#: redbot/cogs/audio/core/utilities/playlists.py:234
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:382
+#: redbot/cogs/audio/core/utilities/formatting.py:388
 msgid " - Name:   <{pname}>\n"
 " - Scope:  < {scope} >\n"
 " - ID:     < {pid} >\n"
@@ -115,15 +115,15 @@ msgstr " - İsim:   <{pname}>\n"
 " - Parçalar: < {ptracks} >\n"
 " - Sahip: < {author} >\n\n"
 
-#: redbot/cogs/audio/core/utilities/local_tracks.py:108
-#: redbot/cogs/audio/core/utilities/player.py:238
-#: redbot/cogs/audio/core/utilities/player.py:248
-#: redbot/cogs/audio/core/utilities/player.py:330
-#: redbot/cogs/audio/core/utilities/player.py:655
+#: redbot/cogs/audio/core/utilities/local_tracks.py:109
+#: redbot/cogs/audio/core/utilities/player.py:235
+#: redbot/cogs/audio/core/utilities/player.py:245
+#: redbot/cogs/audio/core/utilities/player.py:327
+#: redbot/cogs/audio/core/utilities/player.py:652
 msgid "Invalid Environment"
 msgstr "Geçersiz Ortam"
 
-#: redbot/cogs/audio/core/utilities/local_tracks.py:108
+#: redbot/cogs/audio/core/utilities/local_tracks.py:109
 msgid "No localtracks folder."
 msgstr "Yerel şarkı dizini bulunamadı."
 
@@ -170,171 +170,171 @@ msgstr "Sırada şu anda sadece {queuelen} parça var."
 msgid "{skip_to_track} Tracks Skipped"
 msgstr "{skip_to_track} Parça Atlandı"
 
-#: redbot/cogs/audio/core/utilities/player.py:239
+#: redbot/cogs/audio/core/utilities/player.py:236
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin Spotify istemci IDsi ve istemci sırrını ayarlaması gerekir. \n"
 "Yönergeler için `{prefix}audioset spotifyapi` komutunu kullanın."
 
-#: redbot/cogs/audio/core/utilities/player.py:249
+#: redbot/cogs/audio/core/utilities/player.py:246
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
 msgstr "Spotify URLleri veya kodları kullanılmadan önce bot sahibinin YouTube API anahtarı ayarlaması gerekir.\n"
 "Yönergeler için `{prefix}audioset youtubeapi` komutunu kullanın."
 
-#: redbot/cogs/audio/core/utilities/player.py:258
-#: redbot/cogs/audio/core/utilities/player.py:367
-#: redbot/cogs/audio/core/utilities/playlists.py:570
+#: redbot/cogs/audio/core/utilities/player.py:255
+#: redbot/cogs/audio/core/utilities/player.py:364
+#: redbot/cogs/audio/core/utilities/playlists.py:592
 msgid "Unable To Get Tracks"
 msgstr "Parçalar alınamıyor."
 
-#: redbot/cogs/audio/core/utilities/player.py:259
-#: redbot/cogs/audio/core/utilities/player.py:368
-#: redbot/cogs/audio/core/utilities/playlists.py:571
+#: redbot/cogs/audio/core/utilities/player.py:256
+#: redbot/cogs/audio/core/utilities/player.py:365
+#: redbot/cogs/audio/core/utilities/playlists.py:593
 msgid "Wait until the playlist has finished loading."
 msgstr "Playlist yüklenmesi bitene kadar bekleyin."
 
-#: redbot/cogs/audio/core/utilities/player.py:270
-#: redbot/cogs/audio/core/utilities/player.py:312
-#: redbot/cogs/audio/core/utilities/player.py:410
-#: redbot/cogs/audio/core/utilities/playlists.py:581
-#: redbot/cogs/audio/core/utilities/playlists.py:614
+#: redbot/cogs/audio/core/utilities/player.py:267
+#: redbot/cogs/audio/core/utilities/player.py:309
+#: redbot/cogs/audio/core/utilities/player.py:407
+#: redbot/cogs/audio/core/utilities/playlists.py:603
+#: redbot/cogs/audio/core/utilities/playlists.py:636
 msgid "Nothing found."
 msgstr "Hiçbir şey bulunamadı."
 
-#: redbot/cogs/audio/core/utilities/player.py:273
-#: redbot/cogs/audio/core/utilities/player.py:314
-#: redbot/cogs/audio/core/utilities/player.py:425
-#: redbot/cogs/audio/core/utilities/playlists.py:583
-#: redbot/cogs/audio/core/utilities/playlists.py:616
+#: redbot/cogs/audio/core/utilities/player.py:270
+#: redbot/cogs/audio/core/utilities/player.py:311
+#: redbot/cogs/audio/core/utilities/player.py:422
+#: redbot/cogs/audio/core/utilities/playlists.py:605
+#: redbot/cogs/audio/core/utilities/playlists.py:638
 msgid "Track is not playable."
 msgstr "Parça çalınamaz."
 
-#: redbot/cogs/audio/core/utilities/player.py:274
-#: redbot/cogs/audio/core/utilities/player.py:315
-#: redbot/cogs/audio/core/utilities/player.py:427
-#: redbot/cogs/audio/core/utilities/playlists.py:584
-#: redbot/cogs/audio/core/utilities/playlists.py:617
+#: redbot/cogs/audio/core/utilities/player.py:271
+#: redbot/cogs/audio/core/utilities/player.py:312
+#: redbot/cogs/audio/core/utilities/player.py:424
+#: redbot/cogs/audio/core/utilities/playlists.py:606
+#: redbot/cogs/audio/core/utilities/playlists.py:639
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
 msgstr "**{suffix}** tamamen desteklenen bir format değil ve bazı parçalar çalınamayabilir."
 
-#: redbot/cogs/audio/core/utilities/player.py:304
-#: redbot/cogs/audio/core/utilities/player.py:395
-#: redbot/cogs/audio/core/utilities/player.py:662
-#: redbot/cogs/audio/core/utilities/playlists.py:413
-#: redbot/cogs/audio/core/utilities/playlists.py:602
-#: redbot/cogs/audio/core/utilities/playlists.py:631
+#: redbot/cogs/audio/core/utilities/player.py:301
+#: redbot/cogs/audio/core/utilities/player.py:392
+#: redbot/cogs/audio/core/utilities/player.py:659
+#: redbot/cogs/audio/core/utilities/playlists.py:419
+#: redbot/cogs/audio/core/utilities/playlists.py:624
+#: redbot/cogs/audio/core/utilities/playlists.py:653
 msgid "Unable to Get Track"
 msgstr "Parça alınamıyor"
 
-#: redbot/cogs/audio/core/utilities/player.py:305
-#: redbot/cogs/audio/core/utilities/player.py:396
-#: redbot/cogs/audio/core/utilities/player.py:663
-#: redbot/cogs/audio/core/utilities/playlists.py:414
-#: redbot/cogs/audio/core/utilities/playlists.py:603
-#: redbot/cogs/audio/core/utilities/playlists.py:632
+#: redbot/cogs/audio/core/utilities/player.py:302
+#: redbot/cogs/audio/core/utilities/player.py:393
+#: redbot/cogs/audio/core/utilities/player.py:660
+#: redbot/cogs/audio/core/utilities/playlists.py:420
+#: redbot/cogs/audio/core/utilities/playlists.py:625
+#: redbot/cogs/audio/core/utilities/playlists.py:654
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika sonra tekrar deneyin."
 
-#: redbot/cogs/audio/core/utilities/player.py:331
+#: redbot/cogs/audio/core/utilities/player.py:328
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
 msgstr "Spotify API anahtarı veya istemci sırrı düzgün ayarlanmamış. \n"
 "Yönergeler için `{prefix}audioset spotifyapi` komutunu çalıştırın."
 
-#: redbot/cogs/audio/core/utilities/player.py:355
+#: redbot/cogs/audio/core/utilities/player.py:352
 msgid "Unable To Find Tracks"
 msgstr "Parçalar bulunamadı"
 
-#: redbot/cogs/audio/core/utilities/player.py:356
+#: redbot/cogs/audio/core/utilities/player.py:353
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Bu geçerli bir Spotify URL'si ya da kodu gibi gözükmüyor."
 
-#: redbot/cogs/audio/core/utilities/player.py:382
+#: redbot/cogs/audio/core/utilities/player.py:379
 msgid "{query} is not an allowed query."
 msgstr "{query} izin verilmeyen bir sorgudur."
 
-#: redbot/cogs/audio/core/utilities/player.py:418
+#: redbot/cogs/audio/core/utilities/player.py:415
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
 msgstr "`Lavalink.jar` parçayı bulamazsa yerel parçalar çalışmaz.\n"
 "Bu izinler veya Lavalink.jar'ın parçaları bulundurandan farklı bir makinede çalıştırılmasından kaynaklanabilir."
 
-#: redbot/cogs/audio/core/utilities/player.py:491
+#: redbot/cogs/audio/core/utilities/player.py:488
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} şarkıları sıraya alınamaz."
 
-#: redbot/cogs/audio/core/utilities/player.py:497
+#: redbot/cogs/audio/core/utilities/player.py:494
 msgid "No Title"
 msgstr "Başlık Yok"
 
-#: redbot/cogs/audio/core/utilities/player.py:503
+#: redbot/cogs/audio/core/utilities/player.py:500
 msgid "Playlist Enqueued"
 msgstr "Playlist sıraya alındı."
 
-#: redbot/cogs/audio/core/utilities/player.py:506
+#: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "{num} adet şarkı sıraya eklendi.{maxlength_msg}"
 
-#: redbot/cogs/audio/core/utilities/player.py:512
+#: redbot/cogs/audio/core/utilities/player.py:509
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "Playlistin başlamasına {time} süre var:  #{position} sırasında başlar."
 
-#: redbot/cogs/audio/core/utilities/player.py:593
+#: redbot/cogs/audio/core/utilities/player.py:590
 msgid "Nothing found"
 msgstr "Hiçbir şey bulunamadı"
 
-#: redbot/cogs/audio/core/utilities/player.py:628
+#: redbot/cogs/audio/core/utilities/player.py:625
 msgid "Please wait, finding tracks..."
 msgstr "Lütfen bekleyin, şarkılar aranıyor..."
 
-#: redbot/cogs/audio/core/utilities/player.py:634
+#: redbot/cogs/audio/core/utilities/player.py:631
 msgid "Getting track {num}/{total}..."
 msgstr "{num}/{total} şarkı yükleniyor..."
 
-#: redbot/cogs/audio/core/utilities/player.py:635
+#: redbot/cogs/audio/core/utilities/player.py:632
 msgid "Matching track {num}/{total}..."
 msgstr "{num}/{total} şarkı eşleştiriliyor..."
 
-#: redbot/cogs/audio/core/utilities/player.py:636
-#: redbot/cogs/audio/core/utilities/playlists.py:329
-#: redbot/cogs/audio/core/utilities/playlists.py:402
+#: redbot/cogs/audio/core/utilities/player.py:633
+#: redbot/cogs/audio/core/utilities/playlists.py:335
+#: redbot/cogs/audio/core/utilities/playlists.py:408
 msgid "Loading track {num}/{total}..."
 msgstr " {num}/{total} şarkı yükleniyor."
 
-#: redbot/cogs/audio/core/utilities/player.py:637
+#: redbot/cogs/audio/core/utilities/player.py:634
 msgid "Approximate time remaining: {seconds}"
 msgstr "Tahmini kalan süre: {seconds}"
 
-#: redbot/cogs/audio/core/utilities/player.py:672
+#: redbot/cogs/audio/core/utilities/player.py:669
 msgid "The connection was reset while loading the playlist."
 msgstr "Playlist yüklenirken bağlantı yenilendi."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:71
+#: redbot/cogs/audio/core/utilities/playlists.py:77
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
 msgstr "{name} (`{id}`) [**{scope}**] düzenlemek için yetkiniz yok!"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:89
+#: redbot/cogs/audio/core/utilities/playlists.py:95
 msgid "You do not have the permissions to manage that playlist in {guild}."
 msgstr "{guild} sunucusunda çalma listesini düzenlemek için yeterli yetkiniz yok."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:96
+#: redbot/cogs/audio/core/utilities/playlists.py:102
 msgid "You do not have the permissions to manage playlist owned by {user}."
 msgstr "{user} kullanıcısının sahibi olduğu çalma listesini düzenlemek için yetkiniz yok."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:100
+#: redbot/cogs/audio/core/utilities/playlists.py:106
 msgid "You do not have the permissions to manage playlists in {scope} scope."
 msgstr "{scope} kapsamındaki çalma listelerini oynatma izniniz yok."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:104
+#: redbot/cogs/audio/core/utilities/playlists.py:110
 msgid "No access to playlist."
 msgstr "Çalma listesine erişim yok."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:212
+#: redbot/cogs/audio/core/utilities/playlists.py:218
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
 msgstr "{match_count} tane çalma listesi sonucu çıktı {original_input}: Lütfen daha spesifik bir şekilde aratın, ya da aradığınız çalma listesi ID'sini kullanın."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:229
+#: redbot/cogs/audio/core/utilities/playlists.py:235
 msgid "{number}.    <{playlist.name}>\n"
 " - Scope:  < {scope} >\n"
 " - ID:     < {playlist.id} >\n"
@@ -346,92 +346,92 @@ msgstr "{number}.    <{playlist.name}>\n"
 " - Parçalar: < {tracks} >\n"
 " - Yapımcı: < {author} >\n\n"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:246
+#: redbot/cogs/audio/core/utilities/playlists.py:252
 msgid "{playlists} playlists found, which one would you like?"
 msgstr "{playlists} çalma listesi bulundu, hangisini çalmamı istersiniz?"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:265
 #: redbot/cogs/audio/core/utilities/playlists.py:271
+#: redbot/cogs/audio/core/utilities/playlists.py:277
 msgid "Too many matches found and you did not select which one you wanted."
 msgstr "Çok fazla eşleşme bulundu ve herhangi bir seçim yapmadınız."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:296
+#: redbot/cogs/audio/core/utilities/playlists.py:302
 msgid "Playlists you can access in this server:"
 msgstr "Bu sunucuda erişebildiğiniz çalma listeleri:"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:302
+#: redbot/cogs/audio/core/utilities/playlists.py:308
 msgid "Playlists for {scope}:"
 msgstr "{scope} için çalma listeleri:"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:306
+#: redbot/cogs/audio/core/utilities/playlists.py:312
 msgid "Page {page_num}/{total_pages} | {num} playlists."
 msgstr "Sayfa {page_num}/{total_pages} | {num} çalma listesi."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:322
-#: redbot/cogs/audio/core/utilities/playlists.py:400
+#: redbot/cogs/audio/core/utilities/playlists.py:328
+#: redbot/cogs/audio/core/utilities/playlists.py:406
 msgid "Please wait, adding tracks..."
 msgstr "Lütfen bekleyin, şarkılar ekleniyor."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:349
-#: redbot/cogs/audio/core/utilities/playlists.py:452
+#: redbot/cogs/audio/core/utilities/playlists.py:355
+#: redbot/cogs/audio/core/utilities/playlists.py:458
 msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
 msgstr "Boş çalma listesi {name} (`{id}`) [**{scope}**] oluşturuldu."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:354
-#: redbot/cogs/audio/core/utilities/playlists.py:457
+#: redbot/cogs/audio/core/utilities/playlists.py:360
+#: redbot/cogs/audio/core/utilities/playlists.py:463
 msgid "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) could not be loaded."
 msgstr "{num} sayıda şarkı {playlist_name} playlistinden sıraya eklendi. {num_bad} şarkı eklenemedi."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:359
-#: redbot/cogs/audio/core/utilities/playlists.py:462
+#: redbot/cogs/audio/core/utilities/playlists.py:365
+#: redbot/cogs/audio/core/utilities/playlists.py:468
 msgid "Added {num} tracks from the {playlist_name} playlist."
 msgstr "{num} sayıda şarkı {playlist_name} playlistinden sıraya eklendi. "
 
-#: redbot/cogs/audio/core/utilities/playlists.py:363
-#: redbot/cogs/audio/core/utilities/playlists.py:466
+#: redbot/cogs/audio/core/utilities/playlists.py:369
+#: redbot/cogs/audio/core/utilities/playlists.py:472
 msgid "Playlist Saved"
 msgstr "Çalma listesi kaydedildi"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:502
+#: redbot/cogs/audio/core/utilities/playlists.py:520
 msgid "Connection to Lavalink has failed"
 msgstr "Lavalink bağlantısı başarısız"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:516
-#: redbot/cogs/audio/core/utilities/playlists.py:527
 #: redbot/cogs/audio/core/utilities/playlists.py:534
-#: redbot/cogs/audio/core/utilities/playlists.py:547
+#: redbot/cogs/audio/core/utilities/playlists.py:549
+#: redbot/cogs/audio/core/utilities/playlists.py:556
+#: redbot/cogs/audio/core/utilities/playlists.py:569
 msgid "Unable To Get Playlists"
 msgstr "Çalma Listeleri Alınamadı"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:517
+#: redbot/cogs/audio/core/utilities/playlists.py:535
 msgid "I don't have permission to connect to your channel."
 msgstr "Bulunduğun kanala katılabilmem için yetkim yok."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:548
+#: redbot/cogs/audio/core/utilities/playlists.py:570
 msgid "You must be in the voice channel to use the playlist command."
 msgstr "Playlist başlatabilmek için bir kanal da olmanız gerekli."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:657
+#: redbot/cogs/audio/core/utilities/playlists.py:679
 msgid "the Global"
 msgstr "Evrensel"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:657
+#: redbot/cogs/audio/core/utilities/playlists.py:679
 msgid "Global"
 msgstr "Küresel"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:659
+#: redbot/cogs/audio/core/utilities/playlists.py:681
 msgid "the Server"
 msgstr "Sunucu"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:659
+#: redbot/cogs/audio/core/utilities/playlists.py:681
 msgid "Server"
 msgstr "Sunucu"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:661
+#: redbot/cogs/audio/core/utilities/playlists.py:683
 msgid "the User"
 msgstr "Kullanıcı"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:661
+#: redbot/cogs/audio/core/utilities/playlists.py:683
 msgid "User"
 msgstr "Kullanıcı"
 

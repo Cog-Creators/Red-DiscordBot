@@ -229,7 +229,11 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Afficher les informations sur le serveur.\n\n"
+"        `details`: Affiche plus d'informations lorsqu'il est défini sur `True`.\n"
+"        Par défaut sur False.\n"
+"        "
 
 #: redbot/cogs/general/general.py:256
 msgid "Created on {date}. That's over {num} days ago!"
@@ -265,7 +269,7 @@ msgstr "ID du serveur : "
 
 #: redbot/cogs/general/general.py:277
 msgid "  •  Use {command} for more info on the server."
-msgstr ""
+msgstr "  •  Utilisez {command} pour plus d'informations sur le serveur."
 
 #: redbot/cogs/general/general.py:303
 msgid "\n"
@@ -419,7 +423,7 @@ msgstr "Découverte de serveurs"
 
 #: redbot/cogs/general/general.py:380
 msgid "Featurable"
-msgstr ""
+msgstr "En avant"
 
 #: redbot/cogs/general/general.py:381
 msgid "Splash Invite"
@@ -431,7 +435,7 @@ msgstr "Liste des membres désactivée"
 
 #: redbot/cogs/general/general.py:383
 msgid "Membership Screening enabled"
-msgstr ""
+msgstr "Filtrage des membres activé"
 
 #: redbot/cogs/general/general.py:384
 msgid "More Emojis"
@@ -447,7 +451,7 @@ msgstr "Partenaire"
 
 #: redbot/cogs/general/general.py:387
 msgid "Preview enabled"
-msgstr ""
+msgstr "Aperçu activé"
 
 #: redbot/cogs/general/general.py:388
 msgid "Public disabled"
@@ -467,7 +471,7 @@ msgstr "Serveurs vocaux VIP"
 
 #: redbot/cogs/general/general.py:392
 msgid "Welcome Screen enabled"
-msgstr ""
+msgstr "Écran de bienvenue activé"
 
 #: redbot/cogs/general/general.py:400
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
@@ -528,7 +532,10 @@ msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "Niveau {boostlevel} avec {nitroboosters} boosts\n"
+"Limite de taille de fichier: {filelimit}\n"
+"Limite d'émojis: {emojis_limit}\n"
+"Débit maximal des vocaux: {bitrate}"
 
 #: redbot/cogs/general/general.py:472
 msgid "Nitro Boost:"

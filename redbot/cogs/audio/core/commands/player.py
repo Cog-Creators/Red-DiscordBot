@@ -78,10 +78,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -185,10 +189,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -450,10 +458,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -566,10 +578,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
@@ -626,10 +642,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
-        if not guild_data["notify"] and (
-            (player.current and not player.current.extras.get("autoplay")) or not player.current
-        ):
-            await self.send_embed_msg(ctx, title=_("Auto play started."))
+        if not guild_data["notify"] and not player.fetch("autoplay_notified", False):
+            pass
         elif player.current:
             await self.send_embed_msg(ctx, title=_("Adding a track to queue."))
 
@@ -692,10 +706,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Search For Tracks"),
                         description=_("I don't have permission to connect to your channel."),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                player.store("channel", ctx.channel.id)
+                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,

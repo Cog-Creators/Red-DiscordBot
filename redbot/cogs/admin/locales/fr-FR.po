@@ -49,7 +49,7 @@ msgstr "J’ai besoin de la permission de gérer les rôles pour faire cela."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr "Je suis déjà en train d'annoncer quelque chose. Si tu souhaites faire une annonce différente, tu dois d'abord utiliser la commande `{prefix}announce cancel`."
+msgstr "Je suis déjà en train d'annoncer quelque chose. Si vous souhaitez faire une annonce différente, vous devez d'abord utiliser la commande `{prefix}announce cancel`."
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
@@ -82,7 +82,7 @@ msgid "\n"
 msgstr "\n"
 "        Ajouter un rôle à un utilisateur.\n\n"
 "        Utilisez des guillemets si le rôle contient des espaces.\n"
-"        Si l'utilisateur est laissé vide, c'est par défaut l'auteur de la commande.\n"
+"        Si l'utilisateur est laissé vide, ce sera par défaut l'auteur de la commande.\n"
 "        "
 
 #: redbot/cogs/admin/admin.py:239
@@ -95,7 +95,7 @@ msgid "\n"
 msgstr "\n"
 "        Retirer un rôle d'un utilisateur.\n\n"
 "        Utilisez des guillemets doubles si le rôle contient des espaces.\n"
-"        Si l'utilisateur est laissé vide, c'est par défaut l'auteur de la commande.\n"
+"        Si l'utilisateur est laissé vide, ce sera par défaut l'auteur de la commande.\n"
 "        "
 
 #: redbot/cogs/admin/admin.py:253
@@ -120,7 +120,7 @@ msgstr "\n"
 "        La couleur doit être au format hexadécimal.\n"
 "        [Sélecteur de couleurs en ligne](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
 "        Exemples:\n"
-"            `[p]editrole color \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
 "            `[p]editrole colour Test #ff9900`\n"
 "        "
 
@@ -178,7 +178,7 @@ msgid "\n"
 "        "
 msgstr "\n"
 "        Change le salon où le bot enverra les annonces.\n\n"
-"        Si le champ salon est laissé vide, il utilisera, par défaut, le salon actuel.\n"
+"        Si le champ salon est laissé vide, il utilisera par défaut le salon actuel.\n"
 "        "
 
 #: redbot/cogs/admin/admin.py:366
@@ -197,7 +197,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ajoutez ou supprimez un auto-rôle de vous-même.\n\n"
+"        Les administrateurs du serveur doivent avoir configuré le rôle en tant qu'utilisable par les utilisateurs.\n"
+"        NOTE : Le rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:409
 #, docstring

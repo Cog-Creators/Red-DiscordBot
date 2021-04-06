@@ -1,5 +1,146 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.9 (2021-04-06)
+=========================
+
+This is a hotfix release fixing an issue with command error handling.
+
+discord.py version has been bumped to 1.7.1.
+
+Thanks again to :ghuser:`Rapptz` for quick response on this issue.
+
+
+Redbot 3.4.8 (2021-04-06)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.8 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1212>`__.
+
+2. Fedora 31 and OpenSUSE Leap 15.1 are no longer supported as they have already reached end of life.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added per-command embed settings (:issue:`4049`)
+
+    - See help of ``[p]embedset`` and ``[p]embedset command`` command group for more information
+
+- The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
+- ``[p]leave`` accepts server IDs now (:issue:`4831`)
+- Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
+- Messages sent interactively in DM channels no longer fail (:issue:`4876`)
+- An error message will now be shown when a command that is only available in NSFW channels is used in a non-NSFW channel (:issue:`4933`)
+- Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
+- Removed the option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
+- Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
+
+Alias
+*****
+
+- Fixed issues with command aliases for commands that take an arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
+
+Audio
+*****
+
+- Fixed stuttering (:issue:`4565`)
+- Fixed random disconnects (:issue:`4565`)
+- Fixed the issues causing the player to be stuck on 00:00 (:issue:`4565`)
+- Fixed ghost players (:issue:`4565`)
+- Audio will no longer stop playing after a while (:issue:`4565`)
+- Fixed playlist loading for playlists with over 100 songs (:issue:`4932`)
+- Fixed an issue with alerts causing errors in playlists being loaded (:issue:`4932`)
+- Improved playlist extraction (:issue:`4932`)
+- Fixed an issue with consent pages appearing while trying to load songs or playlists (:issue:`4932`)
+
+Cleanup
+*******
+
+- ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without a message ID if the invocation message replies to some message (:issue:`4790`)
+
+Downloader
+**********
+
+- Improved compatibility with Git 2.31 and newer (:issue:`4897`)
+
+Filter
+******
+
+- Added meaningful error messages for incorrect arguments in the ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
+
+Mod
+***
+
+- Improved performance of checking tempban expirations (:issue:`4907`)
+- Fixed tracking of nicknames that were set just before nick reset (:issue:`4830`)
+
+Mutes
+*****
+
+- Vastly improved performance of automatic unmute handling (:issue:`4906`)
+
+Streams
+*******
+
+- Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
+- Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
+- Streamer accounts that no longer exist are now properly handled (:issue:`4735`, :issue:`4746`)
+- Fixed stream alerts being sent even after unloading Streams cog (:issue:`4940`)
+- Checking Twitch streams will now make less API calls (:issue:`4938`)
+- Ratelimits from Twitch API are now properly handled (:issue:`4808`, :issue:`4883`)
+
+Trivia
+******
+
+- Added a new option for hiding the answer to the Trivia answer in a spoiler (:issue:`4700`, :issue:`4877`)
+
+    - ``[p]triviaset usespoilers`` command can be used to enable/disable this option
+
+Warnings
+********
+
+- Fixed output of ``[p]warnings`` command for members that are no longer in the server (:issue:`4900`, :issue:`4904`)
+- Embeds now use the default embed color of the bot (:issue:`4878`)
+
+
+Developer changelog
+-------------------
+
+- Bumped discord.py version to 1.7.0 (:issue:`4928`)
+- Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
+
+    - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+
+    - Read the method's documentation for more information
+- Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
+
+
+Documentation changes
+---------------------
+
+- Added a note about updating cogs in update message and documentation (:issue:`4910`)
+- Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
+- Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
+- `getting-started` now contains an explanation of parameters that can take an arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
+- Added a warning to Arch Linux install guide about the instructions being out-of-date (:issue:`4866`)
+- All shell commands in the documentation are now prefixed with an unselectable prompt (:issue:`4908`)
+- `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
+
+    - Instructions for all Linux-based operating systems now recommend to install ``nano``
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
+
+
 Redbot 3.4.7 (2021-02-26)
 =========================
 | Thanks to all these amazing people that contributed to this release:
