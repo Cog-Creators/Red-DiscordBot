@@ -502,12 +502,13 @@ command disable server
 
 Disable a command in this server only.
 
-**Examples:**
-    - ``[p]command disable server userinfo`` - Disables the ``userinfo`` command in the Mod cog.
-    - ``[p]command disable server urban`` - Disables the ``urban`` command in the General cog.
+        **Examples:**
+            - ``[p]command disable server userinfo`` - Disables the ``userinfo`` command in the Mod cog.
+            - ``[p]command disable server urban`` - Disables the ``urban`` command in the General cog.
 
-**Arguments:**
-    - ``<command>`` - The command to disable for the current server.
+        **Arguments:**
+            - ``<command>`` - The command to disable for the current server.
+        
 
 .. _core-command-command-disablecog:
 
@@ -607,7 +608,7 @@ command enable global
 
 **Description**
 
-Enable a command globally.
+        Enable a command globally.
 
 **Examples:**
     - ``[p]command enable global userinfo`` - Enables the ``userinfo`` command in the Mod cog.
@@ -632,7 +633,7 @@ command enable server
 
 **Description**
 
-Enable a command in this server.
+    Enable a command in this server.
 
 **Examples:**
     - ``[p]command enable server userinfo`` - Enables the ``userinfo`` command in the Mod cog.
@@ -818,6 +819,19 @@ Commands for toggling embeds on or off.
 This setting determines whether or not to use embeds as a response to a command (for commands that support it).
 The default is to use embeds.
 
+The embed settings are checked until the first True/False in this order:
+    - In guild context:
+        1. Channel override ([p]embedset channel)
+        2. Server command override ([p]embedset command server)
+        3. Server override ([p]embedset server)
+        4. Global command override ([p]embedset command global)
+        5. Global setting ([p]embedset global)
+
+    - In DM context:
+        1. User override ([p]embedset user)
+        2. Global command override ([p]embedset command global)
+        3. Global setting ([p]embedset global)
+
 .. _core-command-embedset-channel:
 
 """"""""""""""""
@@ -838,8 +852,10 @@ Toggle the channel's embed setting.
 
 If enabled is None, the setting will be unset and the guild default will be used instead.
 
-If set, this is used instead of the guild default to determine whether or not to use embeds.
-This is used for all commands done in a channel except for help commands.
+If set, this is used instead of the guild and command defaults to determine whether or not to use embeds.
+This is used for all commands done in a channel.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
     - ``[p]embedset channel False`` - Disables embeds in this channel.
@@ -847,6 +863,81 @@ This is used for all commands done in a channel except for help commands.
 
 **Arguments:**
     - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
+
+.. _core-command-embedset-command:
+
+""""""""""""""""
+embedset command
+""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset command <command_name> [enabled]
+
+**Description**
+
+Toggle the command's embed setting.
+
+If you're the bot owner, this will change command's embed setting
+globally by default.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``
+
+.. _core-command-embedset-command-global:
+
+"""""""""""""""""""""""
+embedset command global
+"""""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset command global <command_name> [enabled]
+
+**Description**
+
+Toggle the commmand's embed setting.
+
+If enabled is None, the setting will be unset and
+the global default will be used instead.
+
+If set, this is used instead of the global default
+to determine whether or not to use embeds.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``
+
+.. _core-command-embedset-command-server:
+
+"""""""""""""""""""""""
+embedset command server
+"""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset command server <command_name> [enabled]
+
+.. tip:: Alias: ``embedset command guild``
+
+**Description**
+
+Toggle the commmand's embed setting.
+
+If enabled is None, the setting will be unset and
+the server default will be used instead.
+
+If set, this is used instead of the server default
+to determine whether or not to use embeds.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``
 
 .. _core-command-embedset-global:
 
@@ -868,6 +959,8 @@ Toggle the global embed setting.
 
 This is used as a fallback if the user or guild hasn't set a preference.
 The default is to use embeds.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Example:**
     - ``[p]embedset global``
@@ -895,7 +988,9 @@ Toggle the guild's embed setting.
 If enabled is None, the setting will be unset and the global default will be used instead.
 
 If set, this is used instead of the global default to determine whether or not to use embeds.
-This is used for all commands done in a guild channel except for help commands.
+This is used for all commands done in a server.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
     - ``[p]embedset server False`` - Disables embeds on this server.
@@ -914,7 +1009,7 @@ embedset showsettings
 
 .. code-block:: none
 
-    [p]embedset showsettings 
+    [p]embedset showsettings [command_name]
 
 **Description**
 
@@ -943,6 +1038,8 @@ If enabled is None, the setting will be unset and the global default will be use
 
 If set, this is used instead of the global default to determine whether or not to use embeds.
 This is used for all commands executed in a DM with the bot.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
     - ``[p]embedset user False`` - Disables embeds in your DMs.
@@ -1544,14 +1641,24 @@ leave
 
 .. code-block:: none
 
-    [p]leave 
+    [p]leave [servers...]
 
 **Description**
 
-Leaves the current server.
+Leaves servers.
+
+If no server IDs are passed the local server will be left instead.
 
 .. Note:: This command is interactive.
 
+
+**Examples:**
+    - ``[p]leave`` - Leave the current server.
+    - ``[p]leave "Red - Discord Bot"`` - Quotes are necessary when there are spaces in the name.
+    - ``[p]leave 133049272517001216 240154543684321280`` - Leaves multiple servers, using IDs.
+
+**Arguments:**
+    - ``[servers...]`` - The servers to leave. When blank, attempts to leave the current server.
 
 .. _core-command-licenseinfo:
 
@@ -2152,7 +2259,7 @@ servers
 
 **Description**
 
-Lists and allows Red to leave servers.
+Lists the servers Red is currently in.
 
 .. Note:: This command is interactive.
 
