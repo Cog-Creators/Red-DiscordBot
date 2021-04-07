@@ -27,6 +27,7 @@ from typing import (
     Literal,
     MutableMapping,
     overload,
+    Tuple,
 )
 from types import MappingProxyType
 
@@ -34,7 +35,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
+from . import Config, i18n, commands, errors, drivers, modlog, bank, mutes
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -229,6 +230,8 @@ class RedBase(
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
+        self._mutes = None
+        # Mutes needs to be initialized in _pre_flight passing bot object to itself
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
@@ -942,6 +945,7 @@ class RedBase(
 
         await modlog._init(self)
         await bank._init()
+        self._mutes = mutes.Mutes(self)
 
         packages = []
 
@@ -1702,6 +1706,7 @@ class RedBase(
     async def close(self):
         """Logs out of Discord and closes all connections."""
         await super().close()
+        self._mutes.cog_unload()
         await drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
@@ -1846,7 +1851,6 @@ class RedBase(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
-
 
 # This can be removed, and the parent class renamed as a breaking change
 class Red(RedBase):
