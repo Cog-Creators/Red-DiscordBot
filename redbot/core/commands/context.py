@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     from ..bot import Red
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
-CROSS = "\N{CROSS MARK}"
 
 __all__ = ["Context", "GuildContext", "DMContext"]
 
