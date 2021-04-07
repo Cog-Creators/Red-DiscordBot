@@ -1132,8 +1132,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Show the current embed settings.
 
-        **Example:**
-            - `[p]embedset showsettings`
+        Provide a command name to check for command specific embed settings.
+
+        **Examples:**
+            - `[p]embedset showsettings` - Shows embed settings.
+            - `[p]embedset showsettings info` - Also shows embed settings for the 'info' command.
+            - `[p]embedset showsettings "ignore list"` - Checking subcommands requires quotes.
+
+        **Arguments:**
+            - `[command_name]` - Checks this command for command specific embed settings.
         """
         if command_name is not None:
             command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
@@ -1202,12 +1209,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the guild's embed setting.
-
-        If enabled is None, the setting will be unset and the global default will be used instead.
+        Set the server's embed setting.
 
         If set, this is used instead of the global default to determine whether or not to use embeds.
         This is used for all commands done in a server.
+
+        If enabled is left blank, the setting will be unset and the global default will be used instead.
 
         To see full evaluation order of embed settings, run `[p]help embedset`.
 
@@ -1236,12 +1243,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, command_name: str, enabled: bool = None
     ) -> None:
         """
-        Toggle the command's embed setting.
+        Sets a command's embed setting.
 
-        If you're the bot owner, this will change command's embed setting
-        globally by default.
+        If you're the bot owner, this will try to change the command's embed setting globally by default.
+        Otherwise, this will try to change embed settings on the current server.
 
-        To see full evaluation order of embed settings, run `[p]help embedset`
+        If enabled is left blank, the setting will be unset.
+
+        To see full evaluation order of embed settings, run `[p]help embedset`.
+
+        **Examples:**
+            - `[p]embedset command info` - Clears command specific embed settings for 'info'.
+            - `[p]embedset command info False` - Disables embeds for 'info'.
+            - `[p]embedset command "ignore list" True` - Quotes are needed for subcommands.
+
+        **Arguments:**
+            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
@@ -1266,15 +1283,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, command_name: str, enabled: bool = None
     ):
         """
-        Toggle the commmand's embed setting.
+        Sets a command's embed setting globally.
 
-        If enabled is None, the setting will be unset and
-        the global default will be used instead.
+        If set, this is used instead of the global default to determine whether or not to use embeds.
 
-        If set, this is used instead of the global default
-        to determine whether or not to use embeds.
+        If enabled is left blank, the setting will be unset.
 
-        To see full evaluation order of embed settings, run `[p]help embedset`
+        To see full evaluation order of embed settings, run `[p]help embedset`.
+
+        **Examples:**
+            - `[p]embedset command global info` - Clears command specific embed settings for 'info'.
+            - `[p]embedset command global info False` - Disables embeds for 'info'.
+            - `[p]embedset command global "ignore list" True` - Quotes are needed for subcommands.
+
+        **Arguments:**
+            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
         if command_obj is None:
@@ -1311,15 +1334,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
     ):
         """
-        Toggle the commmand's embed setting.
+        Sets a commmand's embed setting for the current server.
 
-        If enabled is None, the setting will be unset and
-        the server default will be used instead.
+        If set, this is used instead of the server default to determine whether or not to use embeds.
 
-        If set, this is used instead of the server default
-        to determine whether or not to use embeds.
+        If enabled is left blank, the setting will be unset and the server default will be used instead.
 
-        To see full evaluation order of embed settings, run `[p]help embedset`
+        To see full evaluation order of embed settings, run `[p]help embedset`.
+
+        **Examples:**
+            - `[p]embedset command server info` - Clears command specific embed settings for 'info'.
+            - `[p]embedset command server info False` - Disables embeds for 'info'.
+            - `[p]embedset command server "ignore list" True` - Quotes are needed for subcommands.
+
+        **Arguments:**
+            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
         if command_obj is None:
@@ -1355,12 +1384,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the channel's embed setting.
-
-        If enabled is None, the setting will be unset and the guild default will be used instead.
+        Set's a channel's embed setting.
 
         If set, this is used instead of the guild and command defaults to determine whether or not to use embeds.
         This is used for all commands done in a channel.
+
+        If enabled is left blank, the setting will be unset and the guild default will be used instead.
 
         To see full evaluation order of embed settings, run `[p]help embedset`.
 
@@ -1386,12 +1415,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @embedset.command(name="user")
     async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle the user's embed setting for DMs.
-
-        If enabled is None, the setting will be unset and the global default will be used instead.
+        Sets personal embed setting for DMs.
 
         If set, this is used instead of the global default to determine whether or not to use embeds.
         This is used for all commands executed in a DM with the bot.
+
+        If enabled is left blank, the setting will be unset and the global default will be used instead.
 
         To see full evaluation order of embed settings, run `[p]help embedset`.
 
@@ -4282,7 +4311,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Examples:**
             - `[p]command enable userinfo` - Enables the `userinfo` command in the Mod cog.
-            - `[p]command enable server urban` - Enables the `urban` command in the General cog.
+            - `[p]command enable urban` - Enables the `urban` command in the General cog.
 
         **Arguments:**
             - `<command>` - The command to enable.
