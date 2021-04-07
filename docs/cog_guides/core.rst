@@ -586,7 +586,7 @@ Otherwise, this will try to enable a command disabled on the current server.
 
 **Examples:**
     - ``[p]command enable userinfo`` - Enables the ``userinfo`` command in the Mod cog.
-    - ``[p]command enable server urban`` - Enables the ``urban`` command in the General cog.
+    - ``[p]command enable urban`` - Enables the ``urban`` command in the General cog.
 
 **Arguments:**
     - ``<command>`` - The command to enable.
@@ -847,12 +847,12 @@ embedset channel
 
 **Description**
 
-Toggle the channel's embed setting.
-
-If enabled is None, the setting will be unset and the guild default will be used instead.
+Set's a channel's embed setting.
 
 If set, this is used instead of the guild and command defaults to determine whether or not to use embeds.
 This is used for all commands done in a channel.
+
+If enabled is left blank, the setting will be unset and the guild default will be used instead.
 
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
@@ -879,12 +879,22 @@ embedset command
 
 **Description**
 
-Toggle the command's embed setting.
+Sets a command's embed setting.
 
-If you're the bot owner, this will change command's embed setting
-globally by default.
+If you're the bot owner, this will try to change the command's embed setting globally by default.
+Otherwise, this will try to change embed settings on the current server.
 
-To see full evaluation order of embed settings, run ``[p]help embedset``
+If enabled is left blank, the setting will be unset.
+
+To see full evaluation order of embed settings, run ``[p]help embedset``.
+
+**Examples:**
+    - ``[p]embedset command info`` - Clears command specific embed settings for 'info'.
+    - ``[p]embedset command info False`` - Disables embeds for 'info'.
+    - ``[p]embedset command "ignore list" True`` - Quotes are needed for subcommands.
+
+**Arguments:**
+    - ``[enabled]`` - Whether to use embeds for this command. Leave blank to reset to default.
 
 .. _core-command-embedset-command-global:
 
@@ -902,15 +912,21 @@ embedset command global
 
 **Description**
 
-Toggle the commmand's embed setting.
+Sets a command's embed setting globally.
 
-If enabled is None, the setting will be unset and
-the global default will be used instead.
+If set, this is used instead of the global default to determine whether or not to use embeds.
 
-If set, this is used instead of the global default
-to determine whether or not to use embeds.
+If enabled is left blank, the setting will be unset.
 
-To see full evaluation order of embed settings, run ``[p]help embedset``
+To see full evaluation order of embed settings, run ``[p]help embedset``.
+
+**Examples:**
+    - ``[p]embedset command global info`` - Clears command specific embed settings for 'info'.
+    - ``[p]embedset command global info False`` - Disables embeds for 'info'.
+    - ``[p]embedset command global "ignore list" True`` - Quotes are needed for subcommands.
+
+**Arguments:**
+    - ``[enabled]`` - Whether to use embeds for this command. Leave blank to reset to default.
 
 .. _core-command-embedset-command-server:
 
@@ -928,15 +944,21 @@ embedset command server
 
 **Description**
 
-Toggle the commmand's embed setting.
+Sets a commmand's embed setting for the current server.
 
-If enabled is None, the setting will be unset and
-the server default will be used instead.
+If set, this is used instead of the server default to determine whether or not to use embeds.
 
-If set, this is used instead of the server default
-to determine whether or not to use embeds.
+If enabled is left blank, the setting will be unset and the server default will be used instead.
 
-To see full evaluation order of embed settings, run ``[p]help embedset``
+To see full evaluation order of embed settings, run ``[p]help embedset``.
+
+**Examples:**
+    - ``[p]embedset command server info`` - Clears command specific embed settings for 'info'.
+    - ``[p]embedset command server info False`` - Disables embeds for 'info'.
+    - ``[p]embedset command server "ignore list" True`` - Quotes are needed for subcommands.
+
+**Arguments:**
+    - ``[enabled]`` - Whether to use embeds for this command. Leave blank to reset to default.
 
 .. _core-command-embedset-global:
 
@@ -982,12 +1004,12 @@ embedset server
 
 **Description**
 
-Toggle the guild's embed setting.
-
-If enabled is None, the setting will be unset and the global default will be used instead.
+Set the server's embed setting.
 
 If set, this is used instead of the global default to determine whether or not to use embeds.
 This is used for all commands done in a server.
+
+If enabled is left blank, the setting will be unset and the global default will be used instead.
 
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
@@ -1014,8 +1036,15 @@ embedset showsettings
 
 Show the current embed settings.
 
-**Example:**
-    - ``[p]embedset showsettings``
+Provide a command name to check for command specific embed settings.
+
+**Examples:**
+    - ``[p]embedset showsettings`` - Shows embed settings.
+    - ``[p]embedset showsettings info`` - Also shows embed settings for the 'info' command.
+    - ``[p]embedset showsettings "ignore list"`` - Checking subcommands requires quotes.
+
+**Arguments:**
+    - ``[command_name]`` - Checks this command for command specific embed settings.
 
 .. _core-command-embedset-user:
 
@@ -1031,12 +1060,12 @@ embedset user
 
 **Description**
 
-Toggle the user's embed setting for DMs.
-
-If enabled is None, the setting will be unset and the global default will be used instead.
+Sets personal embed setting for DMs.
 
 If set, this is used instead of the global default to determine whether or not to use embeds.
 This is used for all commands executed in a DM with the bot.
+
+If enabled is left blank, the setting will be unset and the global default will be used instead.
 
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
