@@ -274,7 +274,7 @@ class RedHelpFormatter(HelpFormatterABC):
             "Type {ctx.clean_prefix}help <command> for more info on a command. "
             "You can also type {ctx.clean_prefix}help <category> for more info on a category."
         ).format(ctx=ctx)
-    
+
     @staticmethod
     def format_tagline(ctx: Context, tagline: str):
         return tagline.replace("[p]", ctx.clean_prefix)
@@ -726,7 +726,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.avatar_url,
                 )
-                tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -739,7 +741,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.avatar_url,
                 )
-                tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -758,7 +762,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                 icon_url=ctx.me.avatar_url,
             )
-            tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
+            tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(
+                ctx
+            )
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
