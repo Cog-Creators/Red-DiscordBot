@@ -479,7 +479,7 @@ class PicartoStream(Stream):
     token_name = None  # This streaming services don't currently require an API key
 
     async def is_online(self):
-        url = "https://api.picarto.tv/v1/channel/name/" + self.name
+        url = "https://api.picarto.tv/api/v1/channel/name/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
