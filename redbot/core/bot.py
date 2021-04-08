@@ -1706,7 +1706,7 @@ class RedBase(
     async def close(self):
         """Logs out of Discord and closes all connections."""
         await super().close()
-        self._mutes.cog_unload()
+        self._mutes.teardown()
         await drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
