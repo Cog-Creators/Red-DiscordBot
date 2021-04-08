@@ -29,8 +29,6 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_local_folder(self, ctx: commands.Context, *, folder: str = None):
         """Play all songs in a localtracks folder.
 
-        To set up your localtracks folders, please see the documentation at: `placeholder`
-
         Examples:
             [p]local folder
             Open a menu to pick a folder to queue.
@@ -63,7 +61,6 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_local_play(self, ctx: commands.Context):
         """Play a local track.
 
-        To set up your localtracks folders, please see the documentation at: `placeholder`
         To play a local track, either use the menu to choose a track or enter in the
         localtracks path directly with the play command.
         To play an entire local folder, use [p]help local folder for instructions.
@@ -72,9 +69,9 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         [p]local play
         Open a menu to pick a file.
 
-        [p]play localtracks/album_folder/song_name.mp3
+        [p]play localtracks\album_folder\song_name.mp3
         OR
-        [p]play album_folder/song_name.mp3
+        [p]play album_folder\song_name.mp3
         Use a direct link relative to the localtracks folder.
         """
         if not await self.localtracks_folder_exists(ctx):
