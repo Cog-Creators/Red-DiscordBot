@@ -737,7 +737,7 @@ class Streams(commands.Cog):
             message_data["is_schedule"] = True
         stream.messages.append(message_data)
 
-    async def _has_stream_alert_perms(self, channel: discord.TextChannel) -> bool:
+    def _has_stream_alert_perms(self, channel: discord.TextChannel) -> bool:
         perms = channel.permissions_for(channel.guild.me)
         return all((perms.send_messages, perms.embed_links))
 
