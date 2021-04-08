@@ -55,6 +55,7 @@ SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBas
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
+tagline_prefix = lambda x, y: x.replace("[p]", y.clean_prefix)
 
 
 @dataclass(frozen=True)
@@ -274,6 +275,10 @@ class RedHelpFormatter(HelpFormatterABC):
             "Type {ctx.clean_prefix}help <command> for more info on a command. "
             "You can also type {ctx.clean_prefix}help <category> for more info on a category."
         ).format(ctx=ctx)
+    
+    @staticmethod
+    def format_tagline(ctx: Context, tagline: str):
+        return tagline.replace("[p]", ctx.clean_prefix)
 
     @staticmethod
     def get_command_signature(ctx: Context, command: commands.Command) -> str:
@@ -313,7 +318,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         description = command.description or ""
 
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
         signature = _("Syntax: {command_signature}").format(
             command_signature=self.get_command_signature(ctx, command)
         )
@@ -534,7 +539,7 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = obj.format_help_for_context(ctx)
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
@@ -601,7 +606,7 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = ctx.bot.description or ""
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
 
@@ -722,7 +727,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.avatar_url,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -735,7 +740,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.avatar_url,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -754,7 +759,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                 icon_url=ctx.me.avatar_url,
             )
-            tagline = help_settings.tagline or self.get_default_tagline(ctx)
+            tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
