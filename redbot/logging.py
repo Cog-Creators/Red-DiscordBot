@@ -1,19 +1,37 @@
+import argparse
 import logging.handlers
 import pathlib
 import re
 import sys
 
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
-from rich._log_render import LogRender
+import rich
+from pygments.styles.monokai import MonokaiStyle
+from pygments.token import (
+    Comment,
+    Error,
+    Keyword,
+    Name,
+    Number,
+    Operator,
+    String,
+    Token,
+)
+from rich._log_render import LogRender  # DEP-WARN
+from rich.console import render_group
 from rich.containers import Renderables
+from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
+from rich.style import Style
+from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme
 from rich.table import Table
 from rich.text import Text
-from rich.traceback import Traceback
+from rich.theme import Theme
+from rich.traceback import PathHighlighter, Traceback
 
 
 MAX_OLD_LOGS = 8
@@ -109,6 +127,37 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         self.stream = self._open()
 
 
+SYNTAX_THEME = {
+    Token: Style(),
+    Comment: Style(color="bright_black"),
+    Keyword: Style(color="cyan", bold=True),
+    Keyword.Constant: Style(color="bright_magenta"),
+    Keyword.Namespace: Style(color="bright_red"),
+    Operator: Style(bold=True),
+    Operator.Word: Style(color="cyan", bold=True),
+    Name.Builtin: Style(bold=True),
+    Name.Builtin.Pseudo: Style(color="bright_red"),
+    Name.Exception: Style(bold=True),
+    Name.Class: Style(color="bright_green"),
+    Name.Function: Style(color="bright_green"),
+    String: Style(color="yellow"),
+    Number: Style(color="cyan"),
+    Error: Style(bgcolor="red"),
+}
+
+
+class FixedMonokaiStyle(MonokaiStyle):
+    styles = {**MonokaiStyle.styles, Token: "#f8f8f2"}
+
+
+class RedTraceback(Traceback):
+    @render_group()
+    def _render_stack(self, stack):
+        for obj in super()._render_stack.__wrapped__(self, stack):
+            if obj != "":
+                yield obj
+
+
 class RedLogRender(LogRender):
     def __call__(
         self,
@@ -155,7 +204,7 @@ class RedLogRender(LogRender):
 
         if logger_name:
             logger_name_text = Text()
-            logger_name_text.append(f"[{logger_name}]")
+            logger_name_text.append(f"[{logger_name}]", style="bright_black")
             row.append(logger_name_text)
 
         output.add_row(*row)
@@ -174,6 +223,19 @@ class RedRichHandler(RichHandler):
             level_width=self._log_render.level_width,
         )
 
+    def get_level_text(self, record: LogRecord) -> Text:
+        """Get the level name from the record.
+
+        Args:
+            record (LogRecord): LogRecord instance.
+
+        Returns:
+            Text: A tuple of the style and level name.
+        """
+        level_text = super().get_level_text(record)
+        level_text.stylize("bold")
+        return level_text
+
     def emit(self, record: LogRecord) -> None:
         """Invoked by logging."""
         path = pathlib.Path(record.pathname).name
@@ -187,7 +249,7 @@ class RedRichHandler(RichHandler):
             exc_type, exc_value, exc_traceback = record.exc_info
             assert exc_type is not None
             assert exc_value is not None
-            traceback = Traceback.from_exception(
+            traceback = RedTraceback.from_exception(
                 exc_type,
                 exc_value,
                 exc_traceback,
@@ -198,6 +260,7 @@ class RedRichHandler(RichHandler):
                 show_locals=self.tracebacks_show_locals,
                 locals_max_length=self.locals_max_length,
                 locals_max_string=self.locals_max_string,
+                indent_guides=False,
             )
             message = record.getMessage()
 
@@ -215,7 +278,7 @@ class RedRichHandler(RichHandler):
         self.console.print(
             self._log_render(
                 self.console,
-                [message_text] if not traceback else [message_text, traceback],
+                [message_text],
                 log_time=log_time,
                 time_format=time_format,
                 level=level,
@@ -225,11 +288,11 @@ class RedRichHandler(RichHandler):
                 logger_name=record.name,
             )
         )
+        if traceback:
+            self.console.print(traceback)
 
 
-def init_logging(
-    level: int, location: pathlib.Path, force_rich_logging: Union[bool, None]
-) -> None:
+def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
 
     base_logger = logging.getLogger("red")
@@ -239,12 +302,31 @@ def init_logging(
     warnings_logger = logging.getLogger("py.warnings")
     warnings_logger.setLevel(logging.WARNING)
 
+    rich_console = rich.get_console()
+    rich.reconfigure(tab_size=4)
+    rich_console.push_theme(
+        Theme(
+            {
+                "log.time": Style(dim=True),
+                "logging.level.warning": Style(color="yellow"),
+                "logging.level.critical": Style(color="white", bgcolor="red"),
+                "repr.number": Style(color="cyan"),
+                "repr.url": Style(underline=True, italic=True, bold=False, color="cyan"),
+            }
+        )
+    )
+    rich_console.file = sys.stdout
+    # This is terrible solution, but it's the best we can do if we want the paths in tracebacks
+    # to be visible. Rich uses `pygments.string` style  which is fine, but it also uses
+    # this highlighter which dims most of the path and therefore makes it unreadable on Mac.
+    PathHighlighter.highlights = []
+
     enable_rich_logging = False
 
-    if isatty(0) and force_rich_logging is None:
+    if isatty(0) and cli_flags.rich_logging is None:
         # Check if the bot thinks it has a active terminal.
         enable_rich_logging = True
-    elif force_rich_logging is True:
+    elif cli_flags.rich_logging is True:
         enable_rich_logging = True
 
     file_formatter = logging.Formatter(
@@ -253,7 +335,18 @@ def init_logging(
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
-        stdout_handler = RedRichHandler(rich_tracebacks=True, show_path=False)
+        stdout_handler = RedRichHandler(
+            rich_tracebacks=True,
+            show_path=False,
+            highlighter=NullHighlighter(),
+            tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
+            tracebacks_show_locals=cli_flags.rich_traceback_show_locals,
+            tracebacks_theme=(
+                PygmentsSyntaxTheme(FixedMonokaiStyle)
+                if rich_console.color_system == "truecolor"
+                else ANSISyntaxTheme(SYNTAX_THEME)
+            ),
+        )
         stdout_handler.setFormatter(rich_formatter)
     else:
         stdout_handler = logging.StreamHandler(sys.stdout)

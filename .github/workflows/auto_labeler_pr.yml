@@ -10,3 +10,4 @@ jobs:
         uses: actions/labeler@v3
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: ""  # this is a temporary workaround, see #4844

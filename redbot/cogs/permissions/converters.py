@@ -10,7 +10,7 @@ from redbot.core.utils import AsyncIter
 
 _ = Translator("PermissionsConverters", __file__)
 
-MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,20})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:

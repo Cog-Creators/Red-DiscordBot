@@ -7,10 +7,10 @@ import discord
 
 from redbot.core import commands
 
-_ID_RE = re.compile(r"([0-9]{15,21})$")
-_USER_MENTION_RE = re.compile(r"<@!?([0-9]{15,21})>$")
-_CHAN_MENTION_RE = re.compile(r"<#([0-9]{15,21})>$")
-_ROLE_MENTION_RE = re.compile(r"<@&([0-9]{15,21})>$")
+_ID_RE = re.compile(r"([0-9]{15,20})$")
+_USER_MENTION_RE = re.compile(r"<@!?([0-9]{15,20})>$")
+_CHAN_MENTION_RE = re.compile(r"<#([0-9]{15,20})>$")
+_ROLE_MENTION_RE = re.compile(r"<@&([0-9]{15,20})>$")
 
 
 class MessagePredicate(Callable[[discord.Message], bool]):
@@ -982,7 +982,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     ) -> "ReactionPredicate":
         """Match if the reaction is a tick or cross emoji.
 
-        The emojis used can are in
+        The emojis used are in
         `ReactionPredicate.YES_OR_NO_EMOJIS`.
 
         This will assign ``True`` for *yes*, or ``False`` for *no* to

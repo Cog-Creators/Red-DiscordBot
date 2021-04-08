@@ -153,7 +153,8 @@ class KickBanMixin(MixinMeta):
             if toggle:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=bold(_("You have been banned from {guild}.").format(guild=guild))
+                        title=bold(_("You have been banned from {guild}.").format(guild=guild)),
+                        color=await self.bot.get_embed_color(user),
                     )
                     em.add_field(
                         name=_("**Reason**"),
@@ -228,42 +229,62 @@ class KickBanMixin(MixinMeta):
 
         return True, success_message
 
-    async def check_tempban_expirations(self):
-        while self == self.bot.get_cog("Mod"):
-            async for guild in AsyncIter(self.bot.guilds, steps=100):
-                if not guild.me.guild_permissions.ban_members:
-                    continue
+    async def tempban_expirations_task(self) -> None:
+        while True:
+            try:
+                await self._check_tempban_expirations()
+            except Exception:
+                log.exception("Something went wrong in check_tempban_expirations:")
 
-                if await self.bot.cog_disabled_in_guild(self, guild):
-                    continue
-
-                async with self.config.guild(guild).current_tempbans() as guild_tempbans:
-                    for uid in guild_tempbans.copy():
-                        unban_time = datetime.fromtimestamp(
-                            await self.config.member_from_ids(guild.id, uid).banned_until(),
-                            timezone.utc,
-                        )
-                        if datetime.now(timezone.utc) > unban_time:  # Time to unban the user
-                            try:
-                                await guild.unban(
-                                    discord.Object(id=uid), reason=_("Tempban finished")
-                                )
-                            except discord.NotFound:
-                                # user is not banned anymore
-                                guild_tempbans.remove(uid)
-                            except discord.HTTPException as e:
-                                # 50013: Missing permissions error code or 403: Forbidden status
-                                if e.code == 50013 or e.status == 403:
-                                    log.info(
-                                        f"Failed to unban ({uid}) user from "
-                                        f"{guild.name}({guild.id}) guild due to permissions."
-                                    )
-                                    break  # skip the rest of this guild
-                                log.info(f"Failed to unban member: error code: {e.code}")
-                            else:
-                                # user unbanned successfully
-                                guild_tempbans.remove(uid)
             await asyncio.sleep(60)
+
+    async def _check_tempban_expirations(self) -> None:
+        guilds_data = await self.config.all_guilds()
+        async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
+            if not (guild := self.bot.get_guild(guild_id)):
+                continue
+            if not guild.me.guild_permissions.ban_members:
+                continue
+            if await self.bot.cog_disabled_in_guild(self, guild):
+                continue
+
+            guild_tempbans = guild_data["current_tempbans"]
+            if not guild_tempbans:
+                continue
+            async with self.config.guild(guild).current_tempbans.get_lock():
+                if await self._check_guild_tempban_expirations(guild, guild_tempbans):
+                    await self.config.guild(guild).current_tempbans.set(guild_tempbans)
+
+    async def _check_guild_tempban_expirations(
+        self, guild: discord.Guild, guild_tempbans: List[int]
+    ) -> bool:
+        changed = False
+        for uid in guild_tempbans.copy():
+            unban_time = datetime.fromtimestamp(
+                await self.config.member_from_ids(guild.id, uid).banned_until(),
+                timezone.utc,
+            )
+            if datetime.now(timezone.utc) > unban_time:
+                try:
+                    await guild.unban(discord.Object(id=uid), reason=_("Tempban finished"))
+                except discord.NotFound:
+                    # user is not banned anymore
+                    guild_tempbans.remove(uid)
+                    changed = True
+                except discord.HTTPException as e:
+                    # 50013: Missing permissions error code or 403: Forbidden status
+                    if e.code == 50013 or e.status == 403:
+                        log.info(
+                            f"Failed to unban ({uid}) user from "
+                            f"{guild.name}({guild.id}) guild due to permissions."
+                        )
+                        break  # skip the rest of this guild
+                    log.info(f"Failed to unban member: error code: {e.code}")
+                else:
+                    # user unbanned successfully
+                    guild_tempbans.remove(uid)
+                    changed = True
+        return changed
 
     @commands.command()
     @commands.guild_only()
@@ -309,7 +330,8 @@ class KickBanMixin(MixinMeta):
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                    title=bold(_("You have been kicked from {guild}.").format(guild=guild))
+                    title=bold(_("You have been kicked from {guild}.").format(guild=guild)),
+                    color=await self.bot.get_embed_color(user),
                 )
                 em.add_field(
                     name=_("**Reason**"),

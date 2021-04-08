@@ -216,7 +216,7 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
+        await ctx.send("https://lmgtfy.app/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
     @commands.guild_only()

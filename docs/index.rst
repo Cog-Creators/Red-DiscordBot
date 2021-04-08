@@ -37,11 +37,15 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/bank
     cog_guides/cleanup
     cog_guides/cog_manager_ui
+    cog_guides/core
     cog_guides/customcommands
     cog_guides/downloader
     cog_guides/economy
     cog_guides/filter
+    cog_guides/general
+    cog_guides/image
     cog_guides/streams
+    cog_guides/trivia
     red_core_data_statement
 
 .. toctree::
