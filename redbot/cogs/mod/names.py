@@ -161,12 +161,12 @@ class ModInfo(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def userinfo(self, ctx, *, member: discord.Member = None):
-        """Show information about a user.
+        """Show information about a member.
 
         This includes fields for status, discord join date, server
         join date, voice state and previous names/nicknames.
 
-        If the user has no roles, previous names or previous nicknames,
+        If the member has no roles, previous names or previous nicknames,
         these fields will be omitted.
         """
         author = ctx.author
@@ -293,7 +293,7 @@ class ModInfo(MixinMeta):
 
     @commands.command()
     async def names(self, ctx: commands.Context, *, member: discord.Member):
-        """Show previous names and nicknames of a user."""
+        """Show previous names and nicknames of a member."""
         names, nicks = await self.get_names_and_nicks(member)
         msg = ""
         if names:
