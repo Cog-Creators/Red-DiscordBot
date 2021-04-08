@@ -39,7 +39,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_play(self, ctx: commands.Context, *, query: str):
         """Play a URL or search for a track.
 
-        To play a local track\file, the query should be <parentfolder>\<filename>.
+        To play a local track/file, the query should be <parentfolder>\<filename>.
         """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
