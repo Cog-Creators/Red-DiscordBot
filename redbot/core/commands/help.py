@@ -55,7 +55,6 @@ SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBas
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
-tagline_prefix = lambda x, y: x.replace("[p]", y.clean_prefix)
 
 
 @dataclass(frozen=True)
