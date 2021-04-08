@@ -851,7 +851,7 @@ class Streams(commands.Cog):
                                     await role.edit(mentionable=False)
                             await self.save_streams()
                         else:
-                            channels_to_remove.append(channel)
+                            channels_to_remove.append(channel_id)
 
                     if channels_to_remove:
                         for channel_id in channels_to_remove:
