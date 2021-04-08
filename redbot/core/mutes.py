@@ -11,6 +11,18 @@ from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass
 
 from redbot.core import commands, i18n, modlog, Config
+from redbot.core.errors import (
+    MuteError,
+    MuteRoleMissingError,
+    MuteRoleHierarchyError,
+    MuteAdministratorError,
+    MuteHierarchyError,
+    MutePermissionError,
+    MuteMissingChannelError,
+    MuteVoicePermissionError,
+    MuteLeftGuildError,
+    MuteAlreadyUnMutedError,
+)
 from redbot.core.utils import AsyncIter, bounded_gather
 from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
@@ -60,92 +72,12 @@ __all__ = [
     "channel_mute_user",
     "channel_unmute_user",
     "MutedUser",
-    "MuteResult",
     "ChannelMutedUser",
-    "ChannelMuteResult",
     "check_for_mute_role",
     "is_mutes_disabled",
 ]
 
 __version__ = "1.0.0"
-
-
-@dataclass(frozen=True)
-class ChannelMuteResult:
-    """
-    This is a dataclass to represent whether or not a user
-    has been muted in the channel.
-
-    Attributes
-    ----------
-        success: bool
-            Whether or not the channel mute was a success.
-        reason: Optional[str]
-            The optional reason for why the mute was not successful.
-        channel: discord.abc.GuildChannel
-            The channel the user was requested to be muted in.
-        member: discord.Member
-            The user who was requested to be muted.
-        old_overs: Optional[Dict[str, bool]]
-            The overwrites for the user in the channel before muting.
-    """
-
-    success: bool
-    reason: Optional[str]
-    channel: discord.abc.GuildChannel
-    member: discord.Member
-    old_overs: Optional[Dict[str, bool]]
-
-
-@dataclass(frozen=True)
-class MuteResult:
-    """
-    This is a dataclass to represent whether or not a user
-    has been muted in the server.
-
-    Attributes
-    ----------
-        success: bool
-            Whether or not the mute was a success.
-        reason: Optional[str]
-            The Optional reason for why the mute was not successful.
-        channels: List[Tuple[discord.abc.GuildChannel, str]]
-            The channels and reason for why the user could not be muted
-            in those channels.
-        member: discord.Member
-            The user who was requested to be muted.
-    """
-
-    success: bool
-    reason: Optional[str]
-    channels: Optional[Tuple[ChannelMuteResult, ...]]
-    member: discord.Member
-
-
-@dataclass(frozen=True)
-class MutedUser:
-    """
-    This is a datclass to represent a muted user in a server
-
-    Attributes
-    ----------
-        guild_id: int
-            The guild ID in which this MutedUser belongs.
-        author_id: int
-            The member ID of the moderator who requested the mute.
-        user_id: int
-            The member ID of the user who was muted.
-        until: int
-            The timestamp until the mute should be over.
-        reason: Optional[str]
-            The optional reason for the mute.
-    """
-
-    guild: int
-    author: int
-    member: int
-    until: Optional[int]
-    reason: Optional[str]
 
 
 @dataclass(frozen=True)
@@ -177,6 +109,42 @@ class ChannelMutedUser:
     reason: Optional[str]
 
 
+@dataclass(frozen=True)
+class MutedUser:
+    """
+    This is a datclass to represent a muted user in a server
+
+    Attributes
+    ----------
+        guild_id: int
+            The guild ID in which this MutedUser belongs.
+        author_id: int
+            The member ID of the moderator who requested the mute.
+        user_id: int
+            The member ID of the user who was muted.
+        until: int
+            The timestamp until the mute should be over.
+        reason: Optional[str]
+            The optional reason for the mute.
+    """
+
+    guild: int
+    author: int
+    member: int
+    until: Optional[int]
+    reason: Optional[str]
+    issues: Optional[Tuple[Union[ChannelMutedUser, MuteError], ...]]
+
+    def __dict__(self):
+        return {
+            "guild": self.guild,
+            "author": self.author,
+            "member": self.member,
+            "until": self.until,
+            "reason": self.reason,
+        }
+
+
 async def mute_user(
     bot: Red,
     *,
@@ -185,7 +153,7 @@ async def mute_user(
     author: discord.Member,
     until: Optional[datetime] = None,
     reason: Optional[str] = None,
-) -> MuteResult:
+) -> MutedUser:
     """
     Handles muting a user inside a server
 
@@ -206,10 +174,23 @@ async def mute_user(
 
     Returns
     -------
-        MuteResult:
-            An object containing the success of the mute and reasons why
-            the mute may not have been successful.
+        MutedUser:
+            An object containing the information about the mute.
 
+    Raises
+    ------
+        MuteError:
+            Base error for all issues related to mutes.
+        MuteRoleMissingError:
+            Raised when the mute role is missing and role mutes are forced.
+        MuteAdministratorError:
+            Raised when the person attempting to be muted has adminstrator permissions.
+        MuteHierarchyError:
+            Raised when mute was called on someone higher in the role hierarchy.
+        MuteRoleHierarchyError:
+            Raised when there is a role hierarchy issue.
+        MutePermissionError:
+            Raised when the mute is called without proper permissions.
     """
     return await bot._mutes.mute_user(guild, member, author, until, reason)
 
@@ -221,7 +202,7 @@ async def unmute_user(
     member: discord.Member,
     author: discord.Member,
     reason: Optional[str] = None,
-) -> MuteResult:
+) -> MutedUser:
     """
     Handles muting a user inside a server
 
@@ -245,6 +226,21 @@ async def unmute_user(
         MuteResult:
             An object containing the success of the mute and reasons why
             the mute may not have been successful.
+
+    Raises
+    ------
+        MuteError:
+            Base error for all issues related to mutes.
+        MuteRoleMissingError:
+            Raised when the mute role is missing and role mutes are forced.
+        MuteAdministratorError:
+            Raised when the person attempting to be muted has adminstrator permissions.
+        MuteHierarchyError:
+            Raised when mute was called on someone higher in the role hierarchy.
+        MuteRoleHierarchyError:
+            Raised when there is a role hierarchy issue.
+        MutePermissionError:
+            Raised when the mute is called without proper permissions.
 
     """
     return await bot._mutes.unmute_user(guild, member, author, reason)
@@ -259,7 +255,7 @@ async def channel_mute_user(
     author: discord.Member,
     until: Optional[datetime] = None,
     reason: Optional[str] = None,
-) -> ChannelMuteResult:
+) -> ChannelMutedUser:
     """
     Handles muting a user in a channel
 
@@ -286,6 +282,21 @@ async def channel_mute_user(
             An object containing the success of the mute and reasons why
             the mute may not have been successful.
 
+    Raises
+    ------
+        MuteError:
+            Base error for all issues related to mutes.
+        MuteAdministratorError:
+            Raised when the person attempting to be muted has adminstrator permissions.
+        MuteHierarchyError:
+            Raised when mute was called on someone higher in the role hierarchy.
+        MutePermissionError:
+            Raised when the mute is called without proper permissions.
+        MuteMissingChannelError:
+            Raised when the channel we want to mute in is missing.
+        MuteLeftGuildError:
+            Raised when the user we are trying to mute has left the guild.
+
     """
     return await bot._mutes.channel_mute_user(guild, channel, member, author, until, reason)
 
@@ -298,7 +309,7 @@ async def channel_unmute_user(
     member: discord.Member,
     author: discord.Member,
     reason: Optional[str] = None,
-) -> ChannelMuteResult:
+) -> Tuple[bool, discord.Member, discord.abc.GuildChannel]:
     """
     Handles muting a user inside a server
 
@@ -324,6 +335,21 @@ async def channel_unmute_user(
         ChannelMuteResult:
             An object containing the success of the mute and reasons why
             the mute may not have been successful.
+
+    Raises
+    ------
+        MuteError:
+            Base error for all issues related to mutes.
+        MuteAdministratorError:
+            Raised when the person attempting to be muted has adminstrator permissions.
+        MuteHierarchyError:
+            Raised when mute was called on someone higher in the role hierarchy.
+        MutePermissionError:
+            Raised when the mute is called without proper permissions.
+        MuteMissingChannelError:
+            Raised when the channel we want to mute in is missing.
+        MuteLeftGuildError:
+            Raised when the user we are trying to mute has left the guild.
 
     """
     return await bot._mutes.channel_unmute_user(guild, channel, member, author, reason)
@@ -535,6 +561,7 @@ class Mutes:
                     member=int(user_id),
                     until=mute.get("until"),
                     reason=mute.get("reason"),
+                    issues=(),
                 )
                 self._server_mutes[g_id][int(user_id)] = mute_user
         channel_data = await self.config.all_channels()
@@ -1039,13 +1066,13 @@ class Mutes:
             ):
                 del self._channel_mutes[channel.id][data.member]
             return None
-        muted_user = await self.channel_unmute_user(
-            channel.guild, channel, author, member, _("Automatic unmute")
+        has_unmuted, muted_user, _chan = await self.channel_unmute_user(
+            channel.guild, channel, member, author, _("Automatic unmute")
         )
         async with self.config.channel(channel).muted_users() as muted_users:
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
-        if muted_user.success:
+        if has_unmuted:
             if create_case:
                 if isinstance(channel, discord.VoiceChannel):
                     unmute_type = "vunmute"
@@ -1251,7 +1278,48 @@ class Mutes:
         author: Optional[discord.Member],
         until: Optional[datetime] = None,
         reason: Optional[str] = None,
-    ) -> MuteResult:
+    ) -> MutedUser:
+        """
+        This is just a helper method for mutes to be called that determines
+        if we want a server mute to use a role or channel overwrites if no role
+        is present.
+        """
+        mute_role_id = await self.config.guild(guild).mute_role()
+
+        mute_role = guild.get_role(mute_role_id)
+        if mute_role:
+            return await self.mute_user_role(guild, member, author, until, reason)
+        else:
+            return await self.mute_user_overwrites(guild, member, author, until, reason)
+
+    async def unmute_user(
+        self,
+        guild: discord.Guild,
+        member: discord.Member,
+        author: Optional[discord.Member],
+        reason: Optional[str] = None,
+    ) -> Tuple[bool, discord.Member]:
+        """
+        This is just a helper method for mutes to be called that determines
+        if we want a server mute to use a role or channel overwrites if no role
+        is present.
+        """
+        mute_role_id = await self.config.guild(guild).mute_role()
+
+        mute_role = guild.get_role(mute_role_id)
+        if mute_role:
+            return await self.unmute_user_role(guild, member, author, reason)
+        else:
+            return await self.unmute_user_overwrites(guild, member, author, reason)
+
+    async def mute_user_role(
+        self,
+        guild: discord.Guild,
+        member: discord.Member,
+        author: Optional[discord.Member],
+        until: Optional[datetime] = None,
+        reason: Optional[str] = None,
+    ) -> MutedUser:
         """
         Handles muting users
         """
@@ -1260,158 +1328,85 @@ class Mutes:
         # along with this entire method and some othe refactorization
         # v1.0.0 is meant to look ugly right :')
         if permissions.administrator:
-            return MuteResult(False, _(MUTE_UNMUTE_ISSUES["is_admin"]), None, member)
-        if not await self.is_allowed_by_hierarchy(guild, member, author):
-            return MuteResult(False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), None, member)
-        mute_role = await self.config.guild(guild).mute_role()
-
-        if mute_role:
-
-            role = guild.get_role(mute_role)
-            if not role:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["role_missing"]),
-                    channels=None,
-                    member=member,
-                )
-            if author and author != guild.owner and role >= author.top_role:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["assigned_role_hierarchy_problem"]),
-                    channels=None,
-                    member=member,
-                )
-            if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
-                    channels=None,
-                    member=member,
-                )
-            # This is here to prevent the modlog case from happening on role updates
-            # we need to update the cache early so it's there before we receive the member_update event
-            if guild.id not in self._server_mutes:
-                self._server_mutes[guild.id] = {}
-            muted_user = MutedUser(
-                author=getattr(author, "id"),
-                member=member.id,
-                guild=guild.id,
-                reason=reason,
-                until=int(until.timestamp()) if until else None,
+            raise MuteAdministratorError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["is_admin"]), guild=guild
             )
-            self._server_mutes[guild.id][member.id] = muted_user
-            try:
-                await member.add_roles(role, reason=reason)
-                async with self.config.guild(guild).muted_users() as muted_users:
-                    muted_users[str(member.id)] = muted_user.__dict__
-            except discord.errors.Forbidden:
-                if guild.id in self._server_mutes and member.id in self._server_mutes[guild.id]:
-                    del self._server_mutes[guild.id][member.id]
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
-                    channels=None,
-                    member=member,
-                )
-            return MuteResult(success=True, reason=None, channels=None, member=member)
-        else:
-            perms_cache = {}
-            tasks = []
-            for channel in guild.channels:
-                tasks.append(self.channel_mute_user(guild, channel, member, author, until, reason))
-            task_result = await bounded_gather(*tasks)
-            channel_results = []
-            at_least_one_success = False
-            for task in task_result:
-                if not task.success:
-                    channel_results.append(task)
-                else:
-                    chan_id = task.channel.id
-                    perms_cache[str(chan_id)] = task.old_overs
-                    at_least_one_success = True
-            await self.config.member(member).perms_cache.set(perms_cache)
-            if at_least_one_success:
-                ret = MuteResult(
-                    success=True, reason=None, channels=tuple(channel_results), member=member
-                )
-            else:
-                ret = MuteResult(
-                    success=False, reason=None, channels=tuple(channel_results), member=member
-                )
-            return ret
+            # return MuteResult(False, _(MUTE_UNMUTE_ISSUES["is_admin"]), None, member)
+        if not await self.is_allowed_by_hierarchy(guild, member, author):
+            raise MuteHierarchyError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), guild=guild
+            )
+            # return MuteResult(False, _(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), None, member)
+        mute_role_id = await self.config.guild(guild).mute_role()
 
-    async def unmute_user(
+        mute_role = guild.get_role(mute_role_id)
+        if not mute_role:
+            raise MuteRoleMissingError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["role_missing"]), guild=guild
+            )
+
+        if author and author != guild.owner and mute_role >= author.top_role:
+            raise MuteRoleHierarchyError(
+                member=member,
+                reason=_(MUTE_UNMUTE_ISSUES["assigned_role_hierarchy_problem"]),
+                guild=guild,
+            )
+        if not guild.me.guild_permissions.manage_roles or mute_role >= guild.me.top_role:
+            raise MutePermissionError(
+                member=member,
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
+                guild=guild,
+            )
+        # This is here to prevent the modlog case from happening on role updates
+        # we need to update the cache early so it's there before we receive the member_update event
+        if guild.id not in self._server_mutes:
+            self._server_mutes[guild.id] = {}
+        muted_user = MutedUser(
+            author=getattr(author, "id"),
+            member=member.id,
+            guild=guild.id,
+            reason=reason,
+            until=int(until.timestamp()) if until else None,
+            issues=(),
+        )
+        self._server_mutes[guild.id][member.id] = muted_user
+        try:
+            await member.add_roles(mute_role, reason=reason)
+            async with self.config.guild(guild).muted_users() as muted_users:
+                muted_users[str(member.id)] = muted_user.__dict__()
+        except discord.errors.Forbidden:
+            if guild.id in self._server_mutes and member.id in self._server_mutes[guild.id]:
+                del self._server_mutes[guild.id][member.id]
+            raise MutePermissionError(
+                member=member,
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
+                guild=guild,
+            )
+        return muted_user
+
+    async def mute_user_overwrites(
         self,
         guild: discord.Guild,
         member: discord.Member,
         author: Optional[discord.Member],
+        until: Optional[datetime] = None,
         reason: Optional[str] = None,
-    ) -> MuteResult:
-        """
-        Handles unmuting users
-        """
-        mute_role = await self.config.guild(guild).mute_role()
-        if not await self.is_allowed_by_hierarchy(guild, member, author):
-            return MuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
-                channels=None,
-                member=member,
-            )
-        if mute_role:
+    ) -> MutedUser:
 
-            role = guild.get_role(mute_role)
-            if not role:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["role_missing"]),
-                    channels=None,
-                    member=member,
-                )
-
-            if guild.id in self._server_mutes:
-                if member.id in self._server_mutes[guild.id]:
-                    del self._server_mutes[guild.id][member.id]
-            if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
-                    channels=None,
-                    member=member,
-                )
-            try:
-                await member.remove_roles(role, reason=reason)
-            except discord.errors.Forbidden:
-                return MuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
-                    channels=None,
-                    member=member,
-                )
-            return MuteResult(success=True, reason=None, channels=None, member=member)
-        else:
-            tasks = []
-            for channel in guild.channels:
-                tasks.append(self.channel_unmute_user(guild, channel, member, author, reason))
-            results = await bounded_gather(*tasks)
-            channel_results = []
-            at_least_one_success = False
-            for task in results:
-                if not task.success:
-                    channel_results.append(task)
-                else:
-                    at_least_one_success = True
-            await self.config.member(member).clear()
-            if at_least_one_success:
-                ret = MuteResult(
-                    success=True, reason=None, channels=tuple(channel_results), member=member
-                )
-            else:
-                ret = MuteResult(
-                    success=False, reason=None, channels=tuple(channel_results), member=member
-                )
-            return ret
+        tasks = []
+        for channel in guild.channels:
+            tasks.append(self.channel_mute_user(guild, channel, member, author, until, reason))
+        task_result = await bounded_gather(*tasks)
+        # The heavy lifting is done in the channel_mute_user method
+        muted_user = MutedUser(
+            author=getattr(author, "id"),
+            member=member.id,
+            guild=guild.id,
+            reason=reason,
+            until=int(until.timestamp()) if until else None,
+            issues=tuple(task_result)
+        )
+        return muted_user
 
     async def channel_mute_user(
         self,
@@ -1421,29 +1416,21 @@ class Mutes:
         author: Optional[discord.Member],
         until: Optional[datetime] = None,
         reason: Optional[str] = None,
-    ) -> ChannelMuteResult:
+    ) -> ChannelMutedUser:
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(member)
         permissions = channel.permissions_for(member)
         if permissions.administrator:
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["is_admin"]),
-                channel=channel,
-                member=member,
-                old_overs={},
+            raise MuteAdministratorError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["is_admin"]), guild=guild
             )
 
         new_overs: dict = {}
         new_overs.update(send_messages=False, add_reactions=False, speak=False)
 
         if not await self.is_allowed_by_hierarchy(guild, member, author):
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
-                channel=channel,
-                member=member,
-                old_overs={},
+            raise MuteHierarchyError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), guild=guild
             )
 
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
@@ -1451,12 +1438,11 @@ class Mutes:
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
         if not channel.permissions_for(guild.me).manage_permissions:
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]),
-                channel=channel,
+            raise MutePermissionError(
                 member=member,
-                old_overs={},
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]),
+                guild=guild,
+                channel=channel,
             )
         muted_user = ChannelMutedUser(
             guild=guild.id,
@@ -1480,12 +1466,11 @@ class Mutes:
                     and member.id in self._channel_mutes[channel.id]
                 ):
                     del self._channel_mutes[channel.id][member.id]
-                return ChannelMuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["unknown_channel"]),
-                    channel=channel,
+                raise MuteMissingChannelError(
                     member=member,
-                    old_overs={},
+                    reason=_(MUTE_UNMUTE_ISSUES["unknown_channel"]),
+                    guild=guild,
+                    channel=channel,
                 )
             elif e.code == 10009:
                 if (
@@ -1493,12 +1478,11 @@ class Mutes:
                     and member.id in self._channel_mutes[channel.id]
                 ):
                     del self._channel_mutes[channel.id][member.id]
-                return ChannelMuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["left_guild"]),
-                    channel=channel,
+                raise MuteLeftGuildError(
                     member=member,
-                    old_overs={},
+                    reason=_(MUTE_UNMUTE_ISSUES["left_guild"]),
+                    guild=guild,
+                    channel=channel,
                 )
         if member.voice and member.voice.channel:
             # This is so that permissions update on the user immediately
@@ -1513,16 +1497,70 @@ class Mutes:
                 except discord.HTTPException:
                     # catch all discord errors because the result will be the same
                     # we successfully muted by this point but can't move the user
-                    return ChannelMuteResult(
-                        success=True,
-                        reason=_(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
-                        channel=channel,
-                        member=member,
-                        old_overs=old_overs,
-                    )
-        return ChannelMuteResult(
-            success=True, reason=None, channel=channel, member=member, old_overs=old_overs
-        )
+                    # raise MuteVoicePermissionError(
+                    #     member=member,
+                    #     reason=_(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
+                    #     guild=guild,
+                    #     channel=channel,
+                    # )
+                    pass
+        async with self.config.member(member).perms_cache() as cache:
+            cache[channel.id] = old_overs
+        return muted_user
+
+    async def unmute_user_role(
+        self,
+        guild: discord.Guild,
+        member: discord.Member,
+        author: Optional[discord.Member],
+        reason: Optional[str] = None,
+    ) -> discord.Member:
+        """
+        Handles unmuting users
+        """
+        mute_role = await self.config.guild(guild).mute_role()
+        if not await self.is_allowed_by_hierarchy(guild, member, author):
+            raise MuteHierarchyError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), guild=guild
+            )
+        role = guild.get_role(mute_role)
+        if not role:
+            raise MuteRoleMissingError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["role_missing"]), guild=guild
+            )
+
+        if guild.id in self._server_mutes:
+            if member.id in self._server_mutes[guild.id]:
+                del self._server_mutes[guild.id][member.id]
+        if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
+            raise MutePermissionError(
+                member=member,
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
+                guild=guild,
+            )
+        try:
+            await member.remove_roles(role, reason=reason)
+        except discord.errors.Forbidden:
+            raise MutePermissionError(
+                member=member,
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]),
+                guild=guild,
+            )
+        return member
+
+    async def unmute_user_overwrites(
+        self,
+        guild: discord.Guild,
+        member: discord.Member,
+        author: Optional[discord.Member],
+        reason: Optional[str] = None,
+    ) -> Tuple[Union[Tuple[bool, discord.Member, discord.abc.GuildChannel], MuteError], ...]:
+
+        tasks = []
+        for channel in guild.channels:
+            tasks.append(self.channel_unmute_user(guild, channel, member, author, reason))
+        results = await bounded_gather(*tasks)
+        return tuple(results)
 
     async def channel_unmute_user(
         self,
@@ -1531,7 +1569,7 @@ class Mutes:
         member: discord.Member,
         author: Optional[discord.Member],
         reason: Optional[str] = None,
-    ) -> ChannelMuteResult:
+    ) -> Tuple[bool, discord.Member, discord.abc.GuildChannel]:
         """Unmutes the specified user in a specified channel"""
         overwrites = channel.overwrites_for(member)
         perms_cache = await self.config.member(member).perms_cache()
@@ -1541,32 +1579,26 @@ class Mutes:
             old_values = {"send_messages": None, "add_reactions": None, "speak": None}
 
         if not await self.is_allowed_by_hierarchy(guild, member, author):
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
-                channel=channel,
-                member=member,
-                old_overs={},
+            raise MuteHierarchyError(
+                member=member, reason=_(MUTE_UNMUTE_ISSUES["hierarchy_problem"]), guild=guild
             )
 
         overwrites.update(**old_values)
         if channel.id in self._channel_mutes and member.id in self._channel_mutes[channel.id]:
             del self._channel_mutes[channel.id][member.id]
         else:
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["already_unmuted"]),
-                channel=channel,
+            raise MuteAlreadyUnMutedError(
                 member=member,
-                old_overs={},
+                reason=_(MUTE_UNMUTE_ISSUES["already_unmuted"]),
+                guild=guild,
+                channel=channel,
             )
         if not channel.permissions_for(guild.me).manage_permissions:
-            return ChannelMuteResult(
-                success=False,
-                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]),
-                channel=channel,
+            raise MutePermissionError(
                 member=member,
-                old_overs={},
+                reason=_(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]),
+                guild=guild,
+                channel=channel,
             )
         try:
             if overwrites.is_empty():
@@ -1578,22 +1610,22 @@ class Mutes:
             async with self.config.channel(channel).muted_users() as muted_users:
                 if str(member.id) in muted_users:
                     del muted_users[str(member.id)]
+            async with self.config.member(member).perms_cache() as cache:
+                del cache[channel.id]
         except discord.NotFound as e:
             if e.code == 10003:
-                return ChannelMuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["unknown_channel"]),
-                    channel=channel,
+                raise MuteMissingChannelError(
                     member=member,
-                    old_overs={},
+                    reason=_(MUTE_UNMUTE_ISSUES["unknown_channel"]),
+                    guild=guild,
+                    channel=channel,
                 )
             elif e.code == 10009:
-                return ChannelMuteResult(
-                    success=False,
-                    reason=_(MUTE_UNMUTE_ISSUES["left_guild"]),
-                    channel=channel,
+                raise MuteLeftGuildError(
                     member=member,
-                    old_overs={},
+                    reason=_(MUTE_UNMUTE_ISSUES["left_guild"]),
+                    guild=guild,
+                    channel=channel,
                 )
         if member.voice and member.voice.channel:
             # This is so that permissions update on the user immediately
@@ -1608,17 +1640,13 @@ class Mutes:
                 except discord.HTTPException:
                     # catch all discord errors because the result will be the same
                     # we successfully muted by this point but can't move the user
-                    return ChannelMuteResult(
-                        success=True,
-                        reason=_(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
-                        channel=channel,
-                        member=member,
-                        old_overs={},
-                    )
-        return ChannelMuteResult(
-            success=True,
-            reason=None,
-            channel=channel,
-            member=member,
-            old_overs={},
-        )
+                    # We don't want to raise here since we've already muted the user
+                    # successfully
+                    # raise MuteVoicePermissionError(
+                    #     member=member,
+                    #     reason=_(MUTE_UNMUTE_ISSUES["voice_mute_permission"]),
+                    #     guild=guild,
+                    #     channel=channel,
+                    # )
+                    pass
+        return True, member, channel

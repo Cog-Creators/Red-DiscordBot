@@ -4,7 +4,7 @@ import discord
 import logging
 
 from abc import ABC
-from typing import Optional, List, Literal, Union
+from typing import Optional, List, Literal, Union, Tuple
 from datetime import datetime, timedelta, timezone
 
 from .converters import MuteTime
@@ -12,6 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, mutes
+from redbot.core.errors import MuteError
 from redbot.core.utils import bounded_gather
 from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
 from redbot.core.utils.mod import get_audit_reason
@@ -435,41 +436,50 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             success_list = []
             issue_list = []
             for user in users:
-                muted_user = await mutes.mute_user(
-                    self.bot,
-                    guild=guild,
-                    member=user,
-                    author=author,
-                    until=until,
-                    reason=audit_reason,
-                )
-                if muted_user.success:
-                    success_list.append(user)
-                    if muted_user.channels:
-                        # incase we only muted a user in 1 channel not all
-                        issue_list.append(muted_user)
-                    await modlog.create_case(
+                try:
+                    muted_user = await mutes.mute_user(
                         self.bot,
-                        guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
-                        "smute",
-                        user,
-                        author,
-                        reason,
-                        until=until,
-                        channel=None,
-                    )
-                    await mutes.send_mute_dm_notification(
-                        self.bot,
-                        member=user,
-                        moderator=author,
                         guild=guild,
-                        mute_type=_("Server mute"),
-                        reason=reason,
-                        duration=duration,
+                        member=user,
+                        author=author,
+                        until=until,
+                        reason=audit_reason,
                     )
+                except MuteError as e:
+                    issue_list.append(e)
+                    continue
+
+                if muted_user.issues:
+                    # This will only have something if we did channel mutes
+                    for issue in muted_user.issues:
+                        if isinstance(issue, MuteError):
+                            issue_list.append(issue)
+                        elif user not in success_list:
+                            success_list.append(user)
                 else:
-                    issue_list.append(muted_user)
+                    success_list.append(user)
+
+                # incase we only muted a user in 1 channel not all
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
+                    "smute",
+                    user,
+                    author,
+                    reason,
+                    until=until,
+                    channel=None,
+                )
+                await mutes.send_mute_dm_notification(
+                    self.bot,
+                    member=user,
+                    moderator=author,
+                    guild=guild,
+                    mute_type=_("Server mute"),
+                    reason=reason,
+                    duration=duration,
+                )
         if success_list:
             msg = _("{users} has been muted in this server{time}.")
             if len(success_list) > 1:
@@ -480,32 +490,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
-    def parse_issues(self, issue: Union[mutes.MutedUser, mutes.ChannelMutedUser]) -> str:
-        reasons = {}
+    def parse_issues(self, issue: MuteError) -> str:
         reason_msg = f"{issue.reason}\n" if issue.reason else None
         channel_msg = ""
         error_msg = _("{member} could not be (un)muted for the following reasons:\n").format(
             member=str(issue.member)
         )
-        if issue.channels:
-            for channel, reason in issue.channels:
-                if reason not in reasons:
-                    reasons[reason] = [channel]
-                else:
-                    reasons[reason].append(channel)
-
-            for reason, channel_list in reasons.items():
-                channel_msg += _("- {reason} In the following channels: {channels}\n").format(
-                    reason=reason,
-                    channels=humanize_list([c.mention for c in channel_list]),
-                )
         error_msg += reason_msg or channel_msg
         return error_msg
 
     async def handle_issues(
         self,
         ctx: commands.Context,
-        issue_list: List[Union[mutes.MutedUser, mutes.ChannelMutedUser]],
+        issue_list: List[MuteError],
     ) -> None:
         """
         This is to handle the various issues that can return for each user/channel
@@ -543,7 +540,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 with contextlib.suppress(discord.Forbidden):
                     await query.clear_reactions()
             issue = "\n".join(self.parse_issues(issue) for issue in issue_list)
-            resp = pagify(issue)
+            resp = pagify(issue, page_length=1000)
             await ctx.send_interactive(resp)
 
     @commands.command(
@@ -602,7 +599,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     guild=guild,
                     channel=channel,
                     author=author,
-                    user=user,
+                    member=user,
                     until=until,
                     reason=audit_reason,
                 )
@@ -623,8 +620,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await mutes.send_dm_notification(
                         self.bot, user, author, guild, _("Channel mute"), reason, duration
                     )
-                    async with self.config.member(user).perms_cache() as cache:
-                        cache[channel.id] = muted_user.old_overs
                 else:
                     issue_list.append((user, muted_user.reason))
 
@@ -676,7 +671,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 self._channel_mute_events[guild.id] = asyncio.Event()
             for user in users:
                 muted_user = await mutes.unmute_user(
-                    self.bot, guild=guild, author=author, user=user, reason=audit_reason
+                    self.bot, guild=guild, author=author, member=user, reason=audit_reason
                 )
 
                 if muted_user.success:
@@ -746,7 +741,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     guild=guild,
                     channel=channel,
                     author=author,
-                    user=user,
+                    member=user,
                     reason=audit_reason,
                 )
 
