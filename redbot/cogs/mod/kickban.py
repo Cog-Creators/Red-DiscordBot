@@ -604,8 +604,10 @@ class KickBanMixin(MixinMeta):
             duration = timedelta(seconds=await self.config.guild(guild).default_tempban_duration())
         unban_time = datetime.now(timezone.utc) + duration
 
+        settings = await self.config.guild(guild).all()
+
         if days is None:
-            days = await self.config.guild(guild).default_days()
+            days = settings["default_days"]
 
         if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
@@ -618,8 +620,7 @@ class KickBanMixin(MixinMeta):
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
             current_tempbans.append(user.id)
 
-        toggled = await self.config.guild(guild).dm_on_kickban()
-        if toggled:
+        if settings["dm_on_kickban"]:
             with contextlib.suppress(discord.HTTPException):
                 # We don't want blocked DMs preventing us from banning
                 msg = _(
