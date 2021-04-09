@@ -600,11 +600,11 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
-        if duration is None:
-            duration = timedelta(seconds=await self.config.guild(guild).default_tempban_duration())
-        unban_time = datetime.now(timezone.utc) + duration
-
         settings = await self.config.guild(guild).all()
+
+        if duration is None:
+            duration = timedelta(seconds=settings["default_tempban_duration"])
+        unban_time = datetime.now(timezone.utc) + duration
 
         if days is None:
             days = settings["default_days"]
