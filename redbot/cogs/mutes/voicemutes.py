@@ -3,7 +3,8 @@ from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
 import discord
-from redbot.core import commands, checks, i18n, modlog
+from redbot.core import commands, checks, i18n, modlog, mutes
+from redbot.core.errors import MuteError
 from redbot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
@@ -124,39 +125,41 @@ class VoiceMutes(MixinMeta):
                 channel = user_voice_state.channel
                 audit_reason = get_audit_reason(author, reason, shorten=True)
 
-                success = await self.channel_mute_user(
-                    guild, channel, author, user, until, audit_reason
-                )
-
-                if success["success"]:
-                    if "reason" in success and success["reason"]:
-                        issue_list.append((user, success["reason"]))
-                    else:
-                        success_list.append(user)
-                    await modlog.create_case(
+                try:
+                    await mutes.channel_mute_user(
                         self.bot,
-                        guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
-                        "vmute",
-                        user,
-                        author,
-                        reason,
-                        until=until,
+                        guild=guild,
                         channel=channel,
+                        author=author,
+                        member=user,
+                        until=until,
+                        reason=audit_reason,
                     )
-                    await self._send_dm_notification(
-                        user, author, guild, _("Voice mute"), reason, duration
-                    )
-                    async with self.config.member(user).perms_cache() as cache:
-                        cache[channel.id] = success["old_overs"]
-                else:
-                    issue_list.append((user, success["reason"]))
+                except MuteError as e:
+                    issue_list.append(e)
+                    continue
+                success_list.append(user)
+
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at.replace(tzinfo=timezone.utc),
+                    "cmute",
+                    user,
+                    author,
+                    reason,
+                    until=until,
+                    channel=channel,
+                )
+                await mutes.send_dm_notification(
+                    self.bot, user, author, guild, _("Channel mute"), reason, duration
+                )
 
         if success_list:
             msg = _("{users} has been muted in this channel{time}.")
             if len(success_list) > 1:
                 msg = _("{users} have been muted in this channel{time}.")
-            await ctx.send(
+            await channel.send(
                 msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
             )
         if issue_list:

@@ -91,6 +91,7 @@ class CannotSetSubfield(StoredTypeError):
 
 class MuteError(RedError):
     """Base error class for Mute-related errors."""
+
     def __init__(self, **kwargs):
         self.member = kwargs.get("member")
         self.reason = kwargs.get("reason")
@@ -101,36 +102,42 @@ class MuteError(RedError):
 
 class MuteRoleMissingError(MuteError):
     """Raised if role mutes are set and the role is missing."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
 class MuteAdministratorError(MuteError):
     """Raised when mute was called on an administrator."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
 class MuteHierarchyError(MuteError):
     """Raised when mute was called on someone higher in the role hierarchy."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
 class MuteRoleHierarchyError(MuteError):
     """Raised when there is a role hierarchy issue."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
 class MutePermissionError(MuteError):
     """Raised when mute was called without proper channel permissions."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
 class MuteMissingChannelError(MuteError):
     """Raised when the channel a user should be muted in is missing."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -140,6 +147,7 @@ class MuteVoicePermissionError(MuteError):
     Raised when we failed to move the user into their current  voice
     channel to apply mute overwrites.
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -148,6 +156,7 @@ class MuteLeftGuildError(MuteError):
     """
     Raised when we the member has already left the guild.
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -156,5 +165,6 @@ class MuteAlreadyUnMutedError(MuteError):
     """
     Raised when the member is already unmuted in a channel.
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
