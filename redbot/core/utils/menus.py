@@ -36,6 +36,10 @@ async def menu(
               This parameter should be the last one, and none of the
               parameters in the handling functions are optional
 
+    .. warning:: If you're using the `user` param, you need to pass it
+              as a keyword-only argument, and set :obj:`None` as the
+              default in your function.
+
     Parameters
     ----------
     ctx: commands.Context
