@@ -21,6 +21,7 @@ async def menu(
     message: discord.Message = None,
     page: int = 0,
     timeout: float = 30.0,
+    *,
     user: discord.User = None,
 ):
     """
@@ -52,7 +53,10 @@ async def menu(
     timeout: float
         The time (in seconds) to wait for a reaction
     user: discord.User
-        The user allowed to interact with the menu. Defaults to ctx.author
+        The user allowed to interact with the menu. Defaults to ctx.author.
+        This is a keyword-only argument.
+
+        *Added in 3.4.10*
 
     Raises
     ------
@@ -117,9 +121,14 @@ async def menu(
         except discord.NotFound:
             return
     else:
-        return await controls[react.emoji](
-            ctx, pages, controls, message, page, timeout, user, react.emoji
-        )
+        if user is not None:
+            return await controls[react.emoji](
+                ctx, pages, controls, message, page, timeout, react.emoji, user=user
+            )
+        else:
+            return await controls[react.emoji](
+                ctx, pages, controls, message, page, timeout, react.emoji
+            )
 
 
 async def next_page(
@@ -129,8 +138,9 @@ async def next_page(
     message: discord.Message,
     page: int,
     timeout: float,
-    user: discord.User,
     emoji: str,
+    *,
+    user: discord.User = None,
 ):
     perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
@@ -140,7 +150,12 @@ async def next_page(
         page = 0  # Loop around to the first item
     else:
         page = page + 1
-    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout, user=user)
+    if user is not None:
+        return await menu(
+            ctx, pages, controls, message=message, page=page, timeout=timeout, user=user
+        )
+    else:
+        return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
 
 
 async def prev_page(
@@ -150,8 +165,9 @@ async def prev_page(
     message: discord.Message,
     page: int,
     timeout: float,
-    user: discord.User,
     emoji: str,
+    *,
+    user: discord.User = None,
 ):
     perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
@@ -161,7 +177,12 @@ async def prev_page(
         page = len(pages) - 1  # Loop around to the last item
     else:
         page = page - 1
-    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout, user=user)
+    if user is not None:
+        return await menu(
+            ctx, pages, controls, message=message, page=page, timeout=timeout, user=user
+        )
+    else:
+        return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
 
 
 async def close_menu(
@@ -171,8 +192,9 @@ async def close_menu(
     message: discord.Message,
     page: int,
     timeout: float,
-    user: discord.User,
     emoji: str,
+    *,
+    user: discord.User = None,
 ):
     with contextlib.suppress(discord.NotFound):
         await message.delete()
