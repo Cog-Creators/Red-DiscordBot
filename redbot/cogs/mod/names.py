@@ -193,7 +193,9 @@ class ModInfo(MixinMeta):
         user_created = member.created_at.strftime("%d %b %Y %H:%M")
         voice_state = member.voice
         member_number = (
-            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(member)
+            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
+                member
+            )
             + 1
         )
 
