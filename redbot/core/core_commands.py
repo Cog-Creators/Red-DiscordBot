@@ -423,7 +423,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             owner = app_info.team.name
         else:
             owner = app_info.owner
-            
+
         settings = await self.bot._config.all()
         custom_info = settings["custom_info"]
         custom_info_image = settings["custom_info_image"]
