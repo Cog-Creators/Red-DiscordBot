@@ -151,7 +151,7 @@ class Filter(commands.Cog):
         Use double quotes to add or remove sentences.
         """
         pass
-    
+
     @_filter.command(name="clear")
     async def _filter_clear(self, ctx: commands.Context):
         """Clears this servers filter list."""
