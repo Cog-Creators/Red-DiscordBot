@@ -1,4 +1,4 @@
-import asyncio#
+import asyncio
 import contextlib
 import datetime
 import importlib
@@ -423,7 +423,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             owner = app_info.team.name
         else:
             owner = app_info.owner
-        custom_info = await self.bot._config.custom_info()
+            
+        settings = await self.bot._config.all()
+        custom_info = settings["custom_info"]
+        custom_info_image = settings["custom_info_image"]
 
         pypi_version, py_version_req = await fetch_latest_red_version_info()
         outdated = pypi_version and pypi_version > red_version_info
@@ -461,7 +464,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if custom_info:
                 embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
             embed.add_field(name=_("About Red"), value=about, inline=False)
-
+            if custom_info_image:
+                with contextlib.suppress(discord.HTTPException):
+                    embed.set_image(url=custom_info_image)
             embed.set_footer(
                 text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
             )
@@ -2870,7 +2875,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command()
+    @_set.group(invoke_without_command=True)
     @checks.is_owner()
     async def custominfo(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of `[p]info`.
@@ -2898,6 +2903,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.invoke(self.info)
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
+
+    @custominfo.command()
+    async def image(self, ctx: commands.Context, image_url: str = None):
+        """Customizes `[p]info` with an embed image.
+
+        You must provide a valid URL.
+        """
+        if not image_url:
+            await ctx.bot._config.custom_info_image.clear()
+            await ctx.send(_("The custom image has been cleared."))
+        else:
+            await ctx.bot._config.custom_info_image.set(image_url)
+            await ctx.send(_("The custom image has been set."))
 
     @_set.group(invoke_without_command=True)
     @checks.is_owner()

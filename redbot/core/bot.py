@@ -105,6 +105,7 @@ class RedBase(
             color=15158332,
             fuzzy=False,
             custom_info=None,
+            custom_info_image=None,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__delete_delay=0,
