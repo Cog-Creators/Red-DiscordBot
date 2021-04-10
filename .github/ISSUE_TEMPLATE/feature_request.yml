@@ -3,7 +3,6 @@ description: For feature requests regarding Red itself.
 title: ''
 labels: 'Type: Feature'
 assignees: ''
-issue_body: true
 body:
 - type: markdown
   attributes:
@@ -11,6 +10,7 @@ body:
       Thank you for taking the time to fill out an issue, this template is meant for any feature suggestions.
       If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
 - type: dropdown
+  id: feature-name
   attributes:
     label: "Type of feature request"
     description: "What type of feature would you like to request?"
@@ -23,6 +23,7 @@ body:
   validations:
     required: true
 - type: textarea
+  id: proposal
   attributes:
     label: "Description of the feature you're suggesting"
     description: |
@@ -45,4 +46,9 @@ body:
         - Note any restrictions on who can use the command or where it can be used
   validations:
     required: true
+- type: textarea
+  id: anything-else
+  attributes:
+    label: Anything else?
+    description: Let us know if you have anything else to share.
 
