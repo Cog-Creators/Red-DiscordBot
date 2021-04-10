@@ -464,13 +464,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if custom_info:
                 embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
             embed.add_field(name=_("About Red"), value=about, inline=False)
-            if custom_info_image:
-                with contextlib.suppress(discord.HTTPException):
-                    embed.set_image(url=custom_info_image)
             embed.set_footer(
                 text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
             )
-            await ctx.send(embed=embed)
+            try:
+                if custom_info_image:
+                    embed.set_image(url=custom_info_image)
+                await ctx.send(embed=embed)
+            except discord.HTTPException:
+                await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
             dpy_version = "{}".format(discord.__version__)
