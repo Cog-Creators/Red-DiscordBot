@@ -198,7 +198,7 @@ class Filter(commands.Cog):
         """
         pass
 
-    @_filter.command(name="clear")
+    @_filter_channel.command(name="clear")
     async def _channel_clear(self, ctx: commands.Context):
         """Clears this channels filter list."""
         channel = ctx.channel
