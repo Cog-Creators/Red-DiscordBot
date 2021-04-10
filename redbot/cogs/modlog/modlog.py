@@ -109,6 +109,7 @@ class ModLog(commands.Cog):
             msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send("You took too long to respond.")
+            return
         if pred.result:
             await modlog.reset_cases(guild)
             await ctx.send(_("Cases have been reset."))
