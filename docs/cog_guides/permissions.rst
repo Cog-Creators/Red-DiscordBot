@@ -378,8 +378,6 @@ permissions removeserverrule
 
     [p]permissions removeserverrule <cog_or_command> <who_or_what...>
 
-.. tip:: Alias: ``permissions removeguildrule``
-
 **Description**
 
 Remove a server rule from a command.
