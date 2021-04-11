@@ -172,7 +172,7 @@ msgstr "Cette option n'est pas valide. Essayez {r}, {p}, ou {s}."
 
 #: redbot/cogs/general/general.py:172
 msgid "{choice} You win {author.mention}!"
-msgstr "{choice} Vous avez gagner {author.mention} !"
+msgstr "{choice} Vous avez gagné {author.mention} !"
 
 #: redbot/cogs/general/general.py:178
 msgid "{choice} You lose {author.mention}!"
