@@ -379,7 +379,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67].strip() + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 subtext = "\n".join(
                     shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
@@ -409,7 +409,7 @@ class RedHelpFormatter(HelpFormatterABC):
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
-                            doc = doc[: doc_max_width - 3].strip() + "..."
+                            doc = doc[: doc_max_width - 3].rstrip() + "..."
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
@@ -554,7 +554,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67].strip() + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 command_text = "\n".join(
                     shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
@@ -583,7 +583,7 @@ class RedHelpFormatter(HelpFormatterABC):
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
-                            doc = doc[: doc_max_width - 3].strip() + "..."
+                            doc = doc[: doc_max_width - 3].rstrip() + "..."
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
@@ -621,7 +621,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67].strip() + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 cog_text = "\n".join(
                     shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
@@ -654,7 +654,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     width_gap = discord.utils._string_width(nm) - len(nm)
                     doc = com.format_shortdoc_for_context(ctx)
                     if len(doc) > doc_max_width:
-                        doc = doc[: doc_max_width - 3].strip() + "..."
+                        doc = doc[: doc_max_width - 3].rstrip() + "..."
                     yield nm, doc, max_width - width_gap
 
             for cog_name, data in coms:
