@@ -108,8 +108,6 @@ permissions acl getserver
 
     [p]permissions acl getserver 
 
-.. tip:: Alias: ``permissions acl getguild``
-
 **Description**
 
 Get a YAML file detailing all rules in this server.
@@ -256,8 +254,6 @@ permissions addserverrule
 .. code-block:: none
 
     [p]permissions addserverrule <allow_or_deny> <cog_or_command> <who_or_what...>
-
-.. tip:: Alias: ``permissions addguildrule``
 
 **Description**
 
