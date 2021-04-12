@@ -472,6 +472,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     embed.set_image(url=custom_info_image)
                 await ctx.send(embed=embed)
             except discord.HTTPException:
+                embed.set_image(url=embed.Empty)
                 await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
@@ -2877,9 +2878,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.group(invoke_without_command=True)
+    @_set.group()
     @checks.is_owner()
-    async def custominfo(self, ctx: commands.Context, *, text: str = None):
+    async def custominfo(self, ctx: commands.Context):
+        """Customize `[p]info` with text and images."""
+
+    @custominfo.command()
+    async def text(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of `[p]info`.
 
         The maximum amount of allowed characters is 1024.
@@ -2905,16 +2910,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.invoke(self.info)
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
+            
 
     @custominfo.command()
     async def image(self, ctx: commands.Context, image_url: str = None):
         """Customizes `[p]info` with an embed image.
 
-        You must provide a valid URL.
+        If an invalid URL is provided, an image will not appear through `[p]info`.
         """
+        url_check = lambda x: x.startswith(("http", "https")) and not " " in x
         if not image_url:
             await ctx.bot._config.custom_info_image.clear()
             await ctx.send(_("The custom image has been cleared."))
+        elif not url_check(image_url):
+            await ctx.send(_("Please provide a valid URL."))
         else:
             await ctx.bot._config.custom_info_image.set(image_url)
             await ctx.send(_("The custom image has been set."))
