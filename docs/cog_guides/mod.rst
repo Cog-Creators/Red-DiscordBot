@@ -19,7 +19,8 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Moderation tools.
+A range of highly customizable moderation tools used to protect your 
+guild from users who cannot follow the rules.
 
 
 .. _mod-commands:
