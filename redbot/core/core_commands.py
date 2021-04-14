@@ -26,6 +26,7 @@ import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
 from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.predicates import MessagePredicate
 
 from . import (
     __version__,
@@ -1939,10 +1940,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
-        with contextlib.suppress(discord.HTTPException):
-            if not silently:
-                await ctx.send(_("Shutting down... ") + wave + skin)
-        await ctx.bot.shutdown()
+        await ctx.send(
+            _("Are you sure you would like to {action} {botname}? (yes/no)").format(
+                action="shutdown",
+                botname=ctx.me.name
+            )
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            with contextlib.suppress(discord.HTTPException):
+                if not silently:
+                    await ctx.send(_("Shutting down... ") + wave + skin)
+            await ctx.bot.shutdown()
+        else:
+            await ctx.send(_("Okay, I will not be {action}.").format(action="shutting down")
 
     @commands.command(name="restart")
     @checks.is_owner()
@@ -1959,10 +1975,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[silently]` - Whether to skip sending the restart message. Defaults to False.
         """
-        with contextlib.suppress(discord.HTTPException):
-            if not silently:
-                await ctx.send(_("Restarting..."))
-        await ctx.bot.shutdown(restart=True)
+        await ctx.send(
+            _("Are you sure you would like to {action} {botname}? (yes/no)").format(
+                action="restart",
+                botname=ctx.me.name
+            )
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            with contextlib.suppress(discord.HTTPException):
+                if not silently:
+                    await ctx.send(_("Restarting..."))
+            await ctx.bot.shutdown()
+        else:
+            await ctx.send(_("Okay, I will not be {action}.").format(action="restarting")
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
