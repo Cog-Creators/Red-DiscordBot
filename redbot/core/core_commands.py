@@ -1958,7 +1958,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await ctx.send(_("Shutting down... ") + wave + skin)
             await ctx.bot.shutdown()
         else:
-            await ctx.send(_("Okay, I will not be {action}.").format(action="shutting down")
+            await ctx.send(_("Okay, I will not be {action}.").format(action="shutting down"))
 
     @commands.command(name="restart")
     @checks.is_owner()
@@ -1993,7 +1993,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await ctx.send(_("Restarting..."))
             await ctx.bot.shutdown()
         else:
-            await ctx.send(_("Okay, I will not be {action}.").format(action="restarting")
+            await ctx.send(_("Okay, I will not be {action}.").format(action="restarting"))
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
