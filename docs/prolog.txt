@@ -39,14 +39,6 @@
 .. |user-input-quotes| replace:: You can either provide the member's ID or their exact name with the
     tag or not, enclosed in quotes if there are spaces.
 
-.. |member-or-user-input| replace:: You can either mention the user, provide their ID, their exact name with
-    the tag or not, or their nickname. If the user is not in the guild, you must provide their ID or their 
-    exact name with the tag or not.
-
-.. |member-or-user-input-quotes| replace:: You can either mention the user, provide their ID, their exact name with
-    the tag or not, or their nickname. If the user is not in the guild, you must provide their ID or their 
-    exact name with the tag or not. You should enclose these with quotes if there are spaces.
-
 .. |channel-input| replace:: You can either mention the channel, provide its exact name or its ID.
 
 .. |vc-input| replace:: You can either provide the voice channel's ID or its exact name.
