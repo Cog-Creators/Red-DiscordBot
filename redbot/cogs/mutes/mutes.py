@@ -1664,11 +1664,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
         if user.id in self._channel_mutes[channel.id]:
-            return {
-                "success": False,
-                "channel": channel,
-                "reason": _(MUTE_UNMUTE_ISSUES["already_muted"]),
-            }
+            task_name = f"channel-unmute-{channel.id}-{user.id}"
+            if task_name in self._unmute_tasks:
+                self._unmute_tasks[task_name].cancel()
+
         if not channel.permissions_for(guild.me).manage_permissions:
             return {
                 "success": False,
