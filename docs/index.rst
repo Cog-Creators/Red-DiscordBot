@@ -18,6 +18,7 @@ Welcome to Red - Discord Bot's documentation!
     update_red
     about_venv
     autostart_systemd
+    autostart_mac
     autostart_pm2
 
 .. toctree::
