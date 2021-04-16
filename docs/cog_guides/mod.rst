@@ -51,7 +51,7 @@ Ban a user from this server and optionally delete days of messages.
 
 **Arguments**
 
-* ``<user>``: The user to ban. |member-or-user-input-quotes|
+* ``<user>``: The user to ban. |user-input|
 * ``[days]``: The amount of days of messages to cleanup on ban. This parameter default to no days.
 * ``[reason]``: The reason why the user was banned (optional).
 
@@ -86,7 +86,7 @@ Kick a user.
 
 **Arguments**
 
-* ``<member>``: The member to kick. |member-input-quotes|
+* ``<member>``: The member to kick. |member-input|
 * ``[reason]``: The reason why the user was kicked (optional).
 
 **Example Usage**
