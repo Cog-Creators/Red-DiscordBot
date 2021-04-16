@@ -450,4 +450,3 @@ class Reports(commands.Cog):
                 ).format(ticket_number=ticket_number)
                 + big_topic
             )
-            
