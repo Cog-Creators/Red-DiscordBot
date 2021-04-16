@@ -1537,7 +1537,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             # if there is, then we cancel the automatic unmute task.
             if user.id in self._server_mutes[guild.id]:
                 task_name = f"server-unmute-{guild.id}-{user.id}"
-                print(self._unmute_tasks)
                 if task_name in self._unmute_tasks:
                     self._unmute_tasks[task_name].cancel()
 
