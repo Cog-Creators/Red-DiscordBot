@@ -100,7 +100,7 @@ Remove a warning from a member.
 
 **Arguments**
 
-* ``<member>``: The member to warn. |member-input|
+* ``<member>``: The member to warn. |member-input-quotes|
 * ``<warn_id>``: The warning ID to remove from the member.
 * ``[reason]``: The reason for unwarning this member.
 
@@ -116,7 +116,7 @@ warn
 
 .. code-block:: none
 
-    [p]warn <user> [points=1] <reason>
+    [p]warn <member> [points=1] <reason>
 
 **Description**
 
@@ -124,8 +124,9 @@ Warn the user for the specified reason.
 
 **Arguments**
 
-* ``<points>`` number of points the warning should be for. If no number is supplied, 1 point will be given. Pre-set warnings disregard this.
-* ``<reason>`` can be a registered reason if it exists or a custom one is created by default.
+* ``<member>``: The member to warn. |member-input-quotes|
+* ``<points>``: The number of points the warning should be for. If no number is supplied, 1 point will be given. Pre-set warnings disregard this.
+* ``<reason>``: The reason for the warning. This can be a registered reason if it exists or a custom one is created by default.
 
 .. _warnings-command-warnaction:
 
@@ -187,8 +188,6 @@ warnaction delete
 .. code-block:: none
 
     [p]warnaction delete <action_name>
-
-.. tip:: Aliases: ``warnaction del``, ``warnaction remove``
 
 **Description**
 
