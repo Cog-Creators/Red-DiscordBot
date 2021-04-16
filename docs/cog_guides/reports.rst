@@ -138,4 +138,4 @@ reportset toggle
 
 **Description**
 
-Enable or Disable reporting for this server.  
+Enable or disable reporting for this server.  
