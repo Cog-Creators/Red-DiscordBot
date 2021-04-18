@@ -64,7 +64,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
-                if _error_code == 1000 and current_track is not None:
+                if _error_code == 1000 and current_track is not None and player.is_playing:
                     await player.resume(current_track, start=player.position, replace=True)
                     by_remote = extra.get("byRemote", "")
                     reason = extra.get("reason", "No Specified Reason").strip()
