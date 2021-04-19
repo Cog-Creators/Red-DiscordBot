@@ -7,8 +7,8 @@ Some of the converters within are included provisionally and are marked as such.
 """
 import functools
 import re
-import datetime
-from dateutil import relativedelta
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
     Generic,
@@ -69,7 +69,7 @@ TIME_RE = re.compile(TIME_RE_STRING, re.I)
 
 def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional[Dict[str, int]]:
     """
-    Local utility function to match TIME_RE string above to user input for both parse_timedelta and parse_datetimedelta
+    Local utility function to match TIME_RE string above to user input for both parse_timedelta and parse_relativedelta
     """
     matches = TIME_RE.match(string_to_match)
     if matches:
@@ -86,10 +86,10 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
 def parse_timedelta(
     argument: str,
     *,
-    maximum: Optional[datetime.timedelta] = None,
-    minimum: Optional[datetime.timedelta] = None,
+    maximum: Optional[timedelta] = None,
+    minimum: Optional[timedelta] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[datetime.timedelta]:
+) -> Optional[timedelta]:
     """
     This converts a user provided string into a timedelta
 
@@ -130,7 +130,7 @@ def parse_timedelta(
     params = _parse_and_match(argument, allowed_units)
     if params:
         try:
-            delta = datetime.timedelta(**params)
+            delta = timedelta(**params)
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
@@ -151,13 +151,13 @@ def parse_timedelta(
     return None
 
 
-def parse_datetimedelta(
+def parse_relativedelta(
     argument: str,
     *,
-    maximum: Optional[datetime.datetime] = None,
-    minimum: Optional[datetime.datetime] = None,
+    maximum: Optional[relativedelta] = None,
+    minimum: Optional[relativedelta] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[datetime.datetime]:
+) -> Optional[relativedelta]:
     """
     This converts a user provided string into a datetime with offset from NOW
 
@@ -168,9 +168,9 @@ def parse_datetimedelta(
     ----------
     argument : str
         The user provided input
-    maximum : Optional[datetime]
+    maximum : Optional[relativedelta]
         If provided, any parsed value higher than this will raise an exception
-    minimum : Optional[datetime]
+    minimum : Optional[relativedelta]
         If provided, any parsed value lower than this will raise an exception
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
@@ -179,8 +179,8 @@ def parse_datetimedelta(
 
     Returns
     -------
-    Optional[datetime]
-        If matched, the datetime+offset which was parsed. This can return `None`
+    Optional[relativedelta]
+        If matched, the relativedelta which was parsed. This can return `None`
 
     Raises
     ------
@@ -200,25 +200,24 @@ def parse_datetimedelta(
     params = _parse_and_match(argument, allowed_units)
     if params:
         try:
-            delta = relativedelta.relativedelta(**params)
-            new_timestamp = datetime.datetime.now() + delta
+            delta = relativedelta(**params)
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
             )
-        if maximum and maximum < new_timestamp:
+        if maximum and maximum < delta:
             raise BadArgument(
                 _(
                     "This amount of time is too large for this command. (Maximum: {maximum})"
-                ).format(maximum=maximum.isoformat())
+                ).format(maximum=humanize_timedelta(timedelta=maximum))
             )
-        if minimum and new_timestamp < minimum:
+        if minimum and delta < minimum:
             raise BadArgument(
                 _(
                     "This amount of time is too small for this command. (Minimum: {minimum})"
-                ).format(minimum=minimum.isoformat())
+                ).format(minimum=humanize_timedelta(timedelta=minimum))
             )
-        return new_timestamp
+        return delta
     return None
 
 
@@ -326,7 +325,7 @@ else:
 
 
 if TYPE_CHECKING:
-    TimedeltaConverter = datetime.timedelta
+    TimedeltaConverter = timedelta
 else:
 
     class TimedeltaConverter(dpy_commands.Converter):
@@ -359,7 +358,7 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> datetime.timedelta:
+        async def convert(self, ctx: "Context", argument: str) -> timedelta:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
@@ -380,10 +379,10 @@ if TYPE_CHECKING:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[datetime.timedelta] = None,
-        minimum: Optional[datetime.timedelta] = None,
+        maximum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[datetime.timedelta]:
+    ) -> Type[timedelta]:
         ...
 
 
@@ -392,10 +391,10 @@ else:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[datetime.timedelta] = None,
-        minimum: Optional[datetime.timedelta] = None,
+        maximum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[datetime.timedelta]:
+    ) -> Type[timedelta]:
         """
         This creates a type suitable for typechecking which works with discord.py's
         commands.
@@ -439,22 +438,22 @@ else:
 
 
 if TYPE_CHECKING:
-    DatetimeDeltaConverter = datetime.datetime
+    RelativeDeltaConverter = relativedelta
 else:
 
-    class DatetimeDeltaConverter(dpy_commands.Converter):
+    class RelativeDeltaConveter(dpy_commands.Converter):
         """
-        This is a converter for datetimes.
+        This is a converter for relative deltas.
         The units should be in order from largest to smallest.
         This works with or without whitespace.
 
-        See `parse_datetimedelta` for more information about how this functions.
+        See `parse_relativedelta` for more information about how this functions.
 
         Attributes
         ----------
-        maximum : Optional[datetime]
+        maximum : Optional[relativedelta]
             If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[datetime]
+        minimum : Optional[relativedelta]
             If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
@@ -472,11 +471,11 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> datetime.datetime:
+        async def convert(self, ctx: "Context", argument: str) -> relativedelta:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
-            delta = parse_datetimedelta(
+            delta = parse_relativedelta(
                 argument,
                 minimum=self.minimum,
                 maximum=self.maximum,
@@ -490,36 +489,36 @@ else:
 
 if TYPE_CHECKING:
 
-    def get_datetimedelta_converter(
+    def get_relativedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[datetime.datetime] = None,
-        minimum: Optional[datetime.datetime] = None,
+        maximum: Optional[relativedelta] = None,
+        minimum: Optional[relativedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[datetime.datetime]:
+    ) -> Type[relativedelta]:
         ...
 
 
 else:
 
-    def get_datetimedelta_converter(
+    def get_relativedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[datetime.datetime] = None,
-        minimum: Optional[datetime.datetime] = None,
+        maximum: Optional[relativedelta] = None,
+        minimum: Optional[relativedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[datetime.datetime]:
+    ) -> Type[relativedelta]:
         """
         This creates a type suitable for typechecking which works with discord.py's
         commands.
 
-        See `parse_datetimedelta` for more information about how this functions.
+        See `parse_relativedelta` for more information about how this functions.
 
         Parameters
         ----------
-        maximum : Optional[datetime]
+        maximum : Optional[relativedelta]
             If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[datetime]
+        minimum : Optional[relativedelta]
             If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
@@ -533,7 +532,7 @@ else:
         Returns
         -------
         type
-            The converter class, which will be a subclass of `DatetimeDeltaConverter`
+            The converter class, which will be a subclass of `RelativeDeltaConverter`
         """
 
         class PartialMeta(type):
@@ -545,7 +544,7 @@ else:
                 maximum=maximum,
             )
 
-        class ValidatedConverter(DatetimeDeltaConverter, metaclass=PartialMeta):
+        class ValidatedConverter(RelativeDeltaConverter, metaclass=PartialMeta):
             pass
 
         return ValidatedConverter
