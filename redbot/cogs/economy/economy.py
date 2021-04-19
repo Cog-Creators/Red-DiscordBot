@@ -4,7 +4,7 @@ import random
 from collections import defaultdict, deque, namedtuple
 from enum import Enum
 from math import ceil
-from typing import cast, Iterable, Union, Literal
+from typing import cast, Iterable, Union, Literal, Optional
 
 import discord
 
@@ -555,7 +555,7 @@ class Economy(commands.Cog):
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
+    async def leaderboard(self, ctx: commands.Context, top: Optioonal[int] = 10, show_global: bool = False):
         """Print the leaderboard.
 
         Defaults to top 10.
