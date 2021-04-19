@@ -7,7 +7,8 @@ Some of the converters within are included provisionally and are marked as such.
 """
 import functools
 import re
-from datetime import timedelta
+import datetime as dt
+from dateutil import relativedelta
 from typing import (
     TYPE_CHECKING,
     Generic,
@@ -66,13 +67,29 @@ TIME_RE_STRING = r"\s?".join(
 TIME_RE = re.compile(TIME_RE_STRING, re.I)
 
 
+def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional[Dict[str, int]]:
+    """
+    Local utility function to match TIME_RE string above to user input for both parse_timedelta and parse_datetimedelta
+    """
+    matches = TIME_RE.match(string_to_match)
+    if matches:
+        params = {k: int(v) for k, v in matches.groupdict().items() if v is not None}
+        for k in params.keys():
+            if k not in allowed_units:
+                raise BadArgument(
+                    _("`{unit}` is not a valid unit of time for this command").format(unit=k)
+                )
+        return params
+    return None
+
+
 def parse_timedelta(
     argument: str,
     *,
-    maximum: Optional[timedelta] = None,
-    minimum: Optional[timedelta] = None,
+    maximum: Optional[dt.timedelta] = None,
+    minimum: Optional[dt.timedelta] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[timedelta]:
+) -> Optional[dt.timedelta]:
     """
     This converts a user provided string into a timedelta
 
@@ -90,7 +107,7 @@ def parse_timedelta(
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
-        parser understands. (``years``, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        parser understands. (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
 
     Returns
     -------
@@ -103,7 +120,74 @@ def parse_timedelta(
         If the argument passed uses a unit not allowed, but understood
         or if the value is out of bounds.
     """
-    matches = TIME_RE.match(argument)
+    allowed_units = allowed_units or [
+        "weeks",
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+    ]
+    params = _parse_and_match(argument, allowed_units)
+    if params:
+        try:
+            delta = dt.timedelta(**params)
+        except OverflowError:
+            raise BadArgument(
+                _("The time set is way too high, consider setting something reasonable.")
+            )
+        if maximum and maximum < delta:
+            raise BadArgument(
+                _(
+                    "This amount of time is too large for this command. (Maximum: {maximum})"
+                ).format(maximum=humanize_timedelta(timedelta=maximum))
+            )
+        if minimum and delta < minimum:
+            raise BadArgument(
+                _(
+                    "This amount of time is too small for this command. (Minimum: {minimum})"
+                ).format(minimum=humanize_timedelta(timedelta=minimum))
+            )
+        return delta
+    return None
+
+
+def parse_datetimedelta(
+    argument: str,
+    *,
+    maximum: Optional[dt.datetime] = None,
+    minimum: Optional[dt.datetime] = None,
+    allowed_units: Optional[List[str]] = None,
+) -> Optional[dt.datetime]:
+    """
+    This converts a user provided string into a datetime with offset from NOW
+
+    The units should be in order from largest to smallest.
+    This works with or without whitespace.
+
+    Parameters
+    ----------
+    argument : str
+        The user provided input
+    maximum : Optional[datetime]
+        If provided, any parsed value higher than this will raise an exception
+    minimum : Optional[datetime]
+        If provided, any parsed value lower than this will raise an exception
+    allowed_units : Optional[List[str]]
+        If provided, you can constrain a user to expressing the amount of time
+        in specific units. The units you can chose to provide are the same as the
+        parser understands. (``years``, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+
+    Returns
+    -------
+    Optional[datetime]
+        If matched, the datetime+offset which was parsed. This can return `None`
+
+    Raises
+    ------
+    BadArgument
+        If the argument passed uses a unit not allowed, but understood
+        or if the value is out of bounds.
+    """
     allowed_units = allowed_units or [
         "years",
         "months",
@@ -113,43 +197,28 @@ def parse_timedelta(
         "minutes",
         "seconds",
     ]
-    if matches:
-        params = {k: int(v) for k, v in matches.groupdict().items() if v is not None}
-        for k in params.keys():
-            if k not in allowed_units:
-                raise BadArgument(
-                    _("`{unit}` is not a valid unit of time for this command").format(unit=k)
-                )
-        if params:
-            # in order to support years (which python timedelta does not natively support)
-            # we need to convert to days (365)
-            if "years" in params:
-                params["days"] = params.get("days", 0) + (365 * params["years"])
-                del params["years"]
-            # in order to support months (which again, python timedelta doesn't natively support)
-            # we need to add (30 * months) days
-            if "months" in params:
-                params["days"] = params.get("days", 0) + (30 * params["months"])
-                del params["months"]
-            try:
-                delta = timedelta(**params)
-            except OverflowError:
-                raise BadArgument(
-                    _("The time set is way too high, consider setting something reasonable.")
-                )
-            if maximum and maximum < delta:
-                raise BadArgument(
-                    _(
-                        "This amount of time is too large for this command. (Maximum: {maximum})"
-                    ).format(maximum=humanize_timedelta(timedelta=maximum))
-                )
-            if minimum and delta < minimum:
-                raise BadArgument(
-                    _(
-                        "This amount of time is too small for this command. (Minimum: {minimum})"
-                    ).format(minimum=humanize_timedelta(timedelta=minimum))
-                )
-            return delta
+    params = _parse_and_match(argument, allowed_units)
+    if params:
+        try:
+            delta = relativedelta.relativedelta(**params)
+            new_timestamp = dt.datetime.now() + delta
+        except OverflowError:
+            raise BadArgument(
+                _("The time set is way too high, consider setting something reasonable.")
+            )
+        if maximum and maximum < new_timestamp:
+            raise BadArgument(
+                _(
+                    "This amount of time is too large for this command. (Maximum: {maximum})"
+                ).format(maximum=maximum.isoformat())
+            )
+        if minimum and new_timestamp < minimum:
+            raise BadArgument(
+                _(
+                    "This amount of time is too small for this command. (Minimum: {minimum})"
+                ).format(minimum=minimum.isoformat())
+            )
+        return new_timestamp
     return None
 
 
@@ -257,7 +326,7 @@ else:
 
 
 if TYPE_CHECKING:
-    TimedeltaConverter = timedelta
+    TimedeltaConverter = dt.timedelta
 else:
 
     class TimedeltaConverter(dpy_commands.Converter):
@@ -290,7 +359,7 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> timedelta:
+        async def convert(self, ctx: "Context", argument: str) -> dt.timedelta:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
@@ -311,10 +380,10 @@ if TYPE_CHECKING:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[timedelta] = None,
-        minimum: Optional[timedelta] = None,
+        maximum: Optional[dt.timedelta] = None,
+        minimum: Optional[dt.timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[timedelta]:
+    ) -> Type[dt.timedelta]:
         ...
 
 
@@ -323,10 +392,10 @@ else:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[timedelta] = None,
-        minimum: Optional[timedelta] = None,
+        maximum: Optional[dt.timedelta] = None,
+        minimum: Optional[dt.timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[timedelta]:
+    ) -> Type[dt.timedelta]:
         """
         This creates a type suitable for typechecking which works with discord.py's
         commands.
@@ -364,6 +433,119 @@ else:
             )
 
         class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
+            pass
+
+        return ValidatedConverter
+
+
+if TYPE_CHECKING:
+    DatetimeDeltaConverter = dt.datetime
+else:
+
+    class DatetimeDeltaConverter(dpy_commands.Converter):
+        """
+        This is a converter for datetimes.
+        The units should be in order from largest to smallest.
+        This works with or without whitespace.
+
+        See `parse_datetimedelta` for more information about how this functions.
+
+        Attributes
+        ----------
+        maximum : Optional[datetime]
+            If provided, any parsed value higher than this will raise an exception
+        minimum : Optional[datetime]
+            If provided, any parsed value lower than this will raise an exception
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``years``, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+        """
+
+        def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
+            self.allowed_units = allowed_units
+            self.default_unit = default_unit
+            self.minimum = minimum
+            self.maximum = maximum
+
+        async def convert(self, ctx: "Context", argument: str) -> dt.datetime:
+            if self.default_unit and argument.isdecimal():
+                argument = argument + self.default_unit
+
+            delta = parse_datetimedelta(
+                argument,
+                minimum=self.minimum,
+                maximum=self.maximum,
+                allowed_units=self.allowed_units,
+            )
+
+            if delta is not None:
+                return delta
+            raise BadArgument()  # This allows this to be a required argument.
+
+
+if TYPE_CHECKING:
+
+    def get_datetimedelta_converter(
+        *,
+        default_unit: Optional[str] = None,
+        maximum: Optional[dt.datetime] = None,
+        minimum: Optional[dt.datetime] = None,
+        allowed_units: Optional[List[str]] = None,
+    ) -> Type[dt.datetime]:
+        ...
+
+
+else:
+
+    def get_datetimedelta_converter(
+        *,
+        default_unit: Optional[str] = None,
+        maximum: Optional[dt.datetime] = None,
+        minimum: Optional[dt.datetime] = None,
+        allowed_units: Optional[List[str]] = None,
+    ) -> Type[dt.datetime]:
+        """
+        This creates a type suitable for typechecking which works with discord.py's
+        commands.
+
+        See `parse_datetimedelta` for more information about how this functions.
+
+        Parameters
+        ----------
+        maximum : Optional[datetime]
+            If provided, any parsed value higher than this will raise an exception
+        minimum : Optional[datetime]
+            If provided, any parsed value lower than this will raise an exception
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``years`, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+
+        Returns
+        -------
+        type
+            The converter class, which will be a subclass of `DatetimeDeltaConverter`
+        """
+
+        class PartialMeta(type):
+            __call__ = functools.partialmethod(
+                type(DictConverter).__call__,
+                allowed_units=allowed_units,
+                default_unit=default_unit,
+                minimum=minimum,
+                maximum=maximum,
+            )
+
+        class ValidatedConverter(DatetimeDeltaConverter, metaclass=PartialMeta):
             pass
 
         return ValidatedConverter
