@@ -3294,7 +3294,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The maximum tagline length is 2048 characters.
         This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
-        
+
         You can use `[\u200bp]` in your tagline, which will be replaced by the bot's prefix.
 
         **Examples:**
