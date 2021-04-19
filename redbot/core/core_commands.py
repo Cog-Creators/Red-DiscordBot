@@ -4271,8 +4271,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
 
-        command_obj.is_disabled_in_guild(ctx.guild)
-
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")
