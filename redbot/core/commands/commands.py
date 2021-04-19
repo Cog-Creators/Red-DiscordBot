@@ -610,6 +610,9 @@ class Command(CogCommandMixin, DPYCommand):
         else:
             return True
 
+    def is_disabled_in_guild(self, guild: discord.Guild): 
+        print('just trying with guild ')
+
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
         parents = self.parents
