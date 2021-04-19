@@ -4,6 +4,7 @@ import pytest
 from discord.ext import commands as dpy_commands
 
 from redbot.core import commands
+from redbot.core.commands import converter
 
 
 @pytest.fixture(scope="session")
@@ -49,3 +50,9 @@ def test_dpy_commands_reexports():
     missing_attrs = dpy_attrs - set(commands.__dict__.keys())
 
     assert not missing_attrs
+
+
+def test_converter_timedelta():
+    assert converter.parse_timedelta("1 year") == converter.parse_timedelta("365 days")
+    assert converter.parse_timedelta("1 month") == converter.parse_timedelta("30 days")
+    assert converter.parse_timedelta("1 month 10 days") == converter.parse_timedelta("40 days")
