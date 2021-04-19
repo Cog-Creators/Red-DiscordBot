@@ -83,8 +83,11 @@ In that file, place the following code:
 
     from redbot.core import commands
 
-    class Mycog(commands.Cog):
+    class MyCog(commands.Cog):
         """My custom cog"""
+
+        def __init__(self, bot):
+            self.bot = bot
 
         @commands.command()
         async def mycom(self, ctx):
@@ -96,11 +99,11 @@ Open :code:`__init__.py`. In that file, place the following:
 
 .. code-block:: python
 
-    from .mycog import Mycog
+    from .mycog import MyCog
 
 
     def setup(bot):
-        bot.add_cog(Mycog())
+        bot.add_cog(MyCog(bot))
 
 Make sure that both files are saved.
 

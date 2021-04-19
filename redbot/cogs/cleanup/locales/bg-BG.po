@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-16 19:14+0000\n"
+"POT-Creation-Date: 2021-04-04 09:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -33,12 +33,12 @@ msgstr ""
 msgid "Cancelled."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:127
+#: redbot/cogs/cleanup/cleanup.py:144
 #, docstring
 msgid "Base command for deleting messages."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:137
+#: redbot/cogs/cleanup/cleanup.py:154
 #, docstring
 msgid "Delete the last X messages matching the specified text.\n\n"
 "        Example:\n"
@@ -50,7 +50,7 @@ msgid "Delete the last X messages matching the specified text.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:192
+#: redbot/cogs/cleanup/cleanup.py:209
 #, docstring
 msgid "Delete the last X messages from a specified user.\n\n"
 "        Examples:\n"
@@ -63,28 +63,30 @@ msgid "Delete the last X messages from a specified user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:262
+#: redbot/cogs/cleanup/cleanup.py:282
 #, docstring
 msgid "Delete all messages after a specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
 "        settings, 'appearance' tab. Then right click a message\n"
-"        and copy its id.\n\n"
+"        and copy its id.\n"
+"        Replying to a message will cleanup all messages after it.\n\n"
 "        **Arguments:**\n\n"
 "        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:280 redbot/cogs/cleanup/cleanup.py:326
+#: redbot/cogs/cleanup/cleanup.py:303 redbot/cogs/cleanup/cleanup.py:357
 msgid "Message not found."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:307
+#: redbot/cogs/cleanup/cleanup.py:335
 #, docstring
 msgid "Deletes X messages before the specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
 "        settings, 'appearance' tab. Then right click a message\n"
-"        and copy its id.\n\n"
+"        and copy its id.\n"
+"        Replying to a message will cleanup all messages before it.\n\n"
 "        **Arguments:**\n\n"
 "        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.\n"
 "        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
@@ -92,7 +94,7 @@ msgid "Deletes X messages before the specified message.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:354
+#: redbot/cogs/cleanup/cleanup.py:390
 #, docstring
 msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\n\n"
 "        The first message ID should be the older message and the second one the newer.\n\n"
@@ -105,7 +107,7 @@ msgid "Delete the messages between Message One and Message Two, providing the me
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:402
+#: redbot/cogs/cleanup/cleanup.py:438
 #, docstring
 msgid "Delete the last X messages.\n\n"
 "        Example:\n"
@@ -116,7 +118,7 @@ msgid "Delete the last X messages.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:440
+#: redbot/cogs/cleanup/cleanup.py:476
 #, docstring
 msgid "Clean up command messages and messages from the bot.\n\n"
 "        Can only cleanup custom commands and alias commands if those cogs are loaded.\n\n"
@@ -126,7 +128,7 @@ msgid "Clean up command messages and messages from the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:528
+#: redbot/cogs/cleanup/cleanup.py:564
 #, docstring
 msgid "Clean up messages owned by the bot.\n\n"
 "        By default, all messages are cleaned. If a second argument is specified,\n"
@@ -142,7 +144,7 @@ msgid "Clean up messages owned by the bot.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:614
+#: redbot/cogs/cleanup/cleanup.py:650
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"

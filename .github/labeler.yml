@@ -45,6 +45,7 @@
   - docs/framework_datamanager.rst
   - docs/framework_events.rst
   - docs/cog_guides/cog_manager_ui.rst
+  - docs/cog_guides/core.rst
 "Category: CI":
   - .github/workflows/*
 "Category: Cleanup Cog":

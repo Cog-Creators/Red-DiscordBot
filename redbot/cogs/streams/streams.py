@@ -209,6 +209,7 @@ class Streams(commands.Cog):
         await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(
+            _bot=self.bot,
             name=channel_name,
             token=token,
             bearer=self.ttv_bearer_cache.get("access_token", None),
@@ -224,21 +225,25 @@ class Streams(commands.Cog):
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                _bot=self.bot, name=channel_id_or_name, token=apikey, config=self.config
+            )
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                _bot=self.bot, id=channel_id_or_name, token=apikey, config=self.config
+            )
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def smashcast(self, ctx: commands.Context, channel_name: str):
         """Check if a smashcast channel is live."""
-        stream = HitboxStream(name=channel_name)
+        stream = HitboxStream(_bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
-        stream = PicartoStream(name=channel_name)
+        stream = PicartoStream(_bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
     async def check_online(
@@ -396,19 +401,22 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token, config=self.config)
+                stream = _class(_bot=self.bot, id=channel_name, token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
+                    _bot=self.bot,
                     name=channel_name,
                     token=token.get("client_id"),
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
             else:
                 if is_yt:
-                    stream = _class(name=channel_name, token=token, config=self.config)
+                    stream = _class(
+                        _bot=self.bot, name=channel_name, token=token, config=self.config
+                    )
                 else:
-                    stream = _class(name=channel_name, token=token)
+                    stream = _class(_bot=self.bot, name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
@@ -707,23 +715,30 @@ class Streams(commands.Cog):
     async def _stream_alerts(self):
         await self.bot.wait_until_ready()
         while True:
-            try:
-                await self.check_streams()
-            except asyncio.CancelledError:
-                pass
+            await self.check_streams()
             await asyncio.sleep(await self.config.refresh_timer())
 
     async def _send_stream_alert(
-        self, stream, channel: discord.TextChannel, embed: discord.Embed, content: str = None
+        self,
+        stream,
+        channel: discord.TextChannel,
+        embed: discord.Embed,
+        content: str = None,
+        *,
+        is_schedule: bool = False,
     ):
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
         )
-        stream._messages_cache.append(m)
+        message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
+        if is_schedule:
+            message_data["is_schedule"] = True
+        stream.messages.append(message_data)
 
     async def check_streams(self):
+        to_remove = []
         for stream in self.streams:
             try:
                 try:
@@ -738,20 +753,30 @@ class Streams(commands.Cog):
 
                     else:
                         embed = await stream.is_online()
+                except StreamNotFound:
+                    log.info("Stream with name %s no longer exists. Removing...", stream.name)
+                    to_remove.append(stream)
+                    continue
                 except OfflineStream:
-                    if not stream._messages_cache:
+                    if not stream.messages:
                         continue
-                    for message in stream._messages_cache:
-                        if await self.bot.cog_disabled_in_guild(self, message.guild):
+
+                    for msg_data in stream.iter_messages():
+                        partial_msg = msg_data["partial_message"]
+                        if partial_msg is None:
                             continue
-                        autodelete = await self.config.guild(message.guild).autodelete()
-                        if autodelete:
-                            with contextlib.suppress(discord.NotFound):
-                                await message.delete()
-                    stream._messages_cache.clear()
+                        if await self.bot.cog_disabled_in_guild(self, partial_msg.guild):
+                            continue
+                        if not await self.config.guild(partial_msg.guild).autodelete():
+                            continue
+
+                        with contextlib.suppress(discord.NotFound):
+                            await partial_msg.delete()
+
+                    stream.messages.clear()
                     await self.save_streams()
                 else:
-                    if stream._messages_cache:
+                    if stream.messages:
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
@@ -767,7 +792,7 @@ class Streams(commands.Cog):
                             continue
                         if is_schedule:
                             # skip messages and mentions
-                            await self._send_stream_alert(stream, channel, embed)
+                            await self._send_stream_alert(stream, channel, embed, is_schedule=True)
                             await self.save_streams()
                             continue
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
@@ -818,6 +843,11 @@ class Streams(commands.Cog):
             except Exception as e:
                 log.error("An error has occured with Streams. Please report it.", exc_info=e)
 
+        if to_remove:
+            for stream in to_remove:
+                self.streams.remove(stream)
+            await self.save_streams()
+
     async def _get_mention_str(
         self, guild: discord.Guild, channel: discord.TextChannel
     ) -> Tuple[str, List[discord.Role]]:
@@ -864,17 +894,6 @@ class Streams(commands.Cog):
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
-            raw_msg_cache = raw_stream["messages"]
-            raw_stream["_messages_cache"] = []
-            for raw_msg in raw_msg_cache:
-                chn = self.bot.get_channel(raw_msg["channel"])
-                if chn is not None:
-                    try:
-                        msg = await chn.fetch_message(raw_msg["message"])
-                    except discord.HTTPException:
-                        pass
-                    else:
-                        raw_stream["_messages_cache"].append(msg)
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
                 if _class.__name__ == "TwitchStream":
@@ -884,6 +903,7 @@ class Streams(commands.Cog):
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config
                     raw_stream["token"] = token
+            raw_stream["_bot"] = self.bot
             streams.append(_class(**raw_stream))
 
         return streams

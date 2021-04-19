@@ -4,7 +4,7 @@ import asyncio
 import datetime
 
 from abc import ABC, abstractmethod
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
@@ -41,7 +41,7 @@ class MixinMeta(ABC):
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
 
-    skip_votes: MutableMapping[discord.Guild, List[discord.Member]]
+    skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
     _daily_global_playlist_cache: MutableMapping[int, bool]
@@ -62,12 +62,14 @@ class MixinMeta(ABC):
     player_automated_timer_task: Optional[asyncio.Task]
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
-
+    _ws_resume: defaultdict[Any, asyncio.Event]
+    _ws_op_codes: defaultdict[int, asyncio.LifoQueue]
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
 
     _last_ll_update: datetime.datetime
     _ll_guild_updates: Set[int]
+    _diconnected_shard: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):
@@ -304,6 +306,14 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _playlist_check(self, ctx: commands.Context) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_bundled_playlist(self, forced: bool = None) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def decode_track(self, track: str, decode_errors: str = "") -> MutableMapping:
         raise NotImplementedError()
 
     @abstractmethod

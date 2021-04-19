@@ -17,60 +17,60 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "He intentat fer una cosa per la qual Discord m'ha denegat els permisos. La vostra comanda no s'ha pogut completar correctament."
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc donar {role.name} a {member.display_name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc treure {role.name} a {member.display_name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc editar {role.name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc deixar-te donar {role.name} a {member.display_name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc deixar-te treure {role.name} a {member.display_name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc deixar-te editar {role.name} perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
-msgstr ""
+msgstr "Necessito permís de gestió de rols per fer-ho."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "Ja estic anunciant alguna cosa. Si voleu fer un anunci diferent, primer utilitzeu `{prefix}announce cancel`."
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr ""
+msgstr "Una col·lecció d’utilitats d’administració de servidors."
 
 #: redbot/cogs/admin/admin.py:162
 msgid "{member.display_name} already has the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} ja té el rol {role.name}."
 
 #: redbot/cogs/admin/admin.py:182
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "He afegit amb èxit {role.name} a {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:192
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr ""
+msgstr "{member.display_name} no té el rol {role.name}."
 
 #: redbot/cogs/admin/admin.py:212
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "He tret amb èxit {role.name} a {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
@@ -79,7 +79,11 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Afegir un rol a un usuari.\n\n"
+"        Fer servir cometes si el rol té espais.\n"
+"        Si l'usuari es deixa en blanc el valor per defecte és l'autor del comandament.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
@@ -88,12 +92,16 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Treu un rol d'un usuari.\n\n"
+"        Fer servir cometes si el rol té espais.\n"
+"        Si l'usuari es deixa en blanc el valor per defecte és l'autor del comandament.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
 msgid "Edit role settings."
-msgstr ""
+msgstr "Editar la configuració del rol."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
@@ -106,11 +114,19 @@ msgid "\n"
 "            `[p]editrole colour \"The Transistor\" #ff0000`\n"
 "            `[p]editrole colour Test #ff9900`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Editar el color d'un rol.\n\n"
+"        Fes servir cometes dobles si el rol té espais.\n"
+"        El color ha d'estar en format hexadecimal.\n"
+"        [Selector de color en línia](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Exemples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
-msgstr ""
+msgstr "Fet."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
@@ -120,34 +136,39 @@ msgid "\n"
 "        Example:\n"
 "            `[p]editrole name \"The Transistor\" Test`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Editar el nom d'un rol.\n\n"
+"        Fes servir cometes dobles si el rol o el nom té espais.\n\n"
+"        Exemple:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
 msgid "Announce a message to all servers the bot is in."
-msgstr ""
+msgstr "Anunciar un missatge a tots els servidors en què es troba el bot."
 
 #: redbot/cogs/admin/admin.py:334
 msgid "The announcement has begun."
-msgstr ""
+msgstr "L’anunci ha començat."
 
 #: redbot/cogs/admin/admin.py:341
 #, docstring
 msgid "Cancel a running announce."
-msgstr ""
+msgstr "Cancel·lar un anunci en curs."
 
 #: redbot/cogs/admin/admin.py:343
 msgid "There is no currently running announcement."
-msgstr ""
+msgstr "Actualment no hi ha cap anunci en curs."
 
 #: redbot/cogs/admin/admin.py:346
 msgid "The current announcement has been cancelled."
-msgstr ""
+msgstr "L'anunci actual s'ha cancel·lat."
 
 #: redbot/cogs/admin/admin.py:352
 #, docstring
 msgid "Change how announcements are sent in this guild."
-msgstr ""
+msgstr "Canvia com s’envien els anuncis en aquest servidor."
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
@@ -155,16 +176,19 @@ msgid "\n"
 "        Change the channel where the bot will send announcements.\n\n"
 "        If channel is left blank it defaults to the current channel.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Canvieu el canal on el bot enviarà anuncis.\n\n"
+"        Si el canal es deixa en blanc el canal per defecte és el canal actual.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
-msgstr ""
+msgstr "El canal d'anuncis s'ha establert a {channel.mention}"
 
 #: redbot/cogs/admin/admin.py:371
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Treu el canal per als anuncis."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
@@ -173,7 +197,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Afegeix o treu un rol a tu mateix.\n\n"
+"        Els administradors del servidor han d'haver configurat la funció com a configurable per l'usuari.\n"
+"        NOTA: El rol és sensible a majúscules!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:409
 #, docstring
@@ -182,7 +210,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Afegeix un rol a tu mateix.\n\n"
+"        Els administradors del servidor han d'haver configurat la funció com a configurable per l'usuari.\n"
+"        NOTA: El rol és sensible a majúscules!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:420
 #, docstring
@@ -191,24 +223,31 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Treu un rol de tu mateix.\n\n"
+"        Els administradors del servidor han d'haver configurat la funció com a configurable per l'usuari.\n"
+"        NOTA: El rol és sensible a majúscules!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:431
 #, docstring
 msgid "\n"
 "        Lists all available selfroles.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Llista tots els selfrols disponibles.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:441
 msgid "Available Selfroles:\n"
 "{selfroles}"
-msgstr ""
+msgstr "Selfroles disponibles:\n"
+"{selfroles}"
 
 #: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
-msgstr ""
+msgstr "Gestiona selfroles."
 
 #: redbot/cogs/admin/admin.py:452
 #, docstring
@@ -216,19 +255,22 @@ msgid "\n"
 "        Add a role to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Afegeix un rol a la llista de selfroles disponibles.\n\n"
+"        NOTA: El rol és sensible a majúscules!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:459
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc deixar-te afegir {role.name} com a selfrole perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:467
 msgid "Added."
-msgstr ""
+msgstr "Afegit."
 
 #: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
-msgstr ""
+msgstr "Aquest rol ja és un selfrole."
 
 #: redbot/cogs/admin/admin.py:474
 #, docstring
@@ -236,42 +278,45 @@ msgid "\n"
 "        Remove a role from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Treu un rol de la llista de selfroles disponibles.\n\n"
+"        NOTA: El rol és sensible a majúscules!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:481
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "No puc deixar-te treure {role.name} de ser un selfrole perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
 #: redbot/cogs/admin/admin.py:489
 msgid "Removed."
-msgstr ""
+msgstr "Esborrat."
 
 #: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Bloqueja el bot només als seus servidors actuals."
 
 #: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "El bot ja no està bloquejat pel servidor."
 
 #: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "El bot està ara bloquejat pel servidor."
 
 #: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
-msgstr ""
+msgstr "No he pogut anunciar al servidor següent: "
 
 #: redbot/cogs/admin/announcer.py:70
 msgid "I could not announce to the following servers: "
-msgstr ""
+msgstr "No he pogut anunciar als servidor següents: "
 
 #: redbot/cogs/admin/converters.py:12
 msgid "The Admin cog is not loaded."
-msgstr ""
+msgstr "El cog Admin no s'ha carregat."
 
 #: redbot/cogs/admin/converters.py:20
 msgid "The provided role is not a valid selfrole."
-msgstr ""
+msgstr "El rol proporcionat no és un selfrole vàlid."
 

@@ -47,12 +47,12 @@ class Image(commands.Cog):
         """
         pass
 
-    @_imgur.command(name="search")
+    @_imgur.command(name="search", usage="[count] <terms...>")
     async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
-        Use `count` to choose how many images should be returned.
-        Command can return up to 5 images.
+        - `[count]`: How many images should be returned (maximum 5). Defaults to 1.
+        - `<terms...>`: The terms used to search Imgur.
         """
         if count < 1 or count > 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
@@ -98,10 +98,10 @@ class Image(commands.Cog):
     ):
         """Get images from a subreddit.
 
-        You can customize the search with the following options:
-        - `<count>`: number of images to return (up to 5)
-        - `<sort_type>`: new, top
-        - `<window>`: day, week, month, year, all
+        - `<subreddit>`: The subreddit to get images from.
+        - `[count]`: The number of images to return (maximum 5). Defaults to 1.
+        - `[sort_type]`: New, or top results. Defaults to top.
+        - `[window]`: The timeframe, can be the past day, week, month, year or all. Defaults to day.
         """
         if count < 1 or count > 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
@@ -175,9 +175,12 @@ class Image(commands.Cog):
         await ctx.maybe_send_embed(message)
 
     @commands.guild_only()
-    @commands.command()
+    @commands.command(usage="<keywords...>")
     async def gif(self, ctx, *, keywords):
-        """Retrieve the first search result from Giphy."""
+        """Retrieve the first search result from Giphy.
+
+        - `<keywords...>`: The keywords used to search Giphy.
+        """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
@@ -199,9 +202,12 @@ class Image(commands.Cog):
                 await ctx.send(_("Error contacting the Giphy API."))
 
     @commands.guild_only()
-    @commands.command()
+    @commands.command(usage="<keywords...>")
     async def gifr(self, ctx, *, keywords):
-        """Retrieve a random GIF from a Giphy search."""
+        """Retrieve a random GIF from a Giphy search.
+
+        - `<keywords...>`: The keywords used to generate a random GIF.
+        """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(

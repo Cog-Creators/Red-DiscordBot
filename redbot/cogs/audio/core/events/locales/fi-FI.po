@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -14,6 +14,10 @@ msgstr ""
 "X-Crowdin-Language: fi\n"
 "X-Crowdin-File-ID: 670\n"
 "Language: fi_FI\n"
+
+#: redbot/cogs/audio/core/events/cog.py:211
+msgid "Auto Play started."
+msgstr "Automaattinen toisto aloitettu."
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
@@ -71,12 +75,12 @@ msgid "The bot is not connected to a voice channel."
 msgstr "Botti ei ole yhdistettynä puhekanavaan."
 
 #: redbot/cogs/audio/core/events/dpy.py:193
-#: redbot/cogs/audio/core/events/lavalink.py:105
+#: redbot/cogs/audio/core/events/lavalink.py:155
 msgid "Unable to Get Track"
 msgstr "Kappaletta ei voitu hakea"
 
 #: redbot/cogs/audio/core/events/dpy.py:194
-#: redbot/cogs/audio/core/events/lavalink.py:106
+#: redbot/cogs/audio/core/events/lavalink.py:156
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr "En saa kappaletta Lavalinkiltä tällä hetkellä, yritä uudelleen muutaman minuutin kuluttua."
 
@@ -88,45 +92,41 @@ msgstr "Ongelma Discordin kanssa kommunikoitaessa."
 msgid "This error has been reported to the bot owner."
 msgstr "Tämä virhe ilmoitettiin botin omistajalle."
 
-#: redbot/cogs/audio/core/events/lavalink.py:96
+#: redbot/cogs/audio/core/events/lavalink.py:147
 msgid "Couldn't get a valid track."
 msgstr "Kelvollista kappaletta ei saatu."
 
-#: redbot/cogs/audio/core/events/lavalink.py:128
-msgid "Auto Play started."
-msgstr "Automaattinen toisto aloitettu."
-
-#: redbot/cogs/audio/core/events/lavalink.py:143
+#: redbot/cogs/audio/core/events/lavalink.py:182
 msgid "Now Playing"
 msgstr "Nyt toistetaan"
 
-#: redbot/cogs/audio/core/events/lavalink.py:145
+#: redbot/cogs/audio/core/events/lavalink.py:184
 msgid "Track length: {length} | Requested by: {user}"
 msgstr "Kappaleen pituus: {length} | Pyytäjä: {user}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:166
+#: redbot/cogs/audio/core/events/lavalink.py:205
 msgid "Queue ended."
 msgstr "Jono päättyi."
 
-#: redbot/cogs/audio/core/events/lavalink.py:211
+#: redbot/cogs/audio/core/events/lavalink.py:257
 msgid "Multiple Errors Detected"
 msgstr "Useita virheitä havaittu"
 
-#: redbot/cogs/audio/core/events/lavalink.py:212
+#: redbot/cogs/audio/core/events/lavalink.py:258
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr "Monia virheitä havaittiin ja sen vuoksi äänentoisto suljettiin. Jos tämä ongelma jatkuu, ota yhteyttä botin omistajaan, sillä Audio-lisäosa voi olla hetkellisesti poissa käytöstä."
 
-#: redbot/cogs/audio/core/events/lavalink.py:226
+#: redbot/cogs/audio/core/events/lavalink.py:272
 msgid "Track Stuck"
 msgstr "Kappale jumissa"
 
-#: redbot/cogs/audio/core/events/lavalink.py:227
+#: redbot/cogs/audio/core/events/lavalink.py:273
 msgid "Playback of the song has stopped due to an unexcepted error.\n"
 "{error}"
 msgstr "Kappaleen toisto loppui odottamattoman virheen takia.\n"
 "{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:233
+#: redbot/cogs/audio/core/events/lavalink.py:279
 msgid "Track Error"
 msgstr "Kappalevirhe"
 

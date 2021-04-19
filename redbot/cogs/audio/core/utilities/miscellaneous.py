@@ -5,14 +5,14 @@ import functools
 import json
 import logging
 import re
+import struct
 from pathlib import Path
-
 from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 
 import discord
 import lavalink
-
 from discord.embeds import EmptyEmbed
+
 from redbot.core import bank, commands
 from redbot.core.commands import Context
 from redbot.core.i18n import Translator
@@ -22,7 +22,7 @@ from redbot.core.utils.chat_formatting import humanize_number
 from ...apis.playlist_interface import get_all_playlist_for_migration23
 from ...utils import PlaylistScope, task_callback
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
+from ..cog_utils import CompositeMetaClass, DataReader
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 _ = Translator("Audio", Path(__file__))
@@ -338,3 +338,47 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)
+
+    def decode_track(self, track: str, decode_errors: str = "ignore") -> MutableMapping:
+        """
+        Decodes a base64 track string into an AudioTrack object.
+        Parameters
+        ----------
+        track: :class:`str`
+            The base64 track string.
+        decode_errors: :class:`str`
+            The action to take upon encountering erroneous characters within track titles.
+        Returns
+        -------
+        :class:`AudioTrack`
+        """
+        reader = DataReader(track)
+
+        flags = (reader.read_int() & 0xC0000000) >> 30
+        (version,) = (
+            struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
+        )  # pylint: disable=unused-variable
+
+        title = reader.read_utf().decode(errors=decode_errors)
+        author = reader.read_utf().decode()
+        length = reader.read_long()
+        identifier = reader.read_utf().decode()
+        is_stream = reader.read_boolean()
+        uri = reader.read_utf().decode() if reader.read_boolean() else None
+        source = reader.read_utf().decode()
+        position = reader.read_long()  # noqa: F841 pylint: disable=unused-variable
+
+        track_object = {
+            "track": track,
+            "info": {
+                "title": title,
+                "author": author,
+                "length": length,
+                "identifier": identifier,
+                "isStream": is_stream,
+                "uri": uri,
+                "isSeekable": not is_stream,
+            },
+        }
+
+        return track_object
