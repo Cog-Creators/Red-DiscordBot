@@ -4225,7 +4225,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable globally.
         """
-        
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
             await ctx.send(
@@ -4270,7 +4269,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     - `<command>` - The command to disable for the current server.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
-
         if command_obj is None:
             await ctx.send(
                 _("I couldn't find that command. Please note that it is case sensitive.")

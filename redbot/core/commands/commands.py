@@ -611,7 +611,6 @@ class Command(CogCommandMixin, DPYCommand):
             return True
 
     def is_disabled_in_guild(self, guild: discord.Guild) -> bool:
-
         """Checks if this command is disabled in the given guild.
 
         Parameters
