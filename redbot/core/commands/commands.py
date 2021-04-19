@@ -610,9 +610,9 @@ class Command(CogCommandMixin, DPYCommand):
         else:
             return True
 
-    def is_disabled_in_guild(self, guild: discord.Guild) -> bool: 
+    def is_disabled_in_guild(self, guild: discord.Guild) -> bool:
 
-        """Checks if this command is disabled in the given guild. 
+        """Checks if this command is disabled in the given guild.
 
         Parameters
         ----------
@@ -622,17 +622,15 @@ class Command(CogCommandMixin, DPYCommand):
         Returns
         -------
         bool
-            ``True`` if the command is disabled. 
+            ``True`` if the command is disabled.
             ``False`` if the command isn't disabled.
 
         """
-
         disabler = get_command_disabler(guild)
         # If disabler is in self.checks, then command disabled; else the command is enabled
-        if disabler in self.checks: 
+        if disabler in self.checks:
             return True
         return False
-
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
