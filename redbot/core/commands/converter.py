@@ -7,7 +7,7 @@ Some of the converters within are included provisionally and are marked as such.
 """
 import functools
 import re
-import datetime as dt
+import datetime
 from dateutil import relativedelta
 from typing import (
     TYPE_CHECKING,
@@ -86,10 +86,10 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
 def parse_timedelta(
     argument: str,
     *,
-    maximum: Optional[dt.timedelta] = None,
-    minimum: Optional[dt.timedelta] = None,
+    maximum: Optional[datetime.timedelta] = None,
+    minimum: Optional[datetime.timedelta] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[dt.timedelta]:
+) -> Optional[datetime.timedelta]:
     """
     This converts a user provided string into a timedelta
 
@@ -130,7 +130,7 @@ def parse_timedelta(
     params = _parse_and_match(argument, allowed_units)
     if params:
         try:
-            delta = dt.timedelta(**params)
+            delta = datetime.timedelta(**params)
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
@@ -154,10 +154,10 @@ def parse_timedelta(
 def parse_datetimedelta(
     argument: str,
     *,
-    maximum: Optional[dt.datetime] = None,
-    minimum: Optional[dt.datetime] = None,
+    maximum: Optional[datetime.datetime] = None,
+    minimum: Optional[datetime.datetime] = None,
     allowed_units: Optional[List[str]] = None,
-) -> Optional[dt.datetime]:
+) -> Optional[datetime.datetime]:
     """
     This converts a user provided string into a datetime with offset from NOW
 
@@ -201,7 +201,7 @@ def parse_datetimedelta(
     if params:
         try:
             delta = relativedelta.relativedelta(**params)
-            new_timestamp = dt.datetime.now() + delta
+            new_timestamp = datetime.datetime.now() + delta
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
@@ -326,7 +326,7 @@ else:
 
 
 if TYPE_CHECKING:
-    TimedeltaConverter = dt.timedelta
+    TimedeltaConverter = datetime.timedelta
 else:
 
     class TimedeltaConverter(dpy_commands.Converter):
@@ -359,7 +359,7 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> dt.timedelta:
+        async def convert(self, ctx: "Context", argument: str) -> datetime.timedelta:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
@@ -380,10 +380,10 @@ if TYPE_CHECKING:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[dt.timedelta] = None,
-        minimum: Optional[dt.timedelta] = None,
+        maximum: Optional[datetime.timedelta] = None,
+        minimum: Optional[datetime.timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[dt.timedelta]:
+    ) -> Type[datetime.timedelta]:
         ...
 
 
@@ -392,10 +392,10 @@ else:
     def get_timedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[dt.timedelta] = None,
-        minimum: Optional[dt.timedelta] = None,
+        maximum: Optional[datetime.timedelta] = None,
+        minimum: Optional[datetime.timedelta] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[dt.timedelta]:
+    ) -> Type[datetime.timedelta]:
         """
         This creates a type suitable for typechecking which works with discord.py's
         commands.
@@ -439,7 +439,7 @@ else:
 
 
 if TYPE_CHECKING:
-    DatetimeDeltaConverter = dt.datetime
+    DatetimeDeltaConverter = datetime.datetime
 else:
 
     class DatetimeDeltaConverter(dpy_commands.Converter):
@@ -472,7 +472,7 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> dt.datetime:
+        async def convert(self, ctx: "Context", argument: str) -> datetime.datetime:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
@@ -493,10 +493,10 @@ if TYPE_CHECKING:
     def get_datetimedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[dt.datetime] = None,
-        minimum: Optional[dt.datetime] = None,
+        maximum: Optional[datetime.datetime] = None,
+        minimum: Optional[datetime.datetime] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[dt.datetime]:
+    ) -> Type[datetime.datetime]:
         ...
 
 
@@ -505,10 +505,10 @@ else:
     def get_datetimedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[dt.datetime] = None,
-        minimum: Optional[dt.datetime] = None,
+        maximum: Optional[datetime.datetime] = None,
+        minimum: Optional[datetime.datetime] = None,
         allowed_units: Optional[List[str]] = None,
-    ) -> Type[dt.datetime]:
+    ) -> Type[datetime.datetime]:
         """
         This creates a type suitable for typechecking which works with discord.py's
         commands.
