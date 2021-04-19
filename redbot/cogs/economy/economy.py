@@ -556,7 +556,7 @@ class Economy(commands.Cog):
     @commands.command()
     @guild_only_check()
     async def leaderboard(
-        self, ctx: commands.Context, top: Optioonal[int] = 10, show_global: bool = False
+        self, ctx: commands.Context, top: Optional[int] = 10, show_global: bool = False
     ):
         """Print the leaderboard.
 
