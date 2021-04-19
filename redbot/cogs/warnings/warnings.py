@@ -554,8 +554,8 @@ class Warnings(commands.Cog):
                     )
                 await ctx.send_interactive(
                     pagify(msg, shorten_by=58),
-                    box_lang=_("Warnings for {user}").format(
-                        user=user if isinstance(user, discord.Member) else user.id
+                    box_lang=_("Warnings for {member}").format(
+                        member=member if isinstance(member, discord.Member) else member.id
                     ),
                 )
 
