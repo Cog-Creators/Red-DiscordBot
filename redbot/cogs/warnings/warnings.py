@@ -430,7 +430,7 @@ class Warnings(commands.Cog):
                 "mod": ctx.author.id,
             }
         }
-		dm = guild_settings["toggle_dm"]
+        dm = guild_settings["toggle_dm"]
         showmod = guild_settings["show_mod"]
         dm_failed = False
         if dm:
@@ -463,7 +463,6 @@ class Warnings(commands.Cog):
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
-
         await warning_points_add_check(self.config, ctx, user, current_point_count)
 
         toggle_channel = guild_settings["toggle_channel"]
