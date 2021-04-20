@@ -626,9 +626,7 @@ class Command(CogCommandMixin, DPYCommand):
         """
         disabler = get_command_disabler(guild)
         # If disabler is in self.checks, then command disabled; else the command is enabled
-        if disabler in self.checks:
-            return True
-        return False
+        return disabler in self.checks
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
