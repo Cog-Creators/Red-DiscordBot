@@ -154,8 +154,6 @@ def parse_timedelta(
 def parse_relativedelta(
     argument: str,
     *,
-    maximum: Optional[relativedelta] = None,
-    minimum: Optional[relativedelta] = None,
     allowed_units: Optional[List[str]] = None,
 ) -> Optional[relativedelta]:
     """
@@ -168,10 +166,6 @@ def parse_relativedelta(
     ----------
     argument : str
         The user provided input
-    maximum : Optional[relativedelta]
-        If provided, any parsed value higher than this will raise an exception
-    minimum : Optional[relativedelta]
-        If provided, any parsed value lower than this will raise an exception
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
@@ -204,18 +198,6 @@ def parse_relativedelta(
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
-            )
-        if maximum and maximum < delta:
-            raise BadArgument(
-                _(
-                    "This amount of time is too large for this command. (Maximum: {maximum})"
-                ).format(maximum=humanize_timedelta(timedelta=maximum))
-            )
-        if minimum and delta < minimum:
-            raise BadArgument(
-                _(
-                    "This amount of time is too small for this command. (Minimum: {minimum})"
-                ).format(minimum=humanize_timedelta(timedelta=minimum))
             )
         return delta
     return None
@@ -451,10 +433,6 @@ else:
 
         Attributes
         ----------
-        maximum : Optional[relativedelta]
-            If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[relativedelta]
-            If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
@@ -465,11 +443,9 @@ else:
             apply.
         """
 
-        def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
+        def __init__(self, *, allowed_units=None, default_unit=None):
             self.allowed_units = allowed_units
             self.default_unit = default_unit
-            self.minimum = minimum
-            self.maximum = maximum
 
         async def convert(self, ctx: "Context", argument: str) -> relativedelta:
             if self.default_unit and argument.isdecimal():
@@ -477,8 +453,6 @@ else:
 
             delta = parse_relativedelta(
                 argument,
-                minimum=self.minimum,
-                maximum=self.maximum,
                 allowed_units=self.allowed_units,
             )
 
@@ -504,8 +478,6 @@ else:
     def get_relativedelta_converter(
         *,
         default_unit: Optional[str] = None,
-        maximum: Optional[relativedelta] = None,
-        minimum: Optional[relativedelta] = None,
         allowed_units: Optional[List[str]] = None,
     ) -> Type[relativedelta]:
         """
@@ -516,10 +488,6 @@ else:
 
         Parameters
         ----------
-        maximum : Optional[relativedelta]
-            If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[relativedelta]
-            If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
@@ -540,8 +508,6 @@ else:
                 type(DictConverter).__call__,
                 allowed_units=allowed_units,
                 default_unit=default_unit,
-                minimum=minimum,
-                maximum=maximum,
             )
 
         class ValidatedConverter(RelativeDeltaConverter, metaclass=PartialMeta):
