@@ -622,7 +622,6 @@ class Command(CogCommandMixin, DPYCommand):
         -------
         bool
             ``True`` if the command is disabled.
-            ``False`` if the command isn't disabled.
 
         """
         disabler = get_command_disabler(guild)
