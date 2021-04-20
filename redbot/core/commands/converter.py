@@ -441,7 +441,7 @@ if TYPE_CHECKING:
     RelativeDeltaConverter = relativedelta
 else:
 
-    class RelativeDeltaConveter(dpy_commands.Converter):
+    class RelativeDeltaConverter(dpy_commands.Converter):
         """
         This is a converter for relative deltas.
         The units should be in order from largest to smallest.
