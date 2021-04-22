@@ -1,8 +1,6 @@
 name: Bug report
 description: "For bugs that don't involve a command."
-title: ''
 labels: 'Type: Bug'
-assignees: ''
 body:
 - type: markdown
   attributes:
