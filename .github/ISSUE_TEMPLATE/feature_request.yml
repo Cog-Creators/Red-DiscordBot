@@ -1,8 +1,6 @@
 name: Feature request
 description: For feature requests regarding Red itself.
-title: ''
 labels: 'Type: Feature'
-assignees: ''
 body:
 - type: markdown
   attributes:

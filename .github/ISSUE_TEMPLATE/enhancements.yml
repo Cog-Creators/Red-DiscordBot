@@ -1,8 +1,6 @@
 name: Enhancement proposal
 description: For feature requests and improvements related to already existing functionality.
-title: ''
 labels: 'Type: Enhancement'
-assignees: ''
 body:
 - type: markdown
   attributes:
