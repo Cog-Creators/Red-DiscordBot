@@ -1,5 +1,0 @@
-before_script:
-  - source .venv/bin/activate
-
-script:
-  - tox
