@@ -139,6 +139,12 @@ class CogOrCommand(NamedTuple):
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
         ret = None
+
+        # Added as an extra CogOrCommand, in order to encapsulate all cogs or commands
+        if arg == "*":
+            ret = cls(type=None, name="*", obj=None)
+            return ret
+
         if cog := ctx.bot.get_cog(arg):
             ret = cls(type="COG", name=cog.qualified_name, obj=cog)
 

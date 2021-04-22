@@ -582,6 +582,24 @@ class Permissions(commands.Cog):
 
         Handles config.
         """
+        if cog_or_cmd.name == "*":
+            # self.bot.cogs returns a dictionary of cog names and their objects
+            # i.e. {'Core': <redbot.core.core_commands.Core object at 0x10eb26d30>, ...}
+            cogsDictionary = self.bot.cogs
+            for cogName in cogsDictionary:
+
+                cogObject = cogsDictionary[cogName]
+
+                if rule is True:
+                    cogObject.allow_for(model_id, guild_id=guild_id)
+
+                else:
+                    cogObject.deny_to(model_id, guild_id=guild_id)
+
+                async with self.config.custom("COG", cogName.lower()).all() as rules:
+                    rules.setdefault(str(guild_id), {})[str(model_id)] = rule
+            return
+
         if rule is True:
             cog_or_cmd.obj.allow_for(model_id, guild_id=guild_id)
         else:
