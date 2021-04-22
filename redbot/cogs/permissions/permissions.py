@@ -168,9 +168,11 @@ class Permissions(commands.Cog):
         """
         Purpose of this hook is to prevent guild owner lockouts of permissions specifically
         without modifying rule behavior in any other case.
+
         Guild owner is not special cased outside of these configuration commands
         to allow guild owner to restrict the use of potentially damaging commands
         such as, but not limited to, cleanup to specific channels.
+
         Leaving the configuration commands special cased allows guild owners to fix
         any misconfigurations.
         """
@@ -237,6 +239,7 @@ class Permissions(commands.Cog):
         self, ctx: commands.Context, user: discord.Member, *, command: str
     ):
         """Check if a user can run a command.
+
         This will take the current context into account, such as the
         server and text channel.
         """
@@ -299,8 +302,10 @@ class Permissions(commands.Cog):
     @permissions_acl.command(name="setglobal")
     async def permissions_acl_setglobal(self, ctx: commands.Context):
         """Set global rules with a YAML file.
+
         **WARNING**: This will override reset *all* global rules
         to the rules specified in the uploaded file.
+
         This does not validate the names of commands and cogs before
         setting the new rules.
         """
@@ -311,6 +316,7 @@ class Permissions(commands.Cog):
     @permissions_acl.command(name="setserver", aliases=["setguild"])
     async def permissions_acl_setguild(self, ctx: commands.Context):
         """Set rules for this server with a YAML file.
+
         **WARNING**: This will override reset *all* rules in this
         server to the rules specified in the uploaded file.
         """
@@ -350,6 +356,7 @@ class Permissions(commands.Cog):
     @permissions_acl.command(name="updateglobal")
     async def permissions_acl_updateglobal(self, ctx: commands.Context):
         """Update global rules with a YAML file.
+
         This won't touch any rules not specified in the YAML
         file.
         """
@@ -360,6 +367,7 @@ class Permissions(commands.Cog):
     @permissions_acl.command(name="updateserver", aliases=["updateguild"])
     async def permissions_acl_updateguild(self, ctx: commands.Context):
         """Update rules for this server with a YAML file.
+
         This won't touch any rules not specified in the YAML
         file.
         """
@@ -375,9 +383,12 @@ class Permissions(commands.Cog):
         *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Add a global rule to a command.
+
         `<allow_or_deny>` should be one of "allow" or "deny".
+
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
+
         `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
@@ -402,9 +413,12 @@ class Permissions(commands.Cog):
         *who_or_what: GuildUniqueObjectFinder,
     ):
         """Add a rule to a command in this server.
+
         `<allow_or_deny>` should be one of "allow" or "deny".
+
         `<cog_or_command>` is the cog or command to add the rule to.
         This is case sensitive.
+
         `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
@@ -425,8 +439,10 @@ class Permissions(commands.Cog):
         *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a global rule from a command.
+
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
+
         `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
@@ -445,8 +461,10 @@ class Permissions(commands.Cog):
         *who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a server rule from a command.
+
         `<cog_or_command>` is the cog or command to remove the rule
         from. This is case sensitive.
+
         `<who_or_what...>` is one or more users, channels or roles the rule is for.
         """
         for w in who_or_what:
@@ -462,10 +480,13 @@ class Permissions(commands.Cog):
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
         """Set the default rule for a command in this server.
+
         This is the rule a command will default to when no other rule
         is found.
+
         `<allow_or_deny>` should be one of "allow", "deny" or "clear".
         "clear" will reset the default rule.
+
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
@@ -482,10 +503,13 @@ class Permissions(commands.Cog):
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
         """Set the default global rule for a command.
+
         This is the rule a command will default to when no other rule
         is found.
+
         `<allow_or_deny>` should be one of "allow", "deny" or "clear".
         "clear" will reset the default rule.
+
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
@@ -516,6 +540,7 @@ class Permissions(commands.Cog):
     @commands.Cog.listener()
     async def on_cog_add(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
+
         This loads rules whenever a new cog is added.
         """
         if cog is self:
@@ -526,6 +551,7 @@ class Permissions(commands.Cog):
     @commands.Cog.listener()
     async def on_command_add(self, command: commands.Command) -> None:
         """Event listener for `command_add`.
+
         This loads rules whenever a new command is added.
         """
         if command.cog is self:
@@ -551,7 +577,9 @@ class Permissions(commands.Cog):
         self, rule: bool, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int
     ) -> None:
         """Add a rule.
+
         Guild ID should be 0 for global rules.
+
         Handles config.
         """
         if rule is True:
@@ -564,7 +592,9 @@ class Permissions(commands.Cog):
 
     async def _remove_rule(self, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int) -> None:
         """Remove a rule.
+
         Guild ID should be 0 for global rules.
+
         Handles config.
         """
         cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
@@ -577,7 +607,9 @@ class Permissions(commands.Cog):
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int
     ) -> None:
         """Set the default rule.
+
         Guild ID should be 0 for the global default.
+
         Handles config.
         """
         cog_or_cmd.obj.set_default_rule(rule, guild_id)
@@ -586,7 +618,9 @@ class Permissions(commands.Cog):
 
     async def _clear_rules(self, guild_id: int) -> None:
         """Clear all global rules or rules for a guild.
+
         Guild ID should be 0 for global rules.
+
         Handles config.
         """
         self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
@@ -687,6 +721,7 @@ class Permissions(commands.Cog):
 
     async def initialize(self) -> None:
         """Initialize this cog.
+
         This will load all rules from config onto every currently
         loaded command.
         """
@@ -770,6 +805,7 @@ class Permissions(commands.Cog):
         rule_dict: Dict[Union[int, str], Dict[Union[int, str], bool]],
     ) -> None:
         """Load the rules into a command or cog object.
+
         rule_dict should be a dict mapping Guild IDs to Model IDs to
         rules.
         """
@@ -787,6 +823,7 @@ class Permissions(commands.Cog):
 
     async def _unload_all_rules(self) -> None:
         """Unload all rules set by this cog.
+
         This is done instead of just clearing all rules, which could
         clear rules set by other cogs.
         """
@@ -804,6 +841,7 @@ class Permissions(commands.Cog):
         rule_dict: Dict[Union[int, str], Dict[Union[int, str], bool]],
     ) -> None:
         """Unload the rules from a command or cog object.
+
         rule_dict should be a dict mapping Guild IDs to Model IDs to
         rules.
         """
