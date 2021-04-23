@@ -221,7 +221,7 @@ class RedBase(
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
         self._sudo_enabled = cli_flags.enable_sudo
-
+        self._sudo_ctx_var = ContextVar("SudoOwners")
         self._true_owner_ids = kwargs.pop("owner_ids", set())
 
         # to prevent multiple calls to app info in `is_owner()`
@@ -234,7 +234,6 @@ class RedBase(
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
 
-        self._sudo_ctx_var = ContextVar("SudoOwners")
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
@@ -255,7 +254,7 @@ class RedBase(
             return self._sudoed_owner_ids
 
     @owner_ids.setter
-    async def owner_ids(self, value):
+    def owner_ids(self, value):
         self._sudoed_owner_ids = frozenset(value)
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
