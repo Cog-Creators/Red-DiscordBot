@@ -651,7 +651,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         try:
             if (
-                not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                not self.can_join_and_speak(ctx.author.voice.channel)
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                 and self.is_vc_full(ctx.author.voice.channel)
             ):
@@ -659,7 +659,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Join Voice Channel"),
-                    description=_("I don't have permission to connect to your channel."),
+                    description=_("I don't have permission to connect and speak in your channel."),
                 )
             if not self._player_check(ctx):
                 await lavalink.connect(
