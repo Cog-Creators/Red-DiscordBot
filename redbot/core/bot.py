@@ -247,11 +247,7 @@ class RedBase(
 
     @property
     def owner_ids(self):
-        try:
-            return self._sudo_ctx_var.get()
-        except LookupError:
-            self._sudo_ctx_var.set(self._sudoed_owner_ids)
-            return self._sudoed_owner_ids
+        return self._sudo_ctx_var.get(self._sudoed_owner_ids)
 
     @owner_ids.setter
     def owner_ids(self, value):
