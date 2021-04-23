@@ -478,7 +478,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=False)
                 ws_audio_log.info(
                     "WS EVENT - IGNORED (Healthy Socket) | "
-                    "Voice websocket closed event "
+                    f"Voice websocket closed event "
                     f"Code: {code} -- Remote: {by_remote} -- {reason}, {player}"
                 )
         except Exception:
