@@ -1,6 +1,6 @@
-server:
-  host: "localhost"
-  port: 2333 # WS port
+server: # REST and WS server
+  port: 2333
+  address: "localhost"
 lavalink:
   server:
     password: "youshallnotpass"
@@ -10,17 +10,39 @@ lavalink:
       soundcloud: true
       twitch: true
       vimeo: true
-      mixer: true
       http: true
-      local: true
-    sentryDsn: ""
-    bufferDurationMs: 1000
-    youtubePlaylistLoadLimit: 10000
+      local: false
+    bufferDurationMs: 1000 # Length of track to buffer into memory in miliseconds.
+    youtubePlaylistLoadLimit: 10000 # Number of pages at 100 each
+    playerUpdateInterval: 3 # How frequently to send player updates to clients, in seconds
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    gc-warnings: true
+    #ratelimit:
+      #ipBlocks: ["1.0.0.0/8", "..."] # list of ip blocks
+      #excludedIps: ["...", "..."] # ips which should be explicit excluded from usage by lavalink
+      #strategy: "RotateOnBan" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+      #searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing
+      #retryLimit: -1 # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
+
+metrics:
+  prometheus:
+    enabled: false
+    endpoint: /metrics
+
+sentry:
+  dsn: ""
+  environment: ""
+#  tags:
+#    some_key: some_value
+#    another_key: another_value
+
 logging:
   file:
     max-history: 7
     max-size: 1GB
   path: ./logs/
+
   level:
     root: INFO
     lavalink: INFO
