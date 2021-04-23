@@ -9,6 +9,7 @@ import contextlib
 import weakref
 import functools
 from collections import namedtuple
+from contextvars import ContextVar
 from copy import copy
 from datetime import datetime
 from enum import IntEnum
@@ -34,7 +35,6 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
-from sentry_sdk.utils import ContextVar
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -221,21 +221,20 @@ class RedBase(
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
         self._sudo_enabled = cli_flags.enable_sudo
-        if self._sudo_enabled:
-            self._true_owner_ids = kwargs.pop("owner_ids", set())
+
+        self._true_owner_ids = kwargs.pop("owner_ids", set())
 
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
+        self._sudoed_owner_ids = frozenset()
+
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
-        if self._sudo_enabled is False:
-            self._true_owner_ids = self._sudoed_owner_ids = self.owner_ids
 
-        self._sudoed_owner_ids = set()
-        self._sudo_ctx_var = ContextVar("SudoOwners", default=self._sudoed_owner_ids)
+        self._sudo_ctx_var = ContextVar("SudoOwners")
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
@@ -249,7 +248,15 @@ class RedBase(
 
     @property
     def owner_ids(self):
-        return self._sudo_ctx_var.get()
+        try:
+            return self._sudo_ctx_var.get()
+        except LookupError:
+            self._sudo_ctx_var.set(self._sudoed_owner_ids)
+            return self._sudoed_owner_ids
+
+    @owner_ids.setter
+    async def owner_ids(self, value):
+        self._sudoed_owner_ids = frozenset(value)
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
