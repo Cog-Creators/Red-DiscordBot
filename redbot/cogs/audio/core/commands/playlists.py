@@ -1678,7 +1678,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                     return
-                if playlist.url:
+                if playlist.url or playlist.id == 42069:
                     player = lavalink.get_player(ctx.guild.id)
                     added, removed, playlist = await self._maybe_update_playlist(
                         ctx, player, playlist

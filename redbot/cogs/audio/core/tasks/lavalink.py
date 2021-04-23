@@ -4,6 +4,7 @@ from pathlib import Path
 
 import lavalink
 
+from redbot.core import data_manager
 from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
@@ -16,9 +17,16 @@ _ = Translator("Audio", Path(__file__))
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
     def lavalink_restart_connect(self) -> None:
+        lavalink.unregister_event_listener(self.lavalink_event_handler)
+        lavalink.unregister_update_listener(self.lavalink_update_handler)
         if self.lavalink_connect_task:
             self.lavalink_connect_task.cancel()
+        if self._restore_task:
+            self._restore_task.cancel()
 
+        self._restore_task = None
+        lavalink.register_event_listener(self.lavalink_event_handler)
+        lavalink.register_update_listener(self.lavalink_update_handler)
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
 
     async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
@@ -33,7 +41,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 settings = self._default_lavalink_settings
                 host = settings["host"]
                 password = settings["password"]
-                rest_port = settings["rest_port"]
                 ws_port = settings["ws_port"]
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
@@ -73,7 +80,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 host = configs["host"]
                 password = configs["password"]
-                rest_port = configs["rest_port"]
                 ws_port = configs["ws_port"]
                 break
         else:
@@ -86,14 +92,16 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
 
         retry_count = 0
         while retry_count < max_retries:
+            if lavalink.node._nodes:
+                await lavalink.node.disconnect()
             try:
                 await lavalink.initialize(
                     bot=self.bot,
                     host=host,
                     password=password,
-                    rest_port=rest_port,
                     ws_port=ws_port,
                     timeout=timeout,
+                    resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
@@ -115,3 +123,5 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "Connecting to the Lavalink server failed after multiple attempts. "
                 "See above tracebacks for details."
             )
+            return
+        self._restore_task = asyncio.create_task(self.restore_players())

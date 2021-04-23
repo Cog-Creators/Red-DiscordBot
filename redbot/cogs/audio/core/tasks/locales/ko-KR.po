@@ -1,17 +1,49 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-05-21 12:08+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: ko\n"
 "X-Crowdin-File-ID: 664\n"
 "Language: ko_KR\n"
+
+#: redbot/cogs/audio/core/tasks/startup.py:233
+msgid "Couldn't get a valid track."
+msgstr "유효한 트랙을 얻을 수 없습니다."
+
+#: redbot/cogs/audio/core/tasks/startup.py:241
+msgid "Unable to Get Track"
+msgstr "트랙을 찾을수 없습니다"
+
+#: redbot/cogs/audio/core/tasks/startup.py:242
+msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
+msgstr "지금은 라바링크를 통해 음악을 가져올 수 없습니다. 몇분 뒤에 다시 시도해주세요."
+
+#: redbot/cogs/audio/core/tasks/startup.py:256
+msgid "Hello, this message brings you an important update regarding the core Audio cog:\n"
+"                \n"
+"Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.\n"
+"See `[p]help audioset globalapi` for more information.\n"
+"Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.\n\n"
+"An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.\n"
+"Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.\n\n"
+"On a related note, it is highly recommended that you enable your local cache if you haven't yet.\n"
+"To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."
+msgstr "안녕하세요,이 메시지는 핵심 Audio cog에 관한 중요한 업데이트를 제공합니다. \n"
+"                \n"
+"Audio v2.3.0 이상부터는 Cog-Creators 조직에서 제공하는 새로운 서비스 인 ** Global Audio API **를 활용할 수 있습니다. 봇이 YouTube / Spotify에 대한 요청의 양을 크게 줄일 수 있습니다. 이렇게하면 YouTube에 너무 잦은 요청으로 인해 봇의 속도가 제한될 가능성이 줄어듭니다. \n"
+" 자세한 내용은`[p] help audioset globalapi`를 참조하세요. \n"
+"이 서비스에 대한 액세스는 기본적으로 사용 중지되며 ** 명시 적으로 선택해야합니다. ** 사용을 시작하려면 \n\n"
+"이 API를 사용하려면 액세스 토큰이 ** 필수 **입니다. 이 토큰을 얻으려면 <https://discord.gg/red>에 가입하고 #testing 채널에서`? audioapi register`를 통해 진행할 수 있습니다. \n"
+" 참고:이 서비스를 사용하면 봇의 IP 주소가 Cog-Creators 조직이 되며 이는 글로벌 API 서비스를 제공 할 목적으로 만 사용됩니다. \n\n"
+" 관련 메모에서 로컬 캐시를 아직 활성화하지 않은 경우 활성화하는 것이 좋습니다. \n"
+" 이렇게하려면`[p]audioset cache 5`를 실행하십시오. 메타 데이터 만 저장하는이 캐시는 반복되는 오디오 요청시 응답시간을 빠르게 할 수 있으며 YouTube에서 봇의 속도를 제한 할 가능성을 더욱 줄여줍니다. 메타 데이터 일 뿐이므로이 캐시에 필요한 디스크 공간은 무시할 수준으로 적을 것으로 예상됩니다."
 

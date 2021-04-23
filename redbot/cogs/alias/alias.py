@@ -170,7 +170,7 @@ class Alias(commands.Cog):
         for p in prefixes:
             if content.startswith(p):
                 return p
-        raise ValueError(_("No prefix found."))
+        raise ValueError("No prefix found.")
 
     async def call_alias(self, message: discord.Message, prefix: str, alias: AliasEntry):
         new_message = copy(message)
@@ -185,7 +185,7 @@ class Alias(commands.Cog):
         # noinspection PyDunderSlots
         new_message.content = "{}{} {}".format(
             prefix, command, " ".join(args[trackform.max + 1 :])
-        )
+        ).strip()
         await self.bot.process_commands(new_message)
 
     async def paginate_alias_list(

@@ -214,7 +214,12 @@ class CommandObj:
 
 @cog_i18n(_)
 class CustomCommands(commands.Cog):
-    """Creates commands used to display text."""
+    """This cog contains commands for creating and managing custom commands that display text.
+
+    These are useful for storing information members might need, like FAQ answers or invite links.
+    Custom commands can be used by anyone by default, so be careful with pings.
+    Commands can only be lowercase, and will not respond to any uppercase letters.
+    """
 
     def __init__(self, bot):
         super().__init__()
@@ -239,14 +244,18 @@ class CustomCommands(commands.Cog):
     @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
-        """Custom commands management."""
+        """Base command for Custom Commands management."""
         pass
 
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
         """Get the raw response of a custom command, to get the proper markdown.
 
-        This is helpful for copy and pasting."""
+        This is helpful for copy and pasting.
+
+        **Arguments:**
+
+        - `<command>` The custom command to get the raw response of."""
         commands = await self.config.guild(ctx.guild).commands()
         if command not in commands:
             return await ctx.send("That command doesn't exist.")
@@ -286,7 +295,15 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):
-        """Searches through custom commands, according to the query."""
+        """
+        Searches through custom commands, according to the query.
+
+        Uses fuzzywuzzy searching to find close matches.
+
+        **Arguments:**
+
+        - `<query>` The query to search for. Can be multiple words.
+        """
         cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
         extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
@@ -327,6 +344,10 @@ class CustomCommands(commands.Cog):
         """Create a CC where it will randomly choose a response!
 
         Note: This command is interactive.
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -355,7 +376,12 @@ class CustomCommands(commands.Cog):
         """Add a simple custom command.
 
         Example:
-        - `[p]customcom create simple yourcommand Text you want`
+            - `[p]customcom create simple yourcommand Text you want`
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
+        - `<text>` The text to return when executing the command. See guide for enhanced usage.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -387,8 +413,16 @@ class CustomCommands(commands.Cog):
         cooldowns may be set. All cooldowns must be cooled to call the
         custom command.
 
-        Example:
-        - `[p]customcom cooldown yourcommand 30`
+        Examples:
+            - `[p]customcom cooldown pingrole`
+            - `[p]customcom cooldown yourcommand 30`
+            - `[p]cc cooldown mycommand 30 guild`
+
+        **Arguments:**
+
+        - `<command>` The custom command to check or set the cooldown.
+        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.
+        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.
         """
         if cooldown is None:
             try:
@@ -425,7 +459,11 @@ class CustomCommands(commands.Cog):
         """Delete a custom command.
 
         Example:
-        - `[p]customcom delete yourcommand`
+            - `[p]customcom delete yourcommand`
+
+        **Arguments:**
+
+        - `<command>` The custom command to delete.
         """
         try:
             await self.commandobj.delete(ctx=ctx, command=command)
@@ -439,7 +477,12 @@ class CustomCommands(commands.Cog):
         """Edit a custom command.
 
         Example:
-        - `[p]customcom edit yourcommand Text you want`
+            - `[p]customcom edit yourcommand Text you want`
+
+        **Arguments:**
+
+        - `<command>` The custom command to edit.
+        - `<text>` The new text to return when executing the command.
         """
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
@@ -497,7 +540,12 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's responses and its settings."""
+        """Shows a custom command's responses and its settings.
+
+        **Arguments:**
+
+        - `<command>` The custom command to show.
+        """
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)

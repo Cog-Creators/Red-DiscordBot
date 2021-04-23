@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-04-05 19:33+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,121 +15,165 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: nb_NO\n"
 
-#: redbot/core/commands/commands.py:525
-msgid "\\\"{argument}\\\" is not a number."
-msgstr ""
+#: redbot/core/commands/commands.py:532
+msgid "\"{argument}\" is not a number."
+msgstr "\"{argument}\" er ikke et tall."
 
-#: redbot/core/commands/converter.py:112
+#: redbot/core/commands/converter.py:111
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` er ikke en gyldig tidsenhet for denne kommandoen"
 
 #: redbot/core/commands/converter.py:118
+msgid "The time set is way too high, consider setting something reasonable."
+msgstr "Tiden som settes er for høy, kan man vurdere å sette noe rimelig."
+
+#: redbot/core/commands/converter.py:122
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "Denne tidsperioden er for stor for denne kommandoen (Maks: {maximum})"
 
-#: redbot/core/commands/converter.py:124
+#: redbot/core/commands/converter.py:128
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "Det er for lite tid for denne kommandoen. (Minimum: {minimum})"
 
-#: redbot/core/commands/converter.py:152
-msgid "Server \\\"{name}\\\" not found."
-msgstr ""
-
-#: redbot/core/commands/converter.py:187
+#: redbot/core/commands/converter.py:208
 msgid "Unexpected key {key}"
-msgstr ""
+msgstr "Uventet nøkkel {key}"
 
-#: redbot/core/commands/converter.py:389
+#: redbot/core/commands/converter.py:410
 msgid "Expected one of: {}"
-msgstr ""
-
-#: redbot/core/commands/help.py:103
-msgid "No"
-msgstr ""
+msgstr "Forventet én av: {}"
 
 #: redbot/core/commands/help.py:105
+msgid "No"
+msgstr "Nei"
+
+#: redbot/core/commands/help.py:107
 msgid "Yes"
 msgstr "Ja"
 
-#: redbot/core/commands/help.py:111
+#: redbot/core/commands/help.py:113
 msgid "Disabled"
-msgstr ""
+msgstr "Deaktivert"
 
-#: redbot/core/commands/help.py:116
-msgid "\\nCustom Tagline: {tag}"
-msgstr ""
+#: redbot/core/commands/help.py:118
+msgid "\n"
+"Custom Tagline: {tag}"
+msgstr "\n"
+"Tilpass Tagline: {tag}"
 
-#: redbot/core/commands/help.py:122
-msgid "Maximum characters per page: {page_char_limit}\\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}\\nHelp is a menu: {use_menus}\\nHelp shows hidden commands: {show_hidden}\\nHelp only shows commands which can be used: {verify_checks}\\nHelp shows unusable commands when asked directly: {verify_exists}\\nDelete delay: {delete_delay}{tagline_info}"
-msgstr ""
+#: redbot/core/commands/help.py:124
+msgid "Maximum characters per page: {page_char_limit}\n"
+"Maximum pages per guild (only used if menus are not used): {max_pages_in_guild}\n"
+"Help is a menu: {use_menus}\n"
+"Help shows hidden commands: {show_hidden}\n"
+"Help only shows commands which can be used: {verify_checks}\n"
+"Help shows unusable commands when asked directly: {verify_exists}\n"
+"Delete delay: {delete_delay}\n"
+"React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
+msgstr "Maksimalt antall tegn per side: {page_char_limit}\n"
+"Maksimalt antall sider per server (bare brukt dersom menyer ikke er brukt): {max_pages_in_guild}\n"
+"Hjelp er et meny: {use_menus}\n"
+"Hjelp viser skjulte kommandoer: {show_hidden}\n"
+"Hjelpe viser bare kommandoer som kan brukes: {verify_checks}\n"
+"Hjelp viser ubrukelige kommandoer når du spør direkte: {verify_exists}\n"
+"Sletteforsinkelse: {delete_delay}\n"
+"React med et sjekkmerke når hjelp sendes via DM: {use_tick}{tagline_info}"
 
-#: redbot/core/commands/help.py:270
+#: redbot/core/commands/help.py:273
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
+msgstr "Skriv {ctx.clean_prefix}help <command> for mer informasjon om en kommando. Du kan også skrive {ctx.clean_prefix}help <category> for mer informasjon om en kategori."
+
+#: redbot/core/commands/help.py:317
+msgid "Syntax: {command_signature}"
 msgstr ""
 
-#: redbot/core/commands/help.py:300
-msgid "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-msgstr ""
+#: redbot/core/commands/help.py:323
+msgid "Aliases"
+msgstr "Aliaser"
 
-#: redbot/core/commands/help.py:341
+#: redbot/core/commands/help.py:323
+msgid "Alias"
+msgstr "Alias"
+
+#: redbot/core/commands/help.py:344
+msgid "{aliases} and {number} more aliases."
+msgstr "{aliases} og {number} andre aliaser."
+
+#: redbot/core/commands/help.py:348
+msgid "{aliases} and one more alias."
+msgstr "{aliases} og ett til alias."
+
+#: redbot/core/commands/help.py:390
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Underkommandoer__**"
 
-#: redbot/core/commands/help.py:343
+#: redbot/core/commands/help.py:392
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Subcommands:__** (fortsatt)"
 
-#: redbot/core/commands/help.py:354
+#: redbot/core/commands/help.py:403
 msgid "Subcommands:"
-msgstr ""
+msgstr "Underkommandoer:"
 
-#: redbot/core/commands/help.py:418 redbot/core/commands/help.py:673
-#: redbot/core/commands/help.py:686 redbot/core/commands/help.py:705
+#: redbot/core/commands/help.py:467 redbot/core/commands/help.py:722
+#: redbot/core/commands/help.py:735 redbot/core/commands/help.py:754
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Hjelpemeny"
 
-#: redbot/core/commands/help.py:465
-msgid "*Page {page_num} of {page_count}*\\n{content_description}"
-msgstr ""
+#: redbot/core/commands/help.py:514
+msgid "*Page {page_num} of {page_count}*\n"
+"{content_description}"
+msgstr "*Side {page_num} av {page_count}*\n"
+"{content_description}"
 
-#: redbot/core/commands/help.py:516
+#: redbot/core/commands/help.py:565
 msgid "**__Commands:__**"
-msgstr ""
+msgstr "**__Kommando:__**"
 
-#: redbot/core/commands/help.py:518
+#: redbot/core/commands/help.py:567
 msgid "**__Commands:__** (continued)"
-msgstr ""
+msgstr "**__Kommando:__** (fortsatt)"
 
-#: redbot/core/commands/help.py:528
+#: redbot/core/commands/help.py:577
 msgid "Commands:"
-msgstr ""
+msgstr "Kommandoer:"
 
-#: redbot/core/commands/help.py:570
+#: redbot/core/commands/help.py:619
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Ingen kategori:__**"
 
-#: redbot/core/commands/help.py:583
+#: redbot/core/commands/help.py:632
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (fortsatt)"
 
-#: redbot/core/commands/help.py:599 redbot/core/commands/help.py:613
+#: redbot/core/commands/help.py:648 redbot/core/commands/help.py:662
 msgid "No Category:"
-msgstr ""
+msgstr "Ingen kategori:"
 
-#: redbot/core/commands/help.py:682
+#: redbot/core/commands/help.py:731
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Hjelpeemnet for *{command_name}* ikke funnet."
 
-#: redbot/core/commands/help.py:699
+#: redbot/core/commands/help.py:748
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Kommandoen *{command_name}* har ingen underkommando som heter *{not_found}*."
 
-#: redbot/core/commands/help.py:774
+#: redbot/core/commands/help.py:823
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
-msgstr ""
+msgstr "Jeg kunne ikke sende meldingen til deg i DM. Enten har du blokkert meg eller du deaktivert DMs i denne serveren."
 
-#: redbot/core/commands/help.py:812
+#: redbot/core/commands/help.py:862
 #, docstring
-msgid "\\n    I need somebody\\n    (Help) not just anybody\\n    (Help) you know I need someone\\n    (Help!)\\n    "
-msgstr ""
+msgid "\n"
+"    I need somebody\n"
+"    (Help) not just anybody\n"
+"    (Help) you know I need someone\n"
+"    (Help!)\n"
+"    "
+msgstr "\n"
+"    Jeg trenger noen\n"
+"    (Hjelp) ikke bare noen\n"
+"    (Hjelp) du vet at jeg trenger noen\n"
+"    (Hjelp!)\n"
+"    "
 
