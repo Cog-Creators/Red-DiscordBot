@@ -196,10 +196,10 @@ class RedBase(
         self._owner_id_overwrite = cli_flags.owner
 
         if "owner_ids" in kwargs:
-            kwargs["owner_ids"] = set(kwargs["owner_ids"])
+            self._true_owner_ids = frozenset(kwargs["owner_ids"])
         else:
-            kwargs["owner_ids"] = set()
-        kwargs["owner_ids"].update(cli_flags.co_owner)
+            self._true_owner_ids = frozenset()
+        self._true_owner_ids |= set(cli_flags.co_owner)
 
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
@@ -222,7 +222,6 @@ class RedBase(
         self._use_team_features = cli_flags.use_team_features
         self._sudo_enabled = cli_flags.enable_sudo
         self._sudo_ctx_var = ContextVar("SudoOwners")
-        self._true_owner_ids = kwargs.pop("owner_ids", set())
 
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
@@ -234,7 +233,6 @@ class RedBase(
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
 
-
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
@@ -243,7 +241,7 @@ class RedBase(
 
     @property
     def true_owner_ids(self):
-        return frozenset(self._true_owner_ids)
+        return self._true_owner_ids
 
     @property
     def owner_ids(self):
@@ -951,7 +949,7 @@ class RedBase(
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
         if self._owner_id_overwrite is not None:
-            self._true_owner_ids.add(self._owner_id_overwrite)
+            self._true_owner_ids |= {self._owner_id_overwrite}
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
@@ -1160,11 +1158,11 @@ class RedBase(
             if app.team:
                 if self._use_team_features:
                     ids = {m.id for m in app.team.members}
-                    self._true_owner_ids.update(ids)
+                    self._true_owner_ids |= {ids}
                     ret = user.id in ids
             elif self._owner_id_overwrite is None:
                 owner_id = app.owner.id
-                self._true_owner_ids.add(owner_id)
+                self._true_owner_ids |= {owner_id}
                 ret = user.id == owner_id
             self._app_owners_fetched = True
 
