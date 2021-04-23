@@ -56,7 +56,7 @@ class LeaderboardSource(menus.ListPageSource):
                 name = user.display_name
             except AttributeError:
                 user_id = ""
-                if await bot.is_owner(menu.ctx.author):
+                if await bot.is_owner(author):
                     user_id = f"({acc[0]})"
                 name = f"{acc[1]['name']} {user_id}"
             name = escape(name, formatting=True)
@@ -110,6 +110,8 @@ class LeaderboardSource(menus.ListPageSource):
                 ),
             )
             page.set_footer(text=f"Page {menu.current_page + 1}/{self.get_max_pages()}")
+            if guild:
+                page.set_author(name=guild.name, icon_url=guild.icon_url)
         else:
             page = box(header, lang="md")
 
