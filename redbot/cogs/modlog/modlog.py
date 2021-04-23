@@ -126,7 +126,7 @@ class ModLog(commands.Cog):
                 )
                 await ctx.send(message)
 
-    @commands.command()
+    @commands.command(aliases=["listcases"])
     @commands.guild_only()
     async def casesfor(self, ctx: commands.Context, *, member: Union[discord.Member, int]):
         """Display cases for the specified member."""
