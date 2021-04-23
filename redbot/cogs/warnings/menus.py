@@ -24,6 +24,7 @@ class ReasonListSource(menus.ListPageSource):
             message = discord.Embed(
                 title=_("Reason: {name}").format(name=reason),
                 description=data["description"],
+                color=await menu.ctx.embed_colour(),
             )
             message.add_field(name=_("Points"), value=str(data["points"]))
         else:
@@ -42,7 +43,10 @@ class ActionListSource(menus.ListPageSource):
         self, menu: SimpleHybridMenu, entry: Dict[str, str]
     ) -> Union[discord.Embed, str]:
         if await menu.ctx.embed_requested():
-            message = discord.Embed(title=_("Action: {name}").format(name=entry["action_name"]))
+            message = discord.Embed(
+                title=_("Action: {name}").format(name=entry["action_name"]),
+                colour=await menu.ctx.embed_colour(),
+            )
             message.add_field(name=_("Points"), value="{}".format(entry["points"]), inline=False)
             message.add_field(
                 name=_("Exceed command"),

@@ -37,3 +37,27 @@ class CasesForSource(menus.ListPageSource):
             )
             message.set_footer(text=text)
         return message
+
+
+class ListCasesSource(menus.ListPageSource):
+    def __init__(self, cases: List[Case]):
+        super().__init__(cases, per_page=1)
+
+    async def format_page(self, menu: SimpleHybridMenu, case: Case) -> Union[discord.Embed, str]:
+        current_entry = menu.current_page + 1
+        total_entries = self._max_pages
+        use_embeds = await menu.ctx.embed_requested()
+        message = await case.message_content(embed=use_embeds)
+        if not use_embeds:
+            message += _("\n**Timestamp:** {timestamp}").format(
+                timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
+                    "%Y-%m-%d %H:%M:%S UTC"
+                ),
+            )
+        if total_entries > 1 and isinstance(message, discord.Embed):
+            text = _("Case: {page_num}/{total_pages}\n").format(
+                page_num=humanize_number(current_entry),
+                total_pages=humanize_number(max(1, total_entries)),
+            )
+            message.set_footer(text=text)
+        return message
