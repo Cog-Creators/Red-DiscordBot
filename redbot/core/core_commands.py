@@ -4817,7 +4817,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Sudo permission is auto removed after interval set with `[p]set sudotimeout` (Default to 15 minutes).
         """
         if ctx.author.id not in self.bot.owner_ids:
-            self.bot.owner_ids.add(ctx.author.id)
+            self.bot._sudoed_owner_ids.add(ctx.author.id)
             await ctx.send(_("Your bot owner privileges have been enabled."))
             if ctx.author.id in self.bot._owner_sudo_tasks:
                 self.bot._owner_sudo_tasks[ctx.author.id].cancel()
@@ -4827,6 +4827,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             return
         await ctx.send(_("Your bot owner privileges are already enabled."))
+
+    @commands.command(
+        cls=commands.commands._IsTrueBotOwner,
+        name="unsudo",
+    )
+    async def unsudo(self, ctx: commands.Context):
+        """Disable your bot owner privileges."""
+        if ctx.author.id in self.bot.owner_ids:
+            self.bot._sudoed_owner_ids.discard(ctx.author.id)
+            await ctx.send(_("Your bot owner privileges have been disabled."))
+            return
+        await ctx.send(_("Your bot owner privileges are not currently enabled."))
 
     @_set.command()
     @is_sudo_enabled()
@@ -4848,18 +4860,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(
             _("Sudo timer will expire after: {}.").format(humanize_timedelta(timedelta=interval))
         )
-
-    @commands.command(
-        cls=commands.commands._IsTrueBotOwner,
-        name="unsudo",
-    )
-    async def unsudo(self, ctx: commands.Context):
-        """Disable your bot owner privileges."""
-        if ctx.author.id in self.bot.owner_ids:
-            self.bot.owner_ids.discard(ctx.author.id)
-            await ctx.send(_("Your bot owner privileges have been disabled."))
-            return
-        await ctx.send(_("Your bot owner privileges are not currently enabled."))
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
     # Otherwise interfering with the ability for this command to be accessible is also a violation.

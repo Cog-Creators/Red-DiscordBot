@@ -34,6 +34,7 @@ from types import MappingProxyType
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
+from sentry_sdk.utils import ContextVar
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
 from .cog_manager import CogManager, CogManagerUI
@@ -231,7 +232,10 @@ class RedBase(
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
         if self._sudo_enabled is False:
-            self._true_owner_ids = self.owner_ids
+            self._true_owner_ids = self._sudoed_owner_ids = self.owner_ids
+
+        self._sudoed_owner_ids = set()
+        self._sudo_ctx_var = ContextVar("SudoOwners", default=self._sudoed_owner_ids)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
@@ -241,15 +245,11 @@ class RedBase(
 
     @property
     def true_owner_ids(self):
-        return copy(self._true_owner_ids)
+        return frozenset(self._true_owner_ids)
 
-    @true_owner_ids.setter
-    def true_owner_ids(self, value: Any) -> NoReturn:
-        raise RuntimeError("Don't try to assign to this attribute")
-
-    @true_owner_ids.deleter
-    def true_owner_ids(self) -> NoReturn:
-        raise RuntimeError("Don't try to delete this attribute")
+    @property
+    def owner_ids(self):
+        return self._sudo_ctx_var.get()
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
