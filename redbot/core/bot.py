@@ -194,13 +194,11 @@ class RedBase(
             kwargs["intents"] = intents
 
         self._owner_id_overwrite = cli_flags.owner
-
         if "owner_ids" in kwargs:
-            self._true_owner_ids = frozenset(kwargs["owner_ids"])
+            self._true_owner_ids = frozenset(kwargs.pop("owner_ids"))
         else:
             self._true_owner_ids = frozenset()
         self._true_owner_ids |= set(cli_flags.co_owner)
-
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
@@ -225,13 +223,19 @@ class RedBase(
 
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
-        self._sudoed_owner_ids = frozenset()
+        if self._sudo_enabled is False:
+            self._sudoed_owner_ids = self._true_owner_ids
+            kwargs["owner_ids"] = set(self._true_owner_ids)
+        else:
+            self._sudoed_owner_ids = frozenset()
 
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
+        if self._sudo_enabled is False:
+            self._sudoed_owner_ids = self._true_owner_ids
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
@@ -249,7 +253,11 @@ class RedBase(
 
     @owner_ids.setter
     def owner_ids(self, value):
-        self._sudoed_owner_ids = frozenset(value)
+        if self._sudo_enabled is True:
+            self._sudoed_owner_ids = frozenset(value)
+        else:
+            self._true_owner_ids = frozenset(value)
+            self._sudoed_owner_ids = self._true_owner_ids
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
