@@ -40,7 +40,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             debug_exc_log(
                                 log,
                                 err,
-                                f"Exception raised in Audio's unpausing player for {server.id}.",
+                                f"Exception raised in Audio's unpausing {p}.",
                             )
                     pause_times.pop(server.id, None)
             servers = stop_times.copy()
