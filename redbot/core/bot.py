@@ -41,19 +41,19 @@ from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
-
 from .settings_caches import (
     PrefixManager,
     IgnoreManager,
     WhitelistBlacklistManager,
     DisabledCogCache,
+    I18nManager,
 )
-
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
-from .utils._internal_utils import send_to_owners_with_prefix_replaced
+from .utils._internal_utils import deprecated_removed, send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
+COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
@@ -110,6 +110,7 @@ class RedBase(
             help__delete_delay=0,
             help__use_menus=False,
             help__show_hidden=False,
+            help__show_aliases=True,
             help__verify_checks=True,
             help__verify_exists=False,
             help__tagline="",
@@ -142,6 +143,8 @@ class RedBase(
             disabled_commands=[],
             autoimmune_ids=[],
             delete_delay=-1,
+            locale=None,
+            regional_format=None,
         )
 
         self._config.register_channel(embeds=None, ignored=False)
@@ -153,12 +156,20 @@ class RedBase(
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
 
+        # {COMMAND_NAME: {GUILD_ID: {...}}}
+        # GUILD_ID=0 for global setting
+        self._config.init_custom(COMMAND_SCOPE, 2)
+        self._config.register_custom(COMMAND_SCOPE, embeds=None)
+        # TODO: add cache for embed settings
+
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._disabled_cog_cache = DisabledCogCache(self._config)
         self._ignored_cache = IgnoreManager(self._config)
         self._whiteblacklist_cache = WhitelistBlacklistManager(self._config)
+        self._i18n_cache = I18nManager(self._config)
+        self._bypass_cooldowns = False
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
@@ -274,6 +285,92 @@ class RedBase(
         """
         self._help_formatter = commands.help.RedHelpFormatter()
 
+    def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
+        """
+        Add a custom variable to the dev environment (``[p]debug``, ``[p]eval``, and ``[p]repl`` commands).
+        If dev mode is disabled, nothing will happen.
+
+        Example
+        -------
+
+        .. code-block:: python
+
+            class MyCog(commands.Cog):
+                def __init__(self, bot):
+                    self.bot = bot
+                    bot.add_dev_env_value("mycog", lambda ctx: self)
+                    bot.add_dev_env_value("mycogdata", lambda ctx: self.settings[ctx.guild.id])
+
+                def cog_unload(self):
+                    self.bot.remove_dev_env_value("mycog")
+                    self.bot.remove_dev_env_value("mycogdata")
+
+        Once your cog is loaded, the custom variables ``mycog`` and ``mycogdata``
+        will be included in the environment of dev commands.
+
+        Parameters
+        ----------
+        name: str
+            The name of your custom variable.
+        value: Callable[[commands.Context], Any]
+            The function returning the value of the variable.
+            It must take a `commands.Context` as its sole parameter
+
+        Raises
+        ------
+        TypeError
+            ``value`` argument isn't a callable.
+        ValueError
+            The passed callable takes no or more than one argument.
+        RuntimeError
+            The name of the custom variable is either reserved by a variable
+            from the default environment or already taken by some other custom variable.
+        """
+        signature = inspect.signature(value)
+        if len(signature.parameters) != 1:
+            raise ValueError("Callable must take exactly one argument for context")
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        if name in [
+            "bot",
+            "ctx",
+            "channel",
+            "author",
+            "guild",
+            "message",
+            "asyncio",
+            "aiohttp",
+            "discord",
+            "commands",
+            "_",
+            "__name__",
+            "__builtins__",
+        ]:
+            raise RuntimeError(f"The name {name} is reserved for default environement.")
+        if name in dev.env_extensions:
+            raise RuntimeError(f"The name {name} is already used.")
+        dev.env_extensions[name] = value
+
+    def remove_dev_env_value(self, name: str):
+        """
+        Remove a custom variable from the dev environment.
+
+        Parameters
+        ----------
+        name: str
+            The name of the custom variable.
+
+        Raises
+        ------
+        KeyError
+            The custom variable was never set.
+        """
+        dev = self.get_cog("Dev")
+        if dev is None:
+            return
+        del dev.env_extensions[name]
+
     def get_command(self, name: str) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
@@ -376,6 +473,12 @@ class RedBase(
         self._red_before_invoke_objs.add(coro)
         return coro
 
+    async def before_identify_hook(self, shard_id, *, initial=False):
+        """A hook that is called before IDENTIFYing a session.
+        Same as in discord.py, but also dispatches "on_red_identify" bot event."""
+        self.dispatch("red_before_identify", shard_id, initial)
+        return await super().before_identify_hook(shard_id, initial=initial)
+
     @property
     def cog_mgr(self) -> NoReturn:
         raise AttributeError("Please don't mess with the cog manager internals.")
@@ -423,6 +526,7 @@ class RedBase(
         who: Optional[Union[discord.Member, discord.User]] = None,
         *,
         who_id: Optional[int] = None,
+        guild: Optional[discord.Guild] = None,
         guild_id: Optional[int] = None,
         role_ids: Optional[List[int]] = None,
     ) -> bool:
@@ -451,12 +555,24 @@ class RedBase(
         who_id : Optional[int]
             The id of the user or member to check
             If not providing a value for ``who``, this is a required parameter.
-        guild_id : Optional[int]
+        guild : Optional[discord.Guild]
             When used in conjunction with a provided value for ``who_id``, checks
             the lists for the corresponding guild as well.
+            This is ignored when ``who`` is passed.
+        guild_id : Optional[int]
+            When used in conjunction with a provided value for ``who_id``, checks
+            the lists for the corresponding guild as well. This should not be used
+            as it has unfixable bug that can cause it to raise an exception when
+            the guild with the given ID couldn't have been found.
+            This is ignored when ``who`` is passed.
+
+            .. deprecated-removed:: 3.4.8 30
+                Use ``guild`` parameter instead.
+
         role_ids : Optional[List[int]]
             When used with both ``who_id`` and ``guild_id``, checks the role ids provided.
             This is required for accurate checking of members in a guild if providing ids.
+            This is ignored when ``who`` is passed.
 
         Raises
         ------
@@ -472,7 +588,6 @@ class RedBase(
         # All config calls are delayed until needed in this section
         # All changes should be made keeping in mind that this is also used as a global check
 
-        guild = None
         mocked = False  # used for an accurate delayed role id expansion later.
         if not who:
             if not who_id:
@@ -480,7 +595,17 @@ class RedBase(
             mocked = True
             who = discord.Object(id=who_id)
             if guild_id:
-                guild = discord.Object(id=guild_id)
+                deprecated_removed(
+                    "`guild_id` parameter",
+                    "3.4.8",
+                    30,
+                    "Use `guild` parameter instead.",
+                    stacklevel=2,
+                )
+                if guild:
+                    raise ValueError(
+                        "`guild_id` should not be passed when `guild` is already passed."
+                    )
         else:
             guild = getattr(who, "guild", None)
 
@@ -496,6 +621,15 @@ class RedBase(
             global_blacklist = await self._whiteblacklist_cache.get_blacklist()
             if who.id in global_blacklist:
                 return False
+
+        if mocked and guild_id:
+            guild = self.get_guild(guild_id)
+            if guild is None:
+                # this is an AttributeError due to backwards-compatibility concerns
+                raise AttributeError(
+                    "Couldn't get the guild with the given ID. `guild` parameter needs to be used"
+                    " over the deprecated `guild_id` to resolve this."
+                )
 
         if guild:
             if guild.owner_id == who.id:
@@ -665,6 +799,67 @@ class RedBase(
 
         return self._color
 
+    async def get_or_fetch_user(self, user_id: int) -> discord.User:
+        """
+        Retrieves a `discord.User` based on their ID.
+        You do not have to share any guilds
+        with the user to get this information, however many operations
+        do require that you do.
+
+        .. warning::
+
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``bot.get_user`` instead.
+
+        Parameters
+        -----------
+        user_id: int
+            The ID of the user that should be retrieved.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Client.fetch_user`.
+
+        Returns
+        --------
+        discord.User
+            The user you requested.
+        """
+
+        if (user := self.get_user(user_id)) is not None:
+            return user
+        return await self.fetch_user(user_id)
+
+    async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> discord.Member:
+        """
+        Retrieves a `discord.Member` from a guild and a member ID.
+
+        .. warning::
+
+            This method may make an API call if the user is not found in the bot cache. For general usage, consider ``discord.Guild.get_member`` instead.
+
+        Parameters
+        -----------
+        guild: discord.Guild
+            The guild which the member should be retrieved from.
+        member_id: int
+            The ID of the member that should be retrieved.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Guild.fetch_member`.
+
+        Returns
+        --------
+        discord.Member
+            The user you requested.
+        """
+
+        if (member := guild.get_member(member_id)) is not None:
+            return member
+        return await guild.fetch_member(member_id)
+
     get_embed_colour = get_embed_color
 
     # start config migrations
@@ -815,7 +1010,7 @@ class RedBase(
                 packages.insert(0, "permissions")
 
             to_remove = []
-            print("Loading packages...")
+            log.info("Loading packages...")
             for package in packages:
                 try:
                     spec = await self._cog_mgr.find_cog(package)
@@ -838,7 +1033,7 @@ class RedBase(
             for package in to_remove:
                 packages.remove(package)
             if packages:
-                print("Loaded packages: " + ", ".join(packages))
+                log.info("Loaded packages: " + ", ".join(packages))
 
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
@@ -865,7 +1060,12 @@ class RedBase(
             ctx, help_for, from_help_command=from_help_command
         )
 
-    async def embed_requested(self, channel, user, command=None) -> bool:
+    async def embed_requested(
+        self,
+        channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
+        user: discord.abc.User,
+        command: Optional[commands.Command] = None,
+    ) -> bool:
         """
         Determine if an embed is requested for a response.
 
@@ -875,25 +1075,37 @@ class RedBase(
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
-        command
-            (Optional) the command ran.
+        command : `commands.Command`, optional
+            The command ran.
 
         Returns
         -------
         bool
             :code:`True` if an embed is requested
         """
+
+        async def get_command_setting(guild_id: int) -> Optional[bool]:
+            if command is None:
+                return None
+            scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
+            return await scope.embeds()
+
         if isinstance(channel, discord.abc.PrivateChannel):
-            user_setting = await self._config.user(user).embeds()
-            if user_setting is not None:
+            if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
         else:
-            channel_setting = await self._config.channel(channel).embeds()
-            if channel_setting is not None:
+            if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
-            guild_setting = await self._config.guild(channel.guild).embeds()
-            if guild_setting is not None:
+
+            if (command_setting := await get_command_setting(channel.guild.id)) is not None:
+                return command_setting
+
+            if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
+
+        # XXX: maybe this should be checked before guild setting?
+        if (global_command_setting := await get_command_setting(0)) is not None:
+            return global_command_setting
 
         global_setting = await self._config.embeds()
         return global_setting
@@ -1073,6 +1285,7 @@ class RedBase(
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             for name in token_names:
                 group.pop(name, None)
+        self.dispatch("red_api_tokens_update", service_name, MappingProxyType(group))
 
     async def remove_shared_api_services(self, *service_names: str):
         """
@@ -1092,6 +1305,9 @@ class RedBase(
         async with self._config.custom(SHARED_API_TOKENS).all() as group:
             for service in service_names:
                 group.pop(service, None)
+        # dispatch needs to happen *after* it actually updates
+        for service in service_names:
+            self.dispatch("red_api_tokens_update", service, MappingProxyType({}))
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
@@ -1114,7 +1330,7 @@ class RedBase(
 
     @staticmethod
     def list_packages():
-        """Lists packages present in the cogs the folder"""
+        """Lists packages present in the cogs folder"""
         return os.listdir("cogs")
 
     async def save_packages_status(self, packages):
@@ -1311,14 +1527,15 @@ class RedBase(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> None:
+    def remove_command(self, name: str) -> Optional[commands.Command]:
         command = super().remove_command(name)
-        if not command:
-            return
+        if command is None:
+            return None
         command.requires.reset()
         if isinstance(command, commands.Group):
             for subcommand in command.walk_commands():
                 subcommand.requires.reset()
+        return command
 
     def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
@@ -1482,9 +1699,9 @@ class RedBase(
         await asyncio.sleep(delay)
         await _delete_helper(message)
 
-    async def logout(self):
+    async def close(self):
         """Logs out of Discord and closes all connections."""
-        await super().logout()
+        await super().close()
         await drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
@@ -1509,7 +1726,7 @@ class RedBase(
         else:
             self._shutdown_mode = ExitCodes.RESTART
 
-        await self.logout()
+        await self.close()
         sys.exit(self._shutdown_mode)
 
     async def _core_data_deletion(

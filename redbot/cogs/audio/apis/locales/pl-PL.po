@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,51 +15,65 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: pl_PL\n"
 
-#: redbot/cogs/audio/apis/interface.py:282
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Klucz Spotify API lub sekret klienta nie zostały poprawnie ustawione. \\nUżyj `{prefix}audioset spotifyapi` dla dalszych instrukcji."
-
-#: redbot/cogs/audio/apis/interface.py:324
-msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr "Wygląda na to, że nie jest to poprawny adres URL listy odtwarzania/albumu Spotify."
-
-#: redbot/cogs/audio/apis/interface.py:445
-msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr "Wygląda na to, że nie jest to obsługiwany adres URL lub kod Spotify."
-
-#: redbot/cogs/audio/apis/interface.py:511
-msgid "The connection was reset while loading the playlist."
-msgstr "Połączenie zostało zresetowane podczas ładowania listy odtwarzania."
-
-#: redbot/cogs/audio/apis/interface.py:520
-msgid "Player timeout, skipping remaining tracks."
-msgstr "Limit czasu odtwarzacza, pomijam pozostałe utwory."
-
-#: redbot/cogs/audio/apis/interface.py:544
+#: redbot/cogs/audio/apis/interface.py:274
+#: redbot/cogs/audio/apis/interface.py:602
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Nie udało się uzyskać utworów, pomijam pozostałe."
 
-#: redbot/cogs/audio/apis/interface.py:594
-msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Niczego nie znaleziono.\\nKlucz API YouTube może być nieprawidłowy lub może być ograniczany w usłudze wyszukiwania YouTube.\\nSprawdź ponownie klucz API YouTube i postępuj zgodnie z instrukcjami z `{prefix}audioset youtubeapi`."
+#: redbot/cogs/audio/apis/interface.py:307
+#: redbot/cogs/audio/apis/spotify.py:175
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
+msgstr "Klucz Spotify API lub sekret klienta nie zostały poprawnie ustawione. \n"
+"Użyj `{prefix}audioset spotifyapi` dla dalszych instrukcji."
 
-#: redbot/cogs/audio/apis/interface.py:604
+#: redbot/cogs/audio/apis/interface.py:349
+msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
+msgstr "Wygląda na to, że nie jest to poprawny adres URL listy odtwarzania/albumu Spotify."
+
+#: redbot/cogs/audio/apis/interface.py:475
+msgid "This doesn't seem to be a supported Spotify URL or code."
+msgstr "Wygląda na to, że nie jest to obsługiwany adres URL lub kod Spotify."
+
+#: redbot/cogs/audio/apis/interface.py:563
+msgid "The connection was reset while loading the playlist."
+msgstr "Połączenie zostało zresetowane podczas ładowania listy odtwarzania."
+
+#: redbot/cogs/audio/apis/interface.py:574
+msgid "Player timeout, skipping remaining tracks."
+msgstr "Limit czasu odtwarzacza, pomijam pozostałe utwory."
+
+#: redbot/cogs/audio/apis/interface.py:668
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} utworów nie może zostać zakolejkowane."
 
-#: redbot/cogs/audio/apis/interface.py:612
+#: redbot/cogs/audio/apis/interface.py:676
 msgid "Playlist Enqueued"
 msgstr "Lista odtwarzania zakolejkowana"
 
-#: redbot/cogs/audio/apis/interface.py:613
+#: redbot/cogs/audio/apis/interface.py:677
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "Dodano {num} utworów do kolejki.{maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:619
+#: redbot/cogs/audio/apis/interface.py:683
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "{time} do rozpoczęcia odtwarzania listy odtwarzania: zaczyna się od #{position} w kolejce"
 
-#: redbot/cogs/audio/apis/spotify.py:165
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Klucz Spotify API lub sekret klienta nie zostały poprawnie ustawione. \\nUżyj `{prefix}audioset spotifyapi` dla dalszych instrukcji."
+#: redbot/cogs/audio/apis/interface.py:694
+msgid "Nothing found.\n"
+"The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr "Niczego nie znaleziono.\n"
+"Klucz API YouTube może być nieprawidłowy lub może być ograniczany w usłudze wyszukiwania YouTube.\n"
+"Sprawdź ponownie klucz API YouTube i postępuj zgodnie z instrukcjami z `{prefix}audioset youtubeapi`."
+
+#: redbot/cogs/audio/apis/youtube.py:62
+msgid "Your YouTube Data API token is invalid.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr ""
+
+#: redbot/cogs/audio/apis/youtube.py:74
+msgid "YouTube API error code: 403\n"
+"Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
+msgstr ""
 

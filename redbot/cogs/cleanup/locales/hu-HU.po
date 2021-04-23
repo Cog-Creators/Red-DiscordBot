@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-04-04 09:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,82 +15,207 @@ msgstr ""
 "X-Crowdin-File-ID: 31\n"
 "Language: hu_HU\n"
 
-#: redbot/cogs/cleanup/cleanup.py:22
+#: redbot/cogs/cleanup/cleanup.py:23
 #, docstring
-msgid "Commands for cleaning up messages."
-msgstr ""
+msgid "This cog contains commands used for \"cleaning up\" (deleting) messages.\n\n"
+"    This is designed as a moderator tool and offers many convenient use cases.\n"
+"    All cleanup commands only apply to the channel the command is executed in.\n\n"
+"    Messages older than two weeks cannot be mass deleted.\n"
+"    This is a limitation of the API.\n"
+"    "
+msgstr "Ez a cog üzenetek \"tisztogatására\" (törlésére) szolgáló parancsokat tartalmaz.\n\n"
+"    Ez egy moderációs eszköznek lett tervezve, és számos kényelmes funckiót tartalmaz.\n"
+"    Az összes tisztogató parancs arra a csatornára vonatkozik, ahol az ki volt adva.\n\n"
+"    A két hétnél régebbi üzenetek nem törölhetőek csoportosan.\n"
+"    Ez az API limitációja.\n"
+"    "
 
-#: redbot/cogs/cleanup/cleanup.py:46
+#: redbot/cogs/cleanup/cleanup.py:54
 msgid "Are you sure you want to delete {number} messages? (y/n)"
-msgstr ""
+msgstr "Biztosan törölni akarsz {number} üzenetet? (y/n)"
 
-#: redbot/cogs/cleanup/cleanup.py:60
+#: redbot/cogs/cleanup/cleanup.py:68
 msgid "Cancelled."
-msgstr ""
+msgstr "Megszakítva."
 
-#: redbot/cogs/cleanup/cleanup.py:120
+#: redbot/cogs/cleanup/cleanup.py:144
 #, docstring
-msgid "Delete messages."
-msgstr ""
+msgid "Base command for deleting messages."
+msgstr "Alap parancs üzenetek törlésére."
 
-#: redbot/cogs/cleanup/cleanup.py:129
+#: redbot/cogs/cleanup/cleanup.py:154
 #, docstring
-msgid "Delete the last X messages matching the specified text.\\n\\n        Example:\\n            `[p]cleanup text \\\"test\\\" 5`\\n\\n        Remember to use double quotes.\\n        "
-msgstr ""
+msgid "Delete the last X messages matching the specified text.\n\n"
+"        Example:\n"
+"            - `[p]cleanup text \"test\" 5`\n\n"
+"        Remember to use double quotes.\n\n"
+"        **Arguments:**\n\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "Törli az utolsó X üzenetet, ami egyezik a megadott szöveggel.\n\n"
+"        Például:\n"
+"            - `[p]cleanup text \"teszt\" 5`\n\n"
+"        Ne felejtsd el használni az idézőjeleket\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<number>` A törlendő üzenetek maximális száma. Pozitív egész szám kell legyen.\n"
+"        - `<delete_pinned>` Törölje-e a kitűzött üzeneteket is. Alapértelmezetten hamis (False)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:178
+#: redbot/cogs/cleanup/cleanup.py:209
 #, docstring
-msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
-msgstr ""
+msgid "Delete the last X messages from a specified user.\n\n"
+"        Examples:\n"
+"            - `[p]cleanup user @Twentysix 2`\n"
+"            - `[p]cleanup user Red 6`\n\n"
+"        **Arguments:**\n\n"
+"        - `<user>` The user whose messages are to be cleaned up.\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "Törli az utolsó X üzenetet egy adott felhasználótól.\n\n"
+"        Például:\n"
+"            - `[p]cleanup user @Twentysix 2`\n"
+"            - `[p]cleanup user Red 6`\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<user>` Felhasználó, akinek az üzeneteit törölni szeretnénk.\n"
+"        - `<number>`A törlendő üzenetek maximális száma. Pozitív egész szám kell legyen.\n"
+"        - `<delete_pinned>` Törölje-e a kitűzött üzeneteket is. Alapértelmezetten hamis (False)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:241
+#: redbot/cogs/cleanup/cleanup.py:282
 #, docstring
-msgid "Delete all messages after a specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
+msgid "Delete all messages after a specified message.\n\n"
+"        To get a message id, enable developer mode in Discord's\n"
+"        settings, 'appearance' tab. Then right click a message\n"
+"        and copy its id.\n"
+"        Replying to a message will cleanup all messages after it.\n\n"
+"        **Arguments:**\n\n"
+"        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:254 redbot/cogs/cleanup/cleanup.py:293
+#: redbot/cogs/cleanup/cleanup.py:303 redbot/cogs/cleanup/cleanup.py:357
 msgid "Message not found."
-msgstr ""
+msgstr "Üzenet nem található."
 
-#: redbot/cogs/cleanup/cleanup.py:280
+#: redbot/cogs/cleanup/cleanup.py:335
 #, docstring
-msgid "Deletes X messages before specified message.\\n\\n        To get a message id, enable developer mode in Discord's\\n        settings, 'appearance' tab. Then right click a message\\n        and copy its id.\\n        "
+msgid "Deletes X messages before the specified message.\n\n"
+"        To get a message id, enable developer mode in Discord's\n"
+"        settings, 'appearance' tab. Then right click a message\n"
+"        and copy its id.\n"
+"        Replying to a message will cleanup all messages before it.\n\n"
+"        **Arguments:**\n\n"
+"        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:320
+#: redbot/cogs/cleanup/cleanup.py:390
 #, docstring
-msgid "Delete the messages between Messsage One and Message Two, providing the messages IDs.\\n\\n        The first message ID should be the older message and the second one the newer.\\n\\n        Example:\\n            `[p]cleanup between 123456789123456789 987654321987654321`\\n        "
-msgstr ""
+msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\n\n"
+"        The first message ID should be the older message and the second one the newer.\n\n"
+"        Example:\n"
+"            - `[p]cleanup between 123456789123456789 987654321987654321`\n\n"
+"        **Arguments:**\n\n"
+"        - `<one>` The id of the message to cleanup after. This message won't be deleted.\n"
+"        - `<two>` The id of the message to cleanup before. This message won't be deleted.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "Törli az üzeneteket a két megadott üzenet között.\n\n"
+"        Az első üzenet ID a régebbi, a második az újabb kell legyen.\n\n"
+"        Például:\n"
+"        - `[p]cleanup between 123456789123456789 987654321987654321`\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<one>` Az első üzenet ID-je. Ez még nem lesz törölve.\n"
+"        - `<two>` A második üzenet ID-je. Ez már nem lesz törölve.\n"
+"        - `<delete_pinned>` Törölje-e a kitűzött üzeneteket is. Alapértelmezetten hamis (False)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:361
+#: redbot/cogs/cleanup/cleanup.py:438
 #, docstring
-msgid "Delete the last X messages.\\n\\n        Example:\\n            `[p]cleanup messages 26`\\n        "
-msgstr ""
+msgid "Delete the last X messages.\n\n"
+"        Example:\n"
+"            - `[p]cleanup messages 26`\n\n"
+"        **Arguments:**\n\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "Törli az utolsó X üzenetet.\n\n"
+"        Például:\n"
+"            - `[p]cleanup messages 26`\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<number>` A törlendő üzenetek maximális száma. Pozitív egész szám kell legyen.\n"
+"        - `<delete_pinned>` Törölje-e a kitűzött üzeneteket is. Alapértelmezetten hamis (False)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:393
+#: redbot/cogs/cleanup/cleanup.py:476
 #, docstring
-msgid "Clean up command messages and messages from the bot."
-msgstr ""
+msgid "Clean up command messages and messages from the bot.\n\n"
+"        Can only cleanup custom commands and alias commands if those cogs are loaded.\n\n"
+"        **Arguments:**\n\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "Törli a parancs üzeneteket és a bot válaszait.\n\n"
+"        Csak akkor törli az egyéni és cog parancsokat, ha az alias parancsok és az adott cog-ok be vannak töltve.\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<number>` A törlendő üzenetek maximális száma. Pozitív egész szám kell legyen.\n"
+"        - `<delete_pinned>` Törölje-e a kitűzött üzeneteket is. Alapértelmezetten hamis (False)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:472
+#: redbot/cogs/cleanup/cleanup.py:564
 #, docstring
-msgid "Clean up messages owned by the bot.\\n\\n        By default, all messages are cleaned. If a third argument is specified,\\n        it is used for pattern matching - only messages containing the given text will be deleted.\\n        "
-msgstr ""
+msgid "Clean up messages owned by the bot.\n\n"
+"        By default, all messages are cleaned. If a second argument is specified,\n"
+"        it is used for pattern matching - only messages containing the given text will be deleted.\n\n"
+"        Examples:\n"
+"            - `[p]cleanup self 6`\n"
+"            - `[p]cleanup self 10 Pong`\n"
+"            - `[p]cleanup self 7 \"\" True`\n\n"
+"        **Arguments:**\n\n"
+"        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
+"        - `<match_pattern>` The text that messages must contain to be deleted. Use \"\" to skip this.\n"
+"        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
+"        "
+msgstr "A bot által elküldött üzenetek takarítása.\n\n"
+"        Alapértelmezésből minden üzenet takarítva lesz. Ha egy második paraméter is meg van adva,\n"
+"        minták párosítására lesz használva - csak a szöveget tartalmazó üzenetek lesznek törölve.\n\n"
+"        Példák:\n"
+"            - `[p]cleanup self 6`\n"
+"            - `[p]cleanup self 10 Pong`\n"
+"            - `[p]cleanup self 7 \"\" True`\n\n"
+"        **Paraméterek:**\n\n"
+"        - `<number>` A takarítandó üzenetek maximális száma. Pozitív számnak kell lennie.\n"
+"        - `<match_pattern>` A szöveg, amit az üzeneteknek tartalmazniuk kell hogy törölve legyenek. Használd ezt: \"\" ennek a kihagyásához.\n"
+"        - `<delete_pinned>` Hogy töröljön-e kitűzött üzeneteket. Alapértelmezett: hamis (false)\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:542
+#: redbot/cogs/cleanup/cleanup.py:650
 #, docstring
-msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\\n\\n        Defaults to 50.\\n        "
-msgstr ""
+msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
+"        Defaults to 50.\n\n"
+"        **Arguments:**\n\n"
+"        - `<number>` The number of messages to check for duplicates. Must be a positive integer.\n"
+"        "
+msgstr "A legutóbbi X üzenet közül törli a duplikált üzeneteket a csatornában, és csak egy üzenetet tart meg belőle.\n\n"
+"        Alapértelmezetten 50 üzenet közül.\n\n"
+"        **Paraméterek**:\n\n"
+"        - `<number>` Az üzenetek száma, amik között a duplikáltakat keresi. Pozitív egész szám kell legyen.\n"
+"        "
 
-#: redbot/cogs/cleanup/converters.py:15
+#: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."
-msgstr ""
-
-#: redbot/cogs/cleanup/converters.py:27
-msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{} nem tűnik valós üzenet ID-nek."
 
 #: redbot/cogs/cleanup/converters.py:29
+msgid "{arg} is not an integer."
+msgstr "{arg} nem egy egész szám."
+
+#: redbot/cogs/cleanup/converters.py:31
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} nem egy pozitív egész szám."
 

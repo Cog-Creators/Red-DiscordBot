@@ -80,7 +80,7 @@ class General(commands.Cog):
         """ Nothing to delete """
         return
 
-    @commands.command()
+    @commands.command(usage="<choice> <choices...>")
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
@@ -216,7 +216,7 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
+        await ctx.send("https://lmgtfy.app/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -372,21 +372,24 @@ class General(commands.Cog):
             }
 
             features = {
-                "PARTNERED": _("Partnered"),
-                "VERIFIED": _("Verified"),
-                "DISCOVERABLE": _("Server Discovery"),
-                "FEATURABLE": _("Featurable"),
-                "COMMUNITY": _("Community"),
-                "PUBLIC_DISABLED": _("Public disabled"),
-                "INVITE_SPLASH": _("Splash Invite"),
-                "VIP_REGIONS": _("VIP Voice Servers"),
-                "VANITY_URL": _("Vanity URL"),
-                "MORE_EMOJI": _("More Emojis"),
-                "COMMERCE": _("Commerce"),
-                "NEWS": _("News Channels"),
                 "ANIMATED_ICON": _("Animated Icon"),
                 "BANNER": _("Banner Image"),
+                "COMMERCE": _("Commerce"),
+                "COMMUNITY": _("Community"),
+                "DISCOVERABLE": _("Server Discovery"),
+                "FEATURABLE": _("Featurable"),
+                "INVITE_SPLASH": _("Splash Invite"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
+                "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
+                "MORE_EMOJI": _("More Emojis"),
+                "NEWS": _("News Channels"),
+                "PARTNERED": _("Partnered"),
+                "PREVIEW_ENABLED": _("Preview enabled"),
+                "PUBLIC_DISABLED": _("Public disabled"),
+                "VANITY_URL": _("Vanity URL"),
+                "VERIFIED": _("Verified"),
+                "VIP_REGIONS": _("VIP Voice Servers"),
+                "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
             }
             guild_features_list = [
                 f"\N{WHITE HEAVY CHECK MARK} {name}"

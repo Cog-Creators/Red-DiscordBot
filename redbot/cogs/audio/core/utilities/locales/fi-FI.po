@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,451 +15,472 @@ msgstr ""
 "X-Crowdin-File-ID: 688\n"
 "Language: fi_FI\n"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:71
+#: redbot/cogs/audio/core/utilities/formatting.py:75
 msgid "tracks"
-msgstr ""
+msgstr "kappaletta"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:81
-#: redbot/cogs/audio/core/utilities/formatting.py:253
+#: redbot/cogs/audio/core/utilities/formatting.py:85
+#: redbot/cogs/audio/core/utilities/formatting.py:280
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages}"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:92
+#: redbot/cogs/audio/core/utilities/formatting.py:96
 msgid "Connection to Lavalink has failed."
-msgstr ""
+msgstr "Lavalink-yhteys epäonnistui."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:95
-#: redbot/cogs/audio/core/utilities/player.py:543
-#: redbot/cogs/audio/core/utilities/playlists.py:498
+#: redbot/cogs/audio/core/utilities/formatting.py:99
+#: redbot/cogs/audio/core/utilities/player.py:593
+#: redbot/cogs/audio/core/utilities/playlists.py:523
 msgid "Please check your console or logs for details."
-msgstr ""
+msgstr "Tarkista lisätiedot konsolista tai logeista."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:102
-#: redbot/cogs/audio/core/utilities/playlists.py:527
+#: redbot/cogs/audio/core/utilities/formatting.py:111
+#: redbot/cogs/audio/core/utilities/playlists.py:557
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "Yhdistä ensin puhekanavalle."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:105
-#: redbot/cogs/audio/core/utilities/playlists.py:520
+#: redbot/cogs/audio/core/utilities/formatting.py:114
+#: redbot/cogs/audio/core/utilities/playlists.py:550
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "Yhteyttä Lavalinkkiin ei ole vielä muodostettu."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:111
-msgid "Unable To Play Tracks"
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/formatting.py:111
-#: redbot/cogs/audio/core/utilities/player.py:420
-#: redbot/cogs/audio/core/utilities/player.py:491
+#: redbot/cogs/audio/core/utilities/formatting.py:120
+#: redbot/cogs/audio/core/utilities/player.py:441
+#: redbot/cogs/audio/core/utilities/player.py:525
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Jonon enimmäispituus on saavutettu."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:147
-#: redbot/cogs/audio/core/utilities/player.py:546
+#: redbot/cogs/audio/core/utilities/formatting.py:120
+msgid "Unable To Play Tracks"
+msgstr "Kappaleiden toisto ei onnistu"
+
+#: redbot/cogs/audio/core/utilities/formatting.py:158
+#: redbot/cogs/audio/core/utilities/player.py:601
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Kappale lisätty jonoon"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:164
-#: redbot/cogs/audio/core/utilities/player.py:514
+#: redbot/cogs/audio/core/utilities/formatting.py:173
+#: redbot/cogs/audio/core/utilities/player.py:550
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Tämä kappale ei ole sallittu tällä palvelimella."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:175
-#: redbot/cogs/audio/core/utilities/player.py:529
+#: redbot/cogs/audio/core/utilities/formatting.py:191
+#: redbot/cogs/audio/core/utilities/player.py:572
 msgid "Track exceeds maximum length."
-msgstr ""
+msgstr "Kappale ylittää maksimipituuden."
 
-#: redbot/cogs/audio/core/utilities/formatting.py:185
-#: redbot/cogs/audio/core/utilities/player.py:549
+#: redbot/cogs/audio/core/utilities/formatting.py:208
+#: redbot/cogs/audio/core/utilities/player.py:604
 msgid "{time} until track playback: #{position} in queue"
-msgstr ""
+msgstr "{time} kappaleen toistoon: #{position} jonossa"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:241
+#: redbot/cogs/audio/core/utilities/formatting.py:268
 msgid "Tracks Found:"
-msgstr ""
+msgstr "Kappaleita löydetty:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:242
+#: redbot/cogs/audio/core/utilities/formatting.py:269
 msgid "search results"
-msgstr ""
+msgstr "hakutulosta"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:244
+#: redbot/cogs/audio/core/utilities/formatting.py:271
 msgid "Folders Found:"
-msgstr ""
+msgstr "Kansioita löydetty:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:245
+#: redbot/cogs/audio/core/utilities/formatting.py:272
 msgid "local folders"
-msgstr ""
+msgstr "paikallista kansiota"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:247
+#: redbot/cogs/audio/core/utilities/formatting.py:274
 msgid "Files Found:"
-msgstr ""
+msgstr "Tiedostoja löydetty:"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:248
+#: redbot/cogs/audio/core/utilities/formatting.py:275
 msgid "local tracks"
-msgstr ""
+msgstr "paikallista kappaletta"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:346
-#: redbot/cogs/audio/core/utilities/playlists.py:224
+#: redbot/cogs/audio/core/utilities/formatting.py:387
+#: redbot/cogs/audio/core/utilities/playlists.py:234
 msgid "Unknown"
-msgstr ""
+msgstr "Tuntematon"
 
-#: redbot/cogs/audio/core/utilities/formatting.py:347
-msgid " - Name:   <{pname}>\\n - Scope:  < {scope} >\\n - ID:     < {pid} >\\n - Tracks: < {ptracks} >\\n - Author: < {author} >\\n\\n"
-msgstr ""
+#: redbot/cogs/audio/core/utilities/formatting.py:388
+msgid " - Name:   <{pname}>\n"
+" - Scope:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Tracks: < {ptracks} >\n"
+" - Author: < {author} >\n\n"
+msgstr " - Nimi:   <{pname}>\n"
+" - Taso:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Kappaleita: < {ptracks} >\n"
+" - Tekijä: < {author} >\n\n"
 
-#: redbot/cogs/audio/core/utilities/local_tracks.py:105
-#: redbot/cogs/audio/core/utilities/player.py:223
-#: redbot/cogs/audio/core/utilities/player.py:233
-#: redbot/cogs/audio/core/utilities/player.py:312
-#: redbot/cogs/audio/core/utilities/player.py:596
+#: redbot/cogs/audio/core/utilities/local_tracks.py:109
+#: redbot/cogs/audio/core/utilities/player.py:235
+#: redbot/cogs/audio/core/utilities/player.py:245
+#: redbot/cogs/audio/core/utilities/player.py:327
+#: redbot/cogs/audio/core/utilities/player.py:652
 msgid "Invalid Environment"
-msgstr ""
+msgstr "Virheellinen ympäristö"
 
-#: redbot/cogs/audio/core/utilities/local_tracks.py:105
+#: redbot/cogs/audio/core/utilities/local_tracks.py:109
 msgid "No localtracks folder."
-msgstr ""
+msgstr "Ei paikallisten kappaleiden kansiota."
 
-#: redbot/cogs/audio/core/utilities/miscellaneous.py:48
+#: redbot/cogs/audio/core/utilities/miscellaneous.py:53
 msgid "Not enough {currency}"
-msgstr ""
+msgstr "Ei tarpeeksi {currency}"
 
-#: redbot/cogs/audio/core/utilities/miscellaneous.py:49
+#: redbot/cogs/audio/core/utilities/miscellaneous.py:54
 msgid "{required_credits} {currency} required, but you have {bal}."
-msgstr ""
+msgstr "{required_credits} {currency} tarvitaan, mutta sinulla on vain {bal}."
 
-#: redbot/cogs/audio/core/utilities/player.py:74
+#: redbot/cogs/audio/core/utilities/player.py:78
 msgid "music in {} servers"
-msgstr ""
+msgstr "musiikkia {} palvelimella"
 
-#: redbot/cogs/audio/core/utilities/player.py:132
 #: redbot/cogs/audio/core/utilities/player.py:136
-#: redbot/cogs/audio/core/utilities/player.py:141
+#: redbot/cogs/audio/core/utilities/player.py:140
+#: redbot/cogs/audio/core/utilities/player.py:145
 msgid "There's nothing in the queue."
-msgstr ""
+msgstr "Jonossa ei ole mitään."
 
-#: redbot/cogs/audio/core/utilities/player.py:138
+#: redbot/cogs/audio/core/utilities/player.py:142
 msgid "Currently livestreaming {track}"
-msgstr ""
+msgstr "Tällä hetkellä livestriimaa {track}"
 
-#: redbot/cogs/audio/core/utilities/player.py:143
+#: redbot/cogs/audio/core/utilities/player.py:147
 msgid "{time} left on {track}"
-msgstr ""
+msgstr "{time} jäljellä kappaletta {track}"
 
-#: redbot/cogs/audio/core/utilities/player.py:151
-#: redbot/cogs/audio/core/utilities/player.py:186
+#: redbot/cogs/audio/core/utilities/player.py:155
+#: redbot/cogs/audio/core/utilities/player.py:190
 msgid "Track Skipped"
-msgstr ""
+msgstr "Kappale ohitettu"
 
-#: redbot/cogs/audio/core/utilities/player.py:164
+#: redbot/cogs/audio/core/utilities/player.py:168
 msgid "Track number must be equal to or greater than 1."
-msgstr ""
+msgstr "Kappalenumeron tulee olla yhtä suuri tai suurempi kuin 1."
 
-#: redbot/cogs/audio/core/utilities/player.py:170
+#: redbot/cogs/audio/core/utilities/player.py:174
 msgid "There are only {queuelen} songs currently queued."
-msgstr ""
+msgstr "Vain {queuelen} kappaletta on tällä hetkellä jonossa."
 
-#: redbot/cogs/audio/core/utilities/player.py:176
+#: redbot/cogs/audio/core/utilities/player.py:180
 msgid "{skip_to_track} Tracks Skipped"
-msgstr ""
+msgstr "{skip_to_track} kappaletta ohitettu"
 
-#: redbot/cogs/audio/core/utilities/player.py:224
-msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \\nSee `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+#: redbot/cogs/audio/core/utilities/player.py:236
+msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
+"See `{prefix}audioset spotifyapi` for instructions."
+msgstr "Omistajan tulee asettaa Spotify client ID ja Spotify client secret, ennen kuin Spotify-osoitteita voidaan käyttää. \n"
+"Katso `{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
-#: redbot/cogs/audio/core/utilities/player.py:234
-msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\\nSee `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/player.py:243
-#: redbot/cogs/audio/core/utilities/player.py:344
-#: redbot/cogs/audio/core/utilities/playlists.py:562
-msgid "Unable To Get Tracks"
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/player.py:244
-#: redbot/cogs/audio/core/utilities/player.py:345
-#: redbot/cogs/audio/core/utilities/playlists.py:563
-msgid "Wait until the playlist has finished loading."
-msgstr ""
+#: redbot/cogs/audio/core/utilities/player.py:246
+msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
+"See `{prefix}audioset youtubeapi` for instructions."
+msgstr "Omistajan täytyy asettee YouTube API -avain ennen kuin Spotify-osoitteita voidaan käyttää.\n"
+"Katso`{prefix}audioset youtubeapi` saadakseksi ohjeita."
 
 #: redbot/cogs/audio/core/utilities/player.py:255
-#: redbot/cogs/audio/core/utilities/player.py:294
-#: redbot/cogs/audio/core/utilities/player.py:386
-#: redbot/cogs/audio/core/utilities/playlists.py:573
+#: redbot/cogs/audio/core/utilities/player.py:364
+#: redbot/cogs/audio/core/utilities/playlists.py:592
+msgid "Unable To Get Tracks"
+msgstr "Kappaleita ei voitu hakea"
+
+#: redbot/cogs/audio/core/utilities/player.py:256
+#: redbot/cogs/audio/core/utilities/player.py:365
+#: redbot/cogs/audio/core/utilities/playlists.py:593
+msgid "Wait until the playlist has finished loading."
+msgstr "Odota kunnes soittolista on kokonaan latautunut."
+
+#: redbot/cogs/audio/core/utilities/player.py:267
+#: redbot/cogs/audio/core/utilities/player.py:309
+#: redbot/cogs/audio/core/utilities/player.py:407
 #: redbot/cogs/audio/core/utilities/playlists.py:603
+#: redbot/cogs/audio/core/utilities/playlists.py:636
 msgid "Nothing found."
-msgstr ""
+msgstr "Mitään ei löytynyt."
 
-#: redbot/cogs/audio/core/utilities/player.py:258
-#: redbot/cogs/audio/core/utilities/player.py:296
-#: redbot/cogs/audio/core/utilities/player.py:401
-#: redbot/cogs/audio/core/utilities/playlists.py:575
+#: redbot/cogs/audio/core/utilities/player.py:270
+#: redbot/cogs/audio/core/utilities/player.py:311
+#: redbot/cogs/audio/core/utilities/player.py:422
 #: redbot/cogs/audio/core/utilities/playlists.py:605
+#: redbot/cogs/audio/core/utilities/playlists.py:638
 msgid "Track is not playable."
-msgstr ""
+msgstr "Kappale ei ole toistettavissa."
 
-#: redbot/cogs/audio/core/utilities/player.py:259
-#: redbot/cogs/audio/core/utilities/player.py:297
-#: redbot/cogs/audio/core/utilities/player.py:403
-#: redbot/cogs/audio/core/utilities/playlists.py:576
+#: redbot/cogs/audio/core/utilities/player.py:271
+#: redbot/cogs/audio/core/utilities/player.py:312
+#: redbot/cogs/audio/core/utilities/player.py:424
 #: redbot/cogs/audio/core/utilities/playlists.py:606
+#: redbot/cogs/audio/core/utilities/playlists.py:639
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
-msgstr ""
+msgstr "**{suffix}** ei ole täysin tuettu muoto ja sen vuoksi kaikkia kappaleita ei välttämättä voida toistaa."
 
-#: redbot/cogs/audio/core/utilities/player.py:286
-#: redbot/cogs/audio/core/utilities/player.py:374
-#: redbot/cogs/audio/core/utilities/player.py:603
-#: redbot/cogs/audio/core/utilities/playlists.py:409
-#: redbot/cogs/audio/core/utilities/playlists.py:594
-#: redbot/cogs/audio/core/utilities/playlists.py:620
+#: redbot/cogs/audio/core/utilities/player.py:301
+#: redbot/cogs/audio/core/utilities/player.py:392
+#: redbot/cogs/audio/core/utilities/player.py:659
+#: redbot/cogs/audio/core/utilities/playlists.py:419
+#: redbot/cogs/audio/core/utilities/playlists.py:624
+#: redbot/cogs/audio/core/utilities/playlists.py:653
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Kappaletta ei voitu hakea"
 
-#: redbot/cogs/audio/core/utilities/player.py:287
-#: redbot/cogs/audio/core/utilities/player.py:375
-#: redbot/cogs/audio/core/utilities/playlists.py:410
-#: redbot/cogs/audio/core/utilities/playlists.py:595
-#: redbot/cogs/audio/core/utilities/playlists.py:621
-msgid "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+#: redbot/cogs/audio/core/utilities/player.py:302
+#: redbot/cogs/audio/core/utilities/player.py:393
+#: redbot/cogs/audio/core/utilities/player.py:660
+#: redbot/cogs/audio/core/utilities/playlists.py:420
+#: redbot/cogs/audio/core/utilities/playlists.py:625
+#: redbot/cogs/audio/core/utilities/playlists.py:654
+msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
+msgstr "En saa kappaletta Lavalinkiltä tällä hetkellä, yritä uudelleen muutaman minuutin kuluttua."
 
-#: redbot/cogs/audio/core/utilities/player.py:313
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+#: redbot/cogs/audio/core/utilities/player.py:328
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
+msgstr "Spotify API-avainta tai client secret -arvoa ei ole asetettu oikein. \n"
+"Käytä`{prefix}audioset spotifyapi` saadaksesi ohjeita."
 
-#: redbot/cogs/audio/core/utilities/player.py:332
+#: redbot/cogs/audio/core/utilities/player.py:352
 msgid "Unable To Find Tracks"
-msgstr ""
+msgstr "Kappaleita ei voida hakea"
 
-#: redbot/cogs/audio/core/utilities/player.py:333
+#: redbot/cogs/audio/core/utilities/player.py:353
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Tuo ei näytä olevan kelvollinen Spotify-osoite tai -koodi."
 
-#: redbot/cogs/audio/core/utilities/player.py:361
+#: redbot/cogs/audio/core/utilities/player.py:379
 msgid "{query} is not an allowed query."
-msgstr ""
+msgstr "{query} ei ole sallittu haku."
 
-#: redbot/cogs/audio/core/utilities/player.py:394
-msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\\nThis may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
-msgstr ""
+#: redbot/cogs/audio/core/utilities/player.py:415
+msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
+"This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
+msgstr "Paikalliset kappaleet eivät toimi jos `Lavalink.jar` ei voi nähdä niitä.\n"
+"Tämä voi johtua tiedosto-oikeuksista tai siitä että Lavalink.jar ajetaan toisella tietokoneella kuin missä kappaleet ovat."
 
-#: redbot/cogs/audio/core/utilities/player.py:454
+#: redbot/cogs/audio/core/utilities/player.py:488
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} kappaletta ei voida lisätä jonoon."
 
-#: redbot/cogs/audio/core/utilities/player.py:460
+#: redbot/cogs/audio/core/utilities/player.py:494
 msgid "No Title"
-msgstr ""
+msgstr "Ei otsikkoa"
 
-#: redbot/cogs/audio/core/utilities/player.py:466
+#: redbot/cogs/audio/core/utilities/player.py:500
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Soittolista lisätty jonoon"
 
-#: redbot/cogs/audio/core/utilities/player.py:469
+#: redbot/cogs/audio/core/utilities/player.py:503
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Lisättiin {num} kappaletta jonoon.{maxlength_msg}"
 
-#: redbot/cogs/audio/core/utilities/player.py:475
+#: redbot/cogs/audio/core/utilities/player.py:509
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} soittolistan toiston alkuun: alkaa sijalla #{position} jonossa"
 
-#: redbot/cogs/audio/core/utilities/player.py:540
+#: redbot/cogs/audio/core/utilities/player.py:590
 msgid "Nothing found"
-msgstr ""
+msgstr "Mitään ei löytynyt"
 
-#: redbot/cogs/audio/core/utilities/player.py:570
+#: redbot/cogs/audio/core/utilities/player.py:625
 msgid "Please wait, finding tracks..."
-msgstr ""
+msgstr "Odota hetki, etsitään kappaleita..."
 
-#: redbot/cogs/audio/core/utilities/player.py:576
+#: redbot/cogs/audio/core/utilities/player.py:631
 msgid "Getting track {num}/{total}..."
-msgstr ""
+msgstr "Haetaan kappaletta {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:577
+#: redbot/cogs/audio/core/utilities/player.py:632
 msgid "Matching track {num}/{total}..."
-msgstr ""
+msgstr "Yhdistetään kappaletta {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:578
-#: redbot/cogs/audio/core/utilities/playlists.py:325
-#: redbot/cogs/audio/core/utilities/playlists.py:398
+#: redbot/cogs/audio/core/utilities/player.py:633
+#: redbot/cogs/audio/core/utilities/playlists.py:335
+#: redbot/cogs/audio/core/utilities/playlists.py:408
 msgid "Loading track {num}/{total}..."
-msgstr ""
+msgstr "Ladataan kappaletta {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:579
+#: redbot/cogs/audio/core/utilities/player.py:634
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "Arvioitu jäljellä oleva aika: {seconds}"
 
-#: redbot/cogs/audio/core/utilities/player.py:604
-msgid "I'm unable get a track from Lavalink at the moment,try again in a few minutes."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/player.py:613
+#: redbot/cogs/audio/core/utilities/player.py:669
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Yhteys nollattiin soittolistaa ladatessa."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:67
+#: redbot/cogs/audio/core/utilities/playlists.py:77
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "Sinulla ei ole oikeutta hallita soittolistaa {name} (`{id}`) [**{scope}**]."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:85
+#: redbot/cogs/audio/core/utilities/playlists.py:95
 msgid "You do not have the permissions to manage that playlist in {guild}."
-msgstr ""
+msgstr "Sinulla ei ole oikeutta hallita tuota soittolistaa palvelimella {guild}."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:92
+#: redbot/cogs/audio/core/utilities/playlists.py:102
 msgid "You do not have the permissions to manage playlist owned by {user}."
-msgstr ""
+msgstr "Sinulla ei ole oikeutta hallita soittolistaa jonka omistaa {user}."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:96
+#: redbot/cogs/audio/core/utilities/playlists.py:106
 msgid "You do not have the permissions to manage playlists in {scope} scope."
-msgstr ""
+msgstr "Sinulla ei ole oikeutta hallinnoida soittolistoja {scope}-tasolla."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:100
+#: redbot/cogs/audio/core/utilities/playlists.py:110
 msgid "No access to playlist."
-msgstr ""
+msgstr "Ei pääsyä soittolistaan."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:208
+#: redbot/cogs/audio/core/utilities/playlists.py:218
 msgid "{match_count} playlists match {original_input}: Please try to be more specific, or use the playlist ID."
-msgstr ""
+msgstr "{match_count} soittolistaa täsmää hakuun {original_input}: Ole tarkempi tai käytä soittolistan ID:tä."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:225
-msgid "{number}.    <{playlist.name}>\\n - Scope:  < {scope} >\\n - ID:     < {playlist.id} >\\n - Tracks: < {tracks} >\\n - Author: < {author} >\\n\\n"
-msgstr ""
+#: redbot/cogs/audio/core/utilities/playlists.py:235
+msgid "{number}.    <{playlist.name}>\n"
+" - Scope:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Tracks: < {tracks} >\n"
+" - Author: < {author} >\n\n"
+msgstr "{number}.    <{playlist.name}>\n"
+" - Taso:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Kappaleita: < {tracks} >\n"
+" - Tekijä: < {author} >\n\n"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:242
+#: redbot/cogs/audio/core/utilities/playlists.py:252
 msgid "{playlists} playlists found, which one would you like?"
-msgstr ""
+msgstr "{playlists} soittolistaa löytyi, minkä niistä haluat?"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:261
-#: redbot/cogs/audio/core/utilities/playlists.py:267
+#: redbot/cogs/audio/core/utilities/playlists.py:271
+#: redbot/cogs/audio/core/utilities/playlists.py:277
 msgid "Too many matches found and you did not select which one you wanted."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/playlists.py:292
-msgid "Playlists you can access in this server:"
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/playlists.py:298
-msgid "Playlists for {scope}:"
-msgstr ""
+msgstr "Liian monta osumaa löydettiin etkä valinnut minkä niistä halusit."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:302
+msgid "Playlists you can access in this server:"
+msgstr "Soittolistat joihin sinulla on pääsy tällä palvelimella:"
+
+#: redbot/cogs/audio/core/utilities/playlists.py:308
+msgid "Playlists for {scope}:"
+msgstr "Soittolistat {scope}-tasolle:"
+
+#: redbot/cogs/audio/core/utilities/playlists.py:312
 msgid "Page {page_num}/{total_pages} | {num} playlists."
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num} soittolistaa."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:318
-#: redbot/cogs/audio/core/utilities/playlists.py:396
+#: redbot/cogs/audio/core/utilities/playlists.py:328
+#: redbot/cogs/audio/core/utilities/playlists.py:406
 msgid "Please wait, adding tracks..."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/playlists.py:345
-#: redbot/cogs/audio/core/utilities/playlists.py:445
-msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/playlists.py:350
-#: redbot/cogs/audio/core/utilities/playlists.py:450
-msgid "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) could not be loaded."
-msgstr ""
+msgstr "Ole hyvä ja odota, kappaleita lisätään..."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:355
-#: redbot/cogs/audio/core/utilities/playlists.py:455
+#: redbot/cogs/audio/core/utilities/playlists.py:458
+msgid "Empty playlist {name} (`{id}`) [**{scope}**] created."
+msgstr "Tyhjä soittolista {name} (`{id}`) [**{scope}**] luotu."
+
+#: redbot/cogs/audio/core/utilities/playlists.py:360
+#: redbot/cogs/audio/core/utilities/playlists.py:463
+msgid "Added {num} tracks from the {playlist_name} playlist. {num_bad} track(s) could not be loaded."
+msgstr "Lisättiin {num} kappaletta soittolistalta {playlist_name}. {num_bad} kappaletta ei voitu ladata."
+
+#: redbot/cogs/audio/core/utilities/playlists.py:365
+#: redbot/cogs/audio/core/utilities/playlists.py:468
 msgid "Added {num} tracks from the {playlist_name} playlist."
-msgstr ""
+msgstr "Lisättiin {num} kappaletta soittolistalta {playlist_name}."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:359
-#: redbot/cogs/audio/core/utilities/playlists.py:459
+#: redbot/cogs/audio/core/utilities/playlists.py:369
+#: redbot/cogs/audio/core/utilities/playlists.py:472
 msgid "Playlist Saved"
-msgstr ""
+msgstr "Soittolista tallennettu"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:495
+#: redbot/cogs/audio/core/utilities/playlists.py:520
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "Lavalink-yhteys epäonnistui"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:509
-#: redbot/cogs/audio/core/utilities/playlists.py:519
-#: redbot/cogs/audio/core/utilities/playlists.py:526
-#: redbot/cogs/audio/core/utilities/playlists.py:539
+#: redbot/cogs/audio/core/utilities/playlists.py:534
+#: redbot/cogs/audio/core/utilities/playlists.py:549
+#: redbot/cogs/audio/core/utilities/playlists.py:556
+#: redbot/cogs/audio/core/utilities/playlists.py:569
 msgid "Unable To Get Playlists"
-msgstr ""
+msgstr "Soittolistoja ei voitu hakea"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:510
+#: redbot/cogs/audio/core/utilities/playlists.py:535
 msgid "I don't have permission to connect to your channel."
-msgstr ""
+msgstr "Minulla ei ole oikeutta yhdistää kanavallesi."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:540
+#: redbot/cogs/audio/core/utilities/playlists.py:570
 msgid "You must be in the voice channel to use the playlist command."
-msgstr ""
+msgstr "Sinun tulee olla puhekanavalla käyttääksesi soittolista-komentoa."
 
-#: redbot/cogs/audio/core/utilities/playlists.py:643
+#: redbot/cogs/audio/core/utilities/playlists.py:679
 msgid "the Global"
-msgstr ""
+msgstr "Globaalille"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:643
+#: redbot/cogs/audio/core/utilities/playlists.py:679
 msgid "Global"
-msgstr ""
+msgstr "Globaali"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:645
+#: redbot/cogs/audio/core/utilities/playlists.py:681
 msgid "the Server"
-msgstr ""
+msgstr "Palvelin"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:645
+#: redbot/cogs/audio/core/utilities/playlists.py:681
 msgid "Server"
-msgstr ""
+msgstr "Palvelin"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:647
+#: redbot/cogs/audio/core/utilities/playlists.py:683
 msgid "the User"
-msgstr ""
+msgstr "Käyttäjä"
 
-#: redbot/cogs/audio/core/utilities/playlists.py:647
+#: redbot/cogs/audio/core/utilities/playlists.py:683
 msgid "User"
-msgstr ""
+msgstr "Käyttäjä"
 
-#: redbot/cogs/audio/core/utilities/queue.py:36
-msgid "__Too many songs in the queue, only showing the first 500__.\\n\\n"
-msgstr ""
+#: redbot/cogs/audio/core/utilities/queue.py:40
+msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
+msgstr "__Liian monta kappaletta jonossa, näytetään vain ensimmäiset 500__.\n\n"
 
-#: redbot/cogs/audio/core/utilities/queue.py:53
-msgid "**Currently livestreaming:**\\n"
-msgstr ""
+#: redbot/cogs/audio/core/utilities/queue.py:57
+msgid "**Currently livestreaming:**\n"
+msgstr "**Tällä hetkellä livestriimaa:**\n"
 
-#: redbot/cogs/audio/core/utilities/queue.py:55
-#: redbot/cogs/audio/core/utilities/queue.py:60
+#: redbot/cogs/audio/core/utilities/queue.py:59
+#: redbot/cogs/audio/core/utilities/queue.py:64
 msgid "Requested by: **{user}**"
-msgstr ""
+msgstr "Lisääjä: **{user}**"
 
-#: redbot/cogs/audio/core/utilities/queue.py:58
+#: redbot/cogs/audio/core/utilities/queue.py:62
 msgid "Playing: "
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/queue.py:72
-msgid "requested by **{user}**\\n"
-msgstr ""
+msgstr "Toistetaan: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
+msgid "requested by **{user}**\n"
+msgstr "jonka lisäsi **{user}**\n"
+
+#: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr ""
+msgstr "Palvelimen __{guild_name}__ jono"
 
-#: redbot/cogs/audio/core/utilities/queue.py:83
-msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\\n"
-msgstr ""
+#: redbot/cogs/audio/core/utilities/queue.py:88
+msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
+msgstr "Sivu {page_num}/{total_pages} | {num_tracks} kappaletta, {num_remaining} jäljellä\n"
 
-#: redbot/cogs/audio/core/utilities/queue.py:92
+#: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr ""
+msgstr "Automaattinen toisto"
 
-#: redbot/cogs/audio/core/utilities/queue.py:98
+#: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"
-msgstr ""
+msgstr "Sekoitus"
 
-#: redbot/cogs/audio/core/utilities/queue.py:104
+#: redbot/cogs/audio/core/utilities/queue.py:109
 msgid "Repeat"
-msgstr ""
+msgstr "Uudelleentoisto"
 
-#: redbot/cogs/audio/core/utilities/queue.py:156
+#: redbot/cogs/audio/core/utilities/queue.py:161
 msgid "Matching Tracks:"
-msgstr ""
+msgstr "Vastaavat kappaleet:"
 
-#: redbot/cogs/audio/core/utilities/queue.py:159
+#: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num_tracks} kappaletta"
 

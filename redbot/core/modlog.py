@@ -15,7 +15,8 @@ from .utils.common_filters import (
     filter_urls,
     escape_spoilers,
 )
-from .i18n import Translator
+from .utils.chat_formatting import pagify
+from .i18n import Translator, set_contextual_locales_from_guild
 
 from .generic_casetypes import all_generics
 
@@ -342,11 +343,7 @@ class Case:
         title = "{}".format(
             _("Case #{} | {} {}").format(self.case_number, casetype.case_str, casetype.image)
         )
-
-        if self.reason:
-            reason = _("**Reason:** {}").format(self.reason)
-        else:
-            reason = _("**Reason:** Use the `reason` command to add it")
+        reason = _("**Reason:** Use the `reason` command to add it")
 
         if self.moderator is None:
             moderator = _("Unknown")
@@ -403,6 +400,19 @@ class Case:
             )  # Invites and spoilers get rendered even in embeds.
 
         if embed:
+            if self.reason:
+                reason = _("**Reason:** {}").format(self.reason)
+                if len(reason) > 2048:
+                    reason = (
+                        next(
+                            pagify(
+                                reason,
+                                delims=[" ", "\n"],
+                                page_length=2000,
+                            )
+                        )
+                        + "..."
+                    )
             emb = discord.Embed(title=title, description=reason)
             emb.set_author(name=user)
             emb.add_field(name=_("Moderator"), value=moderator, inline=False)
@@ -425,6 +435,19 @@ class Case:
             emb.timestamp = datetime.utcfromtimestamp(self.created_at)
             return emb
         else:
+            if self.reason:
+                reason = _("**Reason:** {}").format(self.reason)
+                if len(reason) > 1000:
+                    reason = (
+                        next(
+                            pagify(
+                                reason,
+                                delims=[" ", "\n"],
+                                page_length=1000,
+                            )
+                        )
+                        + "..."
+                    )
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
@@ -523,15 +546,11 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                try:
-                    message = discord.utils.get(bot.cached_messages, id=message_id)
-                except AttributeError:
-                    # bot.cached_messages didn't exist prior to discord.py 1.1.0
-                    message = None
+                message = discord.utils.get(bot.cached_messages, id=message_id)
                 if message is None:
                     try:
                         message = await mod_channel.fetch_message(message_id)
-                    except (discord.NotFound, AttributeError):
+                    except discord.HTTPException:
                         message = None
             else:
                 message = None
@@ -885,6 +904,7 @@ async def create_case(
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)
 
+    await set_contextual_locales_from_guild(bot, guild)
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
