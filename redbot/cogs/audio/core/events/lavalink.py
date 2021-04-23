@@ -17,7 +17,6 @@ from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = logging.getLogger("red.Audio.WS.Audio")
-ws_audio_log.setLevel(logging.WARNING)
 
 _ = Translator("Audio", Path(__file__))
 

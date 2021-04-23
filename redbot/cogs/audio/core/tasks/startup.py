@@ -33,6 +33,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         # There has to be a task since this requires the bot to be ready
         # If it waits for ready in startup, we cause a deadlock during initial load
         # as initial load happens before the bot can ever be ready.
+        lavalink.set_logging_level(self.bot._cli_flags.debug)
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
         self.cog_init_task.add_done_callback(task_callback)
 
