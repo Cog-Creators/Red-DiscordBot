@@ -333,8 +333,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
             if player.channel:
-                current_perms = player.channel.permissions_for(player.channel.guild.me)
-                has_perm = current_perms.speak and current_perms.connect
+                has_perm = self.can_join_and_speak(player.channel)
             else:
                 has_perm = False
             if code in (1000,) and has_perm and player.current and player.is_playing:

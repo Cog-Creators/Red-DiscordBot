@@ -537,5 +537,10 @@ class MixinMeta(ABC):
     async def icyparser(self, url: str) -> Optional[str]:
         raise NotImplementedError()
 
+    @abstractmethod
     async def self_deafen(self, player: lavalink.Player) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
         raise NotImplementedError()
