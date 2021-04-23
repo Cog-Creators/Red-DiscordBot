@@ -22,9 +22,9 @@ from .errors import LavalinkDownloadFailed
 from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
-log = logging.getLogger("red.audio.manager")
-JAR_VERSION: Final[str] = "3.3.1.4"
-JAR_BUILD: Final[int] = 1115
+log = logging.getLogger("red.Audio.manager")
+JAR_VERSION: Final[str] = "3.3.2.3"
+JAR_BUILD: Final[int] = 1212
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -36,12 +36,48 @@ BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / 
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start. (.*)")
+_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
-_RE_JAVA_VERSION_LINE: Final[Pattern] = re.compile(
-    r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+
+# Version regexes
+#
+# We expect the output to look something like:
+#     $ java -version
+#     ...
+#     ... version "VERSION STRING HERE" ...
+#     ...
+#
+# There are two version formats that we might get here:
+#
+# - Version scheme pre JEP 223 - used by Java 8 and older
+#
+# examples:
+# 1.8.0
+# 1.8.0_275
+# 1.8.0_272-b10
+# 1.8.0_202-internal-201903130451-b08
+# 1.8.0_272-ea-202010231715-b10
+# 1.8.0_272-ea-b10
+#
+# Implementation based on J2SE SDK/JRE Version String Naming Convention document:
+# https://www.oracle.com/java/technologies/javase/versioning-naming.html
+_RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
+    r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_(?:\d+))?(?:-.*)?"'
 )
-_RE_JAVA_SHORT_VERSION: Final[Pattern] = re.compile(r'version "(?P<major>\d+)"')
+# - Version scheme introduced by JEP 223 - used by Java 9 and newer
+#
+# examples:
+# 11
+# 11.0.9
+# 11.0.9.1
+# 11.0.9-ea
+# 11.0.9-202011050024
+#
+# Implementation based on JEP 223 document:
+# https://openjdk.java.net/jeps/223
+_RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
+    r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(\-[a-zA-Z0-9]+)?"'
+)
 
 LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
@@ -175,21 +211,19 @@ class ServerManager:
         _, err = await _proc.communicate()
 
         version_info: str = err.decode("utf-8")
-        # We expect the output to look something like:
-        #     $ java -version
-        #     ...
-        #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
-        #     ...
-        # We only care about the major and minor parts though.
-
         lines = version_info.splitlines()
         for line in lines:
-            match = _RE_JAVA_VERSION_LINE.search(line)
-            short_match = _RE_JAVA_SHORT_VERSION.search(line)
-            if match:
-                return int(match["major"]), int(match["minor"])
-            elif short_match:
-                return int(short_match["major"]), 0
+            match = _RE_JAVA_VERSION_LINE_PRE223.search(line)
+            if match is None:
+                match = _RE_JAVA_VERSION_LINE_223.search(line)
+            if match is None:
+                continue
+            major = int(match["major"])
+            minor = 0
+            if minor_str := match["minor"]:
+                minor = int(minor_str)
+
+            return major, minor
 
         raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
 
@@ -200,6 +234,7 @@ class ServerManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")

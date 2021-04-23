@@ -20,7 +20,14 @@ log = logging.getLogger("red.cleanup")
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
-    """Commands for cleaning up messages."""
+    """This cog contains commands used for "cleaning up" (deleting) messages.
+
+    This is designed as a moderator tool and offers many convenient use cases.
+    All cleanup commands only apply to the channel the command is executed in.
+
+    Messages older than two weeks cannot be mass deleted.
+    This is a limitation of the API.
+    """
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -115,9 +122,26 @@ class Cleanup(commands.Cog):
 
         return collected
 
+    @staticmethod
+    async def get_message_from_reference(
+        channel: discord.TextChannel, reference: discord.MessageReference
+    ) -> Optional[discord.Message]:
+        message = None
+        resolved = reference.resolved
+        if resolved and isinstance(resolved, discord.Message):
+            message = resolved
+        elif (message := reference.cached_message) :
+            pass
+        else:
+            try:
+                message = await channel.fetch_message(reference.message_id)
+            except discord.NotFound:
+                pass
+        return message
+
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
-        """Delete messages."""
+        """Base command for deleting messages."""
         pass
 
     @cleanup.command()
@@ -130,9 +154,14 @@ class Cleanup(commands.Cog):
         """Delete the last X messages matching the specified text.
 
         Example:
-            `[p]cleanup text "test" 5`
+            - `[p]cleanup text "test" 5`
 
         Remember to use double quotes.
+
+        **Arguments:**
+
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
 
         channel = ctx.channel
@@ -180,8 +209,14 @@ class Cleanup(commands.Cog):
         """Delete the last X messages from a specified user.
 
         Examples:
-            `[p]cleanup user @\u200bTwentysix 2`
-            `[p]cleanup user Red 6`
+            - `[p]cleanup user @Twentysix 2`
+            - `[p]cleanup user Red 6`
+
+        **Arguments:**
+
+        - `<user>` The user whose messages are to be cleaned up.
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
         channel = ctx.channel
 
@@ -239,22 +274,38 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def after(
-        self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: Optional[RawMessageIds],
+        delete_pinned: bool = False,
     ):
         """Delete all messages after a specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+        Replying to a message will cleanup all messages after it.
+
+        **Arguments:**
+
+        - `<message_id>` The id of the message to cleanup after. This message won't be deleted.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
 
         channel = ctx.channel
         author = ctx.author
+        after = None
 
-        try:
-            after = await channel.fetch_message(message_id)
-        except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+        if message_id:
+            try:
+                after = await channel.fetch_message(message_id)
+            except discord.NotFound:
+                return await ctx.send(_("Message not found."))
+        elif ref := ctx.message.reference:
+            after = await self.get_message_from_reference(channel, ref)
+
+        if after is None:
+            raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
@@ -277,24 +328,38 @@ class Cleanup(commands.Cog):
     async def before(
         self,
         ctx: commands.Context,
-        message_id: RawMessageIds,
+        message_id: Optional[RawMessageIds],
         number: positive_int,
         delete_pinned: bool = False,
     ):
-        """Deletes X messages before specified message.
+        """Deletes X messages before the specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+        Replying to a message will cleanup all messages before it.
+
+        **Arguments:**
+
+        - `<message_id>` The id of the message to cleanup before. This message won't be deleted.
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
 
         channel = ctx.channel
         author = ctx.author
+        before = None
 
-        try:
-            before = await channel.fetch_message(message_id)
-        except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+        if message_id:
+            try:
+                before = await channel.fetch_message(message_id)
+            except discord.NotFound:
+                return await ctx.send(_("Message not found."))
+        elif ref := ctx.message.reference:
+            before = await self.get_message_from_reference(channel, ref)
+
+        if before is None:
+            raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=number, before=before, delete_pinned=delete_pinned
@@ -327,7 +392,13 @@ class Cleanup(commands.Cog):
         The first message ID should be the older message and the second one the newer.
 
         Example:
-            `[p]cleanup between 123456789123456789 987654321987654321`
+            - `[p]cleanup between 123456789123456789 987654321987654321`
+
+        **Arguments:**
+
+        - `<one>` The id of the message to cleanup after. This message won't be deleted.
+        - `<two>` The id of the message to cleanup before. This message won't be deleted.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
         channel = ctx.channel
         author = ctx.author
@@ -367,7 +438,12 @@ class Cleanup(commands.Cog):
         """Delete the last X messages.
 
         Example:
-            `[p]cleanup messages 26`
+            - `[p]cleanup messages 26`
+
+        **Arguments:**
+
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
 
         channel = ctx.channel
@@ -397,7 +473,15 @@ class Cleanup(commands.Cog):
     async def cleanup_bot(
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
-        """Clean up command messages and messages from the bot."""
+        """Clean up command messages and messages from the bot.
+
+        Can only cleanup custom commands and alias commands if those cogs are loaded.
+
+        **Arguments:**
+
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
+        """
 
         channel = ctx.channel
         author = ctx.message.author
@@ -479,8 +563,19 @@ class Cleanup(commands.Cog):
     ):
         """Clean up messages owned by the bot.
 
-        By default, all messages are cleaned. If a third argument is specified,
+        By default, all messages are cleaned. If a second argument is specified,
         it is used for pattern matching - only messages containing the given text will be deleted.
+
+        Examples:
+            - `[p]cleanup self 6`
+            - `[p]cleanup self 10 Pong`
+            - `[p]cleanup self 7 "" True`
+
+        **Arguments:**
+
+        - `<number>` The max number of messages to cleanup. Must be a positive integer.
+        - `<match_pattern>` The text that messages must contain to be deleted. Use "" to skip this.
+        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False
         """
         channel = ctx.channel
         author = ctx.message.author
@@ -520,6 +615,8 @@ class Cleanup(commands.Cog):
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
+        if can_mass_purge:
+            to_delete.append(ctx.message)
 
         if ctx.guild:
             channel_name = "channel " + channel.name
@@ -543,14 +640,20 @@ class Cleanup(commands.Cog):
         else:
             await slow_deletion(to_delete)
 
-    @cleanup.command(name="spam")
+    @cleanup.command(name="duplicates", aliases=["spam"])
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_spam(self, ctx: commands.Context, number: positive_int = PositiveInt(50)):
+    async def cleanup_duplicates(
+        self, ctx: commands.Context, number: positive_int = PositiveInt(50)
+    ):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
 
         Defaults to 50.
+
+        **Arguments:**
+
+        - `<number>` The number of messages to check for duplicates. Must be a positive integer.
         """
         msgs = []
         spam = []

@@ -5,6 +5,7 @@ import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import box
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -16,7 +17,6 @@ _ = Translator("Audio", Path(__file__))
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="llsetup", aliases=["llset"])
     @commands.is_owner()
-    @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options."""
@@ -55,7 +55,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                         java_path=exc_absolute
                     ),
                 )
-            await self.config.java_exc_path.set(exc_absolute)
+            await self.config.java_exc_path.set(str(exc_absolute))
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Changed"),
@@ -71,7 +71,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Failed To Shutdown Lavalink"),
                 description=_(
-                    "For it to take effect please reload " "Audio (`{prefix}reload audio`)."
+                    "For it to take effect please reload Audio (`{prefix}reload audio`)."
                 ).format(
                     prefix=ctx.prefix,
                 ),
@@ -187,31 +187,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_llsetup.command(name="restport")
-    async def command_llsetup_restport(self, ctx: commands.Context, rest_port: int):
-        """Set the Lavalink REST server port."""
-        await self.config.rest_port.set(rest_port)
-        footer = None
-        if await self.update_external_status():
-            footer = _("External Lavalink server set to True.")
-        await self.send_embed_msg(
-            ctx,
-            title=_("Setting Changed"),
-            description=_("REST port set to {port}.").format(port=rest_port),
-            footer=footer,
-        )
-
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
-            )
-
     @command_llsetup.command(name="wsport")
     async def command_llsetup_wsport(self, ctx: commands.Context, ws_port: int):
         """Set the Lavalink websocket server port."""
@@ -236,3 +211,22 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     prefix=ctx.prefix
                 ),
             )
+
+    @command_llsetup.command(name="info", aliases=["settings"])
+    async def command_llsetup_info(self, ctx: commands.Context):
+        """Display Lavalink connection settings."""
+        configs = await self.config.all()
+        host = configs["host"]
+        password = configs["password"]
+        rest_port = configs["rest_port"]
+        ws_port = configs["ws_port"]
+        msg = "----" + _("Connection Settings") + "----        \n"
+        msg += _("Host:             [{host}]\n").format(host=host)
+        msg += _("WS Port:          [{port}]\n").format(port=ws_port)
+        if ws_port != rest_port and rest_port != 2333:
+            msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
+        msg += _("Password:         [{password}]\n").format(password=password)
+        try:
+            await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))
+        except discord.HTTPException:
+            await ctx.send(_("I need to be able to DM you to send you this info."))

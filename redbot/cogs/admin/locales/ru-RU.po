@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-16 19:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -21,19 +21,19 @@ msgstr "Я попыталась сделать что-то, в чем Discord о
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Невозможно выдать роль {role.name} для {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
+msgstr "Я не могу добавить роль {role.name} пользователю {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Я не могу убрать {role.name} у {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
+msgstr "Я не могу удалить роль {role.name} у пользователя {member.display_name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr "Я не могу редактировать {role.name}, потому что эта роль выше моей или равна самой высокой роли в иерархии Discord."
+msgstr "Я не могу редактировать роль {role.name}, потому что эта роль выше или равна моей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу вам дать {role.name}, {member.display_name}, поскольку эта роль выше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Я не могу дать {role.name} пользователю {member.display_name}, поскольку эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -41,7 +41,7 @@ msgstr "Я не могу позволить вам удалить {role.name} у
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Я не могу позволить вам редактировать {role.name}, потому что эта роль больше или равна вашей самой высокой роли в иерархии Discord."
+msgstr "Я не могу позволить вам редактировать роль {role.name}, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need manage roles permission to do that."
@@ -74,13 +74,29 @@ msgstr "Я успешно забрала роль {role.name} у пользов�
 
 #: redbot/cogs/admin/admin.py:223
 #, docstring
-msgid "\\n        Add a role to a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Добавить роль пользователю.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Если пользователь не указан, по умолчанию используется автор команды.\\n        "
+msgid "\n"
+"        Add a role to a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "\n"
+"        Добавить роль пользователю.\n\n"
+"        Используйте двойные кавычки, если роль содержит пробелы.\n"
+"        Если пользователь не указан, по умолчанию используется автор команды.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:239
 #, docstring
-msgid "\\n        Remove a role from a user.\\n\\n        Use double quotes if the role contains spaces.\\n        If user is left blank it defaults to the author of the command.\\n        "
-msgstr "\\n        Удалить роль у пользователя.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Если пользователь не указан, по умолчанию используется автор команды.\\n        "
+msgid "\n"
+"        Remove a role from a user.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        If user is left blank it defaults to the author of the command.\n"
+"        "
+msgstr "\n"
+"        Удалить роль у пользователя.\n\n"
+"        Используйте двойные кавычки, если роль содержит пробелы.\n"
+"        Если пользователь не указан, по умолчанию используется автор команды.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:253
 #, docstring
@@ -89,8 +105,24 @@ msgstr "Изменение параметров роли."
 
 #: redbot/cogs/admin/admin.py:260
 #, docstring
-msgid "\\n        Edit a role's colour.\\n\\n        Use double quotes if the role contains spaces.\\n        Colour must be in hexadecimal format.\\n        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Examples:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
-msgstr "\\n        Изменить цвет роли.\\n\\n        Используйте двойные кавычки, если роль содержит пробелы.\\n        Цвет должен быть в шестнадцатеричном формате.\\n        [Онлайн-палитра цветов](http://www.w3schools.com/colors/colors_picker.asp)\\n\\n        Примеры:\\n            `[p]editrole colour \\\"The Transistor\\\" #ff0000`\\n            `[p]editrole colour Test #ff9900`\\n        "
+msgid "\n"
+"        Edit a role's colour.\n\n"
+"        Use double quotes if the role contains spaces.\n"
+"        Colour must be in hexadecimal format.\n"
+"        [Online colour picker](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Examples:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
+msgstr "\n"
+"        Изменить цвет роли.\n\n"
+"        Используйте двойные кавычки, если роль содержит пробелы.\n"
+"        Цвет должен быть в шестнадцатеричном формате.\n"
+"        [Онлайн-палитра цветов](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Примеры:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:289 redbot/cogs/admin/admin.py:322
 msgid "Done."
@@ -98,8 +130,18 @@ msgstr "Готово."
 
 #: redbot/cogs/admin/admin.py:293
 #, docstring
-msgid "\\n        Edit a role's name.\\n\\n        Use double quotes if the role or the name contain spaces.\\n\\n        Example:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
-msgstr "\\n        Изменить название роли.\\n\\n        Используйте двойные кавычки, если роль или имя содержат пробелы.\\n\\n        Примеры:\\n            `[p]editrole name \\\"The Transistor\\\" Test`\\n        "
+msgid "\n"
+"        Edit a role's name.\n\n"
+"        Use double quotes if the role or the name contain spaces.\n\n"
+"        Example:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
+msgstr "\n"
+"        Изменить название роли.\n\n"
+"        Используйте двойные кавычки, если роль или имя содержат пробелы.\n\n"
+"        Примеры:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:327
 #, docstring
@@ -117,7 +159,7 @@ msgstr "Отменить текущее объявление."
 
 #: redbot/cogs/admin/admin.py:343
 msgid "There is no currently running announcement."
-msgstr "В данный момент нет запущенных объявлений."
+msgstr "В настоящее время нет запущенных объявлений."
 
 #: redbot/cogs/admin/admin.py:346
 msgid "The current announcement has been cancelled."
@@ -130,8 +172,14 @@ msgstr "Изменить способ отправки объявлений на
 
 #: redbot/cogs/admin/admin.py:357
 #, docstring
-msgid "\\n        Change the channel where the bot will send announcements.\\n\\n        If channel is left blank it defaults to the current channel.\\n        "
-msgstr "\\n        Изменение канала, в который бот будет отправлять объявления.\\n\\n        Если оставить поле пустым, то по умолчанию будет использоваться текущий канал.\\n        "
+msgid "\n"
+"        Change the channel where the bot will send announcements.\n\n"
+"        If channel is left blank it defaults to the current channel.\n"
+"        "
+msgstr "\n"
+"        Изменение канала, в который бот будет отправлять объявления.\n\n"
+"        Если оставить поле пустым, то по умолчанию будет использоваться текущий канал.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:366
 msgid "The announcement channel has been set to {channel.mention}"
@@ -144,73 +192,115 @@ msgstr "Сбрасывает канал для объявлений."
 
 #: redbot/cogs/admin/admin.py:396
 #, docstring
-msgid "Apply selfroles."
-msgstr "Применить свои роли."
+msgid "\n"
+"        Add or remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Удалить свою роль у себя.\n\n"
+"        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к размерчикам!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:401
+#: redbot/cogs/admin/admin.py:409
 #, docstring
-msgid "\\n        Add a selfrole to yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Добавить собственную роль себе.\\n\\n        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
+msgid "\n"
+"        Add a selfrole to yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Добавить собственную роль себе.\n\n"
+"        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:420
 #, docstring
-msgid "\\n        Remove a selfrole from yourself.\\n\\n        Server admins must have configured the role as user settable.\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Удалить собственную роль у себя.\\n\\n        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
+msgid "\n"
+"        Remove a selfrole from yourself.\n\n"
+"        Server admins must have configured the role as user settable.\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Удалить собственную роль у себя.\n\n"
+"        Администраторы сервера должны настроить роль как устанавливаемую пользователем.\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:431
 #, docstring
-msgid "\\n        Lists all available selfroles.\\n        "
-msgstr "\\n        Список всех доступных Собственных ролей.\\n        "
+msgid "\n"
+"        Lists all available selfroles.\n"
+"        "
+msgstr "\n"
+"        Списки всех доступных своих ролей.\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:433
-msgid "Available Selfroles:\\n{selfroles}"
-msgstr "Доступные собственные роли:\\n{selfroles}"
+#: redbot/cogs/admin/admin.py:441
+msgid "Available Selfroles:\n"
+"{selfroles}"
+msgstr "Доступные собственные роли:\n"
+"{selfroles}"
 
-#: redbot/cogs/admin/admin.py:439
+#: redbot/cogs/admin/admin.py:447
 #, docstring
 msgid "Manage selfroles."
 msgstr "Управление своими ролями."
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:452
 #, docstring
-msgid "\\n        Add a role to the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Добавить роль в список доступных своих ролей.\\n\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
+msgid "\n"
+"        Add a role to the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Добавить роль в список доступных своих ролей.\n\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:451
+#: redbot/cogs/admin/admin.py:459
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Нельзя добавить {role.name} в качестве собственной роли, потому что эта роль выше или равна вашей самой высшей роли в иерархии Discord."
 
-#: redbot/cogs/admin/admin.py:459
+#: redbot/cogs/admin/admin.py:467
 msgid "Added."
 msgstr "Добавлено."
 
-#: redbot/cogs/admin/admin.py:462
+#: redbot/cogs/admin/admin.py:470
 msgid "That role is already a selfrole."
 msgstr "У вас уже имеется эта роль."
 
-#: redbot/cogs/admin/admin.py:466
+#: redbot/cogs/admin/admin.py:474
 #, docstring
-msgid "\\n        Remove a role from the list of available selfroles.\\n\\n        NOTE: The role is case sensitive!\\n        "
-msgstr "\\n        Удалить роль из списка доступных собственных ролей.\\n\\n        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\\n        "
+msgid "\n"
+"        Remove a role from the list of available selfroles.\n\n"
+"        NOTE: The role is case sensitive!\n"
+"        "
+msgstr "\n"
+"        Удалить роль из списка доступных собственных ролей.\n\n"
+"        ПРИМЕЧАНИЕ: Роль чувствительна к регистру!\n"
+"        "
 
-#: redbot/cogs/admin/admin.py:473
+#: redbot/cogs/admin/admin.py:481
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Вы не можете забрать у себя роль {role.name}, потому что эта роль выше или равна вашей самой высокой роли в иерархии Discord."
 
-#: redbot/cogs/admin/admin.py:481
+#: redbot/cogs/admin/admin.py:489
 msgid "Removed."
 msgstr "Удалено."
 
-#: redbot/cogs/admin/admin.py:486
+#: redbot/cogs/admin/admin.py:494
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Зафиксировать бота только на его текущих серверах."
 
-#: redbot/cogs/admin/admin.py:491
+#: redbot/cogs/admin/admin.py:499
 msgid "The bot is no longer serverlocked."
 msgstr "Бот больше не зафиксирован на сервере."
 
-#: redbot/cogs/admin/admin.py:493
+#: redbot/cogs/admin/admin.py:501
 msgid "The bot is now serverlocked."
 msgstr "Бот теперь зафиксирован на сервере."
 

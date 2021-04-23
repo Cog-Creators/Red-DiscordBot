@@ -92,6 +92,13 @@ parameters.
     Sometimes (especially for the last argument) these double quotes are not
     required.
 
+    Arguments followed by an ellipsis ``...`` means that you may provide
+    multiple arguments for the command.
+
+    For example, the command ``[p]cog install`` in the downloader cog has
+    the syntax ``cog install <repo> <cogs...>``, meaning that you can provide
+    1 or more ``cogs`` to install from the ``repo``.
+
     Arguments followed by ``=value`` means that, if not specified,
     the argument will be equal to ``value``.
 
@@ -265,8 +272,8 @@ If you want to do it, follow these steps.
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this list <host-list>` for
-  quality VPS providers.
+  on an online service. Please check :ref:`this page <host-list>` for
+  more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
   be able to host Red. The model 3 or above is recommended.
@@ -277,7 +284,7 @@ If you want to do it, follow these steps.
   you're a beginner, we recommend **Ubuntu 20.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
-  <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
+  <https://www.raspberrypi.org/software/>`_ on a micro-SD card.
 
 2.1. **Log in**
 

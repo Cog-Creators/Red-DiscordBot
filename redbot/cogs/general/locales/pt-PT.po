@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-09-03 12:24+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -102,7 +102,10 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:85
 #, docstring
-msgid "Choose between multiple options.\\n\\n        To denote options which include whitespace, you should use\\n        double quotes.\\n        "
+msgid "Choose between multiple options.\n\n"
+"        To denote options which include whitespace, you should use\n"
+"        double quotes.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:92
@@ -111,7 +114,10 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:98
 #, docstring
-msgid "Roll a random number.\\n\\n        The result will be between 1 and `<number>`.\\n\\n        `<number>` defaults to 100.\\n        "
+msgid "Roll a random number.\n\n"
+"        The result will be between 1 and `<number>`.\n\n"
+"        `<number>` defaults to 100.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:113
@@ -124,11 +130,14 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:123
 #, docstring
-msgid "Flip a coin... or a user.\\n\\n        Defaults to a coin.\\n        "
+msgid "Flip a coin... or a user.\n\n"
+"        Defaults to a coin.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:131
-msgid "Nice try. You think this is funny?\\n How about *this* instead:\\n\\n"
+msgid "Nice try. You think this is funny?\n"
+" How about *this* instead:\n\n"
 msgstr ""
 
 #: redbot/cogs/general/general.py:142
@@ -166,7 +175,9 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:191
 #, docstring
-msgid "Ask 8 ball a question.\\n\\n        Question must end with a question mark.\\n        "
+msgid "Ask 8 ball a question.\n\n"
+"        Question must end with a question mark.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:198
@@ -193,12 +204,18 @@ msgstr ""
 
 #: redbot/cogs/general/general.py:224
 #, docstring
-msgid "Because everyone likes hugs!\\n\\n        Up to 10 intensity levels.\\n        "
+msgid "Because everyone likes hugs!\n\n"
+"        Up to 10 intensity levels.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:248
 #, docstring
-msgid "\\n        Show server information.\\n\\n        `details`: Shows more information when set to `True`.\\n        Default to False.\\n        "
+msgid "\n"
+"        Show server information.\n\n"
+"        `details`: Shows more information when set to `True`.\n"
+"        Default to False.\n"
+"        "
 msgstr ""
 
 #: redbot/cogs/general/general.py:256
@@ -238,7 +255,8 @@ msgid "  •  Use {command} for more info on the server."
 msgstr ""
 
 #: redbot/cogs/general/general.py:303
-msgid "\\nShard ID: **{shard_id}/{shard_count}**"
+msgid "\n"
+"Shard ID: **{shard_id}/{shard_count}**"
 msgstr ""
 
 #: redbot/cogs/general/general.py:312
@@ -250,7 +268,7 @@ msgid " • Bots: "
 msgstr ""
 
 #: redbot/cogs/general/general.py:325
-msgid "Users online: **{online}/{total_users}**\\n"
+msgid "Users online: **{online}/{total_users}**\n"
 msgstr ""
 
 #: redbot/cogs/general/general.py:342
@@ -366,27 +384,27 @@ msgid "4 - Extreme"
 msgstr ""
 
 #: redbot/cogs/general/general.py:375
-msgid "Partnered"
+msgid "Animated Icon"
 msgstr ""
 
 #: redbot/cogs/general/general.py:376
-msgid "Verified"
+msgid "Banner Image"
 msgstr ""
 
 #: redbot/cogs/general/general.py:377
-msgid "Server Discovery"
+msgid "Commerce"
 msgstr ""
 
 #: redbot/cogs/general/general.py:378
-msgid "Featurable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:379
 msgid "Community"
 msgstr ""
 
+#: redbot/cogs/general/general.py:379
+msgid "Server Discovery"
+msgstr ""
+
 #: redbot/cogs/general/general.py:380
-msgid "Public disabled"
+msgid "Featurable"
 msgstr ""
 
 #: redbot/cogs/general/general.py:381
@@ -394,11 +412,11 @@ msgid "Splash Invite"
 msgstr ""
 
 #: redbot/cogs/general/general.py:382
-msgid "VIP Voice Servers"
+msgid "Member list disabled"
 msgstr ""
 
 #: redbot/cogs/general/general.py:383
-msgid "Vanity URL"
+msgid "Membership Screening enabled"
 msgstr ""
 
 #: redbot/cogs/general/general.py:384
@@ -406,103 +424,127 @@ msgid "More Emojis"
 msgstr ""
 
 #: redbot/cogs/general/general.py:385
-msgid "Commerce"
-msgstr ""
-
-#: redbot/cogs/general/general.py:386
 msgid "News Channels"
 msgstr ""
 
+#: redbot/cogs/general/general.py:386
+msgid "Partnered"
+msgstr ""
+
 #: redbot/cogs/general/general.py:387
-msgid "Animated Icon"
+msgid "Preview enabled"
 msgstr ""
 
 #: redbot/cogs/general/general.py:388
-msgid "Banner Image"
+msgid "Public disabled"
 msgstr ""
 
 #: redbot/cogs/general/general.py:389
-msgid "Member list disabled"
+msgid "Vanity URL"
 msgstr ""
 
-#: redbot/cogs/general/general.py:397
+#: redbot/cogs/general/general.py:390
+msgid "Verified"
+msgstr ""
+
+#: redbot/cogs/general/general.py:391
+msgid "VIP Voice Servers"
+msgstr ""
+
+#: redbot/cogs/general/general.py:392
+msgid "Welcome Screen enabled"
+msgstr ""
+
+#: redbot/cogs/general/general.py:400
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:419
+#: redbot/cogs/general/general.py:422
 msgid "Members:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:421
+#: redbot/cogs/general/general.py:424
 msgid "Channels:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:422
-msgid "💬 Text: {text}\\n🔊 Voice: {voice}"
+#: redbot/cogs/general/general.py:425
+msgid "💬 Text: {text}\n"
+"🔊 Voice: {voice}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:428
+#: redbot/cogs/general/general.py:431
 msgid "Utility:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:429
-msgid "Owner: {owner}\\nVoice region: {region}\\nVerif. level: {verif}\\nServer ID: {id}{shard_info}"
+#: redbot/cogs/general/general.py:432
+msgid "Owner: {owner}\n"
+"Voice region: {region}\n"
+"Verif. level: {verif}\n"
+"Server ID: {id}{shard_info}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:441
+#: redbot/cogs/general/general.py:444
 msgid "Misc:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:442
-msgid "AFK channel: {afk_chan}\\nAFK timeout: {afk_timeout}\\nCustom emojis: {emoji_count}\\nRoles: {role_count}"
+#: redbot/cogs/general/general.py:445
+msgid "AFK channel: {afk_chan}\n"
+"AFK timeout: {afk_timeout}\n"
+"Custom emojis: {emoji_count}\n"
+"Roles: {role_count}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:447
+#: redbot/cogs/general/general.py:450
 msgid "Not set"
 msgstr ""
 
-#: redbot/cogs/general/general.py:455
+#: redbot/cogs/general/general.py:458
 msgid "Server features:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:457
-msgid "Tier {boostlevel} with {nitroboosters} boosters\\nFile size limit: {filelimit}\\nEmoji limit: {emojis_limit}\\nVCs max bitrate: {bitrate}"
+#: redbot/cogs/general/general.py:460
+msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
+"File size limit: {filelimit}\n"
+"Emoji limit: {emojis_limit}\n"
+"VCs max bitrate: {bitrate}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:469
+#: redbot/cogs/general/general.py:472
 msgid "Nitro Boost:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:478
+#: redbot/cogs/general/general.py:481
 #, docstring
-msgid "Search the Urban Dictionary.\\n\\n        This uses the unofficial Urban Dictionary API.\\n        "
+msgid "Search the Urban Dictionary.\n\n"
+"        This uses the unofficial Urban Dictionary API.\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:496 redbot/cogs/general/general.py:562
+#: redbot/cogs/general/general.py:499 redbot/cogs/general/general.py:568
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
-#: redbot/cogs/general/general.py:502
+#: redbot/cogs/general/general.py:505
 msgid "No Urban Dictionary entries were found."
 msgstr ""
 
-#: redbot/cogs/general/general.py:508
+#: redbot/cogs/general/general.py:511
 msgid "{word} by {author}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:513
-msgid "{definition}\\n\\n**Example:** {example}"
+#: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
+msgid "{definition}\n\n"
+"**Example:** {example}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:519
+#: redbot/cogs/general/general.py:525
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 
-#: redbot/cogs/general/general.py:538
-msgid "<{permalink}>\\n {word} by {author}\\n\\n{description}\\n\\n{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
-
 #: redbot/cogs/general/general.py:544
-msgid "{definition}\\n\\n**Example:** {example}"
+msgid "<{permalink}>\n"
+" {word} by {author}\n\n"
+"{description}\n\n"
+"{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr ""
 

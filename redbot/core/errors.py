@@ -25,7 +25,7 @@ class PackageAlreadyLoaded(RedError):
 
 class CogLoadError(RedError):
     """Raised by a cog when it cannot load itself.
-    The message will be send to the user."""
+    The message will be sent to the user."""
 
     pass
 

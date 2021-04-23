@@ -1,7 +1,8 @@
 import asyncio
+import datetime
 import json
 
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Mapping
 
@@ -62,6 +63,7 @@ class Audio(
         self.play_lock = {}
 
         self.lavalink_connect_task = None
+        self._restore_task = None
         self.player_automated_timer_task = None
         self.cog_cleaned_up = False
         self.lavalink_connection_aborted = False
@@ -75,6 +77,9 @@ class Audio(
 
         self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.cog_ready_event = asyncio.Event()
+        self._ws_resume = defaultdict(asyncio.Event)
+        self._ws_op_codes = defaultdict(asyncio.LifoQueue)
+
         self.cog_init_task = None
         self.global_api_user = {
             "fetched": False,
@@ -82,9 +87,13 @@ class Audio(
             "can_post": False,
             "can_delete": False,
         }
+        self._ll_guild_updates = set()
+        self._diconnected_shard = set()
+        self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
         default_global = dict(
             schema_version=1,
+            bundled_playlist_version=0,
             owner_notification=0,
             cache_level=0,
             cache_age=365,
@@ -103,8 +112,14 @@ class Audio(
 
         default_guild = dict(
             auto_play=False,
+            currently_auto_playing_in=None,
             auto_deafen=True,
-            autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
+            autoplaylist=dict(
+                enabled=True,
+                id=42069,
+                name="Aikaterna's curated tracks",
+                scope=PlaylistScope.GLOBAL.value,
+            ),
             persist_queue=True,
             disconnect=False,
             dj_enabled=False,
