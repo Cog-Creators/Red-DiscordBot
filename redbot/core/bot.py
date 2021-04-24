@@ -21,6 +21,7 @@ from typing import (
     List,
     Dict,
     NoReturn,
+    FrozenSet,
     Set,
     TypeVar,
     Callable,
@@ -184,21 +185,42 @@ class RedBase(
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
-        if "owner_id" in kwargs:
-            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
-
         if "intents" not in kwargs:
             intents = discord.Intents.all()
             for intent_name in cli_flags.disable_intent:
                 setattr(intents, intent_name, False)
             kwargs["intents"] = intents
 
-        self._owner_id_overwrite = cli_flags.owner
+        # This keeps track of owners with elevated privileges in the different contexts.
+        # This is `None` if sudo functionality is disabled.
+        self._sudo_ctx_var: Optional[ContextVar] = None
+        if cli_flags.enable_sudo:
+            self._sudo_ctx_var = ContextVar("SudoOwners")
+
+        if "owner_id" in kwargs:
+            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+
+        # This is owner ID overwrite, which when set is used *instead of* owner of a non-team app.
+        # For teams, it is just appended to the set of all owner IDs.
+        # This is set to `--owner` *or* if the flag is not passed, to `self._config.owner()`
+        self._owner_id_overwrite: Optional[int] = cli_flags.owner
+        # These are IDs of ALL owners, whether they currently have elevated privileges or not
+        self._true_owner_ids: FrozenSet[int] = frozenset()
+        # These are IDs of the owners, that currently have their privileges elevated globally.
+        # If sudo functionality is not enabled, this will remain empty throughout bot's lifetime.
+        self._sudoed_owner_ids: FrozenSet[int] = frozenset()
+
         if "owner_ids" in kwargs:
             self._true_owner_ids = frozenset(kwargs.pop("owner_ids"))
-        else:
-            self._true_owner_ids = frozenset()
-        self._true_owner_ids |= set(cli_flags.co_owner)
+        self._true_owner_ids = self._true_owner_ids.union(cli_flags.co_owner)
+
+        if self._sudo_ctx_var is None:
+            # ensure that d.py doesn't reset our owners in its __init__
+            kwargs["owner_ids"] = self._true_owner_ids
+
+        # to prevent multiple calls to app info in `is_owner()`
+        self._app_owners_fetched = False
+
         if "command_not_found" not in kwargs:
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
@@ -218,24 +240,12 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        self._sudo_enabled = cli_flags.enable_sudo
-        self._sudo_ctx_var = ContextVar("SudoOwners")
-
-        # to prevent multiple calls to app info in `is_owner()`
-        self._app_owners_fetched = False
-        if self._sudo_enabled is False:
-            self._sudoed_owner_ids = self._true_owner_ids
-            kwargs["owner_ids"] = set(self._true_owner_ids)
-        else:
-            self._sudoed_owner_ids = frozenset()
 
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
-        if self._sudo_enabled is False:
-            self._sudoed_owner_ids = self._true_owner_ids
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._red_ready = asyncio.Event()
@@ -249,15 +259,17 @@ class RedBase(
 
     @property
     def owner_ids(self):
+        if self._sudo_ctx_var is None:
+            return self._true_owner_ids
         return self._sudo_ctx_var.get(self._sudoed_owner_ids)
 
     @owner_ids.setter
     def owner_ids(self, value):
-        if self._sudo_enabled is True:
-            self._sudoed_owner_ids = frozenset(value)
+        new_value = frozenset(value)
+        if self._sudo_ctx_var is None:
+            self._true_owner_ids = new_value
         else:
-            self._true_owner_ids = frozenset(value)
-            self._sudoed_owner_ids = self._true_owner_ids
+            self._sudoed_owner_ids = new_value
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
@@ -1166,7 +1178,7 @@ class RedBase(
             if app.team:
                 if self._use_team_features:
                     ids = {m.id for m in app.team.members}
-                    self._true_owner_ids |= {ids}
+                    self._true_owner_ids |= ids
                     ret = user.id in ids
             elif self._owner_id_overwrite is None:
                 owner_id = app.owner.id
