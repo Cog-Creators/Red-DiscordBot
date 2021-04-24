@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 main_log = logging.getLogger("red")
 
 __all__ = (
-    "timed_unsudo",
+    "timed_unsu",
     "safe_delete",
     "fuzzy_command_search",
     "format_fuzzy_results",
@@ -434,7 +434,7 @@ def is_sudo_enabled():
     return check(predicate)
 
 
-async def timed_unsudo(user_id: int, bot: Red):
+async def timed_unsu(user_id: int, bot: Red):
     await asyncio.sleep(delay=await bot._config.sudotime())
     bot._elevated_owner_ids -= {user_id}
     bot._owner_sudo_tasks.pop(user_id, None)
