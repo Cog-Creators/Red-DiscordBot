@@ -436,5 +436,5 @@ def is_sudo_enabled():
 
 async def timed_unsudo(user_id: int, bot: Red):
     await asyncio.sleep(delay=await bot._config.sudotime())
-    bot._sudoed_owner_ids -= {user_id}
+    bot._elevated_owner_ids -= {user_id}
     bot._owner_sudo_tasks.pop(user_id, None)
