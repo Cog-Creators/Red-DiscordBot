@@ -36,7 +36,7 @@ from . import (
     i18n,
 )
 from .utils import AsyncIter
-from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsudo
+from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsu
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -2008,7 +2008,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
         sudotime = (
-            _("Sudo Timeout: {delay}\n").format(
+            _("SU Timeout: {delay}\n").format(
                 delay=humanize_timedelta(seconds=global_data["sudotime"])
             )
             if ctx.bot._sudo_ctx_var is not None
@@ -4809,12 +4809,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command(
         cls=commands.commands._IsTrueBotOwner,
-        name="sudo",
+        name="su",
     )
-    async def sudo(self, ctx: commands.Context):
+    async def su(self, ctx: commands.Context):
         """Enable your bot owner privileges.
 
-        Sudo permission is auto removed after interval set with `[p]set sudotimeout` (Default to 15 minutes).
+        SU permission is auto removed after interval set with `[p]set sutimeout` (Default to 15 minutes).
         """
         if ctx.author.id not in self.bot.owner_ids:
             self.bot._elevated_owner_ids |= {ctx.author.id}
@@ -4823,16 +4823,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 self.bot._owner_sudo_tasks[ctx.author.id].cancel()
                 del self.bot._owner_sudo_tasks[ctx.author.id]
             self.bot._owner_sudo_tasks[ctx.author.id] = asyncio.create_task(
-                timed_unsudo(ctx.author.id, self.bot)
+                timed_unsu(ctx.author.id, self.bot)
             )
             return
         await ctx.send(_("Your bot owner privileges are already enabled."))
 
     @commands.command(
         cls=commands.commands._IsTrueBotOwner,
-        name="unsudo",
+        name="unsu",
     )
-    async def unsudo(self, ctx: commands.Context):
+    async def unsu(self, ctx: commands.Context):
         """Disable your bot owner privileges."""
         if ctx.author.id in self.bot.owner_ids:
             self.bot._elevated_owner_ids -= {ctx.author.id}
@@ -4843,7 +4843,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command()
     @is_sudo_enabled()
     @checks.is_owner()
-    async def sudotimeout(
+    async def sutimeout(
         self,
         ctx: commands.Context,
         *,
@@ -4854,11 +4854,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ) = datetime.timedelta(minutes=15),
     ):
         """
-        Set the interval for sudo permissions to auto expire.
+        Set the interval for SU permissions to auto expire.
         """
         await self.bot._config.sudotime.set(interval.total_seconds())
         await ctx.send(
-            _("Sudo timer will expire after: {}.").format(humanize_timedelta(timedelta=interval))
+            _("SU timer will expire after: {}.").format(humanize_timedelta(timedelta=interval))
         )
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.

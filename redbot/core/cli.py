@@ -278,7 +278,7 @@ def parse_cli_flags(args):
         "Useful for development.",
     )
     parser.add_argument(
-        "--enable-sudo", action="store_true", help="Enable the sudo/unsudo permission mechanics."
+        "--enable-sudo", action="store_true", help="Enable the Super User permission mechanics."
     )
 
     args = parser.parse_args(args)
