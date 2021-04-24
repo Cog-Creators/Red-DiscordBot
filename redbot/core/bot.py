@@ -294,11 +294,9 @@ class RedBase(
 
     @owner_ids.setter
     def owner_ids(self, value):
-        owner_ids = (
-            self._true_owner_ids if self._sudo_ctx_var is None else self._elevated_owner_ids
-        )
-        if not owner_ids.isdisjoint(value):
-            raise AttributeError("can't set attribute")
+        if self._sudo_ctx_var is None and self._true_owner_ids is value:
+            return
+        raise AttributeError("can't set attribute")
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
