@@ -194,8 +194,6 @@ class RedBase(
         # This keeps track of owners with elevated privileges in the different contexts.
         # This is `None` if sudo functionality is disabled.
         self._sudo_ctx_var: Optional[ContextVar] = None
-        if cli_flags.enable_sudo:
-            self._sudo_ctx_var = ContextVar("SudoOwners")
 
         if "owner_id" in kwargs:
             raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
@@ -214,9 +212,8 @@ class RedBase(
             self._true_owner_ids = frozenset(kwargs.pop("owner_ids"))
         self._true_owner_ids = self._true_owner_ids.union(cli_flags.co_owner)
 
-        if self._sudo_ctx_var is None:
-            # ensure that d.py doesn't reset our owners in its __init__
-            kwargs["owner_ids"] = self._true_owner_ids
+        # ensure that d.py doesn't run into AttributeError when trying to set `self.owner_ids`
+        kwargs["owner_ids"] = self._true_owner_ids
 
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
@@ -242,6 +239,12 @@ class RedBase(
         self._use_team_features = cli_flags.use_team_features
 
         super().__init__(*args, help_command=None, **kwargs)
+        # This MUST happen *after* d.py's __init__ is called as otherwise,
+        # access to `self.owner_ids` property would have it set the value of
+        # ContextVar in current context (which is a global context as we're not in any async task)
+        if cli_flags.enable_sudo:
+            self._sudo_ctx_var = ContextVar("SudoOwners")
+
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
@@ -275,14 +278,19 @@ class RedBase(
         This should be used for any privilege checks.
         If sudo functionality is disabled, this will be equivalent to `true_owner_ids`.
         """
+        # NOTE: Accessing this attribute (`owner_ids`) during Red's startup may lead to issues.
+        # It needs to be done carefully.
+
         if self._sudo_ctx_var is None:
             return self._true_owner_ids
-        # XXX: code below needs to ensure that updated global elevation
-        # doesn't leak to currently running contexts
-        #
-        # This needs to be done by making a new context *somewhere*,
-        # not necessarily here.
-        return self._sudo_ctx_var.get(self._elevated_owner_ids)
+        try:
+            return self._sudo_ctx_var.get()
+        except LookupError:
+            # This part is very important as it makes sure that
+            # when IDs of globally elevated owners are updated,
+            # they don't leak to other, currently running contexts.
+            self._sudo_ctx_var.set(self._elevated_owner_ids)
+            return self._elevated_owner_ids
 
     @owner_ids.setter
     def owner_ids(self, value):
