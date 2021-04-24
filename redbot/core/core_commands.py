@@ -2011,7 +2011,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             _("Sudo Timeout: {delay}\n").format(
                 delay=humanize_timedelta(seconds=global_data["sudotime"])
             )
-            if ctx.bot._sudo_enabled
+            if ctx.bot._sudo_ctx_var is not None
             else ""
         )
 

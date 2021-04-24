@@ -429,7 +429,7 @@ def is_sudo_enabled():
     """Deny the command if sudo mechanic is not enabled."""
 
     async def predicate(ctx):
-        return ctx.bot._sudo_enabled
+        return ctx.bot._sudo_ctx_var is not None
 
     return check(predicate)
 
