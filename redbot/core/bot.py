@@ -270,6 +270,8 @@ class RedBase(
         """
         IDs of owners that are elevated in current context.
 
+        You should NEVER try to set to this attribute.
+
         This should be used for any privilege checks.
         If sudo functionality is disabled, this will be equivalent to `true_owner_ids`.
         """
@@ -284,12 +286,9 @@ class RedBase(
 
     @owner_ids.setter
     def owner_ids(self, value):
-        new_value = frozenset(value)
-        if self._sudo_ctx_var is None:
-            self._true_owner_ids = new_value
-        else:
-            # XXX: this should set to ctx var or we get possible unwanted side effects
-            self._sudoed_owner_ids = new_value
+        owner_ids = self._true_owner_ids if self._sudo_ctx_var is None else self._sudoed_owner_ids
+        if not owner_ids.isdisjoint(value):
+            raise AttributeError("can't set attribute")
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
