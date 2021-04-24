@@ -254,12 +254,25 @@ class RedBase(
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
 
     @property
-    def true_owner_ids(self):
+    def true_owner_ids(self) -> FrozenSet[int]:
+        """
+        IDs of ALL owners regardless of their elevation status.
+
+        If you're doing privilege checks, use `owner_ids` instead.
+        This attribute is meant to be used for things
+        that actually need to get a full list of owners for informational purposes.
+        """
         # XXX: rename to `all_owner_ids` perhaps?
         return self._true_owner_ids
 
     @property
-    def owner_ids(self):
+    def owner_ids(self) -> FrozenSet[int]:
+        """
+        IDs of owners that are elevated in current context.
+
+        This should be used for any privilege checks.
+        If sudo functionality is disabled, this will be equivalent to `true_owner_ids`.
+        """
         if self._sudo_ctx_var is None:
             return self._true_owner_ids
         # XXX: code below needs to ensure that updated global elevation
