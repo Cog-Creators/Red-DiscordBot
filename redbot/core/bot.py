@@ -208,7 +208,7 @@ class RedBase(
         self._true_owner_ids: FrozenSet[int] = frozenset()
         # These are IDs of the owners, that currently have their privileges elevated globally.
         # If sudo functionality is not enabled, this will remain empty throughout bot's lifetime.
-        self._sudoed_owner_ids: FrozenSet[int] = frozenset()
+        self._elevated_owner_ids: FrozenSet[int] = frozenset()
 
         if "owner_ids" in kwargs:
             self._true_owner_ids = frozenset(kwargs.pop("owner_ids"))
@@ -282,11 +282,13 @@ class RedBase(
         #
         # This needs to be done by making a new context *somewhere*,
         # not necessarily here.
-        return self._sudo_ctx_var.get(self._sudoed_owner_ids)
+        return self._sudo_ctx_var.get(self._elevated_owner_ids)
 
     @owner_ids.setter
     def owner_ids(self, value):
-        owner_ids = self._true_owner_ids if self._sudo_ctx_var is None else self._sudoed_owner_ids
+        owner_ids = (
+            self._true_owner_ids if self._sudo_ctx_var is None else self._elevated_owner_ids
+        )
         if not owner_ids.isdisjoint(value):
             raise AttributeError("can't set attribute")
 
