@@ -293,9 +293,10 @@ class RedBase(
             return self._elevated_owner_ids
 
     @owner_ids.setter
-    def owner_ids(self, value):
+    def owner_ids(self, value) -> NoReturn:
+        # this if is needed so that d.py's __init__ can "set" to `owner_ids` successfully
         if self._sudo_ctx_var is None and self._true_owner_ids is value:
-            return
+            return  # type: ignore[misc]
         raise AttributeError("can't set attribute")
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
