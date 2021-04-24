@@ -1179,7 +1179,7 @@ class _IsTrueBotOwner(_RuleDropper, Command):
 
     async def can_run(self, ctx, *args, **kwargs) -> bool:
         return (
-            ctx.bot._sudo_enabled is True
+            ctx.bot._sudo_ctx_var is not None
             and not ctx.author.bot
             and ctx.author.id in ctx.bot.true_owner_ids
         )
