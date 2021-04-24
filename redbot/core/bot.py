@@ -255,12 +255,18 @@ class RedBase(
 
     @property
     def true_owner_ids(self):
+        # XXX: rename to `all_owner_ids` perhaps?
         return self._true_owner_ids
 
     @property
     def owner_ids(self):
         if self._sudo_ctx_var is None:
             return self._true_owner_ids
+        # XXX: code below needs to ensure that updated global elevation
+        # doesn't leak to currently running contexts
+        #
+        # This needs to be done by making a new context *somewhere*,
+        # not necessarily here.
         return self._sudo_ctx_var.get(self._sudoed_owner_ids)
 
     @owner_ids.setter
@@ -269,6 +275,7 @@ class RedBase(
         if self._sudo_ctx_var is None:
             self._true_owner_ids = new_value
         else:
+            # XXX: this should set to ctx var or we get possible unwanted side effects
             self._sudoed_owner_ids = new_value
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
