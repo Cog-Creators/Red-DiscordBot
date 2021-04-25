@@ -7,6 +7,8 @@ import keyword
 import logging
 import io
 import random
+from copy import copy
+
 import markdown
 import os
 import re
@@ -4839,6 +4841,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Your bot owner privileges have been disabled."))
             return
         await ctx.send(_("Your bot owner privileges are not currently enabled."))
+
+    @commands.command(
+        cls=commands.commands._IsTrueBotOwner,
+        name="sudo",
+    )
+    async def sudo(self, ctx: commands.Context, *, command: str):
+        """Runs the specified command with bot owner permissions
+
+        The prefix must not be entered.
+        """
+        ids = self.bot._elevated_owner_ids.union({ctx.author.id})
+        self.bot._sudo_ctx_var.set(ids)
+        msg = copy(ctx.message)
+        msg.content = ctx.prefix + command
+        ctx.bot.dispatch("message", msg)
 
     @_set.command()
     @is_sudo_enabled()
