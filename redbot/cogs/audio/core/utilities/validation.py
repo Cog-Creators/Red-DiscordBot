@@ -55,7 +55,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
         current_perms = channel.permissions_for(channel.guild.me)
-        has_perm = current_perms.speak and current_perms.connect
+        return current_perms.speak and current_perms.connect
 
     async def is_query_allowed(
         self,
