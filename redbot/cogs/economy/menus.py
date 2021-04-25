@@ -112,6 +112,8 @@ class LeaderboardSource(menus.ListPageSource):
             page.set_footer(text=f"Page {menu.current_page + 1}/{self.get_max_pages()}")
             if guild:
                 page.set_author(name=guild.name, icon_url=guild.icon_url)
+            else:
+                page.set_author(name=menu.ctx.bot.user.name, icon_url=menu.ctx.bot.user.avatar_url)
         else:
             page = box(header, lang="md")
 
