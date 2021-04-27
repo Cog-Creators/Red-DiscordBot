@@ -8,7 +8,7 @@ from pathlib import Path
 import discord
 import lavalink
 
-from redbot.core import commands, checks
+from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number, pagify
@@ -41,7 +41,6 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.is_owner()
-``` please
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
