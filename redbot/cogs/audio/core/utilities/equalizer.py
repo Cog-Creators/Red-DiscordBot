@@ -51,7 +51,12 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if player.equalizer.get() != config_bands:
                 band_num = list(range(player.equalizer.band_count))
                 band_value = config_bands
-                new_eq = Equalizer(levels=list(zip(band_num, band_value)))
+                new_eq = Equalizer(
+                    levels=[
+                        dict(zip(["band", "gain"], values))
+                        for values in list(zip(band_num, band_value))
+                    ]
+                )
                 await player.set_equalizer(equalizer=new_eq)
         else:
             new_eq = Equalizer(levels=config_bands)

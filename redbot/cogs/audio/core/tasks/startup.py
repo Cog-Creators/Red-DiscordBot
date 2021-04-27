@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import itertools
 import logging
+from collections import namedtuple
 from pathlib import Path
 
 from typing import Optional
@@ -79,6 +80,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 return
         metadata = {}
         all_guilds = await self.config.all_guilds()
+        ctx = namedtuple("Context", "guild")
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if guild_data["auto_play"]:
                 if guild_data["currently_auto_playing_in"]:
@@ -159,6 +161,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
+                await self._eq_check(player=player, ctx=ctx(guild))
                 for track in track_data:
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
@@ -227,6 +230,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
+                await self._eq_check(player=player, ctx=ctx(guild))
                 player.maybe_shuffle()
                 log.info("Restored %r", player)
                 if not player.is_playing:
