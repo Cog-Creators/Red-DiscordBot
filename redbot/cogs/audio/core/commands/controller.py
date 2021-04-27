@@ -733,23 +733,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        if vol < 0:
-            vol = 0
-        if vol > 150:
-            vol = 150
-            await self.config.guild(ctx.guild).volume.set(vol)
-            if self._player_check(ctx):
-                player = lavalink.get_player(ctx.guild.id)
-                await player.set_volume(vol)
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
-        else:
-            await self.config.guild(ctx.guild).volume.set(vol)
-            if self._player_check(ctx):
-                player = lavalink.get_player(ctx.guild.id)
-                await player.set_volume(vol)
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
+        vol = min(max(vol, 0), 150)
+        if self._player_check(ctx):
+            player = lavalink.get_player(ctx.guild.id)
+            player.volume.value = vol/100
+            await player.set_volume(player.volume)
+            player.store("channel", ctx.channel.id)
+            player.store("guild", ctx.guild.id)
 
         embed = discord.Embed(title=_("Volume:"), description=str(vol) + "%")
         if not self._player_check(ctx):
