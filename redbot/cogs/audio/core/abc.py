@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     from ..apis.playlist_interface import Playlist
     from ..apis.playlist_wrapper import PlaylistWrapper
     from ..audio_dataclasses import LocalPath, Query
-    from ..equalizer import Equalizer
     from ..manager import ServerManager
 
 
@@ -351,7 +350,6 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         player: lavalink.Player,
-        eq: "Equalizer",
         message: discord.Message,
         selected: int,
     ) -> None:

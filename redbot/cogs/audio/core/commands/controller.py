@@ -65,12 +65,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, title=_("Disconnecting..."))
             self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
             self.update_player_lock(ctx, False)
-            eq = player.fetch("eq")
             player.queue = []
             player.store("playing_song", None)
             player.store("autoplay_notified", False)
-            if eq:
-                await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
+                player.equalizer.get()
+            )
             await player.stop()
             await player.disconnect()
             await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
@@ -605,9 +605,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             or player.queue
             or getattr(player.current, "extras", {}).get("autoplay")
         ):
-            eq = player.fetch("eq")
-            if eq:
-                await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
+                player.equalizer.get()
+            )
             player.queue = []
             player.store("playing_song", None)
             player.store("prev_requester", None)
