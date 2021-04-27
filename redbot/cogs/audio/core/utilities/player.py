@@ -9,6 +9,8 @@ import discord
 import lavalink
 
 from discord.embeds import EmptyEmbed
+from lavalink.filters import Volume
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -679,7 +681,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        volume = await self.config.guild(ctx.guild).volume()
+        volume = Volume(value=(await self.config.guild(ctx.guild).volume())/100)
         shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
         player.repeat = repeat
         player.shuffle = shuffle

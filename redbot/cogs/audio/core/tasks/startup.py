@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 import lavalink
+from lavalink.filters import Volume
 
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
@@ -112,7 +113,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
                 repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
+                volume = Volume(value=guild_data["volume"]/100)
+
                 shuffle_bumped = guild_data["shuffle_bumped"]
                 auto_deafen = guild_data["auto_deafen"]
 
@@ -188,7 +190,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
                 repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
+                volume = Volume(value=guild_data["volume"]/100)
                 shuffle_bumped = guild_data["shuffle_bumped"]
                 auto_deafen = guild_data["auto_deafen"]
 
