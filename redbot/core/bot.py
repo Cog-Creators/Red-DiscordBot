@@ -278,19 +278,9 @@ class RedBase(
         This should be used for any privilege checks.
         If sudo functionality is disabled, this will be equivalent to `true_owner_ids`.
         """
-        # NOTE: Accessing this attribute (`owner_ids`) during Red's startup may lead to issues.
-        # It needs to be done carefully.
-
         if self._sudo_ctx_var is None:
             return self._true_owner_ids
-        try:
-            return self._sudo_ctx_var.get()
-        except LookupError:
-            # This part is very important as it makes sure that
-            # when IDs of globally elevated owners are updated,
-            # they don't leak to other, currently running contexts.
-            self._sudo_ctx_var.set(self._elevated_owner_ids)
-            return self._elevated_owner_ids
+        return self._sudo_ctx_var.get(self._elevated_owner_ids)
 
     @owner_ids.setter
     def owner_ids(self, value) -> NoReturn:
@@ -1388,14 +1378,23 @@ class RedBase(
         messages,  without the overhead of additional get_context calls
         per cog.
         """
-        if not message.author.bot:
-            ctx = await self.get_context(message)
-            await self.invoke(ctx)
-        else:
-            ctx = None
+        if self._sudo_ctx_var is not None:
+            # we need to ensure that ctx var is set to actual value
+            # rather than rely on the default that can change at any moment
+            token = self._sudo_ctx_var.set(self.owner_ids)
 
-        if ctx is None or ctx.valid is False:
-            self.dispatch("message_without_command", message)
+        try:
+            if not message.author.bot:
+                ctx = await self.get_context(message)
+                await self.invoke(ctx)
+            else:
+                ctx = None
+
+            if ctx is None or ctx.valid is False:
+                self.dispatch("message_without_command", message)
+        finally:
+            if self._sudo_ctx_var is not None:
+                self._sudo_ctx_var.reset(token)
 
     @staticmethod
     def list_packages():
