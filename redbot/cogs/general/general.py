@@ -80,12 +80,15 @@ class General(commands.Cog):
         """ Nothing to delete """
         return
 
-    @commands.command(usage="<choice> <choices...>")
+    @commands.command(usage="<choices...>")
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
-        To denote options which include whitespace, you should use
-        double quotes.
+        There must be at least 2 choices to pick from.
+        Choices are seperated by spaces.
+
+        To denote choices which include whitespace, you should enclose
+        the choice in double quotes.
         """
         choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
