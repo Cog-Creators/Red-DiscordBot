@@ -13,7 +13,6 @@ from redbot.core.utils.chat_formatting import box, humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
-from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -41,7 +40,6 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         player = lavalink.get_player(ctx.guild.id)
-        eq = player.fetch("eq", Equalizer())
         reactions = [
             "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
             "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}",
@@ -55,7 +53,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         ]
         await self._eq_msg_clear(player.fetch("eq_message"))
-        eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
+        eq_message = await ctx.send(box(player.equalizer.visualise(), lang="ini"))
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             with contextlib.suppress(discord.HTTPException):
@@ -65,7 +63,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
         player.store("eq_message", eq_msg_with_reacts)
-        await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
+        await self._eq_interact(ctx, player, eq_msg_with_reacts, 0)
 
     @command_equalizer.command(name="delete", aliases=["del", "remove"])
     async def command_equalizer_delete(self, ctx: commands.Context, eq_preset: str):
@@ -123,9 +121,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             lang="ini",
         )
         preset_list = ""
-        for preset, bands in eq_presets.items():
+        for preset, data in eq_presets.items():
             try:
-                author = self.bot.get_user(bands["author"])
+                author = self.bot.get_user(data["author"])
             except TypeError:
                 author = "None"
             msg = f"{preset}{space * (22 - len(preset))}{author}\n"
@@ -177,10 +175,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("guild", ctx.guild.id)
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         await self._eq_check(ctx, player)
-        eq = player.fetch("eq", Equalizer())
         await self._eq_msg_clear(player.fetch("eq_message"))
         message = await ctx.send(
-            content=box(eq.visualise(), lang="ini"),
+            content=box(player.equalizer.visualise(), lang="ini"),
             embed=discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("The {eq_preset} preset was loaded.".format(eq_preset=eq_preset)),
@@ -205,17 +202,12 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
-        eq = player.fetch("eq", Equalizer())
-
-        for band in range(eq.band_count):
-            eq.set_gain(band, 0.0)
-
-        await self._apply_gains(ctx.guild.id, eq.bands)
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
-        player.store("eq", eq)
+        player.equalizer.reset()
+        await player.set_equalizer(player.equalizer)
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(player.equalizer.get())
         await self._eq_msg_clear(player.fetch("eq_message"))
         message = await ctx.send(
-            content=box(eq.visualise(), lang="ini"),
+            content=box(player.equalizer.visualise(), lang="ini"),
             embed=discord.Embed(
                 colour=await ctx.embed_colour(), title=_("Equalizer values have been reset.")
             ),
@@ -289,8 +281,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
-        eq = player.fetch("eq", Equalizer())
-        to_append = {eq_preset: {"author": ctx.author.id, "bands": eq.bands}}
+        to_append = {eq_preset: {"author": ctx.author.id, "bands": player.equalizer.get()}}
         new_eq_presets = {**eq_presets, **to_append}
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
         embed3 = discord.Embed(
@@ -350,8 +341,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "16k",
         ]
 
-        eq = player.fetch("eq", Equalizer())
-        bands_num = eq.band_count
+        bands_num = player.equalizer.band_count
         if band_value > 1:
             band_value = 1
         elif band_value <= -0.25:
@@ -377,19 +367,18 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if band_name_or_position in band_names:
             band_pos = band_names.index(band_name_or_position)
             band_int = False
-            eq.set_gain(int(band_pos), band_value)
-            await self._apply_gain(ctx.guild.id, int(band_pos), band_value)
+            player.equalizer.set_gain(int(band_pos), band_value)
+            await player.set_equalizer(equalizer=player.equalizer)
         else:
             band_int = True
-            eq.set_gain(band_number, band_value)
-            await self._apply_gain(ctx.guild.id, band_number, band_value)
+            player.equalizer.set_gain(band_number, band_value)
+            await player.set_equalizer(equalizer=player.equalizer)
 
         await self._eq_msg_clear(player.fetch("eq_message"))
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
-        player.store("eq", eq)
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(player.equalizer.get())
         band_name = band_names[band_number] if band_int else band_name_or_position
         message = await ctx.send(
-            content=box(eq.visualise(), lang="ini"),
+            content=box(player.equalizer.visualise(), lang="ini"),
             embed=discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("Preset Modified"),

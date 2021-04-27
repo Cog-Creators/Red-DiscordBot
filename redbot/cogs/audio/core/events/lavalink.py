@@ -236,12 +236,12 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             if early_exit:
                 self._disconnected_players[guild_id] = True
                 self.play_lock[guild_id] = False
-                eq = player.fetch("eq")
                 player.queue = []
                 player.store("playing_song", None)
                 player.store("autoplay_notified", False)
-                if eq:
-                    await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
+                await self.config.custom("EQUALIZER", str(guild_id)).eq_bands.set(
+                    player.equalizer.get()
+                )
                 await player.stop()
                 await player.disconnect()
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
@@ -275,10 +275,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             ).format(error=description),
                         )
                     else:
+                        error = extra.get("message").replace("\n", "")
+                        cause = extra.get("cause", "").replace("\n", "")
+                        if cause:
+                            log.warning(
+                                "Track failed to play: error: %s | ID: %s",
+                                cause,
+                                current_track.track_identifier,
+                            )
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(extra.replace("\n", ""), description),
+                            description="{}{}\n{}".format(error, cause, description),
                         )
                         if current_id:
                             asyncio.create_task(

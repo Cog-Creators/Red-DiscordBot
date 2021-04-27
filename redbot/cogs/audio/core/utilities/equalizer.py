@@ -6,11 +6,11 @@ from typing import List
 
 import discord
 import lavalink
+from lavalink.filters import Equalizer
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
-from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -43,33 +43,27 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             pass
 
     async def _eq_check(self, ctx: commands.Context, player: lavalink.Player) -> None:
-        eq = player.fetch("eq", Equalizer())
-
         config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
         if not config_bands:
-            config_bands = eq.bands
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
-
-        if eq.bands != config_bands:
-            band_num = list(range(0, eq.band_count))
-            band_value = config_bands
-            eq_dict = {}
-            for k, v in zip(band_num, band_value):
-                eq_dict[k] = v
-            for band, value in eq_dict.items():
-                eq.set_gain(band, value)
-            player.store("eq", eq)
-            await self._apply_gains(ctx.guild.id, config_bands)
+            config_bands = player.equalizer.get()
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(config_bands)
+        if isinstance(config_bands[0], (float, int)):
+            if player.equalizer.get() != config_bands:
+                band_num = list(range(0, player.equalizer.band_count))
+                band_value = config_bands
+                new_eq = Equalizer(levels=list(zip(band_num, band_value)))
+                await player.set_equalizer(equalizer=new_eq)
+        else:
+            new_eq = Equalizer(levels=config_bands)
+            await player.set_equalizer(equalizer=new_eq)
 
     async def _eq_interact(
         self,
         ctx: commands.Context,
         player: lavalink.Player,
-        eq: Equalizer,
         message: discord.Message,
         selected: int,
     ) -> None:
-        player.store("eq", eq)
         emoji = {
             "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
             "one_left": "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}",
@@ -84,7 +78,9 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
         selector = f'{" " * 8}{"   " * selected}^^'
         try:
-            await message.edit(content=box(f"{eq.visualise()}\n{selector}", lang="ini"))
+            await message.edit(
+                content=box(f"{player.equalizer.visualise()}\n{selector}", lang="ini")
+            )
         except discord.errors.NotFound:
             return
         try:
@@ -93,66 +89,67 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not react_emoji:
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
+                player.equalizer.get()
+            )
             await self._clear_react(message, emoji)
 
         if react_emoji == "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
-            await self._eq_interact(ctx, player, eq, message, max(selected - 1, 0))
+            await self._eq_interact(ctx, player, message, max(selected - 1, 0))
 
         if react_emoji == "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
-            await self._eq_interact(ctx, player, eq, message, min(selected + 1, 14))
+            await self._eq_interact(ctx, player, message, min(selected + 1, 14))
 
         if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _max = float("{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0)))
-            eq.set_gain(selected, _max)
-            await self._apply_gain(ctx.guild.id, selected, _max)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            _max = float("{:.2f}".format(min(player.equalizer.get_gain(selected) + 0.1, 1.0)))
+            player.equalizer.set_gain(selected, _max)
+            await player.set_equalizer(equalizer=player.equalizer)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _min = float("{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25)))
-            eq.set_gain(selected, _min)
-            await self._apply_gain(ctx.guild.id, selected, _min)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            _min = float("{:.2f}".format(max(player.equalizer.get_gain(selected) - 0.1, -0.25)))
+            player.equalizer.set_gain(selected, _min)
+            await player.set_equalizer(equalizer=player.equalizer)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{BLACK UP-POINTING DOUBLE TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
             _max = 1.0
-            eq.set_gain(selected, _max)
+            player.equalizer.set_gain(selected, _max)
             await self._apply_gain(ctx.guild.id, selected, _max)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
             _min = -0.25
-            eq.set_gain(selected, _min)
+            player.equalizer.set_gain(selected, _min)
             await self._apply_gain(ctx.guild.id, selected, _min)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             selected = 0
-            await self._eq_interact(ctx, player, eq, message, selected)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             selected = 14
-            await self._eq_interact(ctx, player, eq, message, selected)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
-            for band in range(eq.band_count):
-                eq.set_gain(band, 0.0)
-            await self._apply_gains(ctx.guild.id, eq.bands)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            player.equalizer.reset()
+            await player.set_equalizer(equalizer=player.equalizer)
+            await self._eq_interact(ctx, player, message, selected)
 
         if react_emoji == "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             await ctx.send_help(self.command_equalizer)
-            await self._eq_interact(ctx, player, eq, message, selected)
+            await self._eq_interact(ctx, player, message, selected)
 
     async def _eq_msg_clear(self, eq_message: discord.Message):
         if eq_message is not None:
