@@ -283,7 +283,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}{}\n{}".format(error, cause, description),
+                            description="{}\n{}".format(error, description),
                         )
                         if current_id:
                             asyncio.create_task(
