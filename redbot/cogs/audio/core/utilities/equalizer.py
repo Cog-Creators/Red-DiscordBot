@@ -49,7 +49,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(config_bands)
         if isinstance(config_bands[0], (float, int)):
             if player.equalizer.get() != config_bands:
-                band_num = list(range(0, player.equalizer.band_count))
+                band_num = list(range(player.equalizer.band_count))
                 band_value = config_bands
                 new_eq = Equalizer(levels=list(zip(band_num, band_value)))
                 await player.set_equalizer(equalizer=new_eq)
