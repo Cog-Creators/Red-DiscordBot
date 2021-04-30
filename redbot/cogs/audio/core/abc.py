@@ -317,7 +317,13 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def can_manage_playlist(
-        self, scope: str, playlist: "Playlist", ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: "Playlist",
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         raise NotImplementedError()
 
