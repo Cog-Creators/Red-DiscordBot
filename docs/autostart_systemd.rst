@@ -95,7 +95,7 @@ To disable the service, run the following, adding the instance name after the **
 
     sudo systemctl disable red@instancename
 
-To view Red’s log, you can acccess through journalctl:
+To view Red’s log, you can access through journalctl:
 
 .. prompt:: bash
 
