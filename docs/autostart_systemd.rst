@@ -89,7 +89,7 @@ type the following command in the terminal, still by adding the instance name af
 .. warning:: If the service doesn't stop in the next 10 seconds, the process is killed.
     Check your logs to know the cause of the error that prevents the shutdown.
 
-To disable the service, run the following, adding the instance name after the **@**:
+To set the bot to not start on boot anymore, you must disable the service by running the following command, adding the instance name after the **@**:
 
 .. prompt:: bash
 
