@@ -4,8 +4,6 @@
 Trivia List Creation Guide
 ==========================
 
-Throughout this guide, ``[p]`` is considered as your prefix.
-
 The Trivia cog allows you to create your own "trivia lists", 
 which are then processed in the cog - allowing you to create as
 many questions as you'd like, with easy to use syntax.
