@@ -904,8 +904,8 @@ class Downloader(commands.Cog):
         by Downloader.
 
         Examples:
-            - `[p]cog uninstall 26-Cogs defender`
-            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`
+            - `[p]cog uninstall defender`
+            - `[p]cog uninstall say roleinvite`
 
         **Arguments**
 
