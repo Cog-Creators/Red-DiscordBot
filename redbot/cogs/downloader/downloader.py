@@ -1722,14 +1722,14 @@ class Downloader(commands.Cog):
                 cog_name = cog.__class__.__name__
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
+                author_attr = getattr(cog.__class__, "__author__", None)
+                if author_attr:
+                    if isinstance(author_attr, (list, tuple)):
+                        made_by = humanize_list(author_attr)
+                    elif isinstance(author_attr, str):
+                        made_by = author_attr
                 repo_url = _("None - this cog wasn't installed via downloader")
                 cog_name = cog.__class__.__name__
-            author_attr = getattr(cog.__class__, "__author__", None)
-            if author_attr:
-                if isinstance(author_attr, (list, tuple)):
-                    made_by = humanize_list(author_attr)
-                elif isinstance(author_attr, str):
-                    made_by = author_attr
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
