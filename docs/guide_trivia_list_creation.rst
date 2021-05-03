@@ -23,12 +23,17 @@ Author Field
 We should first include an ``AUTHOR`` field,
 to let the user know who wrote the questions.
 
+When the user starts the trivia, the author(s) will
+be sent in the starting message (see below).
+
+.. image:: .resources/trivia/trivia_author.png
+
+This should be placed at the top of your file, replacing "Red" 
+with your name:
+
 .. code-block:: yaml
 
     AUTHOR: Red
-
-This should be placed at the top of your file, replacing "Red" 
-with your name.
 
 If there are multiple authors, we can seperate them with commas.
 
@@ -79,12 +84,14 @@ If we didn't have these quotation marks, the question would not render.
 
     Who is the #1 followed user on Twitter?:
 
-We can also include line breaks within our questions by using ``\n``, like
-this for example:
+.. tip::
 
-.. code-block:: yaml 
+    We can also include line breaks within our questions by using ``\n``, like
+    this for example:
 
-    "My first line\nMy second line":
+    .. code-block:: yaml 
+
+        "My first line\nMy second line":
 
 As you've added more questions, your file should look something like this:
 
