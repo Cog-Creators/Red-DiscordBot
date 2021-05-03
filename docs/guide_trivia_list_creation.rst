@@ -20,7 +20,7 @@ it will be called ``mytrivia``.
 Author Field
 ------------
 
-We should first include an ``AUTHOR`` field at the top of our file,
+We should first include an ``AUTHOR`` field,
 to let the user know who wrote the questions.
 
 .. code-block:: yaml
@@ -44,14 +44,15 @@ Writing questions and answers is simple. Once you've finished your
 ``AUTHOR`` field, you can move on to your questions just below.
 
 Questions should consist of at least one answer, with other
-possible choices included if necessary. You must put a colon at the end 
+possible answers included if necessary. You must put a colon at the end 
 of the question, for example:
 
 .. code-block:: yaml
 
     How many days are there in a regular year?:
 
-Answers will follow below, each seperated by a line break. 
+Answers will follow below, each seperated by a line break and with a
+hyphen at the start of the line.
 
 .. code-block:: yaml
 
@@ -64,7 +65,7 @@ We can add as many valid answers as we'd like below this question. Answers
 are **NOT** case sensitive, So you don't need to worry about adding the same
 answer multiple times in different casing.
 
-There are multiple special characters in YAML, such as colons, hashtags, minuses
+There are multiple special characters in YAML, such as colons, hashtags, hyphens
 and more. If these characters are included within our questions or answers,
 you'll need to enclose the content with quotation marks.
 
