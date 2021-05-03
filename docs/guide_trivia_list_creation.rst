@@ -28,7 +28,7 @@ be sent in the starting message (see below).
 
 .. image:: .resources/trivia/trivia_author.png
 
-This should be placed at the top of your file, replacing "Red" 
+The following should be placed at the top of your file, replacing "Red" 
 with your name:
 
 .. code-block:: yaml
