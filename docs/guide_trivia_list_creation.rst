@@ -62,7 +62,7 @@ hyphen at the start of the line.
 
 Its always nice to include alternative answers if a question needs it. 
 We can add as many valid answers as we'd like below this question. Answers
-are **NOT** case sensitive, So you don't need to worry about adding the same
+are **NOT** case sensitive, so you don't need to worry about adding the same
 answer multiple times in different casing.
 
 There are multiple special characters in YAML, such as colons, hashtags, hyphens
