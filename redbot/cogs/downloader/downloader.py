@@ -1727,7 +1727,7 @@ class Downloader(commands.Cog):
             author_attr = getattr(cog.__class__, "__author__", None)
             if author_attr:
                 if isinstance(author_attr, (list, tuple)):
-                    made_by = humanize_list(author_attr, style="and")
+                    made_by = humanize_list(author_attr)
                 else:
                     made_by = author_attr
         else:
