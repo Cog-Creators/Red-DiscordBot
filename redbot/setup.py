@@ -6,14 +6,12 @@ _early_init()
 import asyncio
 import json
 import logging
-import os
 import sys
 import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
-import appdirs
 import click
 
 from redbot.core.cli import confirm
@@ -23,23 +21,16 @@ from redbot.core.utils._internal_utils import (
     cli_level_to_log_level,
 )
 from redbot.core import config, data_manager, drivers
+from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core.drivers import BackendType, IdentifierData
 
 conversion_log = logging.getLogger("red.converter")
 
-config_dir = None
-appdir = appdirs.AppDirs("Red-DiscordBot")
-if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:  # pylint: disable=no-member  # Non-exist on win
-        config_dir = Path(appdir.site_data_dir)
-if not config_dir:
-    config_dir = Path(appdir.user_config_dir)
 try:
     config_dir.mkdir(parents=True, exist_ok=True)
 except PermissionError:
     print("You don't have permission to write to '{}'\nExiting...".format(config_dir))
     sys.exit(1)
-config_file = config_dir / "config.json"
 
 instance_data = data_manager.load_existing_config()
 if instance_data is None:
