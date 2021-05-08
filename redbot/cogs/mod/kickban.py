@@ -400,7 +400,7 @@ class KickBanMixin(MixinMeta):
 
         Example:
            - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`
-            This will ban all the added userids and delete 7 days of worth messages.
+            This will ban all the added userids and delete 7 days worth of their messages.
 
         User IDs need to be provided in order to ban
         using this command.
