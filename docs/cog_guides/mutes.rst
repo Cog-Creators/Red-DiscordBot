@@ -165,7 +165,7 @@ Whether or not to force role only mutes on the bot.
 
 **Arguments**
 
-* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
 
 .. _mutes-command-muteset-makerole:
 
@@ -241,9 +241,10 @@ Sets the role to be applied when muting a user.
 If no role is setup the bot will attempt to mute a user by setting
 channel overwrites in all channels to prevent the user from sending messages.
 
-.. Note:: If no role is setup a user may be able to leave the server
-
-and rejoin no longer being muted.
+.. Note:: 
+    
+    If no role is setup a user may be able to leave the server
+    and rejoin no longer being muted.
 
 **Arguments**
 
@@ -269,7 +270,7 @@ Set whether mute notifications should be sent to users in DMs.
 
 **Arguments**
 
-* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
 
 .. _mutes-command-muteset-settings:
 
@@ -311,7 +312,7 @@ Decide whether the name of the moderator muting a user should be included in the
 
 **Arguments**
 
-* ``<true_or_false>``: Whether or not to enable/disable this setting, most provide ``true`` or ``false``.
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
 
 .. _mutes-command-unmute:
 
