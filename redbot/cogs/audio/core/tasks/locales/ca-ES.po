@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,19 @@ msgstr ""
 "X-Crowdin-File-ID: 664\n"
 "Language: ca_ES\n"
 
-#: redbot/cogs/audio/core/tasks/startup.py:145
+#: redbot/cogs/audio/core/tasks/startup.py:233
+msgid "Couldn't get a valid track."
+msgstr ""
+
+#: redbot/cogs/audio/core/tasks/startup.py:241
+msgid "Unable to Get Track"
+msgstr ""
+
+#: redbot/cogs/audio/core/tasks/startup.py:242
+msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
+msgstr ""
+
+#: redbot/cogs/audio/core/tasks/startup.py:256
 msgid "Hello, this message brings you an important update regarding the core Audio cog:\n"
 "                \n"
 "Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.\n"

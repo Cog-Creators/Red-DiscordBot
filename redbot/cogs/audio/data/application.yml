@@ -14,7 +14,7 @@ lavalink:
       http: true
       local: true
     sentryDsn: ""
-    bufferDurationMs: 400
+    bufferDurationMs: 1000
     youtubePlaylistLoadLimit: 10000
 logging:
   file:

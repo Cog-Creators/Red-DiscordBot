@@ -114,7 +114,7 @@ class Reports(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
     async def reportset_toggle(self, ctx: commands.Context):
-        """Enable or Disable reporting for this server."""
+        """Enable or disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
@@ -236,12 +236,12 @@ class Reports(commands.Cog):
         )
         return ticket_number
 
-    @commands.group(name="report", invoke_without_command=True)
+    @commands.group(name="report", usage="[text]", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """Send a report.
 
         Use without arguments for interactive reporting, or do
-        `[p]report <text>` to use it non-interactively.
+        `[p]report [text]` to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-16 19:14+0000\n"
+"POT-Creation-Date: 2021-04-03 22:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -55,23 +55,23 @@ msgstr "Jeg krever {perms} tillatelse(r) i brukerens kanal for å gjøre det der
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
 msgstr "Du må ha {perms} tillatelse(r) i kanalen for å bruke denne kommandoen."
 
-#: redbot/cogs/mod/kickban.py:132 redbot/cogs/mod/kickban.py:444
-#: redbot/cogs/mod/kickban.py:611
+#: redbot/cogs/mod/kickban.py:132 redbot/cogs/mod/kickban.py:464
+#: redbot/cogs/mod/kickban.py:631
 msgid "Invalid days. Must be between 0 and 7."
 msgstr "Ugyldige dager. Må være mellom 0 og 7."
 
-#: redbot/cogs/mod/kickban.py:138 redbot/cogs/mod/kickban.py:587
+#: redbot/cogs/mod/kickban.py:138 redbot/cogs/mod/kickban.py:607
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr "Jeg kan ikke la deg gjøre det. Selvskade er dårlig {}"
 
-#: redbot/cogs/mod/kickban.py:143 redbot/cogs/mod/kickban.py:298
-#: redbot/cogs/mod/kickban.py:592 redbot/cogs/mod/kickban.py:671
-#: redbot/cogs/mod/kickban.py:751
+#: redbot/cogs/mod/kickban.py:143 redbot/cogs/mod/kickban.py:318
+#: redbot/cogs/mod/kickban.py:612 redbot/cogs/mod/kickban.py:691
+#: redbot/cogs/mod/kickban.py:771
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr "Jeg kan ikke la deg gjøre det. Du er ikke høyere enn brukeren i rollehierarkiet."
 
-#: redbot/cogs/mod/kickban.py:150 redbot/cogs/mod/kickban.py:306
-#: redbot/cogs/mod/kickban.py:600
+#: redbot/cogs/mod/kickban.py:150 redbot/cogs/mod/kickban.py:326
+#: redbot/cogs/mod/kickban.py:620
 msgid "I cannot do that due to Discord hierarchy rules."
 msgstr "Jeg kan ikke gjøre det på grunn av Discord hierarkiske regler."
 
@@ -79,15 +79,15 @@ msgstr "Jeg kan ikke gjøre det på grunn av Discord hierarkiske regler."
 msgid "You have been banned from {guild}."
 msgstr "Du har blitt utestengt fra {guild}."
 
-#: redbot/cogs/mod/kickban.py:160 redbot/cogs/mod/kickban.py:317
+#: redbot/cogs/mod/kickban.py:160 redbot/cogs/mod/kickban.py:337
 msgid "**Reason**"
 msgstr "**Årsak**"
 
-#: redbot/cogs/mod/kickban.py:161 redbot/cogs/mod/kickban.py:318
+#: redbot/cogs/mod/kickban.py:161 redbot/cogs/mod/kickban.py:338
 msgid "No reason was given."
 msgstr "Ingen grunn ble oppgitt."
 
-#: redbot/cogs/mod/kickban.py:179 redbot/cogs/mod/kickban.py:460
+#: redbot/cogs/mod/kickban.py:179 redbot/cogs/mod/kickban.py:480
 msgid "User with ID {user_id} is already banned."
 msgstr "Bruker med ID {user_id} er allerede utestengt."
 
@@ -95,15 +95,15 @@ msgstr "Bruker med ID {user_id} er allerede utestengt."
 msgid "User with ID {user_id} was upgraded from a temporary to a permanent ban."
 msgstr "Brukeren med ID {user_id} ble oppgradert fra en midlertidig til et permanent forbud."
 
-#: redbot/cogs/mod/kickban.py:204 redbot/cogs/mod/kickban.py:345
+#: redbot/cogs/mod/kickban.py:204 redbot/cogs/mod/kickban.py:365
 msgid "Done. That felt good."
 msgstr "Ferdig. Det følte seg bra."
 
-#: redbot/cogs/mod/kickban.py:206 redbot/cogs/mod/kickban.py:326
+#: redbot/cogs/mod/kickban.py:206 redbot/cogs/mod/kickban.py:346
 msgid "I'm not allowed to do that."
 msgstr "Jeg har ikke lov til å gjøre det."
 
-#: redbot/cogs/mod/kickban.py:208 redbot/cogs/mod/kickban.py:531
+#: redbot/cogs/mod/kickban.py:208 redbot/cogs/mod/kickban.py:551
 msgid "User with ID {user_id} not found"
 msgstr "Bruker med ID {user_id} ble ikke funnet"
 
@@ -111,11 +111,11 @@ msgstr "Bruker med ID {user_id} ble ikke funnet"
 msgid "An unexpected error occurred."
 msgstr "En uventet feil oppstod."
 
-#: redbot/cogs/mod/kickban.py:250
+#: redbot/cogs/mod/kickban.py:269
 msgid "Tempban finished"
 msgstr "Tempban fullført"
 
-#: redbot/cogs/mod/kickban.py:274
+#: redbot/cogs/mod/kickban.py:294
 #, docstring
 msgid "\n"
 "        Kick a user.\n\n"
@@ -138,15 +138,15 @@ msgstr "\n"
 "        i undersø- kelsesloggen.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:291 redbot/cogs/mod/kickban.py:664
+#: redbot/cogs/mod/kickban.py:311 redbot/cogs/mod/kickban.py:684
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr "Jeg kan ikke la deg gjøre det. Selvskade er dårlig {emoji}"
 
-#: redbot/cogs/mod/kickban.py:313
+#: redbot/cogs/mod/kickban.py:333
 msgid "You have been kicked from {guild}."
 msgstr "Du har blitt sparket fra {guild}."
 
-#: redbot/cogs/mod/kickban.py:359
+#: redbot/cogs/mod/kickban.py:379
 #, docstring
 msgid "Ban a user from this server and optionally delete days of messages.\n\n"
 "        `days` is the amount of days of messages to cleanup on ban.\n\n"
@@ -171,7 +171,7 @@ msgstr "Utesteng en bruker fra denne serveren og eventuelt slett dager med meldi
 "        Minimum 0 dager, maksimalt 7. Hvis ikke angitt, vil standardinnstillingene bli brukt i stedet.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:397
+#: redbot/cogs/mod/kickban.py:417
 #, docstring
 msgid "Mass bans user(s) from the server.\n\n"
 "        `days` is the amount of days of messages to cleanup on massban.\n\n"
@@ -190,35 +190,35 @@ msgstr "Masseutestenger brukere fra tjeneren.\n\n"
 "        med denne kommandoen.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:413
+#: redbot/cogs/mod/kickban.py:433
 msgid "Banned {num} users from the server."
 msgstr "Utestengte {num} brukere fra serveren."
 
-#: redbot/cogs/mod/kickban.py:417
+#: redbot/cogs/mod/kickban.py:437
 msgid "\n"
 "Errors:\n"
 msgstr "\n"
 "Feil:\n"
 
-#: redbot/cogs/mod/kickban.py:420
+#: redbot/cogs/mod/kickban.py:440
 msgid "\n"
 "Following user IDs have been upgraded from a temporary to a permanent ban:\n"
 msgstr "\n"
 "Etter bruker-ID-er er oppgradert fra en midlertidig til et permanent forbud:\n"
 
-#: redbot/cogs/mod/kickban.py:448
+#: redbot/cogs/mod/kickban.py:468
 msgid "I lack the permissions to do this."
 msgstr "Jeg mangler tillatelser til å gjøre dette."
 
-#: redbot/cogs/mod/kickban.py:499 redbot/cogs/mod/kickban.py:503
+#: redbot/cogs/mod/kickban.py:519 redbot/cogs/mod/kickban.py:523
 msgid "Failed to ban user {user_id}: {reason}"
 msgstr "Kunne ikke forby bruker {user_id}: {reason}"
 
-#: redbot/cogs/mod/kickban.py:536
+#: redbot/cogs/mod/kickban.py:556
 msgid "Could not ban user with ID {user_id}: missing permissions."
 msgstr "Kunne ikke utestenge bruker med ID {user_id}: manglende tillatelser."
 
-#: redbot/cogs/mod/kickban.py:569
+#: redbot/cogs/mod/kickban.py:589
 #, docstring
 msgid "Temporarily ban a user from this server.\n\n"
 "        `duration` is the amount of time the user should be banned for.\n"
@@ -243,85 +243,85 @@ msgstr "Forby en bruker midlertidig fra denne serveren.\n\n"
 "            Dette vil forby brukeren i 1 dag 2 timer 15 minutter og slette de siste 5 dagene av deres meldinger.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:623
+#: redbot/cogs/mod/kickban.py:643
 msgid "You have been temporarily banned from {server_name} until {date}."
 msgstr "Du har blitt midlertidig utestengt fra {server_name} til {date}."
 
-#: redbot/cogs/mod/kickban.py:627
+#: redbot/cogs/mod/kickban.py:647
 msgid " Here is an invite for when your ban expires: {invite_link}"
 msgstr " Her er en invitasjon for når utestengelsen din utløper: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:637
+#: redbot/cogs/mod/kickban.py:657
 msgid "I can't do that for some reason."
 msgstr "Det kan jeg ikke gjøre av en eller annen grunn."
 
-#: redbot/cogs/mod/kickban.py:639
+#: redbot/cogs/mod/kickban.py:659
 msgid "Something went wrong while banning."
 msgstr "Noe gikk galt under utestengelsen."
 
-#: redbot/cogs/mod/kickban.py:651
+#: redbot/cogs/mod/kickban.py:671
 msgid "Done. Enough chaos for now."
 msgstr "Ferdig. Nok kaos nå."
 
-#: redbot/cogs/mod/kickban.py:658
+#: redbot/cogs/mod/kickban.py:678
 #, docstring
 msgid "Kick a user and delete 1 day's worth of their messages."
 msgstr "Kast ut en bruker og slett en dags verdi av meldingene sine."
 
-#: redbot/cogs/mod/kickban.py:687
+#: redbot/cogs/mod/kickban.py:707
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
 "You can now join the server again. {invite_link}"
 msgstr "Du har blitt utestengt og deretter opphevet utestengelsen som en rask måte å slette meldingene dine.\n"
 "Du kan nå bli med i serveren igjen. {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:698
+#: redbot/cogs/mod/kickban.py:718
 msgid "My role is not high enough to softban that user."
 msgstr "Min rolle er ikke høy nok til å sparke ut den brukeren."
 
-#: redbot/cogs/mod/kickban.py:734
+#: redbot/cogs/mod/kickban.py:754
 msgid "Done. Enough chaos."
 msgstr "Ferdig. Nok kaos."
 
-#: redbot/cogs/mod/kickban.py:742
+#: redbot/cogs/mod/kickban.py:762
 #, docstring
 msgid "Kick a member from a voice channel."
 msgstr "Kast ut et medlem fra en talekanal."
 
-#: redbot/cogs/mod/kickban.py:764
+#: redbot/cogs/mod/kickban.py:784
 msgid "I am unable to kick this member from the voice channel."
 msgstr "Jeg kan ikke kaste ut dette medlemmet fra talekanalen."
 
-#: redbot/cogs/mod/kickban.py:767
+#: redbot/cogs/mod/kickban.py:787
 msgid "Something went wrong while attempting to kick that member."
 msgstr "Noe gikk galt under forsøk på å sparke den brukeren."
 
-#: redbot/cogs/mod/kickban.py:786
+#: redbot/cogs/mod/kickban.py:806
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr "Fjern forbud for en bruker fra å snakke og lytte i serverens talekanaler."
 
-#: redbot/cogs/mod/kickban.py:805
+#: redbot/cogs/mod/kickban.py:825
 msgid "That user isn't muted or deafened by the server."
 msgstr "Den brukeren er ikke dempet eller dempet av serveren."
 
-#: redbot/cogs/mod/kickban.py:821
+#: redbot/cogs/mod/kickban.py:841
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr "Brukeren kan nå snakke og lytte i talekanaler."
 
-#: redbot/cogs/mod/kickban.py:827
+#: redbot/cogs/mod/kickban.py:847
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr "Bannlys en bruker fra å snakke og lytte i serverens talekanaler."
 
-#: redbot/cogs/mod/kickban.py:848
+#: redbot/cogs/mod/kickban.py:868
 msgid "That user is already muted and deafened server-wide."
 msgstr "Den brukeren er allerede dempet og stykket server-wide."
 
-#: redbot/cogs/mod/kickban.py:862
+#: redbot/cogs/mod/kickban.py:882
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr "Brukeren har blitt utestengt fra å snakke eller lytte i talekanaler."
 
-#: redbot/cogs/mod/kickban.py:869
+#: redbot/cogs/mod/kickban.py:889
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -334,35 +334,35 @@ msgstr "Fjern utestengelsen av en bruker fra denne serveren.\n\n"
 "         2. aktiver utviklermodus, gå til utestengelser i denne serverens innstillinger, høyre-\n"
 "        klikk på brukeren og velg \"Kopier ID\"."
 
-#: redbot/cogs/mod/kickban.py:882
+#: redbot/cogs/mod/kickban.py:902
 msgid "It seems that user isn't banned!"
 msgstr "Det virker som brukeren ikke er utestengt!"
 
-#: redbot/cogs/mod/kickban.py:887
+#: redbot/cogs/mod/kickban.py:907
 msgid "Something went wrong while attempting to unban that user."
 msgstr "Noe gikk galt under forsøket på å oppheve utestengelsen av den brukeren."
 
-#: redbot/cogs/mod/kickban.py:901
+#: redbot/cogs/mod/kickban.py:921
 msgid "Unbanned that user from this server."
 msgstr "Opphevet utstengelsen fra den brukeren for denne serveren."
 
-#: redbot/cogs/mod/kickban.py:907
+#: redbot/cogs/mod/kickban.py:927
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr "Jeg deler ikke en annen server med denne brukeren. Jeg kan ikke invitere dem på nytt."
 
-#: redbot/cogs/mod/kickban.py:915
+#: redbot/cogs/mod/kickban.py:935
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr "Du har blitt utestengt fra {server}.\n"
 "Her er en invitasjon for den serveren: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:922
+#: redbot/cogs/mod/kickban.py:942
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr "Jeg sendte ikke en invitasjon til den brukeren. Kanskje du kan sende den for meg?\n"
 "Her er invitasjons lenken: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:930
+#: redbot/cogs/mod/kickban.py:950
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr "Noe gikk galt under forsøket på å sende den brukeran invitasjonen. Her er linken så du kan prøve: {invite_link}"
 

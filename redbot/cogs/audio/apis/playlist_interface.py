@@ -235,7 +235,7 @@ class PlaylistCompat23:
             Trying to access the User scope without an user id.
         """
         guild = data.get("guild") or kwargs.get("guild")
-        author: int = data.get("author") or 0
+        author: int = data.get("author") or kwargs.get("author") or 0
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)
