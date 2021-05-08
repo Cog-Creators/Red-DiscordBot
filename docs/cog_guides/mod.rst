@@ -52,7 +52,7 @@ Ban a user from this server and optionally delete days of messages.
 **Arguments**
 
 * ``<user>``: The user to ban. |user-input|
-* ``[days]``: The amount of days of messages to cleanup on ban. This parameter default to no days.
+* ``[days]``: The amount of days of messages to cleanup on ban. This parameter defaults to the defaultdays setting, or no days if this has not yet been configured.
 * ``[reason]``: The reason why the user was banned (optional).
 
 **Example Usage**
@@ -121,14 +121,14 @@ Mass bans user(s) from the server.
 
 **Arguments**
 
-* ``<user_ids...>``: The users to ban. This must be a list of user IDs seperated by spaces.
+* ``<user_ids...>``: The users to ban. This must be a list of user IDs separated by spaces.
 * ``[days]``: The amount of days of messages to cleanup on massban.
-* ``[reason]``: The reason why this user was banned.
+* ``[reason]``: The reason why these users were banned.
 
 **Example Usage**
 
 * ``[p]massban 345628097929936898 57287406247743488 7 they broke all rules.``
-    This will ban all the added userids and delete 7 days of worth messages.
+    This will ban all the added userids and delete 7 days worth of their messages.
 
 .. _mod-command-modset:
 
@@ -239,7 +239,7 @@ Enable auto-deletion of repeated messages.
 
 **Arguments**
 
-* ``[repeats]``: The number of repeated messages to auto-delete.
+* ``[repeats]``: The number of repeated messages needed before further messages are deleted.
 
 .. note:: Must be between 2 and 20. Set to -1 to disable this feature.
 
@@ -367,7 +367,7 @@ Setting to account for duplicate mentions.
 If enabled all mentions will count including duplicated mentions.
 If disabled only unique mentions will count.
 
-Use this command without any parameter to see current setting.
+Use this command without any parameter to see the current setting.
 
 **Arguments**
 
