@@ -80,8 +80,10 @@ class Stream:
                 channel = guild and guild.get_channel(msg_data["channel"])
             else:
                 channel = self._bot.get_channel(msg_data["channel"])
-            if channel is not None:
-                data["partial_message"] = channel.get_partial_message(data["message"])
+
+            data["partial_message"] = (
+                channel.get_partial_message(data["message"]) if channel is not None else None
+            )
             yield data
 
     def export(self):
