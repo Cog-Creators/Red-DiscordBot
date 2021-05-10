@@ -870,7 +870,7 @@ class Downloader(commands.Cog):
                     (
                         _("Successfully installed cogs: ")
                         if len(installed_cogs) > 1
-                        else _("Successfully installed the cog:")
+                        else _("Successfully installed the cog: ")
                     )
                     + humanize_list(cognames)
                     + (
