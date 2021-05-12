@@ -66,21 +66,44 @@ Paste the following and replace the following:
 
 .. note::
 
-    Should you need to view the output from Red (for example: to find error messages that 
-    are output to the console to help with support), you can run :code:`nano /tmp/red_out.log` 
-    and :code:`nano /tmp/red_err.log` to do so
+    Should you need to set up auto-restart for additional bots, create a :code:`.plist` file for
+    each bot under a different file name, and use the respective file names for the commands below.
 
 Save and exit :code:`ctrl + O; enter; ctrl + x`
 
------------------
-Loading the plist
------------------
+-------------------------------
+Starting and loading the plist
+-------------------------------
 
-Run the following:
+To start the bot and set it to start on boot, you must run the following command:
 
-:code:`sudo launchctl load /Library/LaunchDaemons/red.plist`
+.. prompt:: bash
+
+    sudo launchctl load -w /Library/LaunchDaemons/red.plist
 
 If you need to shutdown the bot, you can use the ``[p]shutdown`` command or
 type the following command in the terminal:
 
-:code:`sudo launchctl stop red`
+.. prompt:: bash
+
+    sudo launchctl stop red
+
+To start the bot again after a shutdown, run the following:
+
+.. prompt:: bash
+
+    sudo launchctl start red
+
+To stop the bot and set it to not start on boot anymore, run the following:
+
+.. prompt:: bash
+
+    sudo launchctl unload -w /Library/LaunchDaemons/red.plist
+
+To view Red's log, run the following (:code:`red_out.log` is for the console output, and
+:code:`red_err.log` for the error logs):
+
+.. prompt:: bash
+
+    nano /tmp/red_out.log
+    nano /tmp/red_err.log
