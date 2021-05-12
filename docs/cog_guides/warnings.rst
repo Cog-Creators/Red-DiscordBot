@@ -393,9 +393,7 @@ warnreason delete
 .. code-block:: none
 
     [p]warnreason delete <reason_name>
-
-.. tip:: Aliases: ``warnreason remove``, ``warnreason del``
-
+    
 **Description**
 
 Delete a warning reason.
