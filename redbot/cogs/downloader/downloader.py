@@ -870,7 +870,7 @@ class Downloader(commands.Cog):
                     (
                         _("Successfully installed cogs: ")
                         if len(installed_cogs) > 1
-                        else _("Successfully installed the cog:")
+                        else _("Successfully installed the cog: ")
                     )
                     + humanize_list(cognames)
                     + (
@@ -904,8 +904,8 @@ class Downloader(commands.Cog):
         by Downloader.
 
         Examples:
-            - `[p]cog uninstall 26-Cogs defender`
-            - `[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite`
+            - `[p]cog uninstall defender`
+            - `[p]cog uninstall say roleinvite`
 
         **Arguments**
 

@@ -138,7 +138,10 @@
   # Docs
   - docs/cog_permissions.rst
 "Category: Reports Cog":
+  # Source
   - redbot/cogs/reports/*
+  # Docs
+  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   # Source
   - redbot/core/rpc.py

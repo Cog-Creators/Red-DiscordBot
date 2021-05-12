@@ -7,6 +7,10 @@ on:
         required: false
         default: 'auto'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   crowdin_download_translations:
     needs: pr_stable_bump
