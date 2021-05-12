@@ -75,7 +75,7 @@ Save and exit :code:`ctrl + O; enter; ctrl + x`
 Starting and loading the plist
 -------------------------------
 
-To start the bot and enable auto-restart, run the following:
+To start the bot and set it to start on boot, you must run the following command:
 
 .. prompt:: bash
 
@@ -94,7 +94,7 @@ To start the bot again after a shutdown, run the following:
 
     sudo launchctl start red
 
-To disable auto-restart and stop the bot, run the following:
+To stop the bot and set it to not start on boot anymore, run the following:
 
 .. prompt:: bash
 
