@@ -95,7 +95,7 @@ To set the bot to not start on boot anymore, you must disable the service by run
 
     sudo systemctl disable red@instancename
 
-To view Red’s log, you can access through journalctl:
+You can access Red's log through journalctl:
 
 .. prompt:: bash
 
