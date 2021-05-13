@@ -434,6 +434,7 @@ class TwitchStream(Stream):
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
+
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
