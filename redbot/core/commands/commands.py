@@ -1185,4 +1185,8 @@ class _IsTrueBotOwner(Command):
             raise TypeError("This command may not be added to a cog")
 
     async def can_run(self, ctx, *args, **kwargs) -> bool:
-        return not ctx.author.bot and ctx.author.id in ctx.bot._true_owner_ids
+        return (
+            ctx.bot._sudo_enabled is True
+            and not ctx.author.bot
+            and ctx.author.id in ctx.bot._true_owner_ids
+        )
