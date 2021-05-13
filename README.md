@@ -72,7 +72,7 @@ from installing and updating, every part of the bot can be controlled from withi
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search
