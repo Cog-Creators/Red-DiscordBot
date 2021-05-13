@@ -208,17 +208,17 @@ class Red(
         # This is set to `--owner` *or* if the flag is not passed, to `self._config.owner()`
         self._owner_id_overwrite: Optional[int] = cli_flags.owner
         # These are IDs of ALL owners, whether they currently have elevated privileges or not
-        self._true_owner_ids: FrozenSet[int] = frozenset()
+        self._all_owner_ids: FrozenSet[int] = frozenset()
         # These are IDs of the owners, that currently have their privileges elevated globally.
         # If sudo functionality is not enabled, this will remain empty throughout bot's lifetime.
         self._elevated_owner_ids: FrozenSet[int] = frozenset()
 
         if "owner_ids" in kwargs:
-            self._true_owner_ids = frozenset(kwargs.pop("owner_ids"))
-        self._true_owner_ids = self._true_owner_ids.union(cli_flags.co_owner)
+            self._all_owner_ids = frozenset(kwargs.pop("owner_ids"))
+        self._all_owner_ids = self._all_owner_ids.union(cli_flags.co_owner)
 
         # ensure that d.py doesn't run into AttributeError when trying to set `self.owner_ids`
-        kwargs["owner_ids"] = self._true_owner_ids
+        kwargs["owner_ids"] = self._all_owner_ids
 
         # to prevent multiple calls to app info during startup
         self._app_info = None
@@ -262,7 +262,7 @@ class Red(
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
 
     @property
-    def true_owner_ids(self) -> FrozenSet[int]:
+    def all_owner_ids(self) -> FrozenSet[int]:
         """
         IDs of ALL owners regardless of their elevation status.
 
@@ -271,7 +271,7 @@ class Red(
         that actually need to get a full list of owners for informational purposes.
         """
         # XXX: rename to `all_owner_ids` perhaps?
-        return self._true_owner_ids
+        return self._all_owner_ids
 
     @property
     def owner_ids(self) -> FrozenSet[int]:
@@ -281,16 +281,16 @@ class Red(
         You should NEVER try to set to this attribute.
 
         This should be used for any privilege checks.
-        If sudo functionality is disabled, this will be equivalent to `true_owner_ids`.
+        If sudo functionality is disabled, this will be equivalent to `all_owner_ids`.
         """
         if self._sudo_ctx_var is None:
-            return self._true_owner_ids
+            return self._all_owner_ids
         return self._sudo_ctx_var.get(self._elevated_owner_ids)
 
     @owner_ids.setter
     def owner_ids(self, value) -> NoReturn:
         # this if is needed so that d.py's __init__ can "set" to `owner_ids` successfully
-        if self._sudo_ctx_var is None and self._true_owner_ids is value:
+        if self._sudo_ctx_var is None and self._all_owner_ids is value:
             return  # type: ignore[misc]
         raise AttributeError("can't set attribute")
 
@@ -1142,7 +1142,7 @@ class Red(
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
         if self._owner_id_overwrite is not None:
-            self._true_owner_ids |= {self._owner_id_overwrite}
+            self._all_owner_ids |= {self._owner_id_overwrite}
 
         i18n_locale = await self._config.locale()
         i18n.set_locale(i18n_locale)
@@ -1261,13 +1261,13 @@ class Red(
 
         if app_info.team:
             if self._use_team_features:
-                self._true_owner_ids |= {m.id for m in app_info.team.members}
+                self._all_owner_ids |= {m.id for m in app_info.team.members}
         elif self._owner_id_overwrite is None:
-            self._true_owner_ids |= {app_info.owner.id}
+            self._all_owner_ids |= {app_info.owner.id}
 
         self._app_info = app_info
 
-        if not self._true_owner_ids:
+        if not self._all_owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
     async def start(self, *args, **kwargs):
@@ -1849,7 +1849,7 @@ class Red(
         await self.wait_until_red_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
-        for user_id in self.true_owner_ids:
+        for user_id in self.all_owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
                 if user and not user.bot:  # user.bot is possible with flags and teams

@@ -1181,7 +1181,7 @@ class _IsTrueBotOwner(_RuleDropper, Command):
         return (
             ctx.bot._sudo_ctx_var is not None
             and not ctx.author.bot
-            and ctx.author.id in ctx.bot.true_owner_ids
+            and ctx.author.id in ctx.bot.all_owner_ids
         )
 
     can_see = can_run
