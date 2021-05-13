@@ -32,6 +32,7 @@ from typing import (
 import aiohttp
 import discord
 import pkg_resources
+from discord.ext.commands import check
 from fuzzywuzzy import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
@@ -57,6 +58,7 @@ __all__ = (
     "fetch_latest_red_version_info",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
+    "is_sudo_enabled",
 )
 
 _T = TypeVar("_T")
@@ -357,3 +359,12 @@ class RichIndefiniteBarColumn(ProgressColumn):
             total=task.total,
             completed=task.completed,
         )
+
+
+def is_sudo_enabled():
+    """Deny the command if sudo mechanic is not enabled."""
+
+    async def predicate(ctx):
+        return ctx.bot._sudo_enabled
+
+    return check(predicate)
