@@ -103,6 +103,7 @@ class RedBase(
             regional_format=None,
             embeds=True,
             color=15158332,
+            sudotime=15 * 60,  # 15 minutes default
             fuzzy=False,
             custom_info=None,
             help__page_char_limit=1000,
@@ -216,12 +217,17 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        self._true_owner_ids = kwargs.pop("owner_ids", set())
+        self._sudo_enabled = cli_flags.enable_sudo
+        if self._sudo_enabled:
+            self._true_owner_ids = kwargs.pop("owner_ids", set())
+
         # to prevent multiple calls to app info in `is_owner()`
         self._app_owners_fetched = False
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
+        if self._sudo_enabled is False:
+            self._true_owner_ids = self.owner_ids
         self._help_formatter = commands.help.RedHelpFormatter()
         self.add_command(commands.help.red_help)
 

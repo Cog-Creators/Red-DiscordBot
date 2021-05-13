@@ -32,6 +32,7 @@ from typing import (
 import aiohttp
 import discord
 import pkg_resources
+from discord.ext.commands import check
 from fuzzywuzzy import fuzz, process
 from tqdm import tqdm
 
@@ -56,6 +57,7 @@ __all__ = (
     "fetch_latest_red_version_info",
     "deprecated_removed",
     "async_tqdm",
+    "is_sudo_enabled",
 )
 
 _T = TypeVar("_T")
@@ -420,3 +422,12 @@ def async_tqdm(
         asyncio.create_task(_progress_bar_refresher())
 
     return progress_bar
+
+
+def is_sudo_enabled():
+    """Deny the command if sudo mechanic is not enabled."""
+
+    async def predicate(ctx):
+        return ctx.bot._sudo_enabled
+
+    return check(predicate)
