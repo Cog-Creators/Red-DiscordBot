@@ -151,7 +151,7 @@ class Dev(commands.Cog):
             return
         except Exception as e:
             await ctx.send_interactive(
-                self.get_pages("{}: {!s}".format(type(e).__name__, e), box_lang="py")
+                self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
             )
             return
 
