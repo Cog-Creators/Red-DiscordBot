@@ -40,7 +40,6 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "soundcloud.com",
             "bandcamp.com",
             "vimeo.com",
-            "beam.pro",
             "twitch.tv",
             "spotify.com",
             "localtracks",
