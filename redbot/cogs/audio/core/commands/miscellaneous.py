@@ -40,6 +40,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.command(name="audiostats")
     @commands.guild_only()
+    @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
