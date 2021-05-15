@@ -435,45 +435,6 @@ class TwitchStream(Stream):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
-class HitboxStream(Stream):
-
-    token_name = None  # This streaming services don't currently require an API key
-
-    async def is_online(self):
-        url = "https://api.smashcast.tv/media/live/" + self.name
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                # data = await r.json(encoding='utf-8')
-                data = await r.text()
-        data = json.loads(data, strict=False)
-        if "livestream" not in data:
-            raise StreamNotFound()
-        elif data["livestream"][0]["media_is_live"] == "0":
-            # self.already_online = False
-            raise OfflineStream()
-        elif data["livestream"][0]["media_is_live"] == "1":
-            # self.already_online = True
-            return self.make_embed(data)
-
-        raise APIError(data)
-
-    def make_embed(self, data):
-        base_url = "https://edge.sf.hitbox.tv"
-        livestream = data["livestream"][0]
-        channel = livestream["channel"]
-        url = channel["channel_link"]
-        embed = discord.Embed(title=livestream["media_status"], url=url, color=0x98CB00)
-        embed.set_author(name=livestream["media_name"])
-        embed.add_field(name=_("Followers"), value=humanize_number(channel["followers"]))
-        embed.set_thumbnail(url=base_url + channel["user_logo"])
-        if livestream["media_thumbnail"]:
-            embed.set_image(url=rnd(base_url + livestream["media_thumbnail"]))
-        embed.set_footer(text=_("Playing: ") + livestream["category_name"])
-
-        return embed
-
-
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
