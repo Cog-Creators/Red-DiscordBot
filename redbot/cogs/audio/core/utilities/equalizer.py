@@ -46,7 +46,10 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
         if not config_bands:
             config_bands = player.equalizer.get()
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(config_bands)
+            async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+                eq_data["eq_bands"] = config_bands
+                eq_data["name"] = player.equalizer.name
+        name = await self.config.custom("EQUALIZER", ctx.guild.id).name()
         if isinstance(config_bands[0], (float, int)):
             if player.equalizer.get() != config_bands:
                 band_num = list(range(player.equalizer.band_count))
@@ -55,11 +58,12 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     levels=[
                         dict(zip(["band", "gain"], values))
                         for values in list(zip(band_num, band_value))
-                    ], name="Default"
+                    ],
+                    name=name
                 )
                 await player.set_equalizer(equalizer=new_eq)
         else:
-            new_eq = Equalizer(levels=config_bands, name="Default")
+            new_eq = Equalizer(levels=config_bands, name=name)
             await player.set_equalizer(equalizer=new_eq)
 
     async def _eq_interact(
@@ -94,9 +98,9 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not react_emoji:
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
-                player.equalizer.get()
-            )
+            async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+                eq_data["eq_bands"] = player.equalizer.get()
+                eq_data["name"] = player.equalizer.name
             await self._clear_react(message, emoji)
 
         if react_emoji == "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}":

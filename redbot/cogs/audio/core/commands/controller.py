@@ -68,9 +68,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.queue = []
             player.store("playing_song", None)
             player.store("autoplay_notified", False)
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
-                player.equalizer.get()
-            )
+            async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+                eq_data["eq_bands"] = player.equalizer.get()
+                eq_data["name"] = player.equalizer.name
             await player.stop()
             await player.disconnect()
             await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
@@ -605,9 +605,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             or player.queue
             or getattr(player.current, "extras", {}).get("autoplay")
         ):
-            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(
-                player.equalizer.get()
-            )
+            async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+                eq_data["eq_bands"] = player.equalizer.get()
+                eq_data["name"] = player.equalizer.name
             player.queue = []
             player.store("playing_song", None)
             player.store("prev_requester", None)
