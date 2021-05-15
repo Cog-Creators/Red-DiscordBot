@@ -45,6 +45,7 @@
   - docs/framework_datamanager.rst
   - docs/framework_events.rst
   - docs/cog_guides/cog_manager_ui.rst
+  - docs/cog_guides/core.rst
 "Category: CI":
   - .github/workflows/*
 "Category: Cleanup Cog":
@@ -137,7 +138,10 @@
   # Docs
   - docs/cog_permissions.rst
 "Category: Reports Cog":
+  # Source
   - redbot/cogs/reports/*
+  # Docs
+  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   # Source
   - redbot/core/rpc.py
