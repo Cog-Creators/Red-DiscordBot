@@ -408,28 +408,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to pause or resume tracks."),
             )
 
-        karaoke = player.karaoke
-        timescale = player.timescale
-        tremolo = player.tremolo
-        vibrato = player.vibrato
-        rotation = player.rotation
-        distortion = player.distortion
+        player.karaoke.reset()
+        player.timescale.reset()
+        player.tremolo.reset()
+        player.vibrato.reset()
+        player.rotation.reset()
+        player.distortion.reset()
 
-        karaoke.reset()
-        timescale.reset()
-        tremolo.reset()
-        vibrato.reset()
-        rotation.reset()
-        distortion.reset()
-
-        await player.set_filters(
-            karaoke=karaoke,
-            timescale=timescale,
-            tremolo=tremolo,
-            vibrato=vibrato,
-            rotation=rotation,
-            distortion=distortion,
-        )
+        await player.set_filters()
         await ctx.invoke(self.command_effects)
 
     @commands.command(name="baseboost")
