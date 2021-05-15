@@ -1,6 +1,5 @@
 import contextlib
 import getpass
-import json
 import pickle
 import sys
 from pathlib import Path
@@ -17,6 +16,7 @@ from ... import data_manager, errors
 from ..base import BaseDriver, IdentifierData, ConfigCategory
 from ..cache import ConfigDriverCache
 from ..log import log
+from .. import json_module as json
 
 __all__ = ["PostgresDriver"]
 

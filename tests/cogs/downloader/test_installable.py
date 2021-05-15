@@ -1,8 +1,8 @@
-import json
 from pathlib import Path
 
 import pytest
 
+from redbot import json
 from redbot.pytest.downloader import *
 from redbot.cogs.downloader.installable import Installable, InstallableType
 from redbot.core import VersionInfo

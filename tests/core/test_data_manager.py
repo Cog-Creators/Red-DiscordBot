@@ -1,8 +1,8 @@
-import json
 from pathlib import Path
 
 import pytest
 
+from redbot import json
 from redbot.pytest.data_manager import *
 from redbot.core import data_manager
 

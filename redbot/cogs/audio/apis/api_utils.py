@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 from collections import namedtuple
 from dataclasses import dataclass, field
@@ -9,6 +8,7 @@ from typing import List, MutableMapping, Optional, Union
 import discord
 import lavalink
 
+from redbot import json
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list

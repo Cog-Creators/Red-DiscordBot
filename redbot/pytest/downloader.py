@@ -1,11 +1,11 @@
 from collections import namedtuple
 from pathlib import Path
-import json
 import subprocess as sp
 import shutil
 
 import pytest
 
+from redbot import json
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 

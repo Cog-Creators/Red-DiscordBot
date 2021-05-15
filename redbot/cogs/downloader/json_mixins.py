@@ -1,7 +1,7 @@
-import json
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
+from redbot import json
 from .info_schemas import REPO_SCHEMA, update_mixin
 from .log import log
 

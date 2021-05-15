@@ -8,6 +8,7 @@ from redbot.core import bank, errors
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, bold, humanize_list, humanize_number
 from redbot.core.utils.common_filters import normalize_smartquotes
+from .converters import MAX_VALUE
 from .log import LOG
 
 __all__ = ["TriviaSession"]
@@ -317,6 +318,8 @@ class TriviaSession:
         if not winners or num_humans < 3:
             return
         payout = int(top_score * multiplier / len(winners))
+        payout = MAX_VALUE if payout > MAX_VALUE else payout
+
         if payout <= 0:
             return
         for winner in winners:
@@ -330,7 +333,7 @@ class TriviaSession:
                 "Congratulations {users}! You have each received {num} {currency} for winning!"
             ).format(
                 users=humanize_list([bold(winner.display_name) for winner in winners]),
-                num=payout,
+                num=humanize_number(payout),
                 currency=await bank.get_currency_name(self.ctx.guild),
             )
         else:
@@ -338,7 +341,7 @@ class TriviaSession:
                 "Congratulations {user}! You have received {num} {currency} for winning!"
             ).format(
                 user=bold(winners[0].display_name),
-                num=payout,
+                num=humanize_number(payout),
                 currency=await bank.get_currency_name(self.ctx.guild),
             )
         await self.ctx.send(msg)

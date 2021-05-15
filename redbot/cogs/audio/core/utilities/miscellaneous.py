@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 import functools
-import json
 import logging
 import re
 import struct
@@ -13,6 +12,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
+from redbot import json
 from redbot.core import bank, commands
 from redbot.core.commands import Context
 from redbot.core.i18n import Translator

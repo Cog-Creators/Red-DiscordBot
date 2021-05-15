@@ -14,6 +14,7 @@ from . import Config, errors, commands
 from .i18n import Translator
 
 from .errors import BankPruneError
+from .utils import AsyncIter
 
 if TYPE_CHECKING:
     from .bot import Red
@@ -70,6 +71,7 @@ _DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 _DEFAULT_USER = _DEFAULT_MEMBER
 
 _config: Config = None
+_bot: Red = None
 
 log = logging.getLogger("red.core.bank")
 
@@ -79,8 +81,9 @@ _cache_is_global = None
 _cache = {"bank_name": None, "currency": None, "default_balance": None, "max_balance": None}
 
 
-async def _init():
-    global _config
+async def _init(bot):
+    global _config, _bot
+    _bot = bot
     _config = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _config.register_global(**_DEFAULT_GLOBAL)
     _config.register_guild(**_DEFAULT_GUILD)

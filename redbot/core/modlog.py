@@ -249,7 +249,7 @@ class Case:
         channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
-        message: Optional[discord.Message] = None,
+        message: Optional[Union[discord.PartialMessage, discord.Message]] = None,
         last_known_username: Optional[str] = None,
     ):
         self.bot = bot
@@ -313,8 +313,19 @@ class Case:
         except discord.Forbidden:
             log.info(
                 "Modlog failed to edit the Discord message for"
-                " the case #%s from guild with ID due to missing permissions."
+                " the case #%s from guild with ID %s due to missing permissions.",
+                self.case_number,
+                self.guild.id,
             )
+        except discord.NotFound:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s as it no longer exists."
+                " Clearing the message ID from case data...",
+                self.case_number,
+                self.guild.id,
+            )
+            await self.edit({"message": None})
         except Exception:  # `finally` with `return` suppresses unexpected exceptions
             log.exception(
                 "Modlog failed to edit the Discord message for"
@@ -547,14 +558,7 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = discord.utils.get(bot.cached_messages, id=message_id)
-                if message is None:
-                    try:
-                        message = await mod_channel.fetch_message(message_id)
-                    except discord.HTTPException:
-                        message = None
-            else:
-                message = None
+                message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):

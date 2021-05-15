@@ -1,8 +1,8 @@
 import asyncio
 import logging
-from typing import Iterable, List, Optional, Union, Any, Dict
+from typing import Iterable, Optional, Union, Any, Dict
 import discord
-from discord.embeds import EmptyEmbed
+from discord.embeds import _EmptyEmbed
 
 from redbot.vendored.discord.ext import menus as _dpy_menus
 
@@ -422,6 +422,15 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         await self.show_page(0)
 
     @button(
+        "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_double_arrows_has_not_external_emojis_perm,
+        position=First(0),
+    )
+    async def go_to_first_page_custom(self, payload):
+        """go to the first page"""
+        await self.show_page(0)
+
+    @button(
         "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
         skip_if=_skip_single_arrows_has_external_emojis_perm,
         position=First(1),
@@ -430,8 +439,26 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         """go to the previous page"""
         await self.show_checked_page(self.current_page - 1)
 
+    @button(
+        "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_single_arrows_has_not_external_emojis_perm,
+        position=First(1),
+    )
+    async def go_to_previous_page_custom(self, payload):
+        """go to the previous page"""
+        await self.show_checked_page(self.current_page - 1)
+
     @button("\N{CROSS MARK}", skip_if=_has_external_emojis_perms, position=Last(0))
     async def stop_pages(self, payload: discord.RawReactionActionEvent) -> None:
+        """stops the pagination session."""
+        self.stop()
+
+    @button(
+        "\N{CROSS MARK}",
+        skip_if=_has_not_external_emojis_perm,
+        position=Last(0),
+    )
+    async def stop_pages_custom(self, payload: discord.RawReactionActionEvent) -> None:
         """stops the pagination session."""
         self.stop()
 
@@ -445,11 +472,30 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
         await self.show_checked_page(self.current_page + 1)
 
     @button(
+        "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_single_arrows_has_not_external_emojis_perm,
+        position=Last(1),
+    )
+    async def go_to_next_page_custom(self, payload):
+        """go to the next page"""
+        await self.show_checked_page(self.current_page + 1)
+
+    @button(
         "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
         skip_if=_skip_double_arrows_has_external_emojis_perm,
         position=Last(2),
     )
     async def go_to_last_page(self, payload):
+        """go to the last page"""
+        # The call here is safe because it's guarded by skip_if
+        await self.show_page(self._source.get_max_pages() - 1)
+
+    @button(
+        "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+        skip_if=_skip_double_arrows_has_not_external_emojis_perm,
+        position=Last(2),
+    )
+    async def go_to_last_page_custom(self, payload):
         """go to the last page"""
         # The call here is safe because it's guarded by skip_if
         await self.show_page(self._source.get_max_pages() - 1)
@@ -508,7 +554,7 @@ class SimpleSource(_dpy_menus.ListPageSource):
         self, menu: SimpleHybridMenu, page: Union[str, discord.Embed]
     ) -> Union[discord.Embed, str]:
         """Sends thee specified page to the menu."""
-        if isinstance(page, discord.Embed) and isinstance(page.colour, EmptyEmbed):
+        if isinstance(page, discord.Embed) and isinstance(page.colour, _EmptyEmbed):
             page.colour = await menu.ctx.embed_colour()
         return page
 

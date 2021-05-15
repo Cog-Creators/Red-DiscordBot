@@ -3,6 +3,7 @@ from typing import Optional
 
 import aiohttp
 
+from redbot import json
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core import checks, Config, commands
 from redbot.core.commands import UserInputOptional
@@ -21,7 +22,7 @@ class Image(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=2652104208, force_registration=True)
         self.config.register_global(**self.default_global)
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.imgur_base_url = "https://api.imgur.com/3/"
 
     def cog_unload(self):
@@ -69,7 +70,7 @@ class Image(commands.Cog):
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         async with self.session.get(url, headers=headers, params=params) as search_get:
-            data = await search_get.json()
+            data = await search_get.json(loads=json.loads)
 
         if data["success"]:
             results = data["data"]
@@ -135,7 +136,7 @@ class Image(commands.Cog):
         url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
-            data = await sub_get.json()
+            data = await sub_get.json(loads=json.loads)
 
         if data["success"]:
             items = data["data"]
@@ -192,7 +193,7 @@ class Image(commands.Cog):
 
         url = "http://api.giphy.com/v1/gifs/search"
         async with self.session.get(url, params={"api_key": giphy_api_key, "q": keywords}) as r:
-            result = await r.json()
+            result = await r.json(loads=json.loads)
             if r.status == 200:
                 if result["data"]:
                     await ctx.send(result["data"][0]["url"])
@@ -219,7 +220,7 @@ class Image(commands.Cog):
 
         url = "http://api.giphy.com/v1/gifs/random"
         async with self.session.get(url, params={"api_key": giphy_api_key, "tag": keywords}) as r:
-            result = await r.json()
+            result = await r.json(loads=json.loads)
             if r.status == 200:
                 if result["data"]:
                     await ctx.send(result["data"]["url"])

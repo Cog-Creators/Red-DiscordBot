@@ -1230,6 +1230,31 @@ class Downloader(commands.Cog):
                 cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
 
                 if updates_available:
+                    cognames = [cog.name for cog in cogs_to_update]
+                    libnames = [lib.name for lib in libs_to_update]
+                    if len(cognames) > 0:
+                        update_message = (
+                            _("These cogs will be updated: ")
+                            + humanize_list(tuple(map(inline, cognames)))
+                            + "\n"
+                        )
+                    else:
+                        update_message = _("There are no cogs to be updated.")
+
+                    if len(libnames) > 0:
+                        update_message += _(
+                            "These shared libraries will be updated: "
+                        ) + humanize_list(tuple(map(inline, libnames)))
+                    else:
+                        update_message += _("There are no shared libraries to be updated.")
+
+                    update_message += _("\n\nWould you like to continue with updating?")
+
+                    confirmed = await self._ask(ctx, update_message)
+
+                    if not confirmed:
+                        return
+
                     updated_cognames, message = await self._update_cogs_and_libs(
                         ctx, cogs_to_update, libs_to_update, current_cog_versions=cogs_to_check
                     )
@@ -1618,46 +1643,53 @@ class Downloader(commands.Cog):
             ) + humanize_list(tuple(map(inline, libnames)))
         return (updated_cognames, message)
 
+    async def _ask(self, ctx: commands.Context, message: str) -> bool:
+        if ctx.assume_yes:
+            return True
+
+        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+        if not can_react:
+            message += " (y/n)"
+        query: discord.Message = await ctx.send(message)
+        if can_react:
+            # noinspection PyAsyncCall
+            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
+            pred = ReactionPredicate.yes_or_no(query, ctx.author)
+            event = "reaction_add"
+        else:
+            pred = MessagePredicate.yes_or_no(ctx)
+            event = "message"
+        try:
+            await ctx.bot.wait_for(event, check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await query.delete()
+            return
+
+        if not pred.result:
+            if can_react:
+                await query.delete()
+            else:
+                await ctx.send(_("OK then."))
+            return False
+        else:
+            if can_react:
+                with contextlib.suppress(discord.Forbidden):
+                    await query.clear_reactions()
+
+        return True
+
     async def _ask_for_cog_reload(self, ctx: commands.Context, updated_cognames: Set[str]) -> None:
         updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
         if not updated_cognames:
             await ctx.send(_("None of the updated cogs were previously loaded. Update complete."))
             return
 
-        if not ctx.assume_yes:
-            message = (
-                _("Would you like to reload the updated cogs?")
-                if len(updated_cognames) > 1
-                else _("Would you like to reload the updated cog?")
-            )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-            if not can_react:
-                message += " (y/n)"
-            query: discord.Message = await ctx.send(message)
-            if can_react:
-                # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
-                pred = ReactionPredicate.yes_or_no(query, ctx.author)
-                event = "reaction_add"
-            else:
-                pred = MessagePredicate.yes_or_no(ctx)
-                event = "message"
-            try:
-                await ctx.bot.wait_for(event, check=pred, timeout=30)
-            except asyncio.TimeoutError:
-                await query.delete()
-                return
+        message = _("Would you like to reload the updated cogs?")
 
-            if not pred.result:
-                if can_react:
-                    await query.delete()
-                else:
-                    await ctx.send(_("OK then."))
-                return
-            else:
-                if can_react:
-                    with contextlib.suppress(discord.Forbidden):
-                        await query.clear_reactions()
+        confimed = await self._ask(ctx, message)
+
+        if not confimed:
+            return
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 

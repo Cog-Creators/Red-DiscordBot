@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
 import contextlib
-import json
 import logging
 import os
 import sys
@@ -13,6 +12,7 @@ from typing import Dict, Any, Optional, Union
 import appdirs
 import click
 
+from redbot import json
 from redbot.core.cli import confirm
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
@@ -106,7 +106,7 @@ def get_data_dir(instance_name: str):
 
 
 def get_storage_type():
-    storage_dict = {1: "JSON", 2: "PostgreSQL", 3: "RedisJSON"}
+    storage_dict = {1: "JSON", 2: "PostgreSQL", 3: "RedisJSON", 4: "Bagel"}
     storage = None
     while storage is None:
         print()
@@ -114,6 +114,10 @@ def get_storage_type():
         print("1. JSON (file storage, requires no database).")
         print("2. PostgreSQL (Requires a database server)")
         print("3. RedisJSON (Requires a redis server with the RedisJSON plugin)")
+        print(
+            "4. Bagel (Requires an instance of the Bagel server: DO NOT USE if you don't know what this is.)"
+        )
+
         storage = input("> ")
         try:
             storage = int(storage)
@@ -169,7 +173,12 @@ def basic_setup():
 
     storage = get_storage_type()
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES, 3: BackendType.REDIS}
+    storage_dict = {
+        1: BackendType.JSON,
+        2: BackendType.POSTGRES,
+        3: BackendType.REDIS,
+        4: BackendType.Bagel,
+    }
     storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
@@ -205,6 +214,8 @@ def get_target_backend(backend) -> BackendType:
         return BackendType.POSTGRES
     elif backend == "redis":
         return BackendType.REDIS
+    elif backend == "bagel":
+        return BackendType.Bagel
 
 
 async def do_migration(
@@ -396,8 +407,8 @@ def delete(
 
 
 @cli.command()
-@click.argument("instance", type=click.Choice(instance_list))
-@click.argument("backend", type=click.Choice(["json"]))  # TODO: GH-3115
+@click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
+@click.argument("backend", type=click.Choice(["json", "postgres", "redis", "bagel"]))
 def convert(instance, backend):
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
@@ -417,7 +428,9 @@ def convert(instance, backend):
         default_dirs["STORAGE_TYPE"] = target.value
         default_dirs["STORAGE_DETAILS"] = new_storage_details
         save_config(instance, default_dirs)
-        conversion_log.info(f"Conversion to {target} complete.")
+        conversion_log.info(
+            f"Instance '{instance}' has been converted from {current_backend} to {target}."
+        )
     else:
         conversion_log.info(
             f"Cannot convert {current_backend.value} to {target.value} at this time."

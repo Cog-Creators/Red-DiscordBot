@@ -1,5 +1,4 @@
 import asyncio
-import json
 import logging
 import os
 import pickle
@@ -11,6 +10,7 @@ from uuid import uuid4
 
 from .. import data_manager, errors
 from .base import BaseDriver, IdentifierData, ConfigCategory
+from . import json_module as json
 
 __all__ = ["JsonDriver"]
 

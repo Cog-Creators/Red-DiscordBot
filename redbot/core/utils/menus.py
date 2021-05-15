@@ -23,7 +23,7 @@ log = logging.getLogger("red.menus")
 async def menu(
     ctx: commands.Context,
     pages: Union[List[str], List[discord.Embed]],
-    controls: dict,
+    controls: Dict,
     message: discord.Message = None,
     page: int = 0,
     timeout: float = 60.0,

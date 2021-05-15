@@ -8,6 +8,7 @@ import urllib.parse
 import aiohttp
 import discord
 
+from redbot import json
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import (
@@ -42,7 +43,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2 ** 64 - 1
+MAX_ROLL: Final[int] = 2 ** 63 - 1
 
 
 @cog_i18n(_)
@@ -492,9 +493,9 @@ class General(commands.Cog):
             params = {"term": str(word).lower()}
 
             headers = {"content-type": "application/json"}
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
                 async with session.get(url, headers=headers, params=params) as response:
-                    data = await response.json()
+                    data = await response.json(loads=json.loads)
 
         except aiohttp.ClientError:
             await ctx.send(

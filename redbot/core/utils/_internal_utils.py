@@ -4,7 +4,6 @@ import asyncio
 import collections.abc
 import contextlib
 import copy
-import json
 import logging
 import math
 import os
@@ -40,10 +39,9 @@ import discord
 import pkg_resources
 from discord.ext.commands import Cog, check
 from fuzzywuzzy import fuzz, process
-from redbot import VersionInfo
 from tqdm import tqdm
 
-from redbot import VersionInfo
+from redbot import VersionInfo, json
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -64,15 +62,17 @@ __all__ = (
     "expected_version",
     "fetch_latest_red_version_info",
     "_is_unsafe_on_strict_config",
+    "is_sudo_enabled",
+    "fetch_last_fork_update",
     "deprecated_removed",
     "async_tqdm",
     "is_sudo_enabled",
 )
 
+_T = TypeVar("_T")
+
 UTF8_RE = re.compile(r"^[\U00000000-\U0010FFFF]*$")
 MIN_INT, MAX_INT = 1 - (2 ** 64), (2 ** 64) - 1
-
-_T = TypeVar("_T")
 
 
 def safe_delete(pth: Path):
@@ -333,9 +333,9 @@ def expected_version(current: str, expected: str) -> bool:
 
 async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
     try:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
-                data = await r.json()
+                data = await r.json(loads=json.loads)
     except (aiohttp.ClientError, asyncio.TimeoutError):
         return None, None
     else:
@@ -343,6 +343,26 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+async def fetch_last_fork_update() -> Tuple[Optional[int], Optional[str]]:
+    try:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
+            async with session.get(
+                "https://api.github.com/repos/Drapersniper/Red-DiscordBot/commits"
+            ) as r:
+                if r.status != 200:
+                    return None, None
+                data = await r.json(loads=json.loads)
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None, None
+    else:
+        date = (
+            datetime.strptime(data[0]["commit"]["committer"]["date"], "%Y-%m-%dT%H:%M:%SZ")
+            - datetime(1970, 1, 1)
+        ).total_seconds()
+        sha = data[0]["sha"]
+        return int(date), sha
 
 
 def _is_unsafe_on_strict_config(data: Any) -> bool:

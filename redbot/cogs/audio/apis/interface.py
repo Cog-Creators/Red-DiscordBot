@@ -1,7 +1,6 @@
 import asyncio
 import contextlib
 import datetime
-import json
 import logging
 import random
 import time
@@ -15,6 +14,7 @@ import discord
 import lavalink
 
 from lavalink.rest_api import LoadResult, LoadType
+from redbot import json
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context

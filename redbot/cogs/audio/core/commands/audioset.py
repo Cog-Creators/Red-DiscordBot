@@ -4,7 +4,6 @@ import logging
 import os
 import tarfile
 from pathlib import Path
-
 from typing import Union
 
 import discord
@@ -761,9 +760,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a price for queueing tracks for non-mods, 0 to disable."""
         if price < 0:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid Price"), description=_("Price can't be less than zero.")
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be less than zero."),
             )
-        if price == 0:
+        elif price > 2 ** 63 - 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be greater or equal to than 2^63."),
+            )
+        elif price == 0:
             jukebox = False
             await self.send_embed_msg(
                 ctx, title=_("Setting Changed"), description=_("Jukebox mode disabled.")
@@ -1432,7 +1439,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
         """Toggle the server settings.
 
-        Default is OFF
+        Default is ON
         """
         state = await self.config.global_db_enabled()
         await self.config.global_db_enabled.set(not state)

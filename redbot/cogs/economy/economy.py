@@ -1,9 +1,8 @@
 import calendar
 import logging
 import random
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, deque
 from enum import Enum
-from math import ceil
 from typing import cast, Iterable, Union, Literal
 
 import discord
@@ -28,7 +27,6 @@ logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 VARIATION_SELECTOR = "\N{VARIATION SELECTOR-16}"
-MOCK_MEMBER = namedtuple("Member", "id guild")
 
 
 class SMReel(Enum):
@@ -565,12 +563,10 @@ class Economy(commands.Cog):
 
         Examples:
             - `[p]leaderboard`
-            - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
-            - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
+            - `[p]leaderboard yes` - Shows members from all servers.
 
         **Arguments**
 
-        - `<top>` How many positions on the leaderboard to show. Defaults to 10 if omitted.
         - `<show_global>` Whether to include results from all servers. This will default to false unless specified.
         """
         guild = ctx.guild

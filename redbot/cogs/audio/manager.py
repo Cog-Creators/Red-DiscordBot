@@ -1,7 +1,6 @@
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
-import json
 import logging
 import pathlib
 import platform
@@ -15,6 +14,7 @@ from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 import aiohttp
 from tqdm import tqdm
 
+from redbot import json
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
 

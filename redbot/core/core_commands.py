@@ -26,6 +26,9 @@ from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequen
 import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
+
+from redbot import json
+from redbot.core import modlog, bank, Config
 from redbot.core.data_manager import storage_type
 from redbot.core.utils.chat_formatting import box, pagify
 
@@ -37,6 +40,7 @@ from . import (
     errors,
     i18n,
 )
+from .commands import UserInputOptional
 from .utils import AsyncIter
 from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsu
 from .utils.predicates import MessagePredicate
@@ -2325,7 +2329,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if url.startswith("<") and url.endswith(">"):
                 url = url[1:-1]
 
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
                 try:
                     async with session.get(url) as r:
                         data = await r.read()
@@ -3623,7 +3627,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Users have been added to the allowlist."))
         else:
             await ctx.send(_("User has been added to the allowlist."))
-        await ctx.send(_("Users added to allowlist."))
 
     @allowlist.command(name="list")
     async def allowlist_list(self, ctx: commands.Context):
@@ -3666,12 +3669,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<users...>` - The user or users to remove from the allowlist.
         """
         uids = {getattr(user, "id", user) for user in users}
-<<<<<<< HEAD
-        await self.bot.remove_from_allowlist(uids, None)
-=======
         await self.bot.remove_from_allowlist_raw(uids, None)
-
->>>>>>> 4912fb74 (Fix crash on localallowlist remove <user/role> reported by fixator)
         if len(uids) > 1:
             await ctx.send(_("Users have been removed from the allowlist."))
         else:
@@ -3768,7 +3766,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         uids = {getattr(user, "id", user) for user in users}
         await self.bot.remove_from_blocklist_raw(uids, None)
-        await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
         if len(uids) > 1:
             await ctx.send(_("Users have been removed from the blocklist."))
         else:
@@ -3877,7 +3874,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
@@ -4894,7 +4890,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         aliases=["licenceinfo"],
         i18n=_,
     )
-    async def license_info_command(self, ctx):
+    async def license_info_command(self, ctx: commands.Context):
         """
         Get info about Red's licenses.
         """

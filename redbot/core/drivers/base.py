@@ -205,6 +205,17 @@ class IdentifierData:
             )
         )
 
+    def to_dict(self) -> Dict[str, Union[str, int, List[str], bool]]:
+        return dict(
+            cog_name=self._cog_name,
+            uuid=self._uuid,
+            category=self._category,
+            primary_key=self._primary_key,
+            identifiers=self._identifiers,
+            primary_key_len=self.primary_key_len,
+            is_custom=self.is_custom,
+        )
+
 
 class BaseDriver(abc.ABC):
     def __init__(self, cog_name: str, identifier: str, **kwargs):

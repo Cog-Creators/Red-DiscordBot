@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import json
 
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -9,6 +8,7 @@ from typing import Mapping
 import aiohttp
 import discord
 
+from redbot import json
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
@@ -98,7 +98,7 @@ class Audio(
             cache_level=0,
             cache_age=365,
             daily_playlists=False,
-            global_db_enabled=False,
+            global_db_enabled=True,
             global_db_get_timeout=5,
             status=False,
             use_external_lavalink=False,
