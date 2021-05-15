@@ -111,7 +111,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
                 )
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel and autoplay:
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
                     [notify_channel, player.channel.id]
@@ -136,7 +136,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
-                notify_channel = player.fetch("channel")
+                notify_channel = player.fetch("notify_channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
@@ -159,7 +159,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 if player.fetch("notify_message") is not None:
@@ -198,7 +198,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
-                notify_channel = player.fetch("channel")
+                notify_channel = player.fetch("notify_channel")
                 if notify_channel and notify:
                     notify_channel = self.bot.get_channel(notify_channel)
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
@@ -217,7 +217,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
-            message_channel = player.fetch("channel")
+            message_channel = player.fetch("notify_channel")
             while True:
                 if current_track in player.queue:
                     player.queue.remove(current_track)

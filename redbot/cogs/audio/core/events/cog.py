@@ -194,12 +194,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         requester: discord.Member,
         player: lavalink.Player,
     ):
-        notify_channel = self.bot.get_channel(player.fetch("channel"))
+        notify_channel = self.bot.get_channel(player.fetch("notify_channel"))
         tries = 0
         while not player._is_playing:
             await asyncio.sleep(0.1)
             if tries > 1000:
                 return
+            tries += 1
 
         if notify_channel and not player.fetch("autoplay_notified", False):
             if (

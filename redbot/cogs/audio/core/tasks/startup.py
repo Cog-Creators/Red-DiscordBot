@@ -133,11 +133,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            await lavalink.connect(vc, deafen=auto_deafen)
-                            player = lavalink.get_player(guild.id)
-                            player.store("connect", datetime.datetime.utcnow())
-                            player.store("guild", guild_id)
-                            player.store("channel", notify_channel_id)
+                            player = await lavalink.connect(vc, deafen=auto_deafen)
+                            player.store("notify_channel", notify_channel_id)
                             break
                         except IndexError:
                             await asyncio.sleep(5)
@@ -206,11 +203,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not (perms.connect and perms.speak):
                             vc = None
                             break
-                        await lavalink.connect(vc, deafen=auto_deafen)
-                        player = lavalink.get_player(guild.id)
-                        player.store("connect", datetime.datetime.utcnow())
-                        player.store("guild", guild_id)
-                        player.store("channel", notify_channel_id)
+                        player = await lavalink.connect(vc, deafen=auto_deafen)
+                        player.store("notify_channel", notify_channel_id)
                         break
                     except IndexError:
                         await asyncio.sleep(5)
@@ -234,7 +228,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.maybe_shuffle()
                 log.info(f"Restored {player}")
                 if not player.is_playing:
-                    notify_channel = player.fetch("channel")
+                    notify_channel = player.fetch("notify_channel")
                     try:
                         await self.api_interface.autoplay(player, self.playlist_api)
                     except DatabaseError:

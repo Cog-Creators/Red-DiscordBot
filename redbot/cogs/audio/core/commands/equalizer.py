@@ -171,8 +171,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Load Preset"),
                 description=_("You need the DJ role to load equalizer presets."),
             )
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         await self._eq_check(ctx, player)
         await self._eq_msg_clear(player.fetch("eq_message"))
@@ -200,8 +199,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to reset the equalizer."),
             )
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         player.equalizer.reset()
         await player.set_equalizer(player.equalizer)
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(player.equalizer.get())
@@ -279,8 +277,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await eq_exists_msg.edit(embed=embed2)
 
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         to_append = {eq_preset: {"author": ctx.author.id, "bands": player.equalizer.get()}}
         new_eq_presets = {**eq_presets, **to_append}
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
@@ -321,8 +318,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         band_names = [
             "25",
             "40",
