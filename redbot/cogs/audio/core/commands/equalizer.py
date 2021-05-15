@@ -173,7 +173,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to load equalizer presets."),
             )
         player.store("notify_channel", ctx.channel.id)
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = eq_values
+            eq_data["name"] = eq_preset
         await self._eq_check(ctx, player)
         await self._eq_msg_clear(player.fetch("eq_message"))
         message = await ctx.send(
@@ -203,7 +205,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("notify_channel", ctx.channel.id)
         player.equalizer.reset()
         await player.set_equalizer(player.equalizer)
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(player.equalizer.get())
+        async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         await self._eq_msg_clear(player.fetch("eq_message"))
         message = await ctx.send(
             content=box(player.equalizer.visualise(), lang="ini"),
@@ -375,7 +379,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await player.set_equalizer(equalizer=player.equalizer)
 
         await self._eq_msg_clear(player.fetch("eq_message"))
-        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(player.equalizer.get())
+        async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         band_name = band_names[band_number] if band_int else band_name_or_position
         message = await ctx.send(
             content=box(player.equalizer.visualise(), lang="ini"),

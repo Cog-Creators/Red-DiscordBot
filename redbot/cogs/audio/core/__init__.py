@@ -149,7 +149,7 @@ class Audio(
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
         self.config.init_custom("EQUALIZER", 1)
-        self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
+        self.config.register_custom("EQUALIZER", name="Default", eq_bands=[], eq_presets={})
         self.config.init_custom(PlaylistScope.GLOBAL.value, 1)
         self.config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
         self.config.init_custom(PlaylistScope.GUILD.value, 2)
