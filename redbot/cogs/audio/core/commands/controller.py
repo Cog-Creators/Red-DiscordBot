@@ -884,6 +884,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Bump Track"),
                 description=_("Song number must be greater than 1 and within the queue limit."),
             )
+
         player.store("notify_channel", ctx.channel.id)
         bump_index = index - 1
         bump_song = player.queue[bump_index]
