@@ -245,9 +245,8 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
-            disabled_message = await bot._config.disabled_command_msg()
-            if disabled_message:
-                await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
+            if error.args[0]:
+                await ctx.send(error.args[0])
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
                 "Exception in command '{}'".format(ctx.command.qualified_name),
@@ -372,18 +371,30 @@ def init_events(bot, cli_flags):
         disabled_commands = await bot._config.disabled_commands()
         if command.qualified_name in disabled_commands:
             command.enabled = False
-        guild_data = await bot._config.all_guilds()
-        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
+        guilds_data = await bot._config.all_guilds()
+        async for guild_id, data in AsyncIter(guilds_data.items(), steps=100):
             disabled_commands = data.get("disabled_commands", [])
             if command.qualified_name in disabled_commands:
                 command.disable_in(discord.Object(id=guild_id))
+        channels_data = await bot._config.all_channels()
+        async for channel_id, data in AsyncIter(channels_data.items(), steps=100):
+            disabled_commands = data.get("disabled_commands", [])
+            if command.qualified_name in disabled_commands:
+                command.disable_in(discord.Object(id=channel_id))
 
     async def _guild_added(guild: discord.Guild):
-        disabled_commands = await bot._config.guild(guild).disabled_commands()
-        for command_name in disabled_commands:
+        disabled_commands_guild = await bot._config.guild(guild).disabled_commands()
+        for command_name in disabled_commands_guild:
             command_obj = bot.get_command(command_name)
             if command_obj is not None:
                 command_obj.disable_in(guild)
+
+        async for channel in AsyncIter(guild.text_channels, steps=50):
+            disabled_commands = await bot._config.channel(channel).disabled_commands()
+            for command_name in disabled_commands:
+                command_obj = bot.get_command(command_name)
+                if command_obj is not None:
+                    command_obj.disable_in(channel)
 
     @bot.event
     async def on_guild_join(guild: discord.Guild):

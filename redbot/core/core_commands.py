@@ -4191,6 +4191,29 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         paged[0] = header + paged[0]
         await ctx.send_interactive(paged)
 
+    @list_disabled.command(name="channel")
+    async def list_disabled_channel(self, ctx: commands.Context):
+        """List disabled commands in this channel.
+
+        **Example:**
+            - `[p]command listdisabled channel`
+        """
+        disabled_list = await self.bot._config.channel(ctx.channel).disabled_commands()
+        if not disabled_list:
+            return await ctx.send(
+                _("There aren't any disabled commands in {}.").format(ctx.channel.mention)
+            )
+
+        if len(disabled_list) > 1:
+            header = _("{} commands are disabled in {}.\n").format(
+                humanize_number(len(disabled_list)), ctx.channel.mention
+            )
+        else:
+            header = _("1 command is disabled in {}.\n").format(ctx.channel.mention)
+        paged = [box(x) for x in pagify(humanize_list(disabled_list), page_length=1000)]
+        paged[0] = header + paged[0]
+        await ctx.send_interactive(paged)
+
     @command_manager.group(name="disable", invoke_without_command=True)
     async def command_disable(self, ctx: commands.Context, *, command: str):
         """
@@ -4302,6 +4325,53 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.tick()
 
+    @commands.guild_only()
+    @command_disable.command(name="channel")
+    async def command_disable_channel(self, ctx: commands.Context, *, command: str):
+        """
+        Disable a command in this channel only.
+
+                **Examples:**
+                    - `[p]command disable channel userinfo` - Disables the `userinfo` command in the Mod cog.
+                    - `[p]command disable channel urban` - Disables the `urban` command in the General cog.
+
+                **Arguments:**
+                    - `<command>` - The command to disable for the current channel.
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
+            await ctx.send(
+                _("The command to disable cannot be `command` or any of its subcommands.")
+            )
+            return
+
+        if isinstance(command_obj, commands.commands._RuleDropper):
+            await ctx.send(
+                _("This command is designated as being always available and cannot be disabled.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to disable that command."))
+            return
+
+        async with ctx.bot._config.channel(ctx.channel).disabled_commands() as disabled_commands:
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
+
+        done = command_obj.disable_in(ctx.channel)
+
+        if not done:
+            await ctx.send(_("That command is already disabled in this channel."))
+        else:
+            await ctx.tick()
+
     @command_manager.group(name="enable", invoke_without_command=True)
     async def command_enable(self, ctx: commands.Context, *, command: str):
         """Enable a command.
@@ -4387,6 +4457,41 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.tick()
 
+    @commands.guild_only()
+    @command_enable.command(name="channel")
+    async def command_enable_channel(self, ctx: commands.Context, *, command: str):
+        """
+            Enable a command in this channel.
+
+        **Examples:**
+            - `[p]command enable channel userinfo` - Enables the `userinfo` command in the Mod cog.
+            - `[p]command enable channel urban` - Enables the `urban` command in the General cog.
+
+        **Arguments:**
+            - `<command>` - The command to enable for the current channel.
+        """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+            await ctx.send(_("You are not allowed to enable that command."))
+            return
+
+        async with ctx.bot._config.channel(ctx.channel).disabled_commands() as disabled_commands:
+            with contextlib.suppress(ValueError):
+                disabled_commands.remove(command_obj.qualified_name)
+
+        done = command_obj.enable_in(ctx.channel)
+
+        if not done:
+            await ctx.send(_("That command is already enabled in this channel."))
+        else:
+            await ctx.tick()
+
     @checks.is_owner()
     @command_manager.command(name="disabledmsg")
     async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
@@ -4395,6 +4500,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Leave blank to send nothing.
 
         To include the command name in the message, include the `{command}` placeholder.
+        To include where is the command disabled, include the `{origin}` placeholder.
 
         **Examples:**
             - `[p]command disabledmsg This command is disabled`

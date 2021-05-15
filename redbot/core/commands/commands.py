@@ -68,7 +68,9 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
-DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
+DisablerDictType = MutableMapping[
+    Union[discord.Guild, discord.TextChannel], Callable[["Context"], Awaitable[bool]]
+]
 
 
 class RedUnhandledAPI(Exception):
@@ -480,7 +482,12 @@ class Command(CogCommandMixin, DPYCommand):
         ctx.command = self
 
         if not self.enabled:
-            raise DisabledCommand(f"{self.name} command is disabled")
+            # Guild and channel disable is handled in disabler check.
+            disabled_msg = await ctx.bot._config.disabled_command_msg()
+            disabled_msg = disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                "{origin}", _("globally")
+            )
+            raise DisabledCommand(disabled_msg)
 
         if not await self.can_run(ctx, change_permission_state=True):
             raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
@@ -567,13 +574,13 @@ class Command(CogCommandMixin, DPYCommand):
 
         return True
 
-    def disable_in(self, guild: discord.Guild) -> bool:
-        """Disable this command in the given guild.
+    def disable_in(self, destination: Union[discord.Guild, discord.TextChannel]) -> bool:
+        """Disable this command in the given guild or text channel.
 
         Parameters
         ----------
-        guild : discord.Guild
-            The guild to disable the command in.
+        destination : Union[discord.Guild, discord.TextChannel]
+            The guild or text channel to disable the command in.
 
         Returns
         -------
@@ -581,20 +588,20 @@ class Command(CogCommandMixin, DPYCommand):
             ``True`` if the command wasn't already disabled.
 
         """
-        disabler = get_command_disabler(guild)
+        disabler = get_command_disabler(destination)
         if disabler in self.checks:
             return False
         else:
             self.checks.append(disabler)
             return True
 
-    def enable_in(self, guild: discord.Guild) -> bool:
-        """Enable this command in the given guild.
+    def enable_in(self, destination: Union[discord.Guild, discord.TextChannel]) -> bool:
+        """Enable this command in the given guild or text channel.
 
         Parameters
         ----------
-        guild : discord.Guild
-            The guild to enable the command in.
+        destination : Union[discord.Guild, discord.TextChannel]
+            The guild or text channel to disable the command in.
 
         Returns
         -------
@@ -602,7 +609,7 @@ class Command(CogCommandMixin, DPYCommand):
             ``True`` if the command wasn't already enabled.
 
         """
-        disabler = get_command_disabler(guild)
+        disabler = get_command_disabler(destination)
         try:
             self.checks.remove(disabler)
         except ValueError:
@@ -1078,22 +1085,37 @@ def group(name=None, cls=Group, **attrs):
 __command_disablers: DisablerDictType = weakref.WeakValueDictionary()
 
 
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
+def get_command_disabler(
+    destination: Union[discord.Guild, discord.TextChannel]
+) -> Callable[["Context"], Awaitable[bool]]:
     """Get the command disabler for a guild.
 
     A command disabler is a simple check predicate which returns
     ``False`` if the context is within the given guild.
     """
     try:
-        return __command_disablers[guild.id]
+        return __command_disablers[destination.id]
     except KeyError:
 
         async def disabler(ctx: "Context") -> bool:
-            if ctx.guild is not None and ctx.guild.id == guild.id:
-                raise DisabledCommand()
+            if ctx.guild is not None and (
+                ctx.guild.id == destination.id or ctx.channel.id == destination.id
+            ):
+                disabled_msg = await ctx.bot._config.disabled_command_msg()
+                # Global is handled in "if not self.enabled:" of Command,
+                # this is mostly here to avoid errors.
+                origin_str = _("globally")
+                if ctx.guild.id == destination.id:
+                    origin_str = _("in this server")
+                elif ctx.channel.id == destination.id:
+                    origin_str = _("in this channel")
+                disabled_msg = disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                    "{origin}", origin_str
+                )
+                raise DisabledCommand(disabled_msg)
             return True
 
-        __command_disablers[guild.id] = disabler
+        __command_disablers[destination.id] = disabler
         return disabler
 
 

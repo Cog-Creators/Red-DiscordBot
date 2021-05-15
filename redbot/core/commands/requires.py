@@ -29,6 +29,7 @@ import discord
 
 from discord.ext.commands import check
 from .errors import BotMissingPermissions
+from ..i18n import Translator
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -61,6 +62,8 @@ __all__ = [
     "PermStateTransitions",
     "PermStateAllowedStates",
 ]
+
+_ = Translator("commands.requires", __file__)
 
 _T = TypeVar("_T")
 GlobalPermissionModel = Union[
@@ -514,7 +517,11 @@ class Requires:
             bot_user = ctx.guild.me
             cog = ctx.cog
             if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-                raise discord.ext.commands.DisabledCommand()
+                disabled_msg = await ctx.bot._config.disabled_command_msg()
+                disabled_msg = disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                    "{origin}", _("in this guild")
+                )
+                raise discord.ext.commands.DisabledCommand(disabled_msg)
 
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
