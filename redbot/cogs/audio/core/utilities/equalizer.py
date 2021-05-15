@@ -55,11 +55,11 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     levels=[
                         dict(zip(["band", "gain"], values))
                         for values in list(zip(band_num, band_value))
-                    ]
+                    ], name="Default"
                 )
                 await player.set_equalizer(equalizer=new_eq)
         else:
-            new_eq = Equalizer(levels=config_bands)
+            new_eq = Equalizer(levels=config_bands, name="Default")
             await player.set_equalizer(equalizer=new_eq)
 
     async def _eq_interact(
