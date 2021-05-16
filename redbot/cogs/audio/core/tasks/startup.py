@@ -228,7 +228,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await player.set_volume(volume)
                 await self._eq_check(player=player, ctx=ctx(guild))
                 player.maybe_shuffle()
-                log.info("Restored %s", player)
+                log.info("Restored %r", player)
                 if not player.is_playing:
                     notify_channel = player.fetch("notify_channel")
                     try:

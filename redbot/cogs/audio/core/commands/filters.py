@@ -558,11 +558,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to apply effects."),
             )
 
-        eq = Equalizer(levels=[
-            {"band": 0, "gain": 0.3},
-            {"band": 1, "gain": 0.3},
-            {"band": 2, "gain": 0.3},
-        ], name="Nightcore")
+        eq = Equalizer(
+            levels=[
+                {"band": 0, "gain": 0.3},
+                {"band": 1, "gain": 0.3},
+                {"band": 2, "gain": 0.3},
+            ],
+            name="Nightcore",
+        )
         ts = filters.Timescale(speed=1.35, pitch=1.25, rate=1.0)
         tm = filters.Tremolo(depth=0.25, frequency=14)
         vb = filters.Vibrato(depth=0.001, frequency=14)
@@ -600,10 +603,13 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to apply effects."),
             )
 
-        eq = Equalizer(levels=[
-            {"band": 0, "gain": 0.3},
-            {"band": 1, "gain": 0.3},
-        ], name="Vaporwave")
+        eq = Equalizer(
+            levels=[
+                {"band": 0, "gain": 0.3},
+                {"band": 1, "gain": 0.3},
+            ],
+            name="Vaporwave",
+        )
         ts = filters.Timescale(speed=1, pitch=0.5, rate=1.0)
         tm = filters.Tremolo(depth=0.3, frequency=14)
         await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm)

@@ -994,9 +994,7 @@ class AudioAPIInterface:
                     query_obj=query,
                 ):
                     if IS_DEBUG:
-                        log.debug(
-                            "Query is not allowed in " "%s (%d)", player.guild, player.guild.id
-                        )
+                        log.debug("Query is not allowed in %s (%d)", player.guild, player.guild.id)
                     continue
                 valid = True
             track.extras.update(

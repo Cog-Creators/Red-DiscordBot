@@ -78,7 +78,7 @@ class GlobalCacheWrapper:
                     search_response = await r.json(loads=json.loads)
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            "GET || Ping %s || " "Status code %d || %s",
+                            "GET || Ping %s || Status code %d || %s",
                             r.headers.get("x-process-time"),
                             r.status,
                             query,
@@ -110,7 +110,7 @@ class GlobalCacheWrapper:
                     search_response = await r.json(loads=json.loads)
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            "GET/spotify || Ping %s || " "Status code %d || %s - %s",
+                            "GET/spotify || Ping %s || Status code %d || %s - %s",
                             r.headers.get("x-process-time"),
                             r.status,
                             title.author,
@@ -146,7 +146,7 @@ class GlobalCacheWrapper:
                 await r.read()
                 if IS_DEBUG and "x-process-time" in r.headers:
                     log.debug(
-                        "GET || Ping %s || " "Status code %d || %s",
+                        "GET || Ping %s || Status code %d || %s",
                         r.headers.get("x-process-time"),
                         r.status,
                         query,

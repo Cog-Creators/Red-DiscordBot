@@ -70,8 +70,12 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     reason = extra.get("reason", "No Specified Reason").strip()
                     ws_audio_log.info(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
-                        f"Voice websocket closed event for guild {guild_id} -> "
-                        f"Code: {_error_code} -- Remote: {by_remote} -- {reason}"
+                        "Voice websocket closed event for guild %d -> "
+                        "Code: %d -- Remote: %s -- %s",
+                        guild_id,
+                        _error_code,
+                        by_remote,
+                        reason,
                     )
                 return
             await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
@@ -436,7 +440,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
-                        "Voice websocket disconnected " "Reason: Error code %d & Unknown, %r",
+                        "Voice websocket disconnected Reason: Error code %d & Unknown, %r",
                         code,
                         player,
                     )
