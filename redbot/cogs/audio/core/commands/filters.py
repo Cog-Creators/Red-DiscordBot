@@ -451,6 +451,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         eq = Equalizer.boost()
         await player.set_equalizer(equalizer=eq)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
     @commands.command(name="piano")
@@ -485,6 +488,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         eq = Equalizer.piano()
         await player.set_equalizer(equalizer=eq)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
     @commands.command(name="metal")
@@ -519,6 +525,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         eq = Equalizer.metal()
         await player.set_equalizer(equalizer=eq)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
     @commands.command(name="nightcore")
@@ -558,4 +567,7 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         tm = filters.Tremolo(depth=0.35, frequency=14)
         vb = filters.Vibrato(frequency=14, depth=0.05)
         await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm, vibrato=vb)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
