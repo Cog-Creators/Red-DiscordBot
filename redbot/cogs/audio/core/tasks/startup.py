@@ -138,7 +138,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         except Exception as exc:
                             tries += 1
                             debug_exc_log(
-                                log, exc, f"Failed to restore music voice channel {vc_id}"
+                                log, exc, "Failed to restore music voice channel %s", vc_id
                             )
                             if vc is None:
                                 break
@@ -160,9 +160,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.maybe_shuffle()
                 if not player.is_playing:
                     await player.play()
-                log.info(f"Restored {player}")
+                log.info("Restored %r", player)
             except Exception as err:
-                debug_exc_log(log, err, f"Error restoring player in {guild_id}")
+                debug_exc_log(log, err, "Error restoring player in %d", guild_id)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
 
         for guild_id, (notify_channel_id, vc_id) in metadata.items():
@@ -206,7 +206,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         tries += 1
                     except Exception as exc:
                         tries += 1
-                        debug_exc_log(log, exc, f"Failed to restore music voice channel ({vc_id})")
+                        debug_exc_log(
+                            log, exc, "Failed to restore music voice channel (%s)", vc_id
+                        )
                         if vc is None:
                             break
                         else:
@@ -220,7 +222,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if player.volume != volume:
                     await player.set_volume(volume)
                 player.maybe_shuffle()
-                log.info(f"Restored {player}")
+                log.info("Restored %s", player)
                 if not player.is_playing:
                     notify_channel = player.fetch("notify_channel")
                     try:
