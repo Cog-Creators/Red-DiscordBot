@@ -571,3 +571,43 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
+
+    @commands.command(name="vaporwave")
+    @commands.guild_only()
+    async def command_vaporwave(self, ctx: commands.Context):
+        """Apply the vaporwave effect."""
+        if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
+
+        player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You must be in the voice channel to apply effects."),
+            )
+        if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You need the DJ role to apply effects."),
+            )
+
+        eq = Equalizer(levels=[
+            {"band": 0, "gain": 0.3},
+            {"band": 1, "gain": 0.3},
+        ], name="Vaporwave")
+        ts = filters.Timescale(speed=1, pitch=0.5, rate=1.0)
+        tm = filters.Tremolo(depth=0.3, frequency=14)
+        await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
+        await ctx.invoke(self.command_effects)
