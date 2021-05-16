@@ -563,9 +563,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             {"band": 1, "gain": 0.3},
             {"band": 2, "gain": 0.3},
         ], name="Nightcore")
-        ts = filters.Timescale(speed=1.25, pitch=1.4, rate=1.0)
-        tm = filters.Tremolo(depth=0.35, frequency=14)
-        vb = filters.Vibrato(frequency=14, depth=0.05)
+        ts = filters.Timescale(speed=1.35, pitch=1.25, rate=1.0)
+        tm = filters.Tremolo(depth=0.25, frequency=14)
+        vb = filters.Vibrato(depth=0.001, frequency=14)
         await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm, vibrato=vb)
         async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = player.equalizer.get()
