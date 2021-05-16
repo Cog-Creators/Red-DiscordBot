@@ -92,14 +92,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         karaoke = player.karaoke
@@ -137,14 +137,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         timescale = player.timescale
@@ -182,14 +182,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         tremolo = player.tremolo
@@ -244,14 +244,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         vibrato = player.vibrato
@@ -303,14 +303,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         rotation = player.rotation
@@ -358,14 +358,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
         distortion = player.distortion
@@ -398,16 +398,17 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to change effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to change effects."),
             )
 
+        player.equalizer.reset()
         player.karaoke.reset()
         player.timescale.reset()
         player.tremolo.reset()
@@ -438,14 +439,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to apply effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to apply effects."),
             )
 
         eq = Equalizer.boost()
@@ -472,14 +473,14 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to apply effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to apply effectss."),
             )
 
         eq = Equalizer.piano()
@@ -506,16 +507,55 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You must be in the voice channel to pause or resume."),
+                description=_("You must be in the voice channel to apply effects."),
             )
         if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Manage Tracks"),
-                description=_("You need the DJ role to pause or resume tracks."),
+                description=_("You need the DJ role to apply effects."),
             )
 
         eq = Equalizer.metal()
         await player.set_equalizer(equalizer=eq)
+        await ctx.invoke(self.command_effects)
+
+    @commands.command(name="nightcore")
+    @commands.guild_only()
+    async def command_nightcore(self, ctx: commands.Context):
+        """Apply the nightcore effect."""
+        if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
+
+        player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You must be in the voice channel to apply effects."),
+            )
+        if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You need the DJ role to apply effects."),
+            )
+
+        eq = Equalizer(levels=[
+            {"band": 0, "gain": 0.3},
+            {"band": 1, "gain": 0.3},
+            {"band": 2, "gain": 0.3},
+        ], name="Nightcore")
+        ts = filters.Timescale(speed=1.25, pitch=1.4, rate=1.0)
+        tm = filters.Tremolo(depth=0.35, frequency=14)
+        vb = filters.Vibrato(frequency=14, depth=0.05)
+        await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm, vibrato=vb)
         await ctx.invoke(self.command_effects)
