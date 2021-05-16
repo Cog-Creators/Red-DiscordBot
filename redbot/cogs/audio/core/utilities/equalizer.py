@@ -61,10 +61,12 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ],
                     name=name
                 )
-                await player.set_equalizer(equalizer=new_eq)
+                if new_eq != player.equalizer:
+                    await player.set_equalizer(equalizer=new_eq)
         else:
             new_eq = Equalizer(levels=config_bands, name=name)
-            await player.set_equalizer(equalizer=new_eq)
+            if new_eq != player.equalizer:
+                await player.set_equalizer(equalizer=new_eq)
 
     async def _eq_interact(
         self,
