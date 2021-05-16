@@ -122,7 +122,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
             player = lavalink.get_player(ctx.guild.id)
-            log.debug(f"Current requester is {player.current.requester}")
+            log.debug("Current requester is %s", player.current.requester)
             return player.current.requester.id == member.id
         except Exception as err:
             debug_exc_log(log, err, "Caught error in `is_requester`")
@@ -454,7 +454,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     query_obj=query,
                 ):
                     if IS_DEBUG:
-                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
                     continue
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
@@ -546,7 +546,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     query_obj=query,
                 ):
                     if IS_DEBUG:
-                        log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
                     self.update_player_lock(ctx, False)
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")

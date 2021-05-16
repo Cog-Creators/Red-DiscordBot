@@ -1540,7 +1540,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         query_obj=query,
                     ):
                         if IS_DEBUG:
-                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                            log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
                         continue
                     query = Query.process_input(track.uri, self.local_folder_current_path)
                     if query.is_local:
