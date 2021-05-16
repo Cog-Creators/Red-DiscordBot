@@ -98,7 +98,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         if not react_emoji:
-            async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
                 eq_data["eq_bands"] = player.equalizer.get()
                 eq_data["name"] = player.equalizer.name
             await self._clear_react(message, emoji)
