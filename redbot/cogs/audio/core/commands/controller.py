@@ -721,6 +721,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         vol = min(max(vol, 0), 150)
+        await self.config.guild(ctx.guild).volume.set(vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             player.volume.value = vol / 100
