@@ -6,7 +6,6 @@ from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replace
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
-    HitboxStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -235,12 +234,6 @@ class Streams(commands.Cog):
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def smashcast(self, ctx: commands.Context, channel_name: str):
-        """Check if a smashcast channel is live."""
-        stream = HitboxStream(_bot=self.bot, name=channel_name)
-        await self.check_online(ctx, stream)
-
-    @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
         stream = PicartoStream(_bot=self.bot, name=channel_name)
@@ -249,7 +242,7 @@ class Streams(commands.Cog):
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, HitboxStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, YoutubeStream, TwitchStream],
     ):
         try:
             info = await stream.is_online()
@@ -322,11 +315,6 @@ class Streams(commands.Cog):
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
-
-    @streamalert.command(name="smashcast")
-    async def smashcast_alert(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Smashcast stream."""
-        await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
