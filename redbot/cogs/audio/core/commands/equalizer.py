@@ -206,7 +206,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("guild", ctx.guild.id)
         player.equalizer.reset()
         await player.set_equalizer(player.equalizer)
-        async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         await self._eq_msg_clear(player.fetch("eq_message"))
@@ -381,7 +381,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await player.set_equalizer(equalizer=player.equalizer)
 
         await self._eq_msg_clear(player.fetch("eq_message"))
-        async with await self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         band_name = band_names[band_number] if band_int else band_name_or_position
