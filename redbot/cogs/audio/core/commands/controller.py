@@ -710,7 +710,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
-            embed = discord.Embed(title=_("Current Volume:"), description=str(vol) + "%")
+            embed = discord.Embed(title=_("Current Volume:"), description=f"{vol}%")
             if not self._player_check(ctx):
                 embed.set_footer(text=_("Nothing playing."))
             return await self.send_embed_msg(ctx, embed=embed)
@@ -733,25 +733,15 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        if vol < 0:
-            vol = 0
-        if vol > 150:
-            vol = 150
-            await self.config.guild(ctx.guild).volume.set(vol)
-            if self._player_check(ctx):
-                player = lavalink.get_player(ctx.guild.id)
-                await player.set_volume(vol)
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
-        else:
-            await self.config.guild(ctx.guild).volume.set(vol)
-            if self._player_check(ctx):
-                player = lavalink.get_player(ctx.guild.id)
-                await player.set_volume(vol)
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
+        vol = max(0, min(vol, 150))
+        await self.config.guild(ctx.guild).volume.set(vol)
+        if self._player_check(ctx):
+            player = lavalink.get_player(ctx.guild.id)
+            await player.set_volume(vol)
+            player.store("channel", ctx.channel.id)
+            player.store("guild", ctx.guild.id)
 
-        embed = discord.Embed(title=_("Volume:"), description=str(vol) + "%")
+        embed = discord.Embed(title=_("Volume:"), description=f"{vol}%")
         if not self._player_check(ctx):
             embed.set_footer(text=_("Nothing playing."))
         await self.send_embed_msg(ctx, embed=embed)
