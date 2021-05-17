@@ -182,7 +182,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+                    "red_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
@@ -196,9 +196,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(

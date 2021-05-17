@@ -644,7 +644,7 @@ class AudioAPIInterface:
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
                                 "red_audio_track_enqueue",
-                                player.channel.guild,
+                                player.guild,
                                 single_track,
                                 ctx.author,
                             )
@@ -660,7 +660,7 @@ class AudioAPIInterface:
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue",
-                            player.channel.guild,
+                            player.guild,
                             single_track,
                             ctx.author,
                         )
@@ -934,7 +934,7 @@ class AudioAPIInterface:
 
     async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
-        autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
+        autoplaylist = await self.config.guild(player.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         notify_channel_id = player.fetch("notify_channel")
@@ -947,8 +947,8 @@ class AudioAPIInterface:
                     autoplaylist["scope"],
                     self.bot,
                     playlist_api,
-                    player.channel.guild,
-                    player.channel.guild.me,
+                    player.guild,
+                    player.guild.me,
                 )
                 tracks = playlist.tracks_obj
             except Exception as exc:
@@ -961,9 +961,7 @@ class AudioAPIInterface:
             if not tracks:
                 ctx = namedtuple("Context", "message guild cog")
                 (results, called_api) = await self.fetch_track(
-                    cast(
-                        commands.Context, ctx(player.channel.guild, player.channel.guild, self.cog)
-                    ),
+                    cast(commands.Context, ctx(player.guild, player.guild, self.cog)),
                     player,
                     Query.process_input(_TOP_100_US, self.cog.local_folder_current_path),
                 )
@@ -1010,18 +1008,18 @@ class AudioAPIInterface:
             player.add(player.guild.me, track)
             self.bot.dispatch(
                 "red_audio_track_auto_play",
-                player.channel.guild,
+                player.guild,
                 track,
-                player.channel.guild.me,
+                player.guild.me,
                 player,
             )
             if notify_channel_id:
                 await self.config.guild_from_id(
-                    guild_id=player.channel.guild.id
+                    guild_id=player.guild.id
                 ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
             else:
                 await self.config.guild_from_id(
-                    guild_id=player.channel.guild.id
+                    guild_id=player.guild.id
                 ).currently_auto_playing_in.set([])
             if not player.current:
                 await player.play()

@@ -24,7 +24,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         pause_times: Dict = {}
         while True:
             async for p in AsyncIter(lavalink.all_players()):
-                server = p.channel.guild
+                server = p.guild
                 if await self.bot.cog_disabled_in_guild(self, server):
                     continue
 
