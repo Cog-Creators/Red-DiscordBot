@@ -60,7 +60,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
-        if playlist.id == 42069:
+        if playlist.playlist_id == 42069:
             has_perms = bypass
         elif is_owner:
             has_perms = True
