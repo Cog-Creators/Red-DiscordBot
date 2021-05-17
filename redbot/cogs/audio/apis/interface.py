@@ -932,7 +932,7 @@ class AudioAPIInterface:
         autoplaylist = await self.config.guild(player.channel.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
-        notify_channel_id = player.fetch("channel")
+        notify_channel_id = player.fetch("notify_channel")
         playlist = None
         tracks = None
         if autoplaylist["enabled"]:

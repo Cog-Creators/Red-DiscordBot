@@ -90,9 +90,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         with contextlib.suppress(Exception):
             player = lavalink.get_player(ctx.guild.id)
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if not notify_channel:
-                player.store("channel", ctx.channel.id)
+                player.store("notify_channel", ctx.channel.id)
 
         self._daily_global_playlist_cache.setdefault(
             self.bot.user.id, await self.config.daily_playlists()

@@ -338,14 +338,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Shuffle Queue"),
                     description=_("I don't have permission to connect to your channel."),
                 )
-            await lavalink.connect(
+            player = await lavalink.connect(
                 ctx.author.voice.channel,
                 deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
             )
-            player = lavalink.get_player(ctx.guild.id)
-            player.store("connect", datetime.datetime.utcnow())
-            player.store("channel", ctx.channel.id)
-            player.store("guild", ctx.guild.id)
+            player.store("notify_channel", ctx.channel.id)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(

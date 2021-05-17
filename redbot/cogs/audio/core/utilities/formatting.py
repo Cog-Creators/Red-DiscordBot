@@ -103,10 +103,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
@@ -114,6 +110,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(

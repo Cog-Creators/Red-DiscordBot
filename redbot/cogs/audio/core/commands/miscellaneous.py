@@ -45,13 +45,14 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
-        total_num = len(lavalink.all_players())
+        total_num = len(lavalink.all_live_players())
 
         msg = ""
-        async for p in AsyncIter(lavalink.all_players()):
-            connect_start = p.fetch("connect")
+        async for p in AsyncIter(lavalink.all_live_players()):
             connect_dur = self.get_time_string(
-                int((datetime.datetime.utcnow() - connect_start).total_seconds())
+                int(
+                    (datetime.datetime.now(datetime.timezone.utc) - p.connected_at).total_seconds()
+                )
             )
             try:
                 if not p.current:
@@ -59,7 +60,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 current_title = await self.get_track_description(
                     p.current, self.local_folder_current_path
                 )
-                msg += "{} [`{}`]: {}\n".format(p.channel.guild.name, connect_dur, current_title)
+                msg += f"{p.guild.name} [`{connect_dur}`]: {current_title}\n"
             except AttributeError:
                 msg += "{} [`{}`]: **{}**\n".format(
                     p.channel.guild.name, connect_dur, _("Nothing playing.")
