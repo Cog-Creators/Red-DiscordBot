@@ -733,7 +733,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = max(0, vol)
+        vol = max(0, min(vol, 150))
         await self.config.guild(ctx.guild).volume.set(vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
