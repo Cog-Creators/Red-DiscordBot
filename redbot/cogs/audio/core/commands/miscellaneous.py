@@ -61,7 +61,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 current_title = await self.get_track_description(
                     p.current, self.local_folder_current_path
                 )
-                msg += "{} [`{}`]: {}\n".format(p.guild.name, connect_dur, current_title)
+                msg += f"{p.guild.name} [`{connect_dur}`]: {current_title}\n"
             except AttributeError:
                 msg += "{} [`{}`]: **{}**\n".format(
                     p.guild.name, connect_dur, _("Nothing playing.")
