@@ -691,7 +691,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_volume(self, ctx: commands.Context, vol: int = None):
-        """Set the volume, 1% - 150%."""
+        """Set the volume in percentages greater or equal to 0%."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -720,7 +720,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = min(max(vol, 0), 150)
+        vol = max(vol, 0)
         await self.config.guild(ctx.guild).volume.set(vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
