@@ -539,10 +539,6 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
             except IndexError:
                 await self.send_embed_msg(
                     ctx,
@@ -557,10 +553,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
