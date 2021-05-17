@@ -200,6 +200,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(0.1)
             if tries > 1000:
                 return
+            tries += 1
 
         if notify_channel and not player.fetch("autoplay_notified", False):
             if (
