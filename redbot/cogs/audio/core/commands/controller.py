@@ -725,8 +725,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             await player.set_volume(vol)
-            player.store("channel", ctx.channel.id)
-            player.store("guild", ctx.guild.id)
+            player.store("notify_channel", ctx.channel.id)
 
         embed = discord.Embed(title=_("Volume:"), description=f"{vol}%")
         if not self._player_check(ctx):
