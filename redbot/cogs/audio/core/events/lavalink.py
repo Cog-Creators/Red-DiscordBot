@@ -474,10 +474,11 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         "to channel %d in guild: %d | "
-                        "Reason: Error code %d & Not playing.",
+                        "Reason: Error code %d & Not playing, %r",
                         channel_id,
                         guild_id,
                         code,
+                        player
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
