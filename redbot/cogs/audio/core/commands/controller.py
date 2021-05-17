@@ -289,7 +289,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 }
             )
             player.add(player.fetch("prev_requester"), track)
-            self.bot.dispatch("red_audio_track_enqueue", player.channel.guild, track, ctx.author)
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)

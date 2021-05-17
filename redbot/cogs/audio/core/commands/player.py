@@ -290,7 +290,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx,
@@ -310,7 +310,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 player.queue.insert(0, single_track)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
+                    "red_audio_track_enqueue", player.guild, single_track, ctx.author
                 )
             else:
                 self.update_player_lock(ctx, False)
@@ -332,9 +332,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.queue.insert(0, single_track)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, single_track, ctx.author)
         description = await self.get_track_description(
             single_track, self.local_folder_current_path
         )
@@ -834,7 +832,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         query_obj=query,
                     ):
                         if IS_DEBUG:
-                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                            log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
                         continue
                     elif guild_data["maxlength"] > 0:
                         if self.is_track_length_allowed(track, guild_data["maxlength"]):
@@ -848,7 +846,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             )
                             player.add(ctx.author, track)
                             self.bot.dispatch(
-                                "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                                "red_audio_track_enqueue", player.guild, track, ctx.author
                             )
                     else:
                         track_len += 1
@@ -861,7 +859,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
-                            "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                            "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
                     if not player.current:
                         await player.play()
