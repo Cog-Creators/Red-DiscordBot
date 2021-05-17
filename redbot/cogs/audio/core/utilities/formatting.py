@@ -167,7 +167,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
+                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")

@@ -213,7 +213,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     except Exception as exc:
                         tries += 1
                         debug_exc_log(
-                            log, exc, "Failed to restore music voice channel (%s)", vc_id
+                            log, exc, "Failed to restore music voice channel %s", vc_id
                         )
                         if vc is None:
                             break
