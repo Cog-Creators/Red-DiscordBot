@@ -836,7 +836,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         query_obj=query,
                     ):
                         if IS_DEBUG:
-                            log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+                            log.debug(
+                                "Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id
+                            )
                         continue
                     elif guild_data["maxlength"] > 0:
                         if self.is_track_length_allowed(track, guild_data["maxlength"]):

@@ -478,7 +478,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         channel_id,
                         guild_id,
                         code,
-                        player
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
