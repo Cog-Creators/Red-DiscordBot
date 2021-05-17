@@ -157,11 +157,11 @@ class AudioAPIInterface:
                     del self._tasks[lock_id]
                 except Exception as exc:
                     debug_exc_log(
-                        log, exc, "Running database writes for %d (%s)", lock_id, lock_author
+                        log, exc, "Failed database writes for %d (%s)", lock_id, lock_author
                     )
                 else:
                     if IS_DEBUG:
-                        log.debug("Running database writes for %d (%s)", lock_id, lock_author)
+                        log.debug("Completed database writes for %d (%s)", lock_id, lock_author)
 
     async def run_all_pending_tasks(self) -> None:
         """Run all pending tasks left in the cache, called on cog_unload."""
@@ -249,7 +249,7 @@ class AudioAPIInterface:
                         )
                     except Exception as exc:
                         debug_exc_log(
-                            log, exc, "Failed to fetch %s from YouTube table", track_info
+                            log, exc, "Failed to fetch %r from YouTube table", track_info
                         )
 
                 if val is None:
@@ -516,7 +516,7 @@ class AudioAPIInterface:
                         )
                     except Exception as exc:
                         debug_exc_log(
-                            log, exc, "Failed to fetch %s from YouTube table", track_info
+                            log, exc, "Failed to fetch %r from YouTube table", track_info
                         )
                 should_query_global = globaldb_toggle and query_global and val is None
                 if should_query_global:
@@ -625,7 +625,7 @@ class AudioAPIInterface:
                 ):
                     has_not_allowed = True
                     if IS_DEBUG:
-                        log.debug("Query is not allowed in %s (%d)", ctx.guild, ctx.guild.id)
+                        log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                     continue
                 track_list.append(single_track)
                 if enqueue:
@@ -752,7 +752,7 @@ class AudioAPIInterface:
             try:
                 (val, update) = await self.local_cache_api.youtube.fetch_one({"track": track_info})
             except Exception as exc:
-                debug_exc_log(log, exc, "Failed to fetch %s from YouTube table", track_info)
+                debug_exc_log(log, exc, "Failed to fetch %r from YouTube table", track_info)
         if val is None:
             try:
                 youtube_url = await self.fetch_youtube_query(
@@ -817,11 +817,11 @@ class AudioAPIInterface:
                     {"query": query_string}
                 )
             except Exception as exc:
-                debug_exc_log(log, exc, "Failed to fetch '%s' from Lavalink table", query_string)
+                debug_exc_log(log, exc, "Failed to fetch %r from Lavalink table", query_string)
 
             if val and isinstance(val, dict):
                 if IS_DEBUG:
-                    log.debug("Updating Local Database with %s", query_string)
+                    log.debug("Updating Local Database with %r", query_string)
                 task = ("update", ("lavalink", {"query": query_string}))
                 self.append_task(ctx, *task)
             else:
@@ -855,7 +855,7 @@ class AudioAPIInterface:
                     valid_global_entry = True
                 if valid_global_entry:
                     if IS_DEBUG:
-                        log.debug("Querying Global DB api for %s", query)
+                        log.debug("Querying Global DB api for %r", query)
                     results, called_api = results, False
         if valid_global_entry:
             pass
@@ -874,7 +874,7 @@ class AudioAPIInterface:
             valid_global_entry = False
         else:
             if IS_DEBUG:
-                log.debug("Querying Lavalink api for %s", query_string)
+                log.debug("Querying Lavalink api for %r", query_string)
             called_api = True
             try:
                 results = await player.load_tracks(query_string)
@@ -927,7 +927,7 @@ class AudioAPIInterface:
                 debug_exc_log(
                     log,
                     exc,
-                    "Failed to enqueue write task for '%s' to Lavalink table",
+                    "Failed to enqueue write task for %r to Lavalink table",
                     query_string,
                 )
         return results, called_api
@@ -992,7 +992,7 @@ class AudioAPIInterface:
                     query_obj=query,
                 ):
                     if IS_DEBUG:
-                        log.debug("Query is not allowed in %s (%d)", player.guild, player.guild.id)
+                        log.debug("Query is not allowed in %r (%d)", player.guild.name, player.guild.id)
                     continue
                 valid = True
             track.extras.update(
