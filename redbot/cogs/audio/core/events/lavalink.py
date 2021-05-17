@@ -92,7 +92,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             current_track, self.local_folder_current_path
         )
         status = await self.config.status()
-        log.debug("Received a new lavalink event for %d: %s: %s", guild_id, event_type, extra)
+        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
 
@@ -335,7 +335,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info(
-                    "Player resumed Reason: Error code %d & %s, %r", code, reason, player
+                    "Player resumed | Reason: Error code %d & %s, %r", code, reason, player
                 )
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
@@ -359,7 +359,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player,
                 )
                 ws_audio_log.debug(
-                    "Reconnecting to channel %d in guild: %d | %d:.2fs",
+                    "Reconnecting to channel %d in guild: %d | %.2fs",
                     channel_id,
                     guild_id,
                     delay,
@@ -444,7 +444,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player._con_delay = ExponentialBackoff(base=1)
                     delay = player._con_delay.delay()
                 ws_audio_log.debug(
-                    "Reconnecting to channel %d in guild: %d | %d.2fs", channel_id, guild_id, delay
+                    "Reconnecting to channel %d in guild: %d | %.2fs", channel_id, guild_id, delay
                 )
                 await asyncio.sleep(delay)
                 if has_perm and player.current and player.is_playing:

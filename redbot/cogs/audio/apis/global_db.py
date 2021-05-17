@@ -113,7 +113,8 @@ class GlobalCacheWrapper:
                             "GET/spotify || Ping %s || Status code %d || %s - %s",
                             r.headers.get("x-process-time"),
                             r.status,
-                            title.author,
+                            title,
+                            author,
                         )
             if "tracks" not in search_response:
                 return {}
