@@ -130,7 +130,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config.guild(player.channel.guild).auto_play()
+        autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
@@ -195,7 +195,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
-        self.bot.dispatch("red_audio_skip_track", player.channel.guild, player.current, ctx.author)
+        self.bot.dispatch("red_audio_skip_track", player.guild, player.current, ctx.author)
         await player.play()
         player.queue += queue_to_append
 
@@ -220,7 +220,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
-        await player.channel.guild.change_voice_state(channel=player.channel, self_deaf=True)
+        await player.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
     async def _get_spotify_tracks(
         self, ctx: commands.Context, query: Query, forced: bool = False
@@ -468,7 +468,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
-                            "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                            "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
 
                 else:
@@ -481,9 +481,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     player.add(ctx.author, track)
-                    self.bot.dispatch(
-                        "red_audio_track_enqueue", player.channel.guild, track, ctx.author
-                    )
+                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
@@ -564,7 +562,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         player.maybe_shuffle()
                         self.bot.dispatch(
                             "red_audio_track_enqueue",
-                            player.channel.guild,
+                            player.guild,
                             single_track,
                             ctx.author,
                         )
@@ -585,7 +583,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
-                        "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
+                        "red_audio_track_enqueue", player.guild, single_track, ctx.author
                     )
             except IndexError:
                 self.update_player_lock(ctx, False)
