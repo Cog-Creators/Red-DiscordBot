@@ -80,7 +80,7 @@ class Mod(
         self.config.register_member(**self.default_member_settings)
         self.config.register_user(**self.default_user_settings)
         self.cache: dict = {}
-        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
+        self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()

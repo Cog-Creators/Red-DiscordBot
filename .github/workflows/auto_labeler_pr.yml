@@ -2,6 +2,9 @@ name: Auto Labeler - PRs
 on:
   pull_request_target:
 
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest

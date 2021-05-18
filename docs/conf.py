@@ -21,6 +21,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("_ext"))
 
 os.environ["BUILDING_DOCS"] = "1"
 
@@ -42,6 +43,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx-prompt",
+    "deprecated_removed",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

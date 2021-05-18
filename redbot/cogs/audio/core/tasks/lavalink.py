@@ -99,7 +99,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                     host=host,
                     password=password,
-                    rest_port=ws_port,
                     ws_port=ws_port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",

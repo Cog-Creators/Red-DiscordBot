@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-16 19:14+0000\n"
+"POT-Creation-Date: 2021-03-26 15:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -69,17 +69,25 @@ msgstr "Spilleautomat utbetalinger:\n"
 "Tre symboler: bud *10\n"
 "To symboler: Bud * 2"
 
-#: redbot/cogs/economy/economy.py:121
+#: redbot/cogs/economy/economy.py:108
+msgid "Invalid value, the argument must be an integer, optionally preceded with a `+` or `-` sign."
+msgstr "Ugyldig verdi, argumentet må være et heltall, eventuelt forut for et `+` eller `-`-sign."
+
+#: redbot/cogs/economy/economy.py:120
+msgid "Invalid value, the amount of currency to increase or decrease must be an integer different from zero."
+msgstr "Ugyldig verdi, valutaen må øke eller minske for å være et heltall som er forskjellig fra null."
+
+#: redbot/cogs/economy/economy.py:132
 #, docstring
 msgid "Get rich and have fun with imaginary currency!"
 msgstr "Få deg god og ha det gøy med bildetekst!"
 
-#: redbot/cogs/economy/economy.py:171
+#: redbot/cogs/economy/economy.py:182
 #, docstring
 msgid "Base command to manage the bank."
 msgstr "Base-kommandoen for å administrere banken."
 
-#: redbot/cogs/economy/economy.py:176
+#: redbot/cogs/economy/economy.py:187
 #, docstring
 msgid "Show the user's account balance.\n\n"
 "        Example:\n"
@@ -96,11 +104,11 @@ msgstr "Vis brukerens kontosaldo.\n\n"
 "        - `<user>` Brukeren som skal sjekke saldoen. Hvis utelatt, settes standard til din egen saldo.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:196
+#: redbot/cogs/economy/economy.py:207
 msgid "{user}'s balance is {num} {currency}"
 msgstr "{user} sin saldo er {num} {currency}"
 
-#: redbot/cogs/economy/economy.py:203
+#: redbot/cogs/economy/economy.py:214
 #, docstring
 msgid "Transfer currency to other users.\n\n"
 "        This will come out of your balance, so make sure you have enough.\n\n"
@@ -119,11 +127,11 @@ msgstr "Overfør valuta til andre brukere.\n\n"
 "        - `<amount>` beløpet av valuta å gi.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:224
+#: redbot/cogs/economy/economy.py:235
 msgid "{user} transferred {num} {currency} to {other_user}"
 msgstr "{user} overførte {num} {currency} til {other_user}"
 
-#: redbot/cogs/economy/economy.py:236
+#: redbot/cogs/economy/economy.py:247
 #, docstring
 msgid "Set the balance of a user's bank account.\n\n"
 "        Putting + or - signs before the amount will add/remove currency on the user's bank account instead.\n\n"
@@ -147,19 +155,19 @@ msgstr "Sett balanse for en bruker's bank\n\n"
 " - `<creds>` Mengden valuta som saldoen skal settes til.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:256
+#: redbot/cogs/economy/economy.py:267
 msgid "{author} added {num} {currency} to {user}'s account."
 msgstr "{author} la til {num} {currency} til {user} sin konto."
 
-#: redbot/cogs/economy/economy.py:264
+#: redbot/cogs/economy/economy.py:275
 msgid "{author} removed {num} {currency} from {user}'s account."
 msgstr "{author} fjernet {num} {currency} fra {user} sin konto."
 
-#: redbot/cogs/economy/economy.py:272
+#: redbot/cogs/economy/economy.py:283
 msgid "{author} set {user}'s account balance to {num} {currency}."
 msgstr "{author} har angitt {user} sin kontobalanse til {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:287
+#: redbot/cogs/economy/economy.py:298
 #, docstring
 msgid "Delete all bank accounts.\n\n"
 "        Examples:\n"
@@ -176,26 +184,26 @@ msgstr "Slett alle bankkontoer.\n\n"
 "        - `<confirmation>` vil bli satt som standard med mindre de er angitt.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:299
+#: redbot/cogs/economy/economy.py:310
 msgid "This will delete all bank accounts for {scope}.\n"
 "If you're sure, type `{prefix}bank reset yes`"
 msgstr "Dette vil slette alle bankkontoer for {scope}.\n"
 "Hvis du er sikker, skriv `{prefix}bank reset yes`"
 
-#: redbot/cogs/economy/economy.py:303 redbot/cogs/economy/economy.py:311
+#: redbot/cogs/economy/economy.py:314 redbot/cogs/economy/economy.py:322
 msgid "this server"
 msgstr "denne serveren"
 
-#: redbot/cogs/economy/economy.py:310
+#: redbot/cogs/economy/economy.py:321
 msgid "All bank accounts for {scope} have been deleted."
 msgstr "Alle bankkontoer for {scope} har blitt slettet."
 
-#: redbot/cogs/economy/economy.py:319
+#: redbot/cogs/economy/economy.py:330
 #, docstring
 msgid "Base command for pruning bank accounts."
 msgstr "Base-kommandoen for å utsette bankkontoer."
 
-#: redbot/cogs/economy/economy.py:326
+#: redbot/cogs/economy/economy.py:337
 #, docstring
 msgid "Prune bank accounts for users no longer in the server.\n\n"
 "        Cannot be used with a global bank. See `[p]bank prune global`.\n\n"
@@ -214,21 +222,21 @@ msgstr "Innløpe bankkontoer for brukere ikke lenger på serveren.\n\n"
 "        - `<confirmation>` vil standard til false med mindre de er angitt.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:340
+#: redbot/cogs/economy/economy.py:351
 msgid "This command cannot be used with a global bank."
 msgstr "Kommandoen kan ikke brukes med en global bank."
 
-#: redbot/cogs/economy/economy.py:344
+#: redbot/cogs/economy/economy.py:355
 msgid "This will delete all bank accounts for users no longer in this server.\n"
 "If you're sure, type `{prefix}bank prune local yes`"
 msgstr "Dette vil slette alle bankkontoer for brukere ikke lenger på denne serveren.\n"
 "Hvis du er sikker, skriver du `{prefix}bank prune local yes`"
 
-#: redbot/cogs/economy/economy.py:353
+#: redbot/cogs/economy/economy.py:364
 msgid "Bank accounts for users no longer in this server have been deleted."
 msgstr "Bankkontoer for brukere som ikke lenger er på denne serveren er slettet."
 
-#: redbot/cogs/economy/economy.py:359
+#: redbot/cogs/economy/economy.py:370
 #, docstring
 msgid "Prune bank accounts for users who no longer share a server with the bot.\n\n"
 "        Cannot be used without a global bank. See `[p]bank prune server`.\n\n"
@@ -247,21 +255,21 @@ msgstr "Prune bank for brukere som ikke lenger deler en server med boten.\n\n"
 "        - `<confirmation>` vil være standard for falske med mindre de er angitt.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:373
+#: redbot/cogs/economy/economy.py:384
 msgid "This command cannot be used with a local bank."
 msgstr "Denne kommandoen kan ikke brukes med en lokal bank."
 
-#: redbot/cogs/economy/economy.py:377
+#: redbot/cogs/economy/economy.py:388
 msgid "This will delete all bank accounts for users who no longer share a server with the bot.\n"
 "If you're sure, type `{prefix}bank prune global yes`"
 msgstr "Dette vil slette alle bankkontoer for brukere som ikke lenger deler en server med boten.\n"
 "Hvis du er sikker, skriv `{prefix}bank prune global yes`"
 
-#: redbot/cogs/economy/economy.py:386
+#: redbot/cogs/economy/economy.py:397
 msgid "Bank accounts for users who no longer share a server with the bot have been pruned."
 msgstr "Bankkontoer for brukere som ikke lenger deler en server med boten er skrevet ut."
 
-#: redbot/cogs/economy/economy.py:396
+#: redbot/cogs/economy/economy.py:407
 #, docstring
 msgid "Delete the bank account of a specified user.\n\n"
 "        Examples:\n"
@@ -280,21 +288,21 @@ msgstr "Slett bankkontoen til en spesifisert bruker.\n\n"
 "        - `<confirmation>` vil bli standard med mindre de er angitt.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:409
+#: redbot/cogs/economy/economy.py:420
 msgid "This command cannot be used in DMs with a local bank."
 msgstr "Denne kommandoen kan ikke brukes i DMs med en lokal bank."
 
-#: redbot/cogs/economy/economy.py:419
+#: redbot/cogs/economy/economy.py:430
 msgid "This will delete {name}'s bank account.\n"
 "If you're sure, type `{prefix}bank prune user {id} yes`"
 msgstr "Dette vil slette {name}sin bankkonto.\n"
 "Hvis du er sikker, skriv `{prefix}bank prune user {id} yes`"
 
-#: redbot/cogs/economy/economy.py:427
+#: redbot/cogs/economy/economy.py:438
 msgid "The bank account for {name} has been pruned."
 msgstr "Bankkontoen for {name} er skrevet ut."
 
-#: redbot/cogs/economy/economy.py:432
+#: redbot/cogs/economy/economy.py:443
 #, docstring
 msgid "Get some free currency.\n\n"
 "        The amount awarded and frequency can be configured.\n"
@@ -303,13 +311,13 @@ msgstr "Få en gratis valuta.\n\n"
 "        Det kan konfigureres beløp og frekvens.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:453
-msgid "You've reached the maximum amount of {currency}!Please spend some more 😬\n\n"
+#: redbot/cogs/economy/economy.py:464 redbot/cogs/economy/economy.py:519
+msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\n\n"
 "You currently have {new_balance} {currency}."
-msgstr "Du har nådd maksimalt antall {currency}!Vennligst bruk litt mer 😬\n\n"
+msgstr "Du har nådd maksimalt antall {currency}! Vennligst bruk mer 😬\n\n"
 "Du har nå {new_balance} {currency}."
 
-#: redbot/cogs/economy/economy.py:467 redbot/cogs/economy/economy.py:524
+#: redbot/cogs/economy/economy.py:478 redbot/cogs/economy/economy.py:535
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\n\n"
 "You currently have {new_balance} {currency}.\n\n"
 "You are currently #{pos} on the global leaderboard!"
@@ -317,17 +325,11 @@ msgstr "{author.mention} Her må du ta {currency}. Nyt! (+{amount} {currency}!)\
 "Du har for øyeblikket {new_balance} {currency}.\n\n"
 "Du er for tiden #{pos} på den globale topplisten!"
 
-#: redbot/cogs/economy/economy.py:484 redbot/cogs/economy/economy.py:540
+#: redbot/cogs/economy/economy.py:495 redbot/cogs/economy/economy.py:551
 msgid "{author.mention} Too soon. For your next payday you have to wait {time}."
 msgstr "{author.mention} For tidlig. For din neste dag må du vente {time}."
 
-#: redbot/cogs/economy/economy.py:508
-msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\n\n"
-"You currently have {new_balance} {currency}."
-msgstr "Du har nådd maksimalt antall {currency}! Vennligst bruk mer 😬\n\n"
-"Du har nå {new_balance} {currency}."
-
-#: redbot/cogs/economy/economy.py:548
+#: redbot/cogs/economy/economy.py:559
 #, docstring
 msgid "Print the leaderboard.\n\n"
 "        Defaults to top 10.\n\n"
@@ -350,40 +352,40 @@ msgstr "Skriv ut topplisten.\n\n"
 "        - `<show_global>` om å inkludere resultater fra alle servere. Dette vil standard med mindre det er angitt.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:565
+#: redbot/cogs/economy/economy.py:576
 msgid "Page {page_num}/{page_len}."
 msgstr "Side {page_num}/{page_len}."
 
-#: redbot/cogs/economy/economy.py:571
+#: redbot/cogs/economy/economy.py:582
 msgid "Economy Leaderboard"
 msgstr "Økonomi ledertavle"
 
-#: redbot/cogs/economy/economy.py:588
+#: redbot/cogs/economy/economy.py:599
 msgid "There are no accounts in the bank."
 msgstr "Det er ingen kontoer i banken."
 
-#: redbot/cogs/economy/economy.py:592
+#: redbot/cogs/economy/economy.py:603
 msgid "Name"
 msgstr "Navn"
 
-#: redbot/cogs/economy/economy.py:593
+#: redbot/cogs/economy/economy.py:604
 msgid "Score"
 msgstr "Poeng"
 
-#: redbot/cogs/economy/economy.py:663
+#: redbot/cogs/economy/economy.py:674
 msgid "No balances found."
 msgstr "Ingen saldoer funnet."
 
-#: redbot/cogs/economy/economy.py:668
+#: redbot/cogs/economy/economy.py:679
 #, docstring
 msgid "Show the payouts for the slot machine."
 msgstr "Vis utbetalinger for slottsmaskinen."
 
-#: redbot/cogs/economy/economy.py:672
+#: redbot/cogs/economy/economy.py:683
 msgid "I can't send direct messages to you."
 msgstr "Jeg kan ikke sende direktemeldinger til deg."
 
-#: redbot/cogs/economy/economy.py:677
+#: redbot/cogs/economy/economy.py:688
 #, docstring
 msgid "Use the slot machine.\n\n"
 "        Example:\n"
@@ -398,44 +400,44 @@ msgstr "Bruk spormaskinen.\n\n"
 "        -<bid>` Beløpet som skal vedlegges på spillmaskinen. Vinnende utbetalinger er høyere når du vedder flere.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:704
+#: redbot/cogs/economy/economy.py:715
 msgid "You're on cooldown, try again in a bit."
 msgstr "Du er på ventetid, prøv igjen litt."
 
-#: redbot/cogs/economy/economy.py:707
+#: redbot/cogs/economy/economy.py:718
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "Det er et ugyldig bud beløp, beklager :/"
 
-#: redbot/cogs/economy/economy.py:710
+#: redbot/cogs/economy/economy.py:721
 msgid "You ain't got enough money, friend."
 msgstr "Du ikke har nok penger, venn."
 
-#: redbot/cogs/economy/economy.py:765
+#: redbot/cogs/economy/economy.py:776
 msgid "You've reached the maximum amount of {currency}! Please spend some more 😬\n"
 "{old_balance} -> {new_balance}!"
 msgstr "Du har nådd maksimalt antall {currency}! Vennligst bruk litt mer 😬\n"
 "Du har nå {old_balance} {new_balance}!"
 
-#: redbot/cogs/economy/economy.py:780
+#: redbot/cogs/economy/economy.py:791
 msgid "Nothing!"
 msgstr "Ingenting!"
 
-#: redbot/cogs/economy/economy.py:784
+#: redbot/cogs/economy/economy.py:795
 msgid "Your bid: {bid}"
 msgstr "Ditt bud: {bid}"
 
-#: redbot/cogs/economy/economy.py:785
+#: redbot/cogs/economy/economy.py:796
 msgid "\n"
 "{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!"
 msgstr "\n"
 "{old_balance} - {bid} (Ditt bud) + {pay} (Winnings) → {new_balance}!"
 
-#: redbot/cogs/economy/economy.py:802
+#: redbot/cogs/economy/economy.py:813
 #, docstring
 msgid "Base command to manage Economy settings."
 msgstr "Base kommando for å administrere Economy innstillinger."
 
-#: redbot/cogs/economy/economy.py:806
+#: redbot/cogs/economy/economy.py:817
 #, docstring
 msgid "\n"
 "        Shows the current economy settings\n"
@@ -444,7 +446,7 @@ msgstr "\n"
 "        Viser nåværende økonomiinnstillinger\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:816
+#: redbot/cogs/economy/economy.py:827
 msgid "----Economy Settings---\n"
 "Minimum slot bid: {slot_min}\n"
 "Maximum slot bid: {slot_max}\n"
@@ -462,7 +464,7 @@ msgstr "----Økonomi innstillinger---\n"
 "Beløp gitt ved kontoregistrering: {register_amount}\n"
 "Maksimalt tillatt saldo: {maximum_bal}"
 
-#: redbot/cogs/economy/economy.py:839
+#: redbot/cogs/economy/economy.py:850
 #, docstring
 msgid "Set the minimum slot machine bid.\n\n"
 "        Example:\n"
@@ -477,15 +479,15 @@ msgstr "Still inn minste spormaskin bud.\n\n"
 "        - `<bid>` Det nye minimumsbudet for bruk av spillemaskinen. Standard er 5.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:856
+#: redbot/cogs/economy/economy.py:867
 msgid "Warning: Minimum bid is greater than the maximum bid ({max_bid}). Slots will not work."
 msgstr "Advarsel: Minimum bud er større enn maksimal budet ({max_bid}). Spor vil ikke fungere."
 
-#: redbot/cogs/economy/economy.py:867
+#: redbot/cogs/economy/economy.py:878
 msgid "Minimum bid is now {bid} {currency}."
 msgstr "Minste budet er nå {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:874
+#: redbot/cogs/economy/economy.py:885
 #, docstring
 msgid "Set the maximum slot machine bid.\n\n"
 "        Example:\n"
@@ -500,15 +502,15 @@ msgstr "Angi maksimalt spormaskin bud.\n\n"
 "        -<bid>` Det nye maksimalbudet for bruk av spillemaskinen. Standard er 100.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:891
+#: redbot/cogs/economy/economy.py:902
 msgid "Warning: Maximum bid is less than the minimum bid ({min_bid}). Slots will not work."
 msgstr "Advarsel: Maksimalt bud er mindre enn minimumsbudet ({min_bid}). Spor vil ikke fungere."
 
-#: redbot/cogs/economy/economy.py:902
+#: redbot/cogs/economy/economy.py:913
 msgid "Maximum bid is now {bid} {currency}."
 msgstr "Høyeste bud er nå {bid} {currency}."
 
-#: redbot/cogs/economy/economy.py:911
+#: redbot/cogs/economy/economy.py:922
 #, docstring
 msgid "Set the cooldown for the slot machine.\n\n"
 "        Examples:\n"
@@ -527,11 +529,11 @@ msgstr "Angi ventetikken for spormaskinen.\n\n"
 "        akseptere: sekunder, minutter, timer, dager, uker (hvis ingen enhet er angitt, varigheten forutsettes å være gitt i sekunder)\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:928
+#: redbot/cogs/economy/economy.py:939
 msgid "Cooldown is now {num} seconds."
 msgstr "Nedkjøling er nå {num} sekunder."
 
-#: redbot/cogs/economy/economy.py:934
+#: redbot/cogs/economy/economy.py:945
 #, docstring
 msgid "Set the cooldown for the payday command.\n\n"
 "        Examples:\n"
@@ -550,11 +552,11 @@ msgstr "Angi nedkjølingsoperasjonen for lønnskommandoen.\n\n"
 "        akseptere: sekunder, minutter, timer, dager, uker (hvis ingen enhet er angitt, varigheten forutsettes å være gitt i sekunder)\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:952
+#: redbot/cogs/economy/economy.py:963
 msgid "Value modified. At least {num} seconds must pass between each payday."
 msgstr "Verdi er endret. Minst {num} sekunder må passere mellom hver lønn."
 
-#: redbot/cogs/economy/economy.py:959
+#: redbot/cogs/economy/economy.py:970
 #, docstring
 msgid "Set the amount earned each payday.\n\n"
 "        Example:\n"
@@ -569,15 +571,15 @@ msgstr "Still inn beløpet du har tjent hver betalingsdag.\n\n"
 "        - `<creds>` Det nye beløpet å gi når du bruker kommandoen betaler. Standard er 120.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:972
+#: redbot/cogs/economy/economy.py:983
 msgid "Amount must be greater than zero and less than {maxbal}."
 msgstr "Beløpet må være større enn null og under {maxbal}."
 
-#: redbot/cogs/economy/economy.py:982
+#: redbot/cogs/economy/economy.py:993
 msgid "Every payday will now give {num} {currency}."
 msgstr "Hver betalingsdag gir nå {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:989
+#: redbot/cogs/economy/economy.py:1000
 #, docstring
 msgid "Set the amount earned each payday for a role.\n"
 "        Set to `0` to remove the payday amount you set for that role.\n\n"
@@ -597,23 +599,23 @@ msgstr "Still inn beløpet som er opptjent hver betalingsdag for en rolle.\n"
 "        - `<creds>` Det nye beløpet å gi når du bruker \"betalingsdag\"-kommandoen.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:1006
+#: redbot/cogs/economy/economy.py:1017
 msgid "The bank requires that you set the payday to be less than its maximum balance of {maxbal}."
 msgstr "Banken krever at du setter betalingsdagen til å være mindre enn maksimal saldo på {maxbal}."
 
-#: redbot/cogs/economy/economy.py:1013
+#: redbot/cogs/economy/economy.py:1024
 msgid "The bank must be per-server for per-role paydays to work."
 msgstr "Banken må være per server for per rolle lønner å arbeide."
 
-#: redbot/cogs/economy/economy.py:1019
+#: redbot/cogs/economy/economy.py:1030
 msgid "The payday value attached to role has been removed. Users with this role will now receive the default pay of {num} {currency}."
 msgstr "Belønningsverdien knyttet til rollen er fjernet. Brukere med denne rollen vil nå motta standardbetalingen av {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:1028
+#: redbot/cogs/economy/economy.py:1039
 msgid "Every payday will now give {num} {currency} to people with the role {role_name}."
 msgstr "Hver betalingsdag vil nå gi {num} {currency} til personer med rollen {role_name}."
 
-#: redbot/cogs/economy/economy.py:1038
+#: redbot/cogs/economy/economy.py:1049
 #, docstring
 msgid "Set the initial balance for new bank accounts.\n\n"
 "        Example:\n"
@@ -628,31 +630,31 @@ msgstr "Angi første saldo for nye bankkontoer.\n\n"
 "        - `<creds>` og ny opprinnelig saldo. Standard er 0.\n"
 "        "
 
-#: redbot/cogs/economy/economy.py:1054
+#: redbot/cogs/economy/economy.py:1065
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
 msgstr "Beløpet må være større enn eller lik null og mindre enn {maxbal}."
 
-#: redbot/cogs/economy/economy.py:1059
+#: redbot/cogs/economy/economy.py:1070
 msgid "Registering an account will now give {num} {currency}."
 msgstr "Registrering av en konto vil nå gi {num} {currency}."
 
-#: redbot/cogs/economy/economy.py:1068
+#: redbot/cogs/economy/economy.py:1079
 msgid "weeks"
 msgstr "uker"
 
-#: redbot/cogs/economy/economy.py:1069
+#: redbot/cogs/economy/economy.py:1080
 msgid "days"
 msgstr "dager"
 
-#: redbot/cogs/economy/economy.py:1070
+#: redbot/cogs/economy/economy.py:1081
 msgid "hours"
 msgstr "timer"
 
-#: redbot/cogs/economy/economy.py:1071
+#: redbot/cogs/economy/economy.py:1082
 msgid "minutes"
 msgstr "minutter"
 
-#: redbot/cogs/economy/economy.py:1072
+#: redbot/cogs/economy/economy.py:1083
 msgid "seconds"
 msgstr "sekunder"
 

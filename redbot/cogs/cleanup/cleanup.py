@@ -122,6 +122,23 @@ class Cleanup(commands.Cog):
 
         return collected
 
+    @staticmethod
+    async def get_message_from_reference(
+        channel: discord.TextChannel, reference: discord.MessageReference
+    ) -> Optional[discord.Message]:
+        message = None
+        resolved = reference.resolved
+        if resolved and isinstance(resolved, discord.Message):
+            message = resolved
+        elif (message := reference.cached_message) :
+            pass
+        else:
+            try:
+                message = await channel.fetch_message(reference.message_id)
+            except discord.NotFound:
+                pass
+        return message
+
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
         """Base command for deleting messages."""
@@ -257,13 +274,17 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def after(
-        self, ctx: commands.Context, message_id: RawMessageIds, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        message_id: Optional[RawMessageIds],
+        delete_pinned: bool = False,
     ):
         """Delete all messages after a specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+        Replying to a message will cleanup all messages after it.
 
         **Arguments:**
 
@@ -273,11 +294,18 @@ class Cleanup(commands.Cog):
 
         channel = ctx.channel
         author = ctx.author
+        after = None
 
-        try:
-            after = await channel.fetch_message(message_id)
-        except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+        if message_id:
+            try:
+                after = await channel.fetch_message(message_id)
+            except discord.NotFound:
+                return await ctx.send(_("Message not found."))
+        elif ref := ctx.message.reference:
+            after = await self.get_message_from_reference(channel, ref)
+
+        if after is None:
+            raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
@@ -300,7 +328,7 @@ class Cleanup(commands.Cog):
     async def before(
         self,
         ctx: commands.Context,
-        message_id: RawMessageIds,
+        message_id: Optional[RawMessageIds],
         number: positive_int,
         delete_pinned: bool = False,
     ):
@@ -309,6 +337,7 @@ class Cleanup(commands.Cog):
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+        Replying to a message will cleanup all messages before it.
 
         **Arguments:**
 
@@ -319,11 +348,18 @@ class Cleanup(commands.Cog):
 
         channel = ctx.channel
         author = ctx.author
+        before = None
 
-        try:
-            before = await channel.fetch_message(message_id)
-        except discord.NotFound:
-            return await ctx.send(_("Message not found."))
+        if message_id:
+            try:
+                before = await channel.fetch_message(message_id)
+            except discord.NotFound:
+                return await ctx.send(_("Message not found."))
+        elif ref := ctx.message.reference:
+            before = await self.get_message_from_reference(channel, ref)
+
+        if before is None:
+            raise commands.BadArgument
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=number, before=before, delete_pinned=delete_pinned

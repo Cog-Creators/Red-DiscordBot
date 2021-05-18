@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-03-07 21:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 45\n"
 "Language: fi_FI\n"
 
-#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:341
+#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:356
 msgid "There is no ongoing trivia session in this channel."
 msgstr "Tällä kanavalla ei ole käynnissä olevaa trivia-istuntoa."
 
@@ -39,61 +39,73 @@ msgstr "Helppoa: {answer}."
 msgid "Oh really? It's {answer} of course."
 msgstr "Ai oikeesti? Se on tietenkin {answer}."
 
-#: redbot/cogs/trivia/session.py:25
+#: redbot/cogs/trivia/session.py:26
+msgid "I know this one! ||{answer}!||"
+msgstr ""
+
+#: redbot/cogs/trivia/session.py:27
+msgid "Easy: ||{answer}.||"
+msgstr ""
+
+#: redbot/cogs/trivia/session.py:28
+msgid "Oh really? It's ||{answer}|| of course."
+msgstr ""
+
+#: redbot/cogs/trivia/session.py:32
 msgid "To the next one I guess..."
 msgstr "Seuraavaan varmaan sitten..."
 
-#: redbot/cogs/trivia/session.py:26
+#: redbot/cogs/trivia/session.py:33
 msgid "Moving on..."
 msgstr "Eteenpäin..."
 
-#: redbot/cogs/trivia/session.py:27
+#: redbot/cogs/trivia/session.py:34
 msgid "I'm sure you'll know the answer of the next one."
 msgstr "Olen varma että tiedätte vastauksen seuraavaan."
 
-#: redbot/cogs/trivia/session.py:28
+#: redbot/cogs/trivia/session.py:35
 msgid "😔 Next one."
 msgstr "😔 Seuraava."
 
-#: redbot/cogs/trivia/session.py:114
+#: redbot/cogs/trivia/session.py:121
 msgid "An unexpected error occurred in the trivia session.\n"
 "Check your console or logs for details."
 msgstr "Trivia-istunnossa tapahtui odottamaton virhe.\n"
 "Tarkista lisätiedot konsolista tai lokeista."
 
-#: redbot/cogs/trivia/session.py:135
+#: redbot/cogs/trivia/session.py:142
 msgid "Question number {num}!"
 msgstr "Kysymys {num}!"
 
-#: redbot/cogs/trivia/session.py:144
+#: redbot/cogs/trivia/session.py:151
 msgid "There are no more questions!"
 msgstr "Kysymykset loppuivat!"
 
-#: redbot/cogs/trivia/session.py:152
+#: redbot/cogs/trivia/session.py:159
 msgid "{trivia_list} (by {author})"
 msgstr "{trivia_list} (käyttäjältä {author})"
 
-#: redbot/cogs/trivia/session.py:157
+#: redbot/cogs/trivia/session.py:164
 msgid "Starting Trivia: {list_names}"
 msgstr "Aloitetaan trivia: {list_names}"
 
-#: redbot/cogs/trivia/session.py:203
+#: redbot/cogs/trivia/session.py:210
 msgid "Guys...? Well, I guess I'll stop then."
 msgstr "Äijät...? No ehkä lopetan sitten."
 
-#: redbot/cogs/trivia/session.py:211
+#: redbot/cogs/trivia/session.py:221
 msgid " **+1** for me!"
 msgstr " **+1** minulle!"
 
-#: redbot/cogs/trivia/session.py:216
+#: redbot/cogs/trivia/session.py:226
 msgid "You got it {user}! **+1** to you!"
 msgstr "Sait sen {user}! **+1** sinulle!"
 
-#: redbot/cogs/trivia/session.py:319
+#: redbot/cogs/trivia/session.py:329
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
 msgstr "Onnittelut {users}! Saitte {num} {currency} voittamisesta!"
 
-#: redbot/cogs/trivia/session.py:327
+#: redbot/cogs/trivia/session.py:337
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr "Onnittelut {user}! Sait {num} {currency} voitosta!"
 
@@ -102,17 +114,17 @@ msgstr "Onnittelut {user}! Sait {num} {currency} voitosta!"
 msgid "Play trivia with friends!"
 msgstr "Pelaa triviaa ystävien kanssa!"
 
-#: redbot/cogs/trivia/trivia.py:79
+#: redbot/cogs/trivia/trivia.py:80
 #, docstring
 msgid "Manage Trivia settings."
 msgstr "Hallitse trivia-asetuksia."
 
-#: redbot/cogs/trivia/trivia.py:83
+#: redbot/cogs/trivia/trivia.py:84
 #, docstring
 msgid "Show the current trivia settings."
 msgstr "Näytä nykyiset trivia-asetukset."
 
-#: redbot/cogs/trivia/trivia.py:87
+#: redbot/cogs/trivia/trivia.py:88
 msgid "Current settings\n"
 "Bot gains points: {bot_plays}\n"
 "Answer time limit: {delay} seconds\n"
@@ -120,69 +132,78 @@ msgid "Current settings\n"
 "Points to win: {max_score}\n"
 "Reveal answer on timeout: {reveal_answer}\n"
 "Payout multiplier: {payout_multiplier}\n"
-"Allow lists to override settings: {allow_override}"
-msgstr "Nykyiset asetukset\n"
-"Botti kerää pisteitä: {bot_plays}\n"
-"Vastausaika: {delay} sekuntia\n"
-"Puuttuvien vastausten aikakatkaisu: {timeout} sekuntia\n"
-"Pisteet voittoon: {max_score}\n"
-"Paljasta vastaukset: {reveal_answer}\n"
-"Palkintokerroin: {payout_multiplier}\n"
-"Anna listojen ohittaa asetuksia: {allow_override}"
+"Allow lists to override settings: {allow_override}\n"
+"Use Spoilers in answers: {use_spoilers}"
+msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:103
+#: redbot/cogs/trivia/trivia.py:105
 #, docstring
 msgid "Set the total points required to win."
 msgstr "Aseta voittoon tarvittavat pisteet."
 
-#: redbot/cogs/trivia/trivia.py:105
+#: redbot/cogs/trivia/trivia.py:107
 msgid "Score must be greater than 0."
 msgstr "Pisteiden tulee olla enemmän kuin 0."
 
-#: redbot/cogs/trivia/trivia.py:109
+#: redbot/cogs/trivia/trivia.py:111
 msgid "Done. Points required to win set to {num}."
 msgstr "Valmis. Voittoon tarvitaan nyt {num} pistettä."
 
-#: redbot/cogs/trivia/trivia.py:113
+#: redbot/cogs/trivia/trivia.py:115
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
 msgstr "Aseta kysymysten maksimivastausaika."
 
-#: redbot/cogs/trivia/trivia.py:115
+#: redbot/cogs/trivia/trivia.py:117
 msgid "Must be at least 4 seconds."
 msgstr "Täytyy olla vähintään 4 sekuntia."
 
-#: redbot/cogs/trivia/trivia.py:119
+#: redbot/cogs/trivia/trivia.py:121
 msgid "Done. Maximum seconds to answer set to {num}."
 msgstr "Valmis. Vastausajaksi asetettiin {num}."
 
-#: redbot/cogs/trivia/trivia.py:123
+#: redbot/cogs/trivia/trivia.py:125
 #, docstring
 msgid "Set how long until trivia stops due to no response."
 msgstr "Aseta kuinka kauan ajan päästä trivia loppuu ilman vastauksia."
 
-#: redbot/cogs/trivia/trivia.py:126
+#: redbot/cogs/trivia/trivia.py:128
 msgid "Must be larger than the answer time limit."
 msgstr "Täytyy olla suurempi kuin vastausaika."
 
-#: redbot/cogs/trivia/trivia.py:130
+#: redbot/cogs/trivia/trivia.py:132
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
 msgstr "Valmista. Trivia-istunnot päättyvät nyt, jos kukaan ei vastaa {num} sekuntiin."
 
-#: redbot/cogs/trivia/trivia.py:137
+#: redbot/cogs/trivia/trivia.py:139
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
 msgstr "Salli/kiellä trivia-listoja ohittamasta asetuksia."
 
-#: redbot/cogs/trivia/trivia.py:142
+#: redbot/cogs/trivia/trivia.py:144
 msgid "Done. Trivia lists can now override the trivia settings for this server."
 msgstr "Valmista. Trivia-listat voivat nyt ohittaa tämän palvelimen trivia-asetuksia."
 
-#: redbot/cogs/trivia/trivia.py:146
+#: redbot/cogs/trivia/trivia.py:148
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
 msgstr "Valmista. Trivia-listat eivät voi enää ohittaa palvelimen trivia-asetuksia."
 
-#: redbot/cogs/trivia/trivia.py:154
+#: redbot/cogs/trivia/trivia.py:156
+#, docstring
+msgid "Set if bot will display the answers in spoilers.\n\n"
+"        If enabled, the bot will use spoilers to hide answers.\n"
+"        "
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:163
+msgid "Done. I'll put the answers in spoilers next time."
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:165
+msgid "Alright, I won't use spoilers to hide answers anymore."
+msgstr ""
+
+#: redbot/cogs/trivia/trivia.py:169
 #, docstring
 msgid "Set whether or not the bot gains points.\n\n"
 "        If enabled, the bot will gain a point if no one guesses correctly.\n"
@@ -191,15 +212,15 @@ msgstr "Aseta saako botti pisteitä.\n\n"
 "        Jos tämä on käytössä, botti saa pisteen kun kukaan ei arvaa oikein.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:161
+#: redbot/cogs/trivia/trivia.py:176
 msgid "Done. I'll now gain a point if users don't answer in time."
 msgstr "Valmista. Saan nyt pisteen, jos pelaajat eivät vastaa ajoissa."
 
-#: redbot/cogs/trivia/trivia.py:163
+#: redbot/cogs/trivia/trivia.py:178
 msgid "Alright, I won't embarrass you at trivia anymore."
 msgstr "Selvä, en nolaa teitä enää trivialla."
 
-#: redbot/cogs/trivia/trivia.py:167
+#: redbot/cogs/trivia/trivia.py:182
 #, docstring
 msgid "Set whether or not the answer is revealed.\n\n"
 "        If enabled, the bot will reveal the answer if no one guesses correctly\n"
@@ -209,15 +230,15 @@ msgstr "Aseta paljastetaanko oikea vastaus.\n\n"
 "        Jos tämä on käytössä, botti paljastaa vastauksen mikäli kukaan ei arvaa oikein ajoissa.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:175
+#: redbot/cogs/trivia/trivia.py:190
 msgid "Done. I'll reveal the answer if no one knows it."
 msgstr "Selvä. Paljastan vastauksen, jos kukaan ei tiedä sitä."
 
-#: redbot/cogs/trivia/trivia.py:177
+#: redbot/cogs/trivia/trivia.py:192
 msgid "Alright, I won't reveal the answer to the questions anymore."
 msgstr "No niin, en enää paljasta vastauksia kysymyksiin."
 
-#: redbot/cogs/trivia/trivia.py:183
+#: redbot/cogs/trivia/trivia.py:198
 #, docstring
 msgid "Set the payout multiplier.\n\n"
 "        This can be any positive decimal number. If a user wins trivia when at\n"
@@ -234,75 +255,75 @@ msgstr "Aseta voittokerroin.\n\n"
 "        kertoimella.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:194
+#: redbot/cogs/trivia/trivia.py:209
 msgid "Multiplier must be at least 0."
 msgstr "Kertoimen tulee olla vähintään 0."
 
-#: redbot/cogs/trivia/trivia.py:198
+#: redbot/cogs/trivia/trivia.py:213
 msgid "Done. Payout multiplier set to {num}."
 msgstr "Valmis. Voittokertoimeksi asetettiin {num}."
 
-#: redbot/cogs/trivia/trivia.py:200
+#: redbot/cogs/trivia/trivia.py:215
 msgid "Done. I will no longer reward the winner with a payout."
 msgstr "Valmista. Voittaja ei saa enää palkintoa."
 
-#: redbot/cogs/trivia/trivia.py:205
+#: redbot/cogs/trivia/trivia.py:220
 #, docstring
 msgid "Manage Custom Trivia lists."
 msgstr "Hallitse mukautettuja trivia-listoja."
 
-#: redbot/cogs/trivia/trivia.py:210
+#: redbot/cogs/trivia/trivia.py:225
 #, docstring
 msgid "List uploaded custom trivia."
 msgstr "Listaa mukautetut trivia-listat."
 
-#: redbot/cogs/trivia/trivia.py:212
+#: redbot/cogs/trivia/trivia.py:227
 msgid "No custom Trivia lists uploaded."
 msgstr "Mukautettuja trivia-listoja ei ole lähetetty."
 
-#: redbot/cogs/trivia/trivia.py:228 redbot/cogs/trivia/trivia.py:235
+#: redbot/cogs/trivia/trivia.py:243 redbot/cogs/trivia/trivia.py:250
 msgid "Uploaded trivia lists"
 msgstr "Lähetetyt trivia-listat"
 
-#: redbot/cogs/trivia/trivia.py:245
+#: redbot/cogs/trivia/trivia.py:260
 #, docstring
 msgid "Upload a trivia file."
 msgstr "Lähetä trivia-tiedosto."
 
-#: redbot/cogs/trivia/trivia.py:247
+#: redbot/cogs/trivia/trivia.py:262
 msgid "Supply a file with next message or type anything to cancel."
 msgstr "Liitä tiedosto seuraavaan viestiin tai kirjoita mitä tahansa peruuttaaksesi."
 
-#: redbot/cogs/trivia/trivia.py:253
+#: redbot/cogs/trivia/trivia.py:268
 msgid "You took too long to upload a list."
 msgstr "Listan lähettäminen kesti liian kauan."
 
-#: redbot/cogs/trivia/trivia.py:256
+#: redbot/cogs/trivia/trivia.py:271
 msgid "You have cancelled the upload process."
 msgstr "Olet peruuttanut lähetysprosessin."
 
-#: redbot/cogs/trivia/trivia.py:264
+#: redbot/cogs/trivia/trivia.py:279
 msgid "Invalid syntax: "
 msgstr "Virheellinen syntaksi: "
 
-#: redbot/cogs/trivia/trivia.py:267
+#: redbot/cogs/trivia/trivia.py:282
 msgid "There was an error parsing the trivia list. See logs for more info."
 msgstr "Trivia-listan lukemisessa tapahtui virhe. Katso lokeista lisätietoja."
 
-#: redbot/cogs/trivia/trivia.py:274
+#: redbot/cogs/trivia/trivia.py:289
 #, docstring
 msgid "Delete a trivia file."
 msgstr "Poista trivia-tiedosto."
 
-#: redbot/cogs/trivia/trivia.py:278
+#: redbot/cogs/trivia/trivia.py:293
 msgid "Trivia {filename} was deleted."
 msgstr "Trivia {filename} poistettiin."
 
-#: redbot/cogs/trivia/trivia.py:280
+#: redbot/cogs/trivia/trivia.py:295
 msgid "Trivia file was not found."
 msgstr "Trivia-tiedostoa ei löydy."
 
-#: redbot/cogs/trivia/trivia.py:285
+#: redbot/cogs/trivia/trivia.py:300
 #, docstring
 msgid "Start trivia session on the specified category.\n\n"
 "        You may list multiple categories, in which case the trivia will involve\n"
@@ -313,41 +334,41 @@ msgstr "Aloita trivia-istunto valitussa kategoriassa.\n\n"
 "        kysymyksiä kaikista niistä.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:293
+#: redbot/cogs/trivia/trivia.py:308
 msgid "There is already an ongoing trivia session in this channel."
 msgstr "Trivia-istunto on jo käynnissä tällä kanavalla."
 
-#: redbot/cogs/trivia/trivia.py:304
+#: redbot/cogs/trivia/trivia.py:319
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
 msgstr "Virheellinen kategoria `{name}`. Katso `{prefix}trivia list` nähdäksesi listan kategorioista."
 
-#: redbot/cogs/trivia/trivia.py:311
+#: redbot/cogs/trivia/trivia.py:326
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
 msgstr "Trivia-listan lukemisessa tapahtui virhe `{name}` -kategoriassa. Se saattaa olla väärin muotoiltu."
 
-#: redbot/cogs/trivia/trivia.py:323
+#: redbot/cogs/trivia/trivia.py:338
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
 msgstr "Trivia-listan luku onnistui, se kuitenkin vaikuttaa olevan tyhjä!"
 
-#: redbot/cogs/trivia/trivia.py:338
+#: redbot/cogs/trivia/trivia.py:353
 #, docstring
 msgid "Stop an ongoing trivia session."
 msgstr "Lopeta meneillään oleva trivia-istunto."
 
-#: redbot/cogs/trivia/trivia.py:345
+#: redbot/cogs/trivia/trivia.py:360
 msgid "Trivia stopped."
 msgstr "Trivia pysäytetty."
 
-#: redbot/cogs/trivia/trivia.py:349
+#: redbot/cogs/trivia/trivia.py:364
 #, docstring
 msgid "List available trivia categories."
 msgstr "Listaa saatavilla olevat trivia-kategoriat."
 
-#: redbot/cogs/trivia/trivia.py:354 redbot/cogs/trivia/trivia.py:360
+#: redbot/cogs/trivia/trivia.py:369 redbot/cogs/trivia/trivia.py:375
 msgid "Available trivia lists"
 msgstr "Saatavilla olevat trivia-listat"
 
-#: redbot/cogs/trivia/trivia.py:370
+#: redbot/cogs/trivia/trivia.py:385
 #, docstring
 msgid "Leaderboard for trivia.\n\n"
 "        Defaults to the top 10 of this server, sorted by total wins. Use\n"
@@ -358,7 +379,7 @@ msgstr "Trivian pistetaulukko.\n\n"
 "        alikomentoja mukauttaaksesi pistetaulukkoa.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:385
+#: redbot/cogs/trivia/trivia.py:400
 #, docstring
 msgid "Leaderboard for this server.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -377,11 +398,11 @@ msgstr "Palvelimen pistetaulukko.\n\n"
 "        `<top>` määrittää kuinka monta sijaa pistetaulukossa näytetään.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:398 redbot/cogs/trivia/trivia.py:427
+#: redbot/cogs/trivia/trivia.py:413 redbot/cogs/trivia/trivia.py:442
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr "Tuntematon kenttä`{field_name}`, katso`{prefix}help trivia leaderboard server` nähdäksesi kentät joiden mukaan voi lajitella."
 
-#: redbot/cogs/trivia/trivia.py:414
+#: redbot/cogs/trivia/trivia.py:429
 #, docstring
 msgid "Global trivia leaderboard.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -400,53 +421,53 @@ msgstr "Palvelinten välinen pistetaulukko.\n\n"
 "        `<top>` määrittää kuinka monta sijaa pistetaulukossa näytetään.\n"
 "        "
 
-#: redbot/cogs/trivia/trivia.py:482
+#: redbot/cogs/trivia/trivia.py:497
 msgid "There are no scores on record!"
 msgstr "Pisteistä ei ole vielä tietoja!"
 
-#: redbot/cogs/trivia/trivia.py:512
+#: redbot/cogs/trivia/trivia.py:527
 msgid "Rank"
 msgstr "Sija"
 
-#: redbot/cogs/trivia/trivia.py:513
+#: redbot/cogs/trivia/trivia.py:528
 msgid "Member"
 msgstr "Jäsen"
 
-#: redbot/cogs/trivia/trivia.py:514
+#: redbot/cogs/trivia/trivia.py:529
 msgid "Wins"
 msgstr "Voitot"
 
-#: redbot/cogs/trivia/trivia.py:515
+#: redbot/cogs/trivia/trivia.py:530
 msgid "Games Played"
 msgstr "Pelejä pelattu"
 
-#: redbot/cogs/trivia/trivia.py:516
+#: redbot/cogs/trivia/trivia.py:531
 msgid "Total Score"
 msgstr "Kokonaispisteet"
 
-#: redbot/cogs/trivia/trivia.py:517
+#: redbot/cogs/trivia/trivia.py:532
 msgid "Average Score"
 msgstr "Keskimääräiset pisteet"
 
-#: redbot/cogs/trivia/trivia.py:632
+#: redbot/cogs/trivia/trivia.py:647
 msgid "{filename} is a reserved trivia name and cannot be replaced.\n"
 "Choose another name."
 msgstr "{filename} on varattu trivia-nimi eikä sitä voi korvata.\n"
 "Valitse toinen nimi."
 
-#: redbot/cogs/trivia/trivia.py:641
+#: redbot/cogs/trivia/trivia.py:656
 msgid "{filename} already exists. Do you wish to overwrite?"
 msgstr "{filename} on jo olemassa. Haluatko korvata sen?"
 
-#: redbot/cogs/trivia/trivia.py:663
+#: redbot/cogs/trivia/trivia.py:678
 msgid "You took too long answering."
 msgstr "Sinulla kesti liian kauan vastata."
 
-#: redbot/cogs/trivia/trivia.py:667
+#: redbot/cogs/trivia/trivia.py:682
 msgid "I am not replacing the existing file."
 msgstr "En korvaa olemassa olevaa tiedostoa."
 
-#: redbot/cogs/trivia/trivia.py:676
+#: redbot/cogs/trivia/trivia.py:691
 msgid "Saved Trivia list as {filename}."
 msgstr "Trivia-lista tallennettiin nimellä {filename}."
 

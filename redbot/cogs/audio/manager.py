@@ -22,9 +22,9 @@ from .errors import LavalinkDownloadFailed
 from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
-log = logging.getLogger("red.audio.manager")
+log = logging.getLogger("red.Audio.manager")
 JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1199
+JAR_BUILD: Final[int] = 1212
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -234,6 +234,7 @@ class ServerManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")

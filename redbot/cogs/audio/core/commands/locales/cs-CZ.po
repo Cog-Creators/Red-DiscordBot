@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -210,42 +210,42 @@ msgid "Auto-play when queue ends: {true_or_false}."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
-#: redbot/cogs/audio/core/commands/audioset.py:585
-#: redbot/cogs/audio/core/commands/audioset.py:606
-#: redbot/cogs/audio/core/commands/audioset.py:623
-#: redbot/cogs/audio/core/commands/audioset.py:671
-#: redbot/cogs/audio/core/commands/audioset.py:746
-#: redbot/cogs/audio/core/commands/audioset.py:894
-#: redbot/cogs/audio/core/commands/audioset.py:909
-#: redbot/cogs/audio/core/commands/audioset.py:929
-#: redbot/cogs/audio/core/commands/audioset.py:971
-#: redbot/cogs/audio/core/commands/audioset.py:972
-#: redbot/cogs/audio/core/commands/audioset.py:973
-#: redbot/cogs/audio/core/commands/audioset.py:974
-#: redbot/cogs/audio/core/commands/audioset.py:975
-#: redbot/cogs/audio/core/commands/audioset.py:976
+#: redbot/cogs/audio/core/commands/audioset.py:591
+#: redbot/cogs/audio/core/commands/audioset.py:612
+#: redbot/cogs/audio/core/commands/audioset.py:629
+#: redbot/cogs/audio/core/commands/audioset.py:677
+#: redbot/cogs/audio/core/commands/audioset.py:752
+#: redbot/cogs/audio/core/commands/audioset.py:900
+#: redbot/cogs/audio/core/commands/audioset.py:915
+#: redbot/cogs/audio/core/commands/audioset.py:935
 #: redbot/cogs/audio/core/commands/audioset.py:977
-#: redbot/cogs/audio/core/commands/audioset.py:991
-#: redbot/cogs/audio/core/commands/audioset.py:993
-#: redbot/cogs/audio/core/commands/audioset.py:1035
-#: redbot/cogs/audio/core/commands/audioset.py:1042
-#: redbot/cogs/audio/core/commands/audioset.py:1086
-#: redbot/cogs/audio/core/commands/audioset.py:1087
-#: redbot/cogs/audio/core/commands/audioset.py:1088
-#: redbot/cogs/audio/core/commands/audioset.py:1089
-#: redbot/cogs/audio/core/commands/audioset.py:1109
-#: redbot/cogs/audio/core/commands/audioset.py:1186
-#: redbot/cogs/audio/core/commands/audioset.py:1201
-#: redbot/cogs/audio/core/commands/audioset.py:1346
-#: redbot/cogs/audio/core/commands/audioset.py:1347
-#: redbot/cogs/audio/core/commands/audioset.py:1348
-#: redbot/cogs/audio/core/commands/audioset.py:1391
-#: redbot/cogs/audio/core/commands/audioset.py:1392
-#: redbot/cogs/audio/core/commands/audioset.py:1393
-#: redbot/cogs/audio/core/commands/audioset.py:1466
-#: redbot/cogs/audio/core/commands/controller.py:415
-#: redbot/cogs/audio/core/commands/controller.py:458
-#: redbot/cogs/audio/core/commands/controller.py:749
+#: redbot/cogs/audio/core/commands/audioset.py:978
+#: redbot/cogs/audio/core/commands/audioset.py:979
+#: redbot/cogs/audio/core/commands/audioset.py:980
+#: redbot/cogs/audio/core/commands/audioset.py:981
+#: redbot/cogs/audio/core/commands/audioset.py:982
+#: redbot/cogs/audio/core/commands/audioset.py:983
+#: redbot/cogs/audio/core/commands/audioset.py:997
+#: redbot/cogs/audio/core/commands/audioset.py:999
+#: redbot/cogs/audio/core/commands/audioset.py:1041
+#: redbot/cogs/audio/core/commands/audioset.py:1048
+#: redbot/cogs/audio/core/commands/audioset.py:1092
+#: redbot/cogs/audio/core/commands/audioset.py:1093
+#: redbot/cogs/audio/core/commands/audioset.py:1094
+#: redbot/cogs/audio/core/commands/audioset.py:1095
+#: redbot/cogs/audio/core/commands/audioset.py:1115
+#: redbot/cogs/audio/core/commands/audioset.py:1192
+#: redbot/cogs/audio/core/commands/audioset.py:1207
+#: redbot/cogs/audio/core/commands/audioset.py:1352
+#: redbot/cogs/audio/core/commands/audioset.py:1353
+#: redbot/cogs/audio/core/commands/audioset.py:1354
+#: redbot/cogs/audio/core/commands/audioset.py:1397
+#: redbot/cogs/audio/core/commands/audioset.py:1398
+#: redbot/cogs/audio/core/commands/audioset.py:1399
+#: redbot/cogs/audio/core/commands/audioset.py:1472
+#: redbot/cogs/audio/core/commands/controller.py:426
+#: redbot/cogs/audio/core/commands/controller.py:471
+#: redbot/cogs/audio/core/commands/controller.py:792
 #: redbot/cogs/audio/core/commands/llset.py:101
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
@@ -253,42 +253,42 @@ msgid "Enabled"
 msgstr "Povoleno"
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
-#: redbot/cogs/audio/core/commands/audioset.py:585
-#: redbot/cogs/audio/core/commands/audioset.py:606
-#: redbot/cogs/audio/core/commands/audioset.py:623
-#: redbot/cogs/audio/core/commands/audioset.py:671
-#: redbot/cogs/audio/core/commands/audioset.py:746
-#: redbot/cogs/audio/core/commands/audioset.py:894
-#: redbot/cogs/audio/core/commands/audioset.py:909
-#: redbot/cogs/audio/core/commands/audioset.py:929
-#: redbot/cogs/audio/core/commands/audioset.py:971
-#: redbot/cogs/audio/core/commands/audioset.py:972
-#: redbot/cogs/audio/core/commands/audioset.py:973
-#: redbot/cogs/audio/core/commands/audioset.py:974
-#: redbot/cogs/audio/core/commands/audioset.py:975
-#: redbot/cogs/audio/core/commands/audioset.py:976
+#: redbot/cogs/audio/core/commands/audioset.py:591
+#: redbot/cogs/audio/core/commands/audioset.py:612
+#: redbot/cogs/audio/core/commands/audioset.py:629
+#: redbot/cogs/audio/core/commands/audioset.py:677
+#: redbot/cogs/audio/core/commands/audioset.py:752
+#: redbot/cogs/audio/core/commands/audioset.py:900
+#: redbot/cogs/audio/core/commands/audioset.py:915
+#: redbot/cogs/audio/core/commands/audioset.py:935
 #: redbot/cogs/audio/core/commands/audioset.py:977
-#: redbot/cogs/audio/core/commands/audioset.py:991
-#: redbot/cogs/audio/core/commands/audioset.py:993
-#: redbot/cogs/audio/core/commands/audioset.py:1035
-#: redbot/cogs/audio/core/commands/audioset.py:1042
-#: redbot/cogs/audio/core/commands/audioset.py:1086
-#: redbot/cogs/audio/core/commands/audioset.py:1087
-#: redbot/cogs/audio/core/commands/audioset.py:1088
-#: redbot/cogs/audio/core/commands/audioset.py:1089
-#: redbot/cogs/audio/core/commands/audioset.py:1111
-#: redbot/cogs/audio/core/commands/audioset.py:1186
-#: redbot/cogs/audio/core/commands/audioset.py:1201
-#: redbot/cogs/audio/core/commands/audioset.py:1346
-#: redbot/cogs/audio/core/commands/audioset.py:1347
-#: redbot/cogs/audio/core/commands/audioset.py:1348
-#: redbot/cogs/audio/core/commands/audioset.py:1391
-#: redbot/cogs/audio/core/commands/audioset.py:1392
-#: redbot/cogs/audio/core/commands/audioset.py:1393
-#: redbot/cogs/audio/core/commands/audioset.py:1466
-#: redbot/cogs/audio/core/commands/controller.py:415
-#: redbot/cogs/audio/core/commands/controller.py:458
-#: redbot/cogs/audio/core/commands/controller.py:749
+#: redbot/cogs/audio/core/commands/audioset.py:978
+#: redbot/cogs/audio/core/commands/audioset.py:979
+#: redbot/cogs/audio/core/commands/audioset.py:980
+#: redbot/cogs/audio/core/commands/audioset.py:981
+#: redbot/cogs/audio/core/commands/audioset.py:982
+#: redbot/cogs/audio/core/commands/audioset.py:983
+#: redbot/cogs/audio/core/commands/audioset.py:997
+#: redbot/cogs/audio/core/commands/audioset.py:999
+#: redbot/cogs/audio/core/commands/audioset.py:1041
+#: redbot/cogs/audio/core/commands/audioset.py:1048
+#: redbot/cogs/audio/core/commands/audioset.py:1092
+#: redbot/cogs/audio/core/commands/audioset.py:1093
+#: redbot/cogs/audio/core/commands/audioset.py:1094
+#: redbot/cogs/audio/core/commands/audioset.py:1095
+#: redbot/cogs/audio/core/commands/audioset.py:1117
+#: redbot/cogs/audio/core/commands/audioset.py:1192
+#: redbot/cogs/audio/core/commands/audioset.py:1207
+#: redbot/cogs/audio/core/commands/audioset.py:1352
+#: redbot/cogs/audio/core/commands/audioset.py:1353
+#: redbot/cogs/audio/core/commands/audioset.py:1354
+#: redbot/cogs/audio/core/commands/audioset.py:1397
+#: redbot/cogs/audio/core/commands/audioset.py:1398
+#: redbot/cogs/audio/core/commands/audioset.py:1399
+#: redbot/cogs/audio/core/commands/audioset.py:1472
+#: redbot/cogs/audio/core/commands/controller.py:426
+#: redbot/cogs/audio/core/commands/controller.py:471
+#: redbot/cogs/audio/core/commands/controller.py:792
 #: redbot/cogs/audio/core/commands/llset.py:101
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
@@ -307,36 +307,36 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
-#: redbot/cogs/audio/core/commands/audioset.py:565
-#: redbot/cogs/audio/core/commands/audioset.py:583
-#: redbot/cogs/audio/core/commands/audioset.py:604
-#: redbot/cogs/audio/core/commands/audioset.py:631
-#: redbot/cogs/audio/core/commands/audioset.py:669
-#: redbot/cogs/audio/core/commands/audioset.py:692
+#: redbot/cogs/audio/core/commands/audioset.py:571
+#: redbot/cogs/audio/core/commands/audioset.py:589
+#: redbot/cogs/audio/core/commands/audioset.py:610
+#: redbot/cogs/audio/core/commands/audioset.py:637
+#: redbot/cogs/audio/core/commands/audioset.py:675
 #: redbot/cogs/audio/core/commands/audioset.py:698
-#: redbot/cogs/audio/core/commands/audioset.py:721
+#: redbot/cogs/audio/core/commands/audioset.py:704
 #: redbot/cogs/audio/core/commands/audioset.py:727
-#: redbot/cogs/audio/core/commands/audioset.py:744
-#: redbot/cogs/audio/core/commands/audioset.py:762
+#: redbot/cogs/audio/core/commands/audioset.py:733
+#: redbot/cogs/audio/core/commands/audioset.py:750
 #: redbot/cogs/audio/core/commands/audioset.py:768
-#: redbot/cogs/audio/core/commands/audioset.py:791
-#: redbot/cogs/audio/core/commands/audioset.py:848
-#: redbot/cogs/audio/core/commands/audioset.py:871
-#: redbot/cogs/audio/core/commands/audioset.py:876
-#: redbot/cogs/audio/core/commands/audioset.py:892
-#: redbot/cogs/audio/core/commands/audioset.py:907
-#: redbot/cogs/audio/core/commands/audioset.py:927
-#: redbot/cogs/audio/core/commands/audioset.py:1184
-#: redbot/cogs/audio/core/commands/audioset.py:1199
-#: redbot/cogs/audio/core/commands/audioset.py:1220
-#: redbot/cogs/audio/core/commands/audioset.py:1227
-#: redbot/cogs/audio/core/commands/audioset.py:1287
-#: redbot/cogs/audio/core/commands/audioset.py:1309
-#: redbot/cogs/audio/core/commands/audioset.py:1417
-#: redbot/cogs/audio/core/commands/audioset.py:1464
-#: redbot/cogs/audio/core/commands/controller.py:413
-#: redbot/cogs/audio/core/commands/controller.py:456
-#: redbot/cogs/audio/core/commands/controller.py:756
+#: redbot/cogs/audio/core/commands/audioset.py:774
+#: redbot/cogs/audio/core/commands/audioset.py:797
+#: redbot/cogs/audio/core/commands/audioset.py:854
+#: redbot/cogs/audio/core/commands/audioset.py:877
+#: redbot/cogs/audio/core/commands/audioset.py:882
+#: redbot/cogs/audio/core/commands/audioset.py:898
+#: redbot/cogs/audio/core/commands/audioset.py:913
+#: redbot/cogs/audio/core/commands/audioset.py:933
+#: redbot/cogs/audio/core/commands/audioset.py:1190
+#: redbot/cogs/audio/core/commands/audioset.py:1205
+#: redbot/cogs/audio/core/commands/audioset.py:1226
+#: redbot/cogs/audio/core/commands/audioset.py:1233
+#: redbot/cogs/audio/core/commands/audioset.py:1293
+#: redbot/cogs/audio/core/commands/audioset.py:1315
+#: redbot/cogs/audio/core/commands/audioset.py:1423
+#: redbot/cogs/audio/core/commands/audioset.py:1470
+#: redbot/cogs/audio/core/commands/controller.py:424
+#: redbot/cogs/audio/core/commands/controller.py:469
+#: redbot/cogs/audio/core/commands/controller.py:799
 #: redbot/cogs/audio/core/commands/llset.py:99
 #: redbot/cogs/audio/core/commands/llset.py:125
 #: redbot/cogs/audio/core/commands/llset.py:150
@@ -478,154 +478,154 @@ msgstr ""
 msgid "Resets auto-play to the default playlist."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:566
+#: redbot/cogs/audio/core/commands/audioset.py:572
 msgid "Set auto-play playlist to play recently played tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:572
+#: redbot/cogs/audio/core/commands/audioset.py:578
 #, docstring
 msgid "Toggle global daily queues.\n\n"
 "        Global daily queues creates a playlist for all tracks played today.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:584
+#: redbot/cogs/audio/core/commands/audioset.py:590
 msgid "Global daily queues: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:593
+#: redbot/cogs/audio/core/commands/audioset.py:599
 #, docstring
 msgid "Toggle daily queues.\n\n"
 "        Daily queues creates a playlist for all tracks played today.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:605
+#: redbot/cogs/audio/core/commands/audioset.py:611
 msgid "Daily queues: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:614
+#: redbot/cogs/audio/core/commands/audioset.py:620
 #, docstring
 msgid "Toggle the bot auto-disconnecting when done playing.\n\n"
 "        This setting takes precedence over `[p]audioset emptydisconnect`.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:622
+#: redbot/cogs/audio/core/commands/audioset.py:628
 msgid "Auto-disconnection at queue end: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:626
-#: redbot/cogs/audio/core/commands/controller.py:753
+#: redbot/cogs/audio/core/commands/audioset.py:632
+#: redbot/cogs/audio/core/commands/controller.py:796
 msgid "\n"
 "Auto-play has been disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:637
+#: redbot/cogs/audio/core/commands/audioset.py:643
 #, docstring
 msgid "Toggle DJ mode.\n\n"
 "        DJ mode allows users with the DJ role to use audio commands.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:648
+#: redbot/cogs/audio/core/commands/audioset.py:654
 msgid "Missing DJ Role"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:649
+#: redbot/cogs/audio/core/commands/audioset.py:655
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:660
+#: redbot/cogs/audio/core/commands/audioset.py:666
 msgid "Response timed out, try again later."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:670
+#: redbot/cogs/audio/core/commands/audioset.py:676
 msgid "DJ role: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:679
+#: redbot/cogs/audio/core/commands/audioset.py:685
 #, docstring
 msgid "Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.\n\n"
 "        `[p]audioset dc` takes precedence over this setting.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:685
-#: redbot/cogs/audio/core/commands/audioset.py:714
-#: redbot/cogs/audio/core/commands/audioset.py:1212
+#: redbot/cogs/audio/core/commands/audioset.py:691
+#: redbot/cogs/audio/core/commands/audioset.py:720
+#: redbot/cogs/audio/core/commands/audioset.py:1218
 msgid "Invalid Time"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:685
-#: redbot/cogs/audio/core/commands/audioset.py:714
-#: redbot/cogs/audio/core/commands/audioset.py:1212
+#: redbot/cogs/audio/core/commands/audioset.py:691
+#: redbot/cogs/audio/core/commands/audioset.py:720
+#: redbot/cogs/audio/core/commands/audioset.py:1218
 msgid "Seconds can't be less than zero."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:692
+#: redbot/cogs/audio/core/commands/audioset.py:698
 msgid "Empty disconnect disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:699
+#: redbot/cogs/audio/core/commands/audioset.py:705
 msgid "Empty disconnect timer set to {num_seconds}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:711
+#: redbot/cogs/audio/core/commands/audioset.py:717
 #, docstring
 msgid "Auto-pause after x seconds when room is empty, 0 to disable."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:721
+#: redbot/cogs/audio/core/commands/audioset.py:727
 msgid "Empty pause disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:728
+#: redbot/cogs/audio/core/commands/audioset.py:734
 msgid "Empty pause timer set to {num_seconds}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:739
+#: redbot/cogs/audio/core/commands/audioset.py:745
 #, docstring
 msgid "Prioritise tracks with lyrics."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:745
+#: redbot/cogs/audio/core/commands/audioset.py:751
 msgid "Prefer tracks with lyrics: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:754
+#: redbot/cogs/audio/core/commands/audioset.py:760
 #, docstring
 msgid "Set a price for queueing tracks for non-mods, 0 to disable."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:757
+#: redbot/cogs/audio/core/commands/audioset.py:763
 msgid "Invalid Price"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:757
+#: redbot/cogs/audio/core/commands/audioset.py:763
 msgid "Price can't be less than zero."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:762
+#: redbot/cogs/audio/core/commands/audioset.py:768
 msgid "Jukebox mode disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:769
+#: redbot/cogs/audio/core/commands/audioset.py:775
 msgid "Track queueing command price set to {price} {currency}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:781
+#: redbot/cogs/audio/core/commands/audioset.py:787
 #, docstring
 msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\n\n"
 "        Leave the path blank to reset the path to the default, the Audio data directory.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:792
+#: redbot/cogs/audio/core/commands/audioset.py:798
 msgid "The localtracks path location has been reset to {localpath}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:797
+#: redbot/cogs/audio/core/commands/audioset.py:803
 msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
 "```\n"
 "ParentDirectory\n"
@@ -640,31 +640,31 @@ msgid "This setting is only for bot owners to set a localtracks folder location 
 "Do you want to continue to set the provided path for local tracks?"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:829
+#: redbot/cogs/audio/core/commands/audioset.py:835
 msgid "Invalid Path"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:830
+#: redbot/cogs/audio/core/commands/audioset.py:836
 msgid "{local_path} does not seem like a valid path."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:836
+#: redbot/cogs/audio/core/commands/audioset.py:842
 msgid "`{localtracks}` does not exist. The path will still be saved, but please check the path and create a localtracks folder in `{localfolder}` before attempting to play local tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:842
+#: redbot/cogs/audio/core/commands/audioset.py:848
 #: redbot/cogs/audio/core/commands/llset.py:34
 #: redbot/cogs/audio/core/commands/llset.py:53
-#: redbot/cogs/audio/core/commands/player.py:412
-#: redbot/cogs/audio/core/commands/player.py:422
+#: redbot/cogs/audio/core/commands/player.py:420
+#: redbot/cogs/audio/core/commands/player.py:430
 msgid "Invalid Environment"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:849
+#: redbot/cogs/audio/core/commands/audioset.py:855
 msgid "The localtracks path location has been set to {localpath}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:858
+#: redbot/cogs/audio/core/commands/audioset.py:864
 #, docstring
 msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
@@ -672,41 +672,41 @@ msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:867
+#: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Invalid length"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:867
+#: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Length can't be less than zero."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:871
+#: redbot/cogs/audio/core/commands/audioset.py:877
 msgid "Track max length disabled."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:877
+#: redbot/cogs/audio/core/commands/audioset.py:883
 msgid "Track max length set to {seconds}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:887
+#: redbot/cogs/audio/core/commands/audioset.py:893
 #, docstring
 msgid "Toggle track announcement and other bot messages."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:893
+#: redbot/cogs/audio/core/commands/audioset.py:899
 msgid "Notify mode: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:902
+#: redbot/cogs/audio/core/commands/audioset.py:908
 #, docstring
 msgid "Toggle whether the bot will be auto deafened upon joining the voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:908
+#: redbot/cogs/audio/core/commands/audioset.py:914
 msgid "Auto Deafen: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:917
+#: redbot/cogs/audio/core/commands/audioset.py:923
 #, docstring
 msgid "Toggle the domain restriction on Audio.\n\n"
 "        When toggled off, users will be able to play songs from non-commercial websites and links.\n"
@@ -715,65 +715,65 @@ msgid "Toggle the domain restriction on Audio.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:928
+#: redbot/cogs/audio/core/commands/audioset.py:934
 msgid "Commercial links only: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:937
+#: redbot/cogs/audio/core/commands/audioset.py:943
 #, docstring
 msgid "Set the role to use for DJ mode."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:946
+#: redbot/cogs/audio/core/commands/audioset.py:952
 msgid "Settings Changed"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:947
+#: redbot/cogs/audio/core/commands/audioset.py:953
 msgid "DJ role set to: {role.name}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:953
+#: redbot/cogs/audio/core/commands/audioset.py:959
 #, docstring
 msgid "Show the current settings."
 msgstr "Zobrazit aktuální nastavení."
 
-#: redbot/cogs/audio/core/commands/audioset.py:990
+#: redbot/cogs/audio/core/commands/audioset.py:996
 msgid "Server Settings"
 msgstr "Nastavení serveru"
 
-#: redbot/cogs/audio/core/commands/audioset.py:991
+#: redbot/cogs/audio/core/commands/audioset.py:997
 msgid "Auto-disconnect:  [{dc}]\n"
 msgstr "Automatické odpojení: [{dc}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:992
+#: redbot/cogs/audio/core/commands/audioset.py:998
 msgid "Auto-play:        [{autoplay}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:996
+#: redbot/cogs/audio/core/commands/audioset.py:1002
 msgid "Disconnect timer: [{num_seconds}]\n"
 msgstr "Odpojit časovač: [{num_seconds}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1000
+#: redbot/cogs/audio/core/commands/audioset.py:1006
 msgid "Auto Pause timer: [{num_seconds}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1004
+#: redbot/cogs/audio/core/commands/audioset.py:1010
 msgid "DJ Role:          [{role.name}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1006
+#: redbot/cogs/audio/core/commands/audioset.py:1012
 msgid "Jukebox:          [{jukebox_name}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1007
+#: redbot/cogs/audio/core/commands/audioset.py:1013
 msgid "Command price:    [{jukebox_price}]\n"
 msgstr "Cena příkazu: [{jukebox_price}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1011
+#: redbot/cogs/audio/core/commands/audioset.py:1017
 msgid "Max track length: [{tracklength}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1014
+#: redbot/cogs/audio/core/commands/audioset.py:1020
 msgid "Repeat:           [{repeat}]\n"
 "Shuffle:          [{shuffle}]\n"
 "Shuffle bumped:   [{bumpped_shuffle}]\n"
@@ -784,117 +784,117 @@ msgid "Repeat:           [{repeat}]\n"
 "Auto-Deafen:      [{auto_deafen}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1034
+#: redbot/cogs/audio/core/commands/audioset.py:1040
 msgid "Thumbnails:       [{0}]\n"
 msgstr "Náhledy: [{0}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1038
+#: redbot/cogs/audio/core/commands/audioset.py:1044
 msgid "Vote skip:        [{vote_enabled}]\n"
 "Skip percentage:  [{vote_percent}%]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1051
+#: redbot/cogs/audio/core/commands/audioset.py:1057
 msgid "Server"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1053
+#: redbot/cogs/audio/core/commands/audioset.py:1059
 msgid "User"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1055
+#: redbot/cogs/audio/core/commands/audioset.py:1061
 #: redbot/cogs/audio/core/commands/playlists.py:1025
 msgid "Global"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1057
-#: redbot/cogs/audio/core/commands/audioset.py:1058
-#: redbot/cogs/audio/core/commands/audioset.py:1059
+#: redbot/cogs/audio/core/commands/audioset.py:1063
+#: redbot/cogs/audio/core/commands/audioset.py:1064
+#: redbot/cogs/audio/core/commands/audioset.py:1065
 msgid "Cached"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1061
-#: redbot/cogs/audio/core/commands/audioset.py:1062
-#: redbot/cogs/audio/core/commands/audioset.py:1063
+#: redbot/cogs/audio/core/commands/audioset.py:1067
+#: redbot/cogs/audio/core/commands/audioset.py:1068
+#: redbot/cogs/audio/core/commands/audioset.py:1069
 msgid "US Top 100"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1066
+#: redbot/cogs/audio/core/commands/audioset.py:1072
 msgid "Auto-play Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1068
+#: redbot/cogs/audio/core/commands/audioset.py:1074
 msgid "Playlist name:    [{pname}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1069
+#: redbot/cogs/audio/core/commands/audioset.py:1075
 msgid "Playlist ID:      [{pid}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1070
+#: redbot/cogs/audio/core/commands/audioset.py:1076
 msgid "Playlist scope:   [{pscope}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1076
-#: redbot/cogs/audio/core/commands/audioset.py:1351
-#: redbot/cogs/audio/core/commands/audioset.py:1396
+#: redbot/cogs/audio/core/commands/audioset.py:1082
+#: redbot/cogs/audio/core/commands/audioset.py:1357
+#: redbot/cogs/audio/core/commands/audioset.py:1402
 msgid "Cache Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1078
+#: redbot/cogs/audio/core/commands/audioset.py:1084
 msgid "Max age:                [{max_age}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1079
+#: redbot/cogs/audio/core/commands/audioset.py:1085
 msgid "Local Spotify cache:    [{spotify_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1080
+#: redbot/cogs/audio/core/commands/audioset.py:1086
 msgid "Local Youtube cache:    [{youtube_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1081
+#: redbot/cogs/audio/core/commands/audioset.py:1087
 msgid "Local Lavalink cache:   [{lavalink_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1082
+#: redbot/cogs/audio/core/commands/audioset.py:1088
 msgid "Global cache status:    [{global_cache}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1083
+#: redbot/cogs/audio/core/commands/audioset.py:1089
 msgid "Global timeout:         [{num_seconds}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1085
-#: redbot/cogs/audio/core/commands/audioset.py:1345
-#: redbot/cogs/audio/core/commands/audioset.py:1390
+#: redbot/cogs/audio/core/commands/audioset.py:1091
+#: redbot/cogs/audio/core/commands/audioset.py:1351
+#: redbot/cogs/audio/core/commands/audioset.py:1396
 msgid "days"
 msgstr "dnů"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1094
+#: redbot/cogs/audio/core/commands/audioset.py:1100
 msgid "User Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1096
+#: redbot/cogs/audio/core/commands/audioset.py:1102
 msgid "Spotify search:   [{country_code}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1101
+#: redbot/cogs/audio/core/commands/audioset.py:1107
 msgid "Lavalink Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1103
+#: redbot/cogs/audio/core/commands/audioset.py:1109
 msgid "Cog version:            [{version}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1104
+#: redbot/cogs/audio/core/commands/audioset.py:1110
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1105
+#: redbot/cogs/audio/core/commands/audioset.py:1111
 msgid "External server:        [{use_external_lavalink}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1114
+#: redbot/cogs/audio/core/commands/audioset.py:1120
 msgid "Lavalink build:         [{llbuild}]\n"
 "Lavalink branch:        [{llbranch}]\n"
 "Release date:           [{build_time}]\n"
@@ -903,70 +903,70 @@ msgid "Lavalink build:         [{llbuild}]\n"
 "Java Executable:        [{jv_exec}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1130
+#: redbot/cogs/audio/core/commands/audioset.py:1136
 msgid "Localtracks path:       [{localpath}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1139
+#: redbot/cogs/audio/core/commands/audioset.py:1145
 #, docstring
 msgid "Sends the Lavalink server logs to your DMs."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1146
-#: redbot/cogs/audio/core/commands/audioset.py:1148
+#: redbot/cogs/audio/core/commands/audioset.py:1152
+#: redbot/cogs/audio/core/commands/audioset.py:1154
 msgid "No logs found in your data folder."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1160
+#: redbot/cogs/audio/core/commands/audioset.py:1166
 msgid "Logs are too large, you can find them in {path}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1170
+#: redbot/cogs/audio/core/commands/audioset.py:1176
 msgid "I need to be able to DM you to send you the logs."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1179
+#: redbot/cogs/audio/core/commands/audioset.py:1185
 #, docstring
 msgid "Enable/disable tracks' titles as status."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1185
+#: redbot/cogs/audio/core/commands/audioset.py:1191
 msgid "Song titles as status: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1194
+#: redbot/cogs/audio/core/commands/audioset.py:1200
 #, docstring
 msgid "Toggle displaying a thumbnail on audio messages."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1200
+#: redbot/cogs/audio/core/commands/audioset.py:1206
 msgid "Thumbnail display: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1209
+#: redbot/cogs/audio/core/commands/audioset.py:1215
 #, docstring
 msgid "Percentage needed for non-mods to skip tracks, 0 to disable."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1221
+#: redbot/cogs/audio/core/commands/audioset.py:1227
 msgid "Voting disabled. All users can use queue management commands."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1228
+#: redbot/cogs/audio/core/commands/audioset.py:1234
 msgid "Vote percentage set to {percent}%."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1237
+#: redbot/cogs/audio/core/commands/audioset.py:1243
 #, docstring
 msgid "Instructions to set the YouTube API key."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1256
+#: redbot/cogs/audio/core/commands/audioset.py:1262
 #, docstring
 msgid "Instructions to set the Spotify API tokens."
 msgstr "Pokyny k nastavení Spotify API tokenů."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1257
+#: redbot/cogs/audio/core/commands/audioset.py:1263
 msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "(https://developer.spotify.com/dashboard/applications)\n"
 "2. Click \"Create An App\".\n"
@@ -977,28 +977,28 @@ msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1274
-#: redbot/cogs/audio/core/commands/audioset.py:1296
+#: redbot/cogs/audio/core/commands/audioset.py:1280
+#: redbot/cogs/audio/core/commands/audioset.py:1302
 #, docstring
 msgid "Set the country code for Spotify searches."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1278
-#: redbot/cogs/audio/core/commands/audioset.py:1300
+#: redbot/cogs/audio/core/commands/audioset.py:1284
+#: redbot/cogs/audio/core/commands/audioset.py:1306
 msgid "Invalid Country Code"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1279
-#: redbot/cogs/audio/core/commands/audioset.py:1301
+#: redbot/cogs/audio/core/commands/audioset.py:1285
+#: redbot/cogs/audio/core/commands/audioset.py:1307
 msgid "Please use an official [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1288
-#: redbot/cogs/audio/core/commands/audioset.py:1310
+#: redbot/cogs/audio/core/commands/audioset.py:1294
+#: redbot/cogs/audio/core/commands/audioset.py:1316
 msgid "Country Code set to {country}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1318
+#: redbot/cogs/audio/core/commands/audioset.py:1324
 #, docstring
 msgid "Sets the caching level.\n\n"
 "        Level can be one of the following:\n\n"
@@ -1011,27 +1011,27 @@ msgid "Sets the caching level.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1340
-#: redbot/cogs/audio/core/commands/audioset.py:1385
+#: redbot/cogs/audio/core/commands/audioset.py:1346
+#: redbot/cogs/audio/core/commands/audioset.py:1391
 msgid "Max age:          [{max_age}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1341
-#: redbot/cogs/audio/core/commands/audioset.py:1386
+#: redbot/cogs/audio/core/commands/audioset.py:1347
+#: redbot/cogs/audio/core/commands/audioset.py:1392
 msgid "Spotify cache:    [{spotify_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1342
-#: redbot/cogs/audio/core/commands/audioset.py:1387
+#: redbot/cogs/audio/core/commands/audioset.py:1348
+#: redbot/cogs/audio/core/commands/audioset.py:1393
 msgid "Youtube cache:    [{youtube_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1343
-#: redbot/cogs/audio/core/commands/audioset.py:1388
+#: redbot/cogs/audio/core/commands/audioset.py:1349
+#: redbot/cogs/audio/core/commands/audioset.py:1394
 msgid "Lavalink cache:   [{lavalink_status}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1403
+#: redbot/cogs/audio/core/commands/audioset.py:1409
 #, docstring
 msgid "Sets the cache max age.\n\n"
 "        This commands allows you to set the max number of days before an entry in the cache becomes\n"
@@ -1039,70 +1039,70 @@ msgid "Sets the cache max age.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1410
+#: redbot/cogs/audio/core/commands/audioset.py:1416
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1415
+#: redbot/cogs/audio/core/commands/audioset.py:1421
 msgid "I've set the cache age to {age} days"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1422
+#: redbot/cogs/audio/core/commands/audioset.py:1428
 #, docstring
 msgid "Change globalapi settings."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1426
+#: redbot/cogs/audio/core/commands/audioset.py:1432
 #, docstring
 msgid "Toggle the server settings.\n\n"
 "        Default is OFF\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1435
+#: redbot/cogs/audio/core/commands/audioset.py:1441
 msgid "Global DB is {status}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1435
+#: redbot/cogs/audio/core/commands/audioset.py:1441
 msgid "enabled"
 msgstr "povoleno"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1435
+#: redbot/cogs/audio/core/commands/audioset.py:1441
 msgid "disabled"
 msgstr "zakázáno"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1442
+#: redbot/cogs/audio/core/commands/audioset.py:1448
 #, docstring
 msgid "Set GET request timeout.\n\n"
 "        Example: 0.1 = 100ms 1 = 1 second\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1448
+#: redbot/cogs/audio/core/commands/audioset.py:1454
 msgid "Request timeout set to {time} second(s)"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1453
+#: redbot/cogs/audio/core/commands/audioset.py:1459
 #, docstring
 msgid "Toggle persistent queues.\n\n"
 "        Persistent queues allows the current queue to be restored when the queue closes.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1465
+#: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Persisting queues: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1473
+#: redbot/cogs/audio/core/commands/audioset.py:1479
 #, docstring
 msgid "Restarts the lavalink connection."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1483
+#: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "Restarting Lavalink"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/audioset.py:1484
+#: redbot/cogs/audio/core/commands/audioset.py:1490
 msgid "It can take a couple of minutes for Lavalink to fully start up."
 msgstr ""
 
@@ -1112,25 +1112,25 @@ msgid "Disconnect from the voice channel."
 msgstr "Odpojit od hlasového kanálu."
 
 #: redbot/cogs/audio/core/commands/controller.py:34
-#: redbot/cogs/audio/core/commands/controller.py:84
-#: redbot/cogs/audio/core/commands/controller.py:200
-#: redbot/cogs/audio/core/commands/controller.py:217
-#: redbot/cogs/audio/core/commands/controller.py:231
-#: redbot/cogs/audio/core/commands/controller.py:239
-#: redbot/cogs/audio/core/commands/controller.py:313
-#: redbot/cogs/audio/core/commands/controller.py:379
-#: redbot/cogs/audio/core/commands/controller.py:470
-#: redbot/cogs/audio/core/commands/controller.py:480
-#: redbot/cogs/audio/core/commands/controller.py:564
-#: redbot/cogs/audio/core/commands/controller.py:684
+#: redbot/cogs/audio/core/commands/controller.py:88
+#: redbot/cogs/audio/core/commands/controller.py:206
+#: redbot/cogs/audio/core/commands/controller.py:224
+#: redbot/cogs/audio/core/commands/controller.py:238
+#: redbot/cogs/audio/core/commands/controller.py:246
+#: redbot/cogs/audio/core/commands/controller.py:321
+#: redbot/cogs/audio/core/commands/controller.py:388
+#: redbot/cogs/audio/core/commands/controller.py:483
+#: redbot/cogs/audio/core/commands/controller.py:493
+#: redbot/cogs/audio/core/commands/controller.py:578
 #: redbot/cogs/audio/core/commands/controller.py:715
-#: redbot/cogs/audio/core/commands/controller.py:770
-#: redbot/cogs/audio/core/commands/controller.py:846
+#: redbot/cogs/audio/core/commands/controller.py:756
+#: redbot/cogs/audio/core/commands/controller.py:813
+#: redbot/cogs/audio/core/commands/controller.py:891
 #: redbot/cogs/audio/core/commands/equalizer.py:39
 #: redbot/cogs/audio/core/commands/equalizer.py:164
-#: redbot/cogs/audio/core/commands/equalizer.py:194
-#: redbot/cogs/audio/core/commands/equalizer.py:227
-#: redbot/cogs/audio/core/commands/equalizer.py:315
+#: redbot/cogs/audio/core/commands/equalizer.py:195
+#: redbot/cogs/audio/core/commands/equalizer.py:230
+#: redbot/cogs/audio/core/commands/equalizer.py:320
 #: redbot/cogs/audio/core/commands/miscellaneous.py:64
 #: redbot/cogs/audio/core/commands/miscellaneous.py:95
 #: redbot/cogs/audio/core/commands/playlists.py:1142
@@ -1143,9 +1143,9 @@ msgid "Unable To Disconnect"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:50
-#: redbot/cogs/audio/core/commands/controller.py:258
-#: redbot/cogs/audio/core/commands/controller.py:326
-#: redbot/cogs/audio/core/commands/controller.py:578
+#: redbot/cogs/audio/core/commands/controller.py:265
+#: redbot/cogs/audio/core/commands/controller.py:334
+#: redbot/cogs/audio/core/commands/controller.py:592
 msgid "There are other people listening - vote to skip instead."
 msgstr ""
 
@@ -1162,211 +1162,211 @@ msgstr ""
 msgid "Disconnecting..."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:82
+#: redbot/cogs/audio/core/commands/controller.py:86
 #, docstring
 msgid "Now playing."
 msgstr "Nyní se přehrává."
 
-#: redbot/cogs/audio/core/commands/controller.py:105
+#: redbot/cogs/audio/core/commands/controller.py:111
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\n"
 " Requested by: **{track.requester}**"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:108
+#: redbot/cogs/audio/core/commands/controller.py:114
 msgid "Nothing."
 msgstr "Nic."
 
-#: redbot/cogs/audio/core/commands/controller.py:113
+#: redbot/cogs/audio/core/commands/controller.py:119
 #: redbot/cogs/audio/core/commands/queue.py:79
 msgid "Now Playing"
 msgstr "Nyní se přehrává"
 
-#: redbot/cogs/audio/core/commands/controller.py:123
+#: redbot/cogs/audio/core/commands/controller.py:129
 #: redbot/cogs/audio/core/commands/queue.py:89
 msgid "Auto-Play"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:129
+#: redbot/cogs/audio/core/commands/controller.py:135
 #: redbot/cogs/audio/core/commands/queue.py:95
 msgid "Shuffle"
 msgstr "Náhodně"
 
-#: redbot/cogs/audio/core/commands/controller.py:135
+#: redbot/cogs/audio/core/commands/controller.py:141
 #: redbot/cogs/audio/core/commands/queue.py:101
 msgid "Repeat"
 msgstr "Opakovat"
 
-#: redbot/cogs/audio/core/commands/controller.py:195
+#: redbot/cogs/audio/core/commands/controller.py:201
 #, docstring
 msgid "Pause or resume a playing track."
 msgstr "Pozastavit nebo obnovit přehrávanou stopu."
 
-#: redbot/cogs/audio/core/commands/controller.py:206
 #: redbot/cogs/audio/core/commands/controller.py:212
+#: redbot/cogs/audio/core/commands/controller.py:218
 msgid "Unable To Manage Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:207
+#: redbot/cogs/audio/core/commands/controller.py:213
 msgid "You must be in the voice channel to pause or resume."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:213
+#: redbot/cogs/audio/core/commands/controller.py:219
 msgid "You need the DJ role to pause or resume tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:224
+#: redbot/cogs/audio/core/commands/controller.py:231
 msgid "Track Paused"
 msgstr "Stopa pozastavena"
 
-#: redbot/cogs/audio/core/commands/controller.py:228
+#: redbot/cogs/audio/core/commands/controller.py:235
 msgid "Track Resumed"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:237
+#: redbot/cogs/audio/core/commands/controller.py:244
 #, docstring
 msgid "Skip to the start of the previously played track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:251
-#: redbot/cogs/audio/core/commands/controller.py:257
-#: redbot/cogs/audio/core/commands/controller.py:263
-#: redbot/cogs/audio/core/commands/controller.py:476
-#: redbot/cogs/audio/core/commands/controller.py:491
+#: redbot/cogs/audio/core/commands/controller.py:258
+#: redbot/cogs/audio/core/commands/controller.py:264
+#: redbot/cogs/audio/core/commands/controller.py:270
+#: redbot/cogs/audio/core/commands/controller.py:489
 #: redbot/cogs/audio/core/commands/controller.py:504
-#: redbot/cogs/audio/core/commands/controller.py:513
+#: redbot/cogs/audio/core/commands/controller.py:517
+#: redbot/cogs/audio/core/commands/controller.py:527
 msgid "Unable To Skip Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:252
+#: redbot/cogs/audio/core/commands/controller.py:259
 msgid "You must be in the voice channel to skip the track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:264
+#: redbot/cogs/audio/core/commands/controller.py:271
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:272
+#: redbot/cogs/audio/core/commands/controller.py:280
 #: redbot/cogs/audio/core/commands/player.py:49
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:60
 #: redbot/cogs/audio/core/commands/player.py:78
-#: redbot/cogs/audio/core/commands/player.py:88
-#: redbot/cogs/audio/core/commands/player.py:94
-#: redbot/cogs/audio/core/commands/player.py:105
-#: redbot/cogs/audio/core/commands/player.py:111
-#: redbot/cogs/audio/core/commands/player.py:118
-#: redbot/cogs/audio/core/commands/player.py:129
-#: redbot/cogs/audio/core/commands/player.py:156
-#: redbot/cogs/audio/core/commands/player.py:161
-#: redbot/cogs/audio/core/commands/player.py:167
-#: redbot/cogs/audio/core/commands/player.py:185
-#: redbot/cogs/audio/core/commands/player.py:195
-#: redbot/cogs/audio/core/commands/player.py:201
-#: redbot/cogs/audio/core/commands/player.py:212
-#: redbot/cogs/audio/core/commands/player.py:218
-#: redbot/cogs/audio/core/commands/player.py:225
-#: redbot/cogs/audio/core/commands/player.py:237
-#: redbot/cogs/audio/core/commands/player.py:246
-#: redbot/cogs/audio/core/commands/player.py:289
-#: redbot/cogs/audio/core/commands/player.py:311
-#: redbot/cogs/audio/core/commands/player.py:432
-#: redbot/cogs/audio/core/commands/player.py:450
-#: redbot/cogs/audio/core/commands/player.py:460
-#: redbot/cogs/audio/core/commands/player.py:466
-#: redbot/cogs/audio/core/commands/player.py:480
-#: redbot/cogs/audio/core/commands/player.py:528
-#: redbot/cogs/audio/core/commands/player.py:548
-#: redbot/cogs/audio/core/commands/player.py:566
-#: redbot/cogs/audio/core/commands/player.py:576
-#: redbot/cogs/audio/core/commands/player.py:582
-#: redbot/cogs/audio/core/commands/player.py:596
-#: redbot/cogs/audio/core/commands/player.py:601
-#: redbot/cogs/audio/core/commands/player.py:735
-#: redbot/cogs/audio/core/commands/player.py:741
-#: redbot/cogs/audio/core/commands/player.py:803
+#: redbot/cogs/audio/core/commands/player.py:92
+#: redbot/cogs/audio/core/commands/player.py:98
+#: redbot/cogs/audio/core/commands/player.py:109
+#: redbot/cogs/audio/core/commands/player.py:115
+#: redbot/cogs/audio/core/commands/player.py:122
+#: redbot/cogs/audio/core/commands/player.py:133
+#: redbot/cogs/audio/core/commands/player.py:160
+#: redbot/cogs/audio/core/commands/player.py:165
+#: redbot/cogs/audio/core/commands/player.py:171
+#: redbot/cogs/audio/core/commands/player.py:189
+#: redbot/cogs/audio/core/commands/player.py:203
+#: redbot/cogs/audio/core/commands/player.py:209
+#: redbot/cogs/audio/core/commands/player.py:220
+#: redbot/cogs/audio/core/commands/player.py:226
+#: redbot/cogs/audio/core/commands/player.py:233
+#: redbot/cogs/audio/core/commands/player.py:245
+#: redbot/cogs/audio/core/commands/player.py:254
+#: redbot/cogs/audio/core/commands/player.py:297
+#: redbot/cogs/audio/core/commands/player.py:319
+#: redbot/cogs/audio/core/commands/player.py:440
+#: redbot/cogs/audio/core/commands/player.py:458
+#: redbot/cogs/audio/core/commands/player.py:472
+#: redbot/cogs/audio/core/commands/player.py:478
+#: redbot/cogs/audio/core/commands/player.py:492
+#: redbot/cogs/audio/core/commands/player.py:540
+#: redbot/cogs/audio/core/commands/player.py:560
+#: redbot/cogs/audio/core/commands/player.py:578
+#: redbot/cogs/audio/core/commands/player.py:592
+#: redbot/cogs/audio/core/commands/player.py:598
+#: redbot/cogs/audio/core/commands/player.py:612
+#: redbot/cogs/audio/core/commands/player.py:617
+#: redbot/cogs/audio/core/commands/player.py:753
+#: redbot/cogs/audio/core/commands/player.py:759
+#: redbot/cogs/audio/core/commands/player.py:821
 #: redbot/cogs/audio/core/commands/playlists.py:1481
 msgid "Unable To Play Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:272
+#: redbot/cogs/audio/core/commands/controller.py:280
 msgid "No previous track."
 msgstr "Žádná předchozí skladba."
 
-#: redbot/cogs/audio/core/commands/controller.py:293
+#: redbot/cogs/audio/core/commands/controller.py:301
 msgid "Replaying Track"
 msgstr "Přehrávání skladby"
 
-#: redbot/cogs/audio/core/commands/controller.py:300
+#: redbot/cogs/audio/core/commands/controller.py:308
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:318
-#: redbot/cogs/audio/core/commands/controller.py:325
-#: redbot/cogs/audio/core/commands/controller.py:332
-#: redbot/cogs/audio/core/commands/controller.py:339
-#: redbot/cogs/audio/core/commands/controller.py:351
+#: redbot/cogs/audio/core/commands/controller.py:326
+#: redbot/cogs/audio/core/commands/controller.py:333
+#: redbot/cogs/audio/core/commands/controller.py:340
+#: redbot/cogs/audio/core/commands/controller.py:348
+#: redbot/cogs/audio/core/commands/controller.py:360
 msgid "Unable To Seek Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:319
+#: redbot/cogs/audio/core/commands/controller.py:327
 msgid "You must be in the voice channel to use seek."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:333
+#: redbot/cogs/audio/core/commands/controller.py:341
 msgid "You need the DJ role or be the track requester to use seek."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:339
+#: redbot/cogs/audio/core/commands/controller.py:348
 msgid "Can't seek on a stream."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:352
+#: redbot/cogs/audio/core/commands/controller.py:361
 msgid "Invalid input for the time to seek."
 msgstr "Neplatný čas vyhledávání."
 
-#: redbot/cogs/audio/core/commands/controller.py:360
+#: redbot/cogs/audio/core/commands/controller.py:369
 msgid "Moved {num_seconds}s to 00:00:00"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:367
+#: redbot/cogs/audio/core/commands/controller.py:376
 msgid "Moved {num_seconds}s to {time}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:375
+#: redbot/cogs/audio/core/commands/controller.py:384
 msgid "Moved to {time}"
 msgstr "Přesunuto do {time}"
 
-#: redbot/cogs/audio/core/commands/controller.py:385
+#: redbot/cogs/audio/core/commands/controller.py:394
 #, docstring
 msgid "Toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:394
-#: redbot/cogs/audio/core/commands/controller.py:405
-#: redbot/cogs/audio/core/commands/controller.py:437
+#: redbot/cogs/audio/core/commands/controller.py:403
+#: redbot/cogs/audio/core/commands/controller.py:414
 #: redbot/cogs/audio/core/commands/controller.py:448
+#: redbot/cogs/audio/core/commands/controller.py:459
 msgid "Unable To Toggle Shuffle"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:395
-#: redbot/cogs/audio/core/commands/controller.py:438
+#: redbot/cogs/audio/core/commands/controller.py:404
+#: redbot/cogs/audio/core/commands/controller.py:449
 msgid "You need the DJ role to toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:406
-#: redbot/cogs/audio/core/commands/controller.py:449
+#: redbot/cogs/audio/core/commands/controller.py:415
+#: redbot/cogs/audio/core/commands/controller.py:460
 msgid "You must be in the voice channel to toggle shuffle."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:414
+#: redbot/cogs/audio/core/commands/controller.py:425
 msgid "Shuffle tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:425
+#: redbot/cogs/audio/core/commands/controller.py:436
 #, docstring
 msgid "Toggle bumped track shuffle.\n\n"
 "        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
@@ -1374,236 +1374,236 @@ msgid "Toggle bumped track shuffle.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:457
+#: redbot/cogs/audio/core/commands/controller.py:470
 msgid "Shuffle bumped tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:468
+#: redbot/cogs/audio/core/commands/controller.py:481
 #, docstring
 msgid "Skip to the next track, or to a given track number."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:477
+#: redbot/cogs/audio/core/commands/controller.py:490
 msgid "You must be in the voice channel to skip the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:492
+#: redbot/cogs/audio/core/commands/controller.py:505
 msgid "You need the DJ role or be the track requester to skip tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:505
+#: redbot/cogs/audio/core/commands/controller.py:518
 msgid "You can only skip the current track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:514
+#: redbot/cogs/audio/core/commands/controller.py:528
 msgid "Can't skip to a specific track in vote mode without the DJ role."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:520
+#: redbot/cogs/audio/core/commands/controller.py:534
 msgid "I removed your vote to skip."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:523
+#: redbot/cogs/audio/core/commands/controller.py:537
 msgid "You voted to skip."
 msgstr "Hlasovali jste pro přeskočení."
 
-#: redbot/cogs/audio/core/commands/controller.py:536
+#: redbot/cogs/audio/core/commands/controller.py:550
 msgid "Vote threshold met."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:539
+#: redbot/cogs/audio/core/commands/controller.py:553
 msgid " Votes: {num_votes}/{num_members} ({cur_percent}% out of {required_percent}% needed)"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:558
+#: redbot/cogs/audio/core/commands/controller.py:572
 #, docstring
 msgid "Stop playback and clear the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:571
-#: redbot/cogs/audio/core/commands/controller.py:577
-#: redbot/cogs/audio/core/commands/controller.py:583
+#: redbot/cogs/audio/core/commands/controller.py:585
+#: redbot/cogs/audio/core/commands/controller.py:591
+#: redbot/cogs/audio/core/commands/controller.py:597
 msgid "Unable To Stop Player"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:572
+#: redbot/cogs/audio/core/commands/controller.py:586
 msgid "You must be in the voice channel to stop the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:584
+#: redbot/cogs/audio/core/commands/controller.py:598
 msgid "You need the DJ role to stop the music."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:601
+#: redbot/cogs/audio/core/commands/controller.py:621
 msgid "Stopping..."
 msgstr "Zastavování..."
 
-#: redbot/cogs/audio/core/commands/controller.py:609
+#: redbot/cogs/audio/core/commands/controller.py:629
 #, docstring
 msgid "Summon the bot to a voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:621
-#: redbot/cogs/audio/core/commands/controller.py:628
 #: redbot/cogs/audio/core/commands/controller.py:641
-#: redbot/cogs/audio/core/commands/controller.py:660
-#: redbot/cogs/audio/core/commands/controller.py:667
+#: redbot/cogs/audio/core/commands/controller.py:648
+#: redbot/cogs/audio/core/commands/controller.py:661
+#: redbot/cogs/audio/core/commands/controller.py:691
+#: redbot/cogs/audio/core/commands/controller.py:698
 msgid "Unable To Join Voice Channel"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:622
+#: redbot/cogs/audio/core/commands/controller.py:642
 msgid "There are other people listening."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:629
+#: redbot/cogs/audio/core/commands/controller.py:649
 msgid "You need the DJ role to summon the bot."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:642
+#: redbot/cogs/audio/core/commands/controller.py:662
 #: redbot/cogs/audio/core/commands/player.py:79
-#: redbot/cogs/audio/core/commands/player.py:186
-#: redbot/cogs/audio/core/commands/player.py:451
-#: redbot/cogs/audio/core/commands/player.py:567
-#: redbot/cogs/audio/core/commands/player.py:693
+#: redbot/cogs/audio/core/commands/player.py:190
+#: redbot/cogs/audio/core/commands/player.py:459
+#: redbot/cogs/audio/core/commands/player.py:579
+#: redbot/cogs/audio/core/commands/player.py:707
 #: redbot/cogs/audio/core/commands/queue.py:339
 msgid "I don't have permission to connect to your channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:661
-#: redbot/cogs/audio/core/commands/player.py:89
-#: redbot/cogs/audio/core/commands/player.py:196
-#: redbot/cogs/audio/core/commands/player.py:461
-#: redbot/cogs/audio/core/commands/player.py:577
-#: redbot/cogs/audio/core/commands/player.py:703
-#: redbot/cogs/audio/core/commands/queue.py:350
+#: redbot/cogs/audio/core/commands/controller.py:692
+#: redbot/cogs/audio/core/commands/player.py:93
+#: redbot/cogs/audio/core/commands/player.py:204
+#: redbot/cogs/audio/core/commands/player.py:473
+#: redbot/cogs/audio/core/commands/player.py:593
+#: redbot/cogs/audio/core/commands/player.py:721
+#: redbot/cogs/audio/core/commands/queue.py:354
 msgid "Connect to a voice channel first."
 msgstr "Nejprve se připojte k hlasovému kanálu."
 
-#: redbot/cogs/audio/core/commands/controller.py:668
-#: redbot/cogs/audio/core/commands/player.py:95
-#: redbot/cogs/audio/core/commands/player.py:202
-#: redbot/cogs/audio/core/commands/player.py:467
-#: redbot/cogs/audio/core/commands/player.py:583
-#: redbot/cogs/audio/core/commands/player.py:709
-#: redbot/cogs/audio/core/commands/queue.py:357
+#: redbot/cogs/audio/core/commands/controller.py:699
+#: redbot/cogs/audio/core/commands/player.py:99
+#: redbot/cogs/audio/core/commands/player.py:210
+#: redbot/cogs/audio/core/commands/player.py:479
+#: redbot/cogs/audio/core/commands/player.py:599
+#: redbot/cogs/audio/core/commands/player.py:727
+#: redbot/cogs/audio/core/commands/queue.py:361
 msgid "Connection to Lavalink has not yet been established."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:675
+#: redbot/cogs/audio/core/commands/controller.py:706
 #, docstring
 msgid "Set the volume, 1% - 150%."
 msgstr "Nastaví hlasitost, 1% - 150%."
 
-#: redbot/cogs/audio/core/commands/controller.py:682
+#: redbot/cogs/audio/core/commands/controller.py:713
 msgid "Current Volume:"
 msgstr "Aktuální hlasitost:"
 
-#: redbot/cogs/audio/core/commands/controller.py:693
-#: redbot/cogs/audio/core/commands/controller.py:699
+#: redbot/cogs/audio/core/commands/controller.py:724
+#: redbot/cogs/audio/core/commands/controller.py:732
 msgid "Unable To Change Volume"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:694
+#: redbot/cogs/audio/core/commands/controller.py:725
 msgid "You must be in the voice channel to change the volume."
 msgstr "Pro změnu hlasitosti musíte být v hlasovém kanálu."
 
-#: redbot/cogs/audio/core/commands/controller.py:700
+#: redbot/cogs/audio/core/commands/controller.py:733
 msgid "You need the DJ role to change the volume."
 msgstr "Potřebujete roli DJ, abyste mohli změnit hlasitost."
 
-#: redbot/cogs/audio/core/commands/controller.py:713
+#: redbot/cogs/audio/core/commands/controller.py:754
 msgid "Volume:"
 msgstr "Hlasitost:"
 
-#: redbot/cogs/audio/core/commands/controller.py:722
+#: redbot/cogs/audio/core/commands/controller.py:763
 #, docstring
 msgid "Toggle repeat."
 msgstr "Zapnout opakování."
 
-#: redbot/cogs/audio/core/commands/controller.py:730
-#: redbot/cogs/audio/core/commands/controller.py:741
+#: redbot/cogs/audio/core/commands/controller.py:771
+#: redbot/cogs/audio/core/commands/controller.py:782
 msgid "Unable To Toggle Repeat"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:731
+#: redbot/cogs/audio/core/commands/controller.py:772
 msgid "You need the DJ role to toggle repeat."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:742
+#: redbot/cogs/audio/core/commands/controller.py:783
 msgid "You must be in the voice channel to toggle repeat."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:748
+#: redbot/cogs/audio/core/commands/controller.py:791
 msgid "Repeat tracks: {true_or_false}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:765
+#: redbot/cogs/audio/core/commands/controller.py:808
 #, docstring
 msgid "Remove a specific track number from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:774
+#: redbot/cogs/audio/core/commands/controller.py:817
 msgid "Nothing queued."
 msgstr "Nic není ve frontě."
 
-#: redbot/cogs/audio/core/commands/controller.py:778
-#: redbot/cogs/audio/core/commands/controller.py:784
-#: redbot/cogs/audio/core/commands/controller.py:791
-#: redbot/cogs/audio/core/commands/controller.py:824
+#: redbot/cogs/audio/core/commands/controller.py:821
+#: redbot/cogs/audio/core/commands/controller.py:827
+#: redbot/cogs/audio/core/commands/controller.py:836
+#: redbot/cogs/audio/core/commands/controller.py:869
 msgid "Unable To Modify Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:779
+#: redbot/cogs/audio/core/commands/controller.py:822
 msgid "You need the DJ role to remove tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:785
+#: redbot/cogs/audio/core/commands/controller.py:828
 msgid "You must be in the voice channel to manage the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:792
-#: redbot/cogs/audio/core/commands/controller.py:865
+#: redbot/cogs/audio/core/commands/controller.py:837
+#: redbot/cogs/audio/core/commands/controller.py:910
 msgid "Song number must be greater than 1 and within the queue limit."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:806
-#: redbot/cogs/audio/core/commands/controller.py:830
+#: redbot/cogs/audio/core/commands/controller.py:851
+#: redbot/cogs/audio/core/commands/controller.py:875
 msgid "Removed track from queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:807
+#: redbot/cogs/audio/core/commands/controller.py:852
 msgid "Removed {track} from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:825
+#: redbot/cogs/audio/core/commands/controller.py:870
 msgid "Removed 0 tracks, nothing matches the URL provided."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:831
+#: redbot/cogs/audio/core/commands/controller.py:876
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:841
+#: redbot/cogs/audio/core/commands/controller.py:886
 #, docstring
 msgid "Bump a track number to the top of the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:852
-#: redbot/cogs/audio/core/commands/controller.py:858
-#: redbot/cogs/audio/core/commands/controller.py:864
-#: redbot/cogs/audio/core/commands/player.py:146
+#: redbot/cogs/audio/core/commands/controller.py:897
+#: redbot/cogs/audio/core/commands/controller.py:903
+#: redbot/cogs/audio/core/commands/controller.py:909
+#: redbot/cogs/audio/core/commands/player.py:150
 msgid "Unable To Bump Track"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:853
+#: redbot/cogs/audio/core/commands/controller.py:898
 msgid "You must be in the voice channel to bump a track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:859
+#: redbot/cogs/audio/core/commands/controller.py:904
 msgid "You need the DJ role to bump tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/controller.py:875
+#: redbot/cogs/audio/core/commands/controller.py:921
 msgid "Moved track to the top of the queue."
 msgstr ""
 
@@ -1671,63 +1671,63 @@ msgstr ""
 msgid "You need the DJ role to load equalizer presets."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:192
+#: redbot/cogs/audio/core/commands/equalizer.py:193
 #, docstring
 msgid "Reset the eq to 0 across all bands."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:201
+#: redbot/cogs/audio/core/commands/equalizer.py:202
 msgid "Unable To Modify Preset"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:202
+#: redbot/cogs/audio/core/commands/equalizer.py:203
 msgid "You need the DJ role to reset the equalizer."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:217
+#: redbot/cogs/audio/core/commands/equalizer.py:220
 msgid "Equalizer values have been reset."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:225
+#: redbot/cogs/audio/core/commands/equalizer.py:228
 #, docstring
 msgid "Save the current eq settings to a preset."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:235
-#: redbot/cogs/audio/core/commands/equalizer.py:253
-#: redbot/cogs/audio/core/commands/equalizer.py:268
+#: redbot/cogs/audio/core/commands/equalizer.py:238
+#: redbot/cogs/audio/core/commands/equalizer.py:256
+#: redbot/cogs/audio/core/commands/equalizer.py:271
 msgid "Unable To Save Preset"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:236
+#: redbot/cogs/audio/core/commands/equalizer.py:239
 msgid "You need the DJ role to save equalizer presets."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:240
+#: redbot/cogs/audio/core/commands/equalizer.py:243
 msgid "Please enter a name for this equalizer preset."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:254
+#: redbot/cogs/audio/core/commands/equalizer.py:257
 msgid "No equalizer preset name entered, try the command again later."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:269
+#: redbot/cogs/audio/core/commands/equalizer.py:272
 msgid "Try the command again with a shorter name."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:273
+#: redbot/cogs/audio/core/commands/equalizer.py:276
 msgid "Preset name already exists, do you want to replace it?"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:281
+#: redbot/cogs/audio/core/commands/equalizer.py:284
 msgid "Not saving preset."
 msgstr "Neukládám přednastavení."
 
-#: redbot/cogs/audio/core/commands/equalizer.py:293
+#: redbot/cogs/audio/core/commands/equalizer.py:298
 msgid "Current equalizer saved to the {preset_name} preset."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:307
+#: redbot/cogs/audio/core/commands/equalizer.py:312
 #, docstring
 msgid "Set an eq band with a band number or name and value.\n\n"
 "        Band positions are 1-15 and values have a range of -0.25 to 1.0.\n"
@@ -1737,27 +1737,27 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:323
+#: redbot/cogs/audio/core/commands/equalizer.py:328
 msgid "Unable To Set Preset"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:324
+#: redbot/cogs/audio/core/commands/equalizer.py:329
 msgid "You need the DJ role to set equalizer presets."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:363
+#: redbot/cogs/audio/core/commands/equalizer.py:370
 msgid "Invalid Band"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:364
+#: redbot/cogs/audio/core/commands/equalizer.py:371
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:388
+#: redbot/cogs/audio/core/commands/equalizer.py:395
 msgid "Preset Modified"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/equalizer.py:389
+#: redbot/cogs/audio/core/commands/equalizer.py:396
 msgid "The {band_name}Hz band has been set to {band_value}."
 msgstr ""
 
@@ -1975,189 +1975,185 @@ msgid "Play a URL or search for a track."
 msgstr "Přehrajte URL nebo vyhledejte skladbu."
 
 #: redbot/cogs/audio/core/commands/player.py:50
-#: redbot/cogs/audio/core/commands/player.py:157
-#: redbot/cogs/audio/core/commands/player.py:736
+#: redbot/cogs/audio/core/commands/player.py:161
+#: redbot/cogs/audio/core/commands/player.py:754
 msgid "That URL is not allowed."
 msgstr "Tato adresa URL není povolena."
 
 #: redbot/cogs/audio/core/commands/player.py:54
-#: redbot/cogs/audio/core/commands/player.py:161
-#: redbot/cogs/audio/core/commands/player.py:742
+#: redbot/cogs/audio/core/commands/player.py:165
+#: redbot/cogs/audio/core/commands/player.py:760
 msgid "That track is not allowed."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:61
-#: redbot/cogs/audio/core/commands/player.py:168
-#: redbot/cogs/audio/core/commands/player.py:433
-#: redbot/cogs/audio/core/commands/player.py:549
-#: redbot/cogs/audio/core/commands/player.py:804
+#: redbot/cogs/audio/core/commands/player.py:172
+#: redbot/cogs/audio/core/commands/player.py:441
+#: redbot/cogs/audio/core/commands/player.py:561
+#: redbot/cogs/audio/core/commands/player.py:822
 msgid "You need the DJ role to queue tracks."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:65
-#: redbot/cogs/audio/core/commands/player.py:172
-#: redbot/cogs/audio/core/commands/player.py:437
-#: redbot/cogs/audio/core/commands/player.py:553
-#: redbot/cogs/audio/core/commands/player.py:679
+#: redbot/cogs/audio/core/commands/player.py:176
+#: redbot/cogs/audio/core/commands/player.py:445
+#: redbot/cogs/audio/core/commands/player.py:565
+#: redbot/cogs/audio/core/commands/player.py:693
 msgid "Connection to Lavalink has failed"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:68
-#: redbot/cogs/audio/core/commands/player.py:175
-#: redbot/cogs/audio/core/commands/player.py:440
-#: redbot/cogs/audio/core/commands/player.py:556
-#: redbot/cogs/audio/core/commands/player.py:682
+#: redbot/cogs/audio/core/commands/player.py:179
+#: redbot/cogs/audio/core/commands/player.py:448
+#: redbot/cogs/audio/core/commands/player.py:568
+#: redbot/cogs/audio/core/commands/player.py:696
 msgid "Please check your console or logs for details."
 msgstr "Prosím zkontrolujte svou konzoli nebo logy pro podrobnosti."
 
-#: redbot/cogs/audio/core/commands/player.py:106
-#: redbot/cogs/audio/core/commands/player.py:213
+#: redbot/cogs/audio/core/commands/player.py:110
+#: redbot/cogs/audio/core/commands/player.py:221
 msgid "You must be in the voice channel to use the play command."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:112
-#: redbot/cogs/audio/core/commands/player.py:219
-#: redbot/cogs/audio/core/commands/player.py:247
+#: redbot/cogs/audio/core/commands/player.py:116
+#: redbot/cogs/audio/core/commands/player.py:227
+#: redbot/cogs/audio/core/commands/player.py:255
 msgid "No tracks found for `{query}`."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:118
-#: redbot/cogs/audio/core/commands/player.py:225
-#: redbot/cogs/audio/core/commands/player.py:528
-#: redbot/cogs/audio/core/commands/player.py:601
+#: redbot/cogs/audio/core/commands/player.py:122
+#: redbot/cogs/audio/core/commands/player.py:233
+#: redbot/cogs/audio/core/commands/player.py:540
+#: redbot/cogs/audio/core/commands/player.py:617
 msgid "Queue size limit reached."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:141
+#: redbot/cogs/audio/core/commands/player.py:145
 #, docstring
 msgid "Force play a URL or search for a track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:147
+#: redbot/cogs/audio/core/commands/player.py:151
 msgid "Only single tracks work with bump play."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:250
-#: redbot/cogs/audio/core/commands/player.py:785
-#: redbot/cogs/audio/core/commands/player.py:905
+#: redbot/cogs/audio/core/commands/player.py:258
+#: redbot/cogs/audio/core/commands/player.py:803
+#: redbot/cogs/audio/core/commands/player.py:923
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:257
-#: redbot/cogs/audio/core/commands/player.py:792
-#: redbot/cogs/audio/core/commands/player.py:912
+#: redbot/cogs/audio/core/commands/player.py:265
+#: redbot/cogs/audio/core/commands/player.py:810
+#: redbot/cogs/audio/core/commands/player.py:930
 msgid "Track is not playable."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:259
-#: redbot/cogs/audio/core/commands/player.py:793
-#: redbot/cogs/audio/core/commands/player.py:913
+#: redbot/cogs/audio/core/commands/player.py:267
+#: redbot/cogs/audio/core/commands/player.py:811
+#: redbot/cogs/audio/core/commands/player.py:931
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:290
+#: redbot/cogs/audio/core/commands/player.py:298
 msgid "This track is not allowed in this server."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:312
+#: redbot/cogs/audio/core/commands/player.py:320
 msgid "Track exceeds maximum length."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:335
+#: redbot/cogs/audio/core/commands/player.py:343
 msgid "{time} until track playback: #1 in queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:339
+#: redbot/cogs/audio/core/commands/player.py:347
 msgid "Track Enqueued"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:353
+#: redbot/cogs/audio/core/commands/player.py:361
 #, docstring
 msgid "Pick a Spotify playlist from a list of categories to start playing."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:413
+#: redbot/cogs/audio/core/commands/player.py:421
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:423
+#: redbot/cogs/audio/core/commands/player.py:431
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:481
+#: redbot/cogs/audio/core/commands/player.py:493
 msgid "You must be in the voice channel to use the genre command."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:488
+#: redbot/cogs/audio/core/commands/player.py:500
 msgid "No categories found"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:492
-#: redbot/cogs/audio/core/commands/player.py:510
+#: redbot/cogs/audio/core/commands/player.py:504
+#: redbot/cogs/audio/core/commands/player.py:522
 msgid "No categories found, try again later."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:497
+#: redbot/cogs/audio/core/commands/player.py:509
 msgid "Categories"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:503
+#: redbot/cogs/audio/core/commands/player.py:515
 msgid "No categories selected, try again later."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:518
+#: redbot/cogs/audio/core/commands/player.py:530
 msgid "Playlists for {friendly_name}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:525
+#: redbot/cogs/audio/core/commands/player.py:537
 msgid "No tracks to play."
 msgstr "Žádné skladby."
 
-#: redbot/cogs/audio/core/commands/player.py:535
+#: redbot/cogs/audio/core/commands/player.py:547
 msgid "Couldn't find tracks for the selected playlist."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:543
+#: redbot/cogs/audio/core/commands/player.py:555
 #, docstring
 msgid "Starts auto play."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:597
+#: redbot/cogs/audio/core/commands/player.py:613
 msgid "You must be in the voice channel to use the autoplay command."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:611
+#: redbot/cogs/audio/core/commands/player.py:627
 msgid "Couldn't get a valid track."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:617
-#: redbot/cogs/audio/core/commands/player.py:754
-#: redbot/cogs/audio/core/commands/player.py:773
-#: redbot/cogs/audio/core/commands/player.py:892
+#: redbot/cogs/audio/core/commands/player.py:633
+#: redbot/cogs/audio/core/commands/player.py:772
+#: redbot/cogs/audio/core/commands/player.py:791
+#: redbot/cogs/audio/core/commands/player.py:910
 #: redbot/cogs/audio/core/commands/playlists.py:1926
 msgid "Unable to Get Track"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:618
-#: redbot/cogs/audio/core/commands/player.py:755
-#: redbot/cogs/audio/core/commands/player.py:774
-#: redbot/cogs/audio/core/commands/player.py:893
+#: redbot/cogs/audio/core/commands/player.py:634
+#: redbot/cogs/audio/core/commands/player.py:773
+#: redbot/cogs/audio/core/commands/player.py:792
+#: redbot/cogs/audio/core/commands/player.py:911
 #: redbot/cogs/audio/core/commands/playlists.py:1927
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:632
-msgid "Auto play started."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/player.py:634
+#: redbot/cogs/audio/core/commands/player.py:648
 msgid "Adding a track to queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:640
+#: redbot/cogs/audio/core/commands/player.py:654
 #, docstring
 msgid "Pick a track with a search.\n\n"
 "        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\n"
@@ -2165,40 +2161,40 @@ msgid "Pick a track with a search.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:692
-#: redbot/cogs/audio/core/commands/player.py:702
-#: redbot/cogs/audio/core/commands/player.py:708
-#: redbot/cogs/audio/core/commands/player.py:719
+#: redbot/cogs/audio/core/commands/player.py:706
+#: redbot/cogs/audio/core/commands/player.py:720
+#: redbot/cogs/audio/core/commands/player.py:726
+#: redbot/cogs/audio/core/commands/player.py:737
 msgid "Unable To Search For Tracks"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:720
+#: redbot/cogs/audio/core/commands/player.py:738
 msgid "You must be in the voice channel to enqueue tracks."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:783
-#: redbot/cogs/audio/core/commands/player.py:903
+#: redbot/cogs/audio/core/commands/player.py:801
+#: redbot/cogs/audio/core/commands/player.py:921
 msgid "Nothing found."
 msgstr "Nic nenalezeno."
 
-#: redbot/cogs/audio/core/commands/player.py:852
+#: redbot/cogs/audio/core/commands/player.py:870
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} skladby nemůžou být zařazeny do fronty."
 
-#: redbot/cogs/audio/core/commands/player.py:858
+#: redbot/cogs/audio/core/commands/player.py:876
 msgid "Queued {num} track(s).{maxlength_msg}"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:864
+#: redbot/cogs/audio/core/commands/player.py:882
 msgid "folder"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:866
+#: redbot/cogs/audio/core/commands/player.py:884
 msgid "search"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/player.py:869
+#: redbot/cogs/audio/core/commands/player.py:887
 msgid "{time} until start of {type} playback: starts at #{position} in queue"
 msgstr ""
 
@@ -2653,8 +2649,8 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/queue.py:289
 #: redbot/cogs/audio/core/commands/queue.py:291
 #: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "There's nothing in the queue."
 msgstr ""
 
@@ -3006,10 +3002,10 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/queue.py:319
 #: redbot/cogs/audio/core/commands/queue.py:326
 #: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:349
-#: redbot/cogs/audio/core/commands/queue.py:356
-#: redbot/cogs/audio/core/commands/queue.py:363
-#: redbot/cogs/audio/core/commands/queue.py:371
+#: redbot/cogs/audio/core/commands/queue.py:353
+#: redbot/cogs/audio/core/commands/queue.py:360
+#: redbot/cogs/audio/core/commands/queue.py:367
+#: redbot/cogs/audio/core/commands/queue.py:375
 msgid "Unable To Shuffle Queue"
 msgstr ""
 
@@ -3017,7 +3013,7 @@ msgstr ""
 msgid "You need the DJ role to shuffle the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:376
+#: redbot/cogs/audio/core/commands/queue.py:380
 msgid "Queue has been shuffled."
 msgstr ""
 
