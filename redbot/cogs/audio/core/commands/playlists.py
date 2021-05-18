@@ -125,9 +125,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
             player = lavalink.get_player(ctx.guild.id)
             to_append = await self.fetch_playlist_tracks(
@@ -314,7 +312,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             temp_playlist = cast(Playlist, FakePlaylist(to_author.id, to_scope))
             if not await self.can_manage_playlist(
-                to_scope, temp_playlist, ctx, to_author, to_guild, bypass=False
+                to_scope, temp_playlist, ctx, to_author, to_guild
             ):
                 ctx.command.reset_cooldown(ctx)
                 return
@@ -409,9 +407,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         async with ctx.typing():
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
             if playlist_name.isnumeric():
@@ -499,9 +495,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
@@ -597,9 +591,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
 
@@ -1131,9 +1123,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
             temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
@@ -1255,9 +1245,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
 
             track_list = playlist.tracks
@@ -1363,9 +1351,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         async with ctx.typing():
             temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return ctx.command.reset_cooldown(ctx)
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
             if playlist_name.isnumeric():
@@ -1840,9 +1826,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope = scope or PlaylistScope.GUILD.value
         temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
         async with ctx.typing():
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return
             if not await self._playlist_check(ctx):
                 return
@@ -2033,9 +2017,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
             scope_name = self.humanize_scope(
