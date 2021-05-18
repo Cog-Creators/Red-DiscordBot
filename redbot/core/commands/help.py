@@ -126,6 +126,7 @@ class HelpSettings:
             "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
             "\nHelp is a menu: {use_menus}"
             "\nHelp shows hidden commands: {show_hidden}"
+            "\nHelp shows commands aliases: {show_aliases}"
             "\nHelp only shows commands which can be used: {verify_checks}"
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
@@ -275,6 +276,20 @@ class RedHelpFormatter(HelpFormatterABC):
             "You can also type {ctx.clean_prefix}help <category> for more info on a category."
         ).format(ctx=ctx)
 
+    @staticmethod
+    def get_command_signature(ctx: Context, command: commands.Command) -> str:
+        parent = command.parent
+        entries = []
+        while parent is not None:
+            if not parent.signature or parent.invoke_without_command:
+                entries.append(parent.name)
+            else:
+                entries.append(parent.name + " " + parent.signature)
+            parent = parent.parent
+        parent_sig = (" ".join(reversed(entries)) + " ") if entries else ""
+
+        return f"{ctx.clean_prefix}{parent_sig}{command.name} {command.signature}"
+
     async def format_command_help(
         self, ctx: Context, obj: commands.Command, help_settings: HelpSettings
     ):
@@ -300,9 +315,9 @@ class RedHelpFormatter(HelpFormatterABC):
         description = command.description or ""
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
-        signature = _(
-            "Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}"
-        ).format(ctx=ctx, command=command)
+        signature = _("Syntax: {command_signature}").format(
+            command_signature=self.get_command_signature(ctx, command)
+        )
 
         aliases = command.aliases
         if help_settings.show_aliases and aliases:

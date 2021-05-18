@@ -45,6 +45,7 @@
   - docs/framework_datamanager.rst
   - docs/framework_events.rst
   - docs/cog_guides/cog_manager_ui.rst
+  - docs/cog_guides/core.rst
 "Category: CI":
   - .github/workflows/*
 "Category: Cleanup Cog":
@@ -120,7 +121,10 @@
   - schema/*
   - tools/*
 "Category: Mod Cog":
+  # Source
   - redbot/cogs/mod/*
+  # Docs
+  - docs/cog_guides/mod.rst
 "Category: Modlog API":
   # Source
   - redbot/core/generic_casetypes.py
@@ -131,14 +135,20 @@
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
+  # Source
   - redbot/cogs/mutes/*
+  # Docs
+  - docs/cog_guides/mutes.rst
 "Category: Permissions":
   # Source
   - redbot/cogs/permissions/*
   # Docs
   - docs/cog_permissions.rst
 "Category: Reports Cog":
+  # Source
   - redbot/cogs/reports/*
+  # Docs
+  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   # Source
   - redbot/core/rpc.py

@@ -181,7 +181,7 @@ async def _edit_prefix(red, prefix, no_prompt):
 
 async def _edit_owner(red, owner, no_prompt):
     if owner:
-        if not (15 <= len(str(owner)) <= 21):
+        if not (15 <= len(str(owner)) <= 20):
             print(
                 "The provided owner id doesn't look like a valid Discord user id."
                 " Instance's owner will remain unchanged."
@@ -199,7 +199,7 @@ async def _edit_owner(red, owner, no_prompt):
             print("Please enter a Discord user id for new owner:")
             while True:
                 owner_id = input("> ").strip()
-                if not (15 <= len(owner_id) <= 21 and owner_id.isdecimal()):
+                if not (15 <= len(owner_id) <= 20 and owner_id.isdecimal()):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
@@ -434,7 +434,7 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.logout()
+        await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]

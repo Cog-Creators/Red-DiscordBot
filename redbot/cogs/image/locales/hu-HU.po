@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-04-05 20:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -30,8 +30,8 @@ msgstr ""
 #: redbot/cogs/image/image.py:52
 #, docstring
 msgid "Search Imgur for the specified term.\n\n"
-"        Use `count` to choose how many images should be returned.\n"
-"        Command can return up to 5 images.\n"
+"        - `[count]`: How many images should be returned (maximum 5). Defaults to 1.\n"
+"        - `<terms...>`: The terms used to search Imgur.\n"
 "        "
 msgstr ""
 
@@ -58,10 +58,10 @@ msgstr ""
 #: redbot/cogs/image/image.py:99
 #, docstring
 msgid "Get images from a subreddit.\n\n"
-"        You can customize the search with the following options:\n"
-"        - `<count>`: number of images to return (up to 5)\n"
-"        - `<sort_type>`: new, top\n"
-"        - `<window>`: day, week, month, year, all\n"
+"        - `<subreddit>`: The subreddit to get images from.\n"
+"        - `[count]`: The number of images to return (maximum 5). Defaults to 1.\n"
+"        - `[sort_type]`: New, or top results. Defaults to top.\n"
+"        - `[window]`: The timeframe, can be the past day, week, month, year or all. Defaults to day.\n"
 "        "
 msgstr ""
 
@@ -69,8 +69,8 @@ msgstr ""
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr "Csak az 'új' és 'top' érvényesek rendezési típusnak."
 
-#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:197
-#: redbot/cogs/image/image.py:221
+#: redbot/cogs/image/image.py:150 redbot/cogs/image/image.py:200
+#: redbot/cogs/image/image.py:227
 msgid "No results found."
 msgstr "Nincs találat."
 
@@ -95,32 +95,36 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:180
 #, docstring
-msgid "Retrieve the first search result from Giphy."
+msgid "Retrieve the first search result from Giphy.\n\n"
+"        - `<keywords...>`: The keywords used to search Giphy.\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/image/image.py:184 redbot/cogs/image/image.py:208
+#: redbot/cogs/image/image.py:187 redbot/cogs/image/image.py:214
 msgid "An API key has not been set! Please set one with `{prefix}giphycreds`."
 msgstr ""
 
-#: redbot/cogs/image/image.py:199
+#: redbot/cogs/image/image.py:202
 msgid "Error contacting the Giphy API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:204
+#: redbot/cogs/image/image.py:207
 #, docstring
-msgid "Retrieve a random GIF from a Giphy search."
+msgid "Retrieve a random GIF from a Giphy search.\n\n"
+"        - `<keywords...>`: The keywords used to generate a random GIF.\n"
+"        "
 msgstr ""
 
-#: redbot/cogs/image/image.py:223
+#: redbot/cogs/image/image.py:229
 msgid "Error contacting the API."
 msgstr ""
 
-#: redbot/cogs/image/image.py:228
+#: redbot/cogs/image/image.py:234
 #, docstring
 msgid "Explains how to set GIPHY API tokens."
 msgstr ""
 
-#: redbot/cogs/image/image.py:230
+#: redbot/cogs/image/image.py:236
 msgid "To get a GIPHY API Key:\n"
 "1. Login to (or create) a GIPHY account.\n"
 "2. Visit this page: https://developers.giphy.com/dashboard.\n"
@@ -133,7 +137,7 @@ msgid "To get a GIPHY API Key:\n"
 "9. In Discord, run the command {command}.\n"
 msgstr ""
 
-#: redbot/cogs/image/image.py:243
+#: redbot/cogs/image/image.py:249
 msgid "<your_api_key_here>"
 msgstr ""
 
