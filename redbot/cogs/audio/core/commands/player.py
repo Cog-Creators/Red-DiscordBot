@@ -37,9 +37,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_play(self, ctx: commands.Context, *, query: str):
-        """Play a URL or search for a track.
+        """Play the specified track or search for a close match.
 
-        To play a local track/file, the query should be <parentfolder>\<filename>.
+        To play a local track, the query should be `<parentfolder>\\<filename>`.
         """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
