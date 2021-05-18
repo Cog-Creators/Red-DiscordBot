@@ -1525,7 +1525,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         query_obj=query,
                     ):
                         if IS_DEBUG:
-                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                            log.debug(
+                                "Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id
+                            )
                         continue
                     query = Query.process_input(track.uri, self.local_folder_current_path)
                     if query.is_local:
@@ -1544,9 +1546,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     player.add(author_obj, track)
-                    self.bot.dispatch(
-                        "red_audio_track_enqueue", player.channel.guild, track, ctx.author
-                    )
+                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
                     track_len += 1
                 player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:
