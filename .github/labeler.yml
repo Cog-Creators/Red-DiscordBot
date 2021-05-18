@@ -121,7 +121,10 @@
   - schema/*
   - tools/*
 "Category: Mod Cog":
+  # Source
   - redbot/cogs/mod/*
+  # Docs
+  - docs/cog_guides/mod.rst
 "Category: Modlog API":
   # Source
   - redbot/core/generic_casetypes.py
@@ -131,7 +134,10 @@
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
+  # Source
   - redbot/cogs/mutes/*
+  # Docs
+  - docs/cog_guides/mutes.rst
 "Category: Permissions":
   # Source
   - redbot/cogs/permissions/*

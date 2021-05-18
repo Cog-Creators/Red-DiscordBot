@@ -63,8 +63,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
-                if _error_code == 1000 and current_track is not None and player.is_playing:
-                    await player.resume(current_track, start=player.position, replace=True)
+                if _error_code == 1000 and player.current is not None and player.is_playing:
+                    await player.resume(player.current, start=player.position, replace=True)
                     by_remote = extra.get("byRemote", "")
                     reason = extra.get("reason", "No Specified Reason").strip()
                     ws_audio_log.info(
@@ -145,19 +145,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
-                notify_channel = player.fetch("notify_channel")
+                notify_channel_id = player.fetch("notify_channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
                         )
                     return
                 except TrackEnqueueError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel,
                             title=_("Unable to Get Track"),
@@ -168,9 +168,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
-            notify_channel = player.fetch("notify_channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
+            notify_channel_id = player.fetch("notify_channel")
+            notify_channel = self.bot.get_channel(notify_channel_id)
+            if notify_channel and self._has_notify_perms(notify_channel):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
@@ -207,9 +207,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
-                notify_channel = player.fetch("notify_channel")
-                if notify_channel and notify:
-                    notify_channel = self.bot.get_channel(notify_channel)
+                notify_channel_id = player.fetch("notify_channel")
+                notify_channel = self.bot.get_channel(notify_channel_id)
+                if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
@@ -279,7 +279,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
                             description=_(
-                                "Playback of the song has stopped due to an unexcepted error.\n{error}"
+                                "Playback of the song has stopped due to an unexpected error.\n{error}"
                             ).format(error=description),
                         )
                     else:
@@ -520,7 +520,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
-                        "Voice websocket closed event for guild %d ->"
+                        "Voice websocket closed event"
                         "Code: %d -- Remote: %s -- %s, %r",
                         guild_id,
                         code,
@@ -531,9 +531,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     ws_audio_log.info(
                         "WS EVENT - IGNORED (Healthy Socket) | "
-                        "Voice websocket closed event for guild %d ->"
+                        "Voice websocket closed event "
                         "Code: %d -- Remote: %s -- %s, %r",
-                        guild_id,
                         code,
                         by_remote,
                         reason,
