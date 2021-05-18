@@ -126,7 +126,7 @@ class HelpSettings:
             "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
             "\nHelp is a menu: {use_menus}"
             "\nHelp shows hidden commands: {show_hidden}"
-            "\nHelp shows commands alias(es): {show_aliases}"
+            "\nHelp shows commands aliases: {show_aliases}"
             "\nHelp only shows commands which can be used: {verify_checks}"
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
