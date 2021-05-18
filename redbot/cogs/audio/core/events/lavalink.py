@@ -520,7 +520,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
-                        "Voice websocket closed event"
+                        "Voice websocket closed event for guild %d ->"
                         "Code: %d -- Remote: %s -- %s, %r",
                         guild_id,
                         code,
@@ -531,8 +531,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     ws_audio_log.info(
                         "WS EVENT - IGNORED (Healthy Socket) | "
-                        "Voice websocket closed event "
+                        "Voice websocket closed event for guild %d ->"
                         "Code: %d -- Remote: %s -- %s, %r",
+                        guild_id,
                         code,
                         by_remote,
                         reason,
