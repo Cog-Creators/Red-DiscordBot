@@ -33,7 +33,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ `[p]local folder`
         ​ ​ ​ ​ ​ ​ ​ ​ Open a menu to pick a folder to queue.
 
-        ​ ​ `[p]local folder [folder_name]`
+        ​ ​ `[p]local folder folder_name`
         ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.
         """
         if not await self.localtracks_folder_exists(ctx):
