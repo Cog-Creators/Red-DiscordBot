@@ -137,19 +137,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
-                notify_channel = player.fetch("channel")
+                notify_channel_id = player.fetch("channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
                         )
                     return
                 except TrackEnqueueError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel,
                             title=_("Unable to Get Track"),
@@ -160,9 +160,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
-            notify_channel = player.fetch("channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
+            notify_channel_id = player.fetch("channel")
+            notify_channel = self.bot.get_channel(notify_channel_id)
+            if notify_channel and self._has_notify_perms(notify_channel):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
@@ -199,9 +199,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
-                notify_channel = player.fetch("channel")
-                if notify_channel and notify:
-                    notify_channel = self.bot.get_channel(notify_channel)
+                notify_channel_id = player.fetch("channel")
+                notify_channel = self.bot.get_channel(notify_channel_id)
+                if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)

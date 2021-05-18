@@ -195,6 +195,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         player: lavalink.Player,
     ):
         notify_channel = self.bot.get_channel(player.fetch("channel"))
+        has_perms = self._has_notify_perms(notify_channel)
         tries = 0
         while not player._is_playing:
             await asyncio.sleep(0.1)
@@ -202,7 +203,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 return
             tries += 1
 
-        if notify_channel and not player.fetch("autoplay_notified", False):
+        if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
             if (
                 len(player.manager.players) < 10
                 or not player._last_resume

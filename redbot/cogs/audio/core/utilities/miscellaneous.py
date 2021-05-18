@@ -100,6 +100,10 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_author(name=name)
         return await ctx.send(embed=embed)
 
+    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+        perms = channel.permissions_for(channel.guild.me)
+        return all((perms.send_messages, perms.embed_links))
+
     async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
             await self.api_interface.run_tasks(ctx)
