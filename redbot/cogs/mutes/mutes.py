@@ -780,12 +780,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command(name="forcerole")
     @commands.is_owner()
-    async def force_role_mutes(self, ctx: commands.Context, force_role_mutes: bool):
+    async def force_role_mutes(self, ctx: commands.Context, true_or_false: bool):
         """
         Whether or not to force role only mutes on the bot
         """
-        await self.config.force_role_mutes.set(force_role_mutes)
-        if force_role_mutes:
+        await self.config.force_role_mutes.set(true_or_false)
+        if true_or_false:
             await ctx.send(_("Okay I will enforce role mutes before muting users."))
         else:
             await ctx.send(_("Okay I will allow channel overwrites for muting users."))

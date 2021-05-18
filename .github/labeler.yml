@@ -131,7 +131,10 @@
 "Category: Modlog Cog":
   - redbot/cogs/modlog/*
 "Category: Mutes Cog":
+  # Source
   - redbot/cogs/mutes/*
+  # Docs
+  - docs/cog_guides/mutes.rst
 "Category: Permissions":
   # Source
   - redbot/cogs/permissions/*
