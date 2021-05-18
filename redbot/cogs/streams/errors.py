@@ -18,5 +18,9 @@ class InvalidYoutubeCredentials(StreamsError):
     pass
 
 
+class YoutubeQuotaExceeded(StreamsError):
+    pass
+
+
 class OfflineStream(StreamsError):
     pass

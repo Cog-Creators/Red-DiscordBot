@@ -10,7 +10,7 @@ from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormat
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [
-    "patch_relative_to",
+    "GIT_VERSION",
     "repo_manager",
     "repo",
     "bot_repo",
@@ -28,6 +28,17 @@ __all__ = [
 ]
 
 
+def _get_git_version():
+    """Returns version tuple in format: (major, minor)"""
+    raw_version = sp.check_output(("git", "version"), text=True)[12:]
+    # we're only interested in major and minor version if we will ever need micro
+    # there's more handling needed for versions like `2.25.0-rc1` and `2.25.0.windows.1`
+    return tuple(int(n) for n in raw_version.split(".", maxsplit=3)[:2])
+
+
+GIT_VERSION = _get_git_version()
+
+
 async def fake_run_noprint(*args, **kwargs):
     fake_result_tuple = namedtuple("fake_result", "returncode result")
     res = fake_result_tuple(0, (args, kwargs))
@@ -36,14 +47,6 @@ async def fake_run_noprint(*args, **kwargs):
 
 async def fake_current_commit(*args, **kwargs):
     return "fake_result"
-
-
-@pytest.fixture(scope="module", autouse=True)
-def patch_relative_to(monkeysession):
-    def fake_relative_to(self, some_path: Path):
-        return self
-
-    monkeysession.setattr("pathlib.Path.relative_to", fake_relative_to)
 
 
 @pytest.fixture
@@ -148,6 +151,7 @@ def _init_test_repo(destination: Path):
     git_dirparams = ("git", "-C", str(destination))
     init_commands = (
         (*git_dirparams, "init"),
+        (*git_dirparams, "checkout", "-b", "master"),
         (*git_dirparams, "config", "--local", "user.name", "Cog-Creators"),
         (*git_dirparams, "config", "--local", "user.email", "cog-creators@example.org"),
         (*git_dirparams, "config", "--local", "commit.gpgSign", "false"),

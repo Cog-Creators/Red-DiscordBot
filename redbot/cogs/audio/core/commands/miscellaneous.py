@@ -3,19 +3,22 @@ import heapq
 import logging
 import math
 import random
+from pathlib import Path
 
 import discord
 import lavalink
-from redbot.core.utils import AsyncIter
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
+_ = Translator("Audio", Path(__file__))
 
 
 class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -37,6 +40,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.command(name="audiostats")
     @commands.guild_only()
+    @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
@@ -52,7 +56,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 if not p.current:
                     raise AttributeError
-                current_title = self.get_track_description(
+                current_title = await self.get_track_description(
                     p.current, self.local_folder_current_path
                 )
                 msg += "{} [`{}`]: {}\n".format(p.channel.guild.name, connect_dur, current_title)

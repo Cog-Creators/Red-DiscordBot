@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
@@ -174,6 +175,19 @@ class Tunnel(metaclass=TunnelMeta):
 
     # Backwards-compatible typo fix (GH-2496)
     files_from_attatch = files_from_attach
+
+    async def close_because_disabled(self, close_message: str):
+        """
+        Sends a mesage to both ends of the tunnel that the tunnel is now closed.
+
+        Parameters
+        ----------
+        close_message: str
+            The message to send to both ends of the tunnel.
+        """
+
+        tasks = [destination.send(close_message) for destination in (self.recipient, self.origin)]
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     async def communicate(
         self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False

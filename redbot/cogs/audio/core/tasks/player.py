@@ -1,9 +1,13 @@
 import asyncio
 import logging
 import time
+from pathlib import Path
+
 from typing import Dict
 
 import lavalink
+
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
 from ...audio_logging import debug_exc_log
@@ -11,6 +15,7 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
@@ -20,6 +25,8 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         while True:
             async for p in AsyncIter(lavalink.all_players()):
                 server = p.channel.guild
+                if await self.bot.cog_disabled_in_guild(self, server):
+                    continue
 
                 if [self.bot.user] == p.channel.members:
                     stop_times.setdefault(server.id, time.time())
@@ -40,14 +47,36 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
             servers.update(pause_times)
             async for sid in AsyncIter(servers, steps=5):
                 server_obj = self.bot.get_guild(sid)
-                if sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
+                if not server_obj:
+                    stop_times.pop(sid, None)
+                    pause_times.pop(sid, None)
+                    try:
+                        player = lavalink.get_player(sid)
+                        await self.api_interface.persistent_queue_api.drop(sid)
+                        player.store("autoplay_notified", False)
+                        await player.stop()
+                        await player.disconnect()
+                        await self.config.guild_from_id(
+                            guild_id=sid
+                        ).currently_auto_playing_in.set([])
+                    except Exception as err:
+                        debug_exc_log(
+                            log, err, f"Exception raised in Audio's emptydc_timer for {sid}."
+                        )
+
+                elif sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
                             player = lavalink.get_player(sid)
+                            await self.api_interface.persistent_queue_api.drop(sid)
+                            player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
+                            await self.config.guild_from_id(
+                                guild_id=sid
+                            ).currently_auto_playing_in.set([])
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)

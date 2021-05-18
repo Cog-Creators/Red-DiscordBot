@@ -55,11 +55,11 @@ def test_bordered_asymmetrical_2():
 def test_bordered_ascii():
     expected = textwrap.dedent(
         """\
-    ----------------    ---------------
+    +--------------+    +-------------+
     |one           |    |four         |
     |two           |    |five         |
     |three         |    |six          |
-    ----------------    ---------------"""
+    +--------------+    +-------------+"""
     )
     col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
     assert chat_formatting.bordered(col1, col2, ascii_border=True) == expected

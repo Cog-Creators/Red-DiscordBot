@@ -1,11 +1,13 @@
 import logging
 import re
-from typing import Final, List, Set, Pattern
+
+from typing import Final, List, Optional, Pattern, Set, Union
 from urllib.parse import urlparse
 
 import discord
 
 from redbot.core import Config
+from redbot.core.commands import Context
 
 from ...audio_dataclasses import Query
 from ..abc import MixinMeta
@@ -54,11 +56,21 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return not (channel.user_limit == 0 or channel.user_limit > len(channel.members))
 
     async def is_query_allowed(
-        self, config: Config, guild: discord.Guild, query: str, query_obj: Query = None
+        self,
+        config: Config,
+        ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
+        query: str,
+        query_obj: Query,
     ) -> bool:
-        """Checks if the query is allowed in this server or globally"""
-
-        query = query.lower().strip()
+        """Checks if the query is allowed in this server or globally."""
+        if ctx_or_channel:
+            guild = ctx_or_channel.guild
+            channel = (
+                ctx_or_channel.channel if isinstance(ctx_or_channel, Context) else ctx_or_channel
+            )
+            query = query.lower().strip()
+        else:
+            guild = None
         if query_obj is not None:
             query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
                 "scsearch:", "soundcloudsearch"

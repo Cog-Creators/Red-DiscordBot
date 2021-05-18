@@ -3,12 +3,10 @@ commands.converter
 ==================
 This module contains useful functions and classes for command argument conversion.
 
-Some of the converters within are included provisionaly and are marked as such.
+Some of the converters within are included provisionally and are marked as such.
 """
 import functools
-import os
 import re
-import warnings
 from datetime import timedelta
 from typing import (
     TYPE_CHECKING,
@@ -22,6 +20,7 @@ from typing import (
     TypeVar,
     Literal as Literal,
     Any,
+    Union as UserInputOptional,
 )
 
 import discord
@@ -36,7 +35,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "DictConverter",
-    "GuildConverter",
     "UserInputOptional",
     "NoParseOptional",
     "TimedeltaConverter",
@@ -48,7 +46,7 @@ __all__ = [
 
 _ = Translator("commands.converter", __file__)
 
-ID_REGEX = re.compile(r"([0-9]{15,21})")
+ID_REGEX = re.compile(r"([0-9]{15,20})")
 
 
 # Taken with permission from
@@ -76,7 +74,7 @@ def parse_timedelta(
     """
     This converts a user provided string into a timedelta
 
-    The units should be in order from largest to smallest. 
+    The units should be in order from largest to smallest.
     This works with or without whitespace.
 
     Parameters
@@ -113,7 +111,12 @@ def parse_timedelta(
                     _("`{unit}` is not a valid unit of time for this command").format(unit=k)
                 )
         if params:
-            delta = timedelta(**params)
+            try:
+                delta = timedelta(**params)
+            except OverflowError:
+                raise BadArgument(
+                    _("The time set is way too high, consider setting something reasonable.")
+                )
             if maximum and maximum < delta:
                 raise BadArgument(
                     _(
@@ -130,80 +133,46 @@ def parse_timedelta(
     return None
 
 
-class GuildConverter(discord.Guild):
+class _GuildConverter(discord.Guild):
     """Converts to a `discord.Guild` object.
 
     The lookup strategy is as follows (in order):
 
     1. Lookup by ID.
     2. Lookup by name.
+
+    .. deprecated-removed:: 3.4.8 60
+        ``GuildConverter`` is now only provided within ``redbot.core.commands`` namespace.
     """
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
-        match = ID_REGEX.fullmatch(argument)
-
-        if match is None:
-            ret = discord.utils.get(ctx.bot.guilds, name=argument)
-        else:
-            guild_id = int(match.group(1))
-            ret = ctx.bot.get_guild(guild_id)
-
-        if ret is None:
-            raise BadArgument(_('Server "{name}" not found.').format(name=argument))
-
-        return ret
+        return await dpy_commands.GuildConverter().convert(ctx, argument)
 
 
-class _APIToken(discord.ext.commands.Converter):
-    """Converts to a `dict` object.
-
-    This will parse the input argument separating the key value pairs into a 
-    format to be used for the core bots API token storage.
-    
-    This will split the argument by a space, comma, or semicolon and return a dict
-    to be stored. Since all API's are different and have different naming convention,
-    this leaves the onus on the cog creator to clearly define how to setup the correct
-    credential names for their cogs.
-
-    Note: Core usage of this has been replaced with `DictConverter` use instead.
-
-    .. warning::
-        This will be removed in the first minor release after 2020-08-05.
-    """
-
-    async def convert(self, ctx: "Context", argument) -> dict:
-        bot = ctx.bot
-        result = {}
-        match = re.split(r";|,| ", argument)
-        # provide two options to split incase for whatever reason one is part of the api key we're using
-        if len(match) > 1:
-            result[match[0]] = "".join(r for r in match[1:])
-        else:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
-        if not result:
-            raise BadArgument(_("The provided tokens are not in a valid format."))
-        return result
-
-
-_APIToken.__name__ = "APIToken"
+_GuildConverter.__name__ = "GuildConverter"
 
 
 def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
-    # honestly, this is awesome (PEP-562)
-    if name == "APIToken":
-        warnings.warn(
-            "`APIToken` is deprecated since Red 3.3.0 and will be removed"
-            " in the first minor release after 2020-08-05. Use `DictConverter` instead.",
-            DeprecationWarning,
-            stacklevel=stacklevel,
+    # Let me just say it one more time... This is awesome! (PEP-562)
+    if name == "GuildConverter":
+        # let's not waste time on importing this when we don't need it
+        # (and let's not put in the public API)
+        from redbot.core.utils._internal_utils import deprecated_removed
+
+        deprecated_removed(
+            "`GuildConverter` from `redbot.core.commands.converter` namespace",
+            "3.4.8",
+            60,
+            "Use `GuildConverter` from `redbot.core.commands` namespace instead.",
+            stacklevel=2,
         )
-        return globals()["_APIToken"]
+        return globals()["_GuildConverter"]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def __dir__() -> List[str]:
-    return [*globals().keys(), "APIToken"]
+    return [*globals().keys(), "GuildConverter"]
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
@@ -217,7 +186,7 @@ else:
 
     class DictConverter(dpy_commands.Converter):
         """
-        Converts pairs of space seperated values to a dict
+        Converts pairs of space separated values to a dict
         """
 
         def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
@@ -387,9 +356,6 @@ if not TYPE_CHECKING:
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
 
-        .. warning::
-            This converter class is still provisional.
-
         .. seealso::
             The `ignore_optional_for_conversion` option of commands.
         """
@@ -400,34 +366,18 @@ if not TYPE_CHECKING:
             return key
 
 
-_T_OPT = TypeVar("_T_OPT", bound=Type)
+_T = TypeVar("_T")
 
-if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
-
-    class UserInputOptional(Generic[_T_OPT]):
-        """
-        This can be used when user input should be converted as discord.py
-        treats `typing.Optional`, but the type should not be equivalent to
-        ``typing.Union[DesiredType, None]`` for type checking.
-
-
-        .. warning::
-            This converter class is still provisional.
-
-            This class may not play well with mypy yet
-            and may still require you guard this in a
-            type checking conditional import vs the desired types
-
-            We're aware and looking into improving this.
-        """
-
-        def __class_getitem__(cls, key: _T_OPT) -> _T_OPT:
-            if isinstance(key, tuple):
-                raise TypeError("Must only provide a single type to Optional")
-            return key
-
-
-else:
+if not TYPE_CHECKING:
+    #: This can be used when user input should be converted as discord.py
+    #: treats `typing.Optional`, but the type should not be equivalent to
+    #: ``typing.Union[DesiredType, None]`` for type checking.
+    #:
+    #: Note: In type checking context, this type hint can be passed
+    #: multiple types, but such usage is not supported and will fail at runtime
+    #:
+    #: .. warning::
+    #:    This converter class is still provisional.
     UserInputOptional = Optional
 
 

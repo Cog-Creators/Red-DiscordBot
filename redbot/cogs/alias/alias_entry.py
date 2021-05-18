@@ -24,7 +24,7 @@ class AliasEntry:
     uses: int
 
     def __init__(
-        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int],
+        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int]
     ):
         super().__init__()
         self.name = name
@@ -90,6 +90,30 @@ class AliasCache:
         self._loaded = False
         self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {None: {}}
 
+    async def anonymize_aliases(self, user_id: int):
+
+        async with self.config.entries() as global_aliases:
+            for a in global_aliases:
+                if a.get("creator", 0) == user_id:
+                    a["creator"] = 0xDE1
+                    if self._cache_enabled:
+                        self._aliases[None][a["name"]] = AliasEntry.from_json(a)
+
+        all_guilds = await self.config.all_guilds()
+        async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
+            for a in guild_data["entries"]:
+                if a.get("creator", 0) == user_id:
+                    break
+            else:
+                continue
+            # basically, don't build a context manager without a need.
+            async with self.config.guild_from_id(guild_id).entries() as entry_list:
+                for a in entry_list:
+                    if a.get("creator", 0) == user_id:
+                        a["creator"] = 0xDE1
+                        if self._cache_enabled:
+                            self._aliases[guild_id][a["name"]] = AliasEntry.from_json(a)
+
     async def load_aliases(self):
         if not self._cache_enabled:
             self._loaded = True
@@ -137,7 +161,7 @@ class AliasCache:
         return aliases
 
     async def get_alias(
-        self, guild: Optional[discord.Guild], alias_name: str,
+        self, guild: Optional[discord.Guild], alias_name: str
     ) -> Optional[AliasEntry]:
         """Returns an AliasEntry object if the provided alias_name is a registered alias"""
         server_aliases: List[AliasEntry] = []

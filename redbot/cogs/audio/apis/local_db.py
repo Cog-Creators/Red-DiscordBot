@@ -4,14 +4,16 @@ import datetime
 import logging
 import random
 import time
-from types import SimpleNamespace
-from typing import Callable, List, MutableMapping, Optional, TYPE_CHECKING, Tuple, Union
+from pathlib import Path
 
-from redbot.core.utils import AsyncIter
+from types import SimpleNamespace
+from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union
 
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_logging import debug_exc_log
@@ -59,7 +61,7 @@ if TYPE_CHECKING:
 
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
-
+_ = Translator("Audio", Path(__file__))
 _SCHEMA_VERSION = 3
 
 
@@ -313,7 +315,7 @@ class LavalinkTableWrapper(BaseWrapper):
         self.statement.get_random = LAVALINK_QUERY_LAST_FETCHED_RANDOM
         self.statement.get_all_global = LAVALINK_FETCH_ALL_ENTRIES_GLOBAL
         self.fetch_result = LavalinkCacheFetchResult
-        self.fetch_for_global: Optional[Callable] = None
+        self.fetch_for_global: Optional[Callable] = LavalinkCacheFetchForGlobalResult
 
     async def fetch_one(
         self, values: MutableMapping

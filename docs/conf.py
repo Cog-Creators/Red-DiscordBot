@@ -21,6 +21,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("_ext"))
 
 os.environ["BUILDING_DOCS"] = "1"
 
@@ -42,6 +43,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx-prompt",
+    "deprecated_removed",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +61,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018-2020, Cog Creators"
+copyright = "2018-2021, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -107,9 +110,6 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-
-# This will be needed until sphinx_rtd_theme supports the html5 writer
-html4_writer = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

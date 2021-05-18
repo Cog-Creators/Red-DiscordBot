@@ -1,9 +1,10 @@
+import asyncio
 import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Iterable, List, Mapping, Tuple, Dict, Set
+from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal
 from urllib.parse import quote_plus
 
 import discord
@@ -11,7 +12,7 @@ from fuzzywuzzy import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus
+from redbot.core.utils import menus, AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -38,16 +39,40 @@ class OnCooldown(CCError):
     pass
 
 
+class CommandNotEdited(CCError):
+    pass
+
+
 class CommandObj:
     def __init__(self, **kwargs):
-        config = kwargs.get("config")
+        self.config = kwargs.get("config")
         self.bot = kwargs.get("bot")
-        self.db = config.guild
+        self.db = self.config.guild
 
     @staticmethod
     async def get_commands(config) -> dict:
         _commands = await config.commands()
         return {k: v for k, v in _commands.items() if _commands[k]}
+
+    async def redact_author_ids(self, user_id: int):
+
+        all_guilds = await self.config.all_guilds()
+
+        for guild_id in all_guilds.keys():
+            await asyncio.sleep(0)
+            async with self.config.guild_from_id(guild_id).commands() as all_commands:
+                async for com_name, com_info in AsyncIter(all_commands.items(), steps=100):
+                    if not com_info:
+                        continue
+
+                    if com_info.get("author", {}).get("id", 0) == user_id:
+                        com_info["author"]["id"] = 0xDE1
+                        com_info["author"]["name"] = "Deleted User"
+
+                    if editors := com_info.get("editors", None):
+                        for index, editor_id in enumerate(editors):
+                            if editor_id == user_id:
+                                editors[index] = 0xDE1
 
     async def get_responses(self, ctx):
         intro = _(
@@ -143,9 +168,9 @@ class CommandObj:
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await self.bot.wait_for("message", check=pred, timeout=30)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 await ctx.send(_("Response timed out, please try again later."))
-                return
+                raise CommandNotEdited()
             if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
@@ -154,9 +179,9 @@ class CommandObj:
                     resp = await self.bot.wait_for(
                         "message", check=MessagePredicate.same_context(ctx), timeout=180
                     )
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     await ctx.send(_("Response timed out, please try again later."))
-                    return
+                    raise CommandNotEdited()
                 response = resp.content
 
         if response:
@@ -180,7 +205,7 @@ class CommandObj:
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
     async def delete(self, ctx: commands.Context, command: str):
-        """Delete an already exisiting custom command"""
+        """Delete an already existing custom command"""
         # Check if this command is registered
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
@@ -189,7 +214,12 @@ class CommandObj:
 
 @cog_i18n(_)
 class CustomCommands(commands.Cog):
-    """Creates commands used to display text."""
+    """This cog contains commands for creating and managing custom commands that display text.
+
+    These are useful for storing information members might need, like FAQ answers or invite links.
+    Custom commands can be used by anyone by default, so be careful with pings.
+    Commands can only be lowercase, and will not respond to any uppercase letters.
+    """
 
     def __init__(self, bot):
         super().__init__()
@@ -200,17 +230,32 @@ class CustomCommands(commands.Cog):
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
         self.cooldowns = {}
 
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        if requester != "discord_deleted_user":
+            return
+
+        await self.commandobj.redact_author_ids(user_id)
+
     @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
-        """Custom commands management."""
+        """Base command for Custom Commands management."""
         pass
 
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
         """Get the raw response of a custom command, to get the proper markdown.
-        
-        This is helpful for copy and pasting."""
+
+        This is helpful for copy and pasting.
+
+        **Arguments:**
+
+        - `<command>` The custom command to get the raw response of."""
         commands = await self.config.guild(ctx.guild).commands()
         if command not in commands:
             return await ctx.send("That command doesn't exist.")
@@ -250,7 +295,15 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="search")
     @commands.guild_only()
     async def cc_search(self, ctx: commands.Context, *, query):
-        """Searches through custom commands, according to the query."""
+        """
+        Searches through custom commands, according to the query.
+
+        Uses fuzzywuzzy searching to find close matches.
+
+        **Arguments:**
+
+        - `<query>` The query to search for. Can be multiple words.
+        """
         cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
         extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
@@ -291,6 +344,10 @@ class CustomCommands(commands.Cog):
         """Create a CC where it will randomly choose a response!
 
         Note: This command is interactive.
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -319,7 +376,12 @@ class CustomCommands(commands.Cog):
         """Add a simple custom command.
 
         Example:
-        - `[p]customcom create simple yourcommand Text you want`
+            - `[p]customcom create simple yourcommand Text you want`
+
+        **Arguments:**
+
+        - `<command>` The command executed to return the text. Cast to lowercase.
+        - `<text>` The text to return when executing the command. See guide for enhanced usage.
         """
         if any(char.isspace() for char in command):
             # Haha, nice try
@@ -351,8 +413,16 @@ class CustomCommands(commands.Cog):
         cooldowns may be set. All cooldowns must be cooled to call the
         custom command.
 
-        Example:
-        - `[p]customcom cooldown yourcommand 30`
+        Examples:
+            - `[p]customcom cooldown pingrole`
+            - `[p]customcom cooldown yourcommand 30`
+            - `[p]cc cooldown mycommand 30 guild`
+
+        **Arguments:**
+
+        - `<command>` The custom command to check or set the cooldown.
+        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.
+        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.
         """
         if cooldown is None:
             try:
@@ -389,7 +459,11 @@ class CustomCommands(commands.Cog):
         """Delete a custom command.
 
         Example:
-        - `[p]customcom delete yourcommand`
+            - `[p]customcom delete yourcommand`
+
+        **Arguments:**
+
+        - `<command>` The custom command to delete.
         """
         try:
             await self.commandobj.delete(ctx=ctx, command=command)
@@ -403,7 +477,12 @@ class CustomCommands(commands.Cog):
         """Edit a custom command.
 
         Example:
-        - `[p]customcom edit yourcommand Text you want`
+            - `[p]customcom edit yourcommand Text you want`
+
+        **Arguments:**
+
+        - `<command>` The custom command to edit.
+        - `<text>` The new text to return when executing the command.
         """
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
@@ -416,6 +495,8 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
+        except CommandNotEdited:
+            pass
 
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
@@ -459,12 +540,17 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
-        """Shows a custom command's responses and its settings."""
+        """Shows a custom command's responses and its settings.
+
+        **Arguments:**
+
+        - `<command>` The custom command to show.
+        """
 
         try:
             cmd = await self.commandobj.get_full(ctx.message, command_name)
         except NotFound:
-            ctx.send(_("I could not not find that custom command."))
+            await ctx.send(_("I could not not find that custom command."))
             return
 
         responses = cmd["response"]
@@ -472,12 +558,14 @@ class CustomCommands(commands.Cog):
         if isinstance(responses, str):
             responses = [responses]
 
-        author = ctx.guild.get_member(cmd["author"]["id"])
-        # If the author is still in the server, show their current name
-        if author:
-            author = "{} ({})".format(author, cmd["author"]["id"])
+        _aid = cmd["author"]["id"]
+
+        if _aid == 0xDE1:
+            author = _("Deleted User")
+        elif member := ctx.guild.get_member(_aid):
+            author = f"{member} ({_aid})"
         else:
-            author = "{} ({})".format(cmd["author"]["name"], cmd["author"]["id"])
+            author = f"{cmd['author']['name']} ({_aid})"
 
         _type = _("Random") if len(responses) > 1 else _("Normal")
 
@@ -490,7 +578,7 @@ class CustomCommands(commands.Cog):
             command_name=command_name, author=author, created_at=cmd["created_at"], type=_type
         )
 
-        cooldowns = cmd["cooldowns"]
+        cooldowns = cmd.get("cooldowns", {})
 
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
@@ -514,6 +602,9 @@ class CustomCommands(commands.Cog):
         user_allowed = True
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+            return
+
+        if await self.bot.cog_disabled_in_guild(self, message.guild):
             return
 
         ctx = await self.bot.get_context(message)
