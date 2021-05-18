@@ -3061,8 +3061,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Using this without a setting will toggle.
 
          **Examples:**
-            - `[p]helpset usemenues True` - Enables using menus.
-            - `[p]helpset usemenues` - Toggles the value.
+            - `[p]helpset usemenus True` - Enables using menus.
+            - `[p]helpset usemenus` - Toggles the value.
 
         **Arguments:**
             - `[use_menus]` - Whether to use menus. Leave blank to toggle.
@@ -3884,7 +3884,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the allowlist.
 
-        This disables the local allowlist and clears all entires.
+        This disables the local allowlist and clears all entries.
 
         **Example:**
             - `[p]localallowlist clear`
@@ -3969,7 +3969,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Removes user or role from blocklist.
+        Removes user or role from local blocklist.
 
         **Examples:**
             - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist.
@@ -3993,7 +3993,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the server blocklist.
 
-        This disabled the server blocklist and clears all entries.
+        This disables the server blocklist and clears all entries.
 
         **Example:**
             - `[p]blocklist clear`
@@ -4261,12 +4261,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Disable a command in this server only.
 
-                **Examples:**
-                    - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
-                    - `[p]command disable server urban` - Disables the `urban` command in the General cog.
+        **Examples:**
+            - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
+            - `[p]command disable server urban` - Disables the `urban` command in the General cog.
 
-                **Arguments:**
-                    - `<command>` - The command to disable for the current server.
+        **Arguments:**
+            - `<command>` - The command to disable for the current server.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4325,7 +4325,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """
-                Enable a command globally.
+        Enable a command globally.
 
         **Examples:**
             - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
