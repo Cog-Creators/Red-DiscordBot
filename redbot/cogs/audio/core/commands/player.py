@@ -40,6 +40,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Play the specified track or search for a close match.
 
         To play a local track, the query should be `<parentfolder>\\<filename>`.
+        If you are the bot owner, use `[p]audioset info` to display your localtracks path.
         """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
