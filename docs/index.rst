@@ -45,6 +45,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/filter
     cog_guides/general
     cog_guides/image
+    cog_guides/mod
     cog_guides/mutes
     cog_guides/reports
     cog_guides/streams
