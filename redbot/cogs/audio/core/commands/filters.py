@@ -566,7 +566,7 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             ],
             name="Nightcore",
         )
-        ts = filters.Timescale(speed=1.2, pitch=1.2, rate=1)
+        ts = filters.Timescale(speed=1.17, pitch=1.2, rate=1)
         await player.set_filters(equalizer=eq, timescale=ts)
         async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = player.equalizer.get()
