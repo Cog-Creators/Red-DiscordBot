@@ -286,8 +286,11 @@ class Case:
     modified_at: Optional[float]
         The UNIX time of the last change to the case.
         `None` if the case was never edited.
-    message: Optional[discord.Message]
+    message: Optional[Union[discord.PartialMessage, discord.Message]]
         The message created by Modlog for this case.
+        Instance of `discord.Message` *if* the Case object was returned from
+        `modlog.create_case()`, otherwise `discord.PartialMessage`.
+
         `None` if we know that the message no longer exists
         (note: it might not exist regardless of whether this attribute is `None`)
         or if it has never been created.
