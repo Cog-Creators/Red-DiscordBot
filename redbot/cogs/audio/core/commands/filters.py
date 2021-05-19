@@ -601,17 +601,17 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to apply effects."),
             )
 
-        eq = Equalizer(
+        eq = filters.Equalizer(
             levels=[
-                {"band": 0, "gain": 0.3},
-                {"band": 1, "gain": 0.3},
+                {"band": 0, "gain": -0.075},
+                {"band": 1, "gain": 0.125},
+                {"band": 2, "gain": 0.125},
             ],
             name="Vaporwave",
         )
-        ts = filters.Timescale(speed=1.0, pitch=0.65, rate=1)
-        tm = filters.Tremolo(frequency=14, depth=0.35)
-        vb = filters.Vibrato(frequency=14, depth=0.45)
-        await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm, vibrato=vb)
+        ts = filters.Timescale(speed=0.70, pitch=0.75, rate=1)
+        tm = filters.Tremolo(frequency=14, depth=0.25)
+        await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm)
         async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
