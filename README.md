@@ -72,7 +72,7 @@ from installing and updating, every part of the bot can be controlled from withi
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search
@@ -131,4 +131,4 @@ Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art f
 Bot Project.
 
 This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) which is distributed under MIT License.
-Copy of this license can be found in [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in [redbot/vendored](redbot/vendored) folder of this repository.
+A copy of this license can be found in the [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in the [redbot/vendored](redbot/vendored) folder of this repository.

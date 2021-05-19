@@ -1268,7 +1268,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
         for command in itertools.chain((command_obj,), command_obj.parents):
-            if command_obj.requires.bot_perms.embed_links:
+            if command.requires.bot_perms.embed_links:
                 # a slight abuse of this exception to save myself two lines later...
                 raise commands.UserFeedbackCheckFailure(
                     _(
@@ -1434,6 +1434,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if enabled is None:
             await self.bot._config.user(ctx.author).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
 
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         await ctx.send(
@@ -2788,7 +2789,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format. This is used for formatting date, time and numbers.
+        Changes the bot's regional format. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale.
@@ -2830,7 +2831,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(manage_guild=True)
     async def regionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale in this server.
@@ -3061,8 +3062,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Using this without a setting will toggle.
 
          **Examples:**
-            - `[p]helpset usemenues True` - Enables using menus.
-            - `[p]helpset usemenues` - Toggles the value.
+            - `[p]helpset usemenus True` - Enables using menus.
+            - `[p]helpset usemenus` - Toggles the value.
 
         **Arguments:**
             - `[use_menus]` - Whether to use menus. Leave blank to toggle.
@@ -3884,7 +3885,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the allowlist.
 
-        This disables the local allowlist and clears all entires.
+        This disables the local allowlist and clears all entries.
 
         **Example:**
             - `[p]localallowlist clear`
@@ -3969,7 +3970,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *users_or_roles: Union[discord.Member, discord.Role, int]
     ):
         """
-        Removes user or role from blocklist.
+        Removes user or role from local blocklist.
 
         **Examples:**
             - `[p]localblocklist remove @26 @Will` - Removes two users from the local blocklist.
@@ -3993,7 +3994,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Clears the server blocklist.
 
-        This disabled the server blocklist and clears all entries.
+        This disables the server blocklist and clears all entries.
 
         **Example:**
             - `[p]blocklist clear`
@@ -4261,12 +4262,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Disable a command in this server only.
 
-                **Examples:**
-                    - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
-                    - `[p]command disable server urban` - Disables the `urban` command in the General cog.
+        **Examples:**
+            - `[p]command disable server userinfo` - Disables the `userinfo` command in the Mod cog.
+            - `[p]command disable server urban` - Disables the `urban` command in the General cog.
 
-                **Arguments:**
-                    - `<command>` - The command to disable for the current server.
+        **Arguments:**
+            - `<command>` - The command to disable for the current server.
         """
         command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
         if command_obj is None:
@@ -4325,7 +4326,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @command_enable.command(name="global")
     async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """
-                Enable a command globally.
+        Enable a command globally.
 
         **Examples:**
             - `[p]command enable global userinfo` - Enables the `userinfo` command in the Mod cog.
@@ -4472,7 +4473,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or role immune from automated moderation actions.
+        Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
             - `[p]autoimmune remove @TwentySix` - Removes a user.

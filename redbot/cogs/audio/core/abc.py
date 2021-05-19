@@ -232,6 +232,10 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def update_external_status(self) -> bool:
         raise NotImplementedError()
 
@@ -318,7 +322,13 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def can_manage_playlist(
-        self, scope: str, playlist: "Playlist", ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: "Playlist",
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         raise NotImplementedError()
 

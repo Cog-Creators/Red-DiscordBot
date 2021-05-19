@@ -29,6 +29,9 @@ jobs:
           twine upload dist/*
 
   pr_dev_bump:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: release_to_pypi
     runs-on: ubuntu-latest
     steps:

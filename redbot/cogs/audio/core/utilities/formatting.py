@@ -93,7 +93,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed.")
+                msg = _("Connection to Lavalink has failed")
                 description = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
@@ -103,10 +103,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
@@ -114,6 +110,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
@@ -167,7 +164,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
@@ -185,7 +182,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+                    "red_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
@@ -199,9 +196,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
