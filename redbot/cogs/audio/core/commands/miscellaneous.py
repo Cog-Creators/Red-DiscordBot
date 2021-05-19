@@ -46,10 +46,10 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())
-        total_num = len(lavalink.all_live_players())
+        total_num = len(lavalink.all_connected_players())
 
         msg = ""
-        async for p in AsyncIter(lavalink.all_live_players()):
+        async for p in AsyncIter(lavalink.all_connected_players()):
             connect_dur = self.get_time_string(
                 int(
                     (datetime.datetime.now(datetime.timezone.utc) - p.connected_at).total_seconds()
