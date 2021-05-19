@@ -1676,9 +1676,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.command.reset_cooldown(ctx)
                 return
             try:
-                if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+                if not await self.can_manage_playlist(
+                    scope, playlist, ctx, author, guild, bypass=True
+                ):
                     return
-                if playlist.url or playlist.id == 42069:
+                if playlist.url or getattr(playlist, "id", 0) == 42069:
                     player = lavalink.get_player(ctx.guild.id)
                     added, removed, playlist = await self._maybe_update_playlist(
                         ctx, player, playlist

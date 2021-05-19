@@ -39,7 +39,13 @@ CURRATED_DATA = (
 
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
-        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: Playlist,
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         is_owner = await self.bot.is_owner(ctx.author)
         has_perms = False
@@ -54,8 +60,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
-
-        if is_owner:
+        if getattr(playlist, "id", 0) == 42069:
+            has_perms = bypass
+        elif is_owner:
             has_perms = True
         elif playlist.scope == PlaylistScope.USER.value:
             if not is_different_user:
@@ -476,7 +483,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _maybe_update_playlist(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
-        if playlist.id == 42069:
+        if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
             results = {}
             old_tracks = playlist.tracks_obj
