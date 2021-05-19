@@ -1,3 +1,4 @@
+from __future__ import annotations
 import concurrent
 import contextlib
 import datetime
@@ -58,7 +59,7 @@ from .api_utils import (
 
 if TYPE_CHECKING:
     from .. import Audio
-
+    from ..core.utilities import SettingCacheManager
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")
 _ = Translator("Audio", Path(__file__))
@@ -67,10 +68,16 @@ _SCHEMA_VERSION = 3
 
 class BaseWrapper:
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
         self.bot = bot
         self.config = config
+        self.config_cache = cache
         self.database = conn
         self.statement = SimpleNamespace()
         self.statement.pragma_temp_store = PRAGMA_SET_temp_store
@@ -103,7 +110,7 @@ class BaseWrapper:
 
     async def clean_up_old_entries(self) -> None:
         """Delete entries older than x in the local cache tables"""
-        max_age = await self.config.cache_age()
+        max_age = await self.config_cache.local_cache_age.get_global()
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
@@ -160,7 +167,7 @@ class BaseWrapper:
         Union[LavalinkCacheFetchResult, SpotifyCacheFetchResult, YouTubeCacheFetchResult]
     ]:
         """Get an entry from the local cache"""
-        max_age = await self.config.cache_age()
+        max_age = await self.config_cache.local_cache_age.get_global()
         maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values.update({"maxage": maxage_int})
@@ -233,9 +240,14 @@ class BaseWrapper:
 
 class YouTubeTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
-        super().__init__(bot, config, conn, cog)
+        super().__init__(bot, config, conn, cog, cache)
         self.statement.upsert = YOUTUBE_UPSERT
         self.statement.update = YOUTUBE_UPDATE
         self.statement.get_one = YOUTUBE_QUERY
@@ -269,9 +281,14 @@ class YouTubeTableWrapper(BaseWrapper):
 
 class SpotifyTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
-        super().__init__(bot, config, conn, cog)
+        super().__init__(bot, config, conn, cog, cache)
         self.statement.upsert = SPOTIFY_UPSERT
         self.statement.update = SPOTIFY_UPDATE
         self.statement.get_one = SPOTIFY_QUERY
@@ -305,9 +322,14 @@ class SpotifyTableWrapper(BaseWrapper):
 
 class LavalinkTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
-        super().__init__(bot, config, conn, cog)
+        super().__init__(bot, config, conn, cog, cache)
         self.statement.upsert = LAVALINK_UPSERT
         self.statement.update = LAVALINK_UPDATE
         self.statement.get_one = LAVALINK_QUERY
@@ -363,12 +385,24 @@ class LocalCacheWrapper:
     """Wraps all table apis into 1 object representing the local cache"""
 
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
         self.bot = bot
         self.config = config
         self.database = conn
         self.cog = cog
-        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(bot, config, conn, self.cog)
-        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(bot, config, conn, self.cog)
-        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(bot, config, conn, self.cog)
+        self.config_cache = cache
+        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(
+            bot, config, conn, self.cog, self.config_cache
+        )
+        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(
+            bot, config, conn, self.cog, self.config_cache
+        )
+        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(
+            bot, config, conn, self.cog, self.config_cache
+        )

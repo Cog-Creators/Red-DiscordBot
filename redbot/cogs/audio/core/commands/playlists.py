@@ -1532,7 +1532,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         continue
                     query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
-                        self.config,
+                        self.config_cache,
                         ctx,
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,

@@ -370,7 +370,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         playlist_url = None
         seek = 0
         if type(query) is not list:
-            if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+            if not await self.is_query_allowed(
+                self.config_cache, ctx, f"{query}", query_obj=query
+            ):
                 raise QueryUnauthorized(
                     _("{query} is not an allowed query.").format(query=query.to_string_user())
                 )
@@ -445,7 +447,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     continue
                 query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
-                    self.config,
+                    self.config_cache,
                     ctx,
                     f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                     query_obj=query,
@@ -532,7 +534,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     single_track.start_timestamp = seek * 1000
                 query = Query.process_input(single_track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
-                    self.config,
+                    self.config_cache,
                     ctx,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "

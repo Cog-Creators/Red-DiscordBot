@@ -46,9 +46,16 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
             self.api_interface = AudioAPIInterface(
-                self.bot, self.config, self.session, self.db_conn, self.bot.get_cog("Audio")
+                self.bot,
+                self.config,
+                self.session,
+                self.db_conn,
+                self.bot.get_cog("Audio"),
+                self.config_cache,
             )
-            self.playlist_api = PlaylistWrapper(self.bot, self.config, self.db_conn)
+            self.playlist_api = PlaylistWrapper(
+                self.bot, self.config, self.db_conn, self.config_cache
+            )
             await self.playlist_api.init()
             await self.api_interface.initialize()
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()

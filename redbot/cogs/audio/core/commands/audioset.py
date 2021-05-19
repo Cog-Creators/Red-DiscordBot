@@ -1283,7 +1283,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         If you wish to disable a specific cache use a negative number.
         """
-        current_level = CacheLevel(await self.config.cache_level())
+        current_level = CacheLevel(await self.config_cache.local_cache_level.get_global())
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
         lavalink_cache = CacheLevel.set_lavalink()
@@ -1298,7 +1298,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Youtube cache:    [{youtube_status}]\n")
                 + _("Lavalink cache:   [{lavalink_status}]\n")
             ).format(
-                max_age=str(await self.config.cache_age()) + " " + _("days"),
+                max_age=str(await self.config_cache.local_cache_age.get_global())
+                + " "
+                + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
@@ -1343,15 +1345,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Youtube cache:    [{youtube_status}]\n")
             + _("Lavalink cache:   [{lavalink_status}]\n")
         ).format(
-            max_age=str(await self.config.cache_age()) + " " + _("days"),
+            max_age=str(await self.config_cache.local_cache_age.get_global()) + " " + _("days"),
             spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
             youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
             lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
         )
 
         await self.send_embed_msg(ctx, title=_("Cache Settings"), description=box(msg, lang="ini"))
-
-        await self.config.cache_level.set(newcache.value)
+        await self.config_cache.local_cache_level.set_global(newcache.value)
 
     @command_audioset.command(name="cacheage")
     @commands.is_owner()
@@ -1369,7 +1370,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ).format(prefix=ctx.prefix)
             age = 7
         msg += _("I've set the cache age to {age} days").format(age=age)
-        await self.config.cache_age.set(age)
+        await self.config_cache.local_cache_age.set_global(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
     @commands.is_owner()

@@ -1,18 +1,20 @@
+from __future__ import annotations
 import logging
 import re
 
-from typing import Final, List, Optional, Pattern, Set, Union
+from typing import Final, Optional, Pattern, TYPE_CHECKING, Union
 from urllib.parse import urlparse
 
 import discord
 
-from redbot.core import Config
 from redbot.core.commands import Context
 
 from ...audio_dataclasses import Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
+if TYPE_CHECKING:
+    from . import SettingCacheManager
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
 
 _RE_YT_LIST_PLAYLIST: Final[Pattern] = re.compile(
@@ -59,7 +61,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def is_query_allowed(
         self,
-        config: Config,
+        cache: SettingCacheManager,
         ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
         query: str,
         query_obj: Query,
@@ -77,20 +79,5 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query = query_obj.lavalink_query.replace("ytsearch:", "youtubesearch").replace(
                 "scsearch:", "soundcloudsearch"
             )
-        global_whitelist = set(await config.url_keyword_whitelist())
-        global_whitelist = [i.lower() for i in global_whitelist]
-        if global_whitelist:
-            return any(i in query for i in global_whitelist)
-        global_blacklist = set(await config.url_keyword_blacklist())
-        global_blacklist = [i.lower() for i in global_blacklist]
-        if any(i in query for i in global_blacklist):
-            return False
-        if guild is not None:
-            whitelist_unique: Set[str] = set(await config.guild(guild).url_keyword_whitelist())
-            whitelist: List[str] = [i.lower() for i in whitelist_unique]
-            if whitelist:
-                return any(i in query for i in whitelist)
-            blacklist_unique: Set[str] = set(await config.guild(guild).url_keyword_blacklist())
-            blacklist: List[str] = [i.lower() for i in blacklist_unique]
-            return not any(i in query for i in blacklist)
-        return True
+
+        return await cache.blacklist_whitelist.allowed_by_whitelist_blacklist(query, guild=guild)

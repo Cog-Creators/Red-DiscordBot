@@ -158,7 +158,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         before_queue_length = len(player.queue)
         query = Query.process_input(search_choice, self.local_folder_current_path)
         if not await self.is_query_allowed(
-            self.config,
+            self.config_cache,
             ctx,
             f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
