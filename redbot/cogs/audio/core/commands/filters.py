@@ -25,6 +25,7 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="effects", invoke_without_command=True)
     @commands.guild_only()
     async def command_effects(self, ctx: commands.Context):
+        """Control all affects that can be applied to tracks."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
