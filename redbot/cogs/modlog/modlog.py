@@ -103,7 +103,9 @@ class ModLog(commands.Cog):
     async def resetcases(self, ctx: commands.Context):
         """Reset all modlog cases in this server."""
         guild = ctx.guild
-        await ctx.send(_("Are you sure you would like to reset all modlog cases? (yes/no)"))
+        await ctx.send(
+            _("Are you sure you would like to reset all modlog cases in this server?") + " (yes/no)"
+        )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
             msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
