@@ -2789,7 +2789,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format. This is used for formatting date, time and numbers.
+        Changes the bot's regional format. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale.
@@ -2831,7 +2831,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(manage_guild=True)
     async def regionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale in this server.
