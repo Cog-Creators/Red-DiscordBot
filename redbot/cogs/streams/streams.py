@@ -6,7 +6,6 @@ from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replace
 from redbot.core.utils.chat_formatting import escape, pagify
 
 from .streamtypes import (
-    HitboxStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -203,18 +202,21 @@ class Streams(commands.Cog):
             if self.ttv_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60:
                 await self.get_twitch_bearer_token()
 
+    @commands.guild_only()
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
         await self.maybe_renew_twitch_bearer_token()
         token = (await self.bot.get_shared_api_tokens("twitch")).get("client_id")
         stream = TwitchStream(
+            _bot=self.bot,
             name=channel_name,
             token=token,
             bearer=self.ttv_bearer_cache.get("access_token", None),
         )
         await self.check_online(ctx, stream)
 
+    @commands.guild_only()
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
@@ -224,27 +226,26 @@ class Streams(commands.Cog):
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
-            stream = YoutubeStream(name=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                _bot=self.bot, name=channel_id_or_name, token=apikey, config=self.config
+            )
         else:
-            stream = YoutubeStream(id=channel_id_or_name, token=apikey, config=self.config)
+            stream = YoutubeStream(
+                _bot=self.bot, id=channel_id_or_name, token=apikey, config=self.config
+            )
         await self.check_online(ctx, stream)
 
-    @commands.command()
-    async def smashcast(self, ctx: commands.Context, channel_name: str):
-        """Check if a smashcast channel is live."""
-        stream = HitboxStream(name=channel_name)
-        await self.check_online(ctx, stream)
-
+    @commands.guild_only()
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
-        stream = PicartoStream(name=channel_name)
+        stream = PicartoStream(_bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, HitboxStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, YoutubeStream, TwitchStream],
     ):
         try:
             info = await stream.is_online()
@@ -409,172 +410,6 @@ class Streams(commands.Cog):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
-    @streamalert.group(name="smashcast", invoke_without_command=True)
-    async def _smashcast(self, ctx: commands.Context, channel_name: str):
-        """Manage Smashcast stream alerts."""
-        if channel_name is not None:
-            await ctx.invoke(self.smashcast_alert_channel, channel_name)
-        else:
-            await ctx.send_help()
-
-    @_smashcast.command(name="channel")
-    async def smashcast_alert_channel(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Smashcast stream."""
-        await self.stream_alert(ctx, HitboxStream, channel_name)
-
-    @_smashcast.command(name="addgame")
-    async def smashcast_addgame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
-        """Add a game to notify when this channel is playing."""
-        stream = self.get_stream(HitboxStream, channel_name)
-        if not stream:
-            return await ctx.send(
-                _("That channel has not been set up for stream alerts in this channel!")
-            )
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://api.smashcast.tv/search/games", params={"q": game_name}
-            ) as resp:
-                if resp.status != 200:
-                    return await ctx.send(_("An error occurred in the request."))
-                data = await resp.json()
-        cat_list = data["categories"]
-        cat_ask_str = ""
-        min_i = 1
-        max_i = 0
-        for i, category in enumerate(cat_list, start=1):
-            cat_ask_str += f"{i}. {category['category_name']}\n"
-            max_i += 1
-        selection = {}
-
-        def check(m):
-            try:
-                sel = int(m.content)
-            except ValueError:
-                return False
-            else:
-                return min_i <= sel <= max_i and m.channel == ctx.channel
-
-        if max_i > 1:
-            await ctx.send(
-                _(
-                    "Multiple possible options found. Please enter the number of the one you were trying to add."
-                )
-            )
-            for page in pagify(cat_ask_str.strip()):
-                await ctx.send(page)
-            try:
-                msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
-            except asyncio.TimeoutError:
-                return await ctx.send(_("No response received. Please retry."))
-            else:
-                selection = cat_list[int(msg.content) - 1]
-        elif max_i == 1:
-            selection = cat_list[0]
-        else:
-            return await ctx.send(_("No game by that name found."))
-        if selection["category_id"] in stream.games:
-            chan_list = stream.games[selection["category_id"]]
-        else:
-            chan_list = []
-        if ctx.channel.id in chan_list:
-            return await ctx.send(
-                _("Already notifying in this channel when the stream is live with this game!")
-            )
-        else:
-            self.streams.remove(stream)
-            chan_list.append(ctx.channel.id)
-            stream.games[selection["category_id"]] = chan_list
-            self.streams.append(stream)
-            await self.save_streams()
-            await ctx.tick()
-
-    @_smashcast.command(name="removegame")
-    async def smashcast_removegame(
-        self, ctx: commands.Context, channel_name: str, *, game_name: str
-    ):
-        """Remove a game to notify when this channel is playing."""
-        stream = self.get_stream(HitboxStream, channel_name)
-        if not stream:
-            return await ctx.send(
-                _("That channel has not been set up for stream alerts in this channel!")
-            )
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://api.smashcast.tv/search/games", params={"q": game_name}
-            ) as resp:
-                if resp.status != 200:
-                    return await ctx.send(_("An error occurred in the request."))
-                data = await resp.json()
-        cat_list = data["categories"]
-        cat_ask_str = ""
-        min_i = 1
-        max_i = 0
-        for i, category in enumerate(cat_list, start=1):
-            cat_ask_str += f"{i}. {category['category_name']}\n"
-            max_i += 1
-        selection = {}
-
-        def check(m):
-            try:
-                sel = int(m.content)
-            except ValueError:
-                return False
-            else:
-                return min_i <= sel <= max_i and m.channel == ctx.channel
-
-        if max_i > 1:
-            await ctx.send(
-                _(
-                    "Multiple possible options found. Please enter the number of the one you were trying to remove."
-                )
-            )
-            for page in pagify(cat_ask_str.strip()):
-                await ctx.send(page)
-            try:
-                msg = await ctx.bot.wait_for("message", check=check, timeout=60.0)
-            except asyncio.TimeoutError:
-                return await ctx.send(_("No response received. Please retry."))
-            else:
-                selection = cat_list[int(msg.content) - 1]
-        elif max_i == 1:
-            selection = cat_list[0]
-        else:
-            return await ctx.send(_("No game by that name found."))
-        if selection["category_id"] in stream.games:
-            chan_list = stream.games[selection["category_id"]]
-        else:
-            chan_list = []
-        if ctx.channel.id not in chan_list:
-            return await ctx.send(
-                _("Already not notifying in this channel when the stream is live with this game!")
-            )
-        else:
-            self.streams.remove(stream)
-            chan_list.remove(ctx.channel.id)
-            stream.games[selection["category_id"]] = chan_list
-            self.streams.append(stream)
-            await self.save_streams()
-            await ctx.tick()
-
-    @_smashcast.command(name="cleargames")
-    async def smashcast_cleargames(self, ctx: commands.Context, channel_name: str):
-        """Clear the game list for the stream filter"""
-        stream = self.get_stream(HitboxStream, channel_name)
-        if not stream:
-            return await ctx.send(
-                _("That channel has not been set up for stream alerts in this channel!")
-            )
-        self.streams.remove(stream)
-        newdict = {}
-        for k, v in stream.games.items():
-            if ctx.channel.id in v:
-                v.remove(ctx.channel.id)
-            newdict[k] = v
-        stream.games = newdict
-        self.streams.append(stream)
-        await self.save_streams()
-        await ctx.tick()
-
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
         """Toggle alerts in this channel for a Picarto stream."""
@@ -648,19 +483,22 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(id=channel_name, token=token, config=self.config)
+                stream = _class(_bot=self.bot, id=channel_name, token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
+                    _bot=self.bot,
                     name=channel_name,
                     token=token.get("client_id"),
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
             else:
                 if is_yt:
-                    stream = _class(name=channel_name, token=token, config=self.config)
+                    stream = _class(
+                        _bot=self.bot, name=channel_name, token=token, config=self.config
+                    )
                 else:
-                    stream = _class(name=channel_name, token=token)
+                    stream = _class(_bot=self.bot, name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
@@ -959,23 +797,30 @@ class Streams(commands.Cog):
     async def _stream_alerts(self):
         await self.bot.wait_until_ready()
         while True:
-            try:
-                await self.check_streams()
-            except asyncio.CancelledError:
-                pass
+            await self.check_streams()
             await asyncio.sleep(await self.config.refresh_timer())
 
     async def _send_stream_alert(
-        self, stream, channel: discord.TextChannel, embed: discord.Embed, content: str = None
+        self,
+        stream,
+        channel: discord.TextChannel,
+        embed: discord.Embed,
+        content: str = None,
+        *,
+        is_schedule: bool = False,
     ):
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
         )
-        stream._messages_cache.append(m)
+        message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
+        if is_schedule:
+            message_data["is_schedule"] = True
+        stream.messages.append(message_data)
 
     async def check_streams(self):
+        to_remove = []
         for stream in self.streams:
             try:
                 try:
@@ -984,10 +829,6 @@ class Streams(commands.Cog):
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, data, is_rerun = await stream.is_online()
-                        is_schedule = False
-                    elif stream.__class__.__name__ == "HitboxStream":
-                        embed, data = await stream.is_online()
-                        is_rerun = False
                         is_schedule = False
                     elif stream.__class__.__name__ == "YoutubeStream":
                         embed, is_schedule = await stream.is_online()
@@ -998,20 +839,30 @@ class Streams(commands.Cog):
                         data = {}
                         is_rerun = False
                         is_schedule = False
+                except StreamNotFound:
+                    log.info("Stream with name %s no longer exists. Removing...", stream.name)
+                    to_remove.append(stream)
+                    continue
                 except OfflineStream:
-                    if not stream._messages_cache:
+                    if not stream.messages:
                         continue
-                    for message in stream._messages_cache:
-                        if await self.bot.cog_disabled_in_guild(self, message.guild):
+
+                    for msg_data in stream.iter_messages():
+                        partial_msg = msg_data["partial_message"]
+                        if partial_msg is None:
                             continue
-                        autodelete = await self.config.guild(message.guild).autodelete()
-                        if autodelete:
-                            with contextlib.suppress(discord.NotFound):
-                                await message.delete()
-                    stream._messages_cache.clear()
+                        if await self.bot.cog_disabled_in_guild(self, partial_msg.guild):
+                            continue
+                        if not await self.config.guild(partial_msg.guild).autodelete():
+                            continue
+
+                        with contextlib.suppress(discord.NotFound):
+                            await partial_msg.delete()
+
+                    stream.messages.clear()
                     await self.save_streams()
                 else:
-                    if stream._messages_cache:
+                    if stream.messages:
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
@@ -1029,20 +880,13 @@ class Streams(commands.Cog):
                             and channel_id not in stream.games[data["game_id"]]
                         ):
                             continue
-                        elif (
-                            isinstance(stream, HitboxStream)
-                            and stream.games
-                            and channel_id
-                            not in stream.games[data["livestream"][0]["category_id"]]
-                        ):
-                            continue
 
                         ignore_schedules = await self.config.guild(channel.guild).ignore_schedule()
                         if ignore_schedules and is_schedule:
                             continue
                         if is_schedule:
                             # skip messages and mentions
-                            await self._send_stream_alert(stream, channel, embed)
+                            await self._send_stream_alert(stream, channel, embed, is_schedule=True)
                             await self.save_streams()
                             continue
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
@@ -1093,6 +937,11 @@ class Streams(commands.Cog):
             except Exception as e:
                 log.error("An error has occured with Streams. Please report it.", exc_info=e)
 
+        if to_remove:
+            for stream in to_remove:
+                self.streams.remove(stream)
+            await self.save_streams()
+
     async def _get_mention_str(
         self, guild: discord.Guild, channel: discord.TextChannel
     ) -> Tuple[str, List[discord.Role]]:
@@ -1139,17 +988,6 @@ class Streams(commands.Cog):
             _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
-            raw_msg_cache = raw_stream["messages"]
-            raw_stream["_messages_cache"] = []
-            for raw_msg in raw_msg_cache:
-                chn = self.bot.get_channel(raw_msg["channel"])
-                if chn is not None:
-                    try:
-                        msg = await chn.fetch_message(raw_msg["message"])
-                    except discord.HTTPException:
-                        pass
-                    else:
-                        raw_stream["_messages_cache"].append(msg)
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             if token:
                 if _class.__name__ == "TwitchStream":
@@ -1159,6 +997,7 @@ class Streams(commands.Cog):
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config
                     raw_stream["token"] = token
+            raw_stream["_bot"] = self.bot
             streams.append(_class(**raw_stream))
 
         return streams

@@ -558,7 +558,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_autoplay.command(name="reset")
     async def command_audioset_autoplay_reset(self, ctx: commands.Context):
         """Resets auto-play to the default playlist."""
-        playlist_data = dict(enabled=False, id=None, name=None, scope=None)
+        playlist_data = dict(
+            enabled=True,
+            id=42069,
+            name="Aikaterna's curated tracks",
+            scope=PlaylistScope.GLOBAL.value,
+        )
+
         await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
         return await self.send_embed_msg(
             ctx,
@@ -1472,7 +1478,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
-            await lavalink.close()
+            await lavalink.close(self.bot)
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
 

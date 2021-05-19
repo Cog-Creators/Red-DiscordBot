@@ -44,7 +44,10 @@ class Mod(
 ):
     """Moderation tools."""
 
-    default_global_settings = {"version": ""}
+    default_global_settings = {
+        "version": "",
+        "track_all_names": True,
+    }
 
     default_guild_settings = {
         "mention_spam": {"ban": None, "kick": None, "warn": None, "strict": False},
@@ -57,6 +60,7 @@ class Mod(
         "dm_on_kickban": False,
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
+        "track_nicknames": True,
     }
 
     default_channel_settings = {"ignored": False}
@@ -76,7 +80,7 @@ class Mod(
         self.config.register_member(**self.default_member_settings)
         self.config.register_user(**self.default_user_settings)
         self.cache: dict = {}
-        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
+        self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()

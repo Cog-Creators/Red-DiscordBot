@@ -21,6 +21,13 @@ _REVEAL_MESSAGES = (
     _("Easy: {answer}."),
     _("Oh really? It's {answer} of course."),
 )
+
+SPOILER_REVEAL_MESSAGES = (
+    _("I know this one! ||{answer}!||"),
+    _("Easy: ||{answer}.||"),
+    _("Oh really? It's ||{answer}|| of course."),
+)
+
 _FAIL_MESSAGES = (
     _("To the next one I guess..."),
     _("Moving on..."),
@@ -204,7 +211,10 @@ class TriviaSession:
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
-                reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
+                if self.settings["use_spoilers"]:
+                    reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)).format(answer=answers[0])
+                else:
+                    reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
             else:
                 reply = T_(random.choice(_FAIL_MESSAGES))
             if self.settings["bot_plays"]:
@@ -261,7 +271,7 @@ class TriviaSession:
             await self.send_table()
         multiplier = self.settings["payout_multiplier"]
         if multiplier > 0:
-            await self.pay_winner(multiplier)
+            await self.pay_winners(multiplier)
         self.stop()
 
     async def send_table(self):
@@ -281,42 +291,57 @@ class TriviaSession:
         channel = self.ctx.channel
         LOG.debug("Force stopping trivia session; #%s in %s", channel, channel.guild.id)
 
-    async def pay_winner(self, multiplier: float):
-        """Pay the winner of this trivia session.
+    async def pay_winners(self, multiplier: float):
+        """Pay the winner(s) of this trivia session.
 
-        The winner is only payed if there are at least 3 human contestants.
+        Payout only occurs if there are at least 3 human contestants.
+        If a tie occurs the payout is split evenly among the winners.
 
         Parameters
         ----------
         multiplier : float
-            The coefficient of the winner's score, used to determine the amount
+            The coefficient of the winning score, used to determine the amount
             paid.
 
         """
-        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
-        me_ = self.ctx.guild.me
-        if winner is not None and winner != me_ and score > 0:
-            contestants = list(self.scores.keys())
-            if me_ in contestants:
-                contestants.remove(me_)
-            if len(contestants) >= 3:
-                amount = int(multiplier * score)
-                if amount > 0:
-                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
-                    try:
-                        await bank.deposit_credits(winner, int(multiplier * score))
-                    except errors.BalanceTooHigh as e:
-                        await bank.set_balance(winner, e.max_balance)
-                    await self.ctx.send(
-                        _(
-                            "Congratulations, {user}, you have received {num} {currency}"
-                            " for coming first."
-                        ).format(
-                            user=winner.display_name,
-                            num=humanize_number(amount),
-                            currency=await bank.get_currency_name(self.ctx.guild),
-                        )
-                    )
+        if not self.scores:
+            return
+        top_score = self.scores.most_common(1)[0][1]
+        winners = []
+        num_humans = 0
+        for (player, score) in self.scores.items():
+            if not player.bot:
+                if score == top_score:
+                    winners.append(player)
+                num_humans += 1
+        if not winners or num_humans < 3:
+            return
+        payout = int(top_score * multiplier / len(winners))
+        if payout <= 0:
+            return
+        for winner in winners:
+            LOG.debug("Paying trivia winner: %d credits --> %s", payout, winner.name)
+            try:
+                await bank.deposit_credits(winner, payout)
+            except errors.BalanceTooHigh as e:
+                await bank.set_balance(winner, e.max_balance)
+        if len(winners) > 1:
+            msg = _(
+                "Congratulations {users}! You have each received {num} {currency} for winning!"
+            ).format(
+                users=humanize_list([bold(winner.display_name) for winner in winners]),
+                num=payout,
+                currency=await bank.get_currency_name(self.ctx.guild),
+            )
+        else:
+            msg = _(
+                "Congratulations {user}! You have received {num} {currency} for winning!"
+            ).format(
+                user=bold(winners[0].display_name),
+                num=payout,
+                currency=await bank.get_currency_name(self.ctx.guild),
+            )
+        await self.ctx.send(msg)
 
 
 def _parse_answers(answers):

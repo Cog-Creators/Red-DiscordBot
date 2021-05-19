@@ -1,7 +1,10 @@
-name: Auto Labeler
+name: Auto Labeler - Issues
 on:
   issues:
     types: [opened]
+
+permissions:
+  issues: write
 
 jobs:
   build:

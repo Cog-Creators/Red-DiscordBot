@@ -233,7 +233,69 @@ async def _migrate_config(from_version: int, to_version: int):
 
 
 class Case:
-    """A single mod log case"""
+    """
+    Case()
+
+    A single mod log case
+
+    Attributes
+    ----------
+    bot: Red
+        The bot object.
+    guild: discord.Guild
+        The guild the action was taken in.
+    created_at: int
+        The UNIX time the action occurred at.
+    action_type: str
+        The type of action that was taken.
+    user: Union[discord.abc.User, int]
+        The user target by the action.
+
+        .. note::
+            This attribute will be of type `int`
+            if the Discord user can no longer be found.
+    moderator: Optional[Union[discord.abc.User, int]]
+        The moderator who took the action.
+        `None` if the moderator is unknown.
+
+        .. note::
+            This attribute will be of type `int`
+            if the Discord user can no longer be found.
+    case_number: int
+        The case's number.
+    reason: Optional[str]
+        The reason the action was taken.
+        `None` if the reason was not specified.
+    until: Optional[int]
+        The UNIX time the action is in effect until.
+        `None` if the action is permanent.
+    channel: Optional[Union[discord.abc.GuildChannel, int]]
+        The channel the action was taken in.
+        `None` if the action was not related to a channel.
+
+        .. note::
+            This attribute will be of type `int`
+            if the channel seems to no longer exist.
+    amended_by: Optional[Union[discord.abc.User, int]]
+        The moderator who made the last change to the case.
+        `None` if the case was never edited.
+
+        .. note::
+            This attribute will be of type `int`
+            if the Discord user can no longer be found.
+    modified_at: Optional[int]
+        The UNIX time of the last change to the case.
+        `None` if the case was never edited.
+    message: Optional[discord.Message]
+        The message created by Modlog for this case.
+        `None` if we know that the message no longer exists
+        (note: it might not exist regardless of whether this attribute is `None`)
+        or if it has never been created.
+    last_known_username: Optional[str]
+        The last known username of the user.
+        `None` if the username of the user was never saved
+        or if their data had to be anonymized.
+    """
 
     def __init__(
         self,
@@ -244,9 +306,9 @@ class Case:
         user: Union[discord.Object, discord.abc.User, int],
         moderator: Optional[Union[discord.Object, discord.abc.User, int]],
         case_number: int,
-        reason: str = None,
-        until: int = None,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, int]] = None,
+        reason: Optional[str] = None,
+        until: Optional[int] = None,
+        channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
@@ -312,8 +374,19 @@ class Case:
         except discord.Forbidden:
             log.info(
                 "Modlog failed to edit the Discord message for"
-                " the case #%s from guild with ID due to missing permissions."
+                " the case #%s from guild with ID %s due to missing permissions.",
+                self.case_number,
+                self.guild.id,
             )
+        except discord.NotFound:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s as it no longer exists."
+                " Clearing the message ID from case data...",
+                self.case_number,
+                self.guild.id,
+            )
+            await self.edit({"message": None})
         except Exception:  # `finally` with `return` suppresses unexpected exceptions
             log.exception(
                 "Modlog failed to edit the Discord message for"
@@ -546,15 +619,11 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                try:
-                    message = discord.utils.get(bot.cached_messages, id=message_id)
-                except AttributeError:
-                    # bot.cached_messages didn't exist prior to discord.py 1.1.0
-                    message = None
+                message = discord.utils.get(bot.cached_messages, id=message_id)
                 if message is None:
                     try:
                         message = await mod_channel.fetch_message(message_id)
-                    except (discord.HTTPException, AttributeError):
+                    except discord.HTTPException:
                         message = None
             else:
                 message = None
@@ -837,7 +906,7 @@ async def create_case(
     moderator: Optional[Union[discord.Object, discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
-    channel: Optional[discord.TextChannel] = None,
+    channel: Optional[discord.abc.GuildChannel] = None,
     last_known_username: Optional[str] = None,
 ) -> Optional[Case]:
     """
@@ -867,7 +936,7 @@ async def create_case(
         The time the action is in effect until.
         If naive `datetime` object is passed, it's treated as a local time
         (similarly to how Python treats naive `datetime` objects).
-    channel: Optional[discord.TextChannel]
+    channel: Optional[discord.abc.GuildChannel]
         The channel the action was taken in
     last_known_username: Optional[str]
         The last known username of the user

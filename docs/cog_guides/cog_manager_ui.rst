@@ -193,7 +193,7 @@ reorderpath
 
 .. code-block:: none
 
-    [p]reorderpath <from\_> <to>
+    [p]reorderpath <from_> <to>
 
 **Description**
 

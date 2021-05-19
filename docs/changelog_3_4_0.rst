@@ -1,5 +1,343 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.9 (2021-04-06)
+=========================
+
+This is a hotfix release fixing an issue with command error handling.
+
+discord.py version has been bumped to 1.7.1.
+
+Thanks again to :ghuser:`Rapptz` for quick response on this issue.
+
+
+Redbot 3.4.8 (2021-04-06)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.8 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1212>`__.
+
+2. Fedora 31 and OpenSUSE Leap 15.1 are no longer supported as they have already reached end of life.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added per-command embed settings (:issue:`4049`)
+
+    - See help of ``[p]embedset`` and ``[p]embedset command`` command group for more information
+
+- The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
+- ``[p]leave`` accepts server IDs now (:issue:`4831`)
+- Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
+- Messages sent interactively in DM channels no longer fail (:issue:`4876`)
+- An error message will now be shown when a command that is only available in NSFW channels is used in a non-NSFW channel (:issue:`4933`)
+- Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
+- Removed the option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
+- Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
+
+Alias
+*****
+
+- Fixed issues with command aliases for commands that take an arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
+
+Audio
+*****
+
+- Fixed stuttering (:issue:`4565`)
+- Fixed random disconnects (:issue:`4565`)
+- Fixed the issues causing the player to be stuck on 00:00 (:issue:`4565`)
+- Fixed ghost players (:issue:`4565`)
+- Audio will no longer stop playing after a while (:issue:`4565`)
+- Fixed playlist loading for playlists with over 100 songs (:issue:`4932`)
+- Fixed an issue with alerts causing errors in playlists being loaded (:issue:`4932`)
+- Improved playlist extraction (:issue:`4932`)
+- Fixed an issue with consent pages appearing while trying to load songs or playlists (:issue:`4932`)
+
+Cleanup
+*******
+
+- ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without a message ID if the invocation message replies to some message (:issue:`4790`)
+
+Downloader
+**********
+
+- Improved compatibility with Git 2.31 and newer (:issue:`4897`)
+
+Filter
+******
+
+- Added meaningful error messages for incorrect arguments in the ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
+
+Mod
+***
+
+- Improved performance of checking tempban expirations (:issue:`4907`)
+- Fixed tracking of nicknames that were set just before nick reset (:issue:`4830`)
+
+Mutes
+*****
+
+- Vastly improved performance of automatic unmute handling (:issue:`4906`)
+
+Streams
+*******
+
+- Streams cog should now load faster on bots that have many stream alerts set up (:issue:`4731`, :issue:`4742`)
+- Fixed possible memory leak related to automatic message deletion (:issue:`4731`, :issue:`4742`)
+- Streamer accounts that no longer exist are now properly handled (:issue:`4735`, :issue:`4746`)
+- Fixed stream alerts being sent even after unloading Streams cog (:issue:`4940`)
+- Checking Twitch streams will now make less API calls (:issue:`4938`)
+- Ratelimits from Twitch API are now properly handled (:issue:`4808`, :issue:`4883`)
+
+Trivia
+******
+
+- Added a new option for hiding the answer to the Trivia answer in a spoiler (:issue:`4700`, :issue:`4877`)
+
+    - ``[p]triviaset usespoilers`` command can be used to enable/disable this option
+
+Warnings
+********
+
+- Fixed output of ``[p]warnings`` command for members that are no longer in the server (:issue:`4900`, :issue:`4904`)
+- Embeds now use the default embed color of the bot (:issue:`4878`)
+
+
+Developer changelog
+-------------------
+
+- Bumped discord.py version to 1.7.0 (:issue:`4928`)
+- Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
+
+    - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+
+    - Read the method's documentation for more information
+- Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
+
+
+Documentation changes
+---------------------
+
+- Added a note about updating cogs in update message and documentation (:issue:`4910`)
+- Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
+- Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
+- `getting-started` now contains an explanation of parameters that can take an arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
+- Added a warning to Arch Linux install guide about the instructions being out-of-date (:issue:`4866`)
+- All shell commands in the documentation are now prefixed with an unselectable prompt (:issue:`4908`)
+- `systemd-service-guide` now asks the user to create the new service file using ``nano`` text editor (:issue:`4869`, :issue:`4870`)
+
+    - Instructions for all Linux-based operating systems now recommend to install ``nano``
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
+
+
+Redbot 3.4.7 (2021-02-26)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
+
+End-user changelog
+------------------
+
+- Added proper permission checks to ``[p]muteset senddm`` and ``[p]muteset showmoderator`` (:issue:`4849`)
+- Updated the ``[p]lmgtfy`` command to use the new domain (:issue:`4840`)
+- Updated the ``[p]info`` command to more clearly indicate that the instance is owned by a team (:issue:`4851`)
+- Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`, :issue:`4853`)
+
+Documentation changes
+---------------------
+
+- Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
+- Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
+
+
+Redbot 3.4.6 (2021-02-16)
+=========================
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1199>`__.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
+- Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
+- ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
+- Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
+
+    - The colors used have been adjusted to be readable on many more terminal applications
+    - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
+    - Tracebacks will now use the full width of the terminal again
+    - Tracebacks no longer contain multiple lines per stack level (this can now be changed with the flag ``--rich-traceback-extra-lines``)
+    - Disabled syntax highlighting on the log messages
+    - Dev cog no longer captures logging output
+    - Added some cool features for developers
+
+        - Added the flag ``--rich-traceback-extra-lines`` which can be used to set the number of additional lines in tracebacks
+        - Added the flag ``--rich-traceback-show-locals`` which enables showing local variables in tracebacks
+
+    - Improved and fixed a few other minor things
+
+- Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with a command name that is already taken by a different cog (:issue:`3870`)
+- Help now includes command aliases in the command help (:issue:`3040`)
+
+    - This can be disabled with ``[p]helpset showaliases`` command
+
+- Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
+
+Admin
+*****
+
+- ``[p]selfrole`` can now be used without a subcommand and passed with a selfrole directly to add/remove it from the user running the command (:issue:`4826`)
+
+Audio
+*****
+
+- Improved detection of embed players for fallback on age-restricted YT tracks (:issue:`4818`, :issue:`4819`)
+- Improved MP4/AAC decoding (:issue:`4818`, :issue:`4819`)
+- Requests for YT tracks are now retried if the initial request causes a connection reset (:issue:`4818`, :issue:`4819`)
+
+Cleanup
+*******
+
+- Renamed the ``[p]cleanup spam`` command to ``[p]cleanup duplicates``, with the old name kept as an alias for the time being (:issue:`4814`)
+- Fixed an error from passing an overly large integer as a message ID to ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
+
+Dev Cog
+*******
+
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
+
+Economy
+*******
+
+- ``[p]economyset rolepaydayamount`` can now remove the previously set payday amount (:issue:`4661`, :issue:`4758`)
+
+Filter
+******
+
+- Added a case type ``filterhit`` which is used to log filter hits (:issue:`4676`, :issue:`4739`)
+
+Mod
+***
+
+- The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
+- Added two new settings for disabling username and nickname tracking (:issue:`4799`)
+
+    - Added a command ``[p]modset trackallnames`` that disables username tracking and overrides the nickname tracking setting for all guilds
+    - Added a command ``[p]modset tracknicknames`` that disables nickname tracking in a specific guild
+
+- Added a command ``[p]modset deletenames`` that deletes all stored usernames and nicknames (:issue:`4827`)
+- Added usage examples to ``[p]kick``, ``[p]ban``, ``[p]massban``, and ``[p]tempban`` (:issue:`4712`, :issue:`4715`)
+- Updated DM on kick/ban to use bot's default embed color (:issue:`4822`)
+
+Modlog
+******
+
+- Added a command ``[p]listcases`` that allows you to see multiple cases for a user at once (:issue:`4426`)
+- Added typing indicator to ``[p]casesfor`` command (:issue:`4426`)
+
+Mutes
+*****
+
+- Fixed an edge case in role hierarchy checks (:issue:`4740`)
+- The modlog reason no longer contains leading whitespace when it's passed *after* the mute time (:issue:`4749`)
+- A DM can now be sent to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
+
+    - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
+    - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
+
+- Added more role hierarchy checks to ensure permission escalations cannot occur on servers with a careless configuration (:issue:`4741`)
+- Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
+
+Reports
+*******
+
+- Reports now use the default embed color of the bot (:issue:`4800`)
+
+Streams
+*******
+
+- Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
+- Fixed meaningless errors happening when the YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
+
+Trivia
+******
+
+- Payout for trivia sessions ending in a tie now gets split between all the players with the highest score (:issue:`3931`, :issue:`4649`)
+
+Trivia Lists
+************
+
+- Added new Who's That Pokémon - Gen. VI trivia list (:issue:`4785`)
+- Updated answers regarding some of the hero's health and abilities in the ``overwatch`` trivia list (:issue:`4805`)
+
+
+Developer changelog
+-------------------
+
+Core Bot
+********
+
+- Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
+- Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
+
+Utility Functions
+*****************
+
+- Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
+
+Dev Cog
+*******
+
+- Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
+
+    - Variables can be added and removed from the environment of Dev cog using two new methods:
+
+        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
+
+
+Documentation changes
+---------------------
+
+- Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
+- Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
+- Restructured the host list (:issue:`4710`)
+- Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
+- Updated the pip command for Red with the postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`4770`)
+
+
+Miscellaneous
+-------------
+
+- Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
+- Red's dependencies have been bumped (:issue:`4572`)
+
+
 Redbot 3.4.5 (2020-12-24)
 =========================
 | Thanks to all these amazing people that contributed to this release:
@@ -12,6 +350,7 @@ Streams
 *******
 
 - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
+
 
 Redbot 3.4.4 (2020-12-24)
 =========================
@@ -103,9 +442,9 @@ Developer changelog
 Documentation changes
 ---------------------
 
-- Added `cog guide for Downloader cog <streams>` (:issue:`4511`)
-- Added `cog guide for Economy cog <streams>` (:issue:`4519`)
-- Added `cog guide for Streams cog <streams>` (:issue:`4521`)
+- Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
+- Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
+- Added `cog guide for Streams cog <cog_guides/streams>` (:issue:`4521`)
 - Added `guide_cog_creators` document (:issue:`4637`)
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 

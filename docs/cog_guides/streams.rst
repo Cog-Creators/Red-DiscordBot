@@ -27,7 +27,6 @@ Supported streaming services are:
 
 - Twitch
 - Youtube
-- Smashcast
 - Picarto
 
 Youtube and Twitch both require setting authentication 
@@ -353,26 +352,6 @@ Check if a Picarto channel is live.
 
 * ``<channel_name>``: The Picarto channel to check.
 
-.. _streams-command-smashcast:
-
-^^^^^^^^^
-smashcast
-^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-    
-    [p]smashcast <channel_name>
-
-**Description**
-
-Check if a Smashcast channel is live.
-
-**Arguments**
-
-* ``<channel_name>``: The Smashcast channel to check.
-
 .. _streams-command-twitchstream:
 
 ^^^^^^^^^^^^
@@ -465,27 +444,6 @@ specified Picarto channel.
 **Arguments**
 
 * ``<channel_name>``: The Picarto channel to toggle the alert for.
-
-.. _streams-command-streamalert-smashcast:
-
-^^^^^^^^^^^^^^^^^^^^^
-streamalert smashcast
-^^^^^^^^^^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-    
-    [p]streamalert smashcast <channel_name>
-
-**Description**
-
-Toggle alerts in the current channel for the 
-specified Smashcast channel.
-
-**Arguments**
-
-* ``<channel_name>``: The Smashcast channel to toggle the alert for.
 
 .. _streams-command-streamalert-twitch-channel:
 
