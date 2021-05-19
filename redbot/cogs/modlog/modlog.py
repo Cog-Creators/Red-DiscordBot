@@ -111,7 +111,7 @@ class ModLog(commands.Cog):
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
             msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
-            await ctx.send("You took too long to respond.")
+            await ctx.send(_("You took too long to respond."))
             return
         if pred.result:
             await modlog.reset_cases(guild)
