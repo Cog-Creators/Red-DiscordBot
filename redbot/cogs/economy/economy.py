@@ -91,7 +91,7 @@ def guild_only_check():
     async def pred(ctx: commands.Context):
         if await bank.is_global():
             return True
-        elif not await bank.is_global() and ctx.guild is not None:
+        elif ctx.guild is not None and not await bank.is_global():
             return True
         else:
             return False
@@ -416,8 +416,7 @@ class Economy(commands.Cog):
         - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
         - `<confirmation>` This will default to false unless specified.
         """
-        global_bank = await bank.is_global()
-        if global_bank is False and ctx.guild is None:
+        if ctx.guild is None and not await bank.is_global():
             return await ctx.send(_("This command cannot be used in DMs with a local bank."))
         try:
             name = member_or_id.display_name
@@ -570,7 +569,7 @@ class Economy(commands.Cog):
         - `<show_global>` Whether to include results from all servers. This will default to false unless specified.
         """
         guild = ctx.guild
-        if await bank.is_global() and show_global:
+        if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(guild=None)
         else:

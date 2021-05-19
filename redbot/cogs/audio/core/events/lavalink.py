@@ -68,12 +68,12 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     reason = extra.get("reason", "No Specified Reason").strip()
                     ws_audio_log.info(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
-                        "Voice websocket closed event for guild %d -> "
-                        "Code: %d -- Remote: %s -- %s",
-                        guild_id,
-                        _error_code,
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        extra.get("code"),
                         by_remote,
                         reason,
+                        player,
                     )
                 return
             await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
@@ -519,9 +519,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
-                        "Voice websocket closed event for guild %d ->"
+                        "Voice websocket closed event "
                         "Code: %d -- Remote: %s -- %s, %r",
-                        guild_id,
                         code,
                         by_remote,
                         reason,
@@ -530,9 +529,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     ws_audio_log.info(
                         "WS EVENT - IGNORED (Healthy Socket) | "
-                        "Voice websocket closed event for guild %d ->"
+                        "Voice websocket closed event "
                         "Code: %d -- Remote: %s -- %s, %r",
-                        guild_id,
                         code,
                         by_remote,
                         reason,

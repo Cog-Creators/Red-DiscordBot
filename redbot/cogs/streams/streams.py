@@ -203,6 +203,7 @@ class Streams(commands.Cog):
             if self.ttv_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60:
                 await self.get_twitch_bearer_token()
 
+    @commands.guild_only()
     @commands.command()
     async def twitchstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Twitch channel is live."""
@@ -216,6 +217,7 @@ class Streams(commands.Cog):
         )
         await self.check_online(ctx, stream)
 
+    @commands.guild_only()
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
@@ -234,6 +236,7 @@ class Streams(commands.Cog):
             )
         await self.check_online(ctx, stream)
 
+    @commands.guild_only()
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
         """Check if a Picarto channel is live."""
