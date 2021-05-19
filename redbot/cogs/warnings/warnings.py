@@ -592,7 +592,7 @@ class Warnings(commands.Cog):
     async def unwarn(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, int],
+        member: Union[discord.Member, int],
         warn_id: str,
         *,
         reason: str = None,
