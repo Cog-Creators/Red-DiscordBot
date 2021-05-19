@@ -374,8 +374,19 @@ class Case:
         except discord.Forbidden:
             log.info(
                 "Modlog failed to edit the Discord message for"
-                " the case #%s from guild with ID due to missing permissions."
+                " the case #%s from guild with ID %s due to missing permissions.",
+                self.case_number,
+                self.guild.id,
             )
+        except discord.NotFound:
+            log.info(
+                "Modlog failed to edit the Discord message for"
+                " the case #%s from guild with ID %s as it no longer exists."
+                " Clearing the message ID from case data...",
+                self.case_number,
+                self.guild.id,
+            )
+            await self.edit({"message": None})
         except Exception:  # `finally` with `return` suppresses unexpected exceptions
             log.exception(
                 "Modlog failed to edit the Discord message for"
