@@ -125,7 +125,9 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             (
                 Query.process_input(
-                    Path(await self.config_cache.localpath.get_context_value(ctx.guild)).absolute(),
+                    Path(
+                        await self.config_cache.localpath.get_context_value(ctx.guild)
+                    ).absolute(),
                     self.local_folder_current_path,
                     search_subfolders=True,
                 )

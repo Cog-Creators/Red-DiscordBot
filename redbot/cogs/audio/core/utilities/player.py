@@ -407,7 +407,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         embed.set_footer(text=result.exception_message[:2000])
                     else:
                         embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
-                if await self.config_cache.managed_lavalink_server.get_context_value(player.guild) and query.is_local:
+                if (
+                    await self.config_cache.managed_lavalink_server.get_context_value(player.guild)
+                    and query.is_local
+                ):
                     embed.description = _(
                         "Local tracks will not work "
                         "if the `Lavalink.jar` cannot see the track.\n"

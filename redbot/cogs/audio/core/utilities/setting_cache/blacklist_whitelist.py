@@ -173,7 +173,10 @@ class WhitelistBlacklistManager:
                         curr_list.remove(string)
 
     async def allowed_by_whitelist_blacklist(
-        self, what: Optional[str] = None, *, guild: Optional[Union[discord.Guild, int]] = None,
+        self,
+        what: Optional[str] = None,
+        *,
+        guild: Optional[Union[discord.Guild, int]] = None,
     ) -> bool:
         if isinstance(guild, int):
             guild = self.bot.get_guild(guild)

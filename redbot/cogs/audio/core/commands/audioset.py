@@ -64,16 +64,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Whitelist Modified"),
-            description=_("Added `{whitelisted}` to the whitelist.").format(
-                whitelisted=keyword
-            ),
+            description=_("Added `{whitelisted}` to the whitelist.").format(whitelisted=keyword),
         )
 
     @command_audioset_perms_global_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(None, printable=True)
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(
+            None, printable=True
+        )
 
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
@@ -143,16 +143,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Blacklist Modified"),
-            description=_("Added `{blacklisted}` to the blacklist.").format(
-                blacklisted=keyword
-            ),
+            description=_("Added `{blacklisted}` to the blacklist.").format(blacklisted=keyword),
         )
 
     @command_audioset_perms_global_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
-        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(None, printable=True)
+        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(
+            None, printable=True
+        )
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
         blacklist.sort()
@@ -223,16 +223,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Whitelist Modified"),
-            description=_("Added `{whitelisted}` to the whitelist.").format(
-                whitelisted=keyword
-            ),
+            description=_("Added `{whitelisted}` to the whitelist.").format(whitelisted=keyword),
         )
 
     @command_audioset_perms_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(ctx.guild, printable=True)
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(
+            ctx.guild, printable=True
+        )
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
         whitelist.sort()
@@ -300,16 +300,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Blacklist Modified"),
-            description=_("Added `{blacklisted}` to the blacklist.").format(
-                blacklisted=keyword
-            ),
+            description=_("Added `{blacklisted}` to the blacklist.").format(blacklisted=keyword),
         )
 
     @command_audioset_perms_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
-        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(None, printable=True)
+        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(
+            None, printable=True
+        )
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
         blacklist.sort()
@@ -1017,7 +1017,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("User Settings")
             + "---        \n"
             + _("Spotify search:   [{country_code}]\n")
-        ).format(country_code=await self.config_cache.country_code.get_context_value(ctx.guild, user=ctx.author))
+        ).format(
+            country_code=await self.config_cache.country_code.get_context_value(
+                ctx.guild, user=ctx.author
+            )
+        )
 
         msg += (
             "\n---"
@@ -1379,7 +1383,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         persist_cache = await self.config_cache.persistent_queue.get_context_value(ctx.guild)
         await self.config_cache.persistent_queue.set_guild(ctx.guild, not persist_cache)
-        self._persist_queue_cache[ctx.guild.id] = not persist_cache
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),

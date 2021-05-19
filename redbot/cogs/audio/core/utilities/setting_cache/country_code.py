@@ -54,7 +54,11 @@ class CountryCodeManager:
             await self._config.guild_from_id(gid).ignored.clear()
             self._cached_user[gid] = self._config.defaults["GUILD"]["country_code"]
 
-    async def get_context_value(self, guild: discord.Guild, user: discord.Member,) -> str:
+    async def get_context_value(
+        self,
+        guild: discord.Guild,
+        user: discord.Member,
+    ) -> str:
         if (code := await self.get_user(user)) is not None:
             return code
         return await self.get_guild(guild)

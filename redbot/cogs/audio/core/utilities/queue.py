@@ -81,7 +81,10 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             description=queue_list,
         )
 
-        if await self.config_cache.thumbnail.get_context_value(ctx.guild) and player.current.thumbnail:
+        if (
+            await self.config_cache.thumbnail.get_context_value(ctx.guild)
+            and player.current.thumbnail
+        ):
             embed.set_thumbnail(url=player.current.thumbnail)
         queue_dur = await self.queue_duration(ctx)
         queue_total_duration = self.format_time(queue_dur)

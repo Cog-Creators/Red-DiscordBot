@@ -95,7 +95,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.store("channel", ctx.channel.id)
 
         if self.local_folder_current_path is None:
-            self.local_folder_current_path = Path(await self.config_cache.localpath.get_context_value(ctx.guild))
+            self.local_folder_current_path = Path(
+                await self.config_cache.localpath.get_context_value(ctx.guild)
+            )
         if not ctx.guild:
             return
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)

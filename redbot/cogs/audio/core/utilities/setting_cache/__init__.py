@@ -84,7 +84,8 @@ class SettingCacheManager:
         self.status = StatusManager(bot, config, self.enabled)
         self.url_restrict = URLRestrictManager(bot, config, self.enabled)
         self.managed_lavalink_server = ManagedLavalinkManager(bot, config, self.enabled)
-        self.managed_lavalink_server_auto_update = LavalinkAutoUpdateManager(bot, config, self.enabled)
+        self.managed_lavalink_server_auto_update = LavalinkAutoUpdateManager(
+            bot, config, self.enabled
+        )
         self.vc_restricted = VCRestrictedManager(bot, config, self.enabled)
         self.auto_deafen = AutoDeafenManager(bot, config, self.enabled)
-

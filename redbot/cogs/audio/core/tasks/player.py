@@ -59,8 +59,12 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
                         )
 
-                elif sid in stop_times and await self.config_cache.empty_dc.get_context_value(server_obj):
-                    emptydc_timer = await self.config_cache.empty_dc_timer.get_context_value(server_obj)
+                elif sid in stop_times and await self.config_cache.empty_dc.get_context_value(
+                    server_obj
+                ):
+                    emptydc_timer = await self.config_cache.empty_dc_timer.get_context_value(
+                        server_obj
+                    )
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
@@ -76,10 +80,12 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             debug_exc_log(
                                 log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
                             )
-                elif (
-                    sid in pause_times and await self.config_cache.empty_pause.get_context_value(server_obj)
+                elif sid in pause_times and await self.config_cache.empty_pause.get_context_value(
+                    server_obj
                 ):
-                    emptypause_timer = await self.config_cache.empty_pause_timer.get_context_value(server_obj)
+                    emptypause_timer = await self.config_cache.empty_pause_timer.get_context_value(
+                        server_obj
+                    )
                     if (time.time() - pause_times.get(sid, 0)) >= emptypause_timer:
                         try:
                             await lavalink.get_player(sid).pause()

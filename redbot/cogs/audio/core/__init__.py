@@ -44,7 +44,9 @@ class Audio(
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
-        self.config_cache = utilities.setting_cache.SettingCacheManager(self.bot, self.config, enable_cache=True)
+        self.config_cache = utilities.setting_cache.SettingCacheManager(
+            self.bot, self.config, enable_cache=True
+        )
 
         self.api_interface = None
         self.player_manager = None
@@ -55,11 +57,6 @@ class Audio(
         self._error_counter = Counter()
         self._error_timer = {}
         self._disconnected_players = {}
-        self._daily_playlist_cache = {}
-        self._daily_global_playlist_cache = {}
-        self._persist_queue_cache = {}
-        self._dj_status_cache = {}
-        self._dj_role_cache = {}
         self.skip_votes = {}
         self.play_lock = {}
 

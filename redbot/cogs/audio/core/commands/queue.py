@@ -104,7 +104,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
-            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
+            dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
             vote_enabled = guild_data["vote_enabled"]
             if (
                 (dj_enabled or vote_enabled)

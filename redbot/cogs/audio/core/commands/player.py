@@ -258,7 +258,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             title = _("Unable To Play Tracks")
             desc = _("No tracks found for `{query}`.").format(query=query.to_string_user())
             embed = discord.Embed(title=title, description=desc)
-            if await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild) and query.is_local:
+            if (
+                await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                and query.is_local
+            ):
                 embed.description = _(
                     "Local tracks will not work "
                     "if the `Lavalink.jar` cannot see the track.\n"
@@ -801,7 +804,12 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         raise e
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
-                    if await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild) and query.is_local:
+                    if (
+                        await self.config_cache.managed_lavalink_server.get_context_value(
+                            ctx.guild
+                        )
+                        and query.is_local
+                    ):
                         embed.description = _(
                             "Local tracks will not work "
                             "if the `Lavalink.jar` cannot see the track.\n"
@@ -923,7 +931,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
-                if await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild) and query.is_local:
+                if (
+                    await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                    and query.is_local
+                ):
                     embed.description = _(
                         "Local tracks will not work "
                         "if the `Lavalink.jar` cannot see the track.\n"

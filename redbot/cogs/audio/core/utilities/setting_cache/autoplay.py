@@ -45,14 +45,18 @@ class AutoPlayManager:
             await self._config.guild_from_id(gid).auto_play.clear()
             self._cached[gid] = self._config.defaults["GUILD"]["auto_play"]
 
-    async def set_currently_in_guild(self, guild: discord.Guild, set_to: Optional[Tuple[int, int]]=None) -> None:
+    async def set_currently_in_guild(
+        self, guild: discord.Guild, set_to: Optional[Tuple[int, int]] = None
+    ) -> None:
         gid: int = guild.id
         if set_to is not None:
             await self._config.guild_from_id(gid).currently_auto_playing_in.set(set_to)
             self._currently_in_cache[gid] = set_to
         else:
             await self._config.guild_from_id(gid).currently_auto_playing_in.clear()
-            self._currently_in_cache[gid] = self._config.defaults["GUILD"]["currently_auto_playing_in"]
+            self._currently_in_cache[gid] = self._config.defaults["GUILD"][
+                "currently_auto_playing_in"
+            ]
 
     async def get_context_value(self, guild: discord.Guild) -> bool:
         return await self.get_guild(guild)

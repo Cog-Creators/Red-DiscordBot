@@ -109,7 +109,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             notify_channel = player.fetch("channel")
             if notify_channel and autoplay:
-                await self.config_cache.autoplay.set_currently_in_guild(guild, [notify_channel, player.channel.id])
+                await self.config_cache.autoplay.set_currently_in_guild(
+                    guild, [notify_channel, player.channel.id]
+                )
             else:
                 await self.config_cache.autoplay.set_currently_in_guild(guild)
         if event_type == lavalink.LavalinkEvents.TRACK_END:
@@ -165,7 +167,10 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     dur = self.format_time(current_length)
 
                 thumb = None
-                if await self.config_cache.thumbnail.get_context_value(player.guild) and current_thumbnail:
+                if (
+                    await self.config_cache.thumbnail.get_context_value(player.guild)
+                    and current_thumbnail
+                ):
                     thumb = current_thumbnail
 
                 notify_message = await self.send_embed_msg(

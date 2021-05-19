@@ -41,7 +41,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
             daily_cache = await self.config_cache.daily_playlist.get_context_value(guild)
-            global_daily_playlists = await self.config_cache.daily_global_playlist.get_context_value(guild)
+            global_daily_playlists = (
+                await self.config_cache.daily_global_playlist.get_context_value(guild)
+            )
             today = datetime.date.today()
             midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
             today_id = int(time.mktime(today.timetuple()))
