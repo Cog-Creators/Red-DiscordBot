@@ -865,7 +865,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_audioset.command(name="addrole")
+    @command_audioset.command(name="addrole", aliases=["role"])
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
@@ -893,7 +893,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role_listrole(self, ctx: commands.Context):
-        """Remove a role from DJ mode allowlist."""
+        """show all roles from DJ mode allowlist."""
         roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
         rolestring = "\n".join([r.name for r in roles])
         pages = pagify(rolestring, page_length=500)
@@ -953,7 +953,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 num_seconds=self.get_time_string(emptypause_timer)
             )
         if dj_enabled and dj_role_obj:
-            msg += _("DJ Roles:          [{role}]\n").format(role=dj_role_obj)
+            msg += _("DJ Roles:         [{role}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(
