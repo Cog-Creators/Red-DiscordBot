@@ -238,7 +238,7 @@ autoimmune remove
 
 **Description**
 
-Makes a user or role immune from automated moderation actions.
+Remove a user or role from being immune to automated moderation actions.
 
 **Examples:**
     - ``[p]autoimmune remove @TwentySix`` - Removes a user.

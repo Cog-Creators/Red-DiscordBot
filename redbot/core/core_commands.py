@@ -4473,7 +4473,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or role immune from automated moderation actions.
+        Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
             - `[p]autoimmune remove @TwentySix` - Removes a user.
