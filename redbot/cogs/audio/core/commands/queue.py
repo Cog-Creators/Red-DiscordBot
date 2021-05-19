@@ -177,9 +177,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
@@ -208,9 +206,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
         except KeyError:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
@@ -305,9 +301,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def command_queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if (
             dj_enabled
             and not await self._can_instaskip(ctx, ctx.author)
@@ -340,7 +334,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             await lavalink.connect(
                 ctx.author.voice.channel,
-                deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
             )
             player = lavalink.get_player(ctx.guild.id)
             player.store("connect", datetime.datetime.utcnow())

@@ -94,33 +94,17 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             if not notify_channel:
                 player.store("channel", ctx.channel.id)
 
-        self._daily_global_playlist_cache.setdefault(
-            self.bot.user.id, await self.config.daily_playlists()
-        )
         if self.local_folder_current_path is None:
-            self.local_folder_current_path = Path(await self.config.localpath())
+            self.local_folder_current_path = Path(await self.config_cache.localpath.get_context_value(ctx.guild))
         if not ctx.guild:
             return
-
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
-        self._daily_playlist_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
-        )
-        self._persist_queue_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled:
-            dj_role = self._dj_role_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-            )
+            dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
             dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
-                await self.config.guild(ctx.guild).dj_enabled.set(None)
-                self._dj_status_cache[ctx.guild.id] = None
-                await self.config.guild(ctx.guild).dj_role.set(None)
-                self._dj_role_cache[ctx.guild.id] = None
+                await self.config_cache.dj_status.set_guild(ctx.guild, None)
+                await self.config_cache.dj_roles.get_context_value(ctx.guild, None)
                 await self.send_embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def cog_after_invoke(self, ctx: commands.Context) -> None:
@@ -268,7 +252,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if (
             channel
             and bot_voice_state is False
-            and await self.config.guild(member.guild).auto_deafen()
+            and await self.config_cache.auto_deafen.get_context_value(channel.guild)
         ):
             try:
                 player = lavalink.get_player(channel.guild.id)

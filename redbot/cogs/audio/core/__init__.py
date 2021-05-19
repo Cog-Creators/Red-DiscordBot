@@ -44,6 +44,7 @@ class Audio(
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
+        self.config_cache = utilities.setting_cache.SettingCacheManager(self.bot, self.config, enable_cache=True)
 
         self.api_interface = None
         self.player_manager = None
@@ -97,6 +98,7 @@ class Audio(
             owner_notification=0,
             cache_level=0,
             cache_age=365,
+            auto_deafen=True,
             daily_playlists=False,
             global_db_enabled=False,
             global_db_get_timeout=5,
@@ -112,7 +114,7 @@ class Audio(
 
         default_guild = dict(
             auto_play=False,
-            currently_auto_playing_in=None,
+            currently_auto_playing_in=[],
             auto_deafen=True,
             autoplaylist=dict(
                 enabled=True,

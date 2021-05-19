@@ -8,6 +8,7 @@ from .player import PlayerUtilities
 from .playlists import PlaylistUtilities
 from .queue import QueueUtilities
 from .validation import ValidationUtilities
+from .setting_cache import SettingCacheManager as SettingCacheManager
 
 
 class Utilities(

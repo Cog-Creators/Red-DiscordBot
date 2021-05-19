@@ -35,17 +35,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
-            await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
+            await self.config_cache.autoplay.set_currently_in_guild(guild, None)
             return
 
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
-            daily_cache = self._daily_playlist_cache.setdefault(
-                guild.id, await self.config.guild(guild).daily_playlists()
-            )
-            global_daily_playlists = self._daily_global_playlist_cache.setdefault(
-                self.bot.user.id, await self.config.daily_playlists()
-            )
+            daily_cache = await self.config_cache.daily_playlist.get_context_value(guild)
+            global_daily_playlists = await self.config_cache.daily_global_playlist.get_context_value(guild)
             today = datetime.date.today()
             midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
             today_id = int(time.mktime(today.timetuple()))
@@ -138,9 +134,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 debug_exc_log(
                     log, err, "Failed to delete global daily playlist ID: %d", too_old_id
                 )
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, await self.config.guild(guild).persist_queue()
-        )
+        persist_cache = await self.config_cache.persistent_queue.get_context_value(guild)
         if persist_cache:
             await self.api_interface.persistent_queue_api.played(
                 guild_id=guild.id, track_id=track_identifier
@@ -166,9 +160,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, await self.config.guild(guild).persist_queue()
-        )
+        persist_cache = await self.config_cache.persistent_queue.get_context_value(guild)
         if persist_cache:
             await self.api_interface.persistent_queue_api.enqueued(
                 guild_id=guild.id, room_id=track.extras["vc"], track=track

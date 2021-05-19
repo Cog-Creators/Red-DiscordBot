@@ -43,9 +43,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             await player.stop()
             await player.disconnect()
             if guild:
-                await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set(
-                    []
-                )
+                await self.config_cache.autoplay.set_currently_in_guild(guild, None)
             return
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
@@ -54,7 +52,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set([])
+            await self.config_cache.autoplay.set_currently_in_guild(guild),
             self._ll_guild_updates.discard(guild.id)
             return
 
@@ -91,7 +89,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         description = await self.get_track_description(
             current_track, self.local_folder_current_path
         )
-        status = await self.config.status()
+        status = await self.config_cache.status.get_context_value(guild)
         log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
@@ -111,13 +109,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             notify_channel = player.fetch("channel")
             if notify_channel and autoplay:
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    [notify_channel, player.channel.id]
-                )
+                await self.config_cache.autoplay.set_currently_in_guild(guild, [notify_channel, player.channel.id])
             else:
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
-                )
+                await self.config_cache.autoplay.set_currently_in_guild(guild)
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
@@ -171,7 +165,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     dur = self.format_time(current_length)
 
                 thumb = None
-                if await self.config.guild(guild).thumbnail() and current_thumbnail:
+                if await self.config_cache.thumbnail.get_context_value(player.guild) and current_thumbnail:
                     thumb = current_thumbnail
 
                 notify_message = await self.send_embed_msg(
@@ -202,9 +196,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.config_cache.autoplay.set_currently_in_guild(guild)
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
@@ -241,9 +233,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
-                )
+                await self.config_cache.autoplay.set_currently_in_guild(guild)
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
@@ -413,9 +403,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.config_cache.autoplay.set_currently_in_guild(guild)
                 else:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
@@ -427,9 +415,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.config_cache.autoplay.set_currently_in_guild(guild)
             elif code in (42069,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
@@ -493,9 +479,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.config_cache.autoplay.set_currently_in_guild(guild)
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
