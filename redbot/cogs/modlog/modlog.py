@@ -104,7 +104,8 @@ class ModLog(commands.Cog):
         """Reset all modlog cases in this server."""
         guild = ctx.guild
         await ctx.send(
-            _("Are you sure you would like to reset all modlog cases in this server?") + " (yes/no)"
+            _("Are you sure you would like to reset all modlog cases in this server?")
+            + " (yes/no)"
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
