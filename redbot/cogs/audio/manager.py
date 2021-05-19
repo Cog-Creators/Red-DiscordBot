@@ -287,7 +287,7 @@ class ServerManager:
                     # hasn't been published yet
                     raise LavalinkDownloadFailed(
                         f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
-                        f"yet",
+                        "yet",
                         response=response,
                         should_retry=False,
                     )

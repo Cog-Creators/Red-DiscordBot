@@ -40,6 +40,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.command(name="audiostats")
     @commands.guild_only()
+    @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
@@ -58,10 +59,10 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 current_title = await self.get_track_description(
                     p.current, self.local_folder_current_path
                 )
-                msg += "{} [`{}`]: {}\n".format(p.channel.guild.name, connect_dur, current_title)
+                msg += "{} [`{}`]: {}\n".format(p.guild.name, connect_dur, current_title)
             except AttributeError:
                 msg += "{} [`{}`]: **{}**\n".format(
-                    p.channel.guild.name, connect_dur, _("Nothing playing.")
+                    p.guild.name, connect_dur, _("Nothing playing.")
                 )
 
         if total_num == 0:

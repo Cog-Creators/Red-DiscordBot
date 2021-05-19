@@ -428,14 +428,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
                 track = result.tracks[0]
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to get track for {song_url}")
+                debug_exc_log(log, err, "Failed to get track for %r", song_url)
                 continue
             try:
                 track_obj = self.get_track_json(player, other_track=track)
                 track_list.append(track_obj)
                 successful_count += 1
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to create track for {track}")
+                debug_exc_log(log, err, "Failed to create track for %r", track)
                 continue
             if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
                 await notifier.notify_user(

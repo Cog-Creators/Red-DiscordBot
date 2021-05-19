@@ -232,6 +232,10 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def update_external_status(self) -> bool:
         raise NotImplementedError()
 

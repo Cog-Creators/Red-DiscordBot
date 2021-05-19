@@ -219,7 +219,7 @@ class PlaylistScope(Enum):
 def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
-            log.exception(f"{task.get_name()} raised an Exception", exc_info=exc)
+            log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
 
 
 def has_internal_server():
