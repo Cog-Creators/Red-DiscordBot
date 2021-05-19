@@ -923,7 +923,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and
+        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and
         Bandcamp links.
         """
         restrict = await self.config.restrict()
