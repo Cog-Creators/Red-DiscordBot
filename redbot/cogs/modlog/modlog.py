@@ -10,6 +10,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu, dpymenu
+from redbot.core.utils.predicates import MessagePredicate
 
 from .menus import CasesForSource
 
