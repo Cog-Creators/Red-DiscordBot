@@ -106,6 +106,14 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
+            volume=150,
+            disconnect=False,
+            persist_queue=None,
+            emptydc_enabled=False,
+            emptydc_timer=0,
+            thumbnail=None,
+            maxlength=0,
+            vc_restricted=False,
             **self._default_lavalink_settings,
         )
 
@@ -123,6 +131,7 @@ class Audio(
             disconnect=False,
             dj_enabled=False,
             dj_role=None,
+            dj_roles=[],
             daily_playlists=False,
             emptydc_enabled=False,
             emptydc_timer=0,
@@ -139,11 +148,14 @@ class Audio(
             thumbnail=False,
             volume=100,
             vote_enabled=False,
-            vote_percent=0,
+            vote_percent=51,
             room_lock=None,
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             country_code="US",
+            vc_restricted=False,
+            whitelisted_text=[],
+            whitelisted_vc=[],
         )
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 

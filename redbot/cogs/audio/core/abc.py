@@ -16,7 +16,6 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from .utilities import SettingCacheManager
 
 if TYPE_CHECKING:
     from ..apis.interface import AudioAPIInterface
@@ -24,6 +23,7 @@ if TYPE_CHECKING:
     from ..apis.playlist_wrapper import PlaylistWrapper
     from ..audio_dataclasses import LocalPath, Query
     from ..manager import ServerManager
+    from .utilities import SettingCacheManager
 
 
 class MixinMeta(ABC):

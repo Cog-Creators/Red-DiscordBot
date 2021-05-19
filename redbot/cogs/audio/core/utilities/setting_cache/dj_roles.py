@@ -74,4 +74,3 @@ class DJRoleManager:
 
     async def get_context_value(self, guild: discord.Guild) -> Set[discord.Role]:
         return await self.get_guild(guild)
-

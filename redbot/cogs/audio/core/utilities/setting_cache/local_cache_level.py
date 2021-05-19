@@ -4,10 +4,9 @@ from typing import Dict, Optional
 
 import discord
 
+from redbot.cogs.audio.utils import CacheLevel
 from redbot.core import Config
 from redbot.core.bot import Red
-
-from ..abstract import CacheLevel
 
 
 class LocalCacheLevelManager:
