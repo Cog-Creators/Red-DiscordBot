@@ -64,7 +64,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
                 if _error_code == 1000 and player.current is not None and player.is_playing:
-                    await player.resume(player.current, start=player.position, replace=False)
+                    await player.resume(player.current, start=player.position, replace=True)
+                    by_remote = extra.get("byRemote", "")
+                    reason = extra.get("reason", "No Specified Reason").strip()
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        extra.get("code"),
+                        by_remote,
+                        reason,
+                        player,
+                    )
                 return
             await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
             try:
@@ -499,16 +510,26 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.resume(player.current, start=player.position, replace=False)
-                ws_audio_log.info(
-                    "WS EVENT - IGNORED (Healthy Socket) | "
-                    "Voice websocket closed event "
-                    "Code: %d -- Remote: %s -- %s, %r",
-                    code,
-                    by_remote,
-                    reason,
-                    player,
-                )
+                    await player.resume(player.current, start=player.position, replace=True)
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
+                else:
+                    ws_audio_log.info(
+                        "WS EVENT - IGNORED (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
         except Exception:
             log.exception("Error in task")
         finally:
