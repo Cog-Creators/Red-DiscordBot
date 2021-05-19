@@ -49,11 +49,16 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         msg = ""
         async for p in AsyncIter(lavalink.all_connected_players()):
-            connect_dur = self.get_time_string(
-                int(
-                    (datetime.datetime.now(datetime.timezone.utc) - p.connected_at).total_seconds()
+            connect_dur = (
+                self.get_time_string(
+                    int(
+                        (
+                            datetime.datetime.now(datetime.timezone.utc) - p.connected_at
+                        ).total_seconds()
+                    )
                 )
-            ) or "0s"
+                or "0s"
+            )
             try:
                 if not p.current:
                     raise AttributeError
