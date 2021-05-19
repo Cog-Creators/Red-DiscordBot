@@ -574,8 +574,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         DJ mode allows users with the DJ role to use audio commands.
         """
         dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
-        dj_role = ctx.guild.get_role(dj_role)
-        if dj_role is None:
+        if not dj_role:
             await self.send_embed_msg(
                 ctx,
                 title=_("Missing DJ Role"),
@@ -592,7 +591,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Response timed out, try again later.")
                 )
-        dj_enabled = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         await self.config_cache.dj_status.set_guild(ctx.guild, not dj_enabled)
         await self.send_embed_msg(
             ctx,

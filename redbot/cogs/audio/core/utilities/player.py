@@ -109,9 +109,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return not nonbots
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
-        dj_role_obj = ctx.guild.get_role(dj_role)
-        return dj_role_obj in ctx.guild.get_member(member.id).roles
+        return await self.config_cache.dj_roles.member_is_dj(ctx.guild, member)
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:

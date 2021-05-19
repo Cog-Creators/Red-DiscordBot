@@ -56,6 +56,6 @@ class MaxTrackLengthManager:
     async def get_context_value(self, guild: discord.Guild) -> int:
         guild_time = await self.get_guild(guild)
         global_time = await self.get_global()
-        if global_time == 0 or global_time >= guild_time:
+        if global_time == 0 or global_time > guild_time:
             return guild_time
         return global_time

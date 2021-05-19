@@ -33,8 +33,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         else:
-            dj_enabled = await self.config_cache.dj_status.get_context_value(guild=ctx.guild)
-            vote_enabled = await self.config_cache.votes.get_context_value(guild=ctx.guild)
+            dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+            vote_enabled = await self.config_cache.votes.get_context_value(ctx.guild)
             player = lavalink.get_player(ctx.guild.id)
             can_skip = await self._can_instaskip(ctx, ctx.author)
             if (
@@ -424,7 +424,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority
         over `[p]shuffle`.
         """
-        dj_enabled = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if dj_enabled and not can_skip:
             return await self.send_embed_msg(
@@ -475,7 +475,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         if not player.current:
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         vote_enabled = await self.config_cache.votes.get_context_value(ctx.guild)
         is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)

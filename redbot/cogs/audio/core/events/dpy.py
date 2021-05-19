@@ -102,11 +102,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             return
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled:
-            dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
-            dj_role_obj = ctx.guild.get_role(dj_role)
-            if not dj_role_obj:
+            dj_roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+            if not dj_roles:
                 await self.config_cache.dj_status.set_guild(ctx.guild, None)
-                await self.config_cache.dj_roles.get_context_value(ctx.guild, None)
+                await self.config_cache.dj_roles.set_guild(ctx.guild, None)
                 await self.send_embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def cog_after_invoke(self, ctx: commands.Context) -> None:

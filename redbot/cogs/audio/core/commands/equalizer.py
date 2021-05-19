@@ -311,7 +311,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        dj_enabled = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,

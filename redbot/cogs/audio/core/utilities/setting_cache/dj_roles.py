@@ -71,3 +71,7 @@ class DJRoleManager:
                 self._cached_guild[gid].remove(role)
                 async with self._config.guild_from_id(gid).dj_roles() as curr_list:
                     curr_list.remove(role)
+
+    async def get_context_value(self, guild: discord.Guild) -> Set[discord.Role]:
+        return await self.get_guild(guild)
+

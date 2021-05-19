@@ -62,4 +62,4 @@ class AutoPlayManager:
         return await self.get_guild(guild)
 
     async def get_currently_in_context_value(self, guild: discord.Guild) -> Tuple[int, int]:
-        return await self.set_currently_in_guild(guild)
+        return await self.get_currently_in_guild(guild)
