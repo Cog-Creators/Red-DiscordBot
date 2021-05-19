@@ -53,7 +53,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 int(
                     (datetime.datetime.now(datetime.timezone.utc) - p.connected_at).total_seconds()
                 )
-            )
+            ) or "0s"
             try:
                 if not p.current:
                     raise AttributeError
