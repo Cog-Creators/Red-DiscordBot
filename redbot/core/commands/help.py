@@ -805,7 +805,11 @@ class RedHelpFormatter(HelpFormatterABC):
         # save on config calls
         channel_permissions = ctx.channel.permissions_for(ctx.me)
 
-        if not (channel_permissions.add_reactions and help_settings.use_menus):
+        if not (
+            channel_permissions.add_reactions
+            and channel_permissions.read_message_history
+            and help_settings.use_menus
+        ):
 
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
