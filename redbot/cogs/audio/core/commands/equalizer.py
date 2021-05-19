@@ -342,7 +342,6 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "16k",
         ]
 
-        bands_num = player.equalizer.band_count
         if band_value > 1:
             band_value = 1
         elif band_value <= -0.25:

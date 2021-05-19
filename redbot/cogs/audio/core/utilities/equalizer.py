@@ -59,7 +59,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         dict(zip(["band", "gain"], values))
                         for values in list(zip(band_num, band_value))
                     ],
-                    name=name,
+                    name=name
                 )
                 if new_eq != player.equalizer:
                     await player.set_equalizer(equalizer=new_eq)
