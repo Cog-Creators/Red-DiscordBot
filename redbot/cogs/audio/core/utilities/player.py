@@ -680,7 +680,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        volume = Volume(value=(await self.config_cache.volume.get_context_value(ctx.guild)))
+        volume = Volume(value=(await self.config_cache.volume.get_context_value(ctx.guild)) / 100)
         shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(ctx.guild)
         player.repeat = repeat
         player.shuffle = shuffle
