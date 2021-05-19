@@ -96,9 +96,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild = self.bot.get_guild(guild_id)
                 if not guild:
                     continue
-                persist_cache = self._persist_queue_cache.setdefault(
-                    guild_id, await self.config.guild(guild).persist_queue()
-                )
+                persist_cache = await self.config_cache.persistent_queue.get_context_value(guild)
                 if not persist_cache:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue

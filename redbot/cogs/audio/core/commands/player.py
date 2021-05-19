@@ -45,7 +45,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
-        restrict = await self.config.restrict()
+        restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
         if restrict and self.match_url(str(query)):
             valid_url = self.is_url_allowed(str(query))
             if not valid_url:
@@ -87,7 +87,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -153,7 +153,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("Only single tracks work with bump play."),
             )
         guild_data = await self.config.guild(ctx.guild).all()
-        restrict = await self.config.restrict()
+        restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
         if restrict and self.match_url(str(query)):
             valid_url = self.is_url_allowed(str(query))
             if not valid_url:
@@ -195,7 +195,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -253,7 +253,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             title = _("Unable To Play Tracks")
             desc = _("No tracks found for `{query}`.").format(query=query.to_string_user())
             embed = discord.Embed(title=title, description=desc)
-            if await self.config.use_external_lavalink() and query.is_local:
+            if (
+                await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                and query.is_local
+            ):
                 embed.description = _(
                     "Local tracks will not work "
                     "if the `Lavalink.jar` cannot see the track.\n"
@@ -459,7 +462,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -575,7 +578,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -699,7 +702,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -730,7 +733,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not isinstance(query, list):
             query = Query.process_input(query, self.local_folder_current_path)
-            restrict = await self.config.restrict()
+            restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
             if restrict and self.match_url(str(query)):
                 valid_url = self.is_url_allowed(str(query))
                 if not valid_url:
@@ -785,7 +788,12 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         raise e
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
-                    if await self.config.use_external_lavalink() and query.is_local:
+                    if (
+                        await self.config_cache.managed_lavalink_server.get_context_value(
+                            ctx.guild
+                        )
+                        and query.is_local
+                    ):
                         embed.description = _(
                             "Local tracks will not work "
                             "if the `Lavalink.jar` cannot see the track.\n"
@@ -907,7 +915,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
-                if await self.config.use_external_lavalink() and query.is_local:
+                if (
+                    await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                    and query.is_local
+                ):
                     embed.description = _(
                         "Local tracks will not work "
                         "if the `Lavalink.jar` cannot see the track.\n"
@@ -924,9 +935,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             tracks = query
 
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
 
         len_search_pages = math.ceil(len(tracks) / 5)
         search_page_list = []

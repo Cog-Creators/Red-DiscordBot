@@ -101,7 +101,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))

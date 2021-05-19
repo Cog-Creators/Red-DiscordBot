@@ -111,7 +111,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await dpymenu(ctx, folder_page_list, DEFAULT_CONTROLS)
         else:
@@ -126,7 +126,9 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             (
                 Query.process_input(
-                    Path(await self.config.localpath()).absolute(),
+                    Path(
+                        await self.config_cache.localpath.get_context_value(ctx.guild)
+                    ).absolute(),
                     self.local_folder_current_path,
                     search_subfolders=True,
                 )

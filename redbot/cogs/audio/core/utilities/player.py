@@ -83,9 +83,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
 
         if member.bot:
             return True
@@ -113,11 +111,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return not nonbots
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
-        dj_role_obj = ctx.guild.get_role(dj_role)
-        return dj_role_obj in ctx.guild.get_member(member.id).roles
+        return await self.config_cache.dj_roles.member_is_dj(ctx.guild, member)
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
@@ -130,7 +124,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config.guild(player.guild).auto_play()
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
@@ -218,7 +212,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(player, "channel.guild.id", None)
         if not guild_id:
             return
-        if not await self.config.guild_from_id(guild_id).auto_deafen():
+        if not await self.config_cache.auto_deafen.get_context_value(player.guild):
             return
         await player.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
@@ -413,7 +407,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         embed.set_footer(text=result.exception_message[:2000])
                     else:
                         embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
-                if await self.config.use_external_lavalink() and query.is_local:
+                if (
+                    await self.config_cache.managed_lavalink_server.get_context_value(player.guild)
+                    and query.is_local
+                ):
                     embed.description = _(
                         "Local tracks will not work "
                         "if the `Lavalink.jar` cannot see the track.\n"
@@ -679,10 +676,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def set_player_settings(self, ctx: commands.Context) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        volume = Volume(value=(await self.config.guild(ctx.guild).volume()) / 100)
-        shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
+        shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
+        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+        volume = Volume(value=(await self.config_cache.volume.get_context_value(ctx.guild)))
+        shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(ctx.guild)
         player.repeat = repeat
         player.shuffle = shuffle
         player.shuffle_bumped = shuffle_bumped
@@ -715,7 +712,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 await player.move_to(
                     user_channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
                 return True
         else:

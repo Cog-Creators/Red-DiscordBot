@@ -16,6 +16,7 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
+from .utilities import SettingCacheManager
 
 if TYPE_CHECKING:
     from ..apis.interface import AudioAPIInterface
@@ -39,15 +40,10 @@ class MixinMeta(ABC):
     local_folder_current_path: Optional[Path]
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
+    config_cache: SettingCacheManager
 
     skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
-    _daily_playlist_cache: MutableMapping[int, bool]
-    _daily_global_playlist_cache: MutableMapping[int, bool]
-    _persist_queue_cache: MutableMapping[int, bool]
-    _dj_status_cache: MutableMapping[int, Optional[bool]]
-    _dj_role_cache: MutableMapping[int, Optional[int]]
-    _nsfw_cache: MutableMapping[int, bool]
     _error_timer: MutableMapping[int, float]
     _disconnected_players: MutableMapping[int, bool]
     global_api_user: MutableMapping[str, Any]

@@ -60,28 +60,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = False
-        async with self.config.url_keyword_whitelist() as whitelist:
-            if keyword in whitelist:
-                exists = True
-            else:
-                whitelist.append(keyword)
-        if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Whitelist Modified"),
-                description=_("Added `{whitelisted}` to the whitelist.").format(
-                    whitelisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.add_to_whitelist(None, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Whitelist Modified"),
+            description=_("Added `{whitelisted}` to the whitelist.").format(whitelisted=keyword),
+        )
 
     @command_audioset_perms_global_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        whitelist = await self.config.url_keyword_whitelist()
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(
+            None, printable=True
+        )
+
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
         whitelist.sort()
@@ -107,10 +100,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
         """Clear all keywords from the whitelist."""
-        whitelist = await self.config.url_keyword_whitelist()
+        whitelist = await self.config_cache.blacklist_whitelist.clear_whitelist(None)
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        await self.config.url_keyword_whitelist.clear()
+        await self.config_cache.blacklist_whitelist.clear_whitelist(ctx.guild)
         return await self.send_embed_msg(
             ctx,
             title=_("Whitelist Modified"),
@@ -125,22 +118,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = True
-        async with self.config.url_keyword_whitelist() as whitelist:
-            if keyword not in whitelist:
-                exists = False
-            else:
-                whitelist.remove(keyword)
-        if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Whitelist Modified"),
-                description=_("Removed `{whitelisted}` from the whitelist.").format(
-                    whitelisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.remove_from_whitelist(None, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Whitelist Modified"),
+            description=_("Removed `{whitelisted}` from the whitelist.").format(
+                whitelisted=keyword
+            ),
+        )
 
     @command_audioset_perms_global.group(name="blacklist")
     async def command_audioset_perms_global_blacklist(self, ctx: commands.Context):
@@ -154,28 +139,20 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = False
-        async with self.config.url_keyword_blacklist() as blacklist:
-            if keyword in blacklist:
-                exists = True
-            else:
-                blacklist.append(keyword)
-        if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the blacklist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Blacklist Modified"),
-                description=_("Added `{blacklisted}` to the blacklist.").format(
-                    blacklisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.add_to_blacklist(None, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Blacklist Modified"),
+            description=_("Added `{blacklisted}` to the blacklist.").format(blacklisted=keyword),
+        )
 
     @command_audioset_perms_global_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
-        blacklist = await self.config.url_keyword_blacklist()
+        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(
+            None, printable=True
+        )
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
         blacklist.sort()
@@ -201,10 +178,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_perms_global_blacklist.command(name="clear")
     async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
         """Clear all keywords added to the blacklist."""
-        blacklist = await self.config.url_keyword_blacklist()
+        blacklist = await self.config_cache.blacklist_whitelist.get_blacklist(None)
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        await self.config.url_keyword_blacklist.clear()
+        await self.config_cache.blacklist_whitelist.clear_blacklist(None)
         return await self.send_embed_msg(
             ctx,
             title=_("Blacklist Modified"),
@@ -219,22 +196,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = True
-        async with self.config.url_keyword_blacklist() as blacklist:
-            if keyword not in blacklist:
-                exists = False
-            else:
-                blacklist.remove(keyword)
-        if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword is not in the blacklist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Blacklist Modified"),
-                description=_("Removed `{blacklisted}` from the blacklist.").format(
-                    blacklisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.remove_from_blacklist(None, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Blacklist Modified"),
+            description=_("Removed `{blacklisted}` from the blacklist.").format(
+                blacklisted=keyword
+            ),
+        )
 
     @command_audioset_perms.group(name="whitelist")
     @commands.guild_only()
@@ -250,28 +219,20 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = False
-        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if keyword in whitelist:
-                exists = True
-            else:
-                whitelist.append(keyword)
-        if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Whitelist Modified"),
-                description=_("Added `{whitelisted}` to the whitelist.").format(
-                    whitelisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.add_to_whitelist(ctx.guild, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Whitelist Modified"),
+            description=_("Added `{whitelisted}` to the whitelist.").format(whitelisted=keyword),
+        )
 
     @command_audioset_perms_whitelist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(
+            ctx.guild, printable=True
+        )
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
         whitelist.sort()
@@ -297,10 +258,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_perms_whitelist.command(name="clear")
     async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
         """Clear all keywords from the whitelist."""
-        whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_value(ctx.guild)
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
-        await self.config.guild(ctx.guild).url_keyword_whitelist.clear()
+        await self.config_cache.blacklist_whitelist.clear_whitelist(ctx.guild)
         return await self.send_embed_msg(
             ctx,
             title=_("Whitelist Modified"),
@@ -315,22 +276,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = True
-        async with self.config.guild(ctx.guild).url_keyword_whitelist() as whitelist:
-            if keyword not in whitelist:
-                exists = False
-            else:
-                whitelist.remove(keyword)
-        if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the whitelist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Whitelist Modified"),
-                description=_("Removed `{whitelisted}` from the whitelist.").format(
-                    whitelisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.remove_from_whitelist(ctx.guild, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Whitelist Modified"),
+            description=_("Removed `{whitelisted}` from the whitelist.").format(
+                whitelisted=keyword
+            ),
+        )
 
     @command_audioset_perms.group(name="blacklist")
     @commands.guild_only()
@@ -343,28 +296,20 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         keyword = keyword.lower().strip()
         if not keyword:
             return await ctx.send_help()
-        exists = False
-        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if keyword in blacklist:
-                exists = True
-            else:
-                blacklist.append(keyword)
-        if exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword already in the blacklist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Blacklist Modified"),
-                description=_("Added `{blacklisted}` to the blacklist.").format(
-                    blacklisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.add_to_blacklist(ctx.guild, {keyword})
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Blacklist Modified"),
+            description=_("Added `{blacklisted}` to the blacklist.").format(blacklisted=keyword),
+        )
 
     @command_audioset_perms_blacklist.command(name="list")
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
-        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
+        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(
+            None, printable=True
+        )
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
         blacklist.sort()
@@ -390,10 +335,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_perms_blacklist.command(name="clear")
     async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
         """Clear all keywords added to the blacklist."""
-        blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
-        if not blacklist:
-            return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
-        await self.config.guild(ctx.guild).url_keyword_blacklist.clear()
+        await self.config_cache.blacklist_whitelist.clear_blacklist(ctx.guild)
         return await self.send_embed_msg(
             ctx,
             title=_("Blacklist Modified"),
@@ -409,21 +351,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not keyword:
             return await ctx.send_help()
         exists = True
-        async with self.config.guild(ctx.guild).url_keyword_blacklist() as blacklist:
-            if keyword not in blacklist:
-                exists = False
-            else:
-                blacklist.remove(keyword)
-        if not exists:
-            return await self.send_embed_msg(ctx, title=_("Keyword is not in the blacklist."))
-        else:
-            return await self.send_embed_msg(
-                ctx,
-                title=_("Blacklist Modified"),
-                description=_("Removed `{blacklisted}` from the blacklist.").format(
-                    blacklisted=keyword
-                ),
-            )
+        await self.config_cache.blacklist_whitelist.remove_from_blacklist(ctx.guild)
+        return await self.send_embed_msg(
+            ctx,
+            title=_("Blacklist Modified"),
+            description=_("Removed `{blacklisted}` from the blacklist.").format(
+                blacklisted=keyword
+            ),
+        )
 
     @command_audioset.group(name="autoplay")
     @commands.guild_only()
@@ -434,19 +369,19 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_autoplay.command(name="toggle")
     async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
-        autoplay = await self.config.guild(ctx.guild).auto_play()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        disconnect = await self.config.guild(ctx.guild).disconnect()
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+        disconnect = await self.config_cache.disconnect.get_context_value(ctx.guild)
         msg = _("Auto-play when queue ends: {true_or_false}.").format(
             true_or_false=_("Enabled") if not autoplay else _("Disabled")
         )
-        await self.config.guild(ctx.guild).auto_play.set(not autoplay)
+        await self.config_cache.autoplay.set_guild(ctx.guild, not autoplay)
         if autoplay is not True and repeat is True:
             msg += _("\nRepeat has been disabled.")
-            await self.config.guild(ctx.guild).repeat.set(False)
+            await self.config_cache.repeat.set_guild(ctx.guild, False)
         if autoplay is not True and disconnect is True:
             msg += _("\nAuto-disconnecting at queue end has been disabled.")
-            await self.config.guild(ctx.guild).disconnect.set(False)
+            await self.config_cache.disconnect.set_guild(ctx.guild, False)
 
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
         if self._player_check(ctx):
@@ -579,11 +514,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Global daily queues creates a playlist for all tracks played today.
         """
-        daily_playlists = self._daily_global_playlist_cache.setdefault(
-            self.bot.user.id, await self.config.daily_playlists()
-        )
-        await self.config.daily_playlists.set(not daily_playlists)
-        self._daily_global_playlist_cache[self.bot.user.id] = not daily_playlists
+        daily_playlists = await self.config_cache.daily_playlist.get_context_value(None)
+        await self.config_cache.daily_playlist.set_guild(None, not daily_playlists)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -600,11 +532,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Daily queues creates a playlist for all tracks played today.
         """
-        daily_playlists = self._daily_playlist_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
-        )
-        await self.config.guild(ctx.guild).daily_playlists.set(not daily_playlists)
-        self._daily_playlist_cache[ctx.guild.id] = not daily_playlists
+        daily_playlists = await self.config_cache.daily_playlist.get_context_value(ctx.guild)
+        await self.config_cache.daily_playlist.set_guild(ctx.guild, not daily_playlists)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -622,17 +551,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         This setting takes precedence over `[p]audioset emptydisconnect`.
         """
 
-        disconnect = await self.config.guild(ctx.guild).disconnect()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        disconnect = await self.config_cache.disconnect.get_context_value(None)
+        autoplay = await self.config_cache.autoplay.get_context_value(None)
         msg = ""
         msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
             true_or_false=_("Enabled") if not disconnect else _("Disabled")
         )
         if disconnect is not True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
-            await self.config.guild(ctx.guild).auto_play.set(False)
+            await self.config_cache.autoplay.set_guild(ctx.guild, False)
 
-        await self.config.guild(ctx.guild).disconnect.set(not disconnect)
+        await self.config_cache.disconnect.set_guild(ctx.guild, not disconnect)
 
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
@@ -644,11 +573,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
-        dj_role = ctx.guild.get_role(dj_role)
-        if dj_role is None:
+        dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        if not dj_role:
             await self.send_embed_msg(
                 ctx,
                 title=_("Missing DJ Role"),
@@ -665,11 +591,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Response timed out, try again later.")
                 )
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
-        await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
-        self._dj_status_cache[ctx.guild.id] = not dj_enabled
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        await self.config_cache.dj_status.set_guild(ctx.guild, not dj_enabled)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -706,9 +629,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     num_seconds=self.get_time_string(seconds)
                 ),
             )
-
-        await self.config.guild(ctx.guild).emptydc_timer.set(seconds)
-        await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
+        await self.config_cache.empty_dc_timer.set_guild(ctx.guild, seconds)
+        await self.config_cache.empty_dc.set_guild(ctx.guild, enabled)
 
     @command_audioset.command(name="emptypause")
     @commands.guild_only()
@@ -735,16 +657,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     num_seconds=self.get_time_string(seconds)
                 ),
             )
-        await self.config.guild(ctx.guild).emptypause_timer.set(seconds)
-        await self.config.guild(ctx.guild).emptypause_enabled.set(enabled)
+        await self.config_cache.empty_pause_timer.set_guild(ctx.guild, seconds)
+        await self.config_cache.empty_pause.set_guild(ctx.guild, enabled)
 
     @command_audioset.command(name="lyrics")
     @commands.guild_only()
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_lyrics(self, ctx: commands.Context):
         """Prioritise tracks with lyrics."""
-        prefer_lyrics = await self.config.guild(ctx.guild).prefer_lyrics()
-        await self.config.guild(ctx.guild).prefer_lyrics.set(not prefer_lyrics)
+        prefer_lyrics = await self.config_cache.prefer_lyrics.get_context_value(ctx.guild)
+        await self.config_cache.prefer_lyrics.set_guild(ctx.guild, not prefer_lyrics)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -784,9 +706,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
-
-        await self.config.guild(ctx.guild).jukebox_price.set(price)
-        await self.config.guild(ctx.guild).jukebox.set(jukebox)
+        await self.config_cache.jukebox_price.set_guild(ctx.guild, price)
+        await self.config_cache.jukebox.set_guild(ctx.guild, jukebox)
 
     @command_audioset.command(name="localpath")
     @commands.is_owner()
@@ -798,7 +719,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
 
         if not local_path:
-            await self.config.localpath.set(str(cog_data_path(raw_name="Audio")))
+            await self.config_cache.localpath.set_global(str(cog_data_path(raw_name="Audio")))
             self.local_folder_current_path = cog_data_path(raw_name="Audio")
             return await self.send_embed_msg(
                 ctx,
@@ -855,7 +776,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ).format(localfolder=temp.absolute(), localtracks=temp.localtrack_folder.absolute())
             await self.send_embed_msg(ctx, title=_("Invalid Environment"), description=warn_msg)
         local_path = str(temp.localtrack_folder.absolute())
-        await self.config.localpath.set(local_path)
+        await self.config_cache.localpath.set_global(str(cog_data_path(raw_name="Audio")))
         self.local_folder_current_path = temp.localtrack_folder.absolute()
         return await self.send_embed_msg(
             ctx,
@@ -892,15 +813,15 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     seconds=self.get_time_string(seconds)
                 ),
             )
-        await self.config.guild(ctx.guild).maxlength.set(seconds)
+        await self.config_cache.max_track_length.set_guild(ctx.guild, seconds)
 
     @command_audioset.command(name="notify")
     @commands.guild_only()
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_notify(self, ctx: commands.Context):
         """Toggle track announcement and other bot messages."""
-        notify = await self.config.guild(ctx.guild).notify()
-        await self.config.guild(ctx.guild).notify.set(not notify)
+        notify = await self.config_cache.notify.get_context_value(ctx.guild)
+        await self.config_cache.notify.set_guild(ctx.guild, not notify)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -914,8 +835,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_auto_deafen(self, ctx: commands.Context):
         """Toggle whether the bot will be auto deafened upon joining the voice channel."""
-        auto_deafen = await self.config.guild(ctx.guild).auto_deafen()
-        await self.config.guild(ctx.guild).auto_deafen.set(not auto_deafen)
+        auto_deafen = await self.config_cache.auto_deafen.get_context_value(ctx.guild)
+        await self.config_cache.auto_deafen.set_guild(ctx.guild, not auto_deafen)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -934,8 +855,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and
         Bandcamp links.
         """
-        restrict = await self.config.restrict()
-        await self.config.restrict.set(not restrict)
+        restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
+        await self.config_cache.url_restrict.set_global(not restrict)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -949,16 +870,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
         """Set the role to use for DJ mode."""
-        await self.config.guild(ctx.guild).dj_role.set(role_name.id)
-        self._dj_role_cache[ctx.guild.id] = role_name.id
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
-        dj_role_obj = ctx.guild.get_role(dj_role)
+        await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
             ctx,
             title=_("Settings Changed"),
-            description=_("DJ role set to: {role.name}.").format(role=dj_role_obj),
+            description=_("DJ role set to: {role.name}.").format(role=role_name),
         )
 
     @command_audioset.command(name="settings", aliases=["info"])
@@ -1108,7 +1024,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("User Settings")
             + "---        \n"
             + _("Spotify search:   [{country_code}]\n")
-        ).format(country_code=await self.config.user(ctx.author).country_code())
+        ).format(
+            country_code=await self.config_cache.country_code.get_context_value(
+                ctx.guild, user=ctx.author
+            )
+        )
 
         msg += (
             "\n---"
@@ -1191,8 +1111,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     async def command_audioset_status(self, ctx: commands.Context):
         """Enable/disable tracks' titles as status."""
-        status = await self.config.status()
-        await self.config.status.set(not status)
+        status = await self.config_cache.status.get_context_value(ctx.guild)
+        await self.config_cache.status.set_global(not status)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -1206,8 +1126,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_thumbnail(self, ctx: commands.Context):
         """Toggle displaying a thumbnail on audio messages."""
-        thumbnail = await self.config.guild(ctx.guild).thumbnail()
-        await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
+        thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
+        await self.config_cache.thumbnail.set_guild(ctx.guild, not thumbnail)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -1242,8 +1162,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("Vote percentage set to {percent}%.").format(percent=percent),
             )
 
-        await self.config.guild(ctx.guild).vote_percent.set(percent)
-        await self.config.guild(ctx.guild).vote_enabled.set(enabled)
+        await self.config_cache.votes.set_guild(ctx.guild, enabled)
+        await self.config_cache.votes_percentage.set_guild(ctx.guild, percent)
 
     @command_audioset.command(name="youtubeapi")
     @commands.is_owner()
@@ -1302,7 +1222,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Country Code set to {country}.").format(country=country),
         )
 
-        await self.config.guild(ctx.guild).country_code.set(country)
+        await self.config_cache.country_code.set_guild(ctx.guild, country)
 
     @command_audioset.command(name="mycountrycode")
     @commands.guild_only()
@@ -1324,7 +1244,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Country Code set to {country}.").format(country=country),
         )
 
-        await self.config.user(ctx.author).country_code.set(country)
+        await self.config_cache.country_code.set_user(ctx.author, country)
 
     @command_audioset.command(name="cache")
     @commands.is_owner()
@@ -1441,8 +1361,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Default is ON
         """
-        state = await self.config.global_db_enabled()
-        await self.config.global_db_enabled.set(not state)
+        state = await self.config_cache.global_api.get_context_value(ctx.guild)
+        await self.config_cache.global_api.set_global(not state)
         if not state:  # Ensure a call is made if the API is enabled to update user perms
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()
         await ctx.send(
@@ -1458,7 +1378,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         Example: 0.1 = 100ms 1 = 1 second
         """
 
-        await self.config.global_db_get_timeout.set(timeout)
+        await self.config_cache.global_api_timeout.set_global(timeout)
         await ctx.send(_("Request timeout set to {time} second(s)").format(time=timeout))
 
     @command_audioset.command(name="persistqueue")
@@ -1468,11 +1388,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Persistent queues allows the current queue to be restored when the queue closes.
         """
-        persist_cache = self._persist_queue_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
-        )
-        await self.config.guild(ctx.guild).persist_queue.set(not persist_cache)
-        self._persist_queue_cache[ctx.guild.id] = not persist_cache
+        persist_cache = await self.config_cache.persistent_queue.get_context_value(ctx.guild)
+        await self.config_cache.persistent_queue.set_guild(ctx.guild, not persist_cache)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),

@@ -29,9 +29,9 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player: lavalink.player_manager.Player,
         page_num: int,
     ) -> discord.Embed:
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
+        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
 
         queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10
@@ -81,7 +81,10 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             description=queue_list,
         )
 
-        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
+        if (
+            await self.config_cache.thumbnail.get_context_value(ctx.guild)
+            and player.current.thumbnail
+        ):
             embed.set_thumbnail(url=player.current.thumbnail)
         queue_dur = await self.queue_duration(ctx)
         queue_total_duration = self.format_time(queue_dur)

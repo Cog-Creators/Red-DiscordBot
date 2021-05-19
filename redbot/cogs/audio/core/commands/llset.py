@@ -27,7 +27,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Enter nothing to reset to default.
         """
-        external = await self.config.use_external_lavalink()
+        external = await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
         if external:
             return await self.send_embed_msg(
                 ctx,
@@ -91,8 +91,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_llsetup.command(name="external")
     async def command_llsetup_external(self, ctx: commands.Context):
         """Toggle using external Lavalink servers."""
-        external = await self.config.use_external_lavalink()
-        await self.config.use_external_lavalink.set(not external)
+        external = await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+        await self.config_cache.managed_lavalink_server.set_global(not external)
 
         if external:
             embed = discord.Embed(

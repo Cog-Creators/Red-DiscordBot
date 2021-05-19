@@ -40,7 +40,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return task
 
     async def maybe_charge_requester(self, ctx: commands.Context, jukebox_price: int) -> bool:
-        jukebox = await self.config.guild(ctx.guild).jukebox()
+        jukebox = await self.config_cache.jukebox.get_context_value(ctx.guild)
         if jukebox and not await self._can_instaskip(ctx, ctx.author):
             can_spend = await bank.can_spend(ctx.author, jukebox_price)
             if can_spend:
@@ -123,11 +123,11 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
 
     async def update_external_status(self) -> bool:
-        external = await self.config.use_external_lavalink()
+        external = await self.config_cache.managed_lavalink_server.get_global()
         if not external:
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
-            await self.config.use_external_lavalink.set(True)
+            await self.config_cache.managed_lavalink_server.set_global(True)
             return True
         else:
             return False
@@ -275,9 +275,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def get_lyrics_status(self, ctx: Context) -> bool:
         global _prefer_lyrics_cache
-        prefer_lyrics = _prefer_lyrics_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
-        )
+        prefer_lyrics = await self.config_cache.prefer_lyrics.get_context_value(ctx.guild)
         return prefer_lyrics
 
     async def data_schema_migration(self, from_version: int, to_version: int) -> None:
