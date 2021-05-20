@@ -314,7 +314,7 @@ class TwitchStream(Stream):
     def display_name(self) -> Optional[str]:
         return self._display_name or self.name
 
-    @property
+    @display_name.setter
     def display_name(self, value: str) -> None:
         self._display_name = value
 
