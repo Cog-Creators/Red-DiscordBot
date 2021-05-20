@@ -801,6 +801,9 @@ class Streams(commands.Cog):
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
+                                content = content.replace(
+                                    "{stream.display_name}", str(stream.display_name)
+                                )
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{mention}", mention_str)
                             else:
@@ -819,6 +822,9 @@ class Streams(commands.Cog):
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
+                                content = content.replace(
+                                    "{stream.display_name}", str(stream.display_name)
+                                )
                                 content = content.replace("{stream}", str(stream.name))
                             else:
                                 content = _("{stream} is live!").format(
