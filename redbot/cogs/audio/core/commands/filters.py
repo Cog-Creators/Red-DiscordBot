@@ -593,3 +593,63 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
+
+    @commands.command(name="synth")
+    @commands.guild_only()
+    async def command_synth(self, ctx: commands.Context):
+        """Apply the synth effect."""
+        if not self._player_check(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
+
+        player = lavalink.get_player(ctx.guild.id)
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You must be in the voice channel to apply effects."),
+            )
+        if dj_enabled and not can_skip and not await self.is_requester_alone(ctx):
+            ctx.command.reset_cooldown(ctx)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Manage Tracks"),
+                description=_("You need the DJ role to apply effects."),
+            )
+
+        eq = filters.Equalizer(
+            levels=[
+                {"band": 0, "gain": -0.075},
+                {"band": 1, "gain": 0.325},
+                {"band": 2, "gain": 0.325},
+                {"band": 4, "gain": 0.45},
+                {"band": 5, "gain": 0.45},
+                {"band": 7, "gain": -0.35},
+                {"band": 8, "gain": -0.35},
+                {"band": 11, "gain": 0.8},
+                {"band": 12, "gain": 0.45},
+                {"band": 13, "gain": -0.025},
+            ],
+            name="Synth",
+        )
+        ts = filters.Timescale(speed=1.0, pitch=1.1, rate=1.00)
+        tm = filters.Tremolo(frequency=4, depth=0.25)
+        vb = filters.Vibrato(frequency=11, depth=0.3)
+        dt = filters.Distortion(
+            sin_offset=0,
+            sin_scale=-0.25,
+            cos_offset=0,
+            cos_scale=-0.5,
+            tan_offset=-2.75,
+            tan_scale=-0.7,
+            offset=-0.27,
+            scale=-1.2,
+        )
+        await player.set_filters(equalizer=eq, timescale=ts, tremolo=tm, vibrato=vb, distortion=dt)
+        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+            eq_data["eq_bands"] = player.equalizer.get()
+            eq_data["name"] = player.equalizer.name
+        await ctx.invoke(self.command_effects)
