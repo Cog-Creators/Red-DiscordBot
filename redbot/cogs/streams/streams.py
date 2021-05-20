@@ -809,10 +809,12 @@ class Streams(commands.Cog):
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{mention}", mention_str)
                             else:
-                                content = _("{mention}, {stream.display_name} is live!").format(
+                                content = _("{mention}, {display_name} is live!").format(
                                     mention=mention_str,
-                                    stream=escape(
-                                        str(stream.name), mass_mentions=True, formatting=True
+                                    display_name=escape(
+                                        str(stream.display_name),
+                                        mass_mentions=True,
+                                        formatting=True,
                                     ),
                                 )
                         else:
@@ -829,9 +831,11 @@ class Streams(commands.Cog):
                                 )
                                 content = content.replace("{stream}", str(stream.name))
                             else:
-                                content = _("{stream.display_name} is live!").format(
-                                    stream=escape(
-                                        str(stream.name), mass_mentions=True, formatting=True
+                                content = _("{display_name} is live!").format(
+                                    display_name=escape(
+                                        str(stream.display_name),
+                                        mass_mentions=True,
+                                        formatting=True,
                                     )
                                 )
                         await self._send_stream_alert(stream, channel, embed, content)
