@@ -528,9 +528,10 @@ class Streams(commands.Cog):
         """Set stream alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
-        Use `{stream}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or username.
+        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).
 
-        For example: `[p]streamset message mention {mention}, {stream} is live!`
+        For example: `[p]streamset message mention {mention}, {stream.display_name} is live!`
         """
         guild = ctx.guild
         await self.config.guild(guild).live_message_mention.set(message)
@@ -541,9 +542,10 @@ class Streams(commands.Cog):
     async def without_mention(self, ctx: commands.Context, *, message: str):
         """Set stream alert message when mentions are disabled.
 
-        Use `{stream}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or username.
+        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).
 
-        For example: `[p]streamset message nomention {stream} is live!`
+        For example: `[p]streamset message nomention {stream.display_name} is live!`
         """
         guild = ctx.guild
         await self.config.guild(guild).live_message_nomention.set(message)
