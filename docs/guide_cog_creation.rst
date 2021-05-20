@@ -108,7 +108,7 @@ Open :code:`__init__.py`. In that file, place the following:
 Finally, open :code:`info_json` (If you made it). In that file, place the following:
         
 
-.. code-block:: python
+.. code-block:: javascript
 
     {
         "author": [
