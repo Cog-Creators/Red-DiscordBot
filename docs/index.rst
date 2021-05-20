@@ -18,7 +18,7 @@ Welcome to Red - Discord Bot's documentation!
     update_red
     about_venv
     autostart_systemd
-    autostart_pm2
+    autostart_mac
 
 .. toctree::
     :maxdepth: 2
@@ -45,6 +45,9 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/general
     cog_guides/image
     cog_guides/permissions
+    cog_guides/mod
+    cog_guides/mutes
+    cog_guides/reports
     cog_guides/streams
     cog_guides/trivia
     red_core_data_statement

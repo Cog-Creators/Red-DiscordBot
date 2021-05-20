@@ -124,7 +124,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                 )
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to delete daily playlist ID: {too_old_id}")
+                debug_exc_log(log, err, "Failed to delete daily playlist ID: %d", too_old_id)
             try:
                 await delete_playlist(
                     scope=PlaylistScope.GLOBAL.value,
@@ -135,7 +135,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                 )
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to delete global daily playlist ID: {too_old_id}")
+                debug_exc_log(
+                    log, err, "Failed to delete global daily playlist ID: %d", too_old_id
+                )
         persist_cache = self._persist_queue_cache.setdefault(
             guild.id, await self.config.guild(guild).persist_queue()
         )
@@ -194,14 +196,16 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         requester: discord.Member,
         player: lavalink.Player,
     ):
-        notify_channel = self.bot.get_channel(player.fetch("channel"))
+        notify_channel = self.bot.get_channel(player.fetch("notify_channel"))
+        has_perms = self._has_notify_perms(notify_channel)
         tries = 0
         while not player._is_playing:
             await asyncio.sleep(0.1)
             if tries > 1000:
                 return
+            tries += 1
 
-        if notify_channel and not player.fetch("autoplay_notified", False):
+        if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
             if (
                 len(player.manager.players) < 10
                 or not player._last_resume

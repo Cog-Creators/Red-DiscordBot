@@ -114,7 +114,7 @@ class Reports(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
     async def reportset_toggle(self, ctx: commands.Context):
-        """Enable or Disable reporting for this server."""
+        """Enable or disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)

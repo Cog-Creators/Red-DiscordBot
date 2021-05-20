@@ -253,9 +253,9 @@ Hosting
 
 If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
-She needs an environment to work and respond.
+It needs an environment to work and respond.
 
-You can try to host Red somewhere she will always be online, like on a virtual
+You can try to host Red somewhere it will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
