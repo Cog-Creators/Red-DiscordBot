@@ -18,7 +18,7 @@ from tqdm import tqdm
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
 
-from .errors import LavalinkDownloadFailed
+from .errors import LavalinkDownloadFailed, ShouldAutoRecover
 from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
@@ -99,9 +99,11 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self) -> None:
+    def __init__(self, host: str, password: str, port: int) -> None:
         self.ready: asyncio.Event = asyncio.Event()
-
+        self._port = port
+        self._host = host
+        self._password = password
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
@@ -140,7 +142,7 @@ class ServerManager:
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise RuntimeError("Internal Lavalink server is already running")
+                raise RuntimeError("Managed Lavalink server is already running")
             elif self._shutdown:
                 raise RuntimeError("Server manager has already been used - create another one")
 
@@ -159,12 +161,12 @@ class ServerManager:
             stderr=asyncio.subprocess.STDOUT,
         )
 
-        log.info("Internal Lavalink server started. PID: %s", self._proc.pid)
+        log.info("Managed Lavalink server started. PID: %s", self._proc.pid)
 
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
+            log.warning("Timeout occurred whilst waiting for managed Lavalink server to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback)
@@ -229,31 +231,42 @@ class ServerManager:
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
-        lastmessage = 0
+        ready = False
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
-                log.info("Internal Lavalink server is ready to receive requests.")
+                ready = True
                 break
             if _FAILED_TO_START.search(line):
-                raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
-            if self._proc.returncode is not None and lastmessage + 2 < time.time():
+                if b"Port 2333 was already in use" in line:
+                    log.warning(
+                        "Unable to start managed Lavalink Server; Port 2333 is already in use."
+                    )
+                    raise ShouldAutoRecover
+                raise RuntimeError("Managed Lavalink failed to start: %s", line.decode().strip())
+            if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
-                lastmessage = time.time()
-                log.critical("Internal lavalink server exited early")
+                ready = False
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
+
+        if self._proc.returncode == 1:
+            raise RuntimeError(
+                "Managed Lavalink failed to start: Server existed with error code 1."
+            )
+        if not ready:
+            log.critical("Managed lavalink server exited early")
 
     async def _monitor(self) -> None:
         while self._proc.returncode is None:
             await asyncio.sleep(0.5)
 
         # This task hasn't been cancelled - Lavalink was shut down by something else
-        log.info("Internal Lavalink jar shutdown unexpectedly")
+        log.info("Managed Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
-            log.info("Restarting internal Lavalink server")
+            log.info("Restarting managed Lavalink server")
             await self.start(self._java_exc)
         else:
             log.critical(
@@ -271,10 +284,11 @@ class ServerManager:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             return
-        log.info("Shutting down internal Lavalink server")
+        log.info("Shutting down managed Lavalink server")
         if self._monitor_task is not None:
             self._monitor_task.cancel()
-        self._proc.terminate()
+        if not self._proc.returncode:
+            self._proc.terminate()
         await self._proc.wait()
         self._shutdown = True
 
