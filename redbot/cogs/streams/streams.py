@@ -807,7 +807,7 @@ class Streams(commands.Cog):
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{mention}", mention_str)
                             else:
-                                content = _("{mention}, {stream} is live!").format(
+                                content = _("{mention}, {stream.display_name} is live!").format(
                                     mention=mention_str,
                                     stream=escape(
                                         str(stream.name), mass_mentions=True, formatting=True
@@ -827,7 +827,7 @@ class Streams(commands.Cog):
                                 )
                                 content = content.replace("{stream}", str(stream.name))
                             else:
-                                content = _("{stream} is live!").format(
+                                content = _("{stream.display_name} is live!").format(
                                     stream=escape(
                                         str(stream.name), mass_mentions=True, formatting=True
                                     )
