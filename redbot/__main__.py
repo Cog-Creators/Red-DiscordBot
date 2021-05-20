@@ -22,9 +22,9 @@ import discord
 # Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-from redbot import _update_event_loop_policy, __version__
+from redbot import _early_init, __version__
 
-_update_event_loop_policy()
+_early_init()
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
