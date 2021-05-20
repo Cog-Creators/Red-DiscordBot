@@ -53,7 +53,7 @@ To set up a package, we would just need to create a new folder.
 This should be named whatever you want the cog to be named (for
 the purposes of this example, we'll call this :code:`mycog`).
 In this folder, create three files: :code:`__init__.py`,
-:code:`mycog.py`, and :code:`info.json`. Open the folder in
+:code:`mycog.py`, and :code:`info.json`(This file is optional.). Open the folder in
 a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.com/>`_,
 `Visual Studio Code <https://code.visualstudio.com/>`_, `Atom <https://atom.io/>`_, and
 `PyCharm <http://www.jetbrains.com/pycharm/>`_).
@@ -104,6 +104,16 @@ Open :code:`__init__.py`. In that file, place the following:
 
     def setup(bot):
         bot.add_cog(MyCog(bot))
+        
+Finally, open :code:`info_json`(If you made it). In that file, place the following:
+        
+{
+  "author": [
+    "Replace with name(Replace with your Discord username.)"
+  ],
+  "install_msg": "Replace this with your install msg. Your install msg s what people will see when they download this cog.",
+  "name": "Replace with Cog name",
+}
 
 Make sure that both files are saved.
 
