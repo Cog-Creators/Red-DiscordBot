@@ -110,13 +110,13 @@ Finally, open :code:`info_json` (If you made it). In that file, place the follow
 
 .. code-block:: python
 
-{
-  "author": [
-    "Replace with name(Replace with your Discord username.)"
-  ],
-  "install_msg": "Replace this with your install msg. Your install msg s what people will see when they download this cog.",
-  "name": "Replace with Cog name",
-}
+    {
+        "author": [
+          "Replace with name(Replace with your Discord username.)"
+        ],
+        "install_msg": "Replace this with your install msg. Your install msg s what people will see when they download this cog.",
+        "name": "Replace with Cog name",
+    }
 
 Make sure that both files are saved.
 
