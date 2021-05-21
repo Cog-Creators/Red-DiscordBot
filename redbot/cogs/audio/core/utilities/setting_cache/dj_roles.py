@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import Dict, Optional, Set
 
 import discord
@@ -13,7 +14,7 @@ class DJRoleManager:
         self._config: Config = config
         self.bot = bot
         self.enable_cache = enable_cache
-        self._cached_guild: Dict[Optional[int], Set[int]] = {}
+        self._cached_guild: Dict[Optional[int], Set[int]] = defaultdict(set)
 
     async def get_guild(self, guild: discord.Guild) -> Set[discord.Role]:
         ret: Set[int]

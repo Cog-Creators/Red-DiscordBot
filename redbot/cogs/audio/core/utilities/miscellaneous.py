@@ -342,9 +342,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             all_guild_data = await self.config.all_guilds()
             async for guild_id, guild_data in AsyncIter(all_guild_data.items()):
                 temp_dj_id = guild_data.pop("dj_role", None)
-                if temp_dj_id:
+                if temp_dj_id and (guild := self.bot.get_guild(guild_id)):
                     await self.config_cache.dj_roles.add_guild(
-                        guild=discord.Object(id=int(guild_id)),
+                        guild=guild,
                         roles={
                             discord.Object(id=int(temp_dj_id)),
                         },
