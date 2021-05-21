@@ -34,7 +34,6 @@ class JukeboxManager(CachingABC):
             self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).jukebox.clear()
-            await self._config.guild_from_id(gid).jukebox()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["jukebox"]
 
     async def get_global(self) -> int:
@@ -55,11 +54,11 @@ class JukeboxManager(CachingABC):
             self._cached_global[None] = self._config.defaults["GLOBAL"]["jukebox"]
 
     async def get_context_value(self, guild: discord.Guild) -> int:
-        guild_time = await self.get_guild(guild)
-        global_time = await self.get_global()
-        if global_time == 0 or global_time > guild_time:
-            return guild_time
-        return global_time
+        guild_value = await self.get_guild(guild)
+        global_value = await self.get_global()
+        if global_value == 0 or guild_value > global_value:
+            return guild_value
+        return global_value
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

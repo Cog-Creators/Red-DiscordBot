@@ -34,7 +34,6 @@ class EmptyDCTimerManager(CachingABC):
             self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).emptydc_timer.clear()
-            await self._config.guild_from_id(gid).emptydc_timer()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["emptydc_timer"]
 
     async def get_global(self) -> int:

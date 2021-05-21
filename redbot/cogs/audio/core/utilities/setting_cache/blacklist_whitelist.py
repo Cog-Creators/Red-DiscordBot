@@ -43,6 +43,7 @@ class WhitelistBlacklistManager(CachingABC):
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = set(await self._config.url_keyword_whitelist())
             for string in strings:
+                string = string.lower()
                 if string not in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].add(string)
                     async with self._config.url_keyword_whitelist() as curr_list:
@@ -53,6 +54,7 @@ class WhitelistBlacklistManager(CachingABC):
                     await self._config.guild_from_id(gid).url_keyword_whitelist()
                 )
             for string in strings:
+                string = string.lower()
                 if string not in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].add(string)
                     async with self._config.guild_from_id(
@@ -79,6 +81,7 @@ class WhitelistBlacklistManager(CachingABC):
             if gid not in self._cached_whitelist:
                 self._cached_whitelist[gid] = set(await self._config.url_keyword_whitelist())
             for string in strings:
+                string = string.lower()
                 if string in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].remove(string)
                     async with self._config.url_keyword_whitelist() as curr_list:
@@ -89,6 +92,7 @@ class WhitelistBlacklistManager(CachingABC):
                     await self._config.guild_from_id(gid).url_keyword_whitelist()
                 )
             for string in strings:
+                string = string.lower()
                 if string in self._cached_whitelist[gid]:
                     self._cached_whitelist[gid].remove(string)
                     async with self._config.guild_from_id(
@@ -120,6 +124,7 @@ class WhitelistBlacklistManager(CachingABC):
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(await self._config.url_keyword_blacklist())
             for string in strings:
+                string = string.lower()
                 if string not in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].add(string)
                     async with self._config.url_keyword_blacklist() as curr_list:
@@ -130,6 +135,7 @@ class WhitelistBlacklistManager(CachingABC):
                     await self._config.guild_from_id(gid).url_keyword_blacklist()
                 )
             for string in strings:
+                string = string.lower()
                 if string not in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].add(string)
                     async with self._config.guild_from_id(
@@ -156,6 +162,7 @@ class WhitelistBlacklistManager(CachingABC):
             if gid not in self._cached_blacklist:
                 self._cached_blacklist[gid] = set(await self._config.url_keyword_blacklist())
             for string in strings:
+                string = string.lower()
                 if string in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].remove(string)
                     async with self._config.url_keyword_blacklist() as curr_list:
@@ -166,6 +173,7 @@ class WhitelistBlacklistManager(CachingABC):
                     await self._config.guild_from_id(gid).url_keyword_blacklist()
                 )
             for string in strings:
+                string = string.lower()
                 if string in self._cached_blacklist[gid]:
                     self._cached_blacklist[gid].remove(string)
                     async with self._config.guild_from_id(
@@ -179,6 +187,8 @@ class WhitelistBlacklistManager(CachingABC):
         *,
         guild: Optional[Union[discord.Guild, int]] = None,
     ) -> bool:
+        if what:
+            what = what.lower()
         if isinstance(guild, int):
             guild = self.bot.get_guild(guild)
         if global_whitelist := await self.get_whitelist():

@@ -34,7 +34,6 @@ class JukeboxPriceManager(CachingABC):
             self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).jukebox_price.clear()
-            await self._config.guild_from_id(gid).jukebox_price()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["jukebox_price"]
 
     async def get_global(self) -> int:
@@ -46,7 +45,7 @@ class JukeboxPriceManager(CachingABC):
             self._cached_global[None] = ret
         return ret
 
-    async def set_global(self, set_to: Optional[bool]) -> None:
+    async def set_global(self, set_to: Optional[int]) -> None:
         if set_to is not None:
             await self._config.jukebox_price.set(set_to)
             self._cached_global[None] = set_to
@@ -57,7 +56,7 @@ class JukeboxPriceManager(CachingABC):
     async def get_context_value(self, guild: discord.Guild) -> int:
         guild_value = await self.get_guild(guild)
         global_value = await self.get_global()
-        if global_value == 0 or global_value > guild_value:
+        if global_value == 0 or guild_value > global_value:
             return guild_value
         return global_value
 
