@@ -18,7 +18,7 @@ class CountryCodeManager(CachingABC):
         self._cached_user: Dict[int, Optional[str]] = {}
         self._cached_guilds: Dict[int, str] = {}
 
-    async def get_global(self, user: discord.Member) -> Optional[str]:
+    async def get_global(self) -> Optional[str]:
         ret: Optional[str]
         if self.enable_cache and None in self._cached_global:
             ret = self._cached_global[None]
@@ -80,7 +80,7 @@ class CountryCodeManager(CachingABC):
     ) -> str:
         if (code := await self.get_user(user)) is not None:
             return code
-        return await self.get_guild(guild)
+        return await self.get_guild(guild) or await self.get_global()
 
     def reset_globals(self) -> None:
         self._cached_user = {}

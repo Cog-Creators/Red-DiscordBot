@@ -54,7 +54,7 @@ class ThumbnailManager(CachingABC):
             self._cached_global[None] = self._config.defaults["GLOBAL"]["thumbnail"]
 
     async def get_context_value(self, guild: discord.Guild) -> bool:
-        if (value := await self.get_global()) is not None:
+        if (value := await self.get_global()) is True:
             return value
         return await self.get_guild(guild)
 

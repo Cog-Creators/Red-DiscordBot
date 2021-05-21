@@ -65,6 +65,11 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=box(tabulate(data)),
         )
 
+    @command_effects.group(name="presets")
+    @commands.cooldown(1, 5, commands.BucketType.guild)
+    async def command_effects_presets(self, ctx: commands.Context):
+        """Apply effect presets."""
+
     @command_effects.command(name="karaoke")
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_karaoke(
@@ -406,9 +411,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await player.set_filters()
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="baseboost")
+    @command_effects_presets.command(name="baseboost")
     @commands.guild_only()
-    async def command_baseboost(self, ctx: commands.Context):
+    async def command_effects_presets_baseboost(self, ctx: commands.Context):
         """This effect emphasizes Punchy Bass and Crisp Mid-High tones.
 
         Not suitable for tracks with Deep/Low Bass."""
@@ -441,9 +446,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="piano")
+    @command_effects_presets.command(name="piano")
     @commands.guild_only()
-    async def command_piano(self, ctx: commands.Context):
+    async def command_effects_presets_piano(self, ctx: commands.Context):
         """This effect is suitable for Piano tracks, or tacks with an emphasis on Female Vocals.
 
         Could also be used as a Bass Cutoff."""
@@ -476,9 +481,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="metal")
+    @command_effects_presets.command(name="metal")
     @commands.guild_only()
-    async def command_metal(self, ctx: commands.Context):
+    async def command_effects_presets_metal(self, ctx: commands.Context):
         """Experimental Metal/Rock Equalizer.
 
         Expect clipping on Bassy songs."""
@@ -511,9 +516,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="nightcore")
+    @command_effects_presets.command(name="nightcore")
     @commands.guild_only()
-    async def command_nightcore(self, ctx: commands.Context):
+    async def command_effects_presets_nightcore(self, ctx: commands.Context):
         """Apply the nightcore effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -552,9 +557,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="vaporwave")
+    @command_effects_presets.command(name="vaporwave")
     @commands.guild_only()
-    async def command_vaporwave(self, ctx: commands.Context):
+    async def command_effects_presets_vaporwave(self, ctx: commands.Context):
         """Apply the vaporwave effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -594,9 +599,9 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @commands.command(name="synth")
+    @command_effects_presets.command(name="synth")
     @commands.guild_only()
-    async def command_synth(self, ctx: commands.Context):
+    async def command_effects_presets_synth(self, ctx: commands.Context):
         """Apply the synth effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)

@@ -14,11 +14,11 @@ class JukeboxManager(CachingABC):
         self._config: Config = config
         self.bot = bot
         self.enable_cache = enable_cache
-        self._cached_guild: Dict[int, int] = {}
-        self._cached_global: Dict[None, int] = {}
+        self._cached_guild: Dict[int, bool] = {}
+        self._cached_global: Dict[None, bool] = {}
 
-    async def get_guild(self, guild: discord.Guild) -> int:
-        ret: int
+    async def get_guild(self, guild: discord.Guild) -> bool:
+        ret: bool
         gid: int = guild.id
         if self.enable_cache and gid in self._cached_guild:
             ret = self._cached_guild[gid]
@@ -27,7 +27,7 @@ class JukeboxManager(CachingABC):
             self._cached_guild[gid] = ret
         return ret
 
-    async def set_guild(self, guild: discord.Guild, set_to: Optional[int]) -> None:
+    async def set_guild(self, guild: discord.Guild, set_to: Optional[bool]) -> None:
         gid: int = guild.id
         if set_to is not None:
             await self._config.guild_from_id(gid).jukebox.set(set_to)
@@ -36,8 +36,8 @@ class JukeboxManager(CachingABC):
             await self._config.guild_from_id(gid).jukebox.clear()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["jukebox"]
 
-    async def get_global(self) -> int:
-        ret: int
+    async def get_global(self) -> bool:
+        ret: bool
         if self.enable_cache and None in self._cached_global:
             ret = self._cached_global[None]
         else:
@@ -50,15 +50,13 @@ class JukeboxManager(CachingABC):
             await self._config.jukebox.set(set_to)
             self._cached_global[None] = set_to
         else:
-            await self._config.empty.clear()
+            await self._config.jukebox.clear()
             self._cached_global[None] = self._config.defaults["GLOBAL"]["jukebox"]
 
-    async def get_context_value(self, guild: discord.Guild) -> int:
-        guild_value = await self.get_guild(guild)
-        global_value = await self.get_global()
-        if global_value == 0 or guild_value > global_value:
-            return guild_value
-        return global_value
+    async def get_context_value(self, guild: discord.Guild) -> Optional[bool]:
+        if (value := await self.get_global()) is True:
+            return value
+        return await self.get_guild(guild)
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

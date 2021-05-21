@@ -45,7 +45,7 @@ class MaxTrackLengthManager(CachingABC):
             self._cached_global[None] = ret
         return ret
 
-    async def set_global(self, set_to: Optional[bool]) -> None:
+    async def set_global(self, set_to: Optional[int]) -> None:
         if set_to is not None:
             await self._config.emptydc_enabled.set(set_to)
             self._cached_global[None] = set_to

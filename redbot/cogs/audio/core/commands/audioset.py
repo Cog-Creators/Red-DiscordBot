@@ -47,6 +47,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle daily queues, if set to disable, it will disable in all servers
 
         Daily queues creates a playlist for all tracks played today.
+
+        If disabled, servers will not be able to overwrite it.
         """
         daily_playlists = await self.config_cache.daily_playlist.get_global()
         await self.config_cache.daily_playlist.set_global(not daily_playlists)
@@ -62,7 +64,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_global_auto_deafen(self, ctx: commands.Context):
         """Toggle whether the bot will be auto deafened upon joining the voice channel.
 
-        This setting will take priority and will be applied globally.
+        If enabled, servers will not be able to override it.
         """
         auto_deafen = await self.config_cache.auto_deafen.get_global()
         await self.config_cache.auto_deafen.set_global(not auto_deafen)
@@ -122,7 +124,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
         await self.config_cache.empty_dc_timer.set_global(seconds)
-        await self.config_cache.empty_dc.get_global(enabled)
+        await self.config_cache.empty_dc.set_global(enabled)
 
     @command_audioset_global.command(name="emptypause")
     async def command_audioset_global_emptypause(self, ctx: commands.Context, seconds: int):
@@ -177,9 +179,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         If enabled, servers cannot override.
         """
-        disconnect = await self.config_cache.disconnect.get_context_value(ctx.guild)
+        disconnect = await self.config_cache.disconnect.get_global()
         msg = ""
-        msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
+        msg += _("Global auto-disconnection at queue end: {true_or_false}.").format(
             true_or_false=_("Enabled") if not disconnect else _("Disabled")
         )
         await self.config_cache.disconnect.set_global(not disconnect)
@@ -190,7 +192,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_global_jukebox(self, ctx: commands.Context, price: int):
         """Set a price for queueing tracks for non-mods, 0 to disable.
 
-        If set servers can never go below this value  and the jukebox will be enabled globally.
+        If set servers can never go below this value and the jukebox will be enabled globally.
         """
         if price < 0:
             return await self.send_embed_msg(
@@ -207,7 +209,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif price == 0:
             jukebox = False
             await self.send_embed_msg(
-                ctx, title=_("Setting Changed"), description=_("Jukebox mode disabled.")
+                ctx, title=_("Setting Changed"), description=_("Global jukebox mode disabled.")
             )
         else:
             jukebox = True
@@ -215,15 +217,101 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "Track queueing command price set to {price} {currency}.").format(
-                    price=humanize_number(price),
-                    currency=await bank.get_currency_name(ctx.guild)
+                    "Global track queueing command price set to {price} {currency}."
+                ).format(
+                    price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
         await self.config_cache.jukebox_price.set_global(price)
         await self.config_cache.jukebox.set_global(jukebox)
 
+    @command_audioset_global.command(name="maxlength")
+    async def command_audioset_global_maxlength(
+        self, ctx: commands.Context, seconds: Union[int, str]
+    ):
+        """Max length of a track to queue in seconds, 0 to disable.
 
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid input will turn the max length setting off.
+
+        Setting this value means that servers will never be able to bypass it, however they will be allowed to set short lengths.
+        """
+        if not isinstance(seconds, int):
+            seconds = self.time_convert(seconds)
+        if seconds < 0:
+            return await self.send_embed_msg(
+                ctx, title=_("Invalid length"), description=_("Length can't be less than zero.")
+            )
+        if seconds == 0:
+            await self.send_embed_msg(
+                ctx, title=_("Setting Changed"), description=_("Global track max length disabled.")
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Global track max length set to {seconds}.").format(
+                    seconds=self.get_time_string(seconds)
+                ),
+            )
+        await self.config_cache.max_track_length.set_global(seconds)
+
+    @command_audioset_global.command(name="thumbnail")
+    async def command_audioset_global_thumbnail(self, ctx: commands.Context):
+        """Toggle displaying a thumbnail on audio messages.
+
+        If enabled servers will not be able to override this setting.
+        """
+        thumbnail = await self.config_cache.thumbnail.get_global()
+        await self.config_cache.thumbnail.set_global(not thumbnail)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Global thumbnail display: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not thumbnail else _("Disabled")
+            ),
+        )
+
+    @command_audioset_global.command(name="countrycode")
+    async def command_audioset_global_countrycode(self, ctx: commands.Context, country: str):
+        """Set the country code for Spotify searches.
+
+        This can be override by servers, however it will set the default value for the bot.
+        """
+        if len(country) != 2:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Country Code"),
+                description=_(
+                    "Please use an official [ISO 3166-1 alpha-2]"
+                    "(https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
+                ),
+            )
+        country = country.upper()
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Global country Code set to {country}.").format(country=country),
+        )
+
+        await self.config_cache.country_code.set_global(country)
+
+    @command_audioset_global.command(name="persistqueue")
+    async def command_audioset_global_persist_queue(self, ctx: commands.Context):
+        """Toggle persistent queues.
+
+        Persistent queues allows the current queue to be restored when the queue closes.
+
+        If set servers will be able to overwrite this value.
+        """
+        persist_cache = await self.config_cache.persistent_queue.get_global()
+        await self.config_cache.persistent_queue.set_global(not persist_cache)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Global queue persistance: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
+            ),
+        )
 
     @command_audioset.group(name="restrictions")
     @commands.mod_or_permissions(manage_guild=True)
@@ -261,9 +349,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
-        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(
-            None
-        )
+        whitelist = await self.config_cache.blacklist_whitelist.get_context_whitelist(None)
 
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
@@ -340,9 +426,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(add_reactions=True)
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
-        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(
-            None
-        )
+        blacklist = await self.config_cache.blacklist_whitelist.get_context_blacklist(None)
         if not blacklist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the blacklist."))
         blacklist = sorted(blacklist)
@@ -558,9 +642,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_autoplay.command(name="toggle")
     async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
-        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        disconnect = await self.config_cache.disconnect.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_guild(ctx.guild)
+        repeat = await self.config_cache.repeat.get_guild(ctx.guild)
+        disconnect = await self.config_cache.disconnect.get_guild(ctx.guild)
         msg = _("Auto-play when queue ends: {true_or_false}.").format(
             true_or_false=_("Enabled") if not autoplay else _("Disabled")
         )
@@ -703,7 +787,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Global daily queues creates a playlist for all tracks played today.
         """
-        daily_playlists = await self.config_cache.daily_global_playlist.get_context_value(ctx.guild)
+        daily_playlists = await self.config_cache.daily_global_playlist.get_context_value(
+            ctx.guild
+        )
         await self.config_cache.daily_global_playlist.set_global(not daily_playlists)
         await self.send_embed_msg(
             ctx,
@@ -721,7 +807,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Daily queues creates a playlist for all tracks played today.
         """
-        daily_playlists = await self.config_cache.daily_playlist.get_context_value(ctx.guild)
+        daily_playlists = await self.config_cache.daily_playlist.get_guild(ctx.guild)
         await self.config_cache.daily_playlist.set_guild(ctx.guild, not daily_playlists)
         await self.send_embed_msg(
             ctx,
@@ -740,8 +826,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         This setting takes precedence over `[p]audioset emptydisconnect`.
         """
 
-        disconnect = await self.config_cache.disconnect.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        disconnect = await self.config_cache.disconnect.get_guild(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_guild(ctx.guild)
         msg = ""
         msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
             true_or_false=_("Enabled") if not disconnect else _("Disabled")
@@ -762,7 +848,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        dj_role = await self.config_cache.dj_roles.get_guild(ctx.guild)
         if not dj_role:
             await self.send_embed_msg(
                 ctx,
@@ -780,7 +866,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Response timed out, try again later.")
                 )
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = await self.config_cache.dj_status.get_guild(ctx.guild)
         await self.config_cache.dj_status.set_guild(ctx.guild, not dj_enabled)
         await self.send_embed_msg(
             ctx,
@@ -854,7 +940,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_lyrics(self, ctx: commands.Context):
         """Prioritise tracks with lyrics."""
-        prefer_lyrics = await self.config_cache.prefer_lyrics.get_context_value(ctx.guild)
+        prefer_lyrics = await self.config_cache.prefer_lyrics.get_guild(ctx.guild)
         await self.config_cache.prefer_lyrics.set_guild(ctx.guild, not prefer_lyrics)
         await self.send_embed_msg(
             ctx,
@@ -1010,7 +1096,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_notify(self, ctx: commands.Context):
         """Toggle track announcement and other bot messages."""
-        notify = await self.config_cache.notify.get_context_value(ctx.guild)
+        notify = await self.config_cache.notify.get_guild(ctx.guild)
         await self.config_cache.notify.set_guild(ctx.guild, not notify)
         await self.send_embed_msg(
             ctx,
@@ -1027,7 +1113,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle whether the bot will be auto deafened upon joining the voice channel."""
         auto_deafen = await self.config_cache.auto_deafen.get_guild(ctx.guild)
         await self.config_cache.auto_deafen.set_guild(ctx.guild, not auto_deafen)
-        auto_deafen_context = await self.config_cache.auto_deafen.get_context_value(ctx.guild)
+        auto_deafen_context = await self.config_cache.auto_deafen.get_guild(ctx.guild)
         enabled = _("Enabled")
         disabled = _("Disabled")
         if auto_deafen_context == (not auto_deafen):
@@ -1069,16 +1155,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-
-    @command_audioset.group(name="addrole", aliases=["role"], invoke_without_command=True)
+    @command_audioset.group(name="djrole", aliases=["role"])
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
-    async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
+    async def command_audioset_role(self, ctx: commands.Context):
+        """Add/Remove/Show DJ Role and members."""
+
+    @command_audioset_role.command(name="create", aliases=["add"])
+    async def command_audioset_role_create(
+        self, ctx: commands.Context, *, role_name: discord.Role
+    ):
         """Add a role from DJ mode allowlist.
 
-        See roles with `[p]audioset listrole`
-        Remove roles with `[p]audioset remrole`
-        See DJs with `[p]audioset listds`
+        See roles with `[p]audioset role list`
+        Remove roles with `[p]audioset role remove`
+        See DJs with `[p]audioset role members`
         """
         await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -1087,15 +1178,15 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Role added to DJ list: {role.name}.").format(role=role_name),
         )
 
-    @command_audioset.command(name="remrole")
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_roles=True)
-    async def command_audioset_role_rem(self, ctx: commands.Context, *, role_name: discord.Role):
+    @command_audioset_role.command(name="delete", aliases=["remove", "del"])
+    async def command_audioset_role_delete(
+        self, ctx: commands.Context, *, role_name: discord.Role
+    ):
         """Remove a role from DJ mode allowlist.
 
-        Add roles with `[p]audioset addrole`
-        See roles with `[p]audioset listrole`
-        See DJs with `[p]audioset listds`
+        Add roles with `[p]audioset role add`
+        See roles with `[p]audioset role list`
+        See DJs with `[p]audioset role members`
         """
         await self.config_cache.dj_roles.remove_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -1104,14 +1195,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Role removed from DJ list: {role.name}.").format(role=role_name),
         )
 
-    @command_audioset.command(name="listrole")
-    @commands.guild_only()
-    async def command_audioset_role_listrole(self, ctx: commands.Context):
+    @command_audioset_role.command(name="list")
+    async def command_audioset_role_list(self, ctx: commands.Context):
         """Show all roles from DJ mode allowlist.
 
-        Add roles with `[p]audioset addrole`
-        Remove roles with `[p]audioset remrole`
-        See DJs with `[p]audioset listds`
+        Add roles with `[p]audioset role add`
+        Remove roles with `[p]audioset role remove`
+        See DJs with `[p]audioset role members`
         """
         roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
         roles = sorted(roles, key=attrgetter("position"), reverse=True)
@@ -1119,19 +1209,18 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         pages = pagify(rolestring, page_length=500)
         await ctx.send_interactive(pages, timeout=30)
 
-    @command_audioset.command(name="listdjs")
-    @commands.guild_only()
-    async def command_audioset_role_listdjs(self, ctx: commands.Context):
+    @command_audioset_role.command(name="members")
+    async def command_audioset_role_members(self, ctx: commands.Context):
         """Show all roles from DJ mode allowlist.
 
-        Add roles with `[p]audioset addrole`
-        Remove roles with `[p]audioset remrole`
-        See roles with `[p]audioset listrole`
+        Add roles with `[p]audioset role add`
+        Remove roles with `[p]audioset role remove`
+        See roles with `[p]audioset role list`
         """
         djs = await self.config_cache.dj_roles.get_allowed_members(ctx.guild)
         djs = sorted(djs, key=attrgetter("top_role.position", "display_name"), reverse=True)
-        rolestring = "\n".join([r.display_name for r in djs])
-        pages = pagify(rolestring, page_length=500)
+        memberstring = "\n".join([r.display_name for r in djs])
+        pages = pagify(memberstring, page_length=500)
         await ctx.send_interactive(pages, timeout=30)
 
     @command_audioset.command(name="settings", aliases=["info"])
@@ -1390,7 +1479,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_thumbnail(self, ctx: commands.Context):
         """Toggle displaying a thumbnail on audio messages."""
-        thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
+        thumbnail = await self.config_cache.thumbnail.get_guild(ctx.guild)
         await self.config_cache.thumbnail.set_guild(ctx.guild, not thumbnail)
         await self.send_embed_msg(
             ctx,
@@ -1657,7 +1746,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Persistent queues allows the current queue to be restored when the queue closes.
         """
-        persist_cache = await self.config_cache.persistent_queue.get_context_value(ctx.guild)
+        persist_cache = await self.config_cache.persistent_queue.get_guild(ctx.guild)
         await self.config_cache.persistent_queue.set_guild(ctx.guild, not persist_cache)
         await self.send_embed_msg(
             ctx,
