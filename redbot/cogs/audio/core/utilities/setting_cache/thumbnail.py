@@ -4,11 +4,12 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class ThumbnailManager:
+class ThumbnailManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -56,3 +57,7 @@ class ThumbnailManager:
         if (value := await self.get_global()) is not None:
             return value
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

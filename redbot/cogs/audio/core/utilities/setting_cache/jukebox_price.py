@@ -4,16 +4,18 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class JukeboxPriceManager:
+class JukeboxPriceManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
         self.enable_cache = enable_cache
         self._cached_guild: Dict[int, int] = {}
+        self._cached_global: Dict[None, int] = {}
 
     async def get_guild(self, guild: discord.Guild) -> int:
         ret: int
@@ -32,7 +34,33 @@ class JukeboxPriceManager:
             self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).jukebox_price.clear()
+            await self._config.guild_from_id(gid).jukebox_price()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["jukebox_price"]
 
+    async def get_global(self) -> int:
+        ret: int
+        if self.enable_cache and None in self._cached_global:
+            ret = self._cached_global[None]
+        else:
+            ret = await self._config.jukebox_price()
+            self._cached_global[None] = ret
+        return ret
+
+    async def set_global(self, set_to: Optional[bool]) -> None:
+        if set_to is not None:
+            await self._config.jukebox_price.set(set_to)
+            self._cached_global[None] = set_to
+        else:
+            await self._config.empty.clear()
+            self._cached_global[None] = self._config.defaults["GLOBAL"]["jukebox_price"]
+
     async def get_context_value(self, guild: discord.Guild) -> int:
-        return await self.get_guild(guild)
+        guild_value = await self.get_guild(guild)
+        global_value = await self.get_global()
+        if global_value == 0 or global_value > guild_value:
+            return guild_value
+        return global_value
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

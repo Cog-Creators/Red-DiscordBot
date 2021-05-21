@@ -4,11 +4,12 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class VotesPercentageManager:
+class VotesPercentageManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -36,3 +37,6 @@ class VotesPercentageManager:
 
     async def get_context_value(self, guild: discord.Guild) -> float:
         return await self.get_guild(guild) / 100
+
+    def reset_globals(self) -> None:
+        pass

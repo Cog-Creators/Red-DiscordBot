@@ -4,12 +4,13 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.cogs.audio.utils import CacheLevel
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class LocalCacheLevelManager:
+class LocalCacheLevelManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -35,3 +36,7 @@ class LocalCacheLevelManager:
 
     async def get_context_value(self, guild: discord.Guild = None) -> CacheLevel:
         return await self.get_global()
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

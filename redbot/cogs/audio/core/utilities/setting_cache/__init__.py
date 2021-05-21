@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import attr
+
 from redbot.core import Config
 from redbot.core.bot import Red
 
@@ -44,48 +46,60 @@ from .auto_deafen import AutoDeafenManager
 __all__ = ["SettingCacheManager"]
 
 
-class SettingCacheManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True) -> None:
-        self._config: Config = config
-        self.bot: Red = bot
-        self.enabled = enable_cache
+def cache_factory(cls):
+    def factory(self: SettingCacheManager):
+        return cls(self.bot, self.config, self.enabled)
 
-        self.blacklist_whitelist = WhitelistBlacklistManager(bot, config, self.enabled)
-        self.dj_roles = DJRoleManager(bot, config, self.enabled)
-        self.dj_status = DJStatusManager(bot, config, self.enabled)
-        self.daily_playlist = DailyPlaylistManager(bot, config, self.enabled)
-        self.daily_global_playlist = DailyGlobalPlaylistManager(bot, config, self.enabled)
-        self.persistent_queue = PersistentQueueManager(bot, config, self.enabled)
-        self.votes = VotingManager(bot, config, self.enabled)
-        self.votes_percentage = VotesPercentageManager(bot, config, self.enabled)
-        self.shuffle = ShuffleManager(bot, config, self.enabled)
-        self.shuffle_bumped = ShuffleBumpedManager(bot, config, self.enabled)
-        self.autoplay = AutoPlayManager(bot, config, self.enabled)
-        self.thumbnail = ThumbnailManager(bot, config, self.enabled)
-        self.localpath = LocalPathManager(bot, config, self.enabled)
-        self.disconnect = AutoDCManager(bot, config, self.enabled)
-        self.empty_dc = EmptyDCManager(bot, config, self.enabled)
-        self.empty_dc_timer = EmptyDCTimerManager(bot, config, self.enabled)
-        self.empty_pause = EmptyPauseManager(bot, config, self.enabled)
-        self.empty_pause_timer = EmptyPauseTimerManager(bot, config, self.enabled)
-        self.global_api = GlobalDBManager(bot, config, self.enabled)
-        self.global_api_timeout = GlobalDBTimeoutManager(bot, config, self.enabled)
-        self.local_cache_level = LocalCacheLevelManager(bot, config, self.enabled)
-        self.country_code = CountryCodeManager(bot, config, self.enabled)
-        self.repeat = RepeatManager(bot, config, self.enabled)
-        self.channel_restrict = ChannelRestrictManager(bot, config, self.enabled)
-        self.volume = VolumeManager(bot, config, self.enabled)
-        self.local_cache_age = LocalCacheAgeManager(bot, config, self.enabled)
-        self.jukebox = JukeboxManager(bot, config, self.enabled)
-        self.jukebox_price = JukeboxPriceManager(bot, config, self.enabled)
-        self.max_track_length = MaxTrackLengthManager(bot, config, self.enabled)
-        self.prefer_lyrics = PreferLyricsManager(bot, config, self.enabled)
-        self.notify = NotifyManager(bot, config, self.enabled)
-        self.status = StatusManager(bot, config, self.enabled)
-        self.url_restrict = URLRestrictManager(bot, config, self.enabled)
-        self.managed_lavalink_server = ManagedLavalinkManager(bot, config, self.enabled)
-        self.managed_lavalink_server_auto_update = LavalinkAutoUpdateManager(
-            bot, config, self.enabled
-        )
-        self.vc_restricted = VCRestrictedManager(bot, config, self.enabled)
-        self.auto_deafen = AutoDeafenManager(bot, config, self.enabled)
+    return attr.Factory(factory, takes_self=True)
+
+
+@attr.s(auto_attribs=True)
+class SettingCacheManager:
+    bot: Red
+    config: Config
+    enabled: bool
+
+    blacklist_whitelist: WhitelistBlacklistManager = cache_factory(WhitelistBlacklistManager)
+    dj_roles: DJRoleManager = cache_factory(DJRoleManager)
+    dj_status: DJStatusManager = cache_factory(DJStatusManager)
+    daily_playlist: DailyPlaylistManager = cache_factory(DailyPlaylistManager)
+    daily_global_playlist: DailyGlobalPlaylistManager = cache_factory(DailyGlobalPlaylistManager)
+    persistent_queue: PersistentQueueManager = cache_factory(PersistentQueueManager)
+    votes: VotingManager = cache_factory(VotingManager)
+    votes_percentage: VotesPercentageManager = cache_factory(VotesPercentageManager)
+    shuffle: ShuffleManager = cache_factory(ShuffleManager)
+    shuffle_bumped: ShuffleBumpedManager = cache_factory(ShuffleBumpedManager)
+    autoplay: AutoPlayManager = cache_factory(AutoPlayManager)
+    thumbnail: ThumbnailManager = cache_factory(ThumbnailManager)
+    localpath: LocalPathManager = cache_factory(LocalPathManager)
+    disconnect: AutoDCManager = cache_factory(AutoDCManager)
+    empty_dc: EmptyDCManager = cache_factory(EmptyDCManager)
+    empty_dc_timer: EmptyDCTimerManager = cache_factory(EmptyDCTimerManager)
+    empty_pause: EmptyPauseManager = cache_factory(EmptyPauseManager)
+    empty_pause_timer: EmptyPauseTimerManager = cache_factory(EmptyPauseTimerManager)
+    global_api: GlobalDBManager = cache_factory(GlobalDBManager)
+    global_api_timeout: GlobalDBTimeoutManager = cache_factory(GlobalDBTimeoutManager)
+    local_cache_level: LocalCacheLevelManager = cache_factory(LocalCacheLevelManager)
+    country_code: CountryCodeManager = cache_factory(CountryCodeManager)
+    repeat: RepeatManager = cache_factory(RepeatManager)
+    channel_restrict: ChannelRestrictManager = cache_factory(ChannelRestrictManager)
+    volume: VolumeManager = cache_factory(VolumeManager)
+    local_cache_age: LocalCacheAgeManager = cache_factory(LocalCacheAgeManager)
+    jukebox: JukeboxManager = cache_factory(JukeboxManager)
+    jukebox_price: JukeboxPriceManager = cache_factory(JukeboxPriceManager)
+    max_track_length: MaxTrackLengthManager = cache_factory(MaxTrackLengthManager)
+    prefer_lyrics: PreferLyricsManager = cache_factory(PreferLyricsManager)
+    notify: NotifyManager = cache_factory(NotifyManager)
+    status: StatusManager = cache_factory(StatusManager)
+    url_restrict: URLRestrictManager = cache_factory(URLRestrictManager)
+    managed_lavalink_server: ManagedLavalinkManager = cache_factory(ManagedLavalinkManager)
+    managed_lavalink_server_auto_update: LavalinkAutoUpdateManager = cache_factory(
+        LavalinkAutoUpdateManager
+    )
+    vc_restricted: VCRestrictedManager = cache_factory(VCRestrictedManager)
+    auto_deafen: AutoDeafenManager = cache_factory(AutoDeafenManager)
+
+    def reset_globals(self):
+        for name, value in attr.asdict(self, recurse=False).items():
+            if name not in ("bot", "config", "enabled"):
+                value.reset_globals()

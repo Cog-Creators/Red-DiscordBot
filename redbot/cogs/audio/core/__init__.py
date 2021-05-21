@@ -45,7 +45,7 @@ class Audio(
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
         self.config_cache = utilities.setting_cache.SettingCacheManager(
-            self.bot, self.config, enable_cache=True
+            self.bot, self.config, True
         )
 
         self.api_interface = None
@@ -97,6 +97,7 @@ class Audio(
             cache_age=365,
             auto_deafen=True,
             daily_playlists=False,
+            daily_playlists_override=False,
             global_db_enabled=True,
             global_db_get_timeout=5,
             status=False,
@@ -106,14 +107,20 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
-            volume=150,
+            volume=499,
             disconnect=False,
             persist_queue=None,
             emptydc_enabled=False,
             emptydc_timer=0,
+            emptypause_enabled=False,
+            emptypause_timer=0,
             thumbnail=None,
             maxlength=0,
             vc_restricted=False,
+            jukebox=False,
+            jukebox_price=0,
+            country_code="US",
+            prefer_lyrics=False,
             **self._default_lavalink_settings,
         )
 
@@ -152,10 +159,13 @@ class Audio(
             room_lock=None,
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
-            country_code="US",
+            country_code=None,
             vc_restricted=False,
             whitelisted_text=[],
             whitelisted_vc=[],
+        )
+        default_channel = dict(
+            volume=100,
         )
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
@@ -169,4 +179,5 @@ class Audio(
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
+        self.config.register_channel(**default_channel)
         self.config.register_user(country_code=None)

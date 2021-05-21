@@ -4,11 +4,12 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class MaxTrackLengthManager:
+class MaxTrackLengthManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -59,3 +60,7 @@ class MaxTrackLengthManager:
         if global_time == 0 or global_time > guild_time:
             return guild_time
         return global_time
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

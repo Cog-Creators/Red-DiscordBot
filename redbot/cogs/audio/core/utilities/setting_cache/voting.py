@@ -4,11 +4,12 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class VotingManager:
+class VotingManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -36,3 +37,6 @@ class VotingManager:
 
     async def get_context_value(self, guild: discord.Guild) -> bool:
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        pass

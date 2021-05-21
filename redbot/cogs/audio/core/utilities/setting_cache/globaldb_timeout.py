@@ -4,11 +4,12 @@ from typing import Dict, Optional, Union
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class GlobalDBTimeoutManager:
+class GlobalDBTimeoutManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -34,3 +35,7 @@ class GlobalDBTimeoutManager:
 
     async def get_context_value(self, guild: discord.Guild = None) -> Union[float, int]:
         return await self.get_global()
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

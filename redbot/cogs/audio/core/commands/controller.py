@@ -112,8 +112,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
         embed = discord.Embed(title=_("Now Playing"), description=song)
-        guild_data = await self.config.guild(ctx.guild).all()
-
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
         autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
@@ -695,7 +693,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = max(vol, 0)
+        vol = min(
+            max(vol, 0),
+            await self.config_cache.volume.get_context_value(
+                ctx.guild, ctx.me.voice.channel if ctx.me.voice else None
+            ),
+        )
         await self.config_cache.volume.set_guild(ctx.guild, vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)

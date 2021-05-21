@@ -4,11 +4,12 @@ from typing import Dict, Optional, Set, Union
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class ChannelRestrictManager:
+class ChannelRestrictManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -118,3 +119,13 @@ class ChannelRestrictManager:
             if allowed := await self.get_context_text(guild):
                 return what in allowed
         return True
+
+    def reset_globals(self) -> None:
+        pass
+
+    async def get_context_value(
+        self,
+        what: Union[discord.TextChannel, discord.VoiceChannel],
+        guild: Union[discord.Guild, int],
+    ) -> bool:
+        return await self.allowed_by_whitelist(what=what, guild=guild)

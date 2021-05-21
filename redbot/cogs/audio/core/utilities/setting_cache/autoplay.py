@@ -4,11 +4,12 @@ from typing import Dict, Optional, Tuple
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class AutoPlayManager:
+class AutoPlayManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -63,3 +64,6 @@ class AutoPlayManager:
 
     async def get_currently_in_context_value(self, guild: discord.Guild) -> Tuple[int, int]:
         return await self.get_currently_in_guild(guild)
+
+    def reset_globals(self) -> None:
+        pass

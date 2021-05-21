@@ -4,11 +4,12 @@ from typing import Dict, Optional, Set, Union
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class WhitelistBlacklistManager:
+class WhitelistBlacklistManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -223,3 +224,18 @@ class WhitelistBlacklistManager:
             context_whitelist = set()
         context_whitelist.update(global_blacklist)
         return context_whitelist
+
+    def reset_globals(self) -> None:
+        if None in self._cached_whitelist:
+            del self._cached_whitelist[None]
+
+        if None in self._cached_blacklist:
+            del self._cached_blacklist[None]
+
+    async def get_context_value(
+        self,
+        what: Optional[str] = None,
+        *,
+        guild: Optional[Union[discord.Guild, int]] = None,
+    ) -> bool:
+        return await self.allowed_by_whitelist_blacklist(what=what, guild=guild)

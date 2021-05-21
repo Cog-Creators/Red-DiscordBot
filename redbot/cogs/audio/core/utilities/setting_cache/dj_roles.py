@@ -5,11 +5,12 @@ from typing import Dict, Optional, Set
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class DJRoleManager:
+class DJRoleManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
@@ -75,3 +76,6 @@ class DJRoleManager:
 
     async def get_context_value(self, guild: discord.Guild) -> Set[discord.Role]:
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        pass

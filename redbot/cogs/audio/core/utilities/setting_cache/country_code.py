@@ -4,17 +4,36 @@ from typing import Dict, Optional
 
 import discord
 
+from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
 
-class CountryCodeManager:
+class CountryCodeManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
         self.bot = bot
         self.enable_cache = enable_cache
+        self._cached_global: Dict[None, str] = {}
         self._cached_user: Dict[int, Optional[str]] = {}
         self._cached_guilds: Dict[int, str] = {}
+
+    async def get_global(self, user: discord.Member) -> Optional[str]:
+        ret: Optional[str]
+        if self.enable_cache and None in self._cached_global:
+            ret = self._cached_global[None]
+        else:
+            ret = await self._config.country_code()
+            self._cached_global[None] = ret
+        return ret
+
+    async def set_global(self, set_to: str) -> None:
+        if set_to is not None:
+            await self._config.country_code.set(set_to)
+            self._cached_global[None] = set_to
+        else:
+            await self._config.country_code.clear()
+            self._cached_global[None] = self._config.defaults["GLOBAL"]["country_code"]
 
     async def get_user(self, user: discord.Member) -> Optional[str]:
         ret: Optional[str]
@@ -62,3 +81,8 @@ class CountryCodeManager:
         if (code := await self.get_user(user)) is not None:
             return code
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        self._cached_user = {}
+        if None in self._cached_global:
+            del self._cached_global[None]

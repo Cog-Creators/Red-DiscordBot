@@ -3,6 +3,8 @@ import contextlib
 import logging
 import os
 import tarfile
+from itertools import groupby
+from operator import attrgetter
 from pathlib import Path
 from typing import Union
 
@@ -34,6 +36,46 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     async def command_audioset(self, ctx: commands.Context):
         """Music configuration options."""
+
+    @command_audioset.group(name="global")
+    @commands.is_owner()
+    async def command_audioset_global(self, ctx: commands.Context):
+        """Bot owner controlled configuration options."""
+
+    @command_audioset_global.command(name="autodeafen")
+    async def command_audioset_global_auto_deafen(self, ctx: commands.Context):
+        """Toggle whether the bot will be auto deafened upon joining the voice channel.
+
+        This setting will take priority and will be applied globally.
+        """
+        auto_deafen = await self.config_cache.auto_deafen.get_global()
+        await self.config_cache.auto_deafen.set_global(not auto_deafen)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Auto Deafen: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
+            ),
+        )
+
+    @command_audioset_global.command(name="volume")
+    async def command_audioset_global_volume(self, ctx: commands.Context, volume: int):
+        """Set the maximum allowed volume to be set by servers."""
+        if volume >= 500:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Setting"),
+                description=_("Maximum allowed volume has to be between 0% and 500%.").format(
+                    volume=volume
+                ),
+            )
+            return
+        await self.config_cache.volume.set_global(volume)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Maximum allowed volume set to: {volume}%.").format(volume=volume),
+        )
 
     @command_audioset.group(name="restrictions")
     @commands.mod_or_permissions(manage_guild=True)
@@ -835,15 +877,30 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_auto_deafen(self, ctx: commands.Context):
         """Toggle whether the bot will be auto deafened upon joining the voice channel."""
-        auto_deafen = await self.config_cache.auto_deafen.get_context_value(ctx.guild)
+        auto_deafen = await self.config_cache.auto_deafen.get_guild(ctx.guild)
         await self.config_cache.auto_deafen.set_guild(ctx.guild, not auto_deafen)
-        await self.send_embed_msg(
-            ctx,
-            title=_("Setting Changed"),
-            description=_("Auto Deafen: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
-            ),
-        )
+        auto_deafen_context = await self.config_cache.auto_deafen.get_context_value(ctx.guild)
+        enabled = _("Enabled")
+        disabled = _("Disabled")
+        if auto_deafen_context == (not auto_deafen):
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Auto Deafen: {true_or_false}.").format(
+                    true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
+                ),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Auto Deafen: {true_or_false}, However global setting is set to {global_value}"
+                ).format(
+                    true_or_false=enabled if not auto_deafen else disabled,
+                    global_value=enabled if auto_deafen_context else disabled,
+                ),
+            )
 
     @command_audioset.command(name="restrict")
     @commands.is_owner()
@@ -852,8 +909,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and
-        Bandcamp links.
+        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and Bandcamp links.
         """
         restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
         await self.config_cache.url_restrict.set_global(not restrict)
@@ -873,6 +929,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         See roles with `[p]audioset listrole`
         Remove roles with `[p]audioset remrole`
+        See DJs with `[p]audioset listds`
         """
         await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -889,6 +946,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Add roles with `[p]audioset addrole`
         See roles with `[p]audioset listrole`
+        See DJs with `[p]audioset listds`
         """
         await self.config_cache.dj_roles.remove_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -904,9 +962,26 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Add roles with `[p]audioset addrole`
         Remove roles with `[p]audioset remrole`
+        See DJs with `[p]audioset listds`
         """
         roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        roles = sorted(roles, key=attrgetter("position"), reverse=True)
         rolestring = "\n".join([r.name for r in roles])
+        pages = pagify(rolestring, page_length=500)
+        await ctx.send_interactive(pages, timeout=30)
+
+    @command_audioset.command(name="listdjs")
+    @commands.guild_only()
+    async def command_audioset_role_listdjs(self, ctx: commands.Context):
+        """Show all roles from DJ mode allowlist.
+
+        Add roles with `[p]audioset addrole`
+        Remove roles with `[p]audioset remrole`
+        See roles with `[p]audioset listrole`
+        """
+        djs = await self.config_cache.dj_roles.get_allowed_members(ctx.guild)
+        djs = sorted(djs, key=attrgetter("top_role.position", "display_name"), reverse=True)
+        rolestring = "\n".join([r.display_name for r in djs])
         pages = pagify(rolestring, page_length=500)
         await ctx.send_interactive(pages, timeout=30)
 
@@ -1045,7 +1120,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Global cache status:    [{global_cache}]\n")
                 + _("Global timeout:         [{num_seconds}]\n")
             ).format(
-                max_age=str(await self.config.cache_age()) + " " + _("days"),
+                max_age=str(await self.config_cache.local_cache_age.get_global())
+                + " "
+                + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
@@ -1077,7 +1154,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and self.player_manager and self.player_manager.ll_build:
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and self.player_manager
+            and self.player_manager.ll_build
+        ):
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1176,7 +1258,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Percentage needed for non-mods to skip tracks, 0 to disable."""
         if percent < 0:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
+                ctx,
+                title=_("Invalid percentage"),
+                description=_("Percentage can't be less than zero."),
             )
         elif percent > 100:
             percent = 100
@@ -1399,9 +1483,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config_cache.global_api.set_global(not state)
         if not state:  # Ensure a call is made if the API is enabled to update user perms
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()
-        await ctx.send(
-            _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
+
+        msg = _("Global DB is {status}").format(
+            status=_("enabled") if not state else _("disabled")
         )
+        await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
     @command_audioset_audiodb.command(name="timeout")
     async def command_audioset_audiodb_timeout(
