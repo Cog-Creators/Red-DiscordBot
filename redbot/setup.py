@@ -9,6 +9,10 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
+from redbot import _early_init
+
+_early_init()
+
 import appdirs
 import click
 

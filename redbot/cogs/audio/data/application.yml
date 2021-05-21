@@ -3,7 +3,7 @@ server: # REST and WS server
   address: "localhost"
 lavalink:
   server:
-    jdanas: true
+    jdanas: true # Experimental toggle; used to disabled/enable JDA on the server, default is ON (should be set to OFF on arm devices)
     password: "youshallnotpass"
     sources:
       youtube: true
@@ -34,9 +34,6 @@ metrics:
 sentry:
   dsn: ""
   environment: ""
-#  tags:
-#    some_key: some_value
-#    another_key: another_value
 
 logging:
   file:
