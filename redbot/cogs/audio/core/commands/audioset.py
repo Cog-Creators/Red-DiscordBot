@@ -869,7 +869,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
-        """Add a role from DJ mode allowlist."""
+        """Add a role from DJ mode allowlist.
+
+        See roles with `[p]audioset listrole`
+        Remove roles with `[p]audioset remrole`
+        """
         await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
             ctx,
@@ -881,7 +885,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role_rem(self, ctx: commands.Context, *, role_name: discord.Role):
-        """Remove a role from DJ mode allowlist."""
+        """Remove a role from DJ mode allowlist.
+
+        Add roles with `[p]audioset addrole`
+        See roles with `[p]audioset listrole`
+        """
         await self.config_cache.dj_roles.remove_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
             ctx,
@@ -893,7 +901,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role_listrole(self, ctx: commands.Context):
-        """show all roles from DJ mode allowlist."""
+        """Show all roles from DJ mode allowlist.
+
+        Add roles with `[p]audioset addrole`
+        Remove roles with `[p]audioset remrole`
+        """
         roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
         rolestring = "\n".join([r.name for r in roles])
         pages = pagify(rolestring, page_length=500)
