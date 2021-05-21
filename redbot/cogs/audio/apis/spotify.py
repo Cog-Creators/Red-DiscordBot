@@ -1,3 +1,4 @@
+from __future__ import annotations
 import base64
 import contextlib
 import json
@@ -19,6 +20,7 @@ from ..errors import SpotifyFetchError
 
 if TYPE_CHECKING:
     from .. import Audio
+    from ..core.utilities import SettingCacheManager
 
 _ = Translator("Audio", Path(__file__))
 
@@ -36,11 +38,17 @@ class SpotifyWrapper:
     """Wrapper for the Spotify API."""
 
     def __init__(
-        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        session: aiohttp.ClientSession,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
         self.bot = bot
         self.config = config
         self.session = session
+        self.config_cache = cache
         self.spotify_token: Optional[MutableMapping] = None
         self.client_id: Optional[str] = None
         self.client_secret: Optional[str] = None
@@ -118,10 +126,7 @@ class SpotifyWrapper:
 
     async def get_country_code(self, ctx: Context = None) -> str:
         return (
-            (
-                await self.config.user(ctx.author).country_code()
-                or await self.config.guild(ctx.guild).country_code()
-            )
+            await self.config_cache.country_code.get_context_value(ctx.guild, ctx.author)
             if ctx
             else "US"
         )

@@ -16,7 +16,6 @@ from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
-from .utilities import SettingCacheManager
 
 if TYPE_CHECKING:
     from ..apis.interface import AudioAPIInterface
@@ -25,6 +24,7 @@ if TYPE_CHECKING:
     from ..audio_dataclasses import LocalPath, Query
     from ..equalizer import Equalizer
     from ..manager import ServerManager
+    from .utilities import SettingCacheManager
 
 
 class MixinMeta(ABC):
@@ -174,7 +174,7 @@ class MixinMeta(ABC):
     @abstractmethod
     async def is_query_allowed(
         self,
-        config: Config,
+        cache: SettingCacheManager,
         ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
         query: str,
         query_obj: Query,

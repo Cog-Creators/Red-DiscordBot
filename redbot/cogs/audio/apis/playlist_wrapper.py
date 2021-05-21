@@ -1,10 +1,11 @@
+from __future__ import annotations
 import concurrent
 import json
 import logging
 from pathlib import Path
 
 from types import SimpleNamespace
-from typing import List, MutableMapping, Optional
+from typing import List, MutableMapping, Optional, TYPE_CHECKING
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -37,12 +38,18 @@ from .api_utils import PlaylistFetchResult
 log = logging.getLogger("red.cogs.Audio.api.Playlists")
 _ = Translator("Audio", Path(__file__))
 
+if TYPE_CHECKING:
+    from ..core.utilities import SettingCacheManager
+
 
 class PlaylistWrapper:
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
+    def __init__(
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cache: SettingCacheManager
+    ):
         self.bot = bot
         self.database = conn
         self.config = config
+        self.config_cache = cache
         self.statement = SimpleNamespace()
         self.statement.pragma_temp_store = PRAGMA_SET_temp_store
         self.statement.pragma_journal_mode = PRAGMA_SET_journal_mode

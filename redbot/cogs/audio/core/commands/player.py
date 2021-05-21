@@ -53,7 +53,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+        elif not await self.is_query_allowed(self.config_cache, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
@@ -161,7 +161,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+        elif not await self.is_query_allowed(self.config_cache, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
@@ -285,7 +285,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             single_track.start_timestamp = seek * 1000
         query = Query.process_input(single_track, self.local_folder_current_path)
         if not await self.is_query_allowed(
-            self.config,
+            self.config_cache,
             ctx,
             f"{single_track.title} {single_track.author} {single_track.uri} {str(query)}",
             query_obj=query,
@@ -741,7 +741,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("That URL is not allowed."),
                     )
-            if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+            if not await self.is_query_allowed(
+                self.config_cache, ctx, f"{query}", query_obj=query
+            ):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -821,7 +823,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         continue
                     query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
-                        self.config,
+                        self.config_cache,
                         ctx,
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,

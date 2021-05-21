@@ -13,7 +13,7 @@ class DJRoleManager:
         self._config: Config = config
         self.bot = bot
         self.enable_cache = enable_cache
-        self._cached_guild: Dict[Optional[int], Set[int]] = {}
+        self._cached_guild: Dict[Optional[int], Set[int]] = defaultdict(set)
 
     async def get_guild(self, guild: discord.Guild) -> Set[discord.Role]:
         ret: Set[int]
@@ -74,4 +74,3 @@ class DJRoleManager:
 
     async def get_context_value(self, guild: discord.Guild) -> Set[discord.Role]:
         return await self.get_guild(guild)
-

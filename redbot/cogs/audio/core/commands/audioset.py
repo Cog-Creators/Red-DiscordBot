@@ -4,7 +4,6 @@ import logging
 import os
 import tarfile
 from pathlib import Path
-
 from typing import Union
 
 import discord
@@ -13,7 +12,7 @@ import lavalink
 from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, humanize_number
+from redbot.core.utils.chat_formatting import box, humanize_number, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
@@ -100,7 +99,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
         """Clear all keywords from the whitelist."""
-        whitelist = await self.config_cache.blacklist_whitelist.clear_whitelist(None)
+        whitelist = await self.config_cache.blacklist_whitelist.get_whitelist(None)
         if not whitelist:
             return await self.send_embed_msg(ctx, title=_("Nothing in the whitelist."))
         await self.config_cache.blacklist_whitelist.clear_whitelist(ctx.guild)
@@ -857,17 +856,50 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_audioset.command(name="role")
+    @command_audioset.command(name="addrole", aliases=["role"])
     @commands.guild_only()
     @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role(self, ctx: commands.Context, *, role_name: discord.Role):
-        """Set the role to use for DJ mode."""
+        """Add a role from DJ mode allowlist.
+
+        See roles with `[p]audioset listrole`
+        Remove roles with `[p]audioset remrole`
+        """
         await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
             ctx,
             title=_("Settings Changed"),
-            description=_("DJ role set to: {role.name}.").format(role=role_name),
+            description=_("Role added to DJ list: {role.name}.").format(role=role_name),
         )
+
+    @command_audioset.command(name="remrole")
+    @commands.guild_only()
+    @commands.admin_or_permissions(manage_roles=True)
+    async def command_audioset_role_rem(self, ctx: commands.Context, *, role_name: discord.Role):
+        """Remove a role from DJ mode allowlist.
+
+        Add roles with `[p]audioset addrole`
+        See roles with `[p]audioset listrole`
+        """
+        await self.config_cache.dj_roles.remove_guild(ctx.guild, {role_name})
+        await self.send_embed_msg(
+            ctx,
+            title=_("Settings Changed"),
+            description=_("Role removed from DJ list: {role.name}.").format(role=role_name),
+        )
+
+    @command_audioset.command(name="listrole")
+    @commands.guild_only()
+    async def command_audioset_role_listrole(self, ctx: commands.Context):
+        """Show all roles from DJ mode allowlist.
+
+        Add roles with `[p]audioset addrole`
+        Remove roles with `[p]audioset remrole`
+        """
+        roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
+        rolestring = "\n".join([r.name for r in roles])
+        pages = pagify(rolestring, page_length=500)
+        await ctx.send_interactive(pages, timeout=30)
 
     @command_audioset.command(name="settings", aliases=["info"])
     @commands.guild_only()
@@ -876,7 +908,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         is_owner = await self.bot.is_owner(ctx.author)
         global_data = await self.config.all()
         data = await self.config.guild(ctx.guild).all()
-        dj_role_obj = ctx.guild.get_role(data["dj_role"])
+        dj_role_obj = len(data["dj_roles"])
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
         emptydc_timer = data["emptydc_timer"]
@@ -923,7 +955,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 num_seconds=self.get_time_string(emptypause_timer)
             )
         if dj_enabled and dj_role_obj:
-            msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
+            msg += _("DJ Roles:         [{role}]\n").format(role=dj_role_obj)
         if jukebox:
             msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(
@@ -1253,7 +1285,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         If you wish to disable a specific cache use a negative number.
         """
-        current_level = CacheLevel(await self.config.cache_level())
+        current_level = await self.config_cache.local_cache_level.get_global()
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
         lavalink_cache = CacheLevel.set_lavalink()
@@ -1268,7 +1300,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Youtube cache:    [{youtube_status}]\n")
                 + _("Lavalink cache:   [{lavalink_status}]\n")
             ).format(
-                max_age=str(await self.config.cache_age()) + " " + _("days"),
+                max_age=str(await self.config_cache.local_cache_age.get_global())
+                + " "
+                + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
@@ -1313,15 +1347,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Youtube cache:    [{youtube_status}]\n")
             + _("Lavalink cache:   [{lavalink_status}]\n")
         ).format(
-            max_age=str(await self.config.cache_age()) + " " + _("days"),
+            max_age=str(await self.config_cache.local_cache_age.get_global()) + " " + _("days"),
             spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
             youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
             lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
         )
 
         await self.send_embed_msg(ctx, title=_("Cache Settings"), description=box(msg, lang="ini"))
-
-        await self.config.cache_level.set(newcache.value)
+        await self.config_cache.local_cache_level.set_global(newcache.value)
 
     @command_audioset.command(name="cacheage")
     @commands.is_owner()
@@ -1339,7 +1372,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ).format(prefix=ctx.prefix)
             age = 7
         msg += _("I've set the cache age to {age} days").format(age=age)
-        await self.config.cache_age.set(age)
+        await self.config_cache.local_cache_age.set_global(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
     @commands.is_owner()

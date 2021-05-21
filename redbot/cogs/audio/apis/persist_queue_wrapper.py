@@ -1,3 +1,4 @@
+from __future__ import annotations
 import concurrent
 import json
 import logging
@@ -39,16 +40,23 @@ _ = Translator("Audio", Path(__file__))
 
 if TYPE_CHECKING:
     from .. import Audio
+    from ..core.utilities import SettingCacheManager
 
 
 class QueueInterface:
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self,
+        bot: Red,
+        config: Config,
+        conn: APSWConnectionWrapper,
+        cog: Union["Audio", Cog],
+        cache: SettingCacheManager,
     ):
         self.bot = bot
         self.database = conn
         self.config = config
         self.cog = cog
+        self.config_cache = cache
         self.statement = SimpleNamespace()
         self.statement.pragma_temp_store = PRAGMA_SET_temp_store
         self.statement.pragma_journal_mode = PRAGMA_SET_journal_mode

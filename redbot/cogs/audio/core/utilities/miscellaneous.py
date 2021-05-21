@@ -338,6 +338,18 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom(scope).clear()
             await self.config.schema_version.set(3)
 
+        if from_version < 4 <= to_version:
+            all_guild_data = await self.config.all_guilds()
+            async for guild_id, guild_data in AsyncIter(all_guild_data.items()):
+                temp_dj_id = guild_data.pop("dj_role", None)
+                if temp_dj_id and (guild := self.bot.get_guild(guild_id)):
+                    await self.config_cache.dj_roles.add_guild(
+                        guild=guild,
+                        roles={
+                            discord.Object(id=int(temp_dj_id)),
+                        },
+                    )
+
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)
 
