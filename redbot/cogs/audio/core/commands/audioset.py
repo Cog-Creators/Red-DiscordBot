@@ -899,7 +899,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="listrole")
     @commands.guild_only()
-    @commands.admin_or_permissions(manage_roles=True)
     async def command_audioset_role_listrole(self, ctx: commands.Context):
         """Show all roles from DJ mode allowlist.
 
