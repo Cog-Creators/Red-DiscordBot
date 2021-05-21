@@ -13,7 +13,7 @@ __version__ = VersionInfo.from_json({"major": 2, "minor": 4, "micro": 0, "releas
 
 __author__ = ["aikaterna", "Draper"]
 
-_SCHEMA_VERSION: Final[int] = 3
+_SCHEMA_VERSION: Final[int] = 4
 _OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
