@@ -39,7 +39,13 @@ CURRATED_DATA = (
 
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
-        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: Playlist,
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         is_owner = await self.bot.is_owner(ctx.author)
         has_perms = False
@@ -54,8 +60,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
-
-        if is_owner:
+        if getattr(playlist, "id", 0) == 42069:
+            has_perms = bypass
+        elif is_owner:
             has_perms = True
         elif playlist.scope == PlaylistScope.USER.value:
             if not is_different_user:
@@ -474,7 +481,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _maybe_update_playlist(
         self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
-        if playlist.id == 42069:
+        if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
             results = {}
             old_tracks = playlist.tracks_obj
@@ -523,24 +530,22 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return False
             try:
                 if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    not self.can_join_and_speak(ctx.author.voice.channel)
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Playlists"),
-                        description=_("I don't have permission to connect to your channel."),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
                     )
                     return False
                 await lavalink.connect(
                     ctx.author.voice.channel,
                     deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
                 )
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                player.store("channel", ctx.channel.id)
-                player.store("guild", ctx.guild.id)
             except IndexError:
                 await self.send_embed_msg(
                     ctx,
@@ -555,10 +560,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):

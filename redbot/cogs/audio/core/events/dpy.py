@@ -90,9 +90,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         with contextlib.suppress(Exception):
             player = lavalink.get_player(ctx.guild.id)
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if not notify_channel:
-                player.store("channel", ctx.channel.id)
+                player.store("notify_channel", ctx.channel.id)
 
         if self.local_folder_current_path is None:
             self.local_folder_current_path = Path(

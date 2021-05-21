@@ -430,12 +430,6 @@ class Warnings(commands.Cog):
                 "mod": ctx.author.id,
             }
         }
-        async with member_settings.warnings() as user_warnings:
-            user_warnings.update(warning_to_add)
-        current_point_count += reason_type["points"]
-        await member_settings.total_points.set(current_point_count)
-
-        await warning_points_add_check(self.config, ctx, user, current_point_count)
         dm = guild_settings["toggle_dm"]
         showmod = guild_settings["show_mod"]
         dm_failed = False
@@ -465,6 +459,11 @@ class Warnings(commands.Cog):
                     " but I wasn't able to send them a warn message."
                 ).format(user=user.mention)
             )
+        async with member_settings.warnings() as user_warnings:
+            user_warnings.update(warning_to_add)
+        current_point_count += reason_type["points"]
+        await member_settings.total_points.set(current_point_count)
+        await warning_points_add_check(self.config, ctx, user, current_point_count)
 
         toggle_channel = guild_settings["toggle_channel"]
         if toggle_channel:

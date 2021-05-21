@@ -62,7 +62,18 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
                 if _error_code == 1000 and player.current is not None and player.is_playing:
-                    await player.resume(player.current, start=player.position, replace=False)
+                    await player.resume(player.current, start=player.position, replace=True)
+                    by_remote = extra.get("byRemote", "")
+                    reason = extra.get("reason", "No Specified Reason").strip()
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        extra.get("code"),
+                        by_remote,
+                        reason,
+                        player,
+                    )
                 return
             await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
             try:
@@ -107,7 +118,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
                 )
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel and autoplay:
                 await self.config_cache.autoplay.set_currently_in_guild(
                     guild, [notify_channel, player.channel.id]
@@ -130,7 +141,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
-                notify_channel_id = player.fetch("channel")
+                notify_channel_id = player.fetch("notify_channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
@@ -153,7 +164,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
-            notify_channel_id = player.fetch("channel")
+            notify_channel_id = player.fetch("notify_channel")
             notify_channel = self.bot.get_channel(notify_channel_id)
             if notify_channel and self._has_notify_perms(notify_channel):
                 if player.fetch("notify_message") is not None:
@@ -195,7 +206,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
-                notify_channel_id = player.fetch("channel")
+                notify_channel_id = player.fetch("notify_channel")
                 notify_channel = self.bot.get_channel(notify_channel_id)
                 if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
@@ -212,7 +223,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
-            message_channel = player.fetch("channel")
+            message_channel = player.fetch("notify_channel")
             while True:
                 if current_track in player.queue:
                     player.queue.remove(current_track)
@@ -322,8 +333,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
             if player.channel:
-                current_perms = player.channel.permissions_for(player.guild.me)
-                has_perm = current_perms.speak and current_perms.connect
+                has_perm = self.can_join_and_speak(player.channel)
             else:
                 has_perm = False
             if code in (1000,) and has_perm and player.current and player.is_playing:
@@ -488,16 +498,26 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.resume(player.current, start=player.position, replace=False)
-                ws_audio_log.info(
-                    "WS EVENT - IGNORED (Healthy Socket) | "
-                    "Voice websocket closed event "
-                    "Code: %d -- Remote: %s -- %s, %r",
-                    code,
-                    by_remote,
-                    reason,
-                    player,
-                )
+                    await player.resume(player.current, start=player.position, replace=True)
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
+                else:
+                    ws_audio_log.info(
+                        "WS EVENT - IGNORED (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
         except Exception:
             log.exception("Error in task")
         finally:
