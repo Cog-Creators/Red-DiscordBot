@@ -3,6 +3,7 @@ server: # REST and WS server
   address: "localhost"
 lavalink:
   server:
+    jdanas: true
     password: "youshallnotpass"
     sources:
       youtube: true
@@ -12,7 +13,7 @@ lavalink:
       vimeo: true
       http: true
       local: true
-    bufferDurationMs: 200 # Length of track to buffer into memory in miliseconds.
+    bufferDurationMs: 300 # Length of track to buffer into memory in miliseconds.
     youtubePlaylistLoadLimit: 10000 # Number of pages at 100 each
     playerUpdateInterval: 1 # How frequently to send player updates to clients, in seconds
     youtubeSearchEnabled: true
