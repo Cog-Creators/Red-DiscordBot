@@ -15,7 +15,7 @@ import aiohttp
 import discord
 import lavalink
 
-from lavalink.rest_api import LoadResult, LoadType
+from lavalink.rest_api import LoadResult, LoadType, Track
 from redbot import json
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -475,7 +475,6 @@ class AudioAPIInterface:
         skip_youtube_api = False
         try:
             current_cache_level = await self.config_cache.local_cache_level.get_global()
-            guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await self.cog.queue_duration(ctx)
@@ -646,8 +645,13 @@ class AudioAPIInterface:
                 if enqueue:
                     if len(player.queue) >= 10000:
                         continue
-                    if guild_data["maxlength"] > 0:
-                        if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
+
+                    if (
+                        max_length := await self.config_cache.max_track_length.get_context_value(
+                            ctx.guild
+                        )
+                    ) > 0:
+                        if self.cog.is_track_length_allowed(single_track, max_length):
                             enqueued_tracks += 1
                             single_track.extras.update(
                                 {
@@ -697,7 +701,10 @@ class AudioAPIInterface:
                         num=enqueued_tracks, maxlength_msg=maxlength_msg
                     ),
                 )
-                if not guild_data["shuffle"] and queue_dur > 0:
+                if (
+                    not await self.config_cache.shuffle.get_context_value(ctx.guild)
+                    and queue_dur > 0
+                ):
                     embed.set_footer(
                         text=_(
                             "{time} until start of playlist"

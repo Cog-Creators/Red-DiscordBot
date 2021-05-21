@@ -114,11 +114,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed(title=_("Now Playing"), description=song)
         guild_data = await self.config.guild(ctx.guild).all()
 
-        if guild_data["thumbnail"] and player.current and player.current.thumbnail:
+        shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
+        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
+        if thumbnail and player.current and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
-        shuffle = guild_data["shuffle"]
-        repeat = guild_data["repeat"]
-        autoplay = guild_data["auto_play"]
         text = ""
         text += (
             _("Auto-Play")
@@ -695,7 +696,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         vol = max(vol, 0)
-        await self.config_cache.auto_deafen.set_guild(ctx.guild, vol)
+        await self.config_cache.volume.set_guild(ctx.guild, vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             player.volume.value = vol / 100

@@ -48,15 +48,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
-        guild_data = await self.config.guild(guild).all()
-        disconnect = guild_data["disconnect"]
+        disconnect = await self.config_cache.disconnect.get_context_value(guild)
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
             self._ll_guild_updates.discard(guild.id)
             return
 
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
-            deafen = guild_data["auto_deafen"]
+            deafen = await self.config_cache.auto_deafen.get_context_value(guild)
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
@@ -93,9 +92,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
         current_id = self.rgetattr(current_track, "_info", {}).get("identifier")
 
-        repeat = guild_data["repeat"]
-        notify = guild_data["notify"]
-        autoplay = guild_data["auto_play"]
+        repeat = await self.config_cache.repeat.get_context_value(guild)
+        notify = await self.config_cache.notify.get_context_value(guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(guild)
         description = await self.get_track_description(
             current_track, self.local_folder_current_path
         )

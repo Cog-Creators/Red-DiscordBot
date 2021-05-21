@@ -117,13 +117,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     except KeyError:
                         player = None
                 vc = 0
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = Volume(value=guild_data["volume"] / 100)
+                shuffle = await self.config_cache.shuffle.get_context_value(guild)
+                repeat = await self.config_cache.repeat.get_context_value(guild)
+                volume = Volume(
+                    value=await self.config_cache.volume.get_context_value(guild) / 100
+                )
 
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
+                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
+                auto_deafen = await self.config_cache.autoplay.get_context_value(guild)
 
                 if player is None:
                     while tries < 5 and vc is not None:
@@ -192,12 +193,13 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except KeyError:
                     player = None
             if player is None:
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = Volume(value=guild_data["volume"] / 100)
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
+                shuffle = await self.config_cache.shuffle.get_context_value(guild)
+                repeat = await self.config_cache.repeat.get_context_value(guild)
+                volume = Volume(
+                    value=await self.config_cache.volume.get_context_value(guild) / 100
+                )
+                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
+                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
 
                 while tries < 5 and vc is not None:
                     try:

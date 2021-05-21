@@ -349,6 +349,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             discord.Object(id=int(temp_dj_id)),
                         },
                     )
+            await self.config.schema_version.set(4)
 
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)

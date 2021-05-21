@@ -1294,7 +1294,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         If you wish to disable a specific cache use a negative number.
         """
-        current_level = CacheLevel(await self.config_cache.local_cache_level.get_global())
+        current_level = await self.config_cache.local_cache_level.get_global()
         spotify_cache = CacheLevel.set_spotify()
         youtube_cache = CacheLevel.set_youtube()
         lavalink_cache = CacheLevel.set_lavalink()

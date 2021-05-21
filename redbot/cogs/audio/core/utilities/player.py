@@ -362,7 +362,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         except KeyError:
             self.update_player_lock(ctx, True)
-        guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
         single_track = None
         index = None
@@ -455,8 +454,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if IS_DEBUG:
                         log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
+
+                elif (
+                    max_length := await self.config_cache.max_track_length.get_context_value(
+                        ctx.guild
+                    )
+                ) > 0:
+                    if self.is_track_length_allowed(track, max_length):
                         track_len += 1
                         track.extras.update(
                             {
@@ -503,7 +507,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     num=track_len, maxlength_msg=maxlength_msg
                 )
             )
-            if not guild_data["shuffle"] and queue_dur > 0:
+            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
@@ -548,8 +552,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
+                elif (
+                    max_length := await self.config_cache.max_track_length.get_context_value(
+                        ctx.guild
+                    )
+                ) > 0:
+                    if self.is_track_length_allowed(single_track, max_length):
                         single_track.extras.update(
                             {
                                 "enqueue_time": int(time.time()),
@@ -598,7 +606,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 single_track, self.local_folder_current_path
             )
             embed = discord.Embed(title=_("Track Enqueued"), description=description)
-            if not guild_data["shuffle"] and queue_dur > 0:
+            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
                         time=queue_total_duration, position=before_queue_length + 1

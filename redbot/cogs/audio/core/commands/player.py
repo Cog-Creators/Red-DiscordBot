@@ -44,7 +44,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         If you are the bot owner, use `[p]audioset info` to display your localtracks path.
         """
         query = Query.process_input(query, self.local_folder_current_path)
-        guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
         if restrict and self.match_url(str(query)):
             valid_url = self.is_url_allowed(str(query))
@@ -59,7 +58,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if guild_data["dj_enabled"] and not can_skip:
+        if await self.config_cache.dj_status.get_context_value(ctx.guild) and not can_skip:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -124,7 +123,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
 
-        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(
+            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+        ):
             return
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
@@ -152,7 +153,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Bump Track"),
                 description=_("Only single tracks work with bump play."),
             )
-        guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
         if restrict and self.match_url(str(query)):
             valid_url = self.is_url_allowed(str(query))
@@ -167,7 +167,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if guild_data["dj_enabled"] and not can_skip:
+        if await self.config_cache.dj_status.get_context_value(ctx.guild) and not can_skip:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -232,7 +232,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
 
-        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(
+            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+        ):
             return
         try:
             if query.is_spotify:
@@ -299,8 +301,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("This track is not allowed in this server."),
             )
-        elif guild_data["maxlength"] > 0:
-            if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
+        elif (
+            max_length := await self.config_cache.max_track_length.get_context_value(ctx.guild)
+        ) > 0:
+            if self.is_track_length_allowed(single_track, max_length):
                 single_track.requester = ctx.author
                 single_track.extras.update(
                     {
@@ -339,7 +343,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             single_track, self.local_folder_current_path
         )
         footer = None
-        if not play_now and not guild_data["shuffle"] and queue_dur > 0:
+        if (
+            not play_now
+            and not await self.config_cache.shuffle.get_context_value(ctx.guild)
+            and queue_dur > 0
+        ):
             footer = _("{time} until track playback: #1 in queue").format(
                 time=self.format_time(queue_dur)
             )
@@ -433,8 +441,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "codes can be used.\nSee `{prefix}audioset youtubeapi` for instructions."
                 ).format(prefix=ctx.prefix),
             )
-        guild_data = await self.config.guild(ctx.guild).all()
-        if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
+        if await self.config_cache.dj_status.get_context_value(
+            ctx.guild
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -535,7 +544,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(
+            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+        ):
             return
         if query.is_spotify:
             return await self._get_spotify_tracks(ctx, query)
@@ -549,8 +560,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_autoplay(self, ctx: commands.Context):
         """Starts auto play."""
-        guild_data = await self.config.guild(ctx.guild).all()
-        if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
+        if await self.config_cache.dj_status.get_context_value(
+            ctx.guild
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
@@ -608,7 +620,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(
+            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+        ):
             return
         try:
             await self.api_interface.autoplay(player, self.playlist_api)
@@ -632,9 +646,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             self.update_player_lock(ctx, False)
             raise e
 
-        if not guild_data["auto_play"]:
+        if not await self.config_cache.autoplay.get_context_value(ctx.guild):
             await ctx.invoke(self.command_audioset_autoplay_toggle)
-        if not guild_data["notify"] and not player.fetch("autoplay_notified", False):
+        if not await self.config_cache.notify.get_context_value(ctx.guild) and not player.fetch(
+            "autoplay_notified", False
+        ):
             pass
         elif player.current:
             await self.send_embed_msg(ctx, title=_("Adding a track to queue."))
@@ -717,7 +733,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
-        guild_data = await self.config.guild(ctx.guild).all()
         player.store("notify_channel", ctx.channel.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
@@ -811,7 +826,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(ctx, embed=embed)
                 queue_dur = await self.queue_duration(ctx)
                 queue_total_duration = self.format_time(queue_dur)
-                if guild_data["dj_enabled"] and not can_skip:
+                if await self.config_cache.dj_status.get_context_value(ctx.guild) and not can_skip:
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Play Tracks"),
@@ -834,8 +849,12 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id
                             )
                         continue
-                    elif guild_data["maxlength"] > 0:
-                        if self.is_track_length_allowed(track, guild_data["maxlength"]):
+                    elif (
+                        max_length := await self.config_cache.max_track_length.get_context_value(
+                            ctx.guild
+                        )
+                    ) > 0:
+                        if self.is_track_length_allowed(track, max_length):
                             track_len += 1
                             track.extras.update(
                                 {
@@ -875,7 +894,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         num=track_len, maxlength_msg=maxlength_msg
                     )
                 )
-                if not guild_data["shuffle"] and queue_dur > 0:
+                if (
+                    not await self.config_cache.shuffle.get_context_value(ctx.guild)
+                    and queue_dur > 0
+                ):
                     if query.is_local and query.is_album:
                         footer = _("folder")
                     else:
