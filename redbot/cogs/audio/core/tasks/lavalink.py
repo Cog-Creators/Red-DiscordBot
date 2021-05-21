@@ -6,7 +6,7 @@ import lavalink
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
-from ...errors import LavalinkDownloadFailed
+from ...errors import LavalinkDownloadFailed, ShouldAutoRecover
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -33,6 +33,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.lavalink_connection_aborted = False
         max_retries = 5
         retry_count = 0
+        lazy_external = False
         while retry_count < max_retries:
             configs = await self.config.all()
             external = configs["use_external_lavalink"]
@@ -44,21 +45,34 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 ws_port = settings["ws_port"]
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
-                self.player_manager = ServerManager()
+                self.player_manager = ServerManager(host, password, ws_port)
                 try:
                     await self.player_manager.start(java_exec)
+                except ShouldAutoRecover:
+                    if self.player_manager is not None:
+                        await self.player_manager.shutdown()
+                    self.player_manager = None
+                    log.warning(
+                        "Managed Lavalink server cannot be started due to port 2333 "
+                        "already being take, attempting to connect to existing server."
+                    )
+                    host = configs["host"]
+                    password = configs["password"]
+                    ws_port = configs["ws_port"]
+                    lazy_external = True
+                    break
                 except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
                     if exc.should_retry:
                         log.exception(
-                            "Exception whilst starting internal Lavalink server, retrying...",
+                            "Exception whilst starting managed Lavalink server, retrying...",
                             exc_info=exc,
                         )
                         retry_count += 1
                         continue
                     else:
                         log.exception(
-                            "Fatal exception whilst starting internal Lavalink server, "
+                            "Fatal exception whilst starting managed Lavalink server, "
                             "aborting...",
                             exc_info=exc,
                         )
@@ -69,7 +83,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     raise
                 except Exception as exc:
                     log.exception(
-                        "Unhandled exception whilst starting internal Lavalink server, "
+                        "Unhandled exception whilst starting managed Lavalink server, "
                         "aborting...",
                         exc_info=exc,
                     )
@@ -119,9 +133,23 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 break
         else:
             self.lavalink_connection_aborted = True
-            log.critical(
-                "Connecting to the Lavalink server failed after multiple attempts. "
-                "See above tracebacks for details."
-            )
+            if not lazy_external:
+                log.critical(
+                    "Connecting to the Lavalink server failed after multiple attempts. "
+                    "See above tracebacks for details."
+                )
+            else:
+                log.critical(
+                    "Connecting to the existing Lavalink server failed after multiple attempts. "
+                    "This could be due to another program using port 2333, "
+                    "please stop that program and reload audio; If you are unsure what program is "
+                    "using port 2333, please restart the machine as it could be a rogue server. "
+                    "Keep in mind, I'm using HOST: %s | PASSWORD: %s | PORT: %s, to connect to to"
+                    "the existing server, if you have an external server already ensure you have "
+                    "set the correct host, password and port using `[p]llset ...` on this bot.",
+                    host,
+                    password,
+                    ws_port,
+                )
             return
         self._restore_task = asyncio.create_task(self.restore_players())

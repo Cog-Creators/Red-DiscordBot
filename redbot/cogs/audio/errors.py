@@ -11,6 +11,10 @@ class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
 
 
+class ShouldAutoRecover(AudioError, RuntimeError):
+    """Spawning a Lavalink server failed, this error is raised when the bot should attempt to connect to external."""
+
+
 class LavalinkDownloadFailed(AudioError, RuntimeError):
     """Downloading the Lavalink jar failed.
 
