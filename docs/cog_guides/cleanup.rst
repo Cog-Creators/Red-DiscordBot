@@ -175,7 +175,7 @@ cleanup messages
 
 **Description**
 
-Delete the last X messages.
+Delete the last X messages in the current channel.
 
 Example:
     - ``[p]cleanup messages 26``
