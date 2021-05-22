@@ -206,7 +206,7 @@ class Cleanup(commands.Cog):
     async def user(
         self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
     ):
-        """Delete the last X messages from a specified user.
+        """Delete the last X messages from a specified user in the current channel.
 
         Examples:
             - `[p]cleanup user @Twentysix 2`

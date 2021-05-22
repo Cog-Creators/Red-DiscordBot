@@ -283,7 +283,7 @@ cleanup user
 
 **Description**
 
-Delete the last X messages from a specified user.
+Delete the last X messages from a specified user in the current channel.
 
 Examples:
     - ``[p]cleanup user @Twentysix 2``
