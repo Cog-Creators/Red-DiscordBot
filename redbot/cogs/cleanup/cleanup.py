@@ -473,7 +473,7 @@ class Cleanup(commands.Cog):
     async def cleanup_bot(
         self, ctx: commands.Context, number: positive_int, delete_pinned: bool = False
     ):
-        """Clean up command messages and messages from the bot.
+        """Clean up command messages and messages from the bot in the current channel.
 
         Can only cleanup custom commands and alias commands if those cogs are loaded.
 

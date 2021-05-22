@@ -150,7 +150,7 @@ cleanup bot
 
 **Description**
 
-Clean up command messages and messages from the bot.
+Clean up command messages and messages from the bot in the current channel.
 
 Can only cleanup custom commands and alias commands if those cogs are loaded.
 
