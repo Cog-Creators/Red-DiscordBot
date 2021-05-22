@@ -561,7 +561,7 @@ class Cleanup(commands.Cog):
         match_pattern: str = None,
         delete_pinned: bool = False,
     ):
-        """Clean up messages owned by the bot.
+        """Clean up messages owned by the bot in the current channel.
 
         By default, all messages are cleaned. If a second argument is specified,
         it is used for pattern matching - only messages containing the given text will be deleted.
