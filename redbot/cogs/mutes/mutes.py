@@ -518,7 +518,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     ):
         if user.bot:
             return
-        
+
         if not await self.config.guild(guild).dm():
             return
 
