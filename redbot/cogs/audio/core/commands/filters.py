@@ -400,8 +400,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await player.set_filters()
         await ctx.invoke(self.command_effects)
 
-    @command_effects.command(name="baseboost")
-    async def command_effects_baseboost(self, ctx: commands.Context):
+    @command_effects.command(name="bassboost", aliases=["baseboost"])
+    async def command_effects_bassboost(self, ctx: commands.Context):
         """This effect emphasizes Punchy Bass and Crisp Mid-High tones.
 
         Not suitable for tracks with Deep/Low Bass."""

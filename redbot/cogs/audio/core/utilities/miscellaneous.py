@@ -123,11 +123,11 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
 
     async def update_external_status(self) -> bool:
-        external = await self.config_cache.managed_lavalink_server.get_global()
+        external = await self.config_cache.external_lavalink_server.get_global()
         if not external:
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
-            await self.config_cache.managed_lavalink_server.set_global(True)
+            await self.config_cache.external_lavalink_server.set_global(True)
             return True
         else:
             return False

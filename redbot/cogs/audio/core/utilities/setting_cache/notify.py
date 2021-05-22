@@ -15,6 +15,7 @@ class NotifyManager(CachingABC):
         self.bot = bot
         self.enable_cache = enable_cache
         self._cached_guild: Dict[int, bool] = {}
+        self._cached_global: Dict[None, bool] = {}
 
     async def get_guild(self, guild: discord.Guild) -> bool:
         ret: bool
@@ -35,7 +36,26 @@ class NotifyManager(CachingABC):
             await self._config.guild_from_id(gid).notify.clear()
             self._cached_guild[gid] = self._config.defaults["GUILD"]["notify"]
 
-    async def get_context_value(self, guild: discord.Guild) -> bool:
+    async def get_global(self) -> bool:
+        ret: bool
+        if self.enable_cache and None in self._cached_global:
+            ret = self._cached_global[None]
+        else:
+            ret = await self._config.notify()
+            self._cached_global[None] = ret
+        return ret
+
+    async def set_global(self, set_to: Optional[bool]) -> None:
+        if set_to is not None:
+            await self._config.notify.set(set_to)
+            self._cached_global[None] = set_to
+        else:
+            await self._config.notify.clear()
+            self._cached_global[None] = self._config.defaults["GLOBAL"]["notify"]
+
+    async def get_context_value(self, guild: discord.Guild) -> Optional[bool]:
+        if (value := await self.get_global()) is False:
+            return value
         return await self.get_guild(guild)
 
     def reset_globals(self) -> None:

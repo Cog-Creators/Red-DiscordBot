@@ -93,7 +93,7 @@ class SettingCacheManager:
     notify: NotifyManager = cache_factory(NotifyManager)
     status: StatusManager = cache_factory(StatusManager)
     url_restrict: URLRestrictManager = cache_factory(URLRestrictManager)
-    managed_lavalink_server: ManagedLavalinkManager = cache_factory(ManagedLavalinkManager)
+    external_lavalink_server: ManagedLavalinkManager = cache_factory(ManagedLavalinkManager)
     managed_lavalink_server_auto_update: LavalinkAutoUpdateManager = cache_factory(
         LavalinkAutoUpdateManager
     )

@@ -122,6 +122,7 @@ class Audio(
             country_code="US",
             prefer_lyrics=False,
             max_queue_size=10_000,
+            notify=True,
             **self._default_lavalink_settings,
         )
 
@@ -146,6 +147,7 @@ class Audio(
             emptypause_enabled=False,
             emptypause_timer=0,
             jukebox=False,
+            restrict=True,
             jukebox_price=0,
             maxlength=0,
             notify=False,

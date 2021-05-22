@@ -260,7 +260,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             desc = _("No tracks found for `{query}`.").format(query=query.to_string_user())
             embed = discord.Embed(title=title, description=desc)
             if (
-                await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                await self.config_cache.external_lavalink_server.get_context_value(ctx.guild)
                 and query.is_local
             ):
                 embed.description = _(
@@ -655,7 +655,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             raise e
 
         if not await self.config_cache.autoplay.get_context_value(ctx.guild):
-            await ctx.invoke(self.command_audioset_autoplay_toggle)
+            await ctx.invoke(self.command_audioset_guild_autoplay_toggle)
         if not await self.config_cache.notify.get_context_value(ctx.guild) and not player.fetch(
             "autoplay_notified", False
         ):
@@ -814,7 +814,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if (
-                        await self.config_cache.managed_lavalink_server.get_context_value(
+                        await self.config_cache.external_lavalink_server.get_context_value(
                             ctx.guild
                         )
                         and query.is_local
@@ -951,7 +951,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
                 if (
-                    await self.config_cache.managed_lavalink_server.get_context_value(ctx.guild)
+                    await self.config_cache.external_lavalink_server.get_context_value(ctx.guild)
                     and query.is_local
                 ):
                     embed.description = _(
