@@ -832,6 +832,22 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=_("Maximum allowed volume set to: {volume}%.").format(volume=volume),
         )
 
+    @command_audioset_channel.command(name="info", aliases=["settings", "config"])
+    async def command_audioset_channel_settings(
+        self, ctx: commands.Context, channel: discord.VoiceChannel
+    ):
+        """Show the settings for the specified channel."""
+
+        volume = await self.config_cache.volume.get_channel(channel)
+        msg = (
+            "----"
+            + _("Channel Settings")
+            + "----        \nVolume:   [{vol}%]\n".format(
+                vol=volume,
+            )
+        )
+        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+
     # --------------------------- SERVER COMMANDS ----------------------------
 
     @command_audioset.group(name="server", aliases=["guild"])
