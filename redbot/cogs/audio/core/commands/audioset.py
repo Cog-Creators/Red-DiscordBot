@@ -1295,7 +1295,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset_guild_role.command(name="members")
     async def command_audioset_guild_role_members(self, ctx: commands.Context):
-        """Show all roles from DJ mode allowlist.
+        """Show all users with DJ permission.
 
         Add roles with `[p]audioset role add`
         Remove roles with `[p]audioset role remove`

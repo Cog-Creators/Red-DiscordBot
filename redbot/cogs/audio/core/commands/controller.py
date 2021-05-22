@@ -692,17 +692,20 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Change Volume"),
                 description=_("You need the DJ role to change the volume."),
             )
+        if not self._player_check(ctx):
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
+        max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(
+            ctx.guild, ctx.guild.me.voice.channel if ctx.guild.me.voice else None
+        )
+        max_volume = min(max_guild, max_global, max_channel)
         volume = min(
             max(vol, 0),
-            await self.config_cache.volume.get_global(),
+            max_volume,
         )
+
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
-            max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(
-                player.guild, player.channel
-            )
-            max_volume = min(max_guild, max_global, max_channel)
             player.volume.value = volume / 100
             if player.volume.value != volume:
                 await player.set_volume(player.volume)
@@ -711,9 +714,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Volume:"),
                 description=f"{volume}%\n\nMaximum allowed volume here is {max_volume}%",
             )
-        if not self._player_check(ctx):
-            embed.set_footer(text=_("Nothing playing."))
-        await self.send_embed_msg(ctx, embed=embed)
+            await self.send_embed_msg(ctx, embed=embed)
 
     @commands.command(name="repeat")
     @commands.guild_only()
