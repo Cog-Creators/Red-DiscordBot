@@ -221,7 +221,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
-            message_channel = player.fetch("notify_channel")
+            message_channel_id = player.fetch("notify_channel")
             while True:
                 if current_track in player.queue:
                     player.queue.remove(current_track)
@@ -250,8 +250,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config_cache.autoplay.set_currently_in_guild(guild)
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
-            if message_channel:
-                message_channel = self.bot.get_channel(message_channel)
+            message_channel = self.bot.get_channel(message_channel_id)
+            if message_channel and self._has_notify_perms(message_channel):
                 if early_exit:
                     embed = discord.Embed(
                         colour=await self.bot.get_embed_color(message_channel),

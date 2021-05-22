@@ -965,7 +965,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Price"),
-                description=_("Price can't be greater than 2^63 - 1."),
+                description=_("Price can't be greater or equal to than 2^63."),
             )
         elif price == 0:
             jukebox = False

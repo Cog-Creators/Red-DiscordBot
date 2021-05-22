@@ -24,6 +24,7 @@ _ = Translator("Audio", Path(__file__))
 class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="effects", invoke_without_command=True)
     @commands.guild_only()
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects(self, ctx: commands.Context):
         """Control all affects that can be applied to tracks."""
         if not self._player_check(ctx):
@@ -65,13 +66,7 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             description=box(tabulate(data)),
         )
 
-    @command_effects.group(name="presets")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
-    async def command_effects_presets(self, ctx: commands.Context):
-        """Apply effect presets."""
-
     @command_effects.command(name="karaoke")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_karaoke(
         self, ctx: commands.Context, level: float, mono: float, band: float, width: float
     ):
@@ -115,7 +110,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="timescale")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_timescale(
         self, ctx: commands.Context, speed: float, pitch: float, rate: float
     ):
@@ -157,7 +151,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="tremolo")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_tremolo(self, ctx: commands.Context, frequency: float, depth: float):
         """
         Uses amplification to create a shuddering effect, where the volume quickly oscillates.
@@ -217,7 +210,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="vibrato")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_vibrato(self, ctx: commands.Context, frequency: float, depth: float):
         """
         Uses amplification to create a shuddering effect, where the pitch quickly oscillates.
@@ -279,7 +271,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="rotation")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_rotation(self, ctx: commands.Context, frequency: float):
         """
         Rotates the sound around the stereo channels/user headphone
@@ -315,7 +306,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="distortion")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_distortion(
         self,
         ctx: commands.Context,
@@ -375,7 +365,6 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await ctx.invoke(self.command_effects)
 
     @command_effects.command(name="reset")
-    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def command_effects_reset(self, ctx: commands.Context):
         """Reset all effects."""
         if not self._player_check(ctx):
@@ -411,9 +400,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
         await player.set_filters()
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="baseboost")
-    @commands.guild_only()
-    async def command_effects_presets_baseboost(self, ctx: commands.Context):
+    @command_effects.command(name="baseboost")
+    async def command_effects_baseboost(self, ctx: commands.Context):
         """This effect emphasizes Punchy Bass and Crisp Mid-High tones.
 
         Not suitable for tracks with Deep/Low Bass."""
@@ -446,9 +434,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="piano")
-    @commands.guild_only()
-    async def command_effects_presets_piano(self, ctx: commands.Context):
+    @command_effects.command(name="piano")
+    async def command_effects_piano(self, ctx: commands.Context):
         """This effect is suitable for Piano tracks, or tacks with an emphasis on Female Vocals.
 
         Could also be used as a Bass Cutoff."""
@@ -481,9 +468,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="metal")
-    @commands.guild_only()
-    async def command_effects_presets_metal(self, ctx: commands.Context):
+    @command_effects.command(name="metal")
+    async def command_effects_metal(self, ctx: commands.Context):
         """Experimental Metal/Rock Equalizer.
 
         Expect clipping on Bassy songs."""
@@ -516,9 +502,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="nightcore")
-    @commands.guild_only()
-    async def command_effects_presets_nightcore(self, ctx: commands.Context):
+    @command_effects.command(name="nightcore")
+    async def command_effects_nightcore(self, ctx: commands.Context):
         """Apply the nightcore effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -557,9 +542,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="vaporwave")
-    @commands.guild_only()
-    async def command_effects_presets_vaporwave(self, ctx: commands.Context):
+    @command_effects.command(name="vaporwave")
+    async def command_effects_vaporwave(self, ctx: commands.Context):
         """Apply the vaporwave effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
@@ -599,9 +583,8 @@ class EffectsCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["name"] = player.equalizer.name
         await ctx.invoke(self.command_effects)
 
-    @command_effects_presets.command(name="synth")
-    @commands.guild_only()
-    async def command_effects_presets_synth(self, ctx: commands.Context):
+    @command_effects.command(name="synth")
+    async def command_effects_synth(self, ctx: commands.Context):
         """Apply the synth effect."""
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
