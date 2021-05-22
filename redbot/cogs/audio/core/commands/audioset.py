@@ -35,7 +35,7 @@ _ = Translator("Audio", Path(__file__))
 
 
 class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
-    @commands.group(name="audio")
+    @commands.group(name="audioset")
     @commands.bot_has_permissions(embed_links=True)
     async def command_audioset(self, ctx: commands.Context):
         """Music configuration options."""
