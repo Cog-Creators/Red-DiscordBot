@@ -1136,7 +1136,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 pred = MessagePredicate.valid_role(ctx)
                 await self.bot.wait_for("message", timeout=15.0, check=pred)
-                await ctx.invoke(self.command_audioset_role, role_name=pred.result)
+                await ctx.invoke(self.command_audioset_guild_role_create, role_name=pred.result)
             except asyncio.TimeoutError:
                 return await self.send_embed_msg(
                     ctx, title=_("Response timed out, try again later.")
