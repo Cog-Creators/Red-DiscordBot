@@ -1253,8 +1253,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-        await self.config.guild(ctx.guild).jukebox_price.set(price)
-        await self.config.guild(ctx.guild).jukebox.set(jukebox)
+        await self.config_cache.jukebox_price.set_guild(ctx.guild, price)
+        await self.config_cache.jukebox.set_guild(ctx.guild, jukebox)
 
     @command_audioset_guild.group(name="djrole", aliases=["role"])
     @commands.admin_or_permissions(manage_roles=True)
