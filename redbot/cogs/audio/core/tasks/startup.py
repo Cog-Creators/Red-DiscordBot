@@ -119,10 +119,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 vc = 0
                 shuffle = await self.config_cache.shuffle.get_context_value(guild)
                 repeat = await self.config_cache.repeat.get_context_value(guild)
-                volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(guild) / 100
-                )
-
                 shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
                 auto_deafen = await self.config_cache.autoplay.get_context_value(guild)
 
@@ -159,6 +155,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
+                volume = Volume(
+                    value=await self.config_cache.volume.get_context_value(guild, channel=player.channel) / 100
+                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
@@ -195,9 +194,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             if player is None:
                 shuffle = await self.config_cache.shuffle.get_context_value(guild)
                 repeat = await self.config_cache.repeat.get_context_value(guild)
-                volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(guild) / 100
-                )
                 shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
                 auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
 
@@ -226,6 +222,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
 
+                volume = Volume(
+                    value=await self.config_cache.volume.get_context_value(guild,
+                                                                           channel=player.channel) / 100
+                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped

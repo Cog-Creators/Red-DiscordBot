@@ -92,7 +92,7 @@ class VolumeManager(CachingABC):
         if channel:
             channel_value = await self.get_channel(channel)
         else:
-            channel_value = None
+            channel_value = -1
         return global_value, guild_value, channel_value
 
     def reset_globals(self) -> None:
