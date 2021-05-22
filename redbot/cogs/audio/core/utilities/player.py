@@ -437,12 +437,15 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
-            if len(player.queue) >= 10000:
+            max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                player.guild
+            )
+            if len(player.queue) >= max_queue_length:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
             empty_queue = not player.queue
             async for track in AsyncIter(tracks):
-                if len(player.queue) >= 10000:
+                if len(player.queue) >= max_queue_length:
                     continue
                 query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
@@ -524,7 +527,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is in the case of [p]play <query>, a single Spotify url/code
             # or this is a localtrack item
             try:
-                if len(player.queue) >= 10000:
+                if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+                    player.guild
+                ):
                     return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
 
                 single_track = (
@@ -688,7 +693,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        volume = Volume(value=(await self.config_cache.volume.get_context_value(ctx.guild)) / 100)
+        volume = Volume(value=(await self.config_cache.volume.get_context_value(ctx.guild, channel=player.channel)) / 100)
         shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(ctx.guild)
         player.repeat = repeat
         player.shuffle = shuffle

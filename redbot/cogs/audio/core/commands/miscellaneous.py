@@ -92,7 +92,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             pages += 1
             servers_embed.append(em)
 
-        await dpymenu(ctx, servers_embed, DEFAULT_CONTROLS)
+        await dpymenu(ctx, servers_embed)
 
     @commands.command(name="percent")
     @commands.guild_only()

@@ -643,7 +643,9 @@ class AudioAPIInterface:
                     continue
                 track_list.append(single_track)
                 if enqueue:
-                    if len(player.queue) >= 10000:
+                    if len(
+                        player.queue
+                    ) >= await self.config_cache.max_queue_size.get_context_value(player.guild):
                         continue
 
                     if (

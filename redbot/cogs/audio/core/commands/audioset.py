@@ -255,6 +255,31 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         await self.config_cache.max_track_length.set_global(seconds)
 
+    @command_audioset_global.command(name="maxqueue")
+    async def command_audioset_global_maxqueue(self, ctx: commands.Context, size: int):
+        """Set the maximum size a queue is allowed to be.
+
+        Default is 10,000, servers cannot go over this value, but they can set smaller values.
+        """
+        if size < 10:
+            return await self.send_embed_msg(
+                ctx, title=_("Invalid Queue Size"), description=_("Size can't be less than 10.")
+            )
+        if size > 20_000:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Queue Size"),
+                description=_("Size can't be greater than than 20,000."),
+            )
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Maximum queue size allowed is now {size}.").format(
+                size=humanize_number(size)
+            ),
+        )
+        await self.config_cache.max_queue_size.set_global(size)
+
     @command_audioset_global.command(name="thumbnail")
     async def command_audioset_global_thumbnail(self, ctx: commands.Context):
         """Toggle displaying a thumbnail on audio messages.
@@ -371,7 +396,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await dpymenu(ctx, pages, DEFAULT_CONTROLS)
+        await dpymenu(ctx, pages)
 
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
@@ -447,7 +472,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await dpymenu(ctx, pages, DEFAULT_CONTROLS)
+        await dpymenu(ctx, pages)
 
     @command_audioset_perms_global_blacklist.command(name="clear")
     async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
@@ -527,7 +552,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await dpymenu(ctx, pages, DEFAULT_CONTROLS)
+        await dpymenu(ctx, pages)
 
     @command_audioset_perms_whitelist.command(name="clear")
     async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
@@ -604,7 +629,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await dpymenu(ctx, pages, DEFAULT_CONTROLS)
+        await dpymenu(ctx, pages)
 
     @command_audioset_perms_blacklist.command(name="clear")
     async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
@@ -632,6 +657,35 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 blacklisted=keyword
             ),
         )
+
+    @command_audioset.command(name="maxqueue")
+    @commands.guild_only()
+    @commands.mod_or_permissions(manage_guild=True)
+    async def command_audioset_maxqueue(self, ctx: commands.Context, size: int):
+        """Set the maximum size a queue is allowed to be.
+
+        Set to -1 to use the maximum value allowed by the bot.
+        """
+        if size < 10:
+            return await self.send_embed_msg(
+                ctx, title=_("Invalid Queue Size"), description=_("Size can't be less than 10.")
+            )
+        if size > 20_000:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Queue Size"),
+                description=_("Size can't be greater than than 20,000."),
+            )
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Maximum queue size allowed is now {size}.").format(
+                size=humanize_number(size)
+            ),
+        )
+        if size < 0:
+            size = None
+        await self.config_cache.max_queue_size.set_guild(ctx.guild, size)
 
     @command_audioset.group(name="autoplay")
     @commands.guild_only()

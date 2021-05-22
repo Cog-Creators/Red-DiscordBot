@@ -111,7 +111,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )

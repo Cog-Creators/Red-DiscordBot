@@ -113,7 +113,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
-            return await dpymenu(ctx, folder_page_list, DEFAULT_CONTROLS)
+            return await dpymenu(ctx, folder_page_list)
         else:
             await menu(ctx, folder_page_list, local_folder_controls)
 

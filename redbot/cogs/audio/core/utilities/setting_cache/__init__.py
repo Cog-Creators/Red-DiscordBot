@@ -28,6 +28,7 @@ from .localpath import LocalPathManager
 from .lyrics import PreferLyricsManager
 from .managed_lavalink_auto_update import LavalinkAutoUpdateManager
 from .managed_lavalink_server import ManagedLavalinkManager
+from .max_queue_size import MaxQueueSizerManager
 from .max_track_length import MaxTrackLengthManager
 from .notify import NotifyManager
 from .persist_queue import PersistentQueueManager
@@ -98,6 +99,7 @@ class SettingCacheManager:
     )
     vc_restricted: VCRestrictedManager = cache_factory(VCRestrictedManager)
     auto_deafen: AutoDeafenManager = cache_factory(AutoDeafenManager)
+    max_queue_size: MaxQueueSizerManager = cache_factory(MaxQueueSizerManager)
 
     def reset_globals(self):
         for name, value in attr.asdict(self, recurse=False).items():

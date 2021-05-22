@@ -147,7 +147,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             to_append_count = len(to_append)
             tracks_obj_list = playlist.tracks_obj
             not_added = 0
-            if current_count + to_append_count > 10000:
+            if (
+                current_count + to_append_count
+                > await self.config_cache.max_queue_size.get_context_value(player.guild)
+            ):
                 to_append = to_append[: 10000 - current_count]
                 not_added = to_append_count - len(to_append)
                 to_append_count = len(to_append)
@@ -921,7 +924,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
                 page_list.append(embed)
-        await dpymenu(ctx, page_list, DEFAULT_CONTROLS)
+        await dpymenu(ctx, page_list)
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @command_playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
@@ -1077,7 +1080,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             async for page_num in AsyncIter(range(1, len_playlist_list_pages + 1)):
                 embed = await self._build_playlist_list_page(ctx, page_num, abc_names, name)
                 playlist_embeds.append(embed)
-        await dpymenu(ctx, playlist_embeds, DEFAULT_CONTROLS)
+        await dpymenu(ctx, playlist_embeds)
 
     @command_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
     @commands.cooldown(1, 300, commands.BucketType.member)
@@ -1162,9 +1165,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             queue_length = len(player.queue)
             to_add = player.queue
             not_added = 0
-            if queue_length > 10000:
-                to_add = player.queue[:10000]
-                not_added = queue_length - 10000
+            max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                player.guild
+            )
+            if queue_length > max_queue_length:
+                to_add = player.queue[:max_queue_length]
+                not_added = queue_length - max_queue_length
 
             async for track in AsyncIter(to_add):
                 queue_idx = player.queue.index(track)
@@ -1391,9 +1397,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if tracklist is not None:
                 playlist_length = len(tracklist)
                 not_added = 0
-                if playlist_length > 10000:
-                    tracklist = tracklist[:10000]
-                    not_added = playlist_length - 10000
+                max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                    player.guild
+                )
+                if playlist_length > max_queue_length:
+                    tracklist = tracklist[:max_queue_length]
+                    not_added = playlist_length - max_queue_length
 
                 playlist = await create_playlist(
                     ctx,
@@ -1527,8 +1536,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 player = lavalink.get_player(ctx.guild.id)
                 tracks = playlist.tracks_obj
                 empty_queue = not player.queue
+                max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                    player.guild
+                )
                 async for track in AsyncIter(tracks):
-                    if len(player.queue) >= 10000:
+                    if len(player.queue) >= max_queue_length:
                         continue
                     query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
@@ -1775,7 +1787,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 added_embeds.append(embed)
                                 added_text = ""
                     embeds = removed_embeds + added_embeds
-                    await dpymenu(ctx, embeds, DEFAULT_CONTROLS)
+                    await dpymenu(ctx, embeds)
                 else:
                     return await self.send_embed_msg(
                         ctx,

@@ -693,20 +693,23 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = min(
+        max_volume = await self.config_cache.volume.get_global()
+        volume = min(
             max(vol, 0),
-            await self.config_cache.volume.get_context_value(
-                ctx.guild, ctx.me.voice.channel if ctx.me.voice else None
-            ),
+            await self.config_cache.volume.get_global(),
         )
-        await self.config_cache.volume.set_guild(ctx.guild, vol)
+        await self.config_cache.volume.set_guild(ctx.guild, volume)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
-            player.volume.value = vol / 100
-            await player.set_volume(player.volume)
+            max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(player.guild, player.channel)
+            max_volume = min(max_guild, max_global, max_channel)
+            player.volume.value = volume / 100
+            if player.volume.value != volume:
+                await player.set_volume(player.volume)
             player.store("notify_channel", ctx.channel.id)
-
-        embed = discord.Embed(title=_("Volume:"), description=f"{vol}%")
+            embed = discord.Embed(title=_("Volume:"), description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%")
+        else:
+            embed = discord.Embed(title=_("Volume:"), description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%")
         if not self._player_check(ctx):
             embed.set_footer(text=_("Nothing playing."))
         await self.send_embed_msg(ctx, embed=embed)

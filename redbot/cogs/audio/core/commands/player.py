@@ -118,7 +118,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     query=query.to_string_user()
                 ),
             )
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
@@ -227,7 +229,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     query=query.to_string_user()
                 ),
             )
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
@@ -540,7 +544,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         query = Query.process_input(playlists_pick, self.local_folder_current_path)
         if not query.valid:
             return await self.send_embed_msg(ctx, title=_("No tracks to play."))
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
@@ -616,7 +622,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("You must be in the voice channel to use the autoplay command."),
             )
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
@@ -834,8 +842,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 track_len = 0
                 empty_queue = not player.queue
+                max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                    player.guild
+                )
                 async for track in AsyncIter(tracks):
-                    if len(player.queue) >= 10000:
+                    if len(player.queue) >= max_queue_length:
                         continue
                     query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
@@ -968,6 +979,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_page_list.append(embed)
 
         if dj_enabled and not can_skip:
-            return await dpymenu(ctx, search_page_list, DEFAULT_CONTROLS)
+            return await dpymenu(ctx, search_page_list)
 
         await menu(ctx, search_page_list, search_controls)
