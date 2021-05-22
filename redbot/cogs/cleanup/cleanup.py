@@ -151,7 +151,7 @@ class Cleanup(commands.Cog):
     async def text(
         self, ctx: commands.Context, text: str, number: positive_int, delete_pinned: bool = False
     ):
-        """Delete the last X messages matching the specified text.
+        """Delete the last X messages matching the specified text in the current channel.
 
         Example:
             - `[p]cleanup text "test" 5`

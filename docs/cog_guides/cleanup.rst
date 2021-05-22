@@ -255,7 +255,7 @@ cleanup text
 
 **Description**
 
-Delete the last X messages matching the specified text.
+Delete the last X messages matching the specified text in the current channel.
 
 Example:
     - ``[p]cleanup text "test" 5``
