@@ -27,10 +27,10 @@ class LocalCacheAgeManager(CachingABC):
 
     async def set_global(self, set_to: Optional[int]) -> None:
         if set_to is not None:
-            await self._config.global_db_get_timeout.set(set_to)
+            await self._config.cache_age.set(set_to)
             self._cached_global[None] = set_to
         else:
-            await self._config.global_db_get_timeout.clear()
+            await self._config.cache_age.clear()
             self._cached_global[None] = self._config.defaults["GLOBAL"]["cache_age"]
 
     async def get_context_value(self, guild: discord.Guild = None) -> int:

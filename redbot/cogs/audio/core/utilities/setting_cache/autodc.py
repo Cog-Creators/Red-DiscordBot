@@ -42,16 +42,16 @@ class AutoDCManager(CachingABC):
         if self.enable_cache and None in self._cached_global:
             ret = self._cached_global[None]
         else:
-            ret = await self._config.emptydc_enabled()
+            ret = await self._config.disconnect()
             self._cached_global[None] = ret
         return ret
 
     async def set_global(self, set_to: Optional[bool]) -> None:
         if set_to is not None:
-            await self._config.emptydc_enabled.set(set_to)
+            await self._config.disconnect.set(set_to)
             self._cached_global[None] = set_to
         else:
-            await self._config.emptydc_enabled.clear()
+            await self._config.disconnect.clear()
             self._cached_global[None] = self._config.defaults["GLOBAL"]["disconnect"]
 
     async def get_context_value(self, guild: discord.Guild) -> Optional[bool]:
