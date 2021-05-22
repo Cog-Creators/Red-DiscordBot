@@ -156,7 +156,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     continue
 
                 volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(guild, channel=player.channel) / 100
+                    value=await self.config_cache.volume.get_context_value(
+                        guild, channel=player.channel
+                    )
+                    / 100
                 )
                 player.repeat = repeat
                 player.shuffle = shuffle
@@ -223,8 +226,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     continue
 
                 volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(guild,
-                                                                           channel=player.channel) / 100
+                    value=await self.config_cache.volume.get_context_value(
+                        guild, channel=player.channel
+                    )
+                    / 100
                 )
                 player.repeat = repeat
                 player.shuffle = shuffle

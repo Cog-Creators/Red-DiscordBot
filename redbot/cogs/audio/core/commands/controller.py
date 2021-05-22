@@ -701,15 +701,23 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config_cache.volume.set_guild(ctx.guild, volume)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
-            max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(player.guild, player.channel)
+            max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(
+                player.guild, player.channel
+            )
             max_volume = min(max_guild, max_global, max_channel)
             player.volume.value = volume / 100
             if player.volume.value != volume:
                 await player.set_volume(player.volume)
             player.store("notify_channel", ctx.channel.id)
-            embed = discord.Embed(title=_("Volume:"), description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%")
+            embed = discord.Embed(
+                title=_("Volume:"),
+                description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%",
+            )
         else:
-            embed = discord.Embed(title=_("Volume:"), description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%")
+            embed = discord.Embed(
+                title=_("Volume:"),
+                description=f"{volume}%\n\nMaximum allowed volume is {max_volume}%",
+            )
         if not self._player_check(ctx):
             embed.set_footer(text=_("Nothing playing."))
         await self.send_embed_msg(ctx, embed=embed)
