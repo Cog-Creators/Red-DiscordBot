@@ -658,7 +658,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             self.update_player_lock(ctx, False)
             raise e
 
-        if not await self.config_cache.autoplay.get_context_value(ctx.guild):
+        if not await self.config_cache.autoplay.get_context_value(
+            ctx.guild, cache=self.config_cache
+        ):
             await ctx.invoke(self.command_audioset_guild_autoplay_toggle)
         if not await self.config_cache.notify.get_context_value(ctx.guild) and not player.fetch(
             "autoplay_notified", False
