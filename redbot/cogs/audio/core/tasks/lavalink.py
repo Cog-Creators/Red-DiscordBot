@@ -54,7 +54,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     self.player_manager = None
                     log.warning(
                         "Managed Lavalink server cannot be started due to port 2333 "
-                        "already being take, attempting to connect to existing server."
+                        "already being taken, attempting to connect to existing server."
                     )
                     host = configs["host"]
                     password = configs["password"]
