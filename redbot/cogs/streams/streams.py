@@ -766,6 +766,13 @@ class Streams(commands.Cog):
 
                     stream.messages.clear()
                     await self.save_streams()
+                except APIError as e:
+                    log.error(
+                        "Something went wrong whilst trying to contact the stream service's API.\n"
+                        "Raw response data:\n%r",
+                        e,
+                    )
+                    continue
                 else:
                     if stream.messages:
                         continue
