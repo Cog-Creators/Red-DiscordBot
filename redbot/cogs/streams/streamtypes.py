@@ -275,7 +275,7 @@ class YoutubeStream(Stream):
             and data["pageInfo"]["totalResults"] < 1
         ):
             raise StreamNotFound()
-        raise APIError(data)
+        raise APIError(r.status, data)
 
     def _check_api_errors(self, data: dict):
         if "error" in data:
@@ -288,7 +288,7 @@ class YoutubeStream(Stream):
                 "rateLimitExceeded",
             ):
                 raise YoutubeQuotaExceeded()
-            raise APIError(data)
+            raise APIError(error_code, data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
@@ -426,7 +426,7 @@ class TwitchStream(Stream):
         elif stream_code == 404:
             raise StreamNotFound()
         else:
-            raise APIError(stream_data)
+            raise APIError(stream_code, stream_data)
 
     async def _fetch_user_profile(self):
         code, data = await self.get_data(TWITCH_ID_ENDPOINT, {"login": self.name})
@@ -441,7 +441,7 @@ class TwitchStream(Stream):
         elif code == 401:
             raise InvalidTwitchCredentials()
         else:
-            raise APIError(data)
+            raise APIError(code, data)
 
     async def fetch_id(self):
         header = {"Client-ID": str(self._client_id)}
@@ -510,7 +510,7 @@ class PicartoStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError(data)
+            raise APIError(r.status, data)
 
     def make_embed(self, data):
         avatar = rnd(
