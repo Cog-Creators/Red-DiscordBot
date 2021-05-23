@@ -56,7 +56,7 @@ ROLE_USER_HIERARCHY_ISSUE = _(
     " in the Discord hierarchy."
 )
 
-NEED_MANAGE_ROLES = _("I need manage roles permission to do that.")
+NEED_MANAGE_ROLES = _('I need the "Manage Roles" permission to do that.')
 
 RUNNING_ANNOUNCEMENT = _(
     "I am already announcing something. If you would like to make a"
