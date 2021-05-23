@@ -94,7 +94,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         repeat = await self.config_cache.repeat.get_context_value(guild)
         notify = await self.config_cache.notify.get_context_value(guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(guild, cache=self.config_cache)
         description = await self.get_track_description(
             current_track, self.local_folder_current_path
         )

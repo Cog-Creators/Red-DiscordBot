@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import discord
 
+from redbot.core.i18n import Translator
 from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
+
+_ = Translator("Audio", Path(__file__))
 
 
 class VolumeManager(CachingABC):
@@ -94,6 +98,26 @@ class VolumeManager(CachingABC):
         else:
             channel_value = -1
         return global_value, guild_value, channel_value
+
+    async def get_max_and_source(
+        self, guild: discord.Guild, channel: discord.VoiceChannel = None
+    ) -> Tuple[int, str]:
+        global_value = await self.get_global()
+        guild_value = await self.get_guild(guild)
+        if channel:
+            channel_value = await self.get_channel(channel)
+        else:
+            channel_value = -1
+
+        maximum = min(global_value, guild_value, channel_value)
+        restrictor = (
+            _("server")
+            if maximum == guild_value
+            else _("channel")
+            if maximum == channel_value
+            else _("global")
+        )
+        return maximum, restrictor
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

@@ -5,7 +5,6 @@ import logging
 import math
 import os
 import tarfile
-from itertools import groupby
 from operator import attrgetter
 from pathlib import Path
 from typing import Union
@@ -19,7 +18,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils._dpy_menus_utils import dpymenu
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...audio_dataclasses import LocalPath
@@ -27,7 +26,15 @@ from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
 from ...utils import CacheLevel, PlaylistScope, has_internal_server
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
+from ..cog_utils import (
+    CompositeMetaClass,
+    ENABLED_TITLE,
+    PlaylistConverter,
+    __version__,
+    DISABLED_TITLE,
+    ENABLED,
+    DISABLED,
+)
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
 
@@ -47,14 +54,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_global(self, ctx: commands.Context):
         """Bot owner controlled configuration options."""
 
-    @command_audioset_global.command(name="volume")
+    @command_audioset_global.command(name="volume", aliases=["vol"])
     async def command_audioset_global_volume(self, ctx: commands.Context, volume: int):
         """Set the maximum allowed volume to be set by servers."""
-        if volume >= 500:
+        if not 10 < volume < 500:
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Setting"),
-                description=_("Maximum allowed volume has to be between 0% and 500%.").format(
+                description=_("Maximum allowed volume has to be between 10% and 500%.").format(
                     volume=volume
                 ),
             )
@@ -80,7 +87,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Global Daily queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+                true_or_false=ENABLED_TITLE if not daily_playlists else DISABLED_TITLE
             ),
         )
 
@@ -96,7 +103,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Auto Deafen: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
+                true_or_false=ENABLED_TITLE if not auto_deafen else DISABLED_TITLE
             ),
         )
 
@@ -172,11 +179,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Prefer tracks with lyrics globally: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
+                true_or_false=ENABLED_TITLE if not prefer_lyrics else DISABLED_TITLE
             ),
         )
 
-    @command_audioset_global.command(name="dc")
+    @command_audioset_global.command(name="disconnect", aliases=["dc"])
     async def command_audioset_global_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
@@ -187,7 +194,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = await self.config_cache.disconnect.get_global()
         msg = ""
         msg += _("Global auto-disconnection at queue end: {true_or_false}.").format(
-            true_or_false=_("Enabled") if not disconnect else _("Disabled")
+            true_or_false=ENABLED_TITLE if not disconnect else DISABLED_TITLE
         )
         await self.config_cache.disconnect.set_global(not disconnect)
 
@@ -266,15 +273,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Default is 10,000, servers cannot go over this value, but they can set smaller values.
         """
-        if size < 10:
-            return await self.send_embed_msg(
-                ctx, title=_("Invalid Queue Size"), description=_("Size can't be less than 10.")
-            )
-        if size > 20_000:
+        if not 10 < size < 20_000:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Queue Size"),
-                description=_("Size can't be greater than than 20,000."),
+                description=_("Queue size must bet between 10 and {cap}.").format(
+                    cap=humanize_number(20_000)
+                ),
             )
         await self.send_embed_msg(
             ctx,
@@ -297,7 +302,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Global thumbnail display: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not thumbnail else _("Disabled")
+                true_or_false=ENABLED_TITLE if not thumbnail else DISABLED_TITLE
             ),
         )
 
@@ -339,7 +344,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Global queue persistence: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
+                true_or_false=ENABLED_TITLE if not persist_cache else DISABLED_TITLE
             ),
         )
 
@@ -510,7 +515,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Commercial links only globally: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not restrict else _("Disabled")
+                true_or_false=ENABLED_TITLE if not restrict else DISABLED_TITLE
             ),
         )
 
@@ -523,7 +528,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Song titles as status: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not status else _("Disabled")
+                true_or_false=ENABLED_TITLE if not status else DISABLED_TITLE
             ),
         )
 
@@ -559,9 +564,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 max_age=str(await self.config_cache.local_cache_age.get_global())
                 + " "
                 + _("days"),
-                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+                spotify_status=ENABLED_TITLE if has_spotify_cache else DISABLED_TITLE,
+                youtube_status=ENABLED_TITLE if has_youtube_cache else DISABLED_TITLE,
+                lavalink_status=ENABLED_TITLE if has_lavalink_cache else DISABLED_TITLE,
             )
             await self.send_embed_msg(
                 ctx, title=_("Cache Settings"), description=box(msg, lang="ini")
@@ -604,9 +609,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Lavalink cache:   [{lavalink_status}]\n")
         ).format(
             max_age=str(await self.config_cache.local_cache_age.get_global()) + " " + _("days"),
-            spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-            youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-            lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+            spotify_status=ENABLED_TITLE if has_spotify_cache else DISABLED_TITLE,
+            youtube_status=ENABLED_TITLE if has_youtube_cache else DISABLED_TITLE,
+            lavalink_status=ENABLED_TITLE if has_lavalink_cache else DISABLED_TITLE,
         )
 
         await self.send_embed_msg(ctx, title=_("Cache Settings"), description=box(msg, lang="ini"))
@@ -645,9 +650,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not state:  # Ensure a call is made if the API is enabled to update user perms
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()
 
-        msg = _("Global DB is {status}").format(
-            status=_("enabled") if not state else _("disabled")
-        )
+        msg = _("Global DB is {status}").format(status=ENABLED if not state else DISABLED)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
     @command_audioset_global_globalapi.command(name="timeout")
@@ -674,7 +677,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Global historical queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+                true_or_false=ENABLED_TITLE if not daily_playlists else DISABLED_TITLE
             ),
         )
 
@@ -708,50 +711,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         max_queue = await self.config_cache.max_queue_size.get_global()
         country_code = await self.config_cache.country_code.get_global()
         historical_playlist = await self.config_cache.daily_global_playlist.get_global()
-
-        disabled = _("Disabled")
-        enabled = _("Enabled")
+        disabled = DISABLED_TITLE
+        enabled = ENABLED_TITLE
 
         msg = "----" + _("Global Settings") + "----        \n"
 
         msg += _(
-            "Auto-disconnect:     [{dc}]\n"
-            "Empty dc:            [{empty_dc_enabled}]\n"
-            "Empty dc timer:      [{dc_num_seconds}]\n"
-            "Empty pause:         [{empty_pause_enabled}]\n"
-            "Empty pause timer:   [{pause_num_seconds}]\n"
-            "Jukebox:             [{jukebox}]\n"
-            "Command price:       [{jukebox_price}]\n"
-            "Max track length:    [{tracklength}]\n"
-            "Volume:              [{volume}%]\n"
-            "URL restrict:        [{restrict}]\n"
-            "Prefer lyrics:       [{lyrics}]\n"
-            "Songs as status:     [{status}]\n"
-            "Persist queue:       [{persist_queue}]\n"
-            "Spotify search:      [{countrycode}]\n"
-            "Auto-deafen:         [{auto_deafen}]\n"
-            "Thumbnails:          [{thumbnail}]\n"
-            "Max queue length:    [{max_queue}]\n"
-            "Historical playlist: [{historical_playlist}]\n"
+            "Songs as status:              [{status}]\n"
+            "Historical playlist:          [{historical_playlist}]\n"
+            "Default persist queue:        [{persist_queue}]\n"
+            "Default Spotify search:       [{countrycode}]\n"
+
         ).format(
-            dc=enabled if disconnect else disabled,
-            dc_num_seconds=self.get_time_string(empty_dc_timer),
-            empty_pause_enabled=enabled if empty_pause_enabled else disabled,
-            empty_dc_enabled=enabled if empty_dc_enabled else disabled,
-            pause_num_seconds=self.get_time_string(empty_pause_timer),
-            jukebox=jukebox,
-            jukebox_price=humanize_number(jukebox_price),
-            tracklength=self.get_time_string(maxlength),
-            volume=volume,
-            restrict=restrict,
+            status=enabled if song_status else disabled,
             countrycode=country_code,
-            status=song_status,
-            persist_queue=persist_queue,
-            auto_deafen=auto_deafen,
-            thumbnail=enabled if thumbnail else disabled,
-            max_queue=humanize_number(max_queue),
             historical_playlist=enabled if historical_playlist else disabled,
-            lyrics=enabled if lyrics else disabled,
+            persist_queue=enabled if persist_queue else disabled,
+
         )
 
         over_notify = await self.config_cache.notify.get_global()
@@ -760,9 +736,42 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\n---"
             + _("Global Rules")
             + "---        \n"
-            + _("Allow notify messages:  [{notify}]\n")
-            + _("Allow daily playlist:   [{daily_playlist}]\n")
-        ).format(notify=over_notify, daily_playlist=over_daily_playlist)
+            + _(
+                "Allow notify messages:        [{notify}]\n"
+                "Allow daily playlist:         [{daily_playlist}]\n"
+                "Enforced auto-disconnect:     [{dc}]\n"
+                "Enforced empty dc:            [{empty_dc_enabled}]\n"
+                "Empty dc timer:               [{dc_num_seconds}]\n"
+                "Enforced empty pause:         [{empty_pause_enabled}]\n"
+                "Empty pause timer:            [{pause_num_seconds}]\n"
+                "Enforced jukebox:             [{jukebox}]\n"
+                "Command price:                [{jukebox_price}]\n"
+                "Enforced max queue length:    [{max_queue}]\n"
+                "Enforced max track length:    [{tracklength}]\n"
+                "Enforced auto-deafen:         [{auto_deafen}]\n"
+                "Enforced thumbnails:          [{thumbnail}]\n"
+                "Enforced maximum volume:      [{volume}%]\n"
+                "Enforced URL restrict:        [{restrict}]\n"
+                "Enforced prefer lyrics:       [{lyrics}]\n"
+            )
+        ).format(
+            notify=over_notify,
+            daily_playlist=over_daily_playlist,
+            dc=enabled if disconnect else disabled,
+            dc_num_seconds=self.get_time_string(empty_dc_timer),
+            empty_pause_enabled=enabled if empty_pause_enabled else disabled,
+            empty_dc_enabled=enabled if empty_dc_enabled else disabled,
+            pause_num_seconds=self.get_time_string(empty_pause_timer),
+            jukebox=enabled if jukebox else disabled,
+            jukebox_price=humanize_number(jukebox_price),
+            tracklength=self.get_time_string(maxlength),
+            volume=volume,
+            restrict=enabled if restrict else disabled,
+            auto_deafen=enabled if auto_deafen else disabled,
+            thumbnail=enabled if thumbnail else disabled,
+            max_queue=humanize_number(max_queue),
+            lyrics=enabled if lyrics else disabled,
+        )
 
         msg += (
             "\n---"
@@ -776,10 +785,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Global timeout:         [{num_seconds}]\n")
         ).format(
             max_age=str(await self.config_cache.local_cache_age.get_global()) + " " + _("days"),
-            spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-            youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-            lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
-            global_cache=_("Enabled") if global_api_enabled else _("Disabled"),
+            spotify_status=ENABLED_TITLE if has_spotify_cache else DISABLED_TITLE,
+            youtube_status=ENABLED_TITLE if has_youtube_cache else DISABLED_TITLE,
+            lavalink_status=ENABLED_TITLE if has_lavalink_cache else DISABLED_TITLE,
+            global_cache=ENABLED_TITLE if global_api_enabled else DISABLED_TITLE,
             num_seconds=self.get_time_string(global_api_get_timeout),
         )
 
@@ -816,12 +825,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Change Volume"),
                 description=_("You need the DJ role to change the volume."),
             )
-        if volume >= 500:
+        global_value, guild_value, __ = await self.config_cache.volume.get_context_max(ctx.guild)
+        max_value = min(global_value, guild_value)
+        if not 10 < volume <= max_value:
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Setting"),
-                description=_("Maximum allowed volume has to be between 0% and 500%.").format(
-                    volume=volume
+                description=_("Maximum allowed volume has to be between 10% and {cap}%.").format(
+                    cap=max_value
                 ),
             )
             return
@@ -1033,12 +1044,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Change Volume"),
                 description=_("You need the DJ role to change the volume."),
             )
-        if volume >= 500:
+
+        global_value, __, __ = await self.config_cache.volume.get_context_max(ctx.guild)
+        if not 10 < volume <= global_value:
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Setting"),
-                description=_("Maximum allowed volume has to be between 0% and 500%.").format(
-                    volume=volume
+                description=_("Maximum allowed volume has to be between 10% and {cap}%.").format(
+                    cap=global_value
                 ),
             )
             return
@@ -1056,15 +1069,15 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Set to -1 to use the maximum value allowed by the bot.
         """
-        if size < 10:
-            return await self.send_embed_msg(
-                ctx, title=_("Invalid Queue Size"), description=_("Size can't be less than 10.")
-            )
-        if size > 20_000:
+        global_value = await self.config_cache.max_queue_size.get_global()
+
+        if not 10 < size < global_value:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Queue Size"),
-                description=_("Size can't be greater than than 20,000."),
+                description=_("Queue size must bet between 10 and {cap}.").format(
+                    cap=humanize_number(global_value)
+                ),
             )
         await self.send_embed_msg(
             ctx,
@@ -1084,17 +1097,29 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Daily queues creates a playlist for all tracks played today.
         """
+
+        if await self.config_cache.daily_playlist.get_global() is False:
+            await self.config_cache.daily_playlist.set_guild(ctx.guild, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Daily queues: {true_or_false}, "
+                    "\n\n**Reason**: The bot owner has disabled this feature."
+                ).format(true_or_false=DISABLED_TITLE),
+            )
+
         daily_playlists = await self.config_cache.daily_playlist.get_guild(ctx.guild)
         await self.config_cache.daily_playlist.set_guild(ctx.guild, not daily_playlists)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Daily queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+                true_or_false=ENABLED_TITLE if not daily_playlists else DISABLED_TITLE
             ),
         )
 
-    @command_audioset_guild.command(name="dc")
+    @command_audioset_guild.command(name="disconnect", aliases=["dc"])
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_guild_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
@@ -1102,11 +1127,24 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         This setting takes precedence over `[p]audioset emptydisconnect`.
         """
 
+        if await self.config_cache.disconnect.get_global() is True:
+            await self.config_cache.disconnect.set_guild(ctx.guild, True)
+            await self.config_cache.autoplay.set_guild(ctx.guild, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Auto-disconnection at queue end: {true_or_false}\n"
+                    "Auto-play has been disabled."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(true_or_false=ENABLED_TITLE),
+            )
+
         disconnect = await self.config_cache.disconnect.get_guild(ctx.guild)
         autoplay = await self.config_cache.autoplay.get_guild(ctx.guild)
         msg = ""
         msg += _("Auto-disconnection at queue end: {true_or_false}.").format(
-            true_or_false=_("Enabled") if not disconnect else _("Disabled")
+            true_or_false=ENABLED_TITLE if not disconnect else DISABLED_TITLE
         )
         if disconnect is not True and autoplay is True:
             msg += _("\nAuto-play has been disabled.")
@@ -1147,7 +1185,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("DJ role: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not dj_enabled else _("Disabled")
+                true_or_false=ENABLED_TITLE if not dj_enabled else DISABLED_TITLE
             ),
         )
 
@@ -1158,6 +1196,24 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         `[p]audioset dc` takes precedence over this setting.
         """
+
+        if await self.config_cache.empty_dc.get_global() is True:
+            await self.config_cache.empty_dc.set_guild(ctx.guild, True)
+            seconds = await self.config_cache.empty_dc_timer.get_global()
+            await self.config_cache.empty_dc_timer.set_guild(ctx.guild, seconds)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Empty disconnect: {true_or_false}\n"
+                    "Empty disconnect timer set to: {time_to_auto_dc}\n"
+                    "Auto-play has been disabled."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(
+                    true_or_false=ENABLED_TITLE, time_to_auto_dc=self.get_time_string(seconds)
+                ),
+            )
+
         if seconds < 0:
             return await self.send_embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1185,6 +1241,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_guild_emptypause(self, ctx: commands.Context, seconds: int):
         """Auto-pause after x seconds when room is empty, 0 to disable."""
+        if await self.config_cache.empty_pause.get_global() is True:
+            await self.config_cache.empty_pause.set_guild(ctx.guild, True)
+            seconds = await self.config_cache.empty_pause_timer.get_global()
+            await self.config_cache.empty_pause_timer.set_guild(ctx.guild, seconds)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Empty pause: {true_or_false}\n"
+                    "Empty pause timer set to: {time_to_auto_dc}\n"
+                    "Auto-play has been disabled."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(
+                    true_or_false=ENABLED_TITLE, time_to_auto_dc=self.get_time_string(seconds)
+                ),
+            )
+
         if seconds < 0:
             return await self.send_embed_msg(
                 ctx, title=_("Invalid Time"), description=_("Seconds can't be less than zero.")
@@ -1212,13 +1285,25 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_guild_lyrics(self, ctx: commands.Context):
         """Prioritise tracks with lyrics."""
+
+        if await self.config_cache.prefer_lyrics.get_global() is True:
+            await self.config_cache.prefer_lyrics.set_guild(ctx.guild, True)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("Prefer tracks with lyrics: {true_or_false}."
+                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
+                true_or_false=ENABLED_TITLE
+            ),
+            )
+
         prefer_lyrics = await self.config_cache.prefer_lyrics.get_guild(ctx.guild)
         await self.config_cache.prefer_lyrics.set_guild(ctx.guild, not prefer_lyrics)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Prefer tracks with lyrics: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
+                true_or_false=ENABLED_TITLE if not prefer_lyrics else DISABLED_TITLE
             ),
         )
 
@@ -1226,6 +1311,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_guild_jukebox(self, ctx: commands.Context, price: int):
         """Set a price for queueing tracks for non-mods, 0 to disable."""
+        if await self.config_cache.jukebox.get_global() is True and await bank.is_global():
+            await self.config_cache.jukebox.set_guild(ctx.guild, True)
+            jukebox_price = await self.config_cache.jukebox_price.get_global()
+            await self.config_cache.jukebox_price.set_guild(ctx.guild, jukebox_price)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Jukebox Mode: {true_or_false}\n"
+                    "Price per command: {cost} {currency}\n"
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(
+                    true_or_false=ENABLED_TITLE, cost=humanize_number(jukebox_price), currency=await bank.get_currency_name(ctx.guild)
+                ),
+            )
         if price < 0:
             return await self.send_embed_msg(
                 ctx,
@@ -1248,7 +1348,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
-                description=_("Track queueing command price set to {price} {currency}.").format(
+                description=_("Jukebox mode enabled, command price set to {price} {currency}.").format(
                     price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
@@ -1330,19 +1430,24 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Max length of a track to queue in seconds, 0 to disable.
 
-        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid
-        input will turn the max length setting off.
+        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid input will turn the max length setting off.
         """
+        global_value = await self.config_cache.max_queue_size.get_global()
         if not isinstance(seconds, int):
             seconds = self.time_convert(seconds)
-        if seconds < 0:
+        if not 0 <= seconds <= global_value:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid length"), description=_("Length can't be less than zero.")
+                ctx, title=_("Invalid length"), description=_("Length can't be less than zero or greater than {cap}.").format(cap=self.get_time_string(global_value))
             )
         if seconds == 0:
-            await self.send_embed_msg(
-                ctx, title=_("Setting Changed"), description=_("Track max length disabled.")
-            )
+            if global_value != 0:
+                await self.send_embed_msg(
+                    ctx, title=_("Setting Changed"), description=_("Track max length disabled.")
+                )
+            else:
+                await self.send_embed_msg(
+                    ctx, title=_("Setting Not Changed"), description=_("Track max length cannot be disabled as it is restricted by the bot owner.")
+                )
         else:
             await self.send_embed_msg(
                 ctx,
@@ -1357,13 +1462,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_guild_notify(self, ctx: commands.Context):
         """Toggle track announcement and other bot messages."""
+        if await self.config_cache.notify.get_global() is False:
+            await self.config_cache.notify.set_guild(ctx.guild, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Notify mode: {true_or_false}, "
+                    "\n\n**Reason**: The bot owner has disabled this feature."
+                ).format(true_or_false=DISABLED_TITLE),
+            )
         notify = await self.config_cache.notify.get_guild(ctx.guild)
         await self.config_cache.notify.set_guild(ctx.guild, not notify)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Notify mode: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not notify else _("Disabled")
+                true_or_false=ENABLED_TITLE if not notify else DISABLED_TITLE
             ),
         )
 
@@ -1371,30 +1486,26 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_audioset_guild_auto_deafen(self, ctx: commands.Context):
         """Toggle whether the bot will be auto deafened upon joining the voice channel."""
+        if await self.config_cache.auto_deafen.get_global() is True:
+            await self.config_cache.auto_deafen.set_guild(ctx.guild, True)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("Auto-deafen: {true_or_false}."
+                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
+                true_or_false=ENABLED_TITLE
+            ),
+            )
         auto_deafen = await self.config_cache.auto_deafen.get_guild(ctx.guild)
         await self.config_cache.auto_deafen.set_guild(ctx.guild, not auto_deafen)
-        auto_deafen_context = await self.config_cache.auto_deafen.get_guild(ctx.guild)
-        enabled = _("Enabled")
-        disabled = _("Disabled")
-        if auto_deafen_context == (not auto_deafen):
-            await self.send_embed_msg(
-                ctx,
-                title=_("Setting Changed"),
-                description=_("Auto Deafen: {true_or_false}.").format(
-                    true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
-                ),
-            )
-        else:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Setting Changed"),
-                description=_(
-                    "Auto Deafen: {true_or_false}, However global setting is set to {global_value}"
-                ).format(
-                    true_or_false=enabled if not auto_deafen else disabled,
-                    global_value=enabled if auto_deafen_context else disabled,
-                ),
-            )
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Auto-deafen: {true_or_false}.").format(
+                true_or_false=ENABLED_TITLE if not auto_deafen else DISABLED_TITLE
+            ),
+        )
+
 
     @command_audioset_guild.command(name="restrict")
     @commands.admin_or_permissions(manage_guild=True)
@@ -1402,15 +1513,25 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and Bandcamp links.
+        When toggled on, users are restricted to YouTube, SoundCloud, Twitch, and Bandcamp links.
         """
+        if await self.config_cache.url_restrict.get_global() is True:
+            await self.config_cache.url_restrict.set_guild(ctx.guild, True)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("Commercial links only: {true_or_false}."
+                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
+                true_or_false=ENABLED_TITLE
+            ),
+            )
         restrict = await self.config_cache.url_restrict.get_guild(ctx.guild)
         await self.config_cache.url_restrict.set_guild(ctx.guild, not restrict)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Commercial links only: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not restrict else _("Disabled")
+                true_or_false=ENABLED_TITLE if not restrict else DISABLED_TITLE
             ),
         )
 
@@ -1418,13 +1539,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_guild_thumbnail(self, ctx: commands.Context):
         """Toggle displaying a thumbnail on audio messages."""
+        if await self.config_cache.thumbnail.get_global() is True:
+            await self.config_cache.thumbnail.set_guild(ctx.guild, True)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("Thumbnail display: {true_or_false}."
+                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
+                true_or_false=ENABLED_TITLE
+            ),
+            )
         thumbnail = await self.config_cache.thumbnail.get_guild(ctx.guild)
         await self.config_cache.thumbnail.set_guild(ctx.guild, not thumbnail)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_("Thumbnail display: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not thumbnail else _("Disabled")
+                true_or_false=ENABLED_TITLE if not thumbnail else DISABLED_TITLE
             ),
         )
 
@@ -1493,7 +1624,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Persisting queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
+                true_or_false=ENABLED_TITLE if not persist_cache else DISABLED_TITLE
             ),
         )
 
@@ -1505,11 +1636,24 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_guild_autoplay.command(name="toggle")
     async def command_audioset_guild_autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
+        if await self.config_cache.disconnect.get_global() is True:
+            await self.config_cache.disconnect.set_guild(ctx.guild, True)
+            await self.config_cache.autoplay.set_guild(ctx.guild, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Auto-disconnection at queue end: {true_or_false}\n"
+                    "Auto-play has been disabled."
+                    "\n\n**Reason**: The bot owner has disabled this feature."
+                ).format(true_or_false=ENABLED_TITLE),
+            )
+
         autoplay = await self.config_cache.autoplay.get_guild(ctx.guild)
         repeat = await self.config_cache.repeat.get_guild(ctx.guild)
         disconnect = await self.config_cache.disconnect.get_guild(ctx.guild)
         msg = _("Auto-play when queue ends: {true_or_false}.").format(
-            true_or_false=_("Enabled") if not autoplay else _("Disabled")
+            true_or_false=ENABLED_TITLE if not autoplay else DISABLED_TITLE
         )
         await self.config_cache.autoplay.set_guild(ctx.guild, not autoplay)
         if autoplay is not True and repeat is True:
@@ -1675,8 +1819,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         autoplaylist = await self.config.guild(ctx.guild).autoplaylist()
 
-        disabled = _("Disabled")
-        enabled = _("Enabled")
+        disabled = DISABLED_TITLE
+        enabled = ENABLED_TITLE
 
         msg = "----" + _("Server Settings") + "----        \n"
         msg += _(
@@ -1973,7 +2117,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             embed = discord.Embed(
                 title=_("Setting Changed"),
                 description=_("External Lavalink server: {true_or_false}.").format(
-                    true_or_false=_("Enabled") if not external else _("Disabled")
+                    true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
@@ -1990,7 +2134,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                         "For it to take effect please reload "
                         "Audio (`{prefix}reload audio`)."
                     ).format(
-                        true_or_false=_("Enabled") if not external else _("Disabled"),
+                        true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE,
                         prefix=ctx.prefix,
                     ),
                 )
@@ -1999,7 +2143,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Setting Changed"),
                     description=_("External Lavalink server: {true_or_false}.").format(
-                        true_or_false=_("Enabled") if not external else _("Disabled")
+                        true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE
                     ),
                 )
         try:
@@ -2116,7 +2260,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ).format(
             version=__version__,
             lavalink_version=lavalink.__version__,
-            use_external_lavalink=_("Enabled") if use_external_lavalink_server else _("Disabled"),
+            use_external_lavalink=ENABLED_TITLE
+            if use_external_lavalink_server
+            else DISABLED_TITLE,
         )
         if (
             not use_external_lavalink_server
@@ -2328,7 +2474,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         jukebox_price = await self.config_cache.jukebox_price.get_context_value(ctx.guild)
         thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
         dc = await self.config_cache.disconnect.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
         maxlength = await self.config_cache.max_track_length.get_context_value(ctx.guild)
         maxqueue = await self.config_cache.max_queue_size.get_context_value(ctx.guild)
         vote_percent = await self.config_cache.votes_percentage.get_context_value(ctx.guild)
@@ -2348,9 +2494,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_level)
         vote_enabled = await self.config_cache.votes.get_context_value(ctx.guild)
         msg = "----" + _("Context Settings") + "----        \n"
-        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=_("Enabled") if dc else _("Disabled"))
+        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=ENABLED_TITLE if dc else DISABLED_TITLE)
         msg += _("Auto-play:        [{autoplay}]\n").format(
-            autoplay=_("Enabled") if autoplay else _("Disabled")
+            autoplay=ENABLED_TITLE if autoplay else DISABLED_TITLE
         )
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
@@ -2395,14 +2541,14 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
-                _("Enabled") if thumbnail else _("Disabled")
+                ENABLED_TITLE if thumbnail else DISABLED_TITLE
             )
         if vote_percent > 0:
             msg += _(
                 "Vote skip:        [{vote_enabled}]\n" "Vote percentage:  [{vote_percent}%]\n"
             ).format(
                 vote_percent=vote_percent,
-                vote_enabled=_("Enabled") if vote_enabled else _("Disabled"),
+                vote_enabled=ENABLED_TITLE if vote_enabled else DISABLED_TITLE,
             )
 
         autoplaylist = await self.config.guild(ctx.guild).autoplaylist()

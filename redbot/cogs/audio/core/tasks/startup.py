@@ -120,7 +120,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 shuffle = await self.config_cache.shuffle.get_context_value(guild)
                 repeat = await self.config_cache.repeat.get_context_value(guild)
                 shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
-                auto_deafen = await self.config_cache.autoplay.get_context_value(guild)
+                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
 
                 if player is None:
                     while tries < 5 and vc is not None:

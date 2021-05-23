@@ -31,7 +31,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> discord.Embed:
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
 
         queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10

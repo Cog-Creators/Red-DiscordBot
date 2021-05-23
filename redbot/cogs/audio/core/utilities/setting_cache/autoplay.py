@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, TYPE_CHECKING, Tuple
 
 import discord
 
@@ -8,6 +8,8 @@ from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
+if TYPE_CHECKING:
+    from . import SettingCacheManager
 
 class AutoPlayManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
@@ -59,7 +61,9 @@ class AutoPlayManager(CachingABC):
                 "currently_auto_playing_in"
             ]
 
-    async def get_context_value(self, guild: discord.Guild) -> bool:
+    async def get_context_value(self, guild: discord.Guild, cache: SettingCacheManager = None) -> bool:
+        if cache is not None and await cache.disconnect.get_global() is True:
+            return True
         return await self.get_guild(guild)
 
     async def get_currently_in_context_value(self, guild: discord.Guild) -> Tuple[int, int]:

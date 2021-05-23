@@ -56,9 +56,7 @@ class MaxQueueSizerManager(CachingABC):
     async def get_context_value(self, guild: discord.Guild) -> int:
         global_size = await self.get_global()
         guild_size = await self.get_guild(guild)
-        return min(
-            global_size, guild_size, 20_000
-        )  # Queues shouldn't ever be larger than 20K tracks as it can easily allow for DOS attacks.
+        return min(global_size, guild_size)
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

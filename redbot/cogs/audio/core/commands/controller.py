@@ -114,7 +114,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed(title=_("Now Playing"), description=song)
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
         thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
         if thumbnail and player.current and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
@@ -695,10 +695,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        max_guild, max_global, max_channel = await self.config_cache.volume.get_context_max(
+        max_volume, max_source = await self.config_cache.volume.get_max_and_source(
             ctx.guild, ctx.guild.me.voice.channel if ctx.guild.me.voice else None
         )
-        max_volume = min(max_guild, max_global, max_channel)
+
         volume = min(
             max(vol, 0),
             max_volume,
@@ -712,7 +712,11 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("notify_channel", ctx.channel.id)
             embed = discord.Embed(
                 title=_("Volume:"),
-                description=f"{volume}%\n\nMaximum allowed volume here is {max_volume}%",
+                description="Currently set to **{volume}%**\n\n"
+                "Maximum allowed volume here is **{max_volume}%** "
+                "due to {restrictor} restrictions.".format(
+                    volume=volume, max_volume=max_volume, restrictor=max_source
+                ),
             )
             await self.send_embed_msg(ctx, embed=embed)
 
@@ -742,7 +746,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             player.store("notify_channel", ctx.channel.id)
 
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
         msg = ""
         msg += _("Repeat tracks: {true_or_false}.").format(

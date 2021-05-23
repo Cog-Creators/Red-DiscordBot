@@ -84,7 +84,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
             repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-            autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+            autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
             text = ""
             text += (
                 _("Auto-Play")

@@ -27,7 +27,7 @@ from ...errors import (
     TrackEnqueueError,
 )
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
+from ..cog_utils import CompositeMetaClass, ENABLED_TITLE
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
 _ = Translator("Audio", Path(__file__))
@@ -573,6 +573,18 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
+            )
+        if await self.config_cache.disconnect.get_global() is True:
+            await self.config_cache.disconnect.set_guild(ctx.guild, True)
+            await self.config_cache.autoplay.set_guild(ctx.guild, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Auto-disconnection at queue end: {true_or_false}\n"
+                    "Auto-play has been disabled."
+                    "\n\n**Reason**: The bot owner has disabled this feature."
+                ).format(true_or_false=ENABLED_TITLE),
             )
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:

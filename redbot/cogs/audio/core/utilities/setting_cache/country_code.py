@@ -78,9 +78,7 @@ class CountryCodeManager(CachingABC):
         guild: discord.Guild,
         user: discord.Member,
     ) -> str:
-        if (code := await self.get_user(user)) is not None:
-            return code
-        return await self.get_guild(guild) or await self.get_global()
+        return await self.get_user(user) or await self.get_guild(guild) or await self.get_global()
 
     def reset_globals(self) -> None:
         self._cached_user = {}

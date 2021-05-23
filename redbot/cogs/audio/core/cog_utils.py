@@ -6,6 +6,7 @@ import struct
 
 from redbot import VersionInfo
 from redbot.core import commands
+from redbot.core.i18n import Translator
 
 from ..converters import get_lazy_converter, get_playlist_converter
 
@@ -18,39 +19,50 @@ _OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
+T_ = Translator("Audio", __file__)
+
+_ = lambda s: s
 HUMANIZED_PERM = {
-    "create_instant_invite": "Create Instant Invite",
-    "kick_members": "Kick Members",
-    "ban_members": "Ban Members",
-    "administrator": "Administrator",
-    "manage_channels": "Manage Channels",
-    "manage_guild": "Manage Server",
-    "add_reactions": "Add Reactions",
-    "view_audit_log": "View Audit Log",
-    "priority_speaker": "Priority Speaker",
-    "stream": "Go Live",
-    "read_messages": "Read Text Channels & See Voice Channels",
-    "send_messages": "Send Messages",
-    "send_tts_messages": "Send TTS Messages",
-    "manage_messages": "Manage Messages",
-    "embed_links": "Embed Links",
-    "attach_files": "Attach Files",
-    "read_message_history": "Read Message History",
-    "mention_everyone": "Mention @everyone, @here, and All Roles",
-    "external_emojis": "Use External Emojis",
-    "view_guild_insights": "View Server Insights",
-    "connect": "Connect",
-    "speak": "Speak",
-    "mute_members": "Mute Members",
-    "deafen_members": "Deafen Members",
-    "move_members": "Move Members",
-    "use_voice_activation": "Use Voice Activity",
-    "change_nickname": "Change Nickname",
-    "manage_nicknames": "Manage Nicknames",
-    "manage_roles": "Manage Roles",
-    "manage_webhooks": "Manage Webhooks",
-    "manage_emojis": "Manage Emojis",
+    "create_instant_invite": _("Create Instant Invite"),
+    "kick_members": _("Kick Members"),
+    "ban_members": _("Ban Members"),
+    "administrator": _("Administrator"),
+    "manage_channels": _("Manage Channels"),
+    "manage_guild": _("Manage Server"),
+    "add_reactions": _("Add Reactions"),
+    "view_audit_log": _("View Audit Log"),
+    "priority_speaker": _("Priority Speaker"),
+    "stream": _("Go Live"),
+    "read_messages": _("Read Text Channels & See Voice Channels"),
+    "send_messages": _("Send Messages"),
+    "send_tts_messages": _("Send TTS Messages"),
+    "manage_messages": _("Manage Messages"),
+    "embed_links": _("Embed Links"),
+    "attach_files": _("Attach Files"),
+    "read_message_history": _("Read Message History"),
+    "mention_everyone": _("Mention @everyone, @here, and All Roles"),
+    "external_emojis": _("Use External Emojis"),
+    "view_guild_insights": _("View Server Insights"),
+    "connect": _("Connect"),
+    "speak": _("Speak"),
+    "mute_members": _("Mute Members"),
+    "deafen_members": _("Deafen Members"),
+    "move_members": _("Move Members"),
+    "use_voice_activation": _("Use Voice Activity"),
+    "change_nickname": _("Change Nickname"),
+    "manage_nicknames": _("Manage Nicknames"),
+    "manage_roles": _("Manage Roles"),
+    "manage_webhooks": _("Manage Webhooks"),
+    "manage_emojis": _("Manage Emojis"),
+    "use_slash_commands": _("Use Slash Commands"),
+    "request_to_speak": _("Request To Speak"),
 }
+ENABLED = _("enabled")
+DISABLED = _("disabled")
+ENABLED_TITLE = _("Enabled")
+DISABLED_TITLE = _("Disabled")
+
+_ = T_
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
