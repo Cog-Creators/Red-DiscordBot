@@ -91,6 +91,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
+    @command_audioset_global.command(name="notify")
+    async def command_audioset_global_dailyqueue_notify(self, ctx: commands.Context):
+        """Toggle track announcement and other bot messages.
+
+
+        If disabled, servers will not be able to overwrite it.
+        """
+        daily_playlists = await self.config_cache.daily_playlist.get_global()
+        await self.config_cache.daily_playlist.set_global(not daily_playlists)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Global track announcement: {true_or_false}.").format(
+                true_or_false=ENABLED_TITLE if not daily_playlists else DISABLED_TITLE
+            ),
+        )
+
     @command_audioset_global.command(name="autodeafen")
     async def command_audioset_global_auto_deafen(self, ctx: commands.Context):
         """Toggle whether the bot will be auto deafened upon joining the voice channel.
@@ -206,6 +223,26 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         If set servers can never go below this value and the jukebox will be enabled globally.
         """
+
+        if not await bank.is_global():
+            await self.config_cache.jukebox.set_global(False)
+            await self.config_cache.jukebox_price.set_global(0)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "Jukebox Mode: {true_or_false}\n"
+                    "Price per command: {cost} {currency}\n"
+                    "\n\n**Reason**: You cannot enable this feature if the bank isn't global\n"
+                    "Use `[p]bankset toggleglobal` from the "
+                    "`Bank` cog to enable a global bank first."
+                ).format(
+                    true_or_false=ENABLED_TITLE,
+                    cost=0,
+                    currency=await bank.get_currency_name(ctx.guild),
+                ),
+            )
+
         if price < 0:
             return await self.send_embed_msg(
                 ctx,
