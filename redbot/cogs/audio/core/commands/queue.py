@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import datetime
 import logging
 import math
 from pathlib import Path
@@ -13,19 +12,15 @@ import lavalink
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils._dpy_menus_utils import dpymenu
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu, dpymenu
 from redbot.core.utils.menus import (
-    DEFAULT_CONTROLS,
-    close_menu,
-    menu,
-    next_page,
-    prev_page,
     start_adding_reactions,
 )
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ..utilities.menus.queue import QueueMenu, QueueSearchSource, QueueSource
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.queue")
 _ = Translator("Audio", Path(__file__))
@@ -37,28 +32,6 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
-
-        async def _queue_menu(
-            ctx: commands.Context,
-            pages: list,
-            controls: MutableMapping,
-            message: discord.Message,
-            page: int,
-            timeout: float,
-            emoji: str,
-        ):
-            if message:
-                await ctx.send_help(self.command_queue)
-                with contextlib.suppress(discord.HTTPException):
-                    await message.delete()
-                return None
-
-        queue_controls = {
-            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
-            "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
-            "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}": _queue_menu,
-        }
 
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -84,7 +57,9 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
             repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-            autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
+            autoplay = await self.config_cache.autoplay.get_context_value(
+                ctx.guild, cache=self.config_cache
+            )
             text = ""
             text += (
                 _("Auto-Play")
@@ -160,18 +135,11 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif not player.current and not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
-        async with ctx.typing():
-            limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
-            len_queue_pages = math.ceil(len(limited_queue) / 10)
-            queue_page_list = []
-            async for page_num in AsyncIter(range(1, len_queue_pages + 1)):
-                embed = await self._build_queue_page(ctx, limited_queue, player, page_num)
-                queue_page_list.append(embed)
-            if page > len_queue_pages:
-                page = len_queue_pages
-        return await menu(ctx, queue_page_list, queue_controls, page=(page - 1))
+        await QueueMenu(source=QueueSource(player.queue, self.config_cache), cog=self).start(
+            ctx=ctx, wait=False, page=page
+        )
 
-    @command_queue.command(name="clear")
+    @command_queue.command(name="clear", aliases=["wipe", "reset"])
     async def command_queue_clear(self, ctx: commands.Context):
         """Clears the queue."""
         try:
@@ -223,7 +191,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         clean_tracks = []
         removed_tracks = 0
         listeners = player.channel.members
-        async for track in AsyncIter(player.queue):
+        async for track in AsyncIter(player.queue.copy()):
             if track.requester in listeners:
                 clean_tracks.append(track)
             else:
@@ -257,7 +225,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         clean_tracks = []
         removed_tracks = 0
-        async for track in AsyncIter(player.queue):
+        async for track in AsyncIter(player.queue.copy()):
             if track.requester != ctx.author:
                 clean_tracks.append(track)
             else:
@@ -287,16 +255,13 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
-        search_list = await self._build_queue_search_list(player.queue, search_words)
+        search_list = await self._build_queue_search_list(player.queue.copy(), search_words)
         if not search_list:
             return await self.send_embed_msg(ctx, title=_("No matches."))
 
-        len_search_pages = math.ceil(len(search_list) / 10)
-        search_page_list = []
-        async for page_num in AsyncIter(range(1, len_search_pages + 1)):
-            embed = await self._build_queue_search_page(ctx, page_num, search_list)
-            search_page_list.append(embed)
-        await dpymenu(ctx, search_page_list)
+        await SimpleHybridMenu(
+            source=QueueSearchSource(search_list, self.config_cache), cog=self
+        ).start(ctx=ctx, wait=False)
 
     @command_queue.command(name="shuffle")
     @commands.cooldown(1, 30, commands.BucketType.guild)
@@ -322,11 +287,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("There's nothing in the queue."),
             )
         try:
-            if (
-                not self.can_join_and_speak(ctx.author.voice.channel)
-                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.is_vc_full(ctx.author.voice.channel)
-            ):
+            vc = ctx.guild.me.voice.channel if ctx.guild.me.voice else ctx.author.voice.channe
+            if not self.can_join_and_speak(vc) or self.is_vc_full(vc):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(
                     ctx,
@@ -334,7 +296,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("I don't have permission to connect and speak in your channel."),
                 )
             player = await lavalink.connect(
-                ctx.author.voice.channel,
+                vc,
                 deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
             )
             player.store("notify_channel", ctx.channel.id)

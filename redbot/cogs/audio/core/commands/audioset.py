@@ -721,13 +721,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Historical playlist:          [{historical_playlist}]\n"
             "Default persist queue:        [{persist_queue}]\n"
             "Default Spotify search:       [{countrycode}]\n"
-
         ).format(
             status=enabled if song_status else disabled,
             countrycode=country_code,
             historical_playlist=enabled if historical_playlist else disabled,
             persist_queue=enabled if persist_queue else disabled,
-
         )
 
         over_notify = await self.config_cache.notify.get_global()
@@ -808,17 +806,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the maximum allowed volume to be set on the specified channel."""
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
-            ) and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Change Volume"),
-                    description=_("You must be in the voice channel to change the volume."),
-                )
-            player.store("notify_channel", ctx.channel.id)
         if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
@@ -1027,17 +1014,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the maximum allowed volume to be set."""
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            if (
-                not ctx.author.voice or ctx.author.voice.channel != player.channel
-            ) and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Change Volume"),
-                    description=_("You must be in the voice channel to change the volume."),
-                )
-            player.store("notify_channel", ctx.channel.id)
         if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
@@ -1291,10 +1267,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
-                description=_("Prefer tracks with lyrics: {true_or_false}."
-                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
-                true_or_false=ENABLED_TITLE
-            ),
+                description=_(
+                    "Prefer tracks with lyrics: {true_or_false}."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(true_or_false=ENABLED_TITLE),
             )
 
         prefer_lyrics = await self.config_cache.prefer_lyrics.get_guild(ctx.guild)
@@ -1323,7 +1299,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     "Price per command: {cost} {currency}\n"
                     "\n\n**Reason**: The bot owner has enforced this feature."
                 ).format(
-                    true_or_false=ENABLED_TITLE, cost=humanize_number(jukebox_price), currency=await bank.get_currency_name(ctx.guild)
+                    true_or_false=ENABLED_TITLE,
+                    cost=humanize_number(jukebox_price),
+                    currency=await bank.get_currency_name(ctx.guild),
                 ),
             )
         if price < 0:
@@ -1348,7 +1326,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
-                description=_("Jukebox mode enabled, command price set to {price} {currency}.").format(
+                description=_(
+                    "Jukebox mode enabled, command price set to {price} {currency}."
+                ).format(
                     price=humanize_number(price), currency=await bank.get_currency_name(ctx.guild)
                 ),
             )
@@ -1437,7 +1417,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             seconds = self.time_convert(seconds)
         if not 0 <= seconds <= global_value:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid length"), description=_("Length can't be less than zero or greater than {cap}.").format(cap=self.get_time_string(global_value))
+                ctx,
+                title=_("Invalid length"),
+                description=_("Length can't be less than zero or greater than {cap}.").format(
+                    cap=self.get_time_string(global_value)
+                ),
             )
         if seconds == 0:
             if global_value != 0:
@@ -1446,7 +1430,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             else:
                 await self.send_embed_msg(
-                    ctx, title=_("Setting Not Changed"), description=_("Track max length cannot be disabled as it is restricted by the bot owner.")
+                    ctx,
+                    title=_("Setting Not Changed"),
+                    description=_(
+                        "Track max length cannot be disabled as it is restricted by the bot owner."
+                    ),
                 )
         else:
             await self.send_embed_msg(
@@ -1491,10 +1479,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
-                description=_("Auto-deafen: {true_or_false}."
-                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
-                true_or_false=ENABLED_TITLE
-            ),
+                description=_(
+                    "Auto-deafen: {true_or_false}."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(true_or_false=ENABLED_TITLE),
             )
         auto_deafen = await self.config_cache.auto_deafen.get_guild(ctx.guild)
         await self.config_cache.auto_deafen.set_guild(ctx.guild, not auto_deafen)
@@ -1505,7 +1493,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 true_or_false=ENABLED_TITLE if not auto_deafen else DISABLED_TITLE
             ),
         )
-
 
     @command_audioset_guild.command(name="restrict")
     @commands.admin_or_permissions(manage_guild=True)
@@ -1520,10 +1507,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
-                description=_("Commercial links only: {true_or_false}."
-                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
-                true_or_false=ENABLED_TITLE
-            ),
+                description=_(
+                    "Commercial links only: {true_or_false}."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(true_or_false=ENABLED_TITLE),
             )
         restrict = await self.config_cache.url_restrict.get_guild(ctx.guild)
         await self.config_cache.url_restrict.set_guild(ctx.guild, not restrict)
@@ -1544,10 +1531,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
-                description=_("Thumbnail display: {true_or_false}."
-                              "\n\n**Reason**: The bot owner has enforced this feature.").format(
-                true_or_false=ENABLED_TITLE
-            ),
+                description=_(
+                    "Thumbnail display: {true_or_false}."
+                    "\n\n**Reason**: The bot owner has enforced this feature."
+                ).format(true_or_false=ENABLED_TITLE),
             )
         thumbnail = await self.config_cache.thumbnail.get_guild(ctx.guild)
         await self.config_cache.thumbnail.set_guild(ctx.guild, not thumbnail)
@@ -2474,7 +2461,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         jukebox_price = await self.config_cache.jukebox_price.get_context_value(ctx.guild)
         thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
         dc = await self.config_cache.disconnect.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
+        autoplay = await self.config_cache.autoplay.get_context_value(
+            ctx.guild, cache=self.config_cache
+        )
         maxlength = await self.config_cache.max_track_length.get_context_value(ctx.guild)
         maxqueue = await self.config_cache.max_queue_size.get_context_value(ctx.guild)
         vote_percent = await self.config_cache.votes_percentage.get_context_value(ctx.guild)

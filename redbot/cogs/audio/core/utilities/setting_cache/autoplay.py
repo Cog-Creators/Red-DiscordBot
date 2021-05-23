@@ -11,6 +11,7 @@ from redbot.core.bot import Red
 if TYPE_CHECKING:
     from . import SettingCacheManager
 
+
 class AutoPlayManager(CachingABC):
     def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
         self._config: Config = config
@@ -61,7 +62,9 @@ class AutoPlayManager(CachingABC):
                 "currently_auto_playing_in"
             ]
 
-    async def get_context_value(self, guild: discord.Guild, cache: SettingCacheManager = None) -> bool:
+    async def get_context_value(
+        self, guild: discord.Guild, cache: SettingCacheManager = None
+    ) -> bool:
         if cache is not None and await cache.disconnect.get_global() is True:
             return True
         return await self.get_guild(guild)

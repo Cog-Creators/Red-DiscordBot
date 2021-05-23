@@ -114,7 +114,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed(title=_("Now Playing"), description=song)
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
+        autoplay = await self.config_cache.autoplay.get_context_value(
+            ctx.guild, cache=self.config_cache
+        )
         thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
         if thumbnail and player.current and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
@@ -746,7 +748,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             player.store("notify_channel", ctx.channel.id)
 
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild, cache=self.config_cache)
+        autoplay = await self.config_cache.autoplay.get_context_value(
+            ctx.guild, cache=self.config_cache
+        )
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
         msg = ""
         msg += _("Repeat tracks: {true_or_false}.").format(

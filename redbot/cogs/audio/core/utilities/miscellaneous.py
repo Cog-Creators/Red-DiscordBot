@@ -67,6 +67,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
     ) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
+        delete_after = kwargs.get("delete_after")
         title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
         _type = kwargs.get("type", "rich") or "rich"
         url = kwargs.get("url", EmptyEmbed) or EmptyEmbed
@@ -98,7 +99,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_author(name=name, icon_url=url)
             elif name:
                 embed.set_author(name=name)
-        return await ctx.send(embed=embed)
+        return await ctx.send(embed=embed, delete_after=delete_after)
 
     def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
         perms = channel.permissions_for(channel.guild.me)
