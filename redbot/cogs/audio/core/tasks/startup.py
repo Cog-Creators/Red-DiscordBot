@@ -164,7 +164,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
-                if player.volume != volume:
+                if player.volume > volume:
                     await player.set_volume(volume)
                 await self._eq_check(player=player, ctx=ctx(guild))
                 for track in track_data:
@@ -234,7 +234,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
-                if player.volume != volume:
+                if player.volume > volume:
                     await player.set_volume(volume)
                 await self._eq_check(player=player, ctx=ctx(guild))
                 player.maybe_shuffle()

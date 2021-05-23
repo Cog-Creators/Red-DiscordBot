@@ -9,6 +9,7 @@ from typing import Optional, Union
 
 import discord
 import lavalink
+from lavalink.filters import Volume
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -701,16 +702,19 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild, ctx.guild.me.voice.channel if ctx.guild.me.voice else None
         )
 
-        volume = min(
-            max(vol, 0),
-            max_volume,
+        volume = (
+            min(
+                max(vol, 0),
+                max_volume,
+            )
+            / 100
         )
 
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
-            player.volume.value = volume / 100
-            if player.volume.value != volume:
-                await player.set_volume(player.volume)
+            vol = Volume(value=volume)
+            if player.volume != vol:
+                await player.set_volume(vol)
             player.store("notify_channel", ctx.channel.id)
             embed = discord.Embed(
                 title=_("Volume:"),

@@ -698,8 +698,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
         volume = Volume(
-            value=(
-                await self.config_cache.volume.get_context_value(ctx.guild, channel=player.channel)
+            value=await self.config_cache.volume.get_context_value(
+                ctx.guild, channel=player.channel
             )
             / 100
         )
@@ -707,7 +707,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player.repeat = repeat
         player.shuffle = shuffle
         player.shuffle_bumped = shuffle_bumped
-        if player.volume != volume:
+        if player.volume > volume:
             await player.set_volume(volume)
 
     async def maybe_move_player(self, ctx: commands.Context) -> bool:
