@@ -721,7 +721,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description="Currently set to **{volume}%**\n\n"
                 "Maximum allowed volume here is **{max_volume}%** "
                 "due to {restrictor} restrictions.".format(
-                    volume=volume, max_volume=max_volume, restrictor=max_source
+                    volume=int(volume * 100), max_volume=max_volume, restrictor=max_source
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)

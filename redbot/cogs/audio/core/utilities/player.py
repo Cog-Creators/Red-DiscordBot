@@ -707,7 +707,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player.repeat = repeat
         player.shuffle = shuffle
         player.shuffle_bumped = shuffle_bumped
-        if player.volume > volume:
+        if float(player.volume) > float(volume):
             await player.set_volume(volume)
 
     async def maybe_move_player(self, ctx: commands.Context) -> bool:
