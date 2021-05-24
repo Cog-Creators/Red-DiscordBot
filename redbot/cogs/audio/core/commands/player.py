@@ -984,3 +984,125 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await dpymenu(ctx, search_page_list)
 
         await menu(ctx, search_page_list, search_controls)
+
+    @commands.command(name="playmix")
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    async def command_playmix(self, ctx: commands.Context, *, query: str):
+        """Generate and enqueue a mix playlist based on query."""
+        query = Query.process_input(query, self.local_folder_current_path)
+        restrict = await self.config_cache.url_restrict.get_context_value(ctx.guild)
+        if restrict and self.match_url(str(query)):
+            valid_url = self.is_url_allowed(str(query))
+            if not valid_url:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("That URL is not allowed."),
+                )
+        elif not await self.is_query_allowed(self.config_cache, ctx, f"{query}", query_obj=query):
+            return await self.send_embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
+            )
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if await self.config_cache.dj_status.get_context_value(ctx.guild) and not can_skip:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Play Tracks"),
+                description=_("You need the DJ role to queue tracks."),
+            )
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink has failed")
+                desc = EmptyEmbed
+                if await self.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                return await self.send_embed_msg(ctx, title=msg, description=desc)
+            try:
+                if not self.can_join_and_speak(ctx.author.voice.channel) or self.is_vc_full(
+                    ctx.author.voice.channel
+                ):
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
+                    )
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
+                )
+            except AttributeError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connect to a voice channel first."),
+                )
+            except IndexError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connection to Lavalink has not yet been established."),
+                )
+        player = lavalink.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
+        await self._eq_check(ctx, player)
+        await self.set_player_settings(ctx)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Play Tracks"),
+                description=_("You must be in the voice channel to use the play command."),
+            )
+        if not query.valid:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Play Tracks"),
+                description=_("No tracks found for `{query}`.").format(
+                    query=query.to_string_user()
+                ),
+            )
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
+            return await self.send_embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
+            )
+        if not query.single_track:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Create Mixlist"),
+                description=_("You need to specify a single track to generate a mixlist."),
+            )
+        elif not (query.is_youtube or query.is_spotify):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Create Mixlist"),
+                description=_("You need to specify a YouTube or Spotify track."),
+            )
+        try:
+            async with ctx.typing():
+                if query.is_spotify:
+                    tracks = await self._get_spotify_tracks(ctx, query)
+                else:
+                    tracks = await self._enqueue_tracks(ctx, query, enqueue=False)
+                self.update_player_lock(ctx, False)
+                if isinstance(tracks, discord.Message):
+                    return
+                single_track = tracks if isinstance(tracks, lavalink.rest_api.Track) else tracks[0]
+                _id = single_track._info["identifier"]
+                mix = "https://www.youtube.com/watch?v={id}&list=RD{id}".format(id=_id)
+                query = Query.process_input(mix, self.local_folder_current_path)
+                if not await self.maybe_charge_requester(
+                    ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+                ):
+                    return
+                await self._enqueue_tracks(ctx, query)
+        except QueryUnauthorized as err:
+            return await self.send_embed_msg(
+                ctx, title=_("Unable To Play Tracks"), description=err.message
+            )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
