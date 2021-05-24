@@ -13,7 +13,8 @@ class AutoPlayManager(CacheBase):
         "bot",
         "enable_cache",
         "config_cache",
-        "_cached_guild" "_currently_in_cache",
+        "_cached_guild",
+        "_currently_in_cache",
     )
 
     def __init__(self, *args, **kwargs):

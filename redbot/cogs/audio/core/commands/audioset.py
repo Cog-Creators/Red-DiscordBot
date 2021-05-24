@@ -2569,7 +2569,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         if vote_percent > 0:
             msg += _(
-                "Vote skip:        [{vote_enabled}]\n" "Vote percentage:  [{vote_percent}%]\n"
+                "Vote skip:        [{vote_enabled}]\nVote percentage:  [{vote_percent}%]\n"
             ).format(
                 vote_percent=vote_percent,
                 vote_enabled=ENABLED_TITLE if vote_enabled else DISABLED_TITLE,
