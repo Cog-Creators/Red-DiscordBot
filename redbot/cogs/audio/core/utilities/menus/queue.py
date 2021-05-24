@@ -29,9 +29,7 @@ class QueueSource(menus.ListPageSource):
 
         shuffle = await self.config_cache.shuffle.get_context_value(menu.ctx.guild)
         repeat = await self.config_cache.repeat.get_context_value(menu.ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(
-            menu.ctx.guild, cache=self.config_cache
-        )
+        autoplay = await self.config_cache.autoplay.get_context_value(menu.ctx.guild)
         player = lavalink.get_player(menu.ctx.guild.id)
         page_num = menu.current_page + 1
         queue_num_pages = self.get_max_pages()

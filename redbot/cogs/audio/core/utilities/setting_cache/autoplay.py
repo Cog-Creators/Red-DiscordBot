@@ -9,13 +9,16 @@ from redbot.core import Config
 from redbot.core.bot import Red
 
 if TYPE_CHECKING:
-    from . import SettingCacheManager
+    from . import AutoDCManager
 
 
 class AutoPlayManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
+    def __init__(
+        self, bot: Red, config: Config, enable_cache: bool = True, disconnect: AutoDCManager = None
+    ):
         self._config: Config = config
         self.bot = bot
+        self._disconnect = disconnect
         self.enable_cache = enable_cache
         self._cached: Dict[int, bool] = {}
         self._currently_in_cache: Dict[int, Tuple[int, int]] = {}
@@ -62,11 +65,12 @@ class AutoPlayManager(CachingABC):
                 "currently_auto_playing_in"
             ]
 
-    async def get_context_value(
-        self, guild: discord.Guild, cache: SettingCacheManager = None
-    ) -> bool:
-        if cache is not None and await cache.disconnect.get_global() is True:
-            return True
+    async def get_context_value(self, guild: discord.Guild) -> bool:
+        if (
+            await self._disconnect.get_global() is True
+            or await self._disconnect.get_guild(guild) is True
+        ):
+            return False
         return await self.get_guild(guild)
 
     async def get_currently_in_context_value(self, guild: discord.Guild) -> Tuple[int, int]:

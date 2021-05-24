@@ -2498,9 +2498,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         jukebox_price = await self.config_cache.jukebox_price.get_context_value(ctx.guild)
         thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
         dc = await self.config_cache.disconnect.get_context_value(ctx.guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(
-            ctx.guild, cache=self.config_cache
-        )
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
         maxlength = await self.config_cache.max_track_length.get_context_value(ctx.guild)
         maxqueue = await self.config_cache.max_queue_size.get_context_value(ctx.guild)
         vote_percent = await self.config_cache.votes_percentage.get_context_value(ctx.guild)

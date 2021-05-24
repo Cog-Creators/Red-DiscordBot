@@ -124,9 +124,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config_cache.autoplay.get_context_value(
-            ctx.guild, cache=self.config_cache
-        )
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
