@@ -124,7 +124,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_audioset_global.command(name="emptydisconnect")
+    @command_audioset_global.command(name="emptydisconnect", aliases=["emptydc"])
     async def command_audioset_global_emptydisconnect(self, ctx: commands.Context, seconds: int):
         """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
 
@@ -1202,7 +1202,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_audioset_guild.command(name="emptydisconnect")
+    @command_audioset_guild.command(name="emptydisconnect", aliases=["emptydc"])
     @commands.mod_or_permissions(administrator=True)
     async def command_audioset_guild_emptydisconnect(self, ctx: commands.Context, seconds: int):
         """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.

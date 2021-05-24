@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 
 import discord
 
@@ -8,11 +8,17 @@ from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
+if TYPE_CHECKING:
+    from .jukebox import JukeboxManager
+
 
 class JukeboxPriceManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
+    def __init__(
+        self, bot: Red, config: Config, enable_cache: bool = True, jukebox: JukeboxManager = None
+    ):
         self._config: Config = config
         self.bot = bot
+        self._jukebox = jukebox
         self.enable_cache = enable_cache
         self._cached_guild: Dict[int, int] = {}
         self._cached_global: Dict[None, int] = {}
@@ -54,11 +60,10 @@ class JukeboxPriceManager(CachingABC):
             self._cached_global[None] = self._config.defaults["GLOBAL"]["jukebox_price"]
 
     async def get_context_value(self, guild: discord.Guild) -> int:
-        guild_value = await self.get_guild(guild)
-        global_value = await self.get_global()
-        if global_value == 0 or guild_value > global_value:
-            return guild_value
-        return global_value
+        if await self._jukebox.get_global() is True:
+            return await self.get_global()
+        else:
+            return await self.get_guild(guild)
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

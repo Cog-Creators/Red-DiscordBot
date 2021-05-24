@@ -47,9 +47,10 @@ from .auto_deafen import AutoDeafenManager
 __all__ = ["SettingCacheManager"]
 
 
-def cache_factory(cls):
+def cache_factory(cls, *self_dependencies):
     def factory(self: SettingCacheManager):
-        return cls(self.bot, self.config, self.enabled)
+        kwargs = {a: getattr(self, a, None) for a in self_dependencies}
+        return cls(self.bot, self.config, self.enabled, **kwargs)
 
     return attr.Factory(factory, takes_self=True)
 
@@ -75,9 +76,11 @@ class SettingCacheManager:
     localpath: LocalPathManager = cache_factory(LocalPathManager)
     disconnect: AutoDCManager = cache_factory(AutoDCManager)
     empty_dc: EmptyDCManager = cache_factory(EmptyDCManager)
-    empty_dc_timer: EmptyDCTimerManager = cache_factory(EmptyDCTimerManager)
+    empty_dc_timer: EmptyDCTimerManager = cache_factory(EmptyDCTimerManager, "empty_dc")
     empty_pause: EmptyPauseManager = cache_factory(EmptyPauseManager)
-    empty_pause_timer: EmptyPauseTimerManager = cache_factory(EmptyPauseTimerManager)
+    empty_pause_timer: EmptyPauseTimerManager = cache_factory(
+        EmptyPauseTimerManager, "empty_pause"
+    )
     global_api: GlobalDBManager = cache_factory(GlobalDBManager)
     global_api_timeout: GlobalDBTimeoutManager = cache_factory(GlobalDBTimeoutManager)
     local_cache_level: LocalCacheLevelManager = cache_factory(LocalCacheLevelManager)
@@ -87,7 +90,7 @@ class SettingCacheManager:
     volume: VolumeManager = cache_factory(VolumeManager)
     local_cache_age: LocalCacheAgeManager = cache_factory(LocalCacheAgeManager)
     jukebox: JukeboxManager = cache_factory(JukeboxManager)
-    jukebox_price: JukeboxPriceManager = cache_factory(JukeboxPriceManager)
+    jukebox_price: JukeboxPriceManager = cache_factory(JukeboxPriceManager, "jukebox")
     max_track_length: MaxTrackLengthManager = cache_factory(MaxTrackLengthManager)
     prefer_lyrics: PreferLyricsManager = cache_factory(PreferLyricsManager)
     notify: NotifyManager = cache_factory(NotifyManager)

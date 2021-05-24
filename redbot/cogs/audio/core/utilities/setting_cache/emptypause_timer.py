@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 
 import discord
 
@@ -8,11 +8,21 @@ from .abc import CachingABC
 from redbot.core import Config
 from redbot.core.bot import Red
 
+if TYPE_CHECKING:
+    from .emptypause import EmptyPauseManager
+
 
 class EmptyPauseTimerManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
+    def __init__(
+        self,
+        bot: Red,
+        config: Config,
+        enable_cache: bool = True,
+        empty_pause: EmptyPauseManager = None,
+    ):
         self._config: Config = config
         self.bot = bot
+        self._empty_pause = empty_pause
         self.enable_cache = enable_cache
         self._cached_guild: Dict[int, int] = {}
         self._cached_global: Dict[None, int] = {}
@@ -54,11 +64,10 @@ class EmptyPauseTimerManager(CachingABC):
             self._cached_global[None] = self._config.defaults["GLOBAL"]["emptypause_timer"]
 
     async def get_context_value(self, guild: discord.Guild) -> int:
-        guild_time = await self.get_guild(guild)
-        global_time = await self.get_global()
-        if global_time == 0 or global_time > guild_time:
-            return guild_time
-        return global_time
+        if await self._empty_pause.get_global() is True:
+            return await self.get_global()
+        else:
+            return await self.get_guild(guild)
 
     def reset_globals(self) -> None:
         if None in self._cached_global:
