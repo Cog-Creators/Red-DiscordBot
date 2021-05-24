@@ -8,6 +8,15 @@ from .abc import CacheBase
 
 
 class WhitelistBlacklistManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_whitelist",
+        "_cached_blacklist",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_whitelist: Dict[Optional[int], Set[str]] = {}

@@ -8,6 +8,14 @@ from .abc import CacheBase
 
 
 class LavalinkAutoUpdateManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_global",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, bool] = {}

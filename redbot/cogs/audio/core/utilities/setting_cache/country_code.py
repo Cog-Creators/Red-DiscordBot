@@ -8,11 +8,21 @@ from .abc import CacheBase
 
 
 class CountryCodeManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+        "_cached_user",
+        "_cached_global",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, str] = {}
         self._cached_user: Dict[int, Optional[str]] = {}
-        self._cached_guilds: Dict[int, str] = {}
+        self._cached_guild: Dict[int, str] = {}
 
     async def get_global(self) -> Optional[str]:
         ret: Optional[str]
@@ -53,21 +63,21 @@ class CountryCodeManager(CacheBase):
     async def get_guild(self, guild: discord.Guild) -> str:
         ret: str
         gid: int = guild.id
-        if self.enable_cache and gid in self._cached_guilds:
-            ret = self._cached_guilds[gid]
+        if self.enable_cache and gid in self._cached_guild:
+            ret = self._cached_guild[gid]
         else:
             ret = await self._config.guild_from_id(gid).country_code()
-            self._cached_guilds[gid] = ret
+            self._cached_guild[gid] = ret
         return ret
 
     async def set_guild(self, guild: discord.Guild, set_to: Optional[str]) -> None:
         gid: int = guild.id
         if set_to:
             await self._config.guild_from_id(gid).country_code.set(set_to)
-            self._cached_guilds[gid] = set_to
+            self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).ignored.clear()
-            self._cached_user[gid] = self._config.defaults["GUILD"]["country_code"]
+            self._cached_guild[gid] = self._config.defaults["GUILD"]["country_code"]
 
     async def get_context_value(
         self,

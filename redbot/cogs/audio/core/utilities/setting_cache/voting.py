@@ -8,6 +8,14 @@ from .abc import CacheBase
 
 
 class VotingManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, bool] = {}

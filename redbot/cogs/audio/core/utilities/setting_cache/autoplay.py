@@ -8,19 +8,27 @@ from .abc import CacheBase
 
 
 class AutoPlayManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild" "_currently_in_cache",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._cached: Dict[int, bool] = {}
+        self._cached_guild: Dict[int, bool] = {}
         self._currently_in_cache: Dict[int, Tuple[int, int]] = {}
 
     async def get_guild(self, guild: discord.Guild) -> bool:
         ret: bool
         gid: int = guild.id
-        if self.enable_cache and gid in self._cached:
-            ret = self._cached[gid]
+        if self.enable_cache and gid in self._cached_guild:
+            ret = self._cached_guild[gid]
         else:
             ret = await self._config.guild_from_id(gid).auto_play()
-            self._cached[gid] = ret
+            self._cached_guild[gid] = ret
         return ret
 
     async def get_currently_in_guild(self, guild: discord.Guild) -> Tuple[int, int]:
@@ -37,10 +45,10 @@ class AutoPlayManager(CacheBase):
         gid: int = guild.id
         if set_to is not None:
             await self._config.guild_from_id(gid).auto_play.set(set_to)
-            self._cached[gid] = set_to
+            self._cached_guild[gid] = set_to
         else:
             await self._config.guild_from_id(gid).auto_play.clear()
-            self._cached[gid] = self._config.defaults["GUILD"]["auto_play"]
+            self._cached_guild[gid] = self._config.defaults["GUILD"]["auto_play"]
 
     async def set_currently_in_guild(
         self, guild: discord.Guild, set_to: Optional[Tuple[int, int]] = None

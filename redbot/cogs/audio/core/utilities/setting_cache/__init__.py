@@ -54,7 +54,7 @@ def cache_factory(cls):
     return attr.Factory(factory, takes_self=True)
 
 
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, slots=True)
 class SettingCacheManager:
     bot: Red
     config: Config

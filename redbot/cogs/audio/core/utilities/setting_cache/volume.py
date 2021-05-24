@@ -12,6 +12,16 @@ _ = Translator("Audio", Path(__file__))
 
 
 class VolumeManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+        "_cached_channel",
+        "_cached_global",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, int] = {}

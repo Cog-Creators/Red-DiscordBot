@@ -8,6 +8,15 @@ from .abc import CacheBase
 
 
 class ChannelRestrictManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_vc",
+        "_cached_text",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_vc: Dict[Optional[int], Set[int]] = {}
