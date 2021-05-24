@@ -2437,7 +2437,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Admin Action."),
-            description=_("Successfully disconnected from all idle voice channels."),
+            description=_("Successfully disconnected from the specified server."),
         )
 
     # --------------------------- USER COMMANDS ----------------------------
