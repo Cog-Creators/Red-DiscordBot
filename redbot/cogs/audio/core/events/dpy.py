@@ -21,7 +21,7 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
+log = logging.getLogger("red.core.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
 RE_CONVERSION: Final[Pattern] = re.compile('Converting to "(.*)" failed for parameter "(.*)".')
 

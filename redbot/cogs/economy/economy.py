@@ -21,7 +21,7 @@ from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
 
-logger = logging.getLogger("red.economy")
+logger = logging.getLogger("red.core.cogs.Economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 VARIATION_SELECTOR = "\N{VARIATION SELECTOR-16}"

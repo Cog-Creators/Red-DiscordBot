@@ -22,7 +22,7 @@ from ...utils import task_callback
 from ..abc import MixinMeta
 from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
+log = logging.getLogger("red.core.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
 
 

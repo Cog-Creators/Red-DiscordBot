@@ -20,7 +20,7 @@ from redbot.core.utils.predicates import ReactionPredicate
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.player_controller")
+log = logging.getLogger("red.core.cogs.Audio.cog.Commands.player_controller")
 _ = Translator("Audio", Path(__file__))
 
 

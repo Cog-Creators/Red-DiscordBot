@@ -40,7 +40,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 from rich.text import Text
 
-log = logging.getLogger("red")
+log = logging.getLogger("red.core.events")
 
 INTRO = r"""
 ______         _           ______ _                       _  ______       _

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 _API_URL = "https://api.redbot.app/"
 _ = Translator("Audio", Path(__file__))
-log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
+log = logging.getLogger("red.core.cogs.Audio.api.GlobalDB")
 
 
 class GlobalCacheWrapper:

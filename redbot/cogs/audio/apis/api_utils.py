@@ -16,7 +16,7 @@ from redbot.core.utils.chat_formatting import humanize_list
 from ..errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
 from ..utils import PlaylistScope
 
-log = logging.getLogger("red.cogs.Audio.api.utils")
+log = logging.getLogger("red.core.cogs.Audio.api.utils")
 _ = Translator("Audio", Path(__file__))
 
 

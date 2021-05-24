@@ -9,7 +9,7 @@ import aiohttp
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.Parsing")
+log = logging.getLogger("red.core.cogs.Audio.cog.Utilities.Parsing")
 
 STREAM_TITLE: Final[re.Pattern] = re.compile(br"StreamTitle='([^']*)';")
 

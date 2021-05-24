@@ -22,7 +22,7 @@ from .errors import LavalinkDownloadFailed
 from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
-log = logging.getLogger("red.Audio.manager")
+log = logging.getLogger("red.core.cogs.Audio.manager")
 JAR_VERSION: Final[str] = "3.3.2.3"
 JAR_BUILD: Final[int] = 1212
 LAVALINK_DOWNLOAD_URL: Final[str] = (

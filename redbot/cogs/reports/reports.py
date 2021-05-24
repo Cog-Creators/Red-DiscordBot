@@ -18,7 +18,7 @@ from redbot.core.utils.tunnel import Tunnel
 
 _ = Translator("Reports", __file__)
 
-log = logging.getLogger("red.reports")
+log = logging.getLogger("red.core.cogs.Reports")
 
 
 @cog_i18n(_)

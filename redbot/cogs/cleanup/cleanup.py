@@ -15,7 +15,7 @@ from .converters import PositiveInt, RawMessageIds, positive_int
 
 _ = Translator("Cleanup", __file__)
 
-log = logging.getLogger("red.cleanup")
+log = logging.getLogger("red.core.cogs.Cleanup")
 
 
 @cog_i18n(_)

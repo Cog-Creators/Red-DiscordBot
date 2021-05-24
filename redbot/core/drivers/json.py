@@ -20,7 +20,7 @@ _driver_counts = {}
 _finalizers = []
 _locks = defaultdict(asyncio.Lock)
 
-log = logging.getLogger("redbot.json_driver")
+log = logging.getLogger("red.core.driver.json")
 
 
 def finalize_driver(cog_name):

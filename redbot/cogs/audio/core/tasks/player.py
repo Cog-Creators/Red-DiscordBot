@@ -14,7 +14,7 @@ from ...audio_logging import debug_exc_log
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Tasks.player")
+log = logging.getLogger("red.core.cogs.Audio.cog.Tasks.player")
 _ = Translator("Audio", Path(__file__))
 
 

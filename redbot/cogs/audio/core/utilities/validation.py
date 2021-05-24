@@ -13,7 +13,7 @@ from ...audio_dataclasses import Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
+log = logging.getLogger("red.core.cogs.Audio.cog.Utilities.validation")
 
 _RE_YT_LIST_PLAYLIST: Final[Pattern] = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"

@@ -21,7 +21,7 @@ from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+log = logging.getLogger("red.core.cogs.Audio.cog.Utilities.formatting")
 _ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 

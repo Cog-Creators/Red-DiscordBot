@@ -12,7 +12,7 @@ import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-log = logging.getLogger("red.cogs.Audio.task.callback")
+log = logging.getLogger("red.core.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 

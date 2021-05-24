@@ -8,7 +8,7 @@ from redbot.core.i18n import Translator
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.red")
+log = logging.getLogger("red.core.cogs.Audio.cog.Events.red")
 _ = Translator("Audio", Path(__file__))
 
 

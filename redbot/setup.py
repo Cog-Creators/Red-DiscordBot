@@ -21,7 +21,7 @@ from redbot.core.utils._internal_utils import safe_delete, create_backup as red_
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
-conversion_log = logging.getLogger("red.converter")
+conversion_log = logging.getLogger("red.driver.converter")
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")

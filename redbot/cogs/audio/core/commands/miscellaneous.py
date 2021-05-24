@@ -17,7 +17,7 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
+log = logging.getLogger("red.core.cogs.Audio.cog.Commands.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 
 

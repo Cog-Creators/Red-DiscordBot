@@ -16,7 +16,7 @@ from .alias_entry import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)
 
-log = logging.getLogger("red.cogs.alias")
+log = logging.getLogger("red.core.cogs.Alias")
 
 
 class _TrackingFormatter(Formatter):

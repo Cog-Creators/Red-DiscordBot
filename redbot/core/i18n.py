@@ -31,7 +31,7 @@ __all__ = [
     "set_contextual_locales_from_guild",
 ]
 
-log = logging.getLogger("red.i18n")
+log = logging.getLogger("red.core.i18n")
 
 _current_locale = ContextVar("_current_locale", default="en-US")
 _current_regional_format = ContextVar("_current_regional_format", default=None)

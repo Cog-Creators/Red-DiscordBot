@@ -34,7 +34,7 @@ from ..sql_statements import (
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult
 
-log = logging.getLogger("red.cogs.Audio.api.Playlists")
+log = logging.getLogger("red.core.cogs.Audio.api.Playlists")
 _ = Translator("Audio", Path(__file__))
 
 

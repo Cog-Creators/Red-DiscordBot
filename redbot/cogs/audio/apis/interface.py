@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 _ = Translator("Audio", Path(__file__))
-log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
+log = logging.getLogger("red.core.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 # TODO: Get random from global Cache
 

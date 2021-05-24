@@ -14,7 +14,7 @@ from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.local_track")
+log = logging.getLogger("red.core.cogs.Audio.cog.Commands.local_track")
 _ = Translator("Audio", Path(__file__))
 
 

@@ -20,7 +20,7 @@ from .abc import MixinMeta
 from .converters import RawUserIds
 from .utils import is_allowed_by_hierarchy
 
-log = logging.getLogger("red.mod")
+log = logging.getLogger("red.core.cogs.Mod")
 _ = i18n.Translator("Mod", __file__)
 
 

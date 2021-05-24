@@ -91,7 +91,7 @@ if TYPE_CHECKING:
 
 __all__ = ["Core"]
 
-log = logging.getLogger("red")
+log = logging.getLogger("red.core.commands")
 
 _ = i18n.Translator("Core", __file__)
 

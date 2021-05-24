@@ -6,7 +6,7 @@ from datetime import timedelta
 from discord.ext.commands.converter import Converter
 from redbot.core import commands
 
-log = logging.getLogger("red.cogs.mutes")
+log = logging.getLogger("red.core.cogs.Mutes")
 
 # the following regex is slightly modified from Red
 # it's changed to be slightly more strict on matching with finditer

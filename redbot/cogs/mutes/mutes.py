@@ -49,7 +49,7 @@ MUTE_UNMUTE_ISSUES = {
 }
 _ = T_
 
-log = logging.getLogger("red.cogs.mutes")
+log = logging.getLogger("red.core.cogs.Mutes")
 
 __version__ = "1.0.0"
 

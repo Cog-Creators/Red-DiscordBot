@@ -18,7 +18,7 @@ from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.audio")
+log = logging.getLogger("red.core.cogs.Audio.cog.Events.audio")
 _ = Translator("Audio", Path(__file__))
 
 

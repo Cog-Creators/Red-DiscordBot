@@ -10,7 +10,7 @@ from redbot.core.utils.chat_formatting import box
 from .announcer import Announcer
 from .converters import SelfRole
 
-log = logging.getLogger("red.admin")
+log = logging.getLogger("red.core.cogs.Admin")
 
 T_ = Translator("Admin", __file__)
 

@@ -56,7 +56,7 @@ CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
-log = logging.getLogger("red")
+log = logging.getLogger("red.core")
 
 __all__ = ["RedBase", "Red", "ExitCodes"]
 

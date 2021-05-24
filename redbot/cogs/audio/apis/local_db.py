@@ -60,7 +60,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 
-log = logging.getLogger("red.cogs.Audio.api.LocalDB")
+log = logging.getLogger("red.core.cogs.Audio.api.LocalDB")
 _ = Translator("Audio", Path(__file__))
 _SCHEMA_VERSION = 3
 

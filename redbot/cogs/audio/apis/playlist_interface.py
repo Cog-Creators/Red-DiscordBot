@@ -16,7 +16,7 @@ from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
 from .playlist_wrapper import PlaylistWrapper
 
-log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
+log = logging.getLogger("red.core.cogs.Audio.api.PlaylistsInterface")
 _ = Translator("Audio", Path(__file__))
 
 
