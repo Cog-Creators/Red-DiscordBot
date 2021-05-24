@@ -1090,6 +1090,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 self.update_player_lock(ctx, False)
                 if isinstance(tracks, discord.Message):
                     return
+                if not tracks:
+                    return await self.send_embed_msg(
+                        ctx, title=_("Couldn't generated a mixlist.")
+                    )
                 single_track = tracks if isinstance(tracks, lavalink.rest_api.Track) else tracks[0]
                 _id = single_track._info["identifier"]
                 mix = "https://www.youtube.com/watch?v={id}&list=RD{id}".format(id=_id)
