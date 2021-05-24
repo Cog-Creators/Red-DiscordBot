@@ -491,7 +491,7 @@ class Admin(commands.Cog):
         await ctx.send(_("Removed."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def serverlock(self, ctx: commands.Context):
         """Lock a bot to its current servers only."""
         serverlocked = await self.config.serverlocked()
