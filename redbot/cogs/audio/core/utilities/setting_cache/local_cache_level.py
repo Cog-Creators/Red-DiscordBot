@@ -4,17 +4,13 @@ from typing import Dict, Optional
 
 import discord
 
-from .abc import CachingABC
+from .abc import CacheBase
 from redbot.cogs.audio.utils import CacheLevel
-from redbot.core import Config
-from redbot.core.bot import Red
 
 
-class LocalCacheLevelManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class LocalCacheLevelManager(CacheBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, int] = {}
 
     async def get_global(self) -> CacheLevel:

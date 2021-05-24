@@ -4,16 +4,12 @@ from typing import Dict, Optional
 
 import discord
 
-from .abc import CachingABC
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class ManagedLavalinkManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class ManagedLavalinkManager(CacheBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, bool] = {}
 
     async def get_global(self) -> bool:

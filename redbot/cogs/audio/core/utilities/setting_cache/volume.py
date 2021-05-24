@@ -6,18 +6,14 @@ from typing import Dict, Optional, Tuple
 import discord
 
 from redbot.core.i18n import Translator
-from .abc import CachingABC
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 _ = Translator("Audio", Path(__file__))
 
 
-class VolumeManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class VolumeManager(CacheBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, int] = {}
         self._cached_channel: Dict[int, int] = {}
         self._cached_global: Dict[None, int] = {}

@@ -4,16 +4,12 @@ from typing import Dict, Optional, Union
 
 import discord
 
-from .abc import CachingABC
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class GlobalDBTimeoutManager(CachingABC):
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class GlobalDBTimeoutManager(CacheBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, Union[float, int]] = {}
 
     async def get_global(self) -> Union[float, int]:
