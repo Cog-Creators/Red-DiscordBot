@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, commands, modlog
+from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
@@ -28,12 +28,12 @@ class ModLog(commands.Cog):
         return
 
     @commands.group()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Manage modlog settings."""
         pass
 
-    @checks.is_owner()
+    @commands.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
     async def reapply_audittype_migration(self, ctx: commands.Context):
         """Command to fix misbehaving casetypes."""

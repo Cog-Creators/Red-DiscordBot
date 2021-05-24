@@ -1,7 +1,7 @@
 import discord
 from redbot.core.utils.chat_formatting import box, humanize_number
 
-from redbot.core import checks, bank, commands
+from redbot.core import bank, commands
 from redbot.core.i18n import Translator, cog_i18n
 
 from redbot.core.bot import Red  # Only used for type hints
@@ -42,7 +42,7 @@ class Bank(commands.Cog):
     # SECTION commands
 
     @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @commands.group()
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings."""
@@ -78,7 +78,7 @@ class Bank(commands.Cog):
         await ctx.send(box(settings))
 
     @bankset.command(name="toggleglobal")
-    @checks.is_owner()
+    @commands.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
         """Toggle whether the bank is global or not.
 
@@ -100,7 +100,7 @@ class Bank(commands.Cog):
             await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
 
     @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="bankname")
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
         """Set the bank's name."""
@@ -108,7 +108,7 @@ class Bank(commands.Cog):
         await ctx.send(_("Bank name has been set to: {name}").format(name=name))
 
     @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="creditsname")
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
         """Set the name for the bank's currency."""
@@ -116,7 +116,7 @@ class Bank(commands.Cog):
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 
     @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="maxbal")
     async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
         """Set the maximum balance a user can get."""

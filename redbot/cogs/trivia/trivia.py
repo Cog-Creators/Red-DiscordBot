@@ -9,7 +9,7 @@ import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks
+from redbot.core import Config, commands
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -75,7 +75,7 @@ class Trivia(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage Trivia settings."""
 
@@ -192,7 +192,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
     @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.

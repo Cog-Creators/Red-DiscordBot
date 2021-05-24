@@ -1,7 +1,7 @@
 import re
 from .abc import MixinMeta
 from datetime import timedelta
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
 
 _ = i18n.Translator("Mod", __file__)
@@ -15,7 +15,7 @@ class Slowmode(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_permissions(manage_channels=True)
     async def slowmode(
         self,
         ctx,

@@ -10,7 +10,7 @@ import discord
 
 from redbot.cogs.bank import is_owner_if_bank_global
 from redbot.cogs.mod.converters import RawUserIds
-from redbot.core import Config, bank, commands, errors, checks
+from redbot.core import Config, bank, commands, errors
 from redbot.core.commands.converter import TimedeltaConverter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -241,7 +241,7 @@ class Economy(commands.Cog):
         )
 
     @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of a user's bank account.
@@ -292,7 +292,7 @@ class Economy(commands.Cog):
             await ctx.send(msg)
 
     @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @_bank.command()
     async def reset(self, ctx, confirmation: bool = False):
         """Delete all bank accounts.
@@ -324,7 +324,7 @@ class Economy(commands.Cog):
             )
 
     @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.group(name="prune")
     async def _prune(self, ctx):
         """Base command for pruning bank accounts."""
@@ -332,7 +332,7 @@ class Economy(commands.Cog):
 
     @_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
-    @checks.guildowner()
+    @commands.guildowner()
     async def _local(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users no longer in the server.
 
@@ -365,7 +365,7 @@ class Economy(commands.Cog):
             )
 
     @_prune.command(name="global")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _global(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users who no longer share a server with the bot.
 
@@ -806,7 +806,7 @@ class Economy(commands.Cog):
 
     @guild_only_check()
     @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Base command to manage Economy settings."""

@@ -4,7 +4,7 @@ from typing import Tuple
 
 import discord
 
-from redbot.core import Config, checks, commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from .announcer import Announcer
@@ -218,7 +218,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def addrole(
         self, ctx: commands.Context, rolename: discord.Role, *, user: discord.Member = None
     ):
@@ -234,7 +234,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def removerole(
         self, ctx: commands.Context, rolename: discord.Role, *, user: discord.Member = None
     ):
@@ -250,7 +250,7 @@ class Admin(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edit role settings."""
         pass
@@ -324,7 +324,7 @@ class Admin(commands.Cog):
             await ctx.send(_("Done."))
 
     @commands.group(invoke_without_command=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def announce(self, ctx: commands.Context, *, message: str):
         """Announce a message to all servers the bot is in."""
         if not self.is_announcing():
@@ -349,7 +349,7 @@ class Admin(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def announceset(self, ctx):
         """Change how announcements are sent in this guild."""
         pass
@@ -444,7 +444,7 @@ class Admin(commands.Cog):
         await ctx.send(box(msg, "diff"))
 
     @commands.group()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def selfroleset(self, ctx: commands.Context):
         """Manage selfroles."""
         pass

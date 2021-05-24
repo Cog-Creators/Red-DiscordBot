@@ -3,7 +3,7 @@ from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
 import discord
-from redbot.core import commands, checks, i18n, modlog
+from redbot.core import commands, i18n, modlog
 from redbot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
