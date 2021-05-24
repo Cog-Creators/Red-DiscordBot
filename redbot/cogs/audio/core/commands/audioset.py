@@ -2269,7 +2269,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ws_port = configs["ws_port"]
         msg = "----" + _("Connection Settings") + "----        \n"
         msg += _("Host:             [{host}]\n").format(host=host)
-        msg += _("Port:          [{port}]\n").format(port=ws_port)
+        msg += _("Port:             [{port}]\n").format(port=ws_port)
         if ws_port != rest_port and rest_port != 2333:
             msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
         msg += _("Password:         [{password}]\n").format(password=password)
