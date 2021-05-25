@@ -16,7 +16,6 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
@@ -25,7 +24,6 @@ import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
-from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -36,6 +34,7 @@ from . import (
     i18n,
 )
 from .utils import AsyncIter
+from .utils._dpy_menus_utils import dpymenu
 from .utils._internal_utils import fetch_latest_red_version_info
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
@@ -1651,7 +1650,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if len(pages) == 1:
             await ctx.send(pages[0])
         else:
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await dpymenu(ctx, pages)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
