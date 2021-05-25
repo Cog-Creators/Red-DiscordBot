@@ -65,6 +65,10 @@ class Stream:
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
 
+    @property
+    def display_name(self) -> Optional[str]:
+        return self.name
+
     async def is_online(self):
         raise NotImplementedError()
 
@@ -299,11 +303,20 @@ class TwitchStream(Stream):
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
+        self._display_name = None
         self._client_id = kwargs.pop("token", None)
         self._bearer = kwargs.pop("bearer", None)
         self._rate_limit_resets: set = set()
         self._rate_limit_remaining: int = 0
         super().__init__(**kwargs)
+
+    @property
+    def display_name(self) -> Optional[str]:
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, value: str) -> None:
+        self._display_name = value
 
     async def wait_for_rate_limit_reset(self) -> None:
         """Check rate limits in response header and ensure we're following them.
@@ -378,7 +391,7 @@ class TwitchStream(Stream):
                 final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
-            final_data["user_name"] = self.name = stream_data["user_name"]
+            final_data["user_name"] = self.display_name = stream_data["user_name"]
             final_data["game_name"] = stream_data["game_name"]
             final_data["thumbnail_url"] = stream_data["thumbnail_url"]
             final_data["title"] = stream_data["title"]

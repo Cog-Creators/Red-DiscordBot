@@ -200,7 +200,10 @@ Use ``{mention}`` in the message to insert the selected mentions.
 
 Use ``{stream}`` in the message to insert the channel or user name.
 
-For example: ``[p]streamset message mention {mention}, {stream} is live!``
+Use ``{stream.display_name}`` in the message to insert the channel's display name
+(on Twitch, this may be different from ``{stream}``).
+
+For example: ``[p]streamset message mention {mention}, {stream.display_name} is live!``
 
 **Arguments**
 
@@ -224,7 +227,10 @@ Sets a stream alert message for when mentions are disabled.
 
 Use ``{stream}`` in the message to insert the channel or user name.
 
-For example: ``[p]streamset message nomention {stream} is live!``
+Use ``{stream.display_name}`` in the message to insert the channel's display name
+(on Twitch, this may be different from ``{stream}``).
+
+For example: ``[p]streamset message nomention {stream.display_name} is live!``
 
 **Arguments**
 

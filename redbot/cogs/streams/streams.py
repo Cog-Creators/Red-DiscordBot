@@ -528,9 +528,10 @@ class Streams(commands.Cog):
         """Set stream alert message when mentions are enabled.
 
         Use `{mention}` in the message to insert the selected mentions.
-        Use `{stream}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or username.
+        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).
 
-        For example: `[p]streamset message mention {mention}, {stream} is live!`
+        For example: `[p]streamset message mention {mention}, {stream.display_name} is live!`
         """
         guild = ctx.guild
         await self.config.guild(guild).live_message_mention.set(message)
@@ -541,9 +542,10 @@ class Streams(commands.Cog):
     async def without_mention(self, ctx: commands.Context, *, message: str):
         """Set stream alert message when mentions are disabled.
 
-        Use `{stream}` in the message to insert the channel or user name.
+        Use `{stream}` in the message to insert the channel or username.
+        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).
 
-        For example: `[p]streamset message nomention {stream} is live!`
+        For example: `[p]streamset message nomention {stream.display_name} is live!`
         """
         guild = ctx.guild
         await self.config.guild(guild).live_message_nomention.set(message)
@@ -808,13 +810,18 @@ class Streams(commands.Cog):
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
+                                content = content.replace(
+                                    "{stream.display_name}", str(stream.display_name)
+                                )
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{mention}", mention_str)
                             else:
-                                content = _("{mention}, {stream} is live!").format(
+                                content = _("{mention}, {display_name} is live!").format(
                                     mention=mention_str,
-                                    stream=escape(
-                                        str(stream.name), mass_mentions=True, formatting=True
+                                    display_name=escape(
+                                        str(stream.display_name),
+                                        mass_mentions=True,
+                                        formatting=True,
                                     ),
                                 )
                         else:
@@ -826,11 +833,16 @@ class Streams(commands.Cog):
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
+                                content = content.replace(
+                                    "{stream.display_name}", str(stream.display_name)
+                                )
                                 content = content.replace("{stream}", str(stream.name))
                             else:
-                                content = _("{stream} is live!").format(
-                                    stream=escape(
-                                        str(stream.name), mass_mentions=True, formatting=True
+                                content = _("{display_name} is live!").format(
+                                    display_name=escape(
+                                        str(stream.display_name),
+                                        mass_mentions=True,
+                                        formatting=True,
                                     )
                                 )
                         await self._send_stream_alert(stream, channel, embed, content)
