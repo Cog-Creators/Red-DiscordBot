@@ -35,7 +35,7 @@ with your name:
 
     AUTHOR: Red
 
-If there are multiple authors, we can seperate them with commas.
+If there are multiple authors, we can separate them with commas.
 
 .. code-block:: yaml
 
@@ -56,7 +56,7 @@ of the question, for example:
 
     How many days are there in a regular year?:
 
-Answers will follow below, each seperated by a line break and with a
+Answers will follow below, each separated by a line break and with a
 hyphen at the start of the line.
 
 .. code-block:: yaml
@@ -65,10 +65,10 @@ hyphen at the start of the line.
     - 365
     - three hundred and sixty five
 
-Its always nice to include alternative answers if a question needs it. 
+It's always nice to include alternative answers if a question needs it. 
 We can add as many valid answers as we'd like below this question. Answers
 are **NOT** case sensitive, so you don't need to worry about adding the same
-answer multiple times in different casing.
+answer multiple times in different casings.
 
 There are multiple special characters in YAML, such as colons, hashtags, hyphens
 and more. If these characters are included within our questions or answers,
