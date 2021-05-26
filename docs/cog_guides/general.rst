@@ -67,14 +67,16 @@ choose
 **Description**
 
 Choose between multiple options.
-Choices are separated by spaces.
+Options are separated by spaces.
 
-.. note::  There must be at least 2 choices to pick from.
-.. note::  To denote choices which include whitespace, you should enclose the choice in double quotes.
+.. note::  There must be at least 2 options to pick from.
+.. note::  To denote options which include whitespace, you should enclose the option in double quotes.
 
 **Arguments**
 
-* ``<first> <second> [others...]``: The arguments for Red to randomly choose from.
+* ``<first>``: The first mandatory option to randomly choose from.
+* ``<second>``: The second mandatory option to randomly choose from.
+* ``[others...]``: Any remaining optional options to choose from.
 
 
 .. _general-command-flip:

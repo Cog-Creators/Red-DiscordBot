@@ -84,10 +84,10 @@ class General(commands.Cog):
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
-        There must be at least 2 choices to pick from.
-        Choices are separated by spaces.
+        There must be at least 2 options to pick from.
+        Options are separated by spaces.
 
-        To denote choices which include whitespace, you should enclose the choice in double quotes.
+        To denote options which include whitespace, you should enclose the options in double quotes.
         """
         choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
