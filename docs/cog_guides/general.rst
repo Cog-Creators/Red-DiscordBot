@@ -74,9 +74,9 @@ Options are separated by spaces.
 
 **Arguments**
 
-* ``<first>``: The first mandatory option to randomly choose from.
-* ``<second>``: The second mandatory option to randomly choose from.
-* ``[others...]``: Any remaining optional options to choose from.
+* ``<first>``: The first mandatory option.
+* ``<second>``: The second mandatory option.
+* ``[others...]``: Any remaining optional options.
 
 
 .. _general-command-flip:
