@@ -825,7 +825,7 @@ class Downloader(commands.Cog):
                     message += (
                         _("\nFailed to install requirements: ")
                         if len(failed_reqs) > 1
-                        else _("\nFailed to install requirement: ")
+                        else _("\nFailed to install the requirement: ")
                     ) + humanize_list(tuple(map(inline, failed_reqs)))
                     await self.send_pagified(ctx, message)
                     return
