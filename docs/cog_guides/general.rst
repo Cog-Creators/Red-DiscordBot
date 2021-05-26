@@ -62,18 +62,20 @@ choose
 
 .. code-block:: none
 
-    [p]choose [choices...]
+    [p]choose <first> <second> [others...]
 
 **Description**
 
 Choose between multiple options.
+Choices are separated by spaces.
 
-.. note:: To denote options which include whitespace, you should use
-    double quotes.
+.. note::  There must be at least 2 choices to pick from.
+.. note::  To denote choices which include whitespace, you should enclose the choice in double quotes.
 
 **Arguments**
 
-* ``[choices...]``: The arguments for Red to randomly choose from.
+* ``<first> <second> [others...]``: The arguments for Red to randomly choose from.
+
 
 .. _general-command-flip:
 

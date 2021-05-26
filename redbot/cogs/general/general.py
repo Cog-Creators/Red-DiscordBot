@@ -85,10 +85,9 @@ class General(commands.Cog):
         """Choose between multiple options.
 
         There must be at least 2 choices to pick from.
-        Choices are seperated by spaces.
+        Choices are separated by spaces.
 
-        To denote choices which include whitespace, you should enclose
-        the choice in double quotes.
+        To denote choices which include whitespace, you should enclose the choice in double quotes.
         """
         choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
