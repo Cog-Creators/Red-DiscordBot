@@ -45,6 +45,7 @@ Streams
 - ``[p]twitchstream``, ``[p]youtubestream``, and ``[p]picarto`` commands can no longer be run in DMs (:issue:`5036`, :issue:`5035`)
 - Smashcast service has been closed and for that reason we have removed support for it from the cog (:issue:`5039`, :issue:`5040`)
 - Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
+- The cog no longer errors when trying to delete a cached message from a channel that no longer exists (:issue:`5032`, :issue:`5031`)
 - In message template, ``{stream.display_name}`` can now be used to refer to streamer's display name (:issue:`5050`, :issue:`5066`)
 
     - This is not always the same as ``{stream}`` which refers to the streamer's channel or username
