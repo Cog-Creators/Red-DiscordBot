@@ -24,6 +24,11 @@ Admin
 
 - The cog will now log when it leaves the guild due to the serverlock (:issue:`5008`, :issue:`5073`)
 
+Audio
+*****
+
+- Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
+
 Downloader
 **********
 
