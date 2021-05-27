@@ -17,7 +17,7 @@ import pip
 import traceback
 from pathlib import Path
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.commands import GuildConverter
+from redbot.core.commands import GuildConverter, RawUserIds
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -2067,7 +2067,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @bankset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):
-        """Set the initial balance for new bank accounts."""
+        """Set the initial balance for new bank accounts.
+
+        Example:
+            - `[p]economyset registeramount 5000`
+
+        **Arguments**
+
+        - `<creds>` The new initial balance amount. Default is 0.
+        """
         guild = ctx.guild
         max_balance = await bank.get_max_balance(ctx.guild)
         credits_name = await bank.get_currency_name(guild)
@@ -2119,7 +2127,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @checks.guildowner()
     async def _local(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users no longer in the server."""
+        """Prune bank accounts for users no longer in the server.
+
+        Cannot be used with a global bank. See `[p]bank prune global`.
+
+        Examples:
+            - `[p]bank prune server` - Did not confirm. Shows the help message.
+            - `[p]bank prune server yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         global_bank = await bank.is_global()
         if global_bank is True:
             return await ctx.send(_("This command cannot be used with a global bank."))
@@ -2141,7 +2160,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_prune.command(name="global")
     @checks.is_owner()
     async def _global(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users who no longer share a server with the bot."""
+        """Prune bank accounts for users who no longer share a server with the bot.
+
+        Cannot be used without a global bank. See `[p]bank prune server`.
+
+        Examples:
+            - `[p]bank prune global` - Did not confirm. Shows the help message.
+            - `[p]bank prune global yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         global_bank = await bank.is_global()
         if global_bank is False:
             return await ctx.send(_("This command cannot be used with a local bank."))
@@ -2165,14 +2195,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_prune.command(usage="<user> [confirmation=False]")
     async def user(
-        self,
-        ctx,
-        member_or_id: Union[discord.Member, commands.RawUserIds],
-        confirmation: bool = False,
+        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
     ):
-        """Delete the bank account of a specified user."""
-        global_bank = await bank.is_global()
-        if global_bank is False and ctx.guild is None:
+        """Delete the bank account of a specified user.
+
+        Examples:
+            - `[p]bank prune user @TwentySix` - Did not confirm. Shows the help message.
+            - `[p]bank prune user @TwentySix yes`
+
+        **Arguments**
+
+        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
+        - `<confirmation>` This will default to false unless specified.
+        """
+        if ctx.guild is None and not await bank.is_global():
             return await ctx.send(_("This command cannot be used in DMs with a local bank."))
         try:
             name = member_or_id.display_name
