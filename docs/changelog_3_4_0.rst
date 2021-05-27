@@ -57,6 +57,11 @@ Streams
 
     - This is not always the same as ``{stream}`` which refers to the streamer's channel or username
 
+Warnings
+********
+
+- The warn action is now taken *after* sending the warn message to the member (:issue:`4713`, :issue:`5004`)
+
 
 Developer changelog
 -------------------
