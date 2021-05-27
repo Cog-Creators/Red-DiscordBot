@@ -14,6 +14,11 @@ Read before updating
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Fixed terminal colors on Windows (:issue:`5063`)
+
 Admin
 *****
 
