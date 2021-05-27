@@ -24,6 +24,11 @@ Downloader
 
 - ``[p]repo remove`` can now remove multiple repos at the same time (:issue:`4765`, :issue:`5082`)
 
+Mod
+***
+
+- ``[p]mute`` command no longer errors on muting a bot user if ``senddm`` option is enabled (:issue:`5071`)
+
 
 Developer changelog
 -------------------
