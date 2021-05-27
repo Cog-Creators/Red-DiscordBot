@@ -14,6 +14,10 @@ Read before updating
 End-user changelog
 ------------------
 
+Downloader
+**********
+
+- ``[p]repo remove`` can now remove multiple repos at the same time (:issue:`4765`, :issue:`5082`)
 
 
 Developer changelog
