@@ -371,7 +371,7 @@ class Warnings(commands.Cog):
         """Warn the user for the specified reason.
         `<points>` number of points the warning should be for. If no number is supplied
         1 point will be given. Pre-set warnings disregard this.
-        `<reason>` is reason for the warning. This can be a registered reason, 
+        `<reason>` is reason for the warning. This can be a registered reason,
         or a custom reason if ``[p]warningset allowcustomreasons`` is set.
         """
         guild = ctx.guild
