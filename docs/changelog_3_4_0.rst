@@ -19,6 +19,7 @@ Core Bot
 
 - Fixed terminal colors on Windows (:issue:`5063`)
 - Fixed ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
+- Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` command (:issue:`4971`)
 
 Admin
 *****
