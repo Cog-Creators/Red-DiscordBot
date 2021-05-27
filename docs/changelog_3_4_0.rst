@@ -30,6 +30,11 @@ Audio
 
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 
+Custom Commands
+***************
+
+- ``[p]customcom create simple`` no longer errors for a few specific names (:issue:`5026`, :issue:`5027`)
+
 Downloader
 **********
 
