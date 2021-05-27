@@ -18,6 +18,7 @@ Core Bot
 ********
 
 - Fixed terminal colors on Windows (:issue:`5063`)
+- Fixed ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
 
 Admin
 *****
