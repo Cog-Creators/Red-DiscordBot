@@ -604,7 +604,8 @@ class Downloader(commands.Cog):
                 _("Successfully deleted repos: ")
                 if len(repos) > 1
                 else _("Successfully deleted the repo: ")
-            ) + humanize_list([i.name for i in set(repos)])
+            )
+            + humanize_list([i.name for i in set(repos)])
         )
 
     @repo.command(name="list")
