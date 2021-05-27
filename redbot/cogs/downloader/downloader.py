@@ -599,14 +599,13 @@ class Downloader(commands.Cog):
         for repo in set(repos):
             await self._repo_manager.delete_repo(repo.name)
 
-        if len(repos) == 1:
-            await ctx.send(
-                _("The repo `{repo.name}` has been deleted successfully.").format(repo=repo)
-            )
-        else:
-            await ctx.send(
-                _("Successfully deleted repos: ") + humanize_list([i.name for i in set(repos)])
-            )
+        await ctx.send(
+            (
+                _("Successfully deleted repos: ")
+                if len(repos) > 1
+                else _("Successfully deleted the repo: ")
+            ) + humanize_list([i.name for i in set(repos)])
+        )
 
     @repo.command(name="list")
     async def _repo_list(self, ctx: commands.Context) -> None:
