@@ -52,6 +52,7 @@ Developer changelog
 -------------------
 
 - Bumped discord.py to 1.7.2 (:issue:`5066`)
+- **Dev** - ``[p]eval``, ``[p]repl``, and ``[p]debug`` commands no longer fail to send very long syntax errors (:issue:`5041`)
 
 
 Documentation changes
