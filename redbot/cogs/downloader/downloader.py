@@ -583,22 +583,29 @@ class Downloader(commands.Cog):
             if repo.install_msg:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
 
-    @repo.command(name="delete", aliases=["remove", "del"])
-    async def _repo_del(self, ctx: commands.Context, repo: Repo) -> None:
+    @repo.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
+    async def _repo_del(self, ctx: commands.Context, *repos: Repo) -> None:
         """
-        Remove a repo and its files.
+        Remove repos and their files.
 
-        Example:
+        Examples:
             - `[p]repo delete 26-Cogs`
+            - `[p]repo delete 26-Cogs Laggrons-Dumb-Cogs`
 
         **Arguments**
 
-        - `<repo>` The name of an already added repo
+        - `<repos...>` The repo or repos to remove.
         """
-        await self._repo_manager.delete_repo(repo.name)
+        for repo in set(repos):
+            await self._repo_manager.delete_repo(repo.name)
 
         await ctx.send(
-            _("The repo `{repo.name}` has been deleted successfully.").format(repo=repo)
+            (
+                _("Successfully deleted repos: ")
+                if len(repos) > 1
+                else _("Successfully deleted the repo: ")
+            )
+            + humanize_list([inline(i.name) for i in set(repos)])
         )
 
     @repo.command(name="list")
