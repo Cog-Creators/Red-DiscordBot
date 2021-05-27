@@ -14,6 +14,11 @@ Read before updating
 End-user changelog
 ------------------
 
+Admin
+*****
+
+- The cog will now log when it leaves the guild due to the serverlock (:issue:`5008`, :issue:`5073`)
+
 Downloader
 **********
 
