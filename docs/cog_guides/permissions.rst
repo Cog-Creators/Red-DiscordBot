@@ -233,7 +233,7 @@ permissions addglobalrule
 
 **Description**
 
-Add a global rule to a command.
+Add a global rule to a cog or command.
 
 **Arguments**
 
@@ -257,7 +257,7 @@ permissions addserverrule
 
 **Description**
 
-Add a rule to a command in this server.
+Add a rule to a cog or command in this server.
 
 **Arguments**
 
@@ -361,7 +361,7 @@ Remove a global rule from a command.
 
 **Arguments**
 
-* ``<cog_or_command>``: The cog or command to add the rule to. This is case sensitive.
+* ``<cog_or_command>``: The cog or command to remove the rule from. This is case sensitive.
 * ``<who_or_what...>``: One or more users, channels or roles the rule is for.
 
 .. _permissions-command-permissions-removeserverrule:
@@ -384,7 +384,7 @@ Remove a server rule from a command.
 
 **Arguments**
 
-* ``<cog_or_command>``: The cog or command to add the rule to. This is case sensitive.
+* ``<cog_or_command>``: The cog or command to remove the rule from. This is case sensitive.
 * ``<who_or_what...>``: One or more users, channels or roles the rule is for.
 
 .. _permissions-command-permissions-setdefaultglobalrule:
@@ -403,7 +403,7 @@ permissions setdefaultglobalrule
 
 **Description**
 
-Set the default global rule for a command.
+Set the default global rule for a command or a cog.
 
 This is the rule a command will default to when no other rule
 is found.
@@ -429,7 +429,7 @@ permissions setdefaultserverrule
 
 **Description**
 
-Set the default rule for a command in this server.
+Set the default rule for a command or a cog in this server.
 
 This is the rule a command will default to when no other rule
 is found.
