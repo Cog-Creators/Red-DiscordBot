@@ -73,6 +73,7 @@ Miscellaneous
 -------------
 
 - Clarified that ``[p]cleanup`` commands only delete the messages from the current channel (:issue:`5070`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
 
 
 Redbot 3.4.9 (2021-04-06)
