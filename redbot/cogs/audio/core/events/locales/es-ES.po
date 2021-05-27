@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-13 12:20+0000\n"
+"POT-Creation-Date: 2021-04-05 19:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,97 +15,118 @@ msgstr ""
 "X-Crowdin-File-ID: 670\n"
 "Language: es_ES\n"
 
-#: redbot/cogs/audio/core/events/dpy.py:34
+#: redbot/cogs/audio/core/events/cog.py:211
+msgid "Auto Play started."
+msgstr "Auto Juego iniciado."
+
+#: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
-msgstr ""
+msgstr "Ha intentado ejecutar el servidor Lavalink de audio en una arquitectura no soportada. Sólo los comandos relacionados con la configuración estarán disponibles."
 
 #: redbot/cogs/audio/core/events/dpy.py:70
-msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
+"Expected Permissions:\n"
+msgstr "No tengo permisos en este servidor, por favor solucione esto tan pronto como sea posible.\n\n"
+"Permisos esperados:\n"
 
-#: redbot/cogs/audio/core/events/dpy.py:80
-msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
+#: redbot/cogs/audio/core/events/dpy.py:77
+msgid "Enabled"
+msgstr "Activado"
 
-#: redbot/cogs/audio/core/events/dpy.py:86
-msgid "Unable To Parse Argument"
-msgstr ""
-
-#: redbot/cogs/audio/core/events/dpy.py:96
-#: redbot/cogs/audio/core/events/dpy.py:104
-msgid "Invalid Argument"
-msgstr ""
-
-#: redbot/cogs/audio/core/events/dpy.py:97
-msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-msgstr ""
-
-#: redbot/cogs/audio/core/events/dpy.py:114
-msgid "Invalid Environment"
-msgstr ""
-
-#: redbot/cogs/audio/core/events/dpy.py:115
-msgid "Connection to Lavalink has been lost."
-msgstr ""
-
-#: redbot/cogs/audio/core/events/dpy.py:123
-msgid "No Player Available"
-msgstr ""
+#: redbot/cogs/audio/core/events/dpy.py:77
+msgid "Disabled"
+msgstr "Desactivado"
 
 #: redbot/cogs/audio/core/events/dpy.py:124
+msgid "No DJ role found. Disabling DJ mode."
+msgstr "No se ha encontrado el rol de DJ. Desactivando el modo DJ."
+
+#: redbot/cogs/audio/core/events/dpy.py:134
+msgid "`{user_input}` is not a valid value for `{command}`"
+msgstr "`{user_input}` no es un valor válido para `{command}`"
+
+#: redbot/cogs/audio/core/events/dpy.py:142
+msgid "Unable To Parse Argument"
+msgstr "No se puede analizar el argumento"
+
+#: redbot/cogs/audio/core/events/dpy.py:154
+#: redbot/cogs/audio/core/events/dpy.py:163
+msgid "Invalid Argument"
+msgstr "Argumento no válido"
+
+#: redbot/cogs/audio/core/events/dpy.py:155
+msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
+msgstr "El argumento que has dado para `{}` no es válido: esperaba un `{}`."
+
+#: redbot/cogs/audio/core/events/dpy.py:175
+msgid "Invalid Environment"
+msgstr "Entorno no válido"
+
+#: redbot/cogs/audio/core/events/dpy.py:176
+msgid "Connection to Lavalink has been lost."
+msgstr "La conexión a Lavalink se ha perdido."
+
+#: redbot/cogs/audio/core/events/dpy.py:184
+msgid "No Player Available"
+msgstr "Jugador no disponible"
+
+#: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
-msgstr ""
+msgstr "El bot no está conectado a un canal de voz."
 
-#: redbot/cogs/audio/core/events/dpy.py:132
-#: redbot/cogs/audio/core/events/lavalink.py:83
+#: redbot/cogs/audio/core/events/dpy.py:193
+#: redbot/cogs/audio/core/events/lavalink.py:155
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "No se puede obtener la pista"
 
-#: redbot/cogs/audio/core/events/dpy.py:133
+#: redbot/cogs/audio/core/events/dpy.py:194
+#: redbot/cogs/audio/core/events/lavalink.py:156
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "No puedo obtener una pista de Lavalink en este momento, inténtalo de nuevo en unos minutos."
 
-#: redbot/cogs/audio/core/events/lavalink.py:74
+#: redbot/cogs/audio/core/events/dpy.py:205
+msgid "There was an issue communicating with Discord."
+msgstr "Hubo un problema de comunicación con Discord."
+
+#: redbot/cogs/audio/core/events/dpy.py:206
+msgid "This error has been reported to the bot owner."
+msgstr "Este error ha sido reportado al propietario del bot."
+
+#: redbot/cogs/audio/core/events/lavalink.py:147
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "No se pudo obtener una pista válida."
 
-#: redbot/cogs/audio/core/events/lavalink.py:84
-msgid "I'm unable get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
-
-#: redbot/cogs/audio/core/events/lavalink.py:106
-msgid "Auto Play started."
-msgstr ""
-
-#: redbot/cogs/audio/core/events/lavalink.py:121
+#: redbot/cogs/audio/core/events/lavalink.py:182
 msgid "Now Playing"
 msgstr "Escuchando"
 
-#: redbot/cogs/audio/core/events/lavalink.py:123
+#: redbot/cogs/audio/core/events/lavalink.py:184
 msgid "Track length: {length} | Requested by: {user}"
 msgstr "Longitud de la pista: {length} | Solicitado por: {user}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:144
+#: redbot/cogs/audio/core/events/lavalink.py:205
 msgid "Queue ended."
-msgstr ""
+msgstr "Cola terminada."
 
-#: redbot/cogs/audio/core/events/lavalink.py:186
+#: redbot/cogs/audio/core/events/lavalink.py:257
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Múltiples errores detectados"
 
-#: redbot/cogs/audio/core/events/lavalink.py:187
+#: redbot/cogs/audio/core/events/lavalink.py:258
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "Cerrando el reproductor de audio debido a múltiples errores detectados. Si esto persiste, por favor informa al propietario del bot ya que el engranaje de audio puede no estar disponible temporalmente."
 
-#: redbot/cogs/audio/core/events/lavalink.py:201
+#: redbot/cogs/audio/core/events/lavalink.py:272
 msgid "Track Stuck"
-msgstr ""
+msgstr "Rastreo atascado"
 
-#: redbot/cogs/audio/core/events/lavalink.py:202
-msgid "Playback of the song has stopped due to an unexcepted error.\\n{error}"
-msgstr ""
+#: redbot/cogs/audio/core/events/lavalink.py:273
+msgid "Playback of the song has stopped due to an unexcepted error.\n"
+"{error}"
+msgstr "La reproducción de la canción se ha detenido debido a un error sin excepción.\n"
+"{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:208
+#: redbot/cogs/audio/core/events/lavalink.py:279
 msgid "Track Error"
 msgstr "Error de pista"
 

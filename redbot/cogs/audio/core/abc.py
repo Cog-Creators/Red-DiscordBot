@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import datetime
 
 from abc import ABC, abstractmethod
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -40,7 +41,7 @@ class MixinMeta(ABC):
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
 
-    skip_votes: MutableMapping[discord.Guild, List[discord.Member]]
+    skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
     _daily_playlist_cache: MutableMapping[int, bool]
     _daily_global_playlist_cache: MutableMapping[int, bool]
@@ -57,12 +58,18 @@ class MixinMeta(ABC):
     _error_counter: Counter
 
     lavalink_connect_task: Optional[asyncio.Task]
+    _restore_task: Optional[asyncio.Task]
     player_automated_timer_task: Optional[asyncio.Task]
     cog_init_task: Optional[asyncio.Task]
     cog_ready_event: asyncio.Event
-
+    _ws_resume: defaultdict[Any, asyncio.Event]
+    _ws_op_codes: defaultdict[int, asyncio.LifoQueue]
     _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
+
+    _last_ll_update: datetime.datetime
+    _ll_guild_updates: Set[int]
+    _diconnected_shard: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):
@@ -119,6 +126,12 @@ class MixinMeta(ABC):
     @abstractmethod
     async def lavalink_event_handler(
         self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def lavalink_update_handler(
+        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
     ) -> None:
         raise NotImplementedError()
 
@@ -219,6 +232,10 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def update_external_status(self) -> bool:
         raise NotImplementedError()
 
@@ -296,8 +313,22 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def _build_bundled_playlist(self, forced: bool = None) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def decode_track(self, track: str, decode_errors: str = "") -> MutableMapping:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def can_manage_playlist(
-        self, scope: str, playlist: "Playlist", ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: "Playlist",
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         raise NotImplementedError()
 
@@ -518,5 +549,10 @@ class MixinMeta(ABC):
     async def icyparser(self, url: str) -> Optional[str]:
         raise NotImplementedError()
 
+    @abstractmethod
     async def self_deafen(self, player: lavalink.Player) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
         raise NotImplementedError()

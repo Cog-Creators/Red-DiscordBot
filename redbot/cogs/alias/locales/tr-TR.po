@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -17,20 +17,31 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:35
 #, docstring
-msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
-msgstr "Komutlar için kısaltma yaratır.\\n\\n    Kısaltmalar, komutlar için alternatiftir. Hem\\n    kısaltma hem de komut bir arada kullanılabilir\\n  Sadece kısaltmalar da kullanılabilir \\\"x y z\\\".\\n\\n    Çalıştırıldığında, diğer adlar ek bağımsız değişkenleri\\n kabul eder ve bunları depolanan diğer ada ekler.\\n    "
-
-#: redbot/cogs/alias/alias.py:173
-msgid "No prefix found."
-msgstr "Prefix yani komut başlangıcı bulunamadı."
+msgid "Create aliases for commands.\n\n"
+"    Aliases are alternative names shortcuts for commands. They\n"
+"    can act as both a lambda (storing arguments for repeated use)\n"
+"    or as simply a shortcut to saying \"x y z\".\n\n"
+"    When run, aliases will accept any additional arguments\n"
+"    and append them to the stored alias.\n"
+"    "
+msgstr "Komutlar için takma adlar oluştur.\n\n"
+"    Takma adlar komutlar için kısa yol olarak kullanılabilen alternatif\n"
+"    isimlerdir. Hem bir komut için seçenekler depolamak\n"
+"    (daha sonra tekrar yazmadan kullanmak için) hem de \"x y z\" demek\n"
+"    gibi basit bir şey için kısa yol olarak kullanılabilirler.\n\n"
+"    Kullanıldıkları zaman takma adlar önlerine yazılanları alıp\n"
+"    depoladıkları komuta eklerler.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
-msgid "Aliases:\\n"
-msgstr "Takma adlar"
+msgid "Aliases:\n"
+msgstr "Takma adlar:\n"
 
 #: redbot/cogs/alias/alias.py:205
-msgid "\\n\\nPage {page}/{total}"
-msgstr "Sayfa"
+msgid "\n\n"
+"Page {page}/{total}"
+msgstr "\n\n"
+"Sayfa {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring

@@ -1,4 +1,10 @@
+from pathlib import Path
+
 import aiohttp
+
+from redbot.core.i18n import Translator
+
+_ = Translator("Audio", Path(__file__))
 
 
 class AudioError(Exception):
@@ -90,6 +96,10 @@ class SpotifyFetchError(SpotifyApiError):
 
 class YouTubeApiError(ApiError):
     """Base exception for YouTube Data API errors."""
+
+    def __init__(self, message, *args):
+        self.message = message
+        super().__init__(*args)
 
 
 class DatabaseError(AudioError):

@@ -3,7 +3,7 @@ commands.converter
 ==================
 This module contains useful functions and classes for command argument conversion.
 
-Some of the converters within are included provisionaly and are marked as such.
+Some of the converters within are included provisionally and are marked as such.
 """
 import functools
 import re
@@ -35,7 +35,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "DictConverter",
-    "GuildConverter",
     "UserInputOptional",
     "NoParseOptional",
     "TimedeltaConverter",
@@ -47,8 +46,12 @@ __all__ = [
 
 _ = Translator("commands.converter", __file__)
 
+<<<<<<< HEAD
 ID_REGEX = re.compile(r"([0-9]{15,21})")
 MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
+=======
+ID_REGEX = re.compile(r"([0-9]{15,20})")
+>>>>>>> release/V3/develop
 
 
 # Taken with permission from
@@ -113,7 +116,12 @@ def parse_timedelta(
                     _("`{unit}` is not a valid unit of time for this command").format(unit=k)
                 )
         if params:
-            delta = timedelta(**params)
+            try:
+                delta = timedelta(**params)
+            except OverflowError:
+                raise BadArgument(
+                    _("The time set is way too high, consider setting something reasonable.")
+                )
             if maximum and maximum < delta:
                 raise BadArgument(
                     _(
@@ -130,6 +138,7 @@ def parse_timedelta(
     return None
 
 
+<<<<<<< HEAD
 class RawUserIds(dpy_commands.Converter):
     async def convert(self, ctx, argument):
         # This is for the hackban and unban commands, where we receive IDs that
@@ -143,28 +152,48 @@ class RawUserIds(dpy_commands.Converter):
 
 
 class GuildConverter(discord.Guild):
+=======
+class _GuildConverter(discord.Guild):
+>>>>>>> release/V3/develop
     """Converts to a `discord.Guild` object.
 
     The lookup strategy is as follows (in order):
 
     1. Lookup by ID.
     2. Lookup by name.
+
+    .. deprecated-removed:: 3.4.8 60
+        ``GuildConverter`` is now only provided within ``redbot.core.commands`` namespace.
     """
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
-        match = ID_REGEX.fullmatch(argument)
+        return await dpy_commands.GuildConverter().convert(ctx, argument)
 
-        if match is None:
-            ret = discord.utils.get(ctx.bot.guilds, name=argument)
-        else:
-            guild_id = int(match.group(1))
-            ret = ctx.bot.get_guild(guild_id)
 
-        if ret is None:
-            raise BadArgument(_('Server "{name}" not found.').format(name=argument))
+_GuildConverter.__name__ = "GuildConverter"
 
-        return ret
+
+def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
+    # Let me just say it one more time... This is awesome! (PEP-562)
+    if name == "GuildConverter":
+        # let's not waste time on importing this when we don't need it
+        # (and let's not put in the public API)
+        from redbot.core.utils._internal_utils import deprecated_removed
+
+        deprecated_removed(
+            "`GuildConverter` from `redbot.core.commands.converter` namespace",
+            "3.4.8",
+            60,
+            "Use `GuildConverter` from `redbot.core.commands` namespace instead.",
+            stacklevel=2,
+        )
+        return globals()["_GuildConverter"]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__() -> List[str]:
+    return [*globals().keys(), "GuildConverter"]
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
@@ -178,7 +207,7 @@ else:
 
     class DictConverter(dpy_commands.Converter):
         """
-        Converts pairs of space seperated values to a dict
+        Converts pairs of space separated values to a dict
         """
 
         def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):

@@ -1,6 +1,7 @@
 import argparse
 import functools
 import re
+from pathlib import Path
 
 from typing import Final, MutableMapping, Optional, Pattern, Tuple, Union
 
@@ -16,7 +17,7 @@ from .apis.playlist_interface import get_all_playlist_converter
 from .errors import NoMatchesFound, TooManyMatches
 from .utils import PlaylistScope
 
-_ = Translator("Audio", __file__)
+_ = Translator("Audio", Path(__file__))
 
 __all__ = [
     "ComplexScopeParser",
@@ -57,7 +58,7 @@ Guild must be a valid version of one of the following:
 
 _ = T_
 
-MENTION_RE: Final[Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE: Final[Pattern] = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,20})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:

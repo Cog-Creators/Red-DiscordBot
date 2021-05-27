@@ -4,6 +4,7 @@ import json
 import logging
 
 from copy import copy
+from pathlib import Path
 from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
@@ -12,6 +13,7 @@ from lavalink.rest_api import LoadResult
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
+from redbot.core.i18n import Translator
 
 from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
@@ -20,7 +22,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 _API_URL = "https://api.redbot.app/"
-
+_ = Translator("Audio", Path(__file__))
 log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
 
 
@@ -38,8 +40,9 @@ class GlobalCacheWrapper:
         self._token: Mapping[str, str] = {}
         self.cog = cog
 
-    def update_token(self, new_token: Mapping[str, str]):
+    async def update_token(self, new_token: Mapping[str, str]):
         self._token = new_token
+        await self.get_perms()
 
     async def _get_api_key(
         self,
@@ -75,14 +78,16 @@ class GlobalCacheWrapper:
                     search_response = await r.json(loads=json.loads)
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            f"GET || Ping {r.headers.get('x-process-time')} || "
-                            f"Status code {r.status} || {query}"
+                            "GET || Ping %s || Status code %d || %s",
+                            r.headers.get("x-process-time"),
+                            r.status,
+                            query,
                         )
             if "tracks" not in search_response:
                 return {}
             return search_response
         except Exception as err:
-            debug_exc_log(log, err, f"Failed to Get query: {api_url}/{query}")
+            debug_exc_log(log, err, "Failed to Get query: %s/%s", api_url, query)
         return {}
 
     async def get_spotify(self, title: str, author: Optional[str]) -> dict:
@@ -105,14 +110,17 @@ class GlobalCacheWrapper:
                     search_response = await r.json(loads=json.loads)
                     if IS_DEBUG and "x-process-time" in r.headers:
                         log.debug(
-                            f"GET/spotify || Ping {r.headers.get('x-process-time')} || "
-                            f"Status code {r.status} || {title} - {author}"
+                            "GET/spotify || Ping %s || Status code %d || %s - %s",
+                            r.headers.get("x-process-time"),
+                            r.status,
+                            title,
+                            author,
                         )
             if "tracks" not in search_response:
                 return {}
             return search_response
         except Exception as err:
-            debug_exc_log(log, err, f"Failed to Get query: {api_url}")
+            debug_exc_log(log, err, "Failed to Get query: %s", api_url)
         return {}
 
     async def post_call(self, llresponse: LoadResult, query: Optional[Query]) -> None:
@@ -139,11 +147,13 @@ class GlobalCacheWrapper:
                 await r.read()
                 if IS_DEBUG and "x-process-time" in r.headers:
                     log.debug(
-                        f"POST || Ping {r.headers.get('x-process-time')} ||"
-                        f" Status code {r.status} || {query}"
+                        "GET || Ping %s || Status code %d || %s",
+                        r.headers.get("x-process-time"),
+                        r.status,
+                        query,
                     )
         except Exception as err:
-            debug_exc_log(log, err, f"Failed to post query: {query}")
+            debug_exc_log(log, err, "Failed to post query: %s", query)
         await asyncio.sleep(0)
 
     async def update_global(self, llresponse: LoadResult, query: Optional[Query] = None):
@@ -165,7 +175,6 @@ class GlobalCacheWrapper:
         global_api_user = copy(self.cog.global_api_user)
         await self._get_api_key()
         is_enabled = await self.config.global_db_enabled()
-        await self._get_api_key()
         if (not is_enabled) or self.api_key is None:
             return global_api_user
         with contextlib.suppress(Exception):

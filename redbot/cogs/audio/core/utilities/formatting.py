@@ -3,6 +3,7 @@ import logging
 import math
 import re
 import time
+from pathlib import Path
 
 from typing import List, Optional
 
@@ -11,16 +12,17 @@ import lavalink
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
 from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
-
+_ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
 
@@ -91,16 +93,16 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed.")
+                msg = _("Connection to Lavalink has failed")
                 description = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
@@ -108,6 +110,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
@@ -157,11 +160,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.is_query_allowed(
             self.config,
             ctx,
-            f"{search_choice.title} {search_choice.author} {search_choice.uri} " f"{str(query)}",
+            f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
@@ -179,7 +182,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+                    "red_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
@@ -193,9 +196,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
@@ -237,24 +238,26 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
-                        track.title,
-                        LocalPath(track.uri, self.local_folder_current_path).to_string_user(),
+                        discord.utils.escape_markdown(track.title),
+                        discord.utils.escape_markdown(
+                            LocalPath(track.uri, self.local_folder_current_path).to_string_user()
+                        ),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
-                        search_track_num, track.title, track.uri
+                        search_track_num, discord.utils.escape_markdown(track.title), track.uri
                     )
             except AttributeError:
                 track = Query.process_input(track, self.local_folder_current_path)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
                     if track.is_album:
                         folder = True
                 else:
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
@@ -295,7 +298,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.author} - {track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = (
@@ -306,7 +309,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if shorten:
                         string = f"{track.title}"
                         if len(string) > 40:
-                            string = "{}...".format((string[:40]).rstrip(" "))
+                            string = f"{(string[:40]).rstrip(' ')}..."
                         string = f'**{escape(f"{string}", formatting=True)}**'
                     else:
                         string = f'**{escape(f"{track.title}", formatting=True)}**' + escape(
@@ -315,7 +318,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     string = query.to_string_user()
                     if shorten and len(string) > 40:
-                        string = "{}...".format((string[:40]).rstrip(" "))
+                        string = f"{(string[:40]).rstrip(' ')}..."
                     string = f'**{escape(f"{string}", formatting=True)}**'
             else:
                 if track.is_stream:
@@ -330,13 +333,13 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     title = track.title
                 string = f"{title}"
                 if shorten and len(string) > 40:
-                    string = "{}...".format((string[:40]).rstrip(" "))
+                    string = f"{(string[:40]).rstrip(' ')}..."
                     string = re.sub(RE_SQUARE, "", string)
                 string = f"**[{escape(string, formatting=True)}]({track.uri}) **"
         elif hasattr(track, "to_string_user") and track.is_local:
             string = track.to_string_user() + " "
             if shorten and len(string) > 40:
-                string = "{}...".format((string[:40]).rstrip(" "))
+                string = f"{(string[:40]).rstrip(' ')}..."
             string = f'**{escape(f"{string}", formatting=True)}**'
         return string
 
@@ -391,7 +394,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def draw_time(self, ctx) -> str:
         player = lavalink.get_player(ctx.guild.id)
         paused = player.paused
-        pos = player.position
+        pos = player.position or 1
         dur = getattr(player.current, "length", player.position or 1)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)

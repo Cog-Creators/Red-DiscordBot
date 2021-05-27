@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import logging
 import math
+from pathlib import Path
 
 from typing import MutableMapping, Optional
 
@@ -10,6 +11,7 @@ import discord
 import lavalink
 
 from redbot.core import commands
+from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import (
     DEFAULT_CONTROLS,
@@ -22,9 +24,10 @@ from redbot.core.utils.menus import (
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.queue")
+_ = Translator("Audio", Path(__file__))
 
 
 class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -71,9 +74,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.get_track_description(player.current, self.local_folder_current_path)
                 or ""
             )
-            song += _("\n Requested by: **{track.requester}**")
-            song += "\n\n{arrow}`{pos}`/`{dur}`"
-            song = song.format(track=player.current, arrow=arrow, pos=pos, dur=dur)
+            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += f"\n\n{arrow}`{pos}`/`{dur}`"
             embed = discord.Embed(title=_("Now Playing"), description=song)
             guild_data = await self.config.guild(ctx.guild).all()
             if guild_data["thumbnail"] and player.current and player.current.thumbnail:
@@ -326,7 +328,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         try:
             if (
-                not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                not self.can_join_and_speak(ctx.author.voice.channel)
                 or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                 and self.is_vc_full(ctx.author.voice.channel)
             ):
@@ -334,12 +336,13 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Shuffle Queue"),
-                    description=_("I don't have permission to connect to your channel."),
+                    description=_("I don't have permission to connect and speak in your channel."),
                 )
-            await lavalink.connect(ctx.author.voice.channel)
-            player = lavalink.get_player(ctx.guild.id)
-            player.store("connect", datetime.datetime.utcnow())
-            await self.self_deafen(player)
+            player = await lavalink.connect(
+                ctx.author.voice.channel,
+                deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+            )
+            player.store("notify_channel", ctx.channel.id)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(

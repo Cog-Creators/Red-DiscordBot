@@ -9,6 +9,10 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
+from redbot import _early_init
+
+_early_init()
+
 import appdirs
 import click
 
@@ -354,7 +358,7 @@ def cli(ctx, debug):
     is_flag=True,
     default=None,
     help=(
-        "Drop the entire database constaining this instance's data. Has no effect on JSON "
+        "Drop the entire database containing this instance's data. Has no effect on JSON "
         "instances, or if --no-delete-data is set. If these options and --no-prompt are omitted,"
         "you will be asked about this."
     ),
