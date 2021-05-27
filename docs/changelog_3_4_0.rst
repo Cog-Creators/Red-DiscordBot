@@ -48,6 +48,11 @@ Mod
 
 - ``[p]mute`` command no longer errors on muting a bot user if ``senddm`` option is enabled (:issue:`5071`)
 
+Modlog
+******
+
+- ``[p]modlogset resetcases`` will now ask for confirmation before proceeding (:issue:`4976`)
+
 Streams
 *******
 
