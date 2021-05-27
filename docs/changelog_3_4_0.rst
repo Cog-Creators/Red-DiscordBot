@@ -31,6 +31,7 @@ Audio
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 - ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
 - Fixed track resuming in a certain edge case (:issue:`4996`)
+- Fixed an error in ``[p]audioset restart`` command (:issue:`4987`)
 
 Custom Commands
 ***************
