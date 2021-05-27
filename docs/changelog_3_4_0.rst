@@ -46,6 +46,7 @@ Streams
 Developer changelog
 -------------------
 
+- Bumped discord.py to 1.7.2 (:issue:`5066`)
 
 
 Documentation changes
