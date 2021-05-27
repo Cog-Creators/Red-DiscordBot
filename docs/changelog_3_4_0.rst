@@ -42,6 +42,7 @@ Mod
 Streams
 *******
 
+- Smashcast service has been closed and for that reason we have removed support for it from the cog (:issue:`5039`, :issue:`5040`)
 - Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
 - In message template, ``{stream.display_name}`` can now be used to refer to streamer's display name (:issue:`5050`, :issue:`5066`)
 
