@@ -46,12 +46,8 @@ __all__ = [
 
 _ = Translator("commands.converter", __file__)
 
-<<<<<<< HEAD
-ID_REGEX = re.compile(r"([0-9]{15,21})")
-MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
-=======
 ID_REGEX = re.compile(r"([0-9]{15,20})")
->>>>>>> release/V3/develop
+MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
 # Taken with permission from
@@ -138,7 +134,6 @@ def parse_timedelta(
     return None
 
 
-<<<<<<< HEAD
 class RawUserIds(dpy_commands.Converter):
     async def convert(self, ctx, argument):
         # This is for the hackban and unban commands, where we receive IDs that
@@ -151,10 +146,7 @@ class RawUserIds(dpy_commands.Converter):
         raise BadArgument(_("{} doesn't look like a valid user ID.").format(argument))
 
 
-class GuildConverter(discord.Guild):
-=======
 class _GuildConverter(discord.Guild):
->>>>>>> release/V3/develop
     """Converts to a `discord.Guild` object.
 
     The lookup strategy is as follows (in order):
