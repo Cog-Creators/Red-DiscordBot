@@ -29,6 +29,14 @@ Mod
 
 - ``[p]mute`` command no longer errors on muting a bot user if ``senddm`` option is enabled (:issue:`5071`)
 
+Streams
+*******
+
+- Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
+- In message template, ``{stream.display_name}`` can now be used to refer to streamer's display name (:issue:`5050`, :issue:`5066`)
+
+    - This is not always the same as ``{stream}`` which refers to the streamer's channel or username
+
 
 Developer changelog
 -------------------
