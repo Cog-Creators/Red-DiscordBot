@@ -43,6 +43,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- Clarified that ``[p]cleanup`` commands only delete the messages from the current channel (:issue:`5070`)
 
 
 Redbot 3.4.9 (2021-04-06)
