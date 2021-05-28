@@ -23,6 +23,7 @@ Core Bot
 - Help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
 - Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
 - ``[p]embedset command`` command and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
+- Fixed an issue with Red reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
 
 Admin
 *****
