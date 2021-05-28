@@ -51,6 +51,7 @@ Downloader
 **********
 
 - ``[p]repo remove`` can now remove multiple repos at the same time (:issue:`4765`, :issue:`5082`)
+- ``[p]cog install`` now properly shows the repo name rather than ``{repo.name}`` (:issue:`4954`)
 
 Mod
 ***
