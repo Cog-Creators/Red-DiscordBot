@@ -9,7 +9,7 @@ Redbot 3.4.10 (2021-05-28)
 Read before updating
 --------------------
 
-1. PM2 process manager is no longer supported is as it is not a viable solution due to certain parts of its behavior.
+1. PM2 process manager is no longer supported as it is not a viable solution due to certain parts of its behavior.
 
     We highly recommend you to switch to one of the other supported solutions:
         - `autostart_systemd`
@@ -29,27 +29,27 @@ Core Bot
 ********
 
 - Fixed terminal colors on Windows (:issue:`5063`)
-- Fixed ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
-- Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` command (:issue:`4971`)
-- Help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
+- Fixed the ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
+- Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` (:issue:`4971`)
+- The help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
 - Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
-- ``[p]embedset command`` command and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
+- ``[p]embedset command`` and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
 - Fixed an issue with Red reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
 
 Admin
 *****
 
-- The cog will now log when it leaves the guild due to the serverlock (:issue:`5008`, :issue:`5073`)
+- The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
 - Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 
 Audio
 *****
 
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
-- ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
+- The ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
 - Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
 - Fixed track resuming in a certain edge case (:issue:`4996`)
-- Fixed an error in ``[p]audioset restart`` command (:issue:`4987`)
+- Fixed an error in ``[p]audioset restart`` (:issue:`4987`)
 - The cog will now check whether it has speak permissions in the channel before performing any actions (:issue:`5012`)
 - Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
 - Fixed fetching of age-restricted tracks (:issue:`5085`)
@@ -69,7 +69,7 @@ Downloader
 Mod
 ***
 
-- ``[p]mute`` command no longer errors on muting a bot user if ``senddm`` option is enabled (:issue:`5071`)
+- ``[p]mute`` no longer errors on muting a bot user if the ``senddm`` option is enabled (:issue:`5071`)
 
 Mutes
 *****
@@ -133,7 +133,7 @@ Miscellaneous
 - Added information on how to set the bot not to start on boot anymore to auto-restart docs (:issue:`5020`)
 - Improved logging in Audio cog (:issue:`5044`)
 - Improved logging of API errors in Streams cog (:issue:`4995`)
-- ``[p]urban`` command from General cog will now use the default embed color of the bot (:issue:`5014`)
+- The command ``[p]urban`` from the General cog will now use the default embed color of the bot (:issue:`5014`)
 - Cog creation guide now includes the ``bot`` as an argument to the cog class (:issue:`4988`)
 - Rephrased a few strings and fixed maaaaany grammar issues and typos (:issue:`4793`, :issue:`4832`, :issue:`4955`, :issue:`4966`, :issue:`5015`, :issue:`5019`, :issue:`5029`, :issue:`5038`, :issue:`5055`, :issue:`5080`, :issue:`5081`)
 
