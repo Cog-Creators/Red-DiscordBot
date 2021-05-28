@@ -110,11 +110,11 @@ Documentation changes
 ---------------------
 
 - Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
-- Added `cog guide for core commands <cog_guides/core>` (:issue:`4597`)
-- Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`4886`)
-- Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`4919`)
-- Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`4875`)
-- Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`4882`)
+- Added `cog guide for core commands <cog_guides/core>` (:issue:`1734`, :issue:`4597`)
+- Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`1734`, :issue:`4886`)
+- Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`1734`, :issue:`4919`)
+- Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`1734`, :issue:`4875`)
+- Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
 - Removed PM2 guide (:issue:`4991`)
 
