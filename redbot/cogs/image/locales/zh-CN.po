@@ -139,5 +139,5 @@ msgstr ""
 
 #: redbot/cogs/image/image.py:249
 msgid "<your_api_key_here>"
-msgstr ""
+msgstr "<your_api_key_here>"
 

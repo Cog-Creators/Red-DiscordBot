@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-03 00:31+0000\n"
+"POT-Creation-Date: 2021-05-28 17:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgid "Enter the command to be run when the user **returns to a value below the 
 "Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
-msgstr "Bir kullanıcı **bir eylemin gerçekleşmesi için gereken puanın altına geri döbdüğünde** çalıştırılacak komutu girin. Lütfen unutmayınız ki bu bir kullanıcı bir eylemin gerçekleşmesi için gereken puanı geçtiğinde yapılanların geri alınması için tasarlanmıştır.\n"
+msgstr "Bir kullanıcı **bir eylemin gerçekleşmesi için gereken puanın altına geri döndüğünde** çalıştırılacak komutu girin. Lütfen unutmayınız ki bu bir kullanıcı bir eylemin gerçekleşmesi için gereken puanı geçtiğinde yapılanların geri alınması için tasarlanmıştır.\n"
 "**Puan düşmesi durumunda bir komutun çalıştırılmasını istemiyorsanız** `none` **yazın**.\n\n"
 "Komutu aynı siz çalıştırıyormuşsunuz gibi yazın, tek fark bir önek kullanmayın ve kullanıcı/üye seçenekleri yerine `{user}` kullanın\n\n"
 "UYARI: Girilen komut herhangi bir denetim veya cooldown dikkate alınmadan çalıştırılacaktır. Bot sahibi olunmasını gerektiren komutlar güvenlik gereği kullanılamaz.\n\n"
@@ -54,7 +54,7 @@ msgstr "Bir kullanıcı **bir eylemin gerçekleşmesi için gereken puanın alt�
 #: redbot/cogs/warnings/warnings.py:30
 #, docstring
 msgid "Warn misbehaving users and take automated actions."
-msgstr "Yaramazlık eden kullanıcıları uyar ve otomatik eylemlerde bulun."
+msgstr "Yaramazlık yapan kullanıcıları uyar ve otomatik eylemlerde bulun."
 
 #: redbot/cogs/warnings/warnings.py:113
 #, docstring
@@ -102,22 +102,20 @@ msgstr "Kullanıcıya özel mesaj gönderirken uyarıyı yazan moderatörün ad�
 
 #: redbot/cogs/warnings/warnings.py:158
 #, docstring
-msgid "Set the channel where warnings should be sent to.\n\n"
+msgid "Set the channel where warnings should be sent to.\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
-msgstr "Uyarıların gönderileceği kanalı ayarla.\n\n"
-"        Boş bırakırsanız `[p]warn` komutunun çalıştırıldığı kanal kullanılacaktır.\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:166
+#: redbot/cogs/warnings/warnings.py:165
 msgid "The warn channel has been set to {channel}."
 msgstr "Uyarı kanalı {channel} olarak ayarlandı."
 
-#: redbot/cogs/warnings/warnings.py:170 redbot/cogs/warnings/warnings.py:186
+#: redbot/cogs/warnings/warnings.py:169 redbot/cogs/warnings/warnings.py:185
 msgid "Warnings will now be sent in the channel command was used in."
 msgstr "Uyarılar artık komutun kullanıldığı kanala gönderilecek."
 
-#: redbot/cogs/warnings/warnings.py:175
+#: redbot/cogs/warnings/warnings.py:174
 #, docstring
 msgid "\n"
 "        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\n"
@@ -126,107 +124,95 @@ msgstr "\n"
 "        Uyarıların bir kanala gönderilip gönderilmemesini `[p]warningset warnchannel` ile ayarla.\n"
 "        "
 
-#: redbot/cogs/warnings/warnings.py:183
+#: redbot/cogs/warnings/warnings.py:182
 msgid "Warnings will now be sent to {channel}."
 msgstr "Uyarılar artık {channel} kanalına gönderilecek."
 
-#: redbot/cogs/warnings/warnings.py:188
+#: redbot/cogs/warnings/warnings.py:187
 msgid "Toggle channel has been disabled."
 msgstr "Kanal seçimi devre dışı bırakıldı."
 
-#: redbot/cogs/warnings/warnings.py:194
+#: redbot/cogs/warnings/warnings.py:193
 #, docstring
-msgid "Manage automated actions for Warnings.\n\n"
+msgid "Manage automated actions for Warnings.\n"
 "        Actions are essentially command macros. Any command can be run\n"
 "        when the action is initially triggered, and/or when the action\n"
-"        is lifted.\n\n"
+"        is lifted.\n"
 "        Actions must be given a name and a points threshold. When a\n"
 "        user is warned enough so that their points go over this\n"
 "        threshold, the action will be executed.\n"
 "        "
-msgstr "Uyarılar için otomatik eylemleri yönet.\n\n"
-"        Eylemler bir nevi komut makrolarıdır. Bir eylem ilk tetiklendiğinde\n"
-"        beya eylem geri alındığında her hangi bir komut\n"
-"        çalıştırılabilir.\n\n"
-"        Eylemlere bir isim ve puan verilmelidir. Bir üye\n"
-"        bu puanın üstüne çıkacak kadar çok uyarı aldığında\n"
-"        eylem gerçekleştirilecektir.\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:209
+#: redbot/cogs/warnings/warnings.py:206
 #, docstring
-msgid "Create an automated action.\n\n"
+msgid "Create an automated action.\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr "Otomatik eylem oluştur.\n\n"
-"        Eylemlerin isimleri aynı olamaz.\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:230
+#: redbot/cogs/warnings/warnings.py:226
 msgid "Duplicate action name found!"
 msgstr "Aynı isimde bir eylem var!"
 
-#: redbot/cogs/warnings/warnings.py:237
+#: redbot/cogs/warnings/warnings.py:233
 msgid "Action {name} has been added."
 msgstr "{name} adlı eylem eklendi."
 
-#: redbot/cogs/warnings/warnings.py:242
+#: redbot/cogs/warnings/warnings.py:238
 #, docstring
 msgid "Delete the action with the specified name."
 msgstr "Belirtilen addaki eylemi sil."
 
-#: redbot/cogs/warnings/warnings.py:255
+#: redbot/cogs/warnings/warnings.py:251
 msgid "No action named {name} exists!"
 msgstr "{name} adında bir eylem bulunmamakta."
 
-#: redbot/cogs/warnings/warnings.py:261
+#: redbot/cogs/warnings/warnings.py:257
 #, docstring
-msgid "Manage warning reasons.\n\n"
+msgid "Manage warning reasons.\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr "Uyarı gerekçelerini yönet.\n\n"
-"        Gerekçelerin bir adı, açıklaması ve puan değeri olmalıdır. Gerekçenin\n"
-"        ismi bir kullanıcıya uyarı yazılırken verilmelidir.\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:273
+#: redbot/cogs/warnings/warnings.py:268
 #, docstring
 msgid "Create a warning reason."
 msgstr "Bir uyarı gerekçesi oluştur."
 
-#: redbot/cogs/warnings/warnings.py:277
+#: redbot/cogs/warnings/warnings.py:272
 msgid "*Custom* cannot be used as a reason name!"
 msgstr "*Custom* bir gerekçe adı olarak kullanılamaz!"
 
-#: redbot/cogs/warnings/warnings.py:287
+#: redbot/cogs/warnings/warnings.py:282
 msgid "The new reason has been registered."
 msgstr "Yeni gerekçe kaydedildi."
 
-#: redbot/cogs/warnings/warnings.py:292
+#: redbot/cogs/warnings/warnings.py:287
 #, docstring
 msgid "Delete a warning reason."
 msgstr "Bir uyarı gerekçesini sil."
 
-#: redbot/cogs/warnings/warnings.py:299
+#: redbot/cogs/warnings/warnings.py:294
 msgid "That is not a registered reason name."
 msgstr "Bu kayıtlı bir gerekçe adı değil."
 
-#: redbot/cogs/warnings/warnings.py:305
+#: redbot/cogs/warnings/warnings.py:300
 #, docstring
 msgid "List all configured reasons for Warnings."
 msgstr "Uyarılar için ayarlanmış tüm gerekçeleri listele."
 
-#: redbot/cogs/warnings/warnings.py:313
+#: redbot/cogs/warnings/warnings.py:308
 msgid "Reason: {name}"
 msgstr "Gerekçe: {name}"
 
-#: redbot/cogs/warnings/warnings.py:317 redbot/cogs/warnings/warnings.py:345
-#: redbot/cogs/warnings/warnings.py:450 redbot/cogs/warnings/warnings.py:478
+#: redbot/cogs/warnings/warnings.py:312 redbot/cogs/warnings/warnings.py:340
+#: redbot/cogs/warnings/warnings.py:438 redbot/cogs/warnings/warnings.py:471
 msgid "Points"
 msgstr "Puanlar"
 
-#: redbot/cogs/warnings/warnings.py:321
+#: redbot/cogs/warnings/warnings.py:316
 msgid "Name: {reason_name}\n"
 "Points: {points}\n"
 "Description: {description}"
@@ -234,28 +220,28 @@ msgstr "İsim: {reason_name}\n"
 "Puan: {points}\n"
 "Açıklama: {description}"
 
-#: redbot/cogs/warnings/warnings.py:328
+#: redbot/cogs/warnings/warnings.py:323
 msgid "There are no reasons configured!"
 msgstr "Yapılandırılmış gerekçe bulunmamakta."
 
-#: redbot/cogs/warnings/warnings.py:334
+#: redbot/cogs/warnings/warnings.py:329
 #, docstring
 msgid "List all configured automated actions for Warnings."
 msgstr "Uyarılar için ayarlanmış tüm otomatik eylemleri listele."
 
-#: redbot/cogs/warnings/warnings.py:342
+#: redbot/cogs/warnings/warnings.py:337
 msgid "Action: {name}"
 msgstr "Eylem: {name}"
 
-#: redbot/cogs/warnings/warnings.py:347
+#: redbot/cogs/warnings/warnings.py:342
 msgid "Exceed command"
 msgstr "Geçiş komutu"
 
-#: redbot/cogs/warnings/warnings.py:351
+#: redbot/cogs/warnings/warnings.py:346
 msgid "Drop command"
 msgstr "Düşüş komutu"
 
-#: redbot/cogs/warnings/warnings.py:355
+#: redbot/cogs/warnings/warnings.py:350
 msgid "Name: {action_name}\n"
 "Points: {points}\n"
 "Exceed command: {exceed_command}\n"
@@ -265,125 +251,120 @@ msgstr "İsim: {action_name}\n"
 "Geçiş komutu: {exceed_command}\n"
 "Düşüş komutu: {drop_command}"
 
-#: redbot/cogs/warnings/warnings.py:363
+#: redbot/cogs/warnings/warnings.py:358
 msgid "There are no actions configured!"
 msgstr "Ayarlanmış eylem bulunmamakta."
 
-#: redbot/cogs/warnings/warnings.py:376
+#: redbot/cogs/warnings/warnings.py:371
 #, docstring
-msgid "Warn the user for the specified reason.\n\n"
+msgid "Warn the user for the specified reason.\n"
 "        `<points>` number of points the warning should be for. If no number is supplied\n"
 "        1 point will be given. Pre-set warnings disregard this.\n"
-"        `<reason>` can be a registered reason if it exists or a custom one\n"
-"        is created by default.\n"
+"        `<reason>` is reason for the warning. This can be a registered reason,\n"
+"        or a custom reason if ``[p]warningset allowcustomreasons`` is set.\n"
 "        "
-msgstr "Bir kullanıcıya belirtilen sebeple uyarı yaz.\n\n"
-"        `<points>` uyarının kaç puan temsil ettiğidir. Eğer bir numara verilmezse\n"
-"        1 puan verilecektir. Bu önceden-ayarlanmış uyarıları etkilemez.\n"
-"        `<reason>` varsa kayıtlı bir gerekçe olabilir veya özel bir tane\n"
-"        varsayılan olarak oluşturulur.\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:385
+#: redbot/cogs/warnings/warnings.py:379
 msgid "You cannot warn yourself."
 msgstr "Kendinize uyarı yazamazsınız."
 
-#: redbot/cogs/warnings/warnings.py:387
+#: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn other bots."
 msgstr "Diğer botlara uyarı yazamazsınız."
 
-#: redbot/cogs/warnings/warnings.py:389
+#: redbot/cogs/warnings/warnings.py:383
 msgid "You cannot warn the server owner."
 msgstr "Sunucu sahibine uyarı yazamazsınız."
 
-#: redbot/cogs/warnings/warnings.py:392
+#: redbot/cogs/warnings/warnings.py:386
 msgid "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
 msgstr "Uyarmaya çalıştığınız kişi Discord hiyerarşisinde sizden üstte veya eşit, onlara uyarı yazamazsınız."
 
-#: redbot/cogs/warnings/warnings.py:402
+#: redbot/cogs/warnings/warnings.py:396
 msgid "That is not a registered reason!"
 msgstr "Bu kayıtlı bir gerekçe değil."
 
-#: redbot/cogs/warnings/warnings.py:417
+#: redbot/cogs/warnings/warnings.py:411
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
 msgstr "Özel gerekçeleri etkinleştirmek için `{prefix}warningset allowcustomreasons true` komutunu kullanın."
 
-#: redbot/cogs/warnings/warnings.py:444 redbot/cogs/warnings/warnings.py:472
+#: redbot/cogs/warnings/warnings.py:432 redbot/cogs/warnings/warnings.py:465
 msgid "Warning from {user}"
 msgstr "{user} tarafından uyarılar"
 
-#: redbot/cogs/warnings/warnings.py:446 redbot/cogs/warnings/warnings.py:474
+#: redbot/cogs/warnings/warnings.py:434 redbot/cogs/warnings/warnings.py:467
 msgid "Warning"
 msgstr "Uyarı"
 
-#: redbot/cogs/warnings/warnings.py:453
+#: redbot/cogs/warnings/warnings.py:441
 msgid "You have received a warning in {guild_name}."
 msgstr "{guild_name} sunucusundan bir uyarı aldınız."
 
-#: redbot/cogs/warnings/warnings.py:463
+#: redbot/cogs/warnings/warnings.py:451
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
-msgstr "{user} için bir uyarı yazıldı, fakat onlara uyarı mesajını gönderemedim."
+msgstr "{user} için bir uyarı yazıldı, fakat ona uyarı mesajı gönderemedim."
 
-#: redbot/cogs/warnings/warnings.py:484 redbot/cogs/warnings/warnings.py:493
+#: redbot/cogs/warnings/warnings.py:477 redbot/cogs/warnings/warnings.py:486
 msgid "{user} has been warned."
 msgstr "{user} uyarıldı."
 
-#: redbot/cogs/warnings/warnings.py:498
+#: redbot/cogs/warnings/warnings.py:491
 msgid "{reason}\n\n"
 "Use `{prefix}unwarn {user} {message}` to remove this warning."
 msgstr "{reason}\n\n"
 "Bu uyarıyı kaldırmak için `{prefix}unwarn {user} {message}` kullanın."
 
-#: redbot/cogs/warnings/warnings.py:501
+#: redbot/cogs/warnings/warnings.py:494
 msgid "{description}\n"
 "Points: {points}"
 msgstr "{description}\n"
 "Puanlar: {points}"
 
-#: redbot/cogs/warnings/warnings.py:524
+#: redbot/cogs/warnings/warnings.py:517
 #, docstring
 msgid "List the warnings for the specified user."
 msgstr "Belirtilen kullanıcı için uyarıları listele."
 
-#: redbot/cogs/warnings/warnings.py:537
+#: redbot/cogs/warnings/warnings.py:530
 msgid "That user has no warnings!"
 msgstr "Bu kullanıcının hiç uyarısı yok!"
 
-#: redbot/cogs/warnings/warnings.py:542 redbot/cogs/warnings/warnings.py:578
+#: redbot/cogs/warnings/warnings.py:535 redbot/cogs/warnings/warnings.py:571
 msgid "Deleted Moderator"
 msgstr "Moderatör silindi"
 
-#: redbot/cogs/warnings/warnings.py:545 redbot/cogs/warnings/warnings.py:581
+#: redbot/cogs/warnings/warnings.py:538 redbot/cogs/warnings/warnings.py:574
 msgid "Unknown Moderator ({})"
 msgstr "Bilinmeyen Moderatör ({})"
 
-#: redbot/cogs/warnings/warnings.py:546 redbot/cogs/warnings/warnings.py:582
+#: redbot/cogs/warnings/warnings.py:539 redbot/cogs/warnings/warnings.py:575
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
-msgstr "{num_points} puanlı uyarı {reason_name} {user} kullanıcısına {description} gerekçesiyle\n"
+msgstr "{num_points} puanlı uyarı {reason_name} {user} tarafından {description} sebebiyle\n"
 
-#: redbot/cogs/warnings/warnings.py:557 redbot/cogs/warnings/warnings.py:593
+#: redbot/cogs/warnings/warnings.py:550 redbot/cogs/warnings/warnings.py:586
 msgid "Warnings for {user}"
 msgstr "{user} için uyarılar"
 
-#: redbot/cogs/warnings/warnings.py:565
+#: redbot/cogs/warnings/warnings.py:558
 #, docstring
 msgid "List warnings for yourself."
 msgstr "Kendiniz için uyarıları listeleyin."
 
-#: redbot/cogs/warnings/warnings.py:573
+#: redbot/cogs/warnings/warnings.py:566
 msgid "You have no warnings!"
 msgstr "Hiç uyarınız bulunmamakta."
 
-#: redbot/cogs/warnings/warnings.py:607
+#: redbot/cogs/warnings/warnings.py:600
 #, docstring
 msgid "Remove a warning from a user."
 msgstr "Bir kullanıcıdan bir uyarı sil."
 
-#: redbot/cogs/warnings/warnings.py:620
+#: redbot/cogs/warnings/warnings.py:613
 msgid "You cannot remove warnings from yourself."
 msgstr "Kendinizden uyarı silemezsiniz."
 
-#: redbot/cogs/warnings/warnings.py:627
+#: redbot/cogs/warnings/warnings.py:620
 msgid "That warning doesn't exist!"
 msgstr "O uyarı yok."
 
