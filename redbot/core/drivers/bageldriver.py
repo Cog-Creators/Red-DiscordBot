@@ -34,6 +34,11 @@ class BagelDriver(BaseDriver):
     __connector: Optional[aiohttp.UnixConnector] = None
     __connector_owner: bool = False
     __default_headers: Dict[str, Any] = {}
+    __serializer: str = json.json_module
+
+    @property
+    def serializer(self):
+        return self.__serializer
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
