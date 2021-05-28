@@ -104,7 +104,7 @@ class RedBase(
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
-        if not cli_flags.slow_json:
+        if cli_flags.fast_json:
             json.overload_stdlib()
         self._config = Config.get_core_conf(force_registration=False)
         self.rpc_enabled = cli_flags.rpc

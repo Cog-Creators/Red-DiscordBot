@@ -289,10 +289,10 @@ def parse_cli_flags(args):
     )
 
     parser.add_argument(
-        "--disable-auto-hackydev",
+        "--enable-auto-hackydev",
         action="store_true",
         default=False,
-        dest="slow_json",
+        dest="fast_json",
         help="Runs `[p]hackydev overload` on bot start up.",
     )
 
