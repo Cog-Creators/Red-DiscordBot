@@ -26,6 +26,7 @@ Admin
 *****
 
 - The cog will now log when it leaves the guild due to the serverlock (:issue:`5008`, :issue:`5073`)
+- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 
 Audio
 *****
