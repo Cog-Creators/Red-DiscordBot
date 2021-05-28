@@ -89,6 +89,7 @@ Miscellaneous
 
 - Clarified that ``[p]cleanup`` commands only delete the messages from the current channel (:issue:`5070`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
+- Improved logging in Audio cog (:issue:`5044`)
 
 
 Redbot 3.4.9 (2021-04-06)
