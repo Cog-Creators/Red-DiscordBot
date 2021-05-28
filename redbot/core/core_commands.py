@@ -4908,3 +4908,39 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.
+
+    @commands.is_owner()
+    @commands.group(name="hackydev")
+    async def _hackydev(self, ctx: commands.Context):
+        """Change hackydev settings."""
+
+    @_hackydev.command(name="overload")
+    async def _hackydev_overload(self, ctx: commands.Context):
+        """Overload JSON lib."""
+        from redbot import json
+
+        json.overload_stdlib()
+        await ctx.tick()
+
+    @_hackydev.command(name="revert")
+    async def _hackydev_undo_overload(self, ctx: commands.Context):
+        """Revert the JSON lib overload."""
+        from redbot import json
+
+        json.restore_stdlib()
+        await ctx.tick()
+
+    @_hackydev.command(name="resetmodules")
+    async def _hackydev_resetmodules(self, ctx: commands.Context):
+        """Reset Libs."""
+        from redbot import json
+
+        json.reset_modules()
+        await ctx.tick()
+
+    @_hackydev.command(name="which")
+    async def _hackydev_which(self, ctx: commands.Context):
+        """Reset Libs."""
+        from redbot import json
+
+        await ctx.send(f"You are using `{json.json_module.__name__}`")

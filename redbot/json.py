@@ -18,7 +18,15 @@ __all__ = [
     "JSONDecoder",
     "JSONDecodeError",
     "JSONEncoder",
+    "overload_stdlib",
+    "restore_stdlib",
+    "reset_modules",
 ]
+
+backup_dumps = None
+backup_dump = None
+backup_loads = None
+backup_load = None
 
 
 def import_modules():
@@ -42,6 +50,23 @@ for item in MODULES:
 if mainjson is None:
     mainjson = stblib_json
     json_module = "json"
+
+
+def reset_modules():
+    global MODULES_IMPORTS, MODULES_NAME, mainjson, json_module
+    MODULES_IMPORTS = list(import_modules())
+    MODULES_NAME = [module.__name__ for module in MODULES_IMPORTS]
+    for item in MODULES:
+        with contextlib.suppress(ValueError):
+            index = MODULES_NAME.index(item)
+            mainjson = MODULES_IMPORTS[index]
+
+            if mainjson:
+                json_module = item
+                break
+    if mainjson is None:
+        mainjson = stblib_json
+        json_module = "json"
 
 
 def dumps(obj, **kw):
@@ -68,3 +93,29 @@ def dump(obj, fp, **kw):
 def load(fp, **kw):
     data = fp.read()
     return loads(data, **kw)
+
+
+def overload_stdlib():
+    global backup_dumps, backup_dump, backup_loads, backup_load
+    import json
+
+    if not backup_dumps and json.dumps is not dumps:
+        backup_dumps = json.dumps
+        backup_dump = json.dump
+        backup_loads = json.loads
+        backup_load = json.load
+
+    json.loads = loads
+    json.load = load
+    json.dumps = dumps
+    json.dump = dump
+
+
+def restore_stdlib():
+    import json
+
+    if backup_dumps and json.dumps is dumps:
+        json.loads = backup_loads
+        json.load = backup_load
+        json.dumps = backup_dumps
+        json.dump = backup_dump
