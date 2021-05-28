@@ -115,6 +115,7 @@ Documentation changes
 - Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`1734`, :issue:`4919`)
 - Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`1734`, :issue:`4875`)
 - Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
+- Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
 - Removed PM2 guide (:issue:`4991`)
 
