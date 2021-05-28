@@ -12,6 +12,13 @@ Read before updating
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
    We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+2. PM2 process manager is no longer supported is as it is not a viable solution due to certain parts of its behavior.
+
+    We highly recommend you to switch to one of the other supported solutions:
+        - `autostart_systemd`
+        - `autostart_mac`
+
+    If you experience any issues when trying to configure it, you can join `our discord server <https://discord.gg/red>`__ and ask in the **support** channel for help.
 
 
 End-user changelog
@@ -109,6 +116,7 @@ Documentation changes
 - Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`4875`)
 - Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`4882`)
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
+- Removed PM2 guide (:issue:`4991`)
 
 
 Miscellaneous
