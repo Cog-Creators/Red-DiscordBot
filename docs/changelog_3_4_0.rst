@@ -21,6 +21,8 @@ Core Bot
 - Fixed ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
 - Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` command (:issue:`4971`)
 - Help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
+- Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
+- ``[p]embedset command`` command and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
 
 Admin
 *****
