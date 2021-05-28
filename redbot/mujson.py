@@ -204,9 +204,6 @@ def mujson_function(name, alias_for=None, ranking=None):
     if ranking is None:
         ranking = DEFAULT_RANKINGS[alias_for]
 
-    if "json" not in ranking:
-        ranking.append("json")
-
     def temp_json_func(*args, **kwargs):
         func = _best_available_json_func(alias_for, ranking, **kwargs)
         globals()[name] = func
