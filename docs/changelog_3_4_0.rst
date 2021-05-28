@@ -99,6 +99,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
 - Added `cog guide for core commands <cog_guides/core>` (:issue:`4597`)
 - Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`4886`)
 - Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`4919`)
@@ -111,7 +112,7 @@ Miscellaneous
 
 - Clarified that ``[p]cleanup`` commands only delete the messages from the current channel (:issue:`5070`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
-- Updated auto-restart docs with more commands (:issue:`5020`)
+- Added information on how to set the bot not to start on boot anymore to auto-restart docs (:issue:`5020`)
 - Improved logging in Audio cog (:issue:`5044`)
 - Improved logging of API errors in Streams cog (:issue:`4995`)
 - ``[p]urban`` command from General cog will now use the default embed color of the bot (:issue:`5014`)
