@@ -53,6 +53,11 @@ Mod
 
 - ``[p]mute`` command no longer errors on muting a bot user if ``senddm`` option is enabled (:issue:`5071`)
 
+Mutes
+*****
+
+- Forbidden errors during the channel mute are now handled properly in a rare edge case (:issue:`4994`)
+
 Modlog
 ******
 
