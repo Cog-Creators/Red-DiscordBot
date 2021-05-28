@@ -288,6 +288,14 @@ def parse_cli_flags(args):
         "--enable-sudo", action="store_true", help="Enable the Super User permission mechanics."
     )
 
+    parser.add_argument(
+        "--disable-auto-hackydev",
+        action="store_true",
+        default=False,
+        dest="slow_json",
+        help="Runs `[p]hackydev overload` on bot start up.",
+    )
+
     args = parser.parse_args(args)
 
     if args.prefix:

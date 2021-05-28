@@ -59,6 +59,7 @@ from .utils._internal_utils import (
     deprecated_removed,
     send_to_owners_with_prefix_replaced,
 )
+from .. import json
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
@@ -103,6 +104,8 @@ class RedBase(
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
+        if not cli_flags.slow_json:
+            json.overload_stdlib()
         self._config = Config.get_core_conf(force_registration=False)
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
