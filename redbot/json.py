@@ -98,6 +98,7 @@ def load(fp, **kw):
 def overload_stdlib():
     global backup_dumps, backup_dump, backup_loads, backup_load
     import json
+
     if json_module == "json":
         return
 
@@ -115,6 +116,7 @@ def overload_stdlib():
 
 def restore_stdlib():
     import json
+
     if json_module == "json":
         return
     if backup_dumps and json.dumps is dumps:
