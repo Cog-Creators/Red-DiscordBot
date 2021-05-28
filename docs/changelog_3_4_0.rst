@@ -62,6 +62,7 @@ Modlog
 ******
 
 - ``[p]modlogset resetcases`` will now ask for confirmation before proceeding (:issue:`4976`)
+- Modlog will no longer try editing the case's Discord message once it knows that it no longer exists (:issue:`4975`)
 
 Streams
 *******
