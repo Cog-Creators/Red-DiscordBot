@@ -20,6 +20,7 @@ Core Bot
 - Fixed terminal colors on Windows (:issue:`5063`)
 - Fixed ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
 - Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` command (:issue:`4971`)
+- Help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
 
 Admin
 *****
