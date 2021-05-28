@@ -4929,18 +4929,3 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         json.restore_stdlib()
         await ctx.tick()
-
-    @_hackydev.command(name="resetmodules")
-    async def _hackydev_resetmodules(self, ctx: commands.Context):
-        """Reset Libs."""
-        from redbot import json
-
-        json.reset_modules()
-        await ctx.tick()
-
-    @_hackydev.command(name="which")
-    async def _hackydev_which(self, ctx: commands.Context):
-        """Reset Libs."""
-        from redbot import json
-
-        await ctx.send(f"You are using `{json.json_module}`")
