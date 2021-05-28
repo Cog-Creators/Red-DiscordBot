@@ -4943,4 +4943,4 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Reset Libs."""
         from redbot import json
 
-        await ctx.send(f"You are using `{json.json_module.__name__}`")
+        await ctx.send(f"You are using `{json.json_module}`")
