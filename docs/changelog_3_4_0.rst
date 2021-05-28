@@ -39,6 +39,7 @@ Audio
 - Fixed track resuming in a certain edge case (:issue:`4996`)
 - Fixed an error in ``[p]audioset restart`` command (:issue:`4987`)
 - The cog will now check whether it has speak permissions in the channel before performing any actions (:issue:`5012`)
+- Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
 
 Custom Commands
 ***************
