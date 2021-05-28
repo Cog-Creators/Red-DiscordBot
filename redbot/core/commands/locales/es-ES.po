@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-05 19:33+0000\n"
+"POT-Creation-Date: 2021-05-19 11:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr "El tiempo fijado es demasiado alto, considere establecer algo razonable.
 
 #: redbot/core/commands/converter.py:122
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr "Esta cantidad de tiempo es demasiado grande para este comando. (Maximo: {maximum})"
+msgstr "Esta cantidad de tiempo es demasiado grande para este comando. (Máximo: {maximum})"
 
 #: redbot/core/commands/converter.py:128
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
@@ -37,7 +37,7 @@ msgstr "Esta cantidad de tiempo es demasiado pequeña para este comando. (Mínim
 
 #: redbot/core/commands/converter.py:208
 msgid "Unexpected key {key}"
-msgstr "Key inesperada {key}"
+msgstr "Clave inesperada {key}"
 
 #: redbot/core/commands/converter.py:410
 msgid "Expected one of: {}"
@@ -59,110 +59,112 @@ msgstr "Desactivado"
 msgid "\n"
 "Custom Tagline: {tag}"
 msgstr "\n"
-"Tagline personalizada: {tag}"
+"Lema personalizado: {tag}"
 
 #: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\n"
 "Maximum pages per guild (only used if menus are not used): {max_pages_in_guild}\n"
 "Help is a menu: {use_menus}\n"
 "Help shows hidden commands: {show_hidden}\n"
+"Help shows commands aliases: {show_aliases}\n"
 "Help only shows commands which can be used: {verify_checks}\n"
 "Help shows unusable commands when asked directly: {verify_exists}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
 msgstr "Caracteres máximos por página: {page_char_limit}\n"
-"Páginas máximas por servidor (solo usadas si no se utilizan menús): {max_pages_in_guild}\n"
+"Páginas máximas por servidor (solo se usa si no se utilizan los menús): {max_pages_in_guild}\n"
 "Ayuda es un menú: {use_menus}\n"
 "Ayuda muestra comandos ocultos: {show_hidden}\n"
+"Ayuda muestra los apodos de los comandos: {show_aliases}\n"
 "Ayuda solo muestra comandos que se pueden usar: {verify_checks}\n"
 "Ayuda muestra comandos inutilizables cuando se le pregunta directamente: {verify_exists}\n"
 "Retraso de borrado: {delete_delay}\n"
-"Reaccionar con una marca de verificación cuando la ayuda se envía a través de DM: {use_tick}{tagline_info}"
+"Reaccionar con una tick de verificación cuando la ayuda se envía a través de DM: {use_tick}{tagline_info}"
 
-#: redbot/core/commands/help.py:273
+#: redbot/core/commands/help.py:274
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr "Escribe {ctx.clean_prefix}help <command> para más información sobre un comando. También puedes escribir {ctx.clean_prefix}help <category> para más información sobre una categoría."
+msgstr "Escribe {ctx.clean_prefix}help <comandos> para más información sobre un comando. También puedes escribir {ctx.clean_prefix}help <categoría> para más información sobre una categoría."
 
-#: redbot/core/commands/help.py:317
+#: redbot/core/commands/help.py:318
 msgid "Syntax: {command_signature}"
-msgstr ""
+msgstr "Sintaxis: {command_signature}"
 
-#: redbot/core/commands/help.py:323
+#: redbot/core/commands/help.py:324
 msgid "Aliases"
-msgstr ""
+msgstr "Apodos"
 
-#: redbot/core/commands/help.py:323
+#: redbot/core/commands/help.py:324
 msgid "Alias"
-msgstr ""
+msgstr "Apodo"
 
-#: redbot/core/commands/help.py:344
+#: redbot/core/commands/help.py:345
 msgid "{aliases} and {number} more aliases."
-msgstr ""
+msgstr "{aliases} y {number} apodos más."
 
-#: redbot/core/commands/help.py:348
+#: redbot/core/commands/help.py:349
 msgid "{aliases} and one more alias."
-msgstr ""
+msgstr "{aliases} y un alias más."
 
-#: redbot/core/commands/help.py:390
+#: redbot/core/commands/help.py:391
 msgid "**__Subcommands:__**"
 msgstr "**__Subcomandos:__**"
 
-#: redbot/core/commands/help.py:392
+#: redbot/core/commands/help.py:393
 msgid "**__Subcommands:__** (continued)"
 msgstr "**__Subcomandos:__** (continuación)"
 
-#: redbot/core/commands/help.py:403
+#: redbot/core/commands/help.py:404
 msgid "Subcommands:"
 msgstr "Subcomandos:"
 
-#: redbot/core/commands/help.py:467 redbot/core/commands/help.py:722
-#: redbot/core/commands/help.py:735 redbot/core/commands/help.py:754
+#: redbot/core/commands/help.py:468 redbot/core/commands/help.py:723
+#: redbot/core/commands/help.py:736 redbot/core/commands/help.py:755
 msgid "{ctx.me.display_name} Help Menu"
 msgstr "Menú de ayuda de {ctx.me.display_name}"
 
-#: redbot/core/commands/help.py:514
+#: redbot/core/commands/help.py:515
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
 msgstr "*Página {page_num} de {page_count}*\n"
 "{content_description}"
 
-#: redbot/core/commands/help.py:565
+#: redbot/core/commands/help.py:566
 msgid "**__Commands:__**"
 msgstr "**__Comandos:__**"
 
-#: redbot/core/commands/help.py:567
+#: redbot/core/commands/help.py:568
 msgid "**__Commands:__** (continued)"
 msgstr "**__Comandos:__** (continuación)"
 
-#: redbot/core/commands/help.py:577
+#: redbot/core/commands/help.py:578
 msgid "Commands:"
 msgstr "Comandos:"
 
-#: redbot/core/commands/help.py:619
+#: redbot/core/commands/help.py:620
 msgid "**__No Category:__**"
 msgstr "**__Sin Categoría:__**"
 
-#: redbot/core/commands/help.py:632
+#: redbot/core/commands/help.py:633
 msgid "{title} (continued)"
 msgstr "{title} (continuación)"
 
-#: redbot/core/commands/help.py:648 redbot/core/commands/help.py:662
+#: redbot/core/commands/help.py:649 redbot/core/commands/help.py:663
 msgid "No Category:"
 msgstr "Sin categoría:"
 
-#: redbot/core/commands/help.py:731
+#: redbot/core/commands/help.py:732
 msgid "Help topic for *{command_name}* not found."
 msgstr "Tema de ayuda para *{command_name}* no encontrado."
 
-#: redbot/core/commands/help.py:748
+#: redbot/core/commands/help.py:749
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr "El comando *{command_name}* no tiene ningún subcomando llamado *{not_found}*."
+msgstr "El comando *{command_name}* no tiene ningún sub-comando llamado *{not_found}*."
 
-#: redbot/core/commands/help.py:823
+#: redbot/core/commands/help.py:828
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr "No pude enviarte el mensaje de ayuda en MD. O me has bloqueado o has desactivado los MDs en este servidor."
 
-#: redbot/core/commands/help.py:862
+#: redbot/core/commands/help.py:867
 #, docstring
 msgid "\n"
 "    I need somebody\n"
@@ -170,5 +172,10 @@ msgid "\n"
 "    (Help) you know I need someone\n"
 "    (Help!)\n"
 "    "
-msgstr ""
+msgstr "\n"
+"    Necesito a alguien\n"
+"    (Ayuda) no a cualquiera\n"
+"    (Ayuda) sabes que necesito a alguien\n"
+"    (Ayuda!)\n"
+"    "
 

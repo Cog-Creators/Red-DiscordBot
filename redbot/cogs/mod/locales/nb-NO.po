@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-03 22:00+0000\n"
+"POT-Creation-Date: 2021-05-18 21:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -177,18 +177,11 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        `days` is the amount of days of messages to cleanup on massban.\n\n"
 "        Example:\n"
 "           - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`\n"
-"            This will ban all the added userids and delete 7 days of worth messages.\n\n"
+"            This will ban all the added userids and delete 7 days worth of their messages.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr "Masseutestenger brukere fra tjeneren.\n\n"
-"        `dager` er antall dager med meldinger å rydde opp på massban.\n\n"
-"        Eksempel:\n"
-"           - `[p]massban 345628097929936898 57287406247743488 7 hadde de all regler.`\n"
-"            Dette vil forby alle de lagt til brukere, og slette 7 dager med verdt meldinger.\n\n"
-"        Bruker-ID-er må oppgis for å utestenge\n"
-"        med denne kommandoen.\n"
-"        "
+msgstr ""
 
 #: redbot/cogs/mod/kickban.py:433
 msgid "Banned {num} users from the server."
@@ -295,33 +288,33 @@ msgstr "Jeg kan ikke kaste ut dette medlemmet fra talekanalen."
 msgid "Something went wrong while attempting to kick that member."
 msgstr "Noe gikk galt under forsøk på å sparke den brukeren."
 
-#: redbot/cogs/mod/kickban.py:806
+#: redbot/cogs/mod/kickban.py:808
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr "Fjern forbud for en bruker fra å snakke og lytte i serverens talekanaler."
 
-#: redbot/cogs/mod/kickban.py:825
+#: redbot/cogs/mod/kickban.py:827
 msgid "That user isn't muted or deafened by the server."
 msgstr "Den brukeren er ikke dempet eller dempet av serveren."
 
-#: redbot/cogs/mod/kickban.py:841
+#: redbot/cogs/mod/kickban.py:843
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr "Brukeren kan nå snakke og lytte i talekanaler."
 
-#: redbot/cogs/mod/kickban.py:847
+#: redbot/cogs/mod/kickban.py:849
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr "Bannlys en bruker fra å snakke og lytte i serverens talekanaler."
 
-#: redbot/cogs/mod/kickban.py:868
+#: redbot/cogs/mod/kickban.py:870
 msgid "That user is already muted and deafened server-wide."
 msgstr "Den brukeren er allerede dempet og stykket server-wide."
 
-#: redbot/cogs/mod/kickban.py:882
+#: redbot/cogs/mod/kickban.py:884
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr "Brukeren har blitt utestengt fra å snakke eller lytte i talekanaler."
 
-#: redbot/cogs/mod/kickban.py:889
+#: redbot/cogs/mod/kickban.py:891
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -334,35 +327,35 @@ msgstr "Fjern utestengelsen av en bruker fra denne serveren.\n\n"
 "         2. aktiver utviklermodus, gå til utestengelser i denne serverens innstillinger, høyre-\n"
 "        klikk på brukeren og velg \"Kopier ID\"."
 
-#: redbot/cogs/mod/kickban.py:902
+#: redbot/cogs/mod/kickban.py:904
 msgid "It seems that user isn't banned!"
 msgstr "Det virker som brukeren ikke er utestengt!"
 
-#: redbot/cogs/mod/kickban.py:907
+#: redbot/cogs/mod/kickban.py:909
 msgid "Something went wrong while attempting to unban that user."
 msgstr "Noe gikk galt under forsøket på å oppheve utestengelsen av den brukeren."
 
-#: redbot/cogs/mod/kickban.py:921
+#: redbot/cogs/mod/kickban.py:923
 msgid "Unbanned that user from this server."
 msgstr "Opphevet utstengelsen fra den brukeren for denne serveren."
 
-#: redbot/cogs/mod/kickban.py:927
+#: redbot/cogs/mod/kickban.py:929
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr "Jeg deler ikke en annen server med denne brukeren. Jeg kan ikke invitere dem på nytt."
 
-#: redbot/cogs/mod/kickban.py:935
+#: redbot/cogs/mod/kickban.py:937
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr "Du har blitt utestengt fra {server}.\n"
 "Her er en invitasjon for den serveren: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:942
+#: redbot/cogs/mod/kickban.py:944
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr "Jeg sendte ikke en invitasjon til den brukeren. Kanskje du kan sende den for meg?\n"
 "Her er invitasjons lenken: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:950
+#: redbot/cogs/mod/kickban.py:952
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr "Noe gikk galt under forsøket på å sende den brukeran invitasjonen. Her er linken så du kan prøve: {invite_link}"
 
@@ -403,12 +396,10 @@ msgstr "Slett forsinkelsesinnstillinger gjenopprettet."
 
 #: redbot/cogs/mod/names.py:36
 #, docstring
-msgid "Change a user's nickname.\n\n"
+msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
-msgstr "Endre brukers kallenavn.\n\n"
-"        Med tomt kallenavn fjernes den.\n"
-"        "
+msgstr ""
 
 #: redbot/cogs/mod/names.py:45
 msgid "Nicknames must be between 2 and 32 characters long."
@@ -476,93 +467,88 @@ msgstr "Konkurrerende i: {competing}"
 
 #: redbot/cogs/mod/names.py:164
 #, docstring
-msgid "Show information about a user.\n\n"
+msgid "Show information about a member.\n\n"
 "        This includes fields for status, discord join date, server\n"
 "        join date, voice state and previous names/nicknames.\n\n"
-"        If the user has no roles, previous names or previous nicknames,\n"
+"        If the member has no roles, previous names or previous nicknames,\n"
 "        these fields will be omitted.\n"
 "        "
-msgstr "Vis informasjon om en bruker.\n\n"
-"        Dette inkluderer felt for status, discord sammenkoblingsdato, server\n"
-"        bli med dato, stemmetilstand og tidligere navn/kallenavn.\n\n"
-"        Hvis brukeren ikke har noen roller, tidligere navn eller tidligere kallenavn,\n"
-"        vil disse feltene utelates.\n"
-"        "
+msgstr ""
 
 #: redbot/cogs/mod/names.py:192
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: redbot/cogs/mod/names.py:200 redbot/cogs/mod/names.py:201
+#: redbot/cogs/mod/names.py:202 redbot/cogs/mod/names.py:203
 msgid "{}\n"
 "({} days ago)"
 msgstr "{}\n"
 "({} dager siden)"
 
-#: redbot/cogs/mod/names.py:213
+#: redbot/cogs/mod/names.py:215
 msgid "Chilling in {} status"
 msgstr "Slapper av i {} status"
 
-#: redbot/cogs/mod/names.py:227
+#: redbot/cogs/mod/names.py:229
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "og {numeric_number} flere roller vises ikke på grunn av grenseverdier for innebygging."
 
-#: redbot/cogs/mod/names.py:254
+#: redbot/cogs/mod/names.py:256
 msgid "Joined Discord on"
 msgstr "Ble med Discord den"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:257
 msgid "Joined this server on"
 msgstr "Ble medlem på serveren"
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Role"
 msgstr "Rolle"
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Names"
 msgstr "Forrige navn"
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Name"
 msgstr "Forrige navn"
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nicknames"
 msgstr "Forrige kallenavn"
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nickname"
 msgstr "Forrige kallenavn"
 
-#: redbot/cogs/mod/names.py:278
+#: redbot/cogs/mod/names.py:280
 msgid "Current voice channel"
 msgstr "Gjeldende talekanal"
 
-#: redbot/cogs/mod/names.py:282
+#: redbot/cogs/mod/names.py:284
 msgid "Member #{} | User ID: {}"
 msgstr "Medlem #{} | Bruker ID: {}"
 
-#: redbot/cogs/mod/names.py:296
+#: redbot/cogs/mod/names.py:298
 #, docstring
-msgid "Show previous names and nicknames of a user."
-msgstr "Vis tidligere navn og kallenavn på en bruker."
+msgid "Show previous names and nicknames of a member."
+msgstr ""
 
-#: redbot/cogs/mod/names.py:300
+#: redbot/cogs/mod/names.py:302
 msgid "**Past 20 names**:"
 msgstr "**Siste 20 navn**:"
 
-#: redbot/cogs/mod/names.py:306
+#: redbot/cogs/mod/names.py:308
 msgid "**Past 20 nicknames**:"
 msgstr "**Siste 20 kallenavn**:"
 
-#: redbot/cogs/mod/names.py:313
-msgid "That user doesn't have any recorded name or nickname change."
-msgstr "Den brukeren har ikke registrert noe navn eller endring av kallenavn."
+#: redbot/cogs/mod/names.py:315
+msgid "That member doesn't have any recorded name or nickname change."
+msgstr ""
 
 #: redbot/cogs/mod/settings.py:23
 #, docstring

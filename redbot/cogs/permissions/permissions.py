@@ -221,7 +221,7 @@ class Permissions(commands.Cog):
             "When additional rules are set using this cog, those rules will be checked prior to "
             "checking for the default restrictions of the command.\n"
             "Global rules (set by the owner) are checked first, then rules set for servers. If "
-            "multiple global or server rules apply to the case, the order they are checked is:\n"
+            "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
             "  2. Rules about the voice channel a user is in.\n"
             "  3. Rules about the text channel a command was issued in.\n"

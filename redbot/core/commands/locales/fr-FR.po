@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-05 19:33+0000\n"
+"POT-Creation-Date: 2021-05-19 11:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,7 @@ msgstr "`{unit}` n'est pas une unité de temps valide pour cette commande"
 
 #: redbot/core/commands/converter.py:118
 msgid "The time set is way too high, consider setting something reasonable."
-msgstr ""
+msgstr "Le temps fixé est beaucoup trop élevé, envisager de configurer quelque chose de raisonnable."
 
 #: redbot/core/commands/converter.py:122
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
@@ -58,102 +58,113 @@ msgstr "Désactivé"
 #: redbot/core/commands/help.py:118
 msgid "\n"
 "Custom Tagline: {tag}"
-msgstr ""
+msgstr "\n"
+"Tagline personnalisée: {tag}"
 
 #: redbot/core/commands/help.py:124
 msgid "Maximum characters per page: {page_char_limit}\n"
 "Maximum pages per guild (only used if menus are not used): {max_pages_in_guild}\n"
 "Help is a menu: {use_menus}\n"
 "Help shows hidden commands: {show_hidden}\n"
+"Help shows commands aliases: {show_aliases}\n"
 "Help only shows commands which can be used: {verify_checks}\n"
 "Help shows unusable commands when asked directly: {verify_exists}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}{tagline_info}"
-msgstr ""
+msgstr "Nombre maximum de caractères par page : {page_char_limit}\n"
+"Nombre maximum de pages par guilde (utilisé uniquement si les menus ne sont pas utilisés) : {max_pages_in_guild}\n"
+"L'aide est un menu : {use_menus}\n"
+"L'aide montre les commandes cachées : {show_hidden}\n"
+"L'aide montre les alias de commandes: {show_aliases}\n"
+"L'aide ne montre que les commandes qui peuvent être utilisées : {verify_checks}\n"
+"L'aide affiche des commandes inutilisables lorsqu'on lui demande directement : {verify_exists}\n"
+"Suppression du délai : {delete_delay}\n"
+"Réagissez en cochant la case lorsque de l'aide est envoyée par DM : {use_tick}{tagline_info}"
 
-#: redbot/core/commands/help.py:273
+#: redbot/core/commands/help.py:274
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
-msgstr ""
+msgstr "Tapez {ctx.clean_prefix}help <command> pour plus d'informations sur une commande. Vous pouvez également taper {ctx.clean_prefix}help <category> pour plus d'informations sur une catégorie."
 
-#: redbot/core/commands/help.py:317
+#: redbot/core/commands/help.py:318
 msgid "Syntax: {command_signature}"
-msgstr ""
+msgstr "Syntaxe : {command_signature}"
 
-#: redbot/core/commands/help.py:323
+#: redbot/core/commands/help.py:324
 msgid "Aliases"
 msgstr "Alias"
 
-#: redbot/core/commands/help.py:323
+#: redbot/core/commands/help.py:324
 msgid "Alias"
 msgstr "Alias"
 
-#: redbot/core/commands/help.py:344
+#: redbot/core/commands/help.py:345
 msgid "{aliases} and {number} more aliases."
-msgstr ""
+msgstr "{aliases} et {number} plus d'alias."
 
-#: redbot/core/commands/help.py:348
+#: redbot/core/commands/help.py:349
 msgid "{aliases} and one more alias."
-msgstr ""
+msgstr "{aliases} et un autre alias."
 
-#: redbot/core/commands/help.py:390
+#: redbot/core/commands/help.py:391
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Sous-commandes:__**"
 
-#: redbot/core/commands/help.py:392
+#: redbot/core/commands/help.py:393
 msgid "**__Subcommands:__** (continued)"
-msgstr ""
+msgstr "**__Sous-commandes:__** (suite)"
 
-#: redbot/core/commands/help.py:403
+#: redbot/core/commands/help.py:404
 msgid "Subcommands:"
-msgstr ""
+msgstr "Sous-commandes:"
 
-#: redbot/core/commands/help.py:467 redbot/core/commands/help.py:722
-#: redbot/core/commands/help.py:735 redbot/core/commands/help.py:754
+#: redbot/core/commands/help.py:468 redbot/core/commands/help.py:723
+#: redbot/core/commands/help.py:736 redbot/core/commands/help.py:755
 msgid "{ctx.me.display_name} Help Menu"
-msgstr ""
+msgstr "{ctx.me.display_name} Menu Aide"
 
-#: redbot/core/commands/help.py:514
+#: redbot/core/commands/help.py:515
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
-msgstr ""
+msgstr "*Page {page_num} sur {page_count}*\n"
+"{content_description}"
 
-#: redbot/core/commands/help.py:565
+#: redbot/core/commands/help.py:566
 msgid "**__Commands:__**"
 msgstr "**__Commandes:__**"
 
-#: redbot/core/commands/help.py:567
+#: redbot/core/commands/help.py:568
 msgid "**__Commands:__** (continued)"
 msgstr "**__Commandes:__** (suite)"
 
-#: redbot/core/commands/help.py:577
+#: redbot/core/commands/help.py:578
 msgid "Commands:"
-msgstr ""
+msgstr "Commandes:"
 
-#: redbot/core/commands/help.py:619
+#: redbot/core/commands/help.py:620
 msgid "**__No Category:__**"
-msgstr ""
+msgstr "**__Aucune catégorie__**"
 
-#: redbot/core/commands/help.py:632
+#: redbot/core/commands/help.py:633
 msgid "{title} (continued)"
-msgstr ""
+msgstr "{title} (suite)"
 
-#: redbot/core/commands/help.py:648 redbot/core/commands/help.py:662
+#: redbot/core/commands/help.py:649 redbot/core/commands/help.py:663
 msgid "No Category:"
-msgstr ""
+msgstr "Aucune catégorie:"
 
-#: redbot/core/commands/help.py:731
+#: redbot/core/commands/help.py:732
 msgid "Help topic for *{command_name}* not found."
-msgstr ""
+msgstr "Sujet d'aide pour *{command_name}* non trouvé."
 
-#: redbot/core/commands/help.py:748
+#: redbot/core/commands/help.py:749
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
-msgstr ""
+msgstr "Commande *{command_name}* n'a pas de sous-commande nommée *{not_found}*."
 
-#: redbot/core/commands/help.py:823
+#: redbot/core/commands/help.py:828
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr "Je n'ai pas pu vous envoyer le message d'aide en MP. Soit vous m'avez bloqué, soit vous avez désactivé les DMs dans ce serveur."
 
-#: redbot/core/commands/help.py:862
+#: redbot/core/commands/help.py:867
 #, docstring
 msgid "\n"
 "    I need somebody\n"
@@ -161,5 +172,10 @@ msgid "\n"
 "    (Help) you know I need someone\n"
 "    (Help!)\n"
 "    "
-msgstr ""
+msgstr "\n"
+"J'ai besoin de quelqu'un\n"
+"(Aide) pas n'importe qui\n"
+"(Aide) tu sais que j'ai besoin de quelqu'un\n"
+"(Aide!)\n"
+"    "
 
