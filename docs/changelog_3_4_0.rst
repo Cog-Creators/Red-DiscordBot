@@ -102,6 +102,7 @@ Miscellaneous
 - Improved logging in Audio cog (:issue:`5044`)
 - Improved logging of API errors in Streams cog (:issue:`4995`)
 - ``[p]urban`` command from General cog will now use the default embed color of the bot (:issue:`5014`)
+- Cog creation guide now includes the ``bot`` as an argument to the cog class (:issue:`4988`)
 
 
 Redbot 3.4.9 (2021-04-06)
