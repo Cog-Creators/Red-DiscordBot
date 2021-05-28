@@ -99,6 +99,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added `cog guide for core commands <cog_guides/core>` (:issue:`4597`)
 - Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`4886`)
 - Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`4919`)
 - Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`4875`)
