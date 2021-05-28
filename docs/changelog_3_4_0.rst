@@ -101,6 +101,7 @@ Documentation changes
 
 - Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`4886`)
 - Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`4919`)
+- Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`4875`)
 - Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`4882`)
 
 
