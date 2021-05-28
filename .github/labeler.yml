@@ -143,6 +143,7 @@
   # Source
   - redbot/cogs/permissions/*
   # Docs
+  - docs/cog_guides/permissions.rst
   - docs/cog_permissions.rst
 "Category: Reports Cog":
   # Source
