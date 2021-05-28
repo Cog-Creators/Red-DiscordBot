@@ -9,6 +9,9 @@ Redbot 3.4.10 (2021-05-27)
 Read before updating
 --------------------
 
+1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
 
 
 End-user changelog
