@@ -167,6 +167,7 @@
   - redbot/cogs/trivia/*
   # Docs
   - docs/cog_guides/trivia.rst
+  - docs/guide_trivia_list_creation.rst
 "Category: Trivia Lists":
   - redbot/cogs/trivia/data/lists/*
 "Category: Utility Functions":

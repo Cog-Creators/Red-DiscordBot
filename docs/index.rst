@@ -26,6 +26,7 @@ Welcome to Red - Discord Bot's documentation!
 
     cog_customcom
     cog_permissions
+    guide_trivia_list_creation
 
 .. toctree::
     :maxdepth: 2
