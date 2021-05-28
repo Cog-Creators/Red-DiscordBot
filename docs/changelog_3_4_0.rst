@@ -117,6 +117,7 @@ Documentation changes
 - Added `cog guide for Permissions cog <cog_guides/permissions>` (:issue:`1734`, :issue:`4985`)
 - Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
 - Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
+- Added `a guide about Trivia list creation <guide_trivia_list_creation>` (:issue:`4595`, :issue:`5023`)
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
 - Removed PM2 guide (:issue:`4991`)
 
