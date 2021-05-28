@@ -67,6 +67,7 @@ Modlog
 Streams
 *******
 
+- Fixed Picarto support (:issue:`4969`, :issue:`4970`)
 - ``[p]twitchstream``, ``[p]youtubestream``, and ``[p]picarto`` commands can no longer be run in DMs (:issue:`5036`, :issue:`5035`)
 - Smashcast service has been closed and for that reason we have removed support for it from the cog (:issue:`5039`, :issue:`5040`)
 - Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
