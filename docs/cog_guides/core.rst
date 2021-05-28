@@ -2326,7 +2326,7 @@ set addadminrole
 
 Adds an admin role for this guild.
 
-Admins have all the same access and Mods, plus additional admin level commands like:
+Admins have the same access as Mods, plus additional admin level commands like:
  - ``[p]set serverprefix``
  - ``[p]addrole``
  - ``[p]ban``

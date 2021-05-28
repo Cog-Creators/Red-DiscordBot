@@ -82,7 +82,7 @@ msgstr ""
 #: redbot/cogs/filter/filter.py:155
 #, docstring
 msgid "Send a list of this server's filtered words."
-msgstr ""
+msgstr "Envoie la liste des mots filtrés sur ce serveur."
 
 #: redbot/cogs/filter/filter.py:160
 msgid "There is no current words setup to be filtered in this server."
@@ -106,7 +106,7 @@ msgstr ""
 #: redbot/cogs/filter/filter.py:180
 #, docstring
 msgid "Send a list of the channel's filtered words."
-msgstr ""
+msgstr "Envoie la liste des mots filtrés dans ce salon."
 
 #: redbot/cogs/filter/filter.py:185
 msgid "There is no current words setup to be filtered in this channel."
