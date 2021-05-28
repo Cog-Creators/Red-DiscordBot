@@ -95,6 +95,7 @@ Miscellaneous
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
 - Updated auto-restart docs with more commands (:issue:`5020`)
 - Improved logging in Audio cog (:issue:`5044`)
+- Improved logging of API errors in Streams cog (:issue:`4995`)
 - ``[p]urban`` command from General cog will now use the default embed color of the bot (:issue:`5014`)
 
 
