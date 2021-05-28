@@ -99,6 +99,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`4919`)
 
 
 Miscellaneous
