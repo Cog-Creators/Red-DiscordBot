@@ -177,4 +177,7 @@
   # Docs
   - docs/framework_utils.rst
 "Category: Warnings":
+  # Source
   - redbot/cogs/warnings/*
+  # Docs
+  - docs/cog_guides/warnings.rst

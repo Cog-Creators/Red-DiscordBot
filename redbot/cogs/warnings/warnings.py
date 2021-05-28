@@ -156,7 +156,6 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set the channel where warnings should be sent to.
-
         Leave empty to use the channel `[p]warn` command was called in.
         """
         guild = ctx.guild
@@ -192,11 +191,9 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Manage automated actions for Warnings.
-
         Actions are essentially command macros. Any command can be run
         when the action is initially triggered, and/or when the action
         is lifted.
-
         Actions must be given a name and a points threshold. When a
         user is warned enough so that their points go over this
         threshold, the action will be executed.
@@ -207,7 +204,6 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an automated action.
-
         Duplicate action names are not allowed.
         """
         guild = ctx.guild
@@ -259,7 +255,6 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Manage warning reasons.
-
         Reasons must be given a name, description and points value. The
         name of the reason must be given when a user is warned.
         """
@@ -368,26 +363,25 @@ class Warnings(commands.Cog):
     async def warn(
         self,
         ctx: commands.Context,
-        user: discord.Member,
+        member: discord.Member,
         points: UserInputOptional[int] = 1,
         *,
         reason: str,
     ):
         """Warn the user for the specified reason.
-
         `<points>` number of points the warning should be for. If no number is supplied
         1 point will be given. Pre-set warnings disregard this.
-        `<reason>` can be a registered reason if it exists or a custom one
-        is created by default.
+        `<reason>` is reason for the warning. This can be a registered reason,
+        or a custom reason if ``[p]warningset allowcustomreasons`` is set.
         """
         guild = ctx.guild
-        if user == ctx.author:
+        if member == ctx.author:
             return await ctx.send(_("You cannot warn yourself."))
-        if user.bot:
+        if member.bot:
             return await ctx.send(_("You cannot warn other bots."))
-        if user == ctx.guild.owner:
+        if member == ctx.guild.owner:
             return await ctx.send(_("You cannot warn the server owner."))
-        if user.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
+        if member.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
             return await ctx.send(
                 _(
                     "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
@@ -421,7 +415,7 @@ class Warnings(commands.Cog):
                     return await ctx.send(msg)
         if reason_type is None:
             return
-        member_settings = self.config.member(user)
+        member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
         warning_to_add = {
             str(ctx.message.id): {
@@ -443,7 +437,7 @@ class Warnings(commands.Cog):
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             try:
-                await user.send(
+                await member.send(
                     _("You have received a warning in {guild_name}.").format(
                         guild_name=ctx.guild.name
                     ),
@@ -457,13 +451,13 @@ class Warnings(commands.Cog):
                 _(
                     "A warning for {user} has been issued,"
                     " but I wasn't able to send them a warn message."
-                ).format(user=user.mention)
+                ).format(user=member.mention)
             )
         async with member_settings.warnings() as user_warnings:
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
-        await warning_points_add_check(self.config, ctx, user, current_point_count)
+        await warning_points_add_check(self.config, ctx, member, current_point_count)
 
         toggle_channel = guild_settings["toggle_channel"]
         if toggle_channel:
@@ -480,7 +474,7 @@ class Warnings(commands.Cog):
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=user.mention),
+                            _("{user} has been warned.").format(user=member.mention),
                             embed=em,
                         )
 
@@ -489,7 +483,7 @@ class Warnings(commands.Cog):
                     await ctx.tick()
                 else:
                     await ctx.send(
-                        _("{user} has been warned.").format(user=user.mention), embed=em
+                        _("{user} has been warned.").format(user=member.mention), embed=em
                     )
         else:
             if not dm_failed:
@@ -501,7 +495,7 @@ class Warnings(commands.Cog):
                 description=reason_type["description"], points=reason_type["points"]
             ),
             prefix=ctx.clean_prefix,
-            user=user.id,
+            user=member.id,
             message=ctx.message.id,
         )
         await modlog.create_case(
@@ -509,7 +503,7 @@ class Warnings(commands.Cog):
             ctx.guild,
             ctx.message.created_at.replace(tzinfo=timezone.utc),
             "warning",
-            user,
+            member,
             ctx.message.author,
             reason_msg,
             until=None,
@@ -519,18 +513,18 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin()
-    async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int]):
+    async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
         try:
-            userid: int = user.id
+            userid: int = member.id
         except AttributeError:
-            userid: int = user
-            user = ctx.guild.get_member(userid)
-            user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
+            userid: int = member
+            member = ctx.guild.get_member(userid)
+            member = member or namedtuple("Member", "id guild")(userid, ctx.guild)
 
         msg = ""
-        member_settings = self.config.member(user)
+        member_settings = self.config.member(member)
         async with member_settings.warnings() as user_warnings:
             if not user_warnings.keys():  # no warnings for the user
                 await ctx.send(_("That user has no warnings!"))
@@ -554,7 +548,7 @@ class Warnings(commands.Cog):
                 await ctx.send_interactive(
                     pagify(msg, shorten_by=58),
                     box_lang=_("Warnings for {user}").format(
-                        user=user if isinstance(user, discord.Member) else user.id
+                        user=member if isinstance(member, discord.Member) else member.id
                     ),
                 )
 
@@ -598,7 +592,7 @@ class Warnings(commands.Cog):
     async def unwarn(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, int],
+        member: Union[discord.Member, int],
         warn_id: str,
         *,
         reason: str = None,
@@ -608,10 +602,10 @@ class Warnings(commands.Cog):
         guild = ctx.guild
 
         try:
-            user_id = user.id
-            member = user
+            user_id = member.id
+            member = member
         except AttributeError:
-            user_id = user
+            user_id = member
             member = guild.get_member(user_id)
             member = member or namedtuple("Member", "guild id")(guild, user_id)
 
