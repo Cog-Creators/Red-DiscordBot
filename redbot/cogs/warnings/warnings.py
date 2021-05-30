@@ -513,7 +513,7 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.admin()
-    async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int]):
+    async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
         try:
