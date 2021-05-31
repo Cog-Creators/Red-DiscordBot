@@ -140,6 +140,162 @@ async def global_unique_user_finder(
         )
 
 
+class MultiLineConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> List[Query]:
+        """Split the input into multiple arguments (Separated by `\n`)"""
+        response = []
+        for line in arg.splitlines():
+            response.append(Query.process_input(line, ctx.cog.local_folder_current_path))
+        if not response:
+            raise commands.BadArgument(_("Could not match process queries."))
+        return response
+
+
+class KaraokeConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Karaoke arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            level, mono, band, width = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _("Expect either `off` OR `<level> <mono> <band> <width>` as an argument")
+            )
+        else:
+            return True, entries
+
+
+class TimescaleConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Timescale arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            speed, pitch, rate = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _("Expect either `off` OR `<speed> <pitch> <rate>` as an argument")
+            )
+        else:
+            return True, entries
+
+
+class TremoloConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Tremolo arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            frequency, depth = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _("Expect either `off` OR `<frequency> <depth>` as an argument")
+            )
+        else:
+            return True, entries
+
+
+class VibratoConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Vibrato arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            frequency, depth = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _("Expect either `off` OR `<frequency> <depth>` as an argument")
+            )
+        else:
+            return True, entries
+
+
+class RotationConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Rotation arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            (frequency,) = entries
+        except ValueError:
+            raise commands.BadArgument(_("Expect either `off` OR `<frequency>` as an argument"))
+        else:
+            return True, entries
+
+
+class DistortionConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the Distortion arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            scale, offset, soffset, sscale, cscale, coffset, toffset, tscale = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _(
+                    "Expect either `off` OR `<scale> <offset> <soffset> <sscale> <cscale> <coffset> <toffset> <tscale>` as an argument"
+                )
+            )
+        else:
+            return True, entries
+
+
+class OffConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str = "True") -> bool:
+        """Parses the Rotation arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False
+        return True
+
+
+class ChannelMixConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the ChannelMix arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            left_to_left, left_to_right, right_to_left, right_to_right = entries
+        except ValueError:
+            raise commands.BadArgument(
+                _(
+                    "Expect either `off` OR `<left_to_left> <left_to_right> <right_to_left> <right_to_right>` as an argument"
+                )
+            )
+        else:
+            return True, entries
+
+
+class LowPassConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
+        """Parses the LowPass arguments"""
+        arg = arg.strip()
+        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
+            return False, None
+        try:
+            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
+            (smoothing,) = entries
+        except ValueError:
+            raise commands.BadArgument(_("Expect either `off` OR `<smoothing>` as an argument"))
+        else:
+            return True, entries
+
+
 class PlaylistConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> MutableMapping:
         """Get playlist for all scopes that match the argument user provided"""

@@ -23,10 +23,10 @@ from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = logging.getLogger("red.Audio.manager")
-JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1233
+JAR_VERSION: Final[str] = "3.3.2.5"
+JAR_BUILD: Final[int] = 1238
 LAVALINK_DOWNLOAD_URL: Final[str] = (
-    "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
+    "https://github.com/Drapersniper/Lavalink-Jars/releases/download/"  #TOD: Revert this before merged, this so the PR is testable only.
     f"{JAR_VERSION}_{JAR_BUILD}/"
     "Lavalink.jar"
 )

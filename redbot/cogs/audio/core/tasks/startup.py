@@ -115,8 +115,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
                 repeat = guild_data["repeat"]
-                volume = Volume(value=guild_data["volume"] / 100)
-
                 shuffle_bumped = guild_data["shuffle_bumped"]
                 auto_deafen = guild_data["auto_deafen"]
 
@@ -153,6 +151,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
+                volume = Volume(value==guild_data["volume"]/ 100)
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
@@ -190,7 +189,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
                 repeat = guild_data["repeat"]
-                volume = Volume(value=guild_data["volume"] / 100)
                 shuffle_bumped = guild_data["shuffle_bumped"]
                 auto_deafen = guild_data["auto_deafen"]
 
@@ -218,7 +216,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             await asyncio.sleep(1)
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
-
+                volume = Volume(value=guild_data["volume"] / 100)
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
