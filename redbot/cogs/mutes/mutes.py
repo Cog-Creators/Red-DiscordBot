@@ -516,6 +516,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         reason: Optional[str],
         duration=None,
     ):
+        if user.bot:
+            return
+
         if not await self.config.guild(guild).dm():
             return
 
@@ -1710,6 +1713,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "channel": channel,
                     "reason": _(MUTE_UNMUTE_ISSUES["left_guild"]),
                 }
+        except discord.Forbidden:
+            return {
+                "success": False,
+                "channel": channel,
+                "reason": _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]),
+            }
         if move_channel:
             try:
                 await user.move_to(channel)

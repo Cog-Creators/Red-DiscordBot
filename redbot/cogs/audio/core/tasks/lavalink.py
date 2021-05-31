@@ -124,4 +124,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "See above tracebacks for details."
             )
             return
+        if external:
+            await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())

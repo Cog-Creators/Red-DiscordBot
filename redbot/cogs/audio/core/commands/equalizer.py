@@ -171,8 +171,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Load Preset"),
                 description=_("You need the DJ role to load equalizer presets."),
             )
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
             eq_data["eq_bands"] = eq_values
             eq_data["name"] = eq_preset
@@ -202,8 +201,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to reset the equalizer."),
             )
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         player.equalizer.reset()
         await player.set_equalizer(player.equalizer)
         async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
@@ -283,8 +281,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await eq_exists_msg.edit(embed=embed2)
 
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         to_append = {eq_preset: {"author": ctx.author.id, "bands": player.equalizer.get()}}
         new_eq_presets = {**eq_presets, **to_append}
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
@@ -325,8 +322,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         band_names = [
             "25",
             "40",

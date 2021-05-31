@@ -15,7 +15,7 @@ import discord
 from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
-from .utils.chat_formatting import box, pagify
+from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
 
 """
@@ -28,7 +28,7 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 _ = Translator("Dev", __file__)
 
-START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 
 
 @cog_i18n(_)
@@ -71,16 +71,16 @@ class Dev(commands.Cog):
         # remove `foo`
         return content.strip("` \n")
 
-    @staticmethod
-    def get_syntax_error(e):
+    @classmethod
+    def get_syntax_error(cls, e):
         """Format a syntax error to send to the user.
 
         Returns a string representation of the error formatted as a codeblock.
         """
         if e.text is None:
-            return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box(
-            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py"
+            return cls.get_pages("{0.__class__.__name__}: {0}".format(e))
+        return cls.get_pages(
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
         )
 
     @staticmethod
@@ -147,10 +147,12 @@ class Dev(commands.Cog):
             compiled = self.async_compile(code, "<string>", "eval")
             result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
-            await ctx.send(self.get_syntax_error(e))
+            await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
             return
         except Exception as e:
-            await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
+            await ctx.send_interactive(
+                self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
+            )
             return
 
         self._last_result = result
@@ -190,7 +192,7 @@ class Dev(commands.Cog):
             compiled = self.async_compile(to_compile, "<string>", "exec")
             exec(compiled, env)
         except SyntaxError as e:
-            return await ctx.send(self.get_syntax_error(e))
+            return await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
 
         func = env["func"]
         result = None
@@ -271,7 +273,7 @@ class Dev(commands.Cog):
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
-                    await ctx.send(self.get_syntax_error(e))
+                    await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
                     continue
 
             env["message"] = response

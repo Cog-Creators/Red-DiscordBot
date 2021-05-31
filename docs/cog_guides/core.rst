@@ -238,7 +238,7 @@ autoimmune remove
 
 **Description**
 
-Makes a user or role immune from automated moderation actions.
+Remove a user or role from being immune to automated moderation actions.
 
 **Examples:**
     - ``[p]autoimmune remove @TwentySix`` - Removes a user.
@@ -2326,7 +2326,7 @@ set addadminrole
 
 Adds an admin role for this guild.
 
-Admins have all the same access and Mods, plus additional admin level commands like:
+Admins have the same access as Mods, plus additional admin level commands like:
  - ``[p]set serverprefix``
  - ``[p]addrole``
  - ``[p]ban``
@@ -2736,7 +2736,7 @@ set globalregionalformat
 
 **Description**
 
-Changes bot's regional format. This is used for formatting date, time and numbers.
+Changes the bot's regional format. This is used for formatting date, time and numbers.
 
 ``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
 Leave ``language_code`` empty to base regional formatting on bot's locale.
@@ -3055,7 +3055,7 @@ set regionalformat
 
 **Description**
 
-Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
 ``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
 Leave ``language_code`` empty to base regional formatting on bot's locale in this server.

@@ -240,7 +240,11 @@ class CoreLogic:
         for m in modules:
             maybe_reload(m)
 
-        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        children = {
+            name: lib
+            for name, lib in sys.modules.items()
+            if name == module_name or name.startswith(f"{module_name}.")
+        }
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
@@ -1268,7 +1272,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
         for command in itertools.chain((command_obj,), command_obj.parents):
-            if command_obj.requires.bot_perms.embed_links:
+            if command.requires.bot_perms.embed_links:
                 # a slight abuse of this exception to save myself two lines later...
                 raise commands.UserFeedbackCheckFailure(
                     _(
@@ -1434,6 +1438,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if enabled is None:
             await self.bot._config.user(ctx.author).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
+            return
 
         await self.bot._config.user(ctx.author).embeds.set(enabled)
         await ctx.send(
@@ -2111,7 +2116,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Adds an admin role for this guild.
 
-        Admins have all the same access and Mods, plus additional admin level commands like:
+        Admins have the same access as Mods, plus additional admin level commands like:
          - `[p]set serverprefix`
          - `[p]addrole`
          - `[p]ban`
@@ -2788,7 +2793,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format. This is used for formatting date, time and numbers.
+        Changes the bot's regional format. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale.
@@ -2830,7 +2835,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(manage_guild=True)
     async def regionalformat(self, ctx: commands.Context, language_code: str = None):
         """
-        Changes bot's regional format in this server. This is used for formatting date, time and numbers.
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
         Leave `language_code` empty to base regional formatting on bot's locale in this server.
@@ -4472,7 +4477,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.Context, *, user_or_role: Union[discord.Member, discord.Role]
     ):
         """
-        Makes a user or role immune from automated moderation actions.
+        Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
             - `[p]autoimmune remove @TwentySix` - Removes a user.

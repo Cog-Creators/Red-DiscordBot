@@ -1,5 +1,143 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.10 (2021-05-28)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`benno1237`, :ghuser:`bobloy`, :ghuser:`BoyDownTown`, :ghuser:`Danstr5544`, :ghuser:`DeltaXWizard`, :ghuser:`Drapersniper`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Lifeismana`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`plofts`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+1. PM2 process manager is no longer supported as it is not a viable solution due to certain parts of its behavior.
+
+    We highly recommend you to switch to one of the other supported solutions:
+        - `autostart_systemd`
+        - `autostart_mac`
+
+    If you experience any issues when trying to configure it, you can join `our discord server <https://discord.gg/red>`__ and ask in the **support** channel for help.
+2. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    - Red 3.4.10 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1233>`__.
+    - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fixed terminal colors on Windows (:issue:`5063`)
+- Fixed the ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
+- Added missing information about the ``showaliases`` setting in ``[p]helpset showsettings`` (:issue:`4971`)
+- The help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
+- Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
+- ``[p]embedset command`` and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
+- Fixed an issue with Red reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
+
+Admin
+*****
+
+- The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
+- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
+
+Audio
+*****
+
+- Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
+- The ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
+- Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
+- Fixed track resuming in a certain edge case (:issue:`4996`)
+- Fixed an error in ``[p]audioset restart`` (:issue:`4987`)
+- The cog will now check whether it has speak permissions in the channel before performing any actions (:issue:`5012`)
+- Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
+- Fixed fetching of age-restricted tracks (:issue:`5085`)
+- Fixed an issue with Soundcloud URLs that ended with a slash (``/``) character (:issue:`5085`)
+
+Custom Commands
+***************
+
+- ``[p]customcom create simple`` no longer errors for a few specific names (:issue:`5026`, :issue:`5027`)
+
+Downloader
+**********
+
+- ``[p]repo remove`` can now remove multiple repos at the same time (:issue:`4765`, :issue:`5082`)
+- ``[p]cog install`` now properly shows the repo name rather than ``{repo.name}`` (:issue:`4954`)
+
+Mod
+***
+
+- ``[p]mute`` no longer errors on muting a bot user if the ``senddm`` option is enabled (:issue:`5071`)
+
+Mutes
+*****
+
+- Forbidden errors during the channel mute are now handled properly in a rare edge case (:issue:`4994`)
+
+Modlog
+******
+
+- ``[p]modlogset resetcases`` will now ask for confirmation before proceeding (:issue:`4976`)
+- Modlog will no longer try editing the case's Discord message once it knows that it no longer exists (:issue:`4975`)
+
+Streams
+*******
+
+- Fixed Picarto support (:issue:`4969`, :issue:`4970`)
+- ``[p]twitchstream``, ``[p]youtubestream``, and ``[p]picarto`` commands can no longer be run in DMs (:issue:`5036`, :issue:`5035`)
+- Smashcast service has been closed and for that reason we have removed support for it from the cog (:issue:`5039`, :issue:`5040`)
+- Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
+- The cog no longer errors when trying to delete a cached message from a channel that no longer exists (:issue:`5032`, :issue:`5031`)
+- In message template, ``{stream.display_name}`` can now be used to refer to streamer's display name (:issue:`5050`, :issue:`5066`)
+
+    - This is not always the same as ``{stream}`` which refers to the streamer's channel or username
+
+Warnings
+********
+
+- The warn action is now taken *after* sending the warn message to the member (:issue:`4713`, :issue:`5004`)
+
+
+Developer changelog
+-------------------
+
+- Bumped discord.py to 1.7.2 (:issue:`5066`)
+- The log messages shown by the global error handler will now show the trace properly for task done callbacks (:issue:`4980`)
+- **Dev** - ``[p]eval``, ``[p]repl``, and ``[p]debug`` commands no longer fail to send very long syntax errors (:issue:`5041`)
+- **Dev** - ``[p]eval``, ``[p]repl``, and ``[p]debug`` commands now, in addition to ``py``, support code blocks with ``python`` syntax (:issue:`5083`)
+
+
+Documentation changes
+---------------------
+
+- Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
+- Added `cog guide for core commands <cog_guides/core>` (:issue:`1734`, :issue:`4597`)
+- Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`1734`, :issue:`4886`)
+- Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`1734`, :issue:`4919`)
+- Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`1734`, :issue:`4875`)
+- Added `cog guide for Permissions cog <cog_guides/permissions>` (:issue:`1734`, :issue:`4985`)
+- Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
+- Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
+- Added :ref:`a guide about Trivia list creation <guide_trivia_list_creation>` (:issue:`4595`, :issue:`5023`)
+- Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
+- Removed PM2 guide (:issue:`4991`)
+
+
+Miscellaneous
+-------------
+
+- Clarified that ``[p]cleanup`` commands only delete the messages from the current channel (:issue:`5070`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
+- Added information on how to set the bot not to start on boot anymore to auto-restart docs (:issue:`5020`)
+- Improved logging in Audio cog (:issue:`5044`)
+- Improved logging of API errors in Streams cog (:issue:`4995`)
+- The command ``[p]urban`` from the General cog will now use the default embed color of the bot (:issue:`5014`)
+- Cog creation guide now includes the ``bot`` as an argument to the cog class (:issue:`4988`)
+- Rephrased a few strings and fixed maaaaany grammar issues and typos (:issue:`4793`, :issue:`4832`, :issue:`4955`, :issue:`4966`, :issue:`5015`, :issue:`5019`, :issue:`5029`, :issue:`5038`, :issue:`5055`, :issue:`5080`, :issue:`5081`)
+
+
 Redbot 3.4.9 (2021-04-06)
 =========================
 

@@ -196,7 +196,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         requester: discord.Member,
         player: lavalink.Player,
     ):
-        notify_channel = self.bot.get_channel(player.fetch("channel"))
+        notify_channel = self.bot.get_channel(player.fetch("notify_channel"))
         has_perms = self._has_notify_perms(notify_channel)
         tries = 0
         while not player._is_playing:

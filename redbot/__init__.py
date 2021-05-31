@@ -191,7 +191,30 @@ def _update_event_loop_policy():
             _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
-__version__ = "3.4.10.dev1"
+def _ensure_no_colorama():
+    # a hacky way to ensure that nothing initialises colorama
+    # if we're not running with legacy Windows command line mode
+    from rich.console import detect_legacy_windows
+
+    if not detect_legacy_windows():
+        import colorama
+        import colorama.initialise
+
+        colorama.deinit()
+
+        def _colorama_wrap_stream(stream, *args, **kwargs):
+            return stream
+
+        colorama.wrap_stream = _colorama_wrap_stream
+        colorama.initialise.wrap_stream = _colorama_wrap_stream
+
+
+def _early_init():
+    _update_event_loop_policy()
+    _ensure_no_colorama()
+
+
+__version__ = "3.4.11.dev1"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
