@@ -815,9 +815,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if (
-                        await self.config_cache.use_managed_lavalink.get_context_value(
-                            ctx.guild
-                        )
+                        await self.config_cache.use_managed_lavalink.get_context_value(ctx.guild)
                         and query.is_local
                     ):
                         embed.description = _(
