@@ -152,6 +152,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
+                volume = await self.config_cache.volume.get_context_value(
+                    guild, channel=player.channel
+                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
@@ -215,6 +218,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
 
+                volume = await self.config_cache.volume.get_context_value(
+                    guild, channel=player.channel
+                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped

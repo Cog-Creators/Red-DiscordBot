@@ -26,7 +26,7 @@ from ...errors import (
     TrackEnqueueError,
 )
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
+from ..cog_utils import CompositeMetaClass, ENABLED_TITLE
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
 _ = Translator("Audio", Path(__file__))

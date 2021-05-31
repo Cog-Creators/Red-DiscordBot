@@ -6,6 +6,7 @@ import struct
 
 from redbot import VersionInfo
 from redbot.core import commands
+from redbot.core.i18n import Translator
 
 from ..converters import get_lazy_converter, get_playlist_converter
 
