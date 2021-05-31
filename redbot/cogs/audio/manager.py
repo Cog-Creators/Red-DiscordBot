@@ -142,9 +142,9 @@ class ServerManager:
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise RuntimeError("Managed Lavalink server is already running")
+                raise RuntimeError("Managed node is already running")
             elif self._shutdown:
-                raise RuntimeError("Server manager has already been used - create another one")
+                raise RuntimeError("Node manager has already been used - create another one")
 
         await self.maybe_download_jar()
 
@@ -161,12 +161,12 @@ class ServerManager:
             stderr=asyncio.subprocess.STDOUT,
         )
 
-        log.info("Managed Lavalink server started. PID: %s", self._proc.pid)
+        log.info("Managed node started. PID: %s", self._proc.pid)
 
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for managed Lavalink server to be ready")
+            log.warning("Timeout occurred whilst waiting for managed node to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback)
@@ -194,9 +194,9 @@ class ServerManager:
             self.java_available = False
             self.java_version = None
         else:
+            self._java_exc = java_exec
             self._java_version = version = await self._get_java_version()
             self._java_available = (11, 0) <= version < (12, 0)
-            self._java_exc = java_exec
         return self._java_available, self._java_version
 
     async def _get_java_version(self) -> Tuple[int, int]:
@@ -230,7 +230,7 @@ class ServerManager:
         raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
-        log.debug("Waiting for Lavalink server to be ready")
+        log.debug("Waiting for managed node to be ready")
         ready = False
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
@@ -240,9 +240,7 @@ class ServerManager:
                 break
             if _FAILED_TO_START.search(line):
                 if b"Port 2333 was already in use" in line:
-                    log.warning(
-                        "Unable to start managed Lavalink Server; Port 2333 is already in use."
-                    )
+                    log.warning("Unable to start managed node; Port 2333 is already in use.")
                     raise ShouldAutoRecover
                 raise RuntimeError("Managed Lavalink failed to start: %s", line.decode().strip())
             if self._proc.returncode is not None:
@@ -253,11 +251,9 @@ class ServerManager:
                 await asyncio.sleep(0.1)
 
         if self._proc.returncode == 1:
-            raise RuntimeError(
-                "Managed Lavalink failed to start: Server existed with error code 1."
-            )
+            raise RuntimeError("Managed node failed to start: Node exited with error code 1.")
         if not ready:
-            log.critical("Managed lavalink server exited early")
+            log.critical("Managed node exited early")
 
     async def _monitor(self) -> None:
         while self._proc.returncode is None:
@@ -266,7 +262,7 @@ class ServerManager:
         # This task hasn't been cancelled - Lavalink was shut down by something else
         log.info("Managed Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
-            log.info("Restarting managed Lavalink server")
+            log.info("Restarting managed node")
             await self.start(self._java_exc)
         else:
             log.critical(
@@ -284,7 +280,7 @@ class ServerManager:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             return
-        log.info("Shutting down managed Lavalink server")
+        log.info("Shutting down managed node")
         if self._monitor_task is not None:
             self._monitor_task.cancel()
         if not self._proc.returncode:
