@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 import logging
 import re
-
-from typing import Final, Optional, Pattern, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Final, Optional, Pattern, Union
 from urllib.parse import urlparse
 
 import discord
-
+from redbot import VersionInfo
 from redbot.core.commands import Context
 
 from ...audio_dataclasses import Query
@@ -19,6 +19,9 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.validation")
 
 _RE_YT_LIST_PLAYLIST: Final[Pattern] = re.compile(
     r"^(https?://)?(www\.)?(youtube\.com|youtu\.?be)(/playlist\?).*(list=)(.*)(&|$)"
+)
+_MIN_SLASH_SUPPORT = VersionInfo.from_json(
+    {"major": 3, "minor": 1, "micro": 0, "releaselevel": "alpha"}
 )
 
 
@@ -69,9 +72,6 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         """Checks if the query is allowed in this server or globally."""
         if ctx_or_channel:
             guild = ctx_or_channel.guild
-            channel = (
-                ctx_or_channel.channel if isinstance(ctx_or_channel, Context) else ctx_or_channel
-            )
             query = query.lower().strip()
         else:
             guild = None
@@ -81,3 +81,14 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         return await cache.blacklist_whitelist.allowed_by_whitelist_blacklist(query, guild=guild)
+
+    @staticmethod
+    def is_slash_compatible() -> bool:
+        try:
+            from dislash import slash_commands  # noqa: F401
+
+            from ...__version__ import version_info
+
+            return _MIN_SLASH_SUPPORT <= version_info
+        except ImportError:
+            return False

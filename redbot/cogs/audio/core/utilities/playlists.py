@@ -6,7 +6,6 @@ import math
 import random
 import time
 from pathlib import Path
-
 from typing import List, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
@@ -14,7 +13,11 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot import json
+try:
+    from redbot import json
+except ImportError:
+    import json
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter

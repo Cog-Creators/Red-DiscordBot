@@ -4,8 +4,8 @@ from typing import Dict, Optional
 
 import discord
 
+from ....utils import CacheLevel
 from .abc import CacheBase
-from redbot.cogs.audio.utils import CacheLevel
 
 
 class LocalCacheLevelManager(CacheBase):

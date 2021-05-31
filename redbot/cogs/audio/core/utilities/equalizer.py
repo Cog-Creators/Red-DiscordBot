@@ -2,12 +2,9 @@ import asyncio
 import contextlib
 import logging
 
-from typing import List
-
 import discord
 import lavalink
 from lavalink.filters import Equalizer
-
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
@@ -18,30 +15,6 @@ log = logging.getLogger("red.cogs.Audio.cog.Utilities.equalizer")
 
 
 class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
-    async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
-        const = {
-            "op": "equalizer",
-            "guildId": str(guild_id),
-            "bands": [{"band": band, "gain": gain}],
-        }
-
-        try:
-            await lavalink.get_player(guild_id).node.send({**const})
-        except (KeyError, IndexError):
-            pass
-
-    async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
-        const = {
-            "op": "equalizer",
-            "guildId": str(guild_id),
-            "bands": [{"band": x, "gain": y} for x, y in enumerate(gains)],
-        }
-
-        try:
-            await lavalink.get_player(guild_id).node.send({**const})
-        except (KeyError, IndexError):
-            pass
-
     async def _eq_check(self, ctx: commands.Context, player: lavalink.Player) -> None:
         config_bands = await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands()
         if not config_bands:
@@ -74,6 +47,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player: lavalink.Player,
         message: discord.Message,
         selected: int,
+        equalizer: Equalizer,
     ) -> None:
         emoji = {
             "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
@@ -87,80 +61,61 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "reset": "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}",
             "info": "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         }
-        selector = f'{" " * 8}{"   " * selected}^^'
-        try:
-            await message.edit(
-                content=box(f"{player.equalizer.visualise()}\n{selector}", lang="ini")
-            )
-        except discord.errors.NotFound:
-            return
-        try:
-            (react_emoji, react_user) = await self._get_eq_reaction(ctx, message, emoji)
-        except TypeError:
-            return
+        async for react_emoji, react_user in self._get_eq_reaction(ctx, message, emoji):
+            selector = f'{" " * 8}{"   " * selected}^^'
+            try:
+                await message.edit(
+                    content=box(f"{player.equalizer.visualise()}\n{selector}", lang="yaml")
+                )
+            except discord.errors.NotFound:
+                break
+            MAX_PAGE = 14
+            MIN_PAGE = 0
+            if not react_emoji:
+                async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
+                    eq_data["eq_bands"] = equalizer.get()
+                    eq_data["name"] = equalizer.name
+                await self._clear_react(message, emoji)
 
-        if not react_emoji:
-            async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
-                eq_data["eq_bands"] = player.equalizer.get()
-                eq_data["name"] = player.equalizer.name
-            await self._clear_react(message, emoji)
+            if react_emoji == "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}":
+                page = selected - 1
+                selected = page if page > 0 else MAX_PAGE
 
-        if react_emoji == "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            await self._eq_interact(ctx, player, message, max(selected - 1, 0))
+            if react_emoji == "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}":
+                page = selected + 1
+                selected = page if page < 15 else MIN_PAGE
+            if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
+                _max = float("{:.2f}".format(min(equalizer.get_gain(selected) + 0.1, 1.0)))
+                equalizer.set_gain(selected, _max)
+                await player.set_equalizer(equalizer=equalizer)
 
-        if react_emoji == "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            await self._eq_interact(ctx, player, message, min(selected + 1, 14))
+            if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
+                _min = float("{:.2f}".format(max(equalizer.get_gain(selected) - 0.05, -0.25)))
+                equalizer.set_gain(selected, _min)
+                await player.set_equalizer(equalizer=equalizer)
 
-        if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
-            await self.remove_react(message, react_emoji, react_user)
-            _max = float("{:.2f}".format(min(player.equalizer.get_gain(selected) + 0.1, 1.0)))
-            player.equalizer.set_gain(selected, _max)
-            await player.set_equalizer(equalizer=player.equalizer)
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{BLACK UP-POINTING DOUBLE TRIANGLE}":
+                _max = 1.0
+                equalizer.set_gain(selected, _max)
+                await player.set_equalizer(equalizer=equalizer)
 
-        if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
-            await self.remove_react(message, react_emoji, react_user)
-            _min = float("{:.2f}".format(max(player.equalizer.get_gain(selected) - 0.1, -0.25)))
-            player.equalizer.set_gain(selected, _min)
-            await player.set_equalizer(equalizer=player.equalizer)
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}":
+                _min = -0.25
+                equalizer.set_gain(selected, _min)
+                await player.set_equalizer(equalizer=equalizer)
 
-        if react_emoji == "\N{BLACK UP-POINTING DOUBLE TRIANGLE}":
-            await self.remove_react(message, react_emoji, react_user)
-            _max = 1.0
-            player.equalizer.set_gain(selected, _max)
-            await self._apply_gain(ctx.guild.id, selected, _max)
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
+                selected = 0
 
-        if react_emoji == "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}":
-            await self.remove_react(message, react_emoji, react_user)
-            _min = -0.25
-            player.equalizer.set_gain(selected, _min)
-            await self._apply_gain(ctx.guild.id, selected, _min)
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
+                selected = 14
 
-        if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            selected = 0
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}":
+                equalizer.reset()
+                await player.set_equalizer(equalizer=equalizer)
 
-        if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            selected = 14
-            await self._eq_interact(ctx, player, message, selected)
-
-        if react_emoji == "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            player.equalizer.reset()
-            await player.set_equalizer(equalizer=player.equalizer)
-            await self._eq_interact(ctx, player, message, selected)
-
-        if react_emoji == "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}":
-            await self.remove_react(message, react_emoji, react_user)
-            await ctx.send_help(self.command_equalizer)
-            await self._eq_interact(ctx, player, message, selected)
+            if react_emoji == "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}":
+                await ctx.send_help(self.command_equalizer)
 
     async def _eq_msg_clear(self, eq_message: discord.Message):
         if eq_message is not None:
@@ -168,16 +123,39 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await eq_message.delete()
 
     async def _get_eq_reaction(self, ctx: commands.Context, message: discord.Message, emoji):
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add",
-                check=lambda r, u: r.message.id == message.id
-                and u.id == ctx.author.id
-                and r.emoji in emoji.values(),
-                timeout=30,
-            )
-        except asyncio.TimeoutError:
-            await self._clear_react(message, emoji)
-            return None
-        else:
-            return reaction.emoji, user
+        while True:
+            try:
+                tasks = [
+                    asyncio.ensure_future(
+                        self.bot.wait_for(
+                            "reaction_add",
+                            check=lambda r, u: r.message.id == message.id
+                            and u.id == ctx.author.id
+                            and r.emoji in emoji.values(),
+                        )
+                    ),
+                    asyncio.ensure_future(
+                        self.bot.wait_for(
+                            "reaction_remove",
+                            check=lambda r, u: r.message.id == message.id
+                            and u.id == ctx.author.id
+                            and r.emoji in emoji.values(),
+                        )
+                    ),
+                ]
+                done, pending = await asyncio.wait(
+                    tasks, timeout=30, return_when=asyncio.FIRST_COMPLETED
+                )
+                for task in pending:
+                    task.cancel()
+
+                if len(done) == 0:
+                    raise asyncio.TimeoutError()
+
+                # Exception will propagate if e.g. cancelled or timed out
+                reaction, user = done.pop().result()
+
+            except asyncio.TimeoutError:
+                return
+            else:
+                yield reaction.emoji, user

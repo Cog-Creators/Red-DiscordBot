@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import datetime
-
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Set, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
-
+from lavalink import Track
+from lavalink.filters import Equalizer
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
@@ -76,11 +76,13 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def update_bot_presence(self, track: lavalink.Track, playing_servers: int) -> None:
+    async def update_bot_presence(
+        self, track: lavalink.Track, track_string: str, playing_servers: int
+    ) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_active_player_count(self) -> Tuple[str, int]:
+    async def get_active_player_count(self) -> Tuple[Optional[Track], Optional[str], int]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -135,15 +137,6 @@ class MixinMeta(ABC):
     async def _clear_react(
         self, message: discord.Message, emoji: MutableMapping = None
     ) -> asyncio.Task:
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def remove_react(
-        self,
-        message: discord.Message,
-        react_emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
-        react_user: discord.abc.User,
-    ) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -223,7 +216,11 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def send_embed_msg(
-        self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
+        self,
+        ctx: commands.Context,
+        author: Mapping[str, str] = None,
+        no_embed: bool = False,
+        **kwargs,
     ) -> discord.Message:
         raise NotImplementedError()
 
@@ -355,15 +352,8 @@ class MixinMeta(ABC):
         player: lavalink.Player,
         message: discord.Message,
         selected: int,
+        equalizer: Equalizer,
     ) -> None:
-        raise NotImplementedError()
-
-    @abstractmethod
-    async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
-        NotImplementedError()
-
-    @abstractmethod
-    async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -534,4 +524,8 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
+        raise NotImplementedError()
+
+    @staticmethod
+    def is_slash_compatible() -> bool:
         raise NotImplementedError()

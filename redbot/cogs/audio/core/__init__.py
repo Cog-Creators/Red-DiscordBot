@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Mapping
@@ -8,7 +7,11 @@ from typing import Mapping
 import aiohttp
 import discord
 
-from redbot import json
+try:
+    from redbot import json
+except ImportError:
+    import json
+
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
@@ -16,7 +19,7 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 
 from ..utils import PlaylistScope
-from . import abc, cog_utils, commands, events, tasks, utilities
+from . import commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
 _ = Translator("Audio", Path(__file__))
@@ -32,13 +35,6 @@ class Audio(
     metaclass=CompositeMetaClass,
 ):
     """Play audio through voice channels."""
-
-    _default_lavalink_settings = {
-        "host": "localhost",
-        "rest_port": 2333,
-        "ws_port": 2333,
-        "password": "youshallnotpass",
-    }
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -89,6 +85,36 @@ class Audio(
         self._diconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
+        default_cog_lavalink_settings = {
+            "primary": {
+                "host": "localhost",
+                "port": 2333,
+                "rest_uri": "http://localhost:2333",
+                "password": "youshallnotpass",
+                "identifier": "primary",
+                "region": "",
+                "shard_id": -1,
+                "search_only": False,
+            }
+        }
+        lavalink_yaml = dict(lavalink={"server": {"sources": {}}}, server={})
+        lavalink_yaml["lavalink"]["server"]["jdanas"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["http"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["local"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["bandcamp"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["soundcloud"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["twitch"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["youtube"] = True
+        lavalink_yaml["lavalink"]["server"]["bufferDurationMs"] = 300
+        lavalink_yaml["lavalink"]["server"]["playerUpdateInterval"] = 1
+        lavalink_yaml["lavalink"]["server"]["youtubeSearchEnabled"] = True
+        lavalink_yaml["lavalink"]["server"]["soundcloudSearchEnabled"] = True
+        lavalink_yaml["lavalink"]["server"]["password"] = default_cog_lavalink_settings["primary"][
+            "password"
+        ]
+        lavalink_yaml["server"]["address"] = default_cog_lavalink_settings["primary"]["host"]
+        lavalink_yaml["server"]["port"] = default_cog_lavalink_settings["primary"]["port"]
+
         default_global = dict(
             schema_version=1,
             bundled_playlist_version=0,
@@ -101,7 +127,6 @@ class Audio(
             global_db_enabled=True,
             global_db_get_timeout=5,
             status=False,
-            use_external_lavalink=False,
             restrict=True,
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
@@ -123,7 +148,13 @@ class Audio(
             prefer_lyrics=False,
             max_queue_size=10_000,
             notify=True,
-            **self._default_lavalink_settings,
+            lavalink__jar__url=None,
+            lavalink__jar__build=None,
+            lavalink__managed=True,
+            lavalink__autoupdate=False,
+            lavalink__jar__stable=True,
+            lavalink__nodes=default_cog_lavalink_settings,
+            lavalink__managed_yaml=lavalink_yaml,
         )
 
         default_guild = dict(
@@ -139,7 +170,6 @@ class Audio(
             persist_queue=True,
             disconnect=False,
             dj_enabled=False,
-            dj_role=None,
             dj_roles=[],
             daily_playlists=False,
             emptydc_enabled=False,

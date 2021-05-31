@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import discord
-
 from redbot.core.i18n import Translator
+
 from .abc import CacheBase
 
 _ = Translator("Audio", Path(__file__))
@@ -115,15 +115,15 @@ class VolumeManager(CacheBase):
         else:
             channel_value = -1
 
-        maximum = min(global_value, guild_value, channel_value)
+        mininum = min(global_value, guild_value, channel_value)
         restrictor = (
             _("server")
-            if maximum == guild_value
+            if mininum == guild_value
             else _("channel")
-            if maximum == channel_value
+            if mininum == channel_value
             else _("global")
         )
-        return maximum, restrictor
+        return mininum, restrictor
 
     def reset_globals(self) -> None:
         if None in self._cached_global:

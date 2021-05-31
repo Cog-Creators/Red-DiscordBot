@@ -1,15 +1,19 @@
 from __future__ import annotations
+
 import concurrent
 import logging
 import time
 from pathlib import Path
-
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, List, Union
 
 import lavalink
 
-from redbot import json
+try:
+    from redbot import json
+except ImportError:
+    import json
+
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog

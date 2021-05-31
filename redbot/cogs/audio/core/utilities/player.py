@@ -1,16 +1,14 @@
 import logging
 import time
 from pathlib import Path
-
 from typing import List, Optional, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
-
 from discord.embeds import EmptyEmbed
+from lavalink import Track
 from lavalink.filters import Volume
-
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -48,7 +46,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self._error_timer[guild] = now
         return self._error_counter[guild] >= 5
 
-    async def get_active_player_count(self) -> Tuple[Optional[str], int]:
+    async def get_active_player_count(self) -> Tuple[Optional[Track], Optional[str], int]:
         try:
             current = next(
                 (
@@ -63,16 +61,21 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             playing_servers = len(lavalink.active_players())
         except IndexError:
+            current = None
             get_single_title = None
             playing_servers = 0
-        return get_single_title, playing_servers
+        return current, get_single_title, playing_servers
 
-    async def update_bot_presence(self, track: Optional[str], playing_servers: int) -> None:
-        if playing_servers == 0:
+    async def update_bot_presence(
+        self, track: Optional[lavalink.Track], track_string: Optional[str], playing_servers: int
+    ) -> None:
+        if playing_servers == 0 or track is None:
             await self.bot.change_presence(activity=None)
-        elif playing_servers == 1:
+        elif playing_servers == 1 and track:
             await self.bot.change_presence(
-                activity=discord.Activity(name=track, type=discord.ActivityType.listening)
+                activity=discord.Activity(
+                    name=f"{track_string}", url=track.uri, type=discord.ActivityType.streaming
+                )
             )
         elif playing_servers > 1:
             await self.bot.change_presence(
@@ -83,14 +86,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
-
         if member.bot:
             return True
 
         if member.id == ctx.guild.owner_id:
             return True
 
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and await self._has_dj_role(ctx, member):
             return True
 

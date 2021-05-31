@@ -9,8 +9,8 @@ import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
-
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
+
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -193,14 +193,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            player_check = await self.get_active_player_count()
-            await self.update_bot_presence(*player_check)
+            current, get_single_title, playing_servers = await self.get_active_player_count()
+            await self.update_bot_presence(current, get_single_title, playing_servers)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                player_check = await self.get_active_player_count()
-                await self.update_bot_presence(*player_check)
+                current, get_single_title, playing_servers = await self.get_active_player_count()
+                await self.update_bot_presence(current, get_single_title, playing_servers)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
@@ -214,8 +214,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
-                player_check = await self.get_active_player_count()
-                await self.update_bot_presence(*player_check)
+                current, get_single_title, playing_servers = await self.get_active_player_count()
+                await self.update_bot_presence(current, get_single_title, playing_servers)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
@@ -278,11 +278,12 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     else:
                         error = extra.get("message").replace("\n", "")
                         cause = extra.get("cause", "").replace("\n", "")
-                        if cause:
+                        song = current_track or prev_song
+                        if cause and song:
                             log.warning(
                                 "Track failed to play: error: %s | ID: %s",
                                 cause,
-                                current_track.track_identifier,
+                                song.track_identifier,
                             )
                         embed = discord.Embed(
                             title=_("Track Error"),

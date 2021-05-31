@@ -33,8 +33,9 @@ class LocalPathManager(CacheBase):
     async def set_global(self, set_to: Optional[Path]) -> None:
         gid = None
         if set_to is not None:
+            set_to = str(set_to.absolute())
             await self._config.localpath.set(set_to)
-            self._cached_global[gid] = str(set_to.absolute())
+            self._cached_global[gid] = set_to
         else:
             await self._config.localpath.clear()
             self._cached_global[gid] = self._config.defaults["GLOBAL"]["localpath"]

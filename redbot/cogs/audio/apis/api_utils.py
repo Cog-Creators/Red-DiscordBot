@@ -8,7 +8,10 @@ from typing import List, MutableMapping, Optional, Union
 import discord
 import lavalink
 
-from redbot import json
+try:
+    from redbot import json
+except ImportError:
+    import json
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list

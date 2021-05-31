@@ -11,29 +11,29 @@ from typing import Union
 
 import discord
 import lavalink
-
 from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils._dpy_menus_utils import dpymenu
-from redbot.core.utils.chat_formatting import box, humanize_number, pagify
+from redbot.core.utils.chat_formatting import box, humanize_list, humanize_number, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
-from ...utils import CacheLevel, PlaylistScope, has_internal_server
+from ...manager import get_latest_lavalink_release
+from ...utils import CacheLevel, PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import (
-    CompositeMetaClass,
-    ENABLED_TITLE,
-    PlaylistConverter,
-    __version__,
+    DISABLED,
     DISABLED_TITLE,
     ENABLED,
-    DISABLED,
+    ENABLED_TITLE,
+    CompositeMetaClass,
+    PlaylistConverter,
+    __version__,
 )
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
@@ -422,10 +422,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if i != total:
                 text += "\n"
                 if i % 10 == 0:
-                    pages.append(box(text, lang="ini"))
+                    pages.append(box(text, lang="yaml"))
                     text = ""
             else:
-                pages.append(box(text, lang="ini"))
+                pages.append(box(text, lang="yaml"))
         embed_colour = await ctx.embed_colour()
         pages = list(
             discord.Embed(title=_("Global Allowlist"), description=page, colour=embed_colour)
@@ -498,10 +498,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if i != total:
                 text += "\n"
                 if i % 10 == 0:
-                    pages.append(box(text, lang="ini"))
+                    pages.append(box(text, lang="yaml"))
                     text = ""
             else:
-                pages.append(box(text, lang="ini"))
+                pages.append(box(text, lang="yaml"))
         embed_colour = await ctx.embed_colour()
         pages = list(
             discord.Embed(title=_("Global Denylist"), description=page, colour=embed_colour)
@@ -606,7 +606,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 lavalink_status=ENABLED_TITLE if has_lavalink_cache else DISABLED_TITLE,
             )
             await self.send_embed_msg(
-                ctx, title=_("Cache Settings"), description=box(msg, lang="ini")
+                ctx, title=_("Cache Settings"), description=box(msg, lang="yaml"), no_embed=True
             )
             return await ctx.send_help()
         if level not in [5, 3, 2, 1, 0, -1, -2, -3]:
@@ -651,7 +651,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             lavalink_status=ENABLED_TITLE if has_lavalink_cache else DISABLED_TITLE,
         )
 
-        await self.send_embed_msg(ctx, title=_("Cache Settings"), description=box(msg, lang="ini"))
+        await self.send_embed_msg(
+            ctx, title=_("Cache Settings"), description=box(msg, lang="yaml"), no_embed=True
+        )
         await self.config_cache.local_cache_level.set_global(newcache.value)
 
     @command_audioset_global.command(name="cacheage")
@@ -827,7 +829,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             num_seconds=self.get_time_string(global_api_get_timeout),
         )
 
-        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     # --------------------------- CHANNEL COMMANDS ----------------------------
 
@@ -881,7 +883,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 vol=volume,
             )
         )
-        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     # --------------------------- SERVER COMMANDS ----------------------------
 
@@ -929,10 +931,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if i != total:
                 text += "\n"
                 if i % 10 == 0:
-                    pages.append(box(text, lang="ini"))
+                    pages.append(box(text, lang="yaml"))
                     text = ""
             else:
-                pages.append(box(text, lang="ini"))
+                pages.append(box(text, lang="yaml"))
         embed_colour = await ctx.embed_colour()
         pages = list(
             discord.Embed(title=_("Allowlist"), description=page, colour=embed_colour)
@@ -1008,10 +1010,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if i != total:
                 text += "\n"
                 if i % 10 == 0:
-                    pages.append(box(text, lang="ini"))
+                    pages.append(box(text, lang="yaml"))
                     text = ""
             else:
-                pages.append(box(text, lang="ini"))
+                pages.append(box(text, lang="yaml"))
         embed_colour = await ctx.embed_colour()
         pages = list(
             discord.Embed(title=_("Denylist"), description=page, colour=embed_colour)
@@ -1137,7 +1139,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_guild_dc(self, ctx: commands.Context):
         """Toggle the bot auto-disconnecting when done playing.
 
-        This setting takes precedence over `[p]audioset emptydisconnect`.
+        This setting takes precedence over `[p]audioset server emptydisconnect`.
         """
 
         if await self.config_cache.disconnect.get_global() is True:
@@ -1207,7 +1209,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_guild_emptydisconnect(self, ctx: commands.Context, seconds: int):
         """Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
 
-        `[p]audioset dc` takes precedence over this setting.
+        `[p]audioset server dc` takes precedence over this setting.
         """
 
         if await self.config_cache.empty_dc.get_global() is True:
@@ -1384,9 +1386,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Add a role from DJ mode allowlist.
 
-        See roles with `[p]audioset role list`
-        Remove roles with `[p]audioset role remove`
-        See DJs with `[p]audioset role members`
+        See roles with `[p]audioset server role list`
+        Remove roles with `[p]audioset server role remove`
+        See DJs with `[p]audioset server role members`
         """
         await self.config_cache.dj_roles.add_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -1401,9 +1403,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Remove a role from DJ mode allowlist.
 
-        Add roles with `[p]audioset role add`
-        See roles with `[p]audioset role list`
-        See DJs with `[p]audioset role members`
+        Add roles with `[p]audioset server role add`
+        See roles with `[p]audioset server role list`
+        See DJs with `[p]audioset server role members`
         """
         await self.config_cache.dj_roles.remove_guild(ctx.guild, {role_name})
         await self.send_embed_msg(
@@ -1416,9 +1418,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_guild_role_list(self, ctx: commands.Context):
         """Show all roles from DJ mode allowlist.
 
-        Add roles with `[p]audioset role add`
-        Remove roles with `[p]audioset role remove`
-        See DJs with `[p]audioset role members`
+        Add roles with `[p]audioset server role add`
+        Remove roles with `[p]audioset server role remove`
+        See DJs with `[p]audioset server role members`
         """
         roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
         roles = sorted(roles, key=attrgetter("position"), reverse=True)
@@ -1430,9 +1432,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_guild_role_members(self, ctx: commands.Context):
         """Show all users with DJ permission.
 
-        Add roles with `[p]audioset role add`
-        Remove roles with `[p]audioset role remove`
-        See roles with `[p]audioset role list`
+        Add roles with `[p]audioset server role add`
+        Remove roles with `[p]audioset serverrole remove`
+        See roles with `[p]audioset server role list`
         """
         djs = await self.config_cache.dj_roles.get_allowed_members(ctx.guild)
         djs = sorted(djs, key=attrgetter("top_role.position", "display_name"), reverse=True)
@@ -1466,7 +1468,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx, title=_("Setting Changed"), description=_("Track max length disabled.")
                 )
             else:
-                await self.send_embed_msg(
+                return await self.send_embed_msg(
                     ctx,
                     title=_("Setting Not Changed"),
                     description=_(
@@ -1703,7 +1705,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`
+        ​ ​ ​ ​ `[p]audioset server autoplay playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -1726,9 +1728,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
+        ​ ​ ​ ​ `[p]audioset server autoplay MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]audioset server autoplay MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]audioset server autoplay PersonalPlaylist --scope User --author Draper`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1922,7 +1924,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Playlist scope:   [{pscope}]\n")
             ).format(pname=pname, pid=pid, pscope=pscope)
 
-        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     # --------------------------- Lavalink COMMANDS ----------------------------
 
@@ -2007,10 +2009,324 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_audioset_lavalink.command(name="logs")
-    @has_internal_server()
+    @command_audioset_lavalink.command(name="restart")
+    async def command_audioset_lavalink_restart(self, ctx: commands.Context):
+        """Restarts the node connection."""
+        async with ctx.typing():
+            await lavalink.close(self.bot)
+            if self.player_manager is not None:
+                await self.player_manager.shutdown()
+
+            self.lavalink_restart_connect()
+
+            await self.send_embed_msg(
+                ctx,
+                title=_("Restarting Lavalink"),
+                description=_("It can take a couple of minutes for Lavalink to fully start up."),
+            )
+
+    @command_audioset_lavalink.group(name="node")
+    async def command_audioset_lavalink_node(self, ctx: commands.Context):
+        """Configure node specific settings.
+
+        Note: Currently `node` may only be set to "primary".
+        """
+
+    @command_audioset_lavalink_node.command(name="host")
+    async def command_audioset_lavalink_node_host(
+        self, ctx: commands.Context, host: str, node: str = "primary"
+    ):
+        """Set the node host.
+
+        Note: Currently `node` may only be set to "primary".
+        """
+        if node not in (  # TODO: Reenable when LL.py is merged in
+            nodes := await self.config_cache.node_config.get_all_identifiers()
+        ):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_host(node_identifier=node, set_to=host)
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Host set to {host}.").format(host=host),
+            footer=footer,
+        )
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(name="token", aliases=["password", "pass"])
+    async def command_audioset_lavalink_node_password(
+        self, ctx: commands.Context, password: str, node: str = "primary"
+    ):
+        """Set the node authentication password."""
+
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_password(node_identifier=node, set_to=password)
+
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Server password set to {password}.").format(password=password),
+            footer=footer,
+        )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(name="port")
+    async def command_audioset_lavalink_node_port(
+        self, ctx: commands.Context, port: int, node: str = "primary"
+    ):
+        """Set the node websocket port for the node."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_port(node_identifier=node, set_to=port)
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Websocket port set to {port}.").format(port=port),
+            footer=footer,
+        )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(
+        name="uri", enabled=False
+    )  # TODO: Reenable when LL.py is merged in
+    async def command_audioset_lavalink_node_uri(
+        self, ctx: commands.Context, rest_uri: str = None, node: str = "primary"
+    ):
+        """Set the Rest URI for the node."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_rest_uri(node_identifier=node, set_to=rest_uri)
+        rest_uri = await self.config_cache.node_config.get_rest_uri(node_identifier=node)
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Rest URI set to `{rest_uri}`.").format(rest_uri=rest_uri),
+            footer=footer,
+        )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(
+        name="region", enabled=False
+    )  # TODO: Reenable when LL.py is merged in
+    async def command_audioset_lavalink_node_region(
+        self, ctx: commands.Context, region: str = None, node: str = "primary"
+    ):
+        """Set the Discord voice region for the node."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_region(node_identifier=node, set_to=region)
+        region = await self.config_cache.node_config.get_region(node_identifier=node)
+
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Node will now serve the following region: {region}.").format(
+                region=region if region else _("all")
+            ),
+            footer=footer,
+        )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(
+        name="shard", enabled=False
+    )  # TODO: Reenable when LL.py is merged in
+    async def command_audioset_lavalink_node_shard(
+        self, ctx: commands.Context, shard_id: str = None, node: str = "primary"
+    ):
+        """Set the Discord voice region for the node."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        await self.config_cache.node_config.set_shard_id(node_identifier=node, set_to=shard_id)
+        shard_id = await self.config_cache.node_config.get_shard_id(node_identifier=node)
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        if shard_id != -1:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Node will now only serve shard: {shard_id}.").format(
+                    shard_id=shard_id
+                ),
+                footer=footer,
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Node will now serve all shards."),
+                footer=footer,
+            )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink_node.command(
+        name="search", enabled=False
+    )  # TODO: Reenable when LL.py is merged in
+    async def command_audioset_lavalink_node_search(
+        self, ctx: commands.Context, node: str = "primary"
+    ):
+        """Toggle a node to only service searches."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        state = await self.config_cache.node_config.set_search_only(node_identifier=node)
+        await self.config_cache.node_config.set_search_only(node_identifier=node, set_to=not state)
+        footer = None
+        if await self.update_external_status():
+            footer = _("External node set to True.")
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Search only: {shard_id}.").format(
+                shard_id=ENABLED_TITLE if not state else DISABLED_TITLE
+            ),
+            footer=footer,
+        )
+
+        try:
+            self.lavalink_restart_connect()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
+                ),
+            )
+
+    @command_audioset_lavalink.group(name="managed", aliases=["external", "internal"])
+    async def command_audioset_lavalink_managed(self, ctx: commands.Context):
+        """Change settings for the managed node."""
+
+    @command_audioset_lavalink_managed.command(name="logs")
     async def command_audioset_lavalink_logs(self, ctx: commands.Context):
-        """Sends the Lavalink server logs to your DMs."""
+        """Sends the managed node logs to your DMs."""
+        if not await self.config_cache.use_managed_lavalink.get_context_value(ctx.guild):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Environment"),
+                description=_(
+                    "You cannot changed the Java executable path of "
+                    "external Lavalink instances from the Audio Cog."
+                ),
+            )
+
         datapath = cog_data_path(raw_name="Audio")
         logs = datapath / "logs" / "spring.log"
         zip_name = None
@@ -2046,23 +2362,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if zip_name is not None:
                 zip_name.unlink(missing_ok=True)
 
-    @command_audioset_lavalink.command(name="restart")
-    async def command_audioset_lavalink_restart(self, ctx: commands.Context):
-        """Restarts the lavalink connection."""
-        async with ctx.typing():
-            await lavalink.close(self.bot)
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
-
-            self.lavalink_restart_connect()
-
-            await self.send_embed_msg(
-                ctx,
-                title=_("Restarting Lavalink"),
-                description=_("It can take a couple of minutes for Lavalink to fully start up."),
-            )
-
-    @command_audioset_lavalink.command(name="java")
+    @command_audioset_lavalink_managed.command(name="java")
     async def command_audioset_lavalink_java(
         self, ctx: commands.Context, *, java_path: str = None
     ):
@@ -2070,8 +2370,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Enter nothing to reset to default.
         """
-        external = await self.config_cache.external_lavalink_server.get_context_value(ctx.guild)
-        if external:
+        internal = await self.config_cache.use_managed_lavalink.get_context_value(ctx.guild)
+        if not internal:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
@@ -2081,7 +2381,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
         if java_path is None:
-            await self.config.java_exc_path.clear()
+            await self.config_cache.java_exec.set_global(None)
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Reset"),
@@ -2098,7 +2398,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                         java_path=exc_absolute
                     ),
                 )
-            await self.config.java_exc_path.set(str(exc_absolute))
+            await self.config_cache.java_exec.set_global(exc_absolute)
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Changed"),
@@ -2131,17 +2431,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
 
-    @command_audioset_lavalink.command(name="external", aliases=["managed"])
-    async def command_audioset_lavalink_external(self, ctx: commands.Context):
-        """Toggle using external Lavalink servers."""
-        external = await self.config_cache.external_lavalink_server.get_context_value(ctx.guild)
-        await self.config_cache.external_lavalink_server.set_global(not external)
+    @command_audioset_lavalink_managed.command(name="toggle")
+    async def command_audioset_lavalink_managed_toggle(self, ctx: commands.Context):
+        """Toggle using external nodes servers."""
+        managed = await self.config_cache.use_managed_lavalink.get_context_value(ctx.guild)
+        await self.config_cache.use_managed_lavalink.set_global(not managed)
 
-        if external:
+        if not managed:
             embed = discord.Embed(
                 title=_("Setting Changed"),
-                description=_("External Lavalink server: {true_or_false}.").format(
-                    true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE
+                description=_("Managed node: {true_or_false}.").format(
+                    true_or_false=ENABLED_TITLE if not managed else DISABLED_TITLE
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
@@ -2154,11 +2454,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Failed To Shutdown Lavalink"),
                     description=_(
-                        "External Lavalink server: {true_or_false}\n"
+                        "Managed node: {true_or_false}\n"
                         "For it to take effect please reload "
                         "Audio (`{prefix}reload audio`)."
                     ).format(
-                        true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE,
+                        true_or_false=ENABLED_TITLE if not managed else DISABLED_TITLE,
                         prefix=ctx.prefix,
                     ),
                 )
@@ -2166,8 +2466,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(
                     ctx,
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
-                        true_or_false=ENABLED_TITLE if not external else DISABLED_TITLE
+                    description=_("Managed node: {true_or_false}.").format(
+                        true_or_false=ENABLED_TITLE if not managed else DISABLED_TITLE
                     ),
                 )
         try:
@@ -2181,98 +2481,514 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_audioset_lavalink.command(name="host")
-    async def command_audioset_lavalink_host(self, ctx: commands.Context, host: str):
-        """Set the Lavalink server host."""
-        await self.config.host.set(host)
-        footer = None
-        if await self.update_external_status():
-            footer = _("External Lavalink server set to True.")
+    @command_audioset_lavalink_managed.group(name="downloader", aliases=["dl"])
+    async def command_audioset_lavalink_managed_downloader(self, ctx: commands.Context):
+        """Configure the managed Lavalibk downloading options."""
+
+    @command_audioset_lavalink_managed_downloader.command(name="build")
+    async def command_audioset_lavalink_managed_downloader_build(
+        self, ctx: commands.Context, build: int = None
+    ):
+        """Set the build ID to check against when downloading the JAR.
+
+        Note if you set this, we will download this version and will not keep it up to date.
+
+        **Warning**: Setting anything here will void any support provided by Red.
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+        await self.config_cache.managed_lavalink_meta.set_global_build(build)
+        if build:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Lavalink downloader will get build: {build}.").format(build=build),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Lavalink downloader attempt to get the latest known version."),
+            )
+
+    @command_audioset_lavalink_managed_downloader.command(name="url")
+    async def command_audioset_lavalink_managed_downloader_url(
+        self, ctx: commands.Context, url: str = None
+    ):
+        """Set the **direct** URL to download the JAR from.
+
+        Note if you set this, we will download this version and will not keep it up to date.
+
+        **Warning**: Setting anything here will void any support provided by Red.
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a node."),
+            )
+        await self.config_cache.managed_lavalink_meta.set_global_build(url)
+        if url:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Lavalink downloader will get the following jar: <{url}>.").format(
+                    url=url
+                ),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Lavalink downloader attempt to get the latest known version."),
+            )
+
+    @command_audioset_lavalink_managed.group(name="config", aliases=["conf", "yaml"])
+    async def command_audioset_lavalink_managed_config(self, ctx: commands.Context):
+        """Configure the local node runtime options. """
+
+    @command_audioset_lavalink_managed_config.group(name="server")
+    async def command_audioset_lavalink_managed_config_server(self, ctx: commands.Context):
+        """Configure the Server authorization and connection settings."""
+
+    @command_audioset_lavalink_managed_config_server.command(name="host")
+    async def command_audioset_lavalink_managed_config_server_host(
+        self, ctx: commands.Context, host: str = None
+    ):
+        """Set the server host address.
+
+        Default is: "localhost"
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        await self.config_cache.managed_lavalink_yaml.set_server_address(set_to=host)
+        host = await self.config_cache.managed_lavalink_yaml.get_server_address()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Host set to {host}.").format(host=host),
-            footer=footer,
+            description=_(
+                "Managed node will now accept connection on {host}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                host=host, p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name
+            ),
         )
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
+
+    @command_audioset_lavalink_managed_config_server.command(
+        name="token", aliases=["password", "pass"]
+    )
+    async def command_audioset_lavalink_managed_config_server_token(
+        self, ctx: commands.Context, password: str = None
+    ):
+        """Set the server authorization token.
+
+        Default is: "youshallnotpass"
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
                 ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
             )
 
-    @command_audioset_lavalink.command(name="password")
-    async def command_audioset_lavalink_password(self, ctx: commands.Context, password: str):
-        """Set the Lavalink server password."""
-        await self.config.password.set(str(password))
-        footer = None
-        if await self.update_external_status():
-            footer = _("External Lavalink server set to True.")
+        await self.config_cache.managed_lavalink_yaml.set_lavalink_password(set_to=password)
+        password = await self.config_cache.managed_lavalink_yaml.get_lavalink_password()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Server password set to {password}.").format(password=password),
-            footer=footer,
+            description=_(
+                "Managed node will now accept {password} as the authorization token.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                password=password,
+                p=ctx.prefix,
+                cmd=self.command_audioset_lavalink_restart.qualified_name,
+            ),
         )
 
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
+    @command_audioset_lavalink_managed_config_server.command(name="port")
+    async def command_audioset_lavalink_managed_config_server_port(
+        self, ctx: commands.Context, port: int = None
+    ):
+        """Set the server connection port.
+
+        Default is: "2333"
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
                 ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
             )
 
-    @command_audioset_lavalink.command(name="port")
-    async def command_audioset_lavalink_port(self, ctx: commands.Context, ws_port: int):
-        """Set the Lavalink websocket server port."""
-        await self.config.ws_port.set(ws_port)
-        footer = None
-        if await self.update_external_status():
-            footer = _("External Lavalink server set to True.")
+        await self.config_cache.managed_lavalink_yaml.set_server_port(set_to=port)
+        port = await self.config_cache.managed_lavalink_yaml.get_server_port()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Websocket port set to {port}.").format(port=ws_port),
-            footer=footer,
+            description=_(
+                "Managed node will now accept connection on {port}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                port=port, p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name
+            ),
         )
 
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
+    @command_audioset_lavalink_managed_config_server.command(name="jdanas", aliases=["jda"])
+    async def command_audioset_lavalink_managed_config_server_jdanas(self, ctx: commands.Context):
+        """Toggle JDA-NAS on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_jda_nsa()
+        await self.config_cache.managed_lavalink_yaml.set_jda_nsa(not state)
+        if not state:
             await self.send_embed_msg(
                 ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will now start with JDA-NAS enabled.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will now start with JDA-NAS disabled.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config.group(name="source")
+    async def command_audioset_lavalink_managed_config_source(self, ctx: commands.Context):
+        """Toggle audio sources on/off."""
+
+    @command_audioset_lavalink_managed_config_source.command(name="http")
+    async def command_audioset_lavalink_managed_config_source_http(self, ctx: commands.Context):
+        """Toggle HTTP direct URL usage on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_http()
+        await self.config_cache.managed_lavalink_yaml.set_source_http(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from direct URLs.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from direct URLs anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config_source.command(name="bandcamp", aliases=["bc"])
+    async def command_audioset_lavalink_managed_config_source_bandcamp(
+        self, ctx: commands.Context
+    ):
+        """Toggle Bandcamp source on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_bandcamp()
+        await self.config_cache.managed_lavalink_yaml.set_source_bandcamp(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from Bandcamp.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from Bandcamp anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config_source.command(name="local")
+    async def command_audioset_lavalink_managed_config_source_local(self, ctx: commands.Context):
+        """Toggle local file usage on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_local()
+        await self.config_cache.managed_lavalink_yaml.set_source_local(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from local files.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from local files anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config_source.command(name="soundcloud", aliases=["sc"])
+    async def command_audioset_lavalink_managed_config_source_soundcloud(
+        self, ctx: commands.Context
+    ):
+        """Toggle Soundcloud source on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_soundcloud()
+        await self.config_cache.managed_lavalink_yaml.set_source_soundcloud(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from Soundcloud.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from Soundcloud anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config_source.command(name="youtube", aliases=["yt"])
+    async def command_audioset_lavalink_managed_config_source_youtube(self, ctx: commands.Context):
+        """Toggle YouTube source on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_youtube()
+        await self.config_cache.managed_lavalink_yaml.set_source_youtube(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from YouTube.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from YouTube anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_config_source.command(name="twitch")
+    async def command_audioset_lavalink_managed_config_source_twitch(self, ctx: commands.Context):
+        """Toggle Twitch source on or off."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        state = await self.config_cache.managed_lavalink_yaml.get_source_twitch()
+        await self.config_cache.managed_lavalink_yaml.set_source_twitch(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will allow playback from Twitch.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not play from Twitch anymore.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_lavalink_restart.qualified_name),
+            )
+
+    @command_audioset_lavalink_managed_downloader.command(name="stable")
+    async def command_audioset_lavalink_managed_downloader_stable(self, ctx: commands.Context):
+        """Toggle between the pre-release track and the stable track.
+
+        Note This only takes affect if auto-update is enabled and you have not set a URL/Build number.
+
+        **Warning**: Using the pre-release track will void any support provided by Red.
+        """
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+        state = await self.config_cache.managed_lavalink_meta.get_global_stable()
+        await self.config_cache.managed_lavalink_meta.set_global_stable(not state)
+
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Managed node downloader will use the stable track for JARs."),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_("Managed node downloader will use the pre-release track for JARs."),
+            )
+
+    @command_audioset_lavalink_managed_downloader.command(name="update")
+    async def command_audioset_lavalink_managed_downloader_update(self, ctx: commands.Context):
+        """Toggle between the auto-update functionality."""
+        if not await self.config_cache.use_managed_lavalink.get_global():
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("You are only able to set this if you are running a managed node."),
+            )
+        state = await self.config_cache.managed_lavalink_server_auto_update.get_global()
+        await self.config_cache.managed_lavalink_server_auto_update.set_global(not state)
+
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node downloader will now auto-update upon cog reload and bot restart."
                 ),
             )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node downloader will no longer auto-update and will depend on Red version updates."
+                ),
+            )
+
+    @command_audioset_lavalink_managed_downloader.command(name="check")
+    async def command_audioset_lavalink_managed_downloader_check(self, ctx: commands.Context):
+        """See the latest version of Red's Lavalink server."""
+
+        name, tag, url, date = await get_latest_lavalink_release(date=True)
+        version, build = tag.split("_")
+        msg = "----" + _("Release Builds") + "----        \n"
+        msg += _("Release Version:  [{version}]\n").format(version=version)
+        msg += _("Release Build:    [{build}]\n").format(build=build)
+        msg += _("Release Date:     [{published}]\n").format(published=date)
+        msg += _("Release URL:      [{url}]\n\n").format(url=url)
+
+        if await self.config_cache.managed_lavalink_meta.get_global_stable():
+            with contextlib.suppress(Exception):
+                alpha_name, alpha_tag, alpha_url, alpha_date = await get_latest_lavalink_release(
+                    False, date=True
+                )
+                alpha_version, alpha_build = alpha_tag.split("_")
+                if int(alpha_build) > int(build):
+                    msg += "----" + _("Alpha Builds") + "----        \n"
+                    msg += _("Alpha Version:  [{version}]\n").format(version=alpha_version)
+                    msg += _("Alpha Build:    [{build}]\n").format(build=alpha_build)
+                    msg += _("Alpha Date:     [{published}]\n").format(published=alpha_date)
+                    msg += _("Alpha URL:      [{url}]\n\n").format(url=alpha_url)
+
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     @command_audioset_lavalink.command(name="info", aliases=["settings"])
-    async def command_audioset_lavalink_info(self, ctx: commands.Context):
-        """Display Lavalink settings."""
-        configs = await self.config.all()
-        use_external_lavalink_server = (
-            await self.config_cache.external_lavalink_server.get_global()
-        )
+    async def command_audioset_lavalink_info(self, ctx: commands.Context, node: str = "primary"):
+        """Display node settings."""
+        if node not in (nodes := await self.config_cache.node_config.get_all_identifiers()):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("{node} doesn't exist.\nAvailable nodes: {nodes}.").format(
+                    nodes=humanize_list(list(nodes), style="or")
+                ),
+            )
+        managed = await self.config_cache.use_managed_lavalink.get_global()
         local_path = await self.config_cache.localpath.get_global()
-        host = configs["host"]
-        password = configs["password"]
-        rest_port = configs["rest_port"]
-        ws_port = configs["ws_port"]
+        host = await self.config_cache.node_config.get_host(node_identifier=node)
+        password = await self.config_cache.node_config.get_password(node_identifier=node)
+        port = await self.config_cache.node_config.get_port(node_identifier=node)
+        rest_uri = await self.config_cache.node_config.get_rest_uri(node_identifier=node)
+        region = await self.config_cache.node_config.get_region(node_identifier=node)
+        shard = await self.config_cache.node_config.get_shard_id(node_identifier=node)
+        search_only = await self.config_cache.node_config.get_search_only(node_identifier=node)
+
         msg = "----" + _("Connection Settings") + "----        \n"
-        msg += _("Host:             [{host}]\n").format(host=host)
-        msg += _("Port:             [{port}]\n").format(port=ws_port)
-        if ws_port != rest_port and rest_port != 2333:
-            msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
-        msg += _("Password:         [{password}]\n").format(password=password)
+        msg += _("Host:                   [{host}]\n").format(host=host)
+        msg += _("Port:                   [{port}]\n").format(port=port)
+        msg += _("Password:               [{password}]\n").format(password=password)
+        msg += _("Dedicated shard:        [{shard}]\n").format(
+            shard=shard if shard >= 0 else _("All")
+        )
+        msg += _("Region:                 [{region}]\n").format(
+            region=region if region else _("All")
+        )
+        msg += _("Rest URI:               [{rest_uri}]\n").format(rest_uri=rest_uri)
+        msg += _("Search Mode:            [{search}]\n").format(
+            search=ENABLED_TITLE if search_only else DISABLED_TITLE
+        )
 
         msg += (
             "\n---"
@@ -2280,38 +2996,56 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + "---        \n"
             + _("Cog version:            [{version}]\n")
             + _("Red-Lavalink:           [{lavalink_version}]\n")
-            + _("External server:        [{use_external_lavalink}]\n")
+            + _("Managed Lavalink:       [{managed}]\n")
         ).format(
             version=__version__,
             lavalink_version=lavalink.__version__,
-            use_external_lavalink=ENABLED_TITLE
-            if use_external_lavalink_server
-            else DISABLED_TITLE,
+            managed=ENABLED_TITLE if managed else DISABLED_TITLE,
         )
-        if (
-            not use_external_lavalink_server
-            and self.player_manager
-            and self.player_manager.ll_build
-        ):
-            msg += _(
-                "Lavalink build:         [{llbuild}]\n"
-                "Lavalink branch:        [{llbranch}]\n"
-                "Release date:           [{build_time}]\n"
-                "Lavaplayer version:     [{lavaplayer}]\n"
-                "Java version:           [{jvm}]\n"
-                "Java Executable:        [{jv_exec}]\n"
-            ).format(
-                build_time=self.player_manager.build_time,
-                llbuild=self.player_manager.ll_build,
-                llbranch=self.player_manager.ll_branch,
-                lavaplayer=self.player_manager.lavaplayer,
-                jvm=self.player_manager.jvm,
-                jv_exec=self.player_manager.path,
+        if managed:
+            if self.player_manager and self.player_manager.ll_build:
+                msg += "\n----" + _("Managed Node Info") + "----        \n"
+                msg += _(
+                    "Build:                  [{llbuild}]\n"
+                    "Branch:                 [{llbranch}]\n"
+                    "Release date:           [{build_time}]\n"
+                    "Lavaplayer:             [{lavaplayer}]\n"
+                    "Java version:           [{jvm}]\n"
+                    "Java executable:        [{jv_exec}]\n"
+                ).format(
+                    build_time=self.player_manager.build_time,
+                    llbuild=self.player_manager.ll_build,
+                    llbranch=self.player_manager.ll_branch,
+                    lavaplayer=self.player_manager.lavaplayer,
+                    jvm=self.player_manager.jvm,
+                    jv_exec=self.player_manager.path,
+                )
+            msg += _("Lavalink auto-update:   [{update}]\n").format(
+                update=await self.config_cache.managed_lavalink_server_auto_update.get_global(),
             )
+
+            custom_url = await self.config_cache.managed_lavalink_meta.get_global_url()
+            if custom_url:
+                msg += _(
+                    "Lavalink build:         [{build}]\nLavalink URL:           [{url}]\n"
+                ).format(
+                    build=await self.config_cache.managed_lavalink_meta.get_global_build(),
+                    url=custom_url,
+                )
+            else:
+                if await self.config_cache.managed_lavalink_meta.get_global_stable():
+                    user_friendly = _("Stable")
+                else:
+                    user_friendly = _("Alpha")
+                msg += _("Download track:         [{track}]\n").format(
+                    track=user_friendly,
+                )
+
+        msg += "\n----" + _("Miscellaneous Settings") + "----        \n"
         msg += _("Localtracks path:       [{localpath}]\n").format(localpath=local_path)
 
         try:
-            await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))
+            await self.send_embed_msg(ctx.author, description=box(msg, lang="yaml"), no_embed=True)
         except discord.HTTPException:
             await ctx.send(_("I need to be able to DM you to send you this info."))
 
@@ -2478,7 +3212,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 country_code=country_code if country_code else _("Not set"),
             )
         )
-        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     # --------------------------- GENERIC COMMANDS ----------------------------
     @command_audioset.command(name="info", aliases=["settings"])
@@ -2604,7 +3338,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Playlist scope:   [{pscope}]\n")
             ).format(pname=pname, pid=pid, pscope=pscope)
 
-        await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
+        await self.send_embed_msg(ctx, description=box(msg, lang="yaml"), no_embed=True)
 
     # --------------------------- GENERIC COMMANDS ----------------------------
 
@@ -2613,7 +3347,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_youtubeapi(self, ctx: commands.Context):
         """Instructions to set the YouTube API key."""
         message = _(
-            f"1. Go to Google Developers Console and log in with your Google account.\n"
+            "1. Go to Google Developers Console and log in with your Google account.\n"
             "(https://console.developers.google.com/)\n"
             "2. You should be prompted to create a new project (name does not matter).\n"
             "3. Click on Enable APIs and Services at the top.\n"

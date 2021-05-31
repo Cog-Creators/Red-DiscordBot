@@ -5,7 +5,6 @@ import ntpath
 import os
 import posixpath
 import re
-
 from pathlib import Path, PosixPath, WindowsPath
 from typing import (
     AsyncIterator,
@@ -21,7 +20,6 @@ from typing import (
 from urllib.parse import urlparse
 
 import lavalink
-
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -431,6 +429,7 @@ class Query:
                 query = query.replace("ytsearch:", "")
             while "scsearch:" in query:
                 query = query.replace("scsearch:", "")
+            query = query.strip()
 
         elif isinstance(query, Query):
             for key, val in kwargs.items():

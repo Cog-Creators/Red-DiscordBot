@@ -1,8 +1,8 @@
 from __future__ import annotations
+
 import asyncio
 import contextlib
 import logging
-
 from copy import copy
 from pathlib import Path
 from typing import TYPE_CHECKING, Mapping, Optional, Union
@@ -10,7 +10,11 @@ from typing import TYPE_CHECKING, Mapping, Optional, Union
 import aiohttp
 from lavalink.rest_api import LoadResult
 
-from redbot import json
+try:
+    from redbot import json
+except ImportError:
+    import json
+
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
@@ -59,7 +63,11 @@ class GlobalCacheWrapper:
             self._token = await self.bot.get_shared_api_tokens("audiodb")
         self.api_key = self._token.get("api_key", None)
         self.has_api_key = self.cog.global_api_user.get("can_post")
-        id_list = list(self.bot.all_owner_ids)
+        id_list = list(
+            getattr(
+                self.bot, "all_owner_ids", getattr(self.bot, "_true_owner_ids", self.bot.owner_ids)
+            )
+        )
         self._handshake_token = "||".join(map(str, id_list))
         return self.api_key
 

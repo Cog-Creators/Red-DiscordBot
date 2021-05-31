@@ -1,23 +1,22 @@
+import struct
 from abc import ABC
-from typing import Final
 from base64 import b64decode
 from io import BytesIO
-import struct
+from typing import Final
 
-from redbot import VersionInfo
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-from ..converters import get_lazy_converter, get_playlist_converter
-
-__version__ = VersionInfo.from_json({"major": 2, "minor": 4, "micro": 0, "releaselevel": "final"})
+from ..__version__ import __version__ as __version__  # noqa: F401
+from ..converters import get_lazy_converter, get_lazy_multiline_converter, get_playlist_converter
 
 __author__ = ["aikaterna", "Draper"]
 
-_SCHEMA_VERSION: Final[int] = 4
+_SCHEMA_VERSION: Final[int] = 7
 _OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
+LazyMultilineConverter = get_lazy_multiline_converter("--")
 PlaylistConverter = get_playlist_converter()
 T_ = Translator("Audio", __file__)
 
@@ -71,10 +70,9 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     coexist with discord.py's metaclass
     """
 
-    pass
 
-
-# Both DataReader and DataWriter are taken from https://github.com/Devoxin/Lavalink.py/blob/master/lavalink/datarw.py
+# Both DataReader and DataWriter are taken from
+# https://github.com/Devoxin/Lavalink.py/blob/master/lavalink/datarw.py
 # These are licenced under MIT, Thanks Devoxin for putting these together!
 # The license can be found in https://github.com/Devoxin/Lavalink.py/blob/master/LICENSE
 
@@ -120,24 +118,24 @@ class DataWriter:
     def write_byte(self, byte):
         self._buf.write(byte)
 
-    def write_boolean(self, b):
-        enc = struct.pack("B", 1 if b else 0)
+    def write_boolean(self, boolean):
+        enc = struct.pack("B", 1 if boolean else 0)
         self.write_byte(enc)
 
-    def write_unsigned_short(self, s):
-        enc = struct.pack(">H", s)
+    def write_unsigned_short(self, short):
+        enc = struct.pack(">H", short)
         self._write(enc)
 
-    def write_int(self, i):
-        enc = struct.pack(">i", i)
+    def write_int(self, integer):
+        enc = struct.pack(">i", integer)
         self._write(enc)
 
-    def write_long(self, l):
-        enc = struct.pack(">Q", l)
+    def write_long(self, long):
+        enc = struct.pack(">Q", long)
         self._write(enc)
 
-    def write_utf(self, s):
-        utf = s.encode("utf8")
+    def write_utf(self, string):
+        utf = string.encode("utf8")
         byte_len = len(utf)
 
         if byte_len > 65535:

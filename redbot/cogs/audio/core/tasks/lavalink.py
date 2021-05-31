@@ -3,9 +3,9 @@ import logging
 from pathlib import Path
 
 import lavalink
-
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
+
 from ...errors import LavalinkDownloadFailed, ShouldAutoRecover
 from ...manager import ServerManager
 from ..abc import MixinMeta
@@ -35,17 +35,15 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         retry_count = 0
         lazy_external = False
         while retry_count < max_retries:
-            configs = await self.config.all()
-            external = configs["use_external_lavalink"]
-            java_exec = configs["java_exc_path"]
-            if external is False:
-                settings = self._default_lavalink_settings
-                host = settings["host"]
-                password = settings["password"]
-                ws_port = settings["ws_port"]
+            managed = await self.config_cache.use_managed_lavalink.get_global()
+            java_exec = str(await self.config_cache.java_exec.get_global())
+            host = await self.config_cache.node_config.get_host(node_identifier="primary")
+            password = await self.config_cache.node_config.get_password(node_identifier="primary")
+            port = await self.config_cache.node_config.get_port(node_identifier="primary")
+            if managed is True:
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
-                self.player_manager = ServerManager(host, password, ws_port)
+                self.player_manager = ServerManager(host, password, port, self.config_cache)
                 try:
                     await self.player_manager.start(java_exec)
                 except ShouldAutoRecover:
@@ -53,38 +51,35 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         await self.player_manager.shutdown()
                     self.player_manager = None
                     log.warning(
-                        "Managed Lavalink server cannot be started due to port 2333 "
-                        "already being taken, attempting to connect to existing server."
+                        "Managed node cannot be started due to port 2333 "
+                        "already being taken, attempting to connect to existing node."
                     )
-                    host = configs["host"]
-                    password = configs["password"]
-                    ws_port = configs["ws_port"]
                     lazy_external = True
                     break
                 except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
                     if exc.should_retry:
                         log.exception(
-                            "Exception whilst starting managed Lavalink server, retrying...",
+                            "Exception whilst starting managed node, retrying...",
                             exc_info=exc,
                         )
                         retry_count += 1
                         continue
                     else:
                         log.exception(
-                            "Fatal exception whilst starting managed Lavalink server, "
-                            "aborting...",
+                            "Fatal exception whilst starting managed node, aborting...",
                             exc_info=exc,
                         )
                         self.lavalink_connection_aborted = True
                         raise
                 except asyncio.CancelledError:
-                    log.exception("Invalid machine architecture, cannot run Lavalink.")
+                    log.exception(
+                        "Invalid machine architecture, cannot run a managed Lavalink node."
+                    )
                     raise
                 except Exception as exc:
                     log.exception(
-                        "Unhandled exception whilst starting managed Lavalink server, "
-                        "aborting...",
+                        "Unhandled exception whilst starting managed node, aborting...",
                         exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True
@@ -92,13 +87,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     break
             else:
-                host = configs["host"]
-                password = configs["password"]
-                ws_port = configs["ws_port"]
                 break
         else:
             log.critical(
-                "Setting up the Lavalink server failed after multiple attempts. "
+                "Setting up the managed node failed after multiple attempts. "
                 "See above tracebacks for details."
             )
             self.lavalink_connection_aborted = True
@@ -113,19 +105,19 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                     host=host,
                     password=password,
-                    ws_port=ws_port,
+                    ws_port=port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
-                log.error("Connecting to Lavalink server timed out, retrying...")
-                if external is False and self.player_manager is not None:
+                log.error("Connecting to node timed out, retrying...")
+                if managed is True and self.player_manager is not None:
                     await self.player_manager.shutdown()
                 retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
             except Exception as exc:
                 log.exception(
-                    "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
+                    "Unhandled exception whilst connecting to node, aborting...", exc_info=exc
                 )
                 self.lavalink_connection_aborted = True
                 raise
@@ -135,23 +127,23 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             self.lavalink_connection_aborted = True
             if not lazy_external:
                 log.critical(
-                    "Connecting to the Lavalink server failed after multiple attempts. "
+                    "Connecting to the node failed after multiple attempts. "
                     "See above tracebacks for details."
                 )
             else:
                 log.critical(
-                    "Connecting to the existing Lavalink server failed after multiple attempts. "
+                    "Connecting to the existing node failed after multiple attempts. "
                     "This could be due to another program using port 2333, "
                     "please stop that program and reload audio; If you are unsure what program is "
-                    "using port 2333, please restart the machine as it could be a rogue server. "
+                    "using port 2333, please restart the machine as it could be a ghost node. "
                     "Keep in mind, I'm using HOST: %s | PASSWORD: %s | PORT: %s, to connect to to"
                     "the existing server, if you have an external server already ensure you have "
-                    "set the correct host, password and port using `[p]llset ...` on this bot.",
+                    "set the correct host, password and port using `[p]audioset lavalink ...` on this bot.",
                     host,
                     password,
-                    ws_port,
+                    port,
                 )
             return
-        if external:
+        if managed is False:
             await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())

@@ -6,12 +6,11 @@ from pathlib import Path
 
 import discord
 import lavalink
-
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils._dpy_menus_utils import dpymenu
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, start_adding_reactions
+from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ..abc import MixinMeta
@@ -52,7 +51,11 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         ]
         await self._eq_msg_clear(player.fetch("eq_message"))
-        eq_message = await ctx.send(box(player.equalizer.visualise(), lang="ini"))
+        eq_message = await self.send_embed_msg(
+            ctx=ctx,
+            description=box(player.equalizer.visualise(), lang="yaml"),
+            no_embed=True,
+        )
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             with contextlib.suppress(discord.HTTPException):
@@ -60,9 +63,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             start_adding_reactions(eq_message, reactions)
 
-        eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
-        player.store("eq_message", eq_msg_with_reacts)
-        await self._eq_interact(ctx, player, eq_msg_with_reacts, 0)
+        player.store("eq_message", eq_message)
+        await self._eq_interact(ctx, player, eq_message, 0, player.equalizer)
 
     @command_equalizer.command(name="delete", aliases=["del", "remove"])
     async def command_equalizer_delete(self, ctx: commands.Context, eq_preset: str):
@@ -203,11 +205,11 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         await self._eq_msg_clear(player.fetch("eq_message"))
-        message = await ctx.send(
-            content=box(player.equalizer.visualise(), lang="ini"),
-            embed=discord.Embed(
-                colour=await ctx.embed_colour(), title=_("Equalizer values have been reset.")
-            ),
+        message = await self.send_embed_msg(
+            ctx=ctx,
+            title=_("Equalizer values have been reset."),
+            description=box(player.equalizer.visualise(), lang="ini"),
+            no_embed=True,
         )
         player.store("eq_message", message)
 
@@ -372,14 +374,12 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             eq_data["eq_bands"] = player.equalizer.get()
             eq_data["name"] = player.equalizer.name
         band_name = band_names[band_number] if band_int else band_name_or_position
-        message = await ctx.send(
-            content=box(player.equalizer.visualise(), lang="ini"),
-            embed=discord.Embed(
-                colour=await ctx.embed_colour(),
-                title=_("Preset Modified"),
-                description=_("The {band_name}Hz band has been set to {band_value}.").format(
-                    band_name=band_name, band_value=band_value
-                ),
+        message = self.send_embed_msg(
+            ctx=ctx,
+            title=_("Preset Modified\nThe {band_name}Hz band has been set to {band_value}").format(
+                band_name=band_name, band_value=band_value
             ),
+            description=box(player.equalizer.visualise(), lang="ini"),
+            no_embed=True,
         )
         player.store("eq_message", message)

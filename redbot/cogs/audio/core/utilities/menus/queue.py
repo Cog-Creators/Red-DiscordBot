@@ -1,12 +1,8 @@
-import queue
 from datetime import timedelta
 from typing import List, Tuple
 
 import discord
 import lavalink
-
-from redbot.cogs.audio.audio_dataclasses import LocalPath, Query
-from redbot.cogs.audio.core.utilities import SettingCacheManager
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils._dpy_menus_utils import HybridMenu, SimpleHybridMenu
@@ -14,6 +10,9 @@ from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.vendored.discord.ext import menus
 from redbot.vendored.discord.ext.menus import Last, button
+
+from ....audio_dataclasses import LocalPath, Query
+from ...utilities import SettingCacheManager
 
 _ = Translator("Audio", __file__)
 

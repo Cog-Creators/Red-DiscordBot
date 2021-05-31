@@ -1,15 +1,12 @@
 import asyncio
-import datetime
 import itertools
 import logging
 from collections import namedtuple
 from pathlib import Path
-
 from typing import Optional
 
 import lavalink
 from lavalink.filters import Volume
-
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -34,6 +31,15 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         # If it waits for ready in startup, we cause a deadlock during initial load
         # as initial load happens before the bot can ever be ready.
         lavalink.set_logging_level(self.bot._cli_flags.logging_level)
+
+        if self.is_slash_compatible():
+            from dislash import slash_commands
+
+            if not hasattr(self.bot, "slash"):
+                slash_commands.SlashClient(self.bot)
+            elif not isinstance(self.bot.slash, slash_commands.SlashClient):
+                raise RuntimeError("Audio requires `bot.slash` to be a `SlashClient` object.")
+
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
         self.cog_init_task.add_done_callback(task_callback)
 
@@ -272,16 +278,16 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         if current_notification < 1 <= _OWNER_NOTIFICATION:
             msg = _(
                 """Hello, this message brings you an important update regarding the core Audio cog:
-                
+
 Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
-See `[p]help audioset globalapi` for more information.
+See `[p]help audioset global globalapi` for more information.
 Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.
 
 An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.
 Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.
 
 On a related note, it is highly recommended that you enable your local cache if you haven't yet.
-To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
+To do so, run `[p]audioset global cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
             )
             await send_to_owners_with_prefix_replaced(self.bot, msg)
             await self.config.owner_notification.set(1)

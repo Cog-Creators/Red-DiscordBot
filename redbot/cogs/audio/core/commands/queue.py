@@ -1,21 +1,15 @@
 import asyncio
-import contextlib
 import logging
-import math
 from pathlib import Path
-
-from typing import MutableMapping, Optional
+from typing import Optional
 
 import discord
 import lavalink
-
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu, dpymenu
-from redbot.core.utils.menus import (
-    start_adding_reactions,
-)
+from redbot.core.utils._dpy_menus_utils import SimpleHybridMenu
+from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
@@ -285,7 +279,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("There's nothing in the queue."),
             )
         try:
-            vc = ctx.guild.me.voice.channel if ctx.guild.me.voice else ctx.author.voice.channe
+            vc = ctx.guild.me.voice.channel if ctx.guild.me.voice else ctx.author.voice.channel
             if not self.can_join_and_speak(vc) or self.is_vc_full(vc):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(
