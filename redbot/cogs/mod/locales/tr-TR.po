@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-03 22:00+0000\n"
+"POT-Creation-Date: 2021-05-18 21:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,7 @@ msgstr "Discord hierarşi kuralları nedeniyle bunu yapamam."
 
 #: redbot/cogs/mod/kickban.py:156
 msgid "You have been banned from {guild}."
-msgstr "Bu sunucudan yasaklandınız {guild}."
+msgstr "{guild} sunucusundan yasaklandınız."
 
 #: redbot/cogs/mod/kickban.py:160 redbot/cogs/mod/kickban.py:337
 msgid "**Reason**"
@@ -144,7 +144,7 @@ msgstr "Bunu yapmana izin veremem. Kendine zarar vermek kötü bir şey. {}"
 
 #: redbot/cogs/mod/kickban.py:333
 msgid "You have been kicked from {guild}."
-msgstr "Bu sunucudan atıldınız {guild}."
+msgstr "{guild} sunucusundan atıldınız."
 
 #: redbot/cogs/mod/kickban.py:379
 #, docstring
@@ -177,17 +177,17 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        `days` is the amount of days of messages to cleanup on massban.\n\n"
 "        Example:\n"
 "           - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`\n"
-"            This will ban all the added userids and delete 7 days of worth messages.\n\n"
+"            This will ban all the added userids and delete 7 days worth of their messages.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr "Kullanıcıları sunucudan topluca banlar.\n\n"
-"        `günler` toplu ban sırasında önceki kaç gün boyunca atılmış mesajların silineceğini temsil eder.\n\n"
+msgstr "Kullanıcıları sunucudan topluca yasaklar.\n\n"
+"        `günler` toplu yasaklama sırasında son kaç gün atılan mesajların silineceğini belirtir.\n\n"
 "        Örnek:\n"
-"           - `[p]massban 345628097929936898 57287406247743488 7 tüm kuralları çiğnediler.`\n"
-"            Bu verilen kullanıcı IDlerini banlar ve son 7 günde attıkları mesajları siler.\n\n"
-"        Bu komutu kullanarak banlayabilmek için\n"
-"        kullanıcı IDsi belirtilmesi gerekir.\n"
+"           - `[p]massban 345628097929936898 57287406247743488 7 tüm kuralları çiğnedi.`\n"
+"            Bu, IDsi verilen tüm kullanıcıları yasaklayıp son 7 gün boyunca attıkları tüm mesajları siler.\n\n"
+"        Bu komutu kullanarak yasaklama yapmak için\n"
+"        kullanıcı IDleri gerekir.\n"
 "        "
 
 #: redbot/cogs/mod/kickban.py:433
@@ -245,7 +245,7 @@ msgstr "Bir kullanıcıyı sunucudan geçici olarak banla.\n\n"
 
 #: redbot/cogs/mod/kickban.py:643
 msgid "You have been temporarily banned from {server_name} until {date}."
-msgstr "Bu sunucudan {server_name} geçici olarak yasaklandın. Şu zamana kadar {date}."
+msgstr "{server_name} sunucusundan {date} tarihine kadar yasaklandınız."
 
 #: redbot/cogs/mod/kickban.py:647
 msgid " Here is an invite for when your ban expires: {invite_link}"
@@ -295,33 +295,33 @@ msgstr "Bu üyeyi ses kanalından atamıyorum."
 msgid "Something went wrong while attempting to kick that member."
 msgstr "O üye sunucudan atılırken bir şey ters gitti."
 
-#: redbot/cogs/mod/kickban.py:806
+#: redbot/cogs/mod/kickban.py:808
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr "Bir kullanıcının sunucunun ses kanallarında konuşma ve dinleme yasağını kaldır."
 
-#: redbot/cogs/mod/kickban.py:825
+#: redbot/cogs/mod/kickban.py:827
 msgid "That user isn't muted or deafened by the server."
 msgstr "O kullanıcı sunucu tarafından susturulmamış ya da sağırlaştırılmamış."
 
-#: redbot/cogs/mod/kickban.py:841
+#: redbot/cogs/mod/kickban.py:843
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr "Kullanıcının artık ses kanallarında konuşma ve dinleme izni var."
 
-#: redbot/cogs/mod/kickban.py:847
+#: redbot/cogs/mod/kickban.py:849
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr "Bir kullanıcının sunucunun ses kanallarında konuşmasını ve dinlemesini yasakla."
 
-#: redbot/cogs/mod/kickban.py:868
+#: redbot/cogs/mod/kickban.py:870
 msgid "That user is already muted and deafened server-wide."
 msgstr "O kullanıcı zaten sunucu bazında susturulmuş ve sağırlaştırılmış."
 
-#: redbot/cogs/mod/kickban.py:882
+#: redbot/cogs/mod/kickban.py:884
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr "Kullanıcının ses kanallarında konuşması ve dinlemesi yasaklandı."
 
-#: redbot/cogs/mod/kickban.py:889
+#: redbot/cogs/mod/kickban.py:891
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -334,35 +334,35 @@ msgstr "Kullanıcının bu sunucudaki banını kaldır.\n\n"
 "         2. geliştirici modunu açıp, sunucunun ban ayarlarına gidip, kullanıcıya sağ-\n"
 "        tıklayıp `IDyi kopyala` seçeneğine tıklayabilirsiniz."
 
-#: redbot/cogs/mod/kickban.py:902
+#: redbot/cogs/mod/kickban.py:904
 msgid "It seems that user isn't banned!"
 msgstr "Görünüşe bakılırsa o kullanıcı banlı değil."
 
-#: redbot/cogs/mod/kickban.py:907
+#: redbot/cogs/mod/kickban.py:909
 msgid "Something went wrong while attempting to unban that user."
 msgstr "Kullanıcının banı kaldırılırken bir şey ters gitti."
 
-#: redbot/cogs/mod/kickban.py:921
+#: redbot/cogs/mod/kickban.py:923
 msgid "Unbanned that user from this server."
 msgstr "Bu kullanıcının yasağını bu sunucudan kaldırdın."
 
-#: redbot/cogs/mod/kickban.py:927
+#: redbot/cogs/mod/kickban.py:929
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr "Bu kullanıcıyla ortak sunucum yok, onları yeniden davet edemem."
 
-#: redbot/cogs/mod/kickban.py:935
+#: redbot/cogs/mod/kickban.py:937
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr "{server} sunucusundaki banınız kaldırıldı.\n"
 "O sunucuya tekrar katılmak için davet linki: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:942
+#: redbot/cogs/mod/kickban.py:944
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr "O kullanıcıya davet gönderemedim. Belki benim için siz gönderebilirsiniz?\n"
 "Davet linki: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:950
+#: redbot/cogs/mod/kickban.py:952
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr "O kullanıcıya bir davet linki gönderirken sorunla karşılaşıldı. Eğer siz denemek isterseniz davet linki: {invite_link}"
 
@@ -403,7 +403,7 @@ msgstr "Silme gecikmesi ayarları geri getirildi."
 
 #: redbot/cogs/mod/names.py:36
 #, docstring
-msgid "Change a user's nickname.\n\n"
+msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
 msgstr "Bir kullanıcının takma adını değiştir.\n\n"
@@ -476,94 +476,93 @@ msgstr "{competing} içinde kapışılıyor"
 
 #: redbot/cogs/mod/names.py:164
 #, docstring
-msgid "Show information about a user.\n\n"
+msgid "Show information about a member.\n\n"
 "        This includes fields for status, discord join date, server\n"
 "        join date, voice state and previous names/nicknames.\n\n"
-"        If the user has no roles, previous names or previous nicknames,\n"
+"        If the member has no roles, previous names or previous nicknames,\n"
 "        these fields will be omitted.\n"
 "        "
-msgstr "Bir kullanıcı hakkında bilgi göster.\n\n"
-"        Buna kullanıcının durumu, discorda katılma tarihi, sunucuya\n"
-"        katılma tarihi, ses durumu\n"
-" önceki adı/adları dahildir.\n\n"
-"        Eğer üyenin her hangi bir rolü, önceden kullandığı ad ya da takma ad yoksa,\n"
-"        bu alanlar boş bırakılacaktır.\n"
+msgstr "Bir üye hakkında bilgi göster.\n\n"
+"        Buna durum, discord kayıt tarihi, sunucuya giriş tarihi,\n"
+"        ses durumu ve önceki adlar/takma adlar dahildir.\n\n"
+"        Eğer üyenin rolleri veya önceden kullanmış olduğu adlar veya takma adları\n"
+"        yoksa bu alanlar boş bırakılır.\n"
 "        "
 
 #: redbot/cogs/mod/names.py:192
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: redbot/cogs/mod/names.py:200 redbot/cogs/mod/names.py:201
+#: redbot/cogs/mod/names.py:202 redbot/cogs/mod/names.py:203
 msgid "{}\n"
 "({} days ago)"
 msgstr "{}\n"
 "({} gün önce)"
 
-#: redbot/cogs/mod/names.py:213
+#: redbot/cogs/mod/names.py:215
 msgid "Chilling in {} status"
 msgstr "{} durumda rahatına bakıyor"
 
-#: redbot/cogs/mod/names.py:227
+#: redbot/cogs/mod/names.py:229
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "Ve mesaj sınırlamaları yüzünden gösterilemeyen {numeric_number} rol."
 
-#: redbot/cogs/mod/names.py:254
+#: redbot/cogs/mod/names.py:256
 msgid "Joined Discord on"
 msgstr "Discord'a Katıldı"
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:257
 msgid "Joined this server on"
 msgstr "Bu sunucuya katıldı"
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Role"
 msgstr "Rol"
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Names"
 msgstr "Geçmiş İsimleri"
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Name"
 msgstr "Önceki isim"
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nicknames"
 msgstr "Geçmiş Kullanıcı adları"
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nickname"
 msgstr "Önceki Takma İsim"
 
-#: redbot/cogs/mod/names.py:278
+#: redbot/cogs/mod/names.py:280
 msgid "Current voice channel"
 msgstr "Şu anki ses kanalı"
 
-#: redbot/cogs/mod/names.py:282
+#: redbot/cogs/mod/names.py:284
 msgid "Member #{} | User ID: {}"
 msgstr "Üye #{} | Kullanıcı IDsi: {}"
 
-#: redbot/cogs/mod/names.py:296
+#: redbot/cogs/mod/names.py:298
 #, docstring
-msgid "Show previous names and nicknames of a user."
-msgstr "Bir kullanıcının önceki adlarını ve takma adlarını göster."
+msgid "Show previous names and nicknames of a member."
+msgstr "Bir üyenin önceden kullanmış olduğu ad ve takma adları göster."
 
-#: redbot/cogs/mod/names.py:300
+#: redbot/cogs/mod/names.py:302
 msgid "**Past 20 names**:"
 msgstr "**Son 20 isim**:"
 
-#: redbot/cogs/mod/names.py:306
+#: redbot/cogs/mod/names.py:308
 msgid "**Past 20 nicknames**:"
 msgstr "**Son 20 takma isim**:"
 
-#: redbot/cogs/mod/names.py:313
-msgid "That user doesn't have any recorded name or nickname change."
-msgstr "O kullanıcının her hangi bir kaydedilmiş adı yada ad değişikliği bulunmamakta."
+#: redbot/cogs/mod/names.py:315
+msgid "That member doesn't have any recorded name or nickname change."
+msgstr "Bu üyenin kaydedilmiş herhangi bir ad ve takma ad değişikliği yok."
 
 #: redbot/cogs/mod/settings.py:23
 #, docstring

@@ -52,7 +52,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await self.config_cache.autoplay.set_currently_in_guild(guild),
             self._ll_guild_updates.discard(guild.id)
             return
 

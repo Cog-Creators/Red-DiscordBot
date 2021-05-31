@@ -45,7 +45,7 @@ class ModLog(commands.Cog):
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set a channel as the modlog.
 
-        Omit `<channel>` to disable the modlog.
+        Omit `[channel]` to disable the modlog.
         """
         guild = ctx.guild
         if channel:

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-03-15 04:02+0000\n"
+"POT-Creation-Date: 2021-05-08 00:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -40,8 +40,8 @@ msgstr "Le salon des rapports a été défini."
 
 #: redbot/cogs/reports/reports.py:117
 #, docstring
-msgid "Enable or Disable reporting for this server."
-msgstr "Activer ou désactiver les rapports pour ce serveur."
+msgid "Enable or disable reporting for this server."
+msgstr ""
 
 #: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"
