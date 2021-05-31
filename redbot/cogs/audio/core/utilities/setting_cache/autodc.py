@@ -4,15 +4,21 @@ from typing import Dict, Optional
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class AutoDCManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class AutoDCManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+        "_cached_global",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, bool] = {}
         self._cached_global: Dict[None, bool] = {}
 
@@ -40,19 +46,23 @@ class AutoDCManager:
         if self.enable_cache and None in self._cached_global:
             ret = self._cached_global[None]
         else:
-            ret = await self._config.emptydc_enabled()
+            ret = await self._config.disconnect()
             self._cached_global[None] = ret
         return ret
 
     async def set_global(self, set_to: Optional[bool]) -> None:
         if set_to is not None:
-            await self._config.emptydc_enabled.set(set_to)
+            await self._config.disconnect.set(set_to)
             self._cached_global[None] = set_to
         else:
-            await self._config.emptydc_enabled.clear()
+            await self._config.disconnect.clear()
             self._cached_global[None] = self._config.defaults["GLOBAL"]["disconnect"]
 
     async def get_context_value(self, guild: discord.Guild) -> Optional[bool]:
         if (value := await self.get_global()) is True:
             return value
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

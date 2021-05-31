@@ -4,15 +4,21 @@ from typing import Dict, Optional
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class ThumbnailManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class ThumbnailManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+        "_cached_global",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, bool] = {}
         self._cached_global: Dict[None, bool] = {}
 
@@ -53,6 +59,10 @@ class ThumbnailManager:
             self._cached_global[None] = self._config.defaults["GLOBAL"]["thumbnail"]
 
     async def get_context_value(self, guild: discord.Guild) -> bool:
-        if (value := await self.get_global()) is not None:
+        if (value := await self.get_global()) is True:
             return value
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

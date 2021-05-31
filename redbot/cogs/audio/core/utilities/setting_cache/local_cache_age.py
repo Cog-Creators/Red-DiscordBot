@@ -4,15 +4,20 @@ from typing import Dict, Optional
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class LocalCacheAgeManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class LocalCacheAgeManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_global",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, int] = {}
 
     async def get_global(self) -> int:
@@ -26,11 +31,15 @@ class LocalCacheAgeManager:
 
     async def set_global(self, set_to: Optional[int]) -> None:
         if set_to is not None:
-            await self._config.global_db_get_timeout.set(set_to)
+            await self._config.cache_age.set(set_to)
             self._cached_global[None] = set_to
         else:
-            await self._config.global_db_get_timeout.clear()
+            await self._config.cache_age.clear()
             self._cached_global[None] = self._config.defaults["GLOBAL"]["cache_age"]
 
     async def get_context_value(self, guild: discord.Guild = None) -> int:
         return await self.get_global()
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

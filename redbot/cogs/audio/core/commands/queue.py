@@ -77,13 +77,13 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             song += _("\n Requested by: **{track.requester}**").format(track=player.current)
             song += f"\n\n{arrow}`{pos}`/`{dur}`"
             embed = discord.Embed(title=_("Now Playing"), description=song)
-            guild_data = await self.config.guild(ctx.guild).all()
-            if guild_data["thumbnail"] and player.current and player.current.thumbnail:
+            thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
+            if thumbnail and player.current and player.current.thumbnail:
                 embed.set_thumbnail(url=player.current.thumbnail)
 
-            shuffle = guild_data["shuffle"]
-            repeat = guild_data["repeat"]
-            autoplay = guild_data["auto_play"]
+            shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
+            repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+            autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
             text = ""
             text += (
                 _("Auto-Play")
@@ -105,7 +105,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
             dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
-            vote_enabled = guild_data["vote_enabled"]
+            vote_enabled = await self.config_cache.votes.get_context_value(ctx.guild)
             if (
                 (dj_enabled or vote_enabled)
                 and not await self._can_instaskip(ctx, ctx.author)
@@ -321,11 +321,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("There's nothing in the queue."),
             )
         try:
-            if (
-                not self.can_join_and_speak(ctx.author.voice.channel)
-                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.is_vc_full(ctx.author.voice.channel)
-            ):
+            vc = ctx.guild.me.voice.channel if ctx.guild.me.voice else ctx.author.voice.channel
+            if not self.can_join_and_speak(vc) or self.is_vc_full(vc):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(
                     ctx,
@@ -333,7 +330,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("I don't have permission to connect and speak in your channel."),
                 )
             player = await lavalink.connect(
-                ctx.author.voice.channel,
+                vc,
                 deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
             )
             player.store("notify_channel", ctx.channel.id)

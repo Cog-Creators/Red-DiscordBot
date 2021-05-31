@@ -220,11 +220,3 @@ def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
             log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
-
-
-def has_internal_server():
-    async def pred(ctx: commands.Context):
-        external = await ctx.cog.config.use_external_lavalink()
-        return not external
-
-    return commands.check(pred)

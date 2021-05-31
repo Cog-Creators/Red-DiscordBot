@@ -34,17 +34,15 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         max_retries = 5
         retry_count = 0
         while retry_count < max_retries:
-            configs = await self.config.all()
-            external = configs["use_external_lavalink"]
-            java_exec = configs["java_exc_path"]
-            if external is False:
-                settings = self._default_lavalink_settings
-                host = settings["host"]
-                password = settings["password"]
-                ws_port = settings["ws_port"]
+            managed = await self.config_cache.use_managed_lavalink.get_global()
+            java_exec = str(await self.config_cache.java_exec.get_global())
+            host = await self.config_cache.node_config.get_host(node_identifier="primary")
+            password = await self.config_cache.node_config.get_password(node_identifier="primary")
+            port = await self.config_cache.node_config.get_port(node_identifier="primary")
+            if managed is True:
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
-                self.player_manager = ServerManager()
+                self.player_manager = ServerManager(host, password, port, self.config_cache)
                 try:
                     await self.player_manager.start(java_exec)
                 except LavalinkDownloadFailed as exc:
@@ -78,9 +76,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     break
             else:
-                host = configs["host"]
-                password = configs["password"]
-                ws_port = configs["ws_port"]
                 break
         else:
             log.critical(
@@ -99,13 +94,13 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                     host=host,
                     password=password,
-                    ws_port=ws_port,
+                    ws_port=port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
-                log.error("Connecting to Lavalink server timed out, retrying...")
-                if external is False and self.player_manager is not None:
+                log.error("Connecting to node timed out, retrying...")
+                if managed is True and self.player_manager is not None:
                     await self.player_manager.shutdown()
                 retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
@@ -124,6 +119,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "See above tracebacks for details."
             )
             return
-        if external:
+        if managed is False:
             await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())

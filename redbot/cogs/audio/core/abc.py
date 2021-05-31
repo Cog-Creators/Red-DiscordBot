@@ -69,7 +69,7 @@ class MixinMeta(ABC):
     _diconnected_shard: Set[int]
 
     @abstractmethod
-    async def command_llsetup(self, ctx: commands.Context):
+    async def command_audioset_lavalink(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -392,7 +392,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
+    async def command_audioset_guild_autoplay_toggle(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod

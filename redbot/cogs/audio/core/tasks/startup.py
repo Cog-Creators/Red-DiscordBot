@@ -114,12 +114,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     except KeyError:
                         player = None
                 vc = 0
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
+                shuffle = await self.config_cache.shuffle.get_context_value(guild)
+                repeat = await self.config_cache.repeat.get_context_value(guild)
+                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
+                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
 
                 if player is None:
                     while tries < 5 and vc is not None:
@@ -187,12 +185,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except KeyError:
                     player = None
             if player is None:
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
+                shuffle = await self.config_cache.shuffle.get_context_value(guild)
+                repeat = await self.config_cache.repeat.get_context_value(guild)
+                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
+                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
 
                 while tries < 5 and vc is not None:
                     try:
@@ -259,16 +255,16 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         if current_notification < 1 <= _OWNER_NOTIFICATION:
             msg = _(
                 """Hello, this message brings you an important update regarding the core Audio cog:
-                
+
 Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
-See `[p]help audioset globalapi` for more information.
+See `[p]help audioset global globalapi` for more information.
 Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.
 
 An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.
 Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.
 
 On a related note, it is highly recommended that you enable your local cache if you haven't yet.
-To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
+To do so, run `[p]audioset global cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
             )
             await send_to_owners_with_prefix_replaced(self.bot, msg)
             await self.config.owner_notification.set(1)

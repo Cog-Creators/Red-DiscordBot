@@ -111,12 +111,15 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
-        guild_data = await self.config.guild(ctx.guild).all()
-        if len(player.queue) >= 10000:
+        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+            player.guild
+        ):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
+        if not await self.maybe_charge_requester(
+            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+        ):
             return
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
@@ -169,9 +172,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
             )
-        elif guild_data["maxlength"] > 0:
+        elif (
+            max_length := await self.config_cache.max_track_length.get_context_value(ctx.guild)
+        ) > 0:
 
-            if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
+            if self.is_track_length_allowed(search_choice, max_length):
                 search_choice.extras.update(
                     {
                         "enqueue_time": int(time.time()),
@@ -198,7 +203,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             player.maybe_shuffle()
             self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
-        if not guild_data["shuffle"] and queue_dur > 0:
+        if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
             songembed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
                     time=queue_total_duration, position=before_queue_length + 1

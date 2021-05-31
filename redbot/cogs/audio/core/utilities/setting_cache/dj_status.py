@@ -4,15 +4,20 @@ from typing import Dict, Optional
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class DJStatusManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class DJStatusManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, bool] = {}
 
     async def get_guild(self, guild: discord.Guild) -> bool:
@@ -36,3 +41,6 @@ class DJStatusManager:
 
     async def get_context_value(self, guild: discord.Guild) -> bool:
         return await self.get_guild(guild)
+
+    def reset_globals(self) -> None:
+        pass

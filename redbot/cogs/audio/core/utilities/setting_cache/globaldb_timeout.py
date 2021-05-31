@@ -4,15 +4,14 @@ from typing import Dict, Optional, Union
 
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
 
 
-class GlobalDBTimeoutManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class GlobalDBTimeoutManager(CacheBase):
+    __slots__ = ("_config", "bot", "enable_cache", "config_cache", "_cached_global")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_global: Dict[None, Union[float, int]] = {}
 
     async def get_global(self) -> Union[float, int]:
@@ -34,3 +33,7 @@ class GlobalDBTimeoutManager:
 
     async def get_context_value(self, guild: discord.Guild = None) -> Union[float, int]:
         return await self.get_global()
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

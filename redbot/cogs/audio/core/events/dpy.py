@@ -95,8 +95,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 player.store("notify_channel", ctx.channel.id)
 
         if self.local_folder_current_path is None:
-            self.local_folder_current_path = Path(
-                await self.config_cache.localpath.get_context_value(ctx.guild)
+            self.local_folder_current_path = await self.config_cache.localpath.get_context_value(
+                ctx.guild
             )
         if not ctx.guild:
             return

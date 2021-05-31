@@ -1,18 +1,29 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import discord
+from redbot.core.i18n import Translator
 
-from redbot.core import Config
-from redbot.core.bot import Red
+from .abc import CacheBase
+
+_ = Translator("Audio", Path(__file__))
 
 
-class VolumeManager:
-    def __init__(self, bot: Red, config: Config, enable_cache: bool = True):
-        self._config: Config = config
-        self.bot = bot
-        self.enable_cache = enable_cache
+class VolumeManager(CacheBase):
+    __slots__ = (
+        "_config",
+        "bot",
+        "enable_cache",
+        "config_cache",
+        "_cached_guild",
+        "_cached_channel",
+        "_cached_global",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._cached_guild: Dict[int, int] = {}
         self._cached_channel: Dict[int, int] = {}
         self._cached_global: Dict[None, int] = {}
@@ -83,8 +94,37 @@ class VolumeManager:
             channel_value = 1000000
         return min(global_value, guild_value, channel_value)
 
-    async def get_context_max(self, guild: discord.Guild) -> Tuple[int, int]:
+    async def get_context_max(
+        self, guild: discord.Guild, channel: discord.VoiceChannel = None
+    ) -> Tuple[int, int, Optional[int]]:
         global_value = await self.get_global()
         guild_value = await self.get_guild(guild)
+        if channel:
+            channel_value = await self.get_channel(channel)
+        else:
+            channel_value = -1
+        return global_value, guild_value, channel_value
 
-        return global_value, guild_value
+    async def get_max_and_source(
+        self, guild: discord.Guild, channel: discord.VoiceChannel = None
+    ) -> Tuple[int, str]:
+        global_value = await self.get_global()
+        guild_value = await self.get_guild(guild)
+        if channel:
+            channel_value = await self.get_channel(channel)
+        else:
+            channel_value = -1
+
+        mininum = min(global_value, guild_value, channel_value)
+        restrictor = (
+            _("server")
+            if mininum == guild_value
+            else _("channel")
+            if mininum == channel_value
+            else _("global")
+        )
+        return mininum, restrictor
+
+    def reset_globals(self) -> None:
+        if None in self._cached_global:
+            del self._cached_global[None]

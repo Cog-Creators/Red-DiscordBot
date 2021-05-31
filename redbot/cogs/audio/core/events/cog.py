@@ -35,7 +35,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
-            await self.config_cache.autoplay.set_currently_in_guild(guild, None)
+            await self.config_cache.autoplay.set_currently_in_guild(guild)
             return
 
         track_identifier = track.track_identifier

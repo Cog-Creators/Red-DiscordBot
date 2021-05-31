@@ -529,10 +529,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(ctx, title=msg, description=desc)
                 return False
             try:
-                if (
-                    not self.can_join_and_speak(ctx.author.voice.channel)
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.is_vc_full(ctx.author.voice.channel)
+                if not self.can_join_and_speak(ctx.author.voice.channel) or self.is_vc_full(
+                    ctx.author.voice.channel
                 ):
                     await self.send_embed_msg(
                         ctx,

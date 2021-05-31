@@ -475,7 +475,6 @@ class AudioAPIInterface:
         skip_youtube_api = False
         try:
             current_cache_level = await self.config_cache.local_cache_level.get_global()
-            guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await self.cog.queue_duration(ctx)
@@ -644,10 +643,17 @@ class AudioAPIInterface:
                     continue
                 track_list.append(single_track)
                 if enqueue:
-                    if len(player.queue) >= 10000:
+                    if len(
+                        player.queue
+                    ) >= await self.config_cache.max_queue_size.get_context_value(player.guild):
                         continue
-                    if guild_data["maxlength"] > 0:
-                        if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
+
+                    if (
+                        max_length := await self.config_cache.max_track_length.get_context_value(
+                            ctx.guild
+                        )
+                    ) > 0:
+                        if self.cog.is_track_length_allowed(single_track, max_length):
                             enqueued_tracks += 1
                             single_track.extras.update(
                                 {
@@ -697,7 +703,10 @@ class AudioAPIInterface:
                         num=enqueued_tracks, maxlength_msg=maxlength_msg
                     ),
                 )
-                if not guild_data["shuffle"] and queue_dur > 0:
+                if (
+                    not await self.config_cache.shuffle.get_context_value(ctx.guild)
+                    and queue_dur > 0
+                ):
                     embed.set_footer(
                         text=_(
                             "{time} until start of playlist"
@@ -773,7 +782,7 @@ class AudioAPIInterface:
                 youtube_url = await self.fetch_youtube_query(
                     ctx, track_info, current_cache_level=current_cache_level
                 )
-            except YouTubeApiError as err:
+            except YouTubeApiError:
                 youtube_url = None
         else:
             if cache_enabled:

@@ -81,14 +81,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
-
         if member.bot:
             return True
 
         if member.id == ctx.guild.owner_id:
             return True
 
+        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and await self._has_dj_role(ctx, member):
             return True
 
@@ -360,7 +359,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         except KeyError:
             self.update_player_lock(ctx, True)
-        guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
         single_track = None
         index = None
@@ -408,7 +406,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     else:
                         embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
                 if (
-                    await self.config_cache.managed_lavalink_server.get_context_value(player.guild)
+                    await self.config_cache.external_lavalink_server.get_context_value(
+                        player.guild
+                    )
                     and query.is_local
                 ):
                     embed.description = _(
@@ -436,12 +436,15 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
-            if len(player.queue) >= 10000:
+            max_queue_length = await self.config_cache.max_queue_size.get_context_value(
+                player.guild
+            )
+            if len(player.queue) >= max_queue_length:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
             empty_queue = not player.queue
             async for track in AsyncIter(tracks):
-                if len(player.queue) >= 10000:
+                if len(player.queue) >= max_queue_length:
                     continue
                 query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
@@ -453,8 +456,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if IS_DEBUG:
                         log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
+
+                elif (
+                    max_length := await self.config_cache.max_track_length.get_context_value(
+                        ctx.guild
+                    )
+                ) > 0:
+                    if self.is_track_length_allowed(track, max_length):
                         track_len += 1
                         track.extras.update(
                             {
@@ -501,7 +509,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     num=track_len, maxlength_msg=maxlength_msg
                 )
             )
-            if not guild_data["shuffle"] and queue_dur > 0:
+            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
@@ -518,7 +526,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is in the case of [p]play <query>, a single Spotify url/code
             # or this is a localtrack item
             try:
-                if len(player.queue) >= 10000:
+                if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
+                    player.guild
+                ):
                     return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
 
                 single_track = (
@@ -546,8 +556,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
+                elif (
+                    max_length := await self.config_cache.max_track_length.get_context_value(
+                        ctx.guild
+                    )
+                ) > 0:
+                    if self.is_track_length_allowed(single_track, max_length):
                         single_track.extras.update(
                             {
                                 "enqueue_time": int(time.time()),
@@ -596,7 +610,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 single_track, self.local_folder_current_path
             )
             embed = discord.Embed(title=_("Track Enqueued"), description=description)
-            if not guild_data["shuffle"] and queue_dur > 0:
+            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
                         time=queue_total_duration, position=before_queue_length + 1

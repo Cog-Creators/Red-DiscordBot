@@ -33,13 +33,6 @@ class Audio(
 ):
     """Play audio through voice channels."""
 
-    _default_lavalink_settings = {
-        "host": "localhost",
-        "rest_port": 2333,
-        "ws_port": 2333,
-        "password": "youshallnotpass",
-    }
-
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
@@ -89,6 +82,36 @@ class Audio(
         self._diconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
+        default_cog_lavalink_settings = {
+            "primary": {
+                "host": "localhost",
+                "port": 2333,
+                "rest_uri": "http://localhost:2333",
+                "password": "youshallnotpass",
+                "identifier": "primary",
+                "region": "",
+                "shard_id": -1,
+                "search_only": False,
+            }
+        }
+        lavalink_yaml = dict(lavalink={"server": {"sources": {}}}, server={})
+        lavalink_yaml["lavalink"]["server"]["jdanas"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["http"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["local"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["bandcamp"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["soundcloud"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["twitch"] = True
+        lavalink_yaml["lavalink"]["server"]["sources"]["youtube"] = True
+        lavalink_yaml["lavalink"]["server"]["bufferDurationMs"] = 300
+        lavalink_yaml["lavalink"]["server"]["playerUpdateInterval"] = 1
+        lavalink_yaml["lavalink"]["server"]["youtubeSearchEnabled"] = True
+        lavalink_yaml["lavalink"]["server"]["soundcloudSearchEnabled"] = True
+        lavalink_yaml["lavalink"]["server"]["password"] = default_cog_lavalink_settings["primary"][
+            "password"
+        ]
+        lavalink_yaml["server"]["address"] = default_cog_lavalink_settings["primary"]["host"]
+        lavalink_yaml["server"]["port"] = default_cog_lavalink_settings["primary"]["port"]
+
         default_global = dict(
             schema_version=1,
             bundled_playlist_version=0,
@@ -97,24 +120,38 @@ class Audio(
             cache_age=365,
             auto_deafen=True,
             daily_playlists=False,
-            global_db_enabled=False,
+            daily_playlists_override=False,
+            global_db_enabled=True,
             global_db_get_timeout=5,
             status=False,
-            use_external_lavalink=False,
             restrict=True,
             localpath=str(cog_data_path(raw_name="Audio")),
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
-            volume=150,
+            volume=499,
             disconnect=False,
             persist_queue=None,
             emptydc_enabled=False,
             emptydc_timer=0,
+            emptypause_enabled=False,
+            emptypause_timer=0,
             thumbnail=None,
             maxlength=0,
             vc_restricted=False,
-            **self._default_lavalink_settings,
+            jukebox=False,
+            jukebox_price=0,
+            country_code="US",
+            prefer_lyrics=False,
+            max_queue_size=10_000,
+            notify=True,
+            lavalink__jar__url=None,
+            lavalink__jar__build=None,
+            lavalink__managed=True,
+            lavalink__autoupdate=False,
+            lavalink__jar__stable=True,
+            lavalink__nodes=default_cog_lavalink_settings,
+            lavalink__managed_yaml=lavalink_yaml,
         )
 
         default_guild = dict(
@@ -130,7 +167,6 @@ class Audio(
             persist_queue=True,
             disconnect=False,
             dj_enabled=False,
-            dj_role=None,
             dj_roles=[],
             daily_playlists=False,
             emptydc_enabled=False,
@@ -138,6 +174,7 @@ class Audio(
             emptypause_enabled=False,
             emptypause_timer=0,
             jukebox=False,
+            restrict=True,
             jukebox_price=0,
             maxlength=0,
             notify=False,
@@ -149,18 +186,22 @@ class Audio(
             volume=100,
             vote_enabled=False,
             vote_percent=51,
+            max_queue_size=20_000,
             room_lock=None,
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
-            country_code="US",
+            country_code=None,
             vc_restricted=False,
             whitelisted_text=[],
             whitelisted_vc=[],
         )
+        default_channel = dict(
+            volume=100,
+        )
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
         self.config.init_custom("EQUALIZER", 1)
-        self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
+        self.config.register_custom("EQUALIZER", name="Default", eq_bands=[], eq_presets={})
         self.config.init_custom(PlaylistScope.GLOBAL.value, 1)
         self.config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
         self.config.init_custom(PlaylistScope.GUILD.value, 2)
@@ -169,4 +210,5 @@ class Audio(
         self.config.register_custom(PlaylistScope.USER.value, **_playlist)
         self.config.register_guild(**default_guild)
         self.config.register_global(**default_global)
+        self.config.register_channel(**default_channel)
         self.config.register_user(country_code=None)
