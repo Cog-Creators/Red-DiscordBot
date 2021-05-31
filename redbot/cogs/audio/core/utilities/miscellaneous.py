@@ -127,7 +127,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if managed:
             if self.player_manager is not None:
                 await self.player_manager.shutdown()
-            await self.config_cache.managed_lavalink_server.set_global(True)
+            await self.config_cache.use_managed_lavalink.set_global(True)
             return True
         else:
             return False
