@@ -9,7 +9,7 @@ from redbot.vendored.discord.ext import menus as _dpy_menus
 from .. import commands
 from ..commands import Context
 from ..i18n import Translator
-from ...vendored.discord.ext.menus import First, Last, button
+from ...vendored.discord.ext.menus import AsyncIteratorPageSource, First, Last, button
 
 _ = Translator("Menus", __file__)
 
@@ -399,7 +399,7 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
                 await self._event.wait()
 
     async def send_initial_message(
-        self, ctx: Context, channel: discord.abc.Messageable, page: int = 0
+            self, ctx: Context, channel: discord.abc.Messageable, page: int = 0
     ):
         """
 
@@ -408,7 +408,11 @@ class HybridMenu(_dpy_menus.MenuPages, inherit_buttons=False):
 
         This implementation shows the first page of the source.
         """
-        page = await self._source.get_page(page)
+        if isinstance(self._source, AsyncIteratorPageSource):
+            self.current_page = 0
+        else:
+            self.current_page = min(page, self._source.get_max_pages() - 1)
+        page = await self._source.get_page(self.current_page)
         kwargs = await self._get_kwargs_from_page(page)
         return await channel.send(**kwargs)
 
