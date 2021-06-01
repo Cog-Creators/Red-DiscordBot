@@ -212,6 +212,7 @@ def _ensure_no_colorama():
 def _early_init():
     _update_event_loop_policy()
     _ensure_no_colorama()
+    from . import _discord_overloads
 
 
 __version__ = "3.4.11a69.dev26"
