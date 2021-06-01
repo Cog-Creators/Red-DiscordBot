@@ -485,6 +485,8 @@ def main():
     if cli_flags.edit:
         handle_edit(cli_flags)
         return
+    if cli_flags.no_compression:
+        from . import _discord_overloads
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)

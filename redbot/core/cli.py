@@ -295,6 +295,13 @@ def parse_cli_flags(args):
         dest="fast_json",
         help="Runs `[p]hackydev overload` on bot start up.",
     )
+    parser.add_argument(
+        "--no-compression",
+        action="store_true",
+        default=False,
+        dest="no_compression",
+        help="Disable compression in WS connection reducing CPU cycles but increasing network usage.",
+    )
 
     args = parser.parse_args(args)
 
