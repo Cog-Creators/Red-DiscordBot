@@ -3,7 +3,6 @@ server: # REST and WS server
   address: "localhost"
 lavalink:
   server:
-    jdanas: true
     password: "youshallnotpass"
     sources:
       youtube: true
