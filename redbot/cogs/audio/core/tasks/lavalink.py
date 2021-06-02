@@ -49,26 +49,26 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await asyncio.sleep(1)
                     if exc.should_retry:
                         log.exception(
-                            "Exception whilst starting internal Lavalink server, retrying...",
+                            "Exception whilst starting managed node, retrying...",
                             exc_info=exc,
                         )
                         retry_count += 1
                         continue
                     else:
                         log.exception(
-                            "Fatal exception whilst starting internal Lavalink server, "
-                            "aborting...",
+                            "Fatal exception whilst starting managed node, aborting...",
                             exc_info=exc,
                         )
                         self.lavalink_connection_aborted = True
                         raise
                 except asyncio.CancelledError:
-                    log.exception("Invalid machine architecture, cannot run Lavalink.")
+                    log.exception(
+                        "Invalid machine architecture, cannot run a managed Lavalink node."
+                    )
                     raise
                 except Exception as exc:
                     log.exception(
-                        "Unhandled exception whilst starting internal Lavalink server, "
-                        "aborting...",
+                        "Unhandled exception whilst starting managed node, aborting...",
                         exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True
@@ -79,7 +79,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 break
         else:
             log.critical(
-                "Setting up the Lavalink server failed after multiple attempts. "
+                "Setting up the managed node failed after multiple attempts. "
                 "See above tracebacks for details."
             )
             self.lavalink_connection_aborted = True
@@ -106,7 +106,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 await asyncio.sleep(1)  # prevent busylooping
             except Exception as exc:
                 log.exception(
-                    "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
+                    "Unhandled exception whilst connecting to node, aborting...", exc_info=exc
                 )
                 self.lavalink_connection_aborted = True
                 raise
@@ -115,7 +115,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         else:
             self.lavalink_connection_aborted = True
             log.critical(
-                "Connecting to the Lavalink server failed after multiple attempts. "
+                "Connecting to the node failed after multiple attempts. "
                 "See above tracebacks for details."
             )
             return

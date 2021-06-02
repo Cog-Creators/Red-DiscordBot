@@ -431,6 +431,7 @@ class Query:
                 query = query.replace("ytsearch:", "")
             while "scsearch:" in query:
                 query = query.replace("scsearch:", "")
+            query = query.strip()
 
         elif isinstance(query, Query):
             for key, val in kwargs.items():

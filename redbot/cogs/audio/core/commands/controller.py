@@ -112,13 +112,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             with contextlib.suppress(discord.HTTPException):
                 await player.fetch("np_message").delete()
         embed = discord.Embed(title=_("Now Playing"), description=song)
-        guild_data = await self.config.guild(ctx.guild).all()
-
-        if guild_data["thumbnail"] and player.current and player.current.thumbnail:
+        shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
+        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
+        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        thumbnail = await self.config_cache.thumbnail.get_context_value(ctx.guild)
+        if thumbnail and player.current and player.current.thumbnail:
             embed.set_thumbnail(url=player.current.thumbnail)
-        shuffle = guild_data["shuffle"]
-        repeat = guild_data["repeat"]
-        autoplay = guild_data["auto_play"]
         text = ""
         text += (
             _("Auto-Play")
@@ -667,15 +666,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_volume(self, ctx: commands.Context, vol: int = None):
-        """Set the volume, 1% - 150%."""
+        """Set the volume in percentages greater or equal to 0%."""
         dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if not vol:
-            vol = await self.config_cache.volume.get_context_value(ctx.guild)
-            embed = discord.Embed(title=_("Current Volume:"), description=f"{vol}%")
-            if not self._player_check(ctx):
-                embed.set_footer(text=_("Nothing playing."))
-            return await self.send_embed_msg(ctx, embed=embed)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             if (
@@ -693,17 +686,44 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Change Volume"),
                 description=_("You need the DJ role to change the volume."),
             )
-
-        vol = max(0, min(vol, 150))
-        await self.config_cache.auto_deafen.set_guild(ctx.guild, vol)
-        if self._player_check(ctx):
-            player = lavalink.get_player(ctx.guild.id)
-            await player.set_volume(vol)
-            player.store("notify_channel", ctx.channel.id)
-
-        embed = discord.Embed(title=_("Volume:"), description=f"{vol}%")
         if not self._player_check(ctx):
-            embed.set_footer(text=_("Nothing playing."))
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
+
+        player = lavalink.get_player(ctx.guild.id)
+        max_volume, max_source = await self.config_cache.volume.get_max_and_source(
+            ctx.guild, player.channel
+        )
+
+        if vol:
+            volume = (
+                min(
+                    max(vol, 0),
+                    max_volume,
+                )
+            )
+        else:
+            volume = None
+
+        if volume:
+            vol = volume
+            if player.volume != vol:
+                await player.set_volume(vol)
+            player.store("notify_channel", ctx.channel.id)
+            description = (
+                "Currently set to **{volume}%**\n\n"
+                "Maximum allowed volume here is **{max_volume}%** "
+                "due to {restrictor} restrictions."
+            ).format(volume=int(volume), max_volume=max_volume, restrictor=max_source)
+        else:
+            description = (
+                "Maximum allowed volume here is **{max_volume}%** "
+                "due to {restrictor} restrictions."
+            ).format(max_volume=max_volume, restrictor=max_source)
+
+        embed = discord.Embed(
+            title=_("Volume"),
+            description=description,
+        )
         await self.send_embed_msg(ctx, embed=embed)
 
     @commands.command(name="repeat")

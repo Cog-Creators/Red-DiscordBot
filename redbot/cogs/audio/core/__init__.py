@@ -16,7 +16,7 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 
 from ..utils import PlaylistScope
-from . import abc, cog_utils, commands, events, tasks, utilities
+from . import commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
 _ = Translator("Audio", Path(__file__))
@@ -38,7 +38,7 @@ class Audio(
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
         self.config_cache = utilities.setting_cache.SettingCacheManager(
-            self.bot, self.config, enable_cache=True
+            self.bot, self.config, True
         )
 
         self.api_interface = None

@@ -406,9 +406,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     else:
                         embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
                 if (
-                    await self.config_cache.external_lavalink_server.get_context_value(
-                        player.guild
-                    )
+                    await self.config_cache.use_managed_lavalink.get_context_value(player.guild)
                     and query.is_local
                 ):
                     embed.description = _(

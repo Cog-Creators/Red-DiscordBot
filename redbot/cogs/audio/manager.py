@@ -1,5 +1,7 @@
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import contextlib
+import datetime
 import itertools
 import json
 import logging
@@ -25,10 +27,10 @@ from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = logging.getLogger("red.Audio.manager")
-JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1233
+JAR_VERSION: Final[str] = "3.3.2.5"
+JAR_BUILD: Final[int] = 1238
 LAVALINK_DOWNLOAD_URL: Final[str] = (
-    "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
+    "https://github.com/Drapersniper/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
     "Lavalink.jar"
 )
@@ -85,6 +87,44 @@ LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
 LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
+LAVALINK_JAR_ENDPOINT: Final[
+    str
+] = "https://api.github.com/repos/Drapersniper/Lavalink-Jars/releases" #TODO: Remove me before merge
+
+
+async def get_latest_lavalink_release(stable=True, date=False):
+    async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
+        async with session.get(LAVALINK_JAR_ENDPOINT) as resp:
+            if resp.status != 200:
+                return "", "0_0", "0", None
+            data = await resp.json(loads=json.loads)
+            if stable:
+                data = list(
+                    filter(lambda d: d["prerelease"] is False and d["draft"] is False, data)
+                )
+            data = sorted(data, key=lambda k: k["published_at"], reverse=True)[0] or {}
+            output = (
+                data.get("name"),
+                data.get("tag_name"),
+                next(
+                    (
+                        i.get("browser_download_url")
+                        for i in data.get("assets", [])
+                        if i.get("name") == "Lavalink.jar"
+                    ),
+                    None,
+                ),
+                None,
+            )
+            if not date:
+                return output
+            else:
+                return (
+                    output[0],
+                    output[1],
+                    output[2],
+                    data.get("published_at", datetime.datetime.now()),
+                )
 
 
 class ServerManager:
@@ -144,8 +184,33 @@ class ServerManager:
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise asyncio.CancelledError(
-                "You are attempting to run Lavalink audio on an unsupported machine architecture."
+                "You are attempting to run a Lavalink node on an unsupported machine architecture."
             )
+
+        if (jar_url := await self.config_cache.managed_lavalink_meta.get_global_url()) is not None:
+            self._jar_name = jar_url
+            self._jar_download_url = jar_url
+            self._jar_build = (
+                await self.config_cache.managed_lavalink_meta.get_global_build() or self._jar_build
+            )
+        else:
+            if await self.config_cache.managed_lavalink_server_auto_update.get_global():
+                with contextlib.suppress(Exception):
+                    name, tag, url, _nothing = await get_latest_lavalink_release()
+                    if name and "_" in name:
+                        tag = name
+                        version, build = name.split("_")
+                        build = int(build)
+                    elif tag and "_" in tag:
+                        name = tag
+                        version, build = name.split("_")
+                        build = int(build)
+                    else:
+                        name = tag = version = build = None
+                    self._jar_name = name or tag or self._jar_name
+                    self._jar_download_url = url or self._jar_download_url
+                    self._jar_build = build or self._jar_build
+                    self._jar_version = version or self._jar_version
 
         if self._proc is not None:
             if self._proc.returncode is None:
@@ -288,16 +353,16 @@ class ServerManager:
             raise RuntimeError("The value provided for the setting YAML is incorrect.")
 
     async def _wait_for_launcher(self) -> None:
-        log.debug("Waiting for Lavalink server to be ready")
+        log.debug("Waiting for managed node to be ready")
         lastmessage = 0
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
-                log.info("Internal Lavalink server is ready to receive requests.")
+                log.info("Managed node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
-                raise RuntimeError("Managed Lavalink failed to start: %s", line.decode().strip())
+                raise RuntimeError("Managed node failed to start: %s", line.decode().strip())
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
@@ -317,7 +382,7 @@ class ServerManager:
             await self.start(self._java_exc)
         else:
             log.critical(
-                "Your Java is borked. Please find the hs_err_pid%d.log file"
+                "Your Java install is broken. Please find the hs_err_pid%d.log file"
                 " in the Audio data folder and report this issue.",
                 self._proc.pid,
             )
@@ -334,7 +399,8 @@ class ServerManager:
         log.info("Shutting down managed node")
         if self._monitor_task is not None:
             self._monitor_task.cancel()
-        self._proc.terminate()
+        if not self._proc.returncode:
+            self._proc.terminate()
         await self._proc.wait()
         self._shutdown = True
 
@@ -346,8 +412,8 @@ class ServerManager:
                     # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
                     # hasn't been published yet
                     raise LavalinkDownloadFailed(
-                        f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
-                        "yet",
+                        f"Lavalink server version {self._jar_version}_{self._jar_build} "
+                        "hasn't been published yet",
                         response=response,
                         should_retry=False,
                     )
@@ -426,3 +492,10 @@ class ServerManager:
     async def maybe_download_jar(self):
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
+            if not await self._is_up_to_date():
+                raise LavalinkDownloadFailed(
+                    f"Download of Lavalink build {self.ll_build} from {self.ll_branch} "
+                    f"({self._jar_download_url}) failed, Expected build {self._jar_build} "
+                    f"But downloaded {self._lavalink_build}",
+                    should_retry=False,
+                )

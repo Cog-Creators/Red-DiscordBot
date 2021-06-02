@@ -561,7 +561,7 @@ WHERE
 LAVALINK_FETCH_ALL_ENTRIES_GLOBAL: Final[
     str
 ] = """
-SELECT query, data 
+SELECT query, data
 FROM lavalink
 """
 
