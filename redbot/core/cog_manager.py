@@ -127,11 +127,7 @@ class CogManager:
         pathlib.Path
 
         """
-        try:
-            path.exists()
-        except AttributeError:
-            path = Path(path)
-        return path
+        return Path(path)
 
     async def add_path(self, path: Union[Path, str]) -> None:
         """Add a cog path to current list.
@@ -177,7 +173,7 @@ class CogManager:
             Path to remove.
 
         """
-        path = self._ensure_path_obj(path).resolve()
+        path = self._ensure_path_obj(path)
         paths = await self.user_defined_paths()
 
         paths.remove(path)

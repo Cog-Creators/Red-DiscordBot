@@ -34,7 +34,7 @@ jobs:
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v1
+          uses: actions/setup-python@v2
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
@@ -68,7 +68,7 @@ jobs:
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v1
+          uses: actions/setup-python@v2
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox

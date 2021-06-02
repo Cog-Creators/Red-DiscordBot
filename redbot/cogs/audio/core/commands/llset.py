@@ -55,7 +55,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                         java_path=exc_absolute
                     ),
                 )
-            await self.config.java_exc_path.set(exc_absolute)
+            await self.config.java_exc_path.set(str(exc_absolute))
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Changed"),
@@ -223,7 +223,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg = "----" + _("Connection Settings") + "----        \n"
         msg += _("Host:             [{host}]\n").format(host=host)
         msg += _("WS Port:          [{port}]\n").format(port=ws_port)
-        if ws_port != rest_port:
+        if ws_port != rest_port and rest_port != 2333:
             msg += _("Rest Port:        [{port}]\n").format(port=rest_port)
         msg += _("Password:         [{password}]\n").format(password=password)
         try:

@@ -246,46 +246,28 @@ class PostgresDriver(BaseDriver):
                 yield row["cog_name"], row["cog_id"]
 
     @classmethod
-    async def delete_all_data(
-        cls, *, interactive: bool = False, drop_db: Optional[bool] = None, **kwargs
-    ) -> None:
+    async def delete_all_data(cls, *, drop_db: Optional[bool] = None, **kwargs) -> None:
         """Delete all data being stored by this driver.
+
+        Schemas within the database which
+        store bot data will be dropped, as well as functions,
+        aggregates, event triggers, and meta-tables.
 
         Parameters
         ----------
-        interactive : bool
-            Set to ``True`` to allow the method to ask the user for
-            input from the console, regarding the other unset parameters
-            for this method.
         drop_db : Optional[bool]
-            Set to ``True`` to drop the entire database for the current
-            bot's instance. Otherwise, schemas within the database which
-            store bot data will be dropped, as well as functions,
-            aggregates, event triggers, and meta-tables.
+            If set to ``True``, function will print information
+            about not being able to drop the entire database.
 
         """
-        if interactive is True and drop_db is None:
-            print(
-                "Please choose from one of the following options:\n"
-                " 1. Drop the entire PostgreSQL database for this instance, or\n"
-                " 2. Delete all of Red's data within this database, without dropping the database "
-                "itself."
-            )
-            options = ("1", "2")
-            while True:
-                resp = input("> ")
-                try:
-                    drop_db = bool(options.index(resp))
-                except ValueError:
-                    print("Please type a number corresponding to one of the options.")
-                else:
-                    break
         if drop_db is True:
-            storage_details = data_manager.storage_details()
-            await cls._pool.execute(f"DROP DATABASE $1", storage_details["database"])
-        else:
-            with DROP_DDL_SCRIPT_PATH.open() as fs:
-                await cls._pool.execute(fs.read())
+            print(
+                "Dropping the entire database is not possible in PostgreSQL driver."
+                " We will delete all of Red's data within this database,"
+                " without dropping the database itself."
+            )
+        with DROP_DDL_SCRIPT_PATH.open() as fs:
+            await cls._pool.execute(fs.read())
 
     @classmethod
     async def _execute(cls, query: str, *args, method: Optional[Callable] = None) -> Any:

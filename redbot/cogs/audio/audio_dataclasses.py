@@ -578,8 +578,6 @@ class Query:
                             returning["single"] = True
                     elif url_domain == "vimeo.com":
                         returning["vimeo"] = True
-                    elif url_domain in ["mixer.com", "beam.pro"]:
-                        returning["mixer"] = True
                     elif url_domain == "twitch.tv":
                         returning["twitch"] = True
                         if "?t=" in track:

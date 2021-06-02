@@ -191,7 +191,30 @@ def _update_event_loop_policy():
             _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
 
 
-__version__ = "3.4.3.dev1"
+def _ensure_no_colorama():
+    # a hacky way to ensure that nothing initialises colorama
+    # if we're not running with legacy Windows command line mode
+    from rich.console import detect_legacy_windows
+
+    if not detect_legacy_windows():
+        import colorama
+        import colorama.initialise
+
+        colorama.deinit()
+
+        def _colorama_wrap_stream(stream, *args, **kwargs):
+            return stream
+
+        colorama.wrap_stream = _colorama_wrap_stream
+        colorama.initialise.wrap_stream = _colorama_wrap_stream
+
+
+def _early_init():
+    _update_event_loop_policy()
+    _ensure_no_colorama()
+
+
+__version__ = "3.4.11.dev1"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
@@ -204,12 +227,3 @@ if "--debug" not in _sys.argv:
     # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
     # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
     _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
-    # DeprecationWarning: "@coroutine" decorator is deprecated since Python 3.8, use "async def" instead
-    #   def noop(*args, **kwargs):  # type: ignore
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=107)
-    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
-    #   hosts = await asyncio.shield(self._resolve_host(..
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=964)
-    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
-    #   self._event = asyncio.Event(loop=loop)
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="aiohttp", lineno=21)

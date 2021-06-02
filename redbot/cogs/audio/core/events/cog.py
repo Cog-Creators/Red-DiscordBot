@@ -32,8 +32,10 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if await self.bot.cog_disabled_in_guild(self, guild):
             player = lavalink.get_player(guild.id)
+            player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
+            await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
             return
 
         track_identifier = track.track_identifier
@@ -122,7 +124,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                 )
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to delete daily playlist ID: {too_old_id}")
+                debug_exc_log(log, err, "Failed to delete daily playlist ID: %d", too_old_id)
             try:
                 await delete_playlist(
                     scope=PlaylistScope.GLOBAL.value,
@@ -133,7 +135,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                 )
             except Exception as err:
-                debug_exc_log(log, err, f"Failed to delete global daily playlist ID: {too_old_id}")
+                debug_exc_log(
+                    log, err, "Failed to delete global daily playlist ID: %d", too_old_id
+                )
         persist_cache = self._persist_queue_cache.setdefault(
             guild.id, await self.config.guild(guild).persist_queue()
         )
@@ -157,7 +161,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
 
     @commands.Cog.listener()
-    async def on_red_audio_track_enqueue(self, guild: discord.Guild, track, requester):
+    async def on_red_audio_track_enqueue(
+        self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
+    ):
         if not (track and guild):
             return
         persist_cache = self._persist_queue_cache.setdefault(
@@ -181,3 +187,30 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.drop(guild.id)
             await asyncio.sleep(5)
             await self.api_interface.persistent_queue_api.delete_scheduled()
+
+    @commands.Cog.listener()
+    async def on_red_audio_track_auto_play(
+        self,
+        guild: discord.Guild,
+        track: lavalink.Track,
+        requester: discord.Member,
+        player: lavalink.Player,
+    ):
+        notify_channel = self.bot.get_channel(player.fetch("notify_channel"))
+        has_perms = self._has_notify_perms(notify_channel)
+        tries = 0
+        while not player._is_playing:
+            await asyncio.sleep(0.1)
+            if tries > 1000:
+                return
+            tries += 1
+
+        if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
+            if (
+                len(player.manager.players) < 10
+                or not player._last_resume
+                and player._last_resume + datetime.timedelta(seconds=60)
+                > datetime.datetime.now(tz=datetime.timezone.utc)
+            ):
+                await self.send_embed_msg(notify_channel, title=_("Auto Play started."))
+            player.store("autoplay_notified", True)
