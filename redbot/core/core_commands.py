@@ -1580,10 +1580,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         enabled = not await self.bot._config.invite_commands_scope()
         await self.bot._config.invite_commands_scope.set(enabled)
         if enabled is True:
-            await ctx.send("The `applications.commands` scope has been added to the invite URL.")
+            await ctx.send(_("The `applications.commands` scope has been added to the invite URL."))
         else:
             await ctx.send(
-                "The `applications.commands` scope has been removed from the invite URL."
+                _("The `applications.commands` scope has been removed from the invite URL.")
             )
 
     @commands.command()
