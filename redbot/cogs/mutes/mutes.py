@@ -826,12 +826,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         default_time = timedelta(seconds=data["default_time"])
         msg = _(
             "Mute Role: {role}\n"
+            "Update new channels: {auto_update}\n"
             "Notification Channel: {channel}\n"
             "Default Time: {time}\n"
             "Send DM: {dm}\n"
             "Show moderator: {show_mod}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),
+            auto_update=data["auto_update"],
             channel=notification_channel.mention if notification_channel else _("None"),
             time=humanize_timedelta(timedelta=default_time) if default_time else _("None"),
             dm=data["dm"],
