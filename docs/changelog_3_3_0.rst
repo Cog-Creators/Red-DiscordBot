@@ -553,7 +553,7 @@ Core Bot
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
-- Permissions for commands in Bank, Economy and Trivia cogs can now be overriden by Permissions cog (:issue:`3672`, :issue:`3233`)
+- Permissions for commands in Bank, Economy and Trivia cogs can now be overridden by Permissions cog (:issue:`3672`, :issue:`3233`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
 - Fixed few deprecation warnings related to menus and uvloop (:issue:`3644`, :issue:`3700`)

@@ -3,7 +3,7 @@ commands.requires
 =================
 This module manages the logic of resolving command permissions and
 requirements. This includes rules which override those requirements,
-as well as custom checks which can be overriden, and some special
+as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
 import asyncio
@@ -11,23 +11,23 @@ import enum
 import inspect
 from collections import ChainMap
 from typing import (
-    Union,
-    Optional,
-    List,
-    Callable,
-    Awaitable,
-    Dict,
-    Any,
     TYPE_CHECKING,
-    TypeVar,
-    Tuple,
+    Any,
+    Awaitable,
+    Callable,
     ClassVar,
+    Dict,
+    List,
     Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
 )
 
 import discord
 
-from .converter import GuildConverter
+from discord.ext.commands import check
 from .errors import BotMissingPermissions
 
 if TYPE_CHECKING:
@@ -47,6 +47,7 @@ __all__ = [
     "Requires",
     "permissions_check",
     "bot_has_permissions",
+    "bot_in_a_guild",
     "has_permissions",
     "has_guild_permissions",
     "is_owner",
@@ -68,7 +69,7 @@ GlobalPermissionModel = Union[
     discord.TextChannel,
     discord.CategoryChannel,
     discord.Role,
-    GuildConverter,  # Unfortunately this will have to do for now
+    discord.Guild,
 ]
 GuildPermissionModel = Union[
     discord.Member,
@@ -76,7 +77,7 @@ GuildPermissionModel = Union[
     discord.TextChannel,
     discord.CategoryChannel,
     discord.Role,
-    GuildConverter,
+    discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
@@ -385,7 +386,7 @@ class Requires:
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
             If a global rule is set for a model,
-            it will be prefered over the guild rule.
+            it will be preferred over the guild rule.
 
         Returns
         -------
@@ -473,7 +474,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -486,7 +487,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
@@ -524,7 +525,7 @@ class Requires:
         cur_state = self._get_rule_from_ctx(ctx)
         should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
         if should_invoke is None:
-            # NORMAL invokation, we simply follow standard procedure
+            # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
@@ -703,6 +704,15 @@ def bot_has_permissions(**perms: bool):
         return func
 
     return decorator
+
+
+def bot_in_a_guild():
+    """Deny the command if the bot is not in a guild."""
+
+    async def predicate(ctx):
+        return len(ctx.bot.guilds) > 0
+
+    return check(predicate)
 
 
 def has_permissions(**perms: bool):

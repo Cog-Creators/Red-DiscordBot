@@ -83,8 +83,11 @@ In that file, place the following code:
 
     from redbot.core import commands
 
-    class Mycog(commands.Cog):
+    class MyCog(commands.Cog):
         """My custom cog"""
+
+        def __init__(self, bot):
+            self.bot = bot
 
         @commands.command()
         async def mycom(self, ctx):
@@ -96,11 +99,11 @@ Open :code:`__init__.py`. In that file, place the following:
 
 .. code-block:: python
 
-    from .mycog import Mycog
+    from .mycog import MyCog
 
 
     def setup(bot):
-        bot.add_cog(Mycog())
+        bot.add_cog(MyCog(bot))
 
 Make sure that both files are saved.
 
@@ -156,6 +159,12 @@ Publishing your cog
 
 Go to :doc:`/guide_publish_cogs`
 
+--------------------------------
+Becoming an Approved Cog Creator
+--------------------------------
+
+:doc:`/guide_cog_creators` explains the Cog Creator Application process and lists requirements and good practices for Cog Creators.  This information is worth following for anyone creating cogs for Red, regardless of if you plan to publish your cogs or not.
+
 --------------------
 Additional resources
 --------------------
@@ -163,98 +172,3 @@ Additional resources
 Be sure to check out the :doc:`/guide_migration` for some resources
 on developing cogs for V3. This will also cover differences between V2 and V3 for
 those who developed cogs for V2.
-
-
-.. _guidelines-for-cog-creators:
-
----------------------------
-Guidelines for Cog Creators
----------------------------
-
-The following are a list of guidelines Cog Creators should strive to follow.
-Not all of these are strict requirements (some are) but are all generally advisable.
-
-1. Cogs should follow a few naming conventions for consistency.
-
-  - Cog classes should be TitleCased, using alphabetic characters only.
-  - Commands should be lower case, using alphanumeric characters only.
-  - Cog modules should be lower case, using alphabetic characters only.
-
-2. Cogs and commands should have docstrings suitable for use in help output.
-
-  - This one is slightly flexible if using other methods of setting help.
-
-3. Don't prevent normal operation of the bot without the user opting into this.
-
-  - This includes as a side effect by blocking the event loop.
-
-4. If your cog uses logging:
-
-  - The namespace for logging should be: ``red.your_repo_name.cog_name``.
-  - Print statements are not a substitute for proper logging.
-
-5. If you use asyncio.create_task, your tasks need to:
-
-  - Be cancelled on cog unload.
-  - Handle errors.
-
-6. Event listeners should exit early if it is an event you don't need.
-   This makes your events less expensive in terms of CPU time. Examples below:
-
-  - Checking that you are in a guild before interacting with config for an antispam command.
-  - Checking that you aren't reacting to a bot message (``not message.author.bot``) early on.
-
-7. Use .gitignore (or something else) to keep unwanted files out of your cog repo.
-8. Put a license on your cog repo.
-
-  - By default, in most jurisdictions, without a license that at least offers the code for use,
-    users cannot legally use your code.
-
-9. Use botwide features when they apply. Some examples of this:
-
-  - ``ctx.embed_color``
-  - ``bot.is_automod_immune``
-
-10. Use checks to limit command use when the bot needs special permissions.
-11. Check against user input before doing things. Common things to check:
-
-  - Resulting output is safe.
-  - Values provided make sense. (eg. no negative numbers for payday)
-  - Don't unsafely use user input for things like database input.
-
-12. Don't abuse bot internals.
-
-  - If you need access to something, ask us or open an issue.
-  - If you're sure the current usage is safe, document why,
-    but we'd prefer you work with us on ensuring you have access to what you need.
-
-13. Update your cogs for breakage.
-
-  - We announce this in advance.
-  - If you need help, ask.
-
-14. Check events against `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`
-
-  - Not all events need to be checked, only those that interact with a guild.
-  - Some discretion may apply, for example,
-    a cog which logs command invocation errors could choose to ignore this
-    but a cog which takes actions based on messages should not.
-
-15. Respect settings when treating non command messages as commands.
-
-16. Handle user data responsibly
-
-  - Don't do unexpected things with user data.
-  - Don't expose user data to additional audiences without permission.
-  - Don't collect data your cogs don't need.
-  - Don't store data in unexpected locations.
-    Utilize the cog data path, Config, or if you need something more
-    prompt the owner to provide it.
-
-17. Utilize the data deletion and statement APIs
-
-  - See `redbot.core.commands.Cog.red_delete_data_for_user`
-  - Make a statement about what data your cogs use with the module level
-    variable ``__red_end_user_data_statement__``.
-    This should be a string containing a user friendly explanation of what data
-    your cog stores and why.

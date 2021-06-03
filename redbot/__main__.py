@@ -22,9 +22,9 @@ import discord
 # Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-from redbot import _update_event_loop_policy, __version__
+from redbot import _early_init, __version__
 
-_update_event_loop_policy()
+_early_init()
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
@@ -97,6 +97,7 @@ def debug_info():
         + "OS version: {}\n".format(osver)
         + "System arch: {}\n".format(platform.machine())
         + "User: {}\n".format(user_who_ran)
+        + "Metadata file: {}\n".format(data_manager.config_file)
     )
     print(info)
     sys.exit(0)
@@ -180,7 +181,7 @@ async def _edit_prefix(red, prefix, no_prompt):
 
 async def _edit_owner(red, owner, no_prompt):
     if owner:
-        if not (15 <= len(str(owner)) <= 21):
+        if not (15 <= len(str(owner)) <= 20):
             print(
                 "The provided owner id doesn't look like a valid Discord user id."
                 " Instance's owner will remain unchanged."
@@ -198,7 +199,7 @@ async def _edit_owner(red, owner, no_prompt):
             print("Please enter a Discord user id for new owner:")
             while True:
                 owner_id = input("> ").strip()
-                if not (15 <= len(owner_id) <= 21 and owner_id.isdecimal()):
+                if not (15 <= len(owner_id) <= 20 and owner_id.isdecimal()):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
@@ -300,7 +301,7 @@ def handle_edit(cli_flags: Namespace):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True)
+    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
@@ -319,7 +320,7 @@ def handle_edit(cli_flags: Namespace):
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
     """
     This runs the bot.
-    
+
     Any shutdown which is a result of not being able to log in needs to raise
     a SystemExit exception.
 
@@ -334,7 +335,9 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     await driver_cls.initialize(**data_manager.storage_details())
 
     redbot.logging.init_logging(
-        level=cli_flags.logging_level, location=data_manager.core_data_path() / "logs"
+        level=cli_flags.logging_level,
+        location=data_manager.core_data_path() / "logs",
+        cli_flags=cli_flags,
     )
 
     log.debug("====Basic Config====")
@@ -391,6 +394,13 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 print("Token has been reset.")
                 sys.exit(0)
         sys.exit(1)
+    except discord.PrivilegedIntentsRequired:
+        print(
+            "Red requires all Privileged Intents to be enabled.\n"
+            "You can find out how to enable Privileged Intents with this guide:\n"
+            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents"
+        )
+        sys.exit(1)
 
     return None
 
@@ -424,7 +434,7 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.logout()
+        await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -436,13 +446,18 @@ def global_exception_handler(red, loop, context):
     """
     Logs unhandled exceptions in other tasks
     """
-    msg = context.get("exception", context["message"])
+    exc = context.get("exception")
     # These will get handled later when it *also* kills loop.run_forever
-    if not isinstance(msg, (KeyboardInterrupt, SystemExit)):
-        if isinstance(msg, Exception):
-            log.critical("Caught unhandled exception in task:\n", exc_info=msg)
-        else:
-            log.critical("Caught unhandled exception in task: %s", msg)
+    if exc is not None and isinstance(exc, (KeyboardInterrupt, SystemExit)):
+        return
+    # Maybe in the future we should handle some of the other things
+    # that the default exception handler handles, but this should work fine for now.
+    log.critical(
+        "Caught unhandled exception in %s:\n%s",
+        context.get("future", "event loop"),
+        context["message"],
+        exc_info=exc,
+    )
 
 
 def red_exception_handler(red, red_task: asyncio.Future):
@@ -487,9 +502,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(
-            cli_flags=cli_flags, description="Red V3", dm_help=None, fetch_offline_members=True
-        )
+        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
 
         if os.name != "nt":
             # None of this works on windows.
@@ -503,7 +516,7 @@ def main():
         exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
         # We actually can't (just) use asyncio.run here
-        # We probably could if we didnt support windows, but we might run into
+        # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future
         fut = loop.create_task(run_bot(red, cli_flags))
         r_exc_handler = functools.partial(red_exception_handler, red)
@@ -528,7 +541,7 @@ def main():
             loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
-        # Transports may still not be closed correcly on windows, see below
+        # Transports may still not be closed correctly on windows, see below
         loop.run_until_complete(loop.shutdown_asyncgens())
         # *we* aren't cleaning up more here, but it prevents
         # a runtime error at the event loop on windows

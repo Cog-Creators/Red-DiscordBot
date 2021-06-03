@@ -1,6 +1,7 @@
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
+import json
 import logging
 import pathlib
 import platform
@@ -9,18 +10,21 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import ClassVar, Final, List, Optional, Tuple, Pattern
+from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
 from tqdm import tqdm
 
 from redbot.core import data_manager
+from redbot.core.i18n import Translator
 
 from .errors import LavalinkDownloadFailed
+from .utils import task_callback
 
-log = logging.getLogger("red.audio.manager")
-JAR_VERSION: Final[str] = "3.3.1"
-JAR_BUILD: Final[int] = 1069
+_ = Translator("Audio", pathlib.Path(__file__))
+log = logging.getLogger("red.Audio.manager")
+JAR_VERSION: Final[str] = "3.3.2.3"
+JAR_BUILD: Final[int] = 1233
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -32,12 +36,48 @@ BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / 
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start. (.*)")
+_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
-_RE_JAVA_VERSION_LINE: Final[Pattern] = re.compile(
-    r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?(?:-[A-Za-z0-9]+)?"'
+
+# Version regexes
+#
+# We expect the output to look something like:
+#     $ java -version
+#     ...
+#     ... version "VERSION STRING HERE" ...
+#     ...
+#
+# There are two version formats that we might get here:
+#
+# - Version scheme pre JEP 223 - used by Java 8 and older
+#
+# examples:
+# 1.8.0
+# 1.8.0_275
+# 1.8.0_272-b10
+# 1.8.0_202-internal-201903130451-b08
+# 1.8.0_272-ea-202010231715-b10
+# 1.8.0_272-ea-b10
+#
+# Implementation based on J2SE SDK/JRE Version String Naming Convention document:
+# https://www.oracle.com/java/technologies/javase/versioning-naming.html
+_RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
+    r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_(?:\d+))?(?:-.*)?"'
 )
-_RE_JAVA_SHORT_VERSION: Final[Pattern] = re.compile(r'version "(?P<major>\d+)"')
+# - Version scheme introduced by JEP 223 - used by Java 9 and newer
+#
+# examples:
+# 11
+# 11.0.9
+# 11.0.9.1
+# 11.0.9-ea
+# 11.0.9-202011050024
+#
+# Implementation based on JEP 223 document:
+# https://openjdk.java.net/jeps/223
+_RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
+    r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(\-[a-zA-Z0-9]+)?"'
+)
 
 LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
@@ -57,6 +97,7 @@ class ServerManager:
     _jvm: ClassVar[Optional[str]] = None
     _lavalink_branch: ClassVar[Optional[str]] = None
     _buildtime: ClassVar[Optional[str]] = None
+    _java_exc: ClassVar[str] = "java"
 
     def __init__(self) -> None:
         self.ready: asyncio.Event = asyncio.Event()
@@ -64,6 +105,10 @@ class ServerManager:
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
+
+    @property
+    def path(self) -> Optional[str]:
+        return self._java_exc
 
     @property
     def jvm(self) -> Optional[str]:
@@ -85,8 +130,9 @@ class ServerManager:
     def build_time(self) -> Optional[str]:
         return self._buildtime
 
-    async def start(self) -> None:
+    async def start(self, java_path: str) -> None:
         arch_name = platform.machine()
+        self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise asyncio.CancelledError(
                 "You are attempting to run Lavalink audio on an unsupported machine architecture."
@@ -121,6 +167,7 @@ class ServerManager:
             log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
+        self._monitor_task.add_done_callback(task_callback)
 
     async def _get_jar_args(self) -> List[str]:
         (java_available, java_version) = await self._has_java()
@@ -128,51 +175,57 @@ class ServerManager:
         if not java_available:
             raise RuntimeError("You must install Java 11 for Lavalink to run.")
 
-        return ["java", "-Djdk.tls.client.protocols=TLSv1.2", "-jar", str(LAVALINK_JAR_FILE)]
+        return [
+            self._java_exc,
+            "-Djdk.tls.client.protocols=TLSv1.2",
+            "-jar",
+            str(LAVALINK_JAR_FILE),
+        ]
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if self._java_available is not None:
             # Return cached value if we've checked this before
             return self._java_available, self._java_version
-        java_available = shutil.which("java") is not None
+        java_exec = shutil.which(self._java_exc)
+        java_available = java_exec is not None
         if not java_available:
             self.java_available = False
             self.java_version = None
         else:
             self._java_version = version = await self._get_java_version()
             self._java_available = (11, 0) <= version < (12, 0)
+            self._java_exc = java_exec
         return self._java_available, self._java_version
 
-    @staticmethod
-    async def _get_java_version() -> Tuple[int, int]:
+    async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
-        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-            "java", "-version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        _proc: asyncio.subprocess.Process = (
+            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
+                self._java_exc,
+                "-version",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()
 
         version_info: str = err.decode("utf-8")
-        # We expect the output to look something like:
-        #     $ java -version
-        #     ...
-        #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
-        #     ...
-        # We only care about the major and minor parts though.
-
         lines = version_info.splitlines()
         for line in lines:
-            match = _RE_JAVA_VERSION_LINE.search(line)
-            short_match = _RE_JAVA_SHORT_VERSION.search(line)
-            if match:
-                return int(match["major"]), int(match["minor"])
-            elif short_match:
-                return int(short_match["major"]), 0
+            match = _RE_JAVA_VERSION_LINE_PRE223.search(line)
+            if match is None:
+                match = _RE_JAVA_VERSION_LINE_223.search(line)
+            if match is None:
+                continue
+            major = int(match["major"])
+            minor = 0
+            if minor_str := match["minor"]:
+                minor = int(minor_str)
 
-        raise RuntimeError(
-            "The output of `java -version` was unexpected. Please report this issue on Red's "
-            "issue tracker."
-        )
+            return major, minor
+
+        raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
@@ -181,6 +234,7 @@ class ServerManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
@@ -200,7 +254,7 @@ class ServerManager:
         log.info("Internal Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
             log.info("Restarting internal Lavalink server")
-            await self.start()
+            await self.start(self._java_exc)
         else:
             log.critical(
                 "Your Java is borked. Please find the hs_err_pid%d.log file"
@@ -226,14 +280,14 @@ class ServerManager:
 
     async def _download_jar(self) -> None:
         log.info("Downloading Lavalink.jar...")
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
                     # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
                     # hasn't been published yet
                     raise LavalinkDownloadFailed(
                         f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
-                        f"yet",
+                        "yet",
                         response=response,
                         should_retry=False,
                     )

@@ -134,7 +134,7 @@ class CogCommandMixin:
                 return ctx.clean_prefix
             if s == "[botname]":
                 return ctx.me.display_name
-            # We shouldnt get here:
+            # We shouldn't get here:
             return s
 
         return formatting_pattern.sub(replacement, text)
@@ -268,7 +268,7 @@ class Command(CogCommandMixin, DPYCommand):
 
         None of your methods should start with ``red_`` or
         be dunder names which start with red (eg. ``__red_test_thing__``)
-        unless to override behavior in a method designed to be overriden,
+        unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
 
@@ -485,15 +485,22 @@ class Command(CogCommandMixin, DPYCommand):
         if not await self.can_run(ctx, change_permission_state=True):
             raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
 
-        if self.cooldown_after_parsing:
-            await self._parse_arguments(ctx)
-            self._prepare_cooldowns(ctx)
-        else:
-            self._prepare_cooldowns(ctx)
-            await self._parse_arguments(ctx)
         if self._max_concurrency is not None:
             await self._max_concurrency.acquire(ctx)
-        await self.call_before_hooks(ctx)
+
+        try:
+            if self.cooldown_after_parsing:
+                await self._parse_arguments(ctx)
+                self._prepare_cooldowns(ctx)
+            else:
+                self._prepare_cooldowns(ctx)
+                await self._parse_arguments(ctx)
+
+            await self.call_before_hooks(ctx)
+        except:
+            if self._max_concurrency is not None:
+                await self._max_concurrency.release(ctx)
+            raise
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter
@@ -655,7 +662,7 @@ class Command(CogCommandMixin, DPYCommand):
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
 
-                    if isinstance(error.original, MyErrrorType):
+                    if isinstance(error.original, MyErrorType):
                         self.log_exception(error.original)
                     else:
                         await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
@@ -815,7 +822,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
                 return await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the the invokation of *this* command. However, because of
+            # will skip the invocation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             if not await self.can_run(ctx, change_permission_state=True):
@@ -877,8 +884,8 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         Raises
         ------
         RedUnhandledAPI
-            If the method was not overriden,
-            or an overriden implementation is not handling this
+            If the method was not overridden,
+            or an overridden implementation is not handling this
 
         """
         raise RedUnhandledAPI()
@@ -960,8 +967,8 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         Raises
         ------
         RedUnhandledAPI
-            If the method was not overriden,
-            or an overriden implementation is not handling this
+            If the method was not overridden,
+            or an overridden implementation is not handling this
         """
         raise RedUnhandledAPI()
 
@@ -1026,9 +1033,9 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
 
     .. warning::
 
-        None of your methods should start with ``red_`` or 
+        None of your methods should start with ``red_`` or
         be dunder names which start with red (eg. ``__red_test_thing__``)
-        unless to override behavior in a method designed to be overriden,
+        unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
 
