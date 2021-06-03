@@ -377,9 +377,12 @@ class CoreLogic:
             Invite URL.
         """
         app_info = await self.bot.application_info()
-        perms_int = await self.bot._config.invite_perm()
+        data = await self.bot._config.all()
+        commands_scope = data["invite_commands_scope"]
+        scopes = ("bot", "applications.commands") if commands_scope else None
+        perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(app_info.id, permissions)
+        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -1564,6 +1567,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         await self.bot._config.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
+
+    @inviteset.command()
+    async def commandscope(self, ctx: commands.Context):
+        """
+        Add the `applications.commands` scope to your invite URL.
+
+        This allows the usage of slash commands on the servers that invited your bot with that scope.
+
+        Note that previous servers that invited the bot without the scope cannot have slash commands, they will have to invite the bot a second time.
+        """
+        enabled = not await self.bot._config.invite_commands_scope()
+        await self.bot._config.invite_commands_scope.set(enabled)
+        if enabled is True:
+            await ctx.send(
+                _("The `applications.commands` scope has been added to the invite URL.")
+            )
+        else:
+            await ctx.send(
+                _("The `applications.commands` scope has been removed from the invite URL.")
+            )
 
     @commands.command()
     @checks.is_owner()

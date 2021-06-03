@@ -118,6 +118,7 @@ class RedBase(
             description="Red V3",
             invite_public=False,
             invite_perm=0,
+            invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             extra_owner_destinations=[],
