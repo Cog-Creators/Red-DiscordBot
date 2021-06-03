@@ -75,6 +75,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         default_guild = {
             "sent_instructions": False,
             "mute_role": None,
+            "auto_update": False,
             "notification_channel": None,
             "muted_users": {},
             "default_time": 0,
@@ -97,6 +98,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._unmute_tasks: Dict[str, asyncio.Task] = {}
         self._unmute_task = None
         self.mute_role_cache: Dict[int, int] = {}
+        self.auto_update_cache: Dict[int, bool] = {}
         self._channel_mute_events: Dict[int, asyncio.Event] = {}
         # this is a dict of guild ID's and asyncio.Events
         # to wait for a guild to finish channel unmutes before
@@ -134,6 +136,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             self._server_mutes[g_id] = {}
             if mutes["mute_role"]:
                 self.mute_role_cache[g_id] = mutes["mute_role"]
+            if mutes["auto_update"]:
+                self.auto_update_cache[g_id] = True
             for user_id, mute in mutes["muted_users"].items():
                 self._server_mutes[g_id][int(user_id)] = mute
         channel_data = await self.config.all_channels()
@@ -719,6 +723,22 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 await self.config.channel(after).muted_users.set(self._channel_mutes[after.id])
 
     @commands.Cog.listener()
+    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel):
+        """
+        Will update permissions of new channel if the setting is enabled.
+        """
+        guild: discord.Guild = channel.guild
+        if self.auto_update_cache.get(guild.id, False) is False:
+            return
+        mute_role = guild.get_role(self.mute_role_cache.get(guild.id))
+        if mute_role is None:
+            return
+        if guild.me and not guild.me.guild_permissions.manage_roles:
+            return
+        await i18n.set_contextual_locales_from_guild(self.bot, guild)
+        await self._set_mute_role_overwrites(mute_role, channel)
+
+    @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         guild = member.guild
         if await self.bot.cog_disabled_in_guild(self, guild):
@@ -950,6 +970,32 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return None
         except discord.errors.Forbidden:
             return channel.mention
+
+    @muteset.command(name="autoupdate")
+    @checks.admin_or_permissions(manage_roles=True)
+    @commands.bot_has_guild_permissions(manage_roles=True)
+    async def auto_update_mute_role(self, ctx: commands.Context, true_or_false: bool):
+        """
+        Defines if new channels' permissions should be updated for the mute role
+
+        If enabled, each new text and voice channel will have updated permissions, denying the permission to send messages, add reactions and speak to the mute role.
+        """
+        if not await self.config.guild(ctx.guild).mute_role():
+            await ctx.send(
+                _(
+                    "You don't have any mute role currently setup! "
+                    "Setup one with `{p}muteset role` or `{p}muteset makerole`."
+                ).format(p=ctx.clean_prefix)
+            )
+            return
+        await self.config.guild(ctx.guild).auto_update.set(true_or_false)
+        self.auto_update_cache[ctx.guild.id] = true_or_false
+        if true_or_false:
+            await ctx.send(
+                _("Okay, I will update the permissions of new channels for the mute role.")
+            )
+        else:
+            await ctx.send(_("Okay, I won't update the permissions of new channels."))
 
     @muteset.command(name="defaulttime", aliases=["time"])
     @checks.mod_or_permissions(manage_messages=True)
