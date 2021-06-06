@@ -531,7 +531,7 @@ async def test_config_value_atomicity(config):
                 await asyncio.sleep(0.1)
                 await config.foo.set(foo)
 
-        tasks.append(func())
+        tasks.append(asyncio.create_task(func()))
 
     await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
@@ -549,7 +549,7 @@ async def test_config_ctxmgr_atomicity(config):
                 foo.append(0)
                 await asyncio.sleep(0.1)
 
-        tasks.append(func())
+        tasks.append(asyncio.create_task(func()))
 
     await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
