@@ -287,6 +287,9 @@ class RedBase(
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
 
+        # remove on startup chunking
+        kwargs["chunk_guilds_at_startup"] = False
+
         super().__init__(*args, help_command=None, **kwargs)
         # This MUST happen *after* d.py's __init__ is called as otherwise,
         # access to `self.owner_ids` property would have it set the value of
