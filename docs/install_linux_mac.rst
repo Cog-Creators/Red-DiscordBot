@@ -109,7 +109,7 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
 
 ----
 
@@ -124,7 +124,7 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python39 git java-11-openjdk-headless @development-tools nano
 
 Continue by `creating-venv-linux`.
 
@@ -376,7 +376,7 @@ Create your virtual environment with the following command:
 
 .. prompt:: bash
 
-    python3.8 -m venv ~/redenv
+    python3.9 -m venv ~/redenv
 
 And activate it with the following command:
 
