@@ -12,6 +12,7 @@ import discord
 from .. import commands
 from .predicates import ReactionPredicate
 from ..i18n import Translator
+from ._dpy_menus_utils import dpymenu
 
 _ReactableEmoji = Union[str, discord.Emoji]
 
@@ -62,6 +63,14 @@ async def menu(
     RuntimeError
         If either of the notes above are violated
     """
+    if (
+        not message
+        and controls == DEFAULT_CONTROLS
+        or (len(controls) == 1 and list(controls.values())[0] == close_menu)
+    ):
+        await dpymenu(ctx, pages, controls, message, page, timeout)
+        return
+
     if not isinstance(pages[0], (discord.Embed, str)):
         raise RuntimeError("Pages must be of type discord.Embed or str")
     if not all(isinstance(x, discord.Embed) for x in pages) and not all(
