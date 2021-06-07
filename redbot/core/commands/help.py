@@ -859,7 +859,7 @@ class RedHelpFormatter(HelpFormatterABC):
             ).start(ctx=ctx, wait=False)
 
 
-@commands.command(name="help", hidden=True, i18n=_)
+@commands.command(name="help", aliases=["h", "commands"], hidden=True, i18n=_)
 async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
     """
     I need somebody
