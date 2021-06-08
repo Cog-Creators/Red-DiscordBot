@@ -114,7 +114,7 @@ available 3rd party cogs!
 
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
-[find](https://cogboard.red/t/approved-repositories/210) the cog you’re looking for,
+[find](https://index.discord.red) the cog you’re looking for,
 consult our [guide](https://red-discordbot.readthedocs.io/en/stable/guide_cog_creation.html) on
 building your own cogs!
 
