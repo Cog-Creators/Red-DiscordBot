@@ -4886,6 +4886,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if maybe in prefixes:
                     prefixes.remove(maybe)
                     prefixes.add(f"@{self.bot.user.name}")
+                elif f"{maybe} " in prefixes:
+                    prefixes.remove(maybe)
+                    prefixes.add(f"@{self.bot.user.name} ")
             prefixes = list(f"`{p}`" for p in prefixes)
             await message.reply(
                 f"Hello there! I'm Jojobot!\nMy prefixes are {humanize_list(prefixes)}"
