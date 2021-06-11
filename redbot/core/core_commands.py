@@ -4877,6 +4877,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
+        if message.author.bot:
+            return
         id_pattern = re.compile(fr"<@!?{self.bot.user.id}>")
         if re.match(id_pattern, message.content):
             prefixes = set(await self.bot.get_valid_prefixes(message.guild))
