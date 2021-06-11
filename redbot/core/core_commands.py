@@ -406,7 +406,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command(hidden=True)
     async def ping(self, ctx: commands.Context):
         """Pong."""
-        await ctx.send("Pong.")
+        await ctx.reply("Pong.")
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -430,7 +430,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             owner = app_info.team.name
         else:
             owner = app_info.owner
-        custom_info = await self.bot._config.custom_info()
+        custom_info = (
+            "Jojobot is a custom fork of Red made by Jojo#7791.\n"
+            "Jojobot (aka Philip Mumford) is a bot created by "
+            "Jojo for... reasons? idk why he does these things"
+        )
 
         pypi_version, py_version_req = await fetch_latest_red_version_info()
         outdated = pypi_version and pypi_version > red_version_info
@@ -2133,6 +2137,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.tick()
 
     @_set.command()
+    @commands.is_owner()
+    async def dmchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """Sets the channel for dm logging.
+        
+        If a channel is not provided, the channel will be reset."""
+        if not channel:
+            await self.bot._config.dm_log_channel.clear()
+            await ctx.send("Dm log channel has been reset.")
+        else:
+            await self.bot._config.dm_log_channel.set(channel.id)
+            await ctx.send(f"The dm log channel has been set to {channel.name}.")
+
+    @_set.command()
     @checks.guildowner()
     @commands.guild_only()
     async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
@@ -3346,8 +3363,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot._config.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set."))
 
-    @commands.command(cooldown_after_parsing=True)
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    @commands.command()
     async def contact(self, ctx: commands.Context, *, message: str):
         """Sends a message to the owner.
 
@@ -3359,104 +3375,110 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[message]` - The message to send to the owner.
         """
-        guild = ctx.message.guild
-        author = ctx.message.author
-        footer = _("User ID: {}").format(author.id)
-
-        if ctx.guild is None:
-            source = _("through DM")
-        else:
-            source = _("from {}").format(guild)
-            footer += _(" | Server ID: {}").format(guild.id)
-
-        prefixes = await ctx.bot.get_valid_prefixes()
-        prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
-
-        content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
-
-        description = _("Sent by {} {}").format(author, source)
-
-        destinations = await ctx.bot.get_owner_notification_destinations()
-
-        if not destinations:
-            await ctx.send(_("I've been configured not to send this anywhere."))
+        try:
+            await ctx.send("Hallo there, the owner of Jojobot, Jojo, has disabled this command."
+                "\nIf you wish to contact him, dm me. Thanks! :)"
+            )
+        except discord.Forbidden:
             return
+        # guild = ctx.message.guild
+        # author = ctx.message.author
+        # footer = _("User ID: {}").format(author.id)
 
-        successful = False
+        # if ctx.guild is None:
+        #     source = _("through DM")
+        # else:
+        #     source = _("from {}").format(guild)
+        #     footer += _(" | Server ID: {}").format(guild.id)
 
-        for destination in destinations:
+        # prefixes = await ctx.bot.get_valid_prefixes()
+        # prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
 
-            is_dm = isinstance(destination, discord.User)
-            send_embed = None
+        # content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
-            if is_dm:
-                send_embed = await ctx.bot._config.user(destination).embeds()
-            else:
-                if not destination.permissions_for(destination.guild.me).send_messages:
-                    continue
-                if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.channel(destination).embeds()
-                    if send_embed is None:
-                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
-                else:
-                    send_embed = False
+        # description = _("Sent by {} {}").format(author, source)
 
-            if send_embed is None:
-                send_embed = await ctx.bot._config.embeds()
+        # destinations = await ctx.bot.get_owner_notification_destinations()
 
-            if send_embed:
+        # if not destinations:
+        #     await ctx.send(_("I've been configured not to send this anywhere."))
+        #     return
 
-                if not is_dm:
-                    color = await ctx.bot.get_embed_color(destination)
-                else:
-                    color = ctx.bot._color
+        # successful = False
 
-                e = discord.Embed(colour=color, description=message)
-                if author.avatar_url:
-                    e.set_author(name=description, icon_url=author.avatar_url)
-                else:
-                    e.set_author(name=description)
+        # for destination in destinations:
 
-                e.set_footer(text=footer)
+        #     is_dm = isinstance(destination, discord.User)
+        #     send_embed = None
 
-                try:
-                    await destination.send(embed=e)
-                except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
-                    # Should this automatically opt them out?
-                except discord.HTTPException:
-                    log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
-                    )
-                else:
-                    successful = True
+        #     if is_dm:
+        #         send_embed = await ctx.bot._config.user(destination).embeds()
+        #     else:
+        #         if not destination.permissions_for(destination.guild.me).send_messages:
+        #             continue
+        #         if destination.permissions_for(destination.guild.me).embed_links:
+        #             send_embed = await ctx.bot._config.channel(destination).embeds()
+        #             if send_embed is None:
+        #                 send_embed = await ctx.bot._config.guild(destination.guild).embeds()
+        #         else:
+        #             send_embed = False
 
-            else:
+        #     if send_embed is None:
+        #         send_embed = await ctx.bot._config.embeds()
 
-                msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+        #     if send_embed:
 
-                try:
-                    await destination.send("{}\n{}".format(content, box(msg_text)))
-                except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
-                    # Should this automatically opt them out?
-                except discord.HTTPException:
-                    log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
-                    )
-                else:
-                    successful = True
+        #         if not is_dm:
+        #             color = await ctx.bot.get_embed_color(destination)
+        #         else:
+        #             color = ctx.bot._color
 
-        if successful:
-            await ctx.send(_("Your message has been sent."))
-        else:
-            await ctx.send(_("I'm unable to deliver your message. Sorry."))
+        #         e = discord.Embed(colour=color, description=message)
+        #         if author.avatar_url:
+        #             e.set_author(name=description, icon_url=author.avatar_url)
+        #         else:
+        #             e.set_author(name=description)
+
+        #         e.set_footer(text=footer)
+
+        #         try:
+        #             await destination.send(embed=e)
+        #         except discord.Forbidden:
+        #             log.exception(f"Contact failed to {destination}({destination.id})")
+        #             # Should this automatically opt them out?
+        #         except discord.HTTPException:
+        #             log.exception(
+        #                 f"An unexpected error happened while attempting to"
+        #                 f" send contact to {destination}({destination.id})"
+        #             )
+        #         else:
+        #             successful = True
+
+        #     else:
+
+        #         msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+
+        #         try:
+        #             await destination.send("{}\n{}".format(content, box(msg_text)))
+        #         except discord.Forbidden:
+        #             log.exception(f"Contact failed to {destination}({destination.id})")
+        #             # Should this automatically opt them out?
+        #         except discord.HTTPException:
+        #             log.exception(
+        #                 f"An unexpected error happened while attempting to"
+        #                 f" send contact to {destination}({destination.id})"
+        #             )
+        #         else:
+        #             successful = True
+
+        # if successful:
+        #     await ctx.send(_("Your message has been sent."))
+        # else:
+        #     await ctx.send(_("I'm unable to deliver your message. Sorry."))
 
     @commands.command()
     @checks.is_owner()
-    async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
+    async def dm(self, ctx: commands.Context, user_id: int, info: Optional[bool], *, message: str):
         """Sends a DM to a user.
 
         This command needs a user ID to work.
@@ -3470,6 +3492,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[message]` - The message to dm to the user.
         """
+        info = True if info is None else info
         destination = self.bot.get_user(user_id)
         if destination is None or destination.bot:
             await ctx.send(
@@ -3487,12 +3510,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
             e = discord.Embed(colour=discord.Colour.red(), description=message)
-
-            e.set_footer(text=content)
-            if ctx.bot.user.avatar_url:
-                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
-            else:
-                e.set_author(name=description)
+            if info:
+                e.set_footer(text=content)
+                if ctx.bot.user.avatar_url:
+                    e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+                else:
+                    e.set_author(name=description)
 
             try:
                 await destination.send(embed=e)
@@ -3503,7 +3526,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
         else:
-            response = "{}\nMessage:\n\n{}".format(description, message)
+            if info:
+                response = "{}\nMessage:\n\n{}".format(description, message)
+            else:
+                response = message
             try:
                 await destination.send("{}\n{}".format(box(response), content))
             except discord.HTTPException:
@@ -4848,3 +4874,39 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.
+
+    @commands.Cog.listener()
+    async def on_message_without_command(self, message: discord.Message):
+        id_pattern = re.compile(fr"<@!?{self.bot.user.id}>")
+        if re.match(id_pattern, message.content):
+            prefixes = set(await self.bot.get_valid_prefixes(message.guild))
+            for maybe in (f"<@{self.bot.user.id}>", f"<@!{self.bot.user.id}>"):
+                if maybe in prefixes:
+                    prefixes.remove(maybe)
+                    prefixes.add(f"@{self.bot.user.name}")
+            prefixes = list(f"`{p}`" for p in prefixes)
+            await message.reply(
+                f"Hello there! I'm Jojobot!\nMy prefixes are {humanize_list(prefixes)}"
+            )
+        if not message.guild:
+            maybe_channel = await self.bot._config.dm_log_channel()
+            log.info(maybe_channel)
+            if not maybe_channel:
+                return
+            if not (channel := self.bot.get_channel(maybe_channel)) or not (
+                channel := await self.bot.fetch_channel(maybe_channel)
+            ):
+                return
+            kwargs = {
+                "content": f"Dm from {message.author} ({message.author.id})\n{message.content}"
+            }
+            if await self.bot.embed_requested(channel.guild, message.author):
+                embed = discord.Embed(
+                    title=f"Dm from {message.author} ({message.author.id})",
+                    colour=await self.bot.get_embed_colour(channel),
+                    description=message.content,
+                )
+                embed.set_author(icon_url=message.author.avatar_url, name=message.author.name)
+                embed.timestamp = datetime.datetime.utcnow()
+                kwargs = {"embed": embed}
+            await channel.send(**kwargs)

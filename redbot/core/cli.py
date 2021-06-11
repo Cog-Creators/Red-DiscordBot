@@ -193,7 +193,7 @@ def parse_cli_flags(args):
         default=logging.INFO,
         help="Sets the loggers level as debug",
     )
-    parser.add_argument("--dev", action="store_true", help="Enables developer mode")
+    parser.add_argument("--dev", action="store_true", default=True, help="Enables developer mode")
     parser.add_argument(
         "--mentionable",
         action="store_true",

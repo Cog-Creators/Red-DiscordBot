@@ -129,6 +129,7 @@ class RedBase(
             schema_version=0,
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
+            dm_log_channel=None,
         )
 
         self._config.register_guild(
@@ -202,7 +203,9 @@ class RedBase(
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
         if "allowed_mentions" not in kwargs:
-            kwargs["allowed_mentions"] = discord.AllowedMentions(everyone=False, roles=False)
+            kwargs["allowed_mentions"] = discord.AllowedMentions(
+                everyone=False, roles=False, replied_user=False
+            )
 
         message_cache_size = cli_flags.message_cache_size
         if cli_flags.no_message_cache:
@@ -938,8 +941,7 @@ class RedBase(
 
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
-        if cli_flags.dev:
-            self.add_cog(Dev())
+        self.add_cog(Dev())
 
         await modlog._init(self)
         await bank._init()
