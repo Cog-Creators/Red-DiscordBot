@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from ..bot import Red
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
+CROSS = "\N{CROSS MARK}"
 
 __all__ = ["Context", "GuildContext", "DMContext"]
 
@@ -99,8 +100,13 @@ class Context(DPYContext):
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
-    async def tick(self) -> bool:
+    async def tick(self, *, cross: bool = False) -> bool:
         """Add a tick reaction to the command message.
+
+        Parameters
+        ----------
+        cross: Optional[:class:`bool`]
+            Adds an x mark if :code:`True`. Defaults to :code:`False`.
 
         Returns
         -------
@@ -108,8 +114,9 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
 
         """
+        emoji = CROSS if cross else TICK
         try:
-            await self.message.add_reaction(TICK)
+            await self.message.add_reaction(emoji)
         except discord.HTTPException:
             return False
         else:

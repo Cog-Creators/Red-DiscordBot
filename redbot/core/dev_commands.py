@@ -147,9 +147,11 @@ class Dev(commands.Cog):
             compiled = self.async_compile(code, "<string>", "eval")
             result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
+            await ctx.tick(cross=True)
             await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
             return
         except Exception as e:
+            await ctx.tick(cross=True)
             await ctx.send_interactive(
                 self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
             )
@@ -158,6 +160,7 @@ class Dev(commands.Cog):
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")
@@ -192,6 +195,7 @@ class Dev(commands.Cog):
             compiled = self.async_compile(to_compile, "<string>", "exec")
             exec(compiled, env)
         except SyntaxError as e:
+            await ctx.tick(cross=True)
             return await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
 
         func = env["func"]
@@ -200,6 +204,7 @@ class Dev(commands.Cog):
             with redirect_stdout(stdout):
                 result = await func()
         except:
+            await ctx.tick(cross=True)
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -289,9 +294,11 @@ class Dev(commands.Cog):
                         result = executor(code, env)
                     result = await self.maybe_await(result)
             except:
+                await ctx.tick(cross=True)
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
+                await ctx.tick()
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
@@ -336,6 +343,7 @@ class Dev(commands.Cog):
         msg.content = ctx.prefix + command
 
         ctx.bot.dispatch("message", msg)
+        await ctx.tick()
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
@@ -357,6 +365,7 @@ class Dev(commands.Cog):
         await asyncio.sleep(2)
         ctx.message.author = old_author
         ctx.message.content = old_content
+        await ctx.tick()
 
     @commands.command()
     @checks.is_owner()
