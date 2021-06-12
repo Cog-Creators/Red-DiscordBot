@@ -97,6 +97,8 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
+MAX_PREFIX_LENGTH = 20
+
 
 class CoreLogic:
     def __init__(self, bot: "Red"):
@@ -2695,6 +2697,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<prefixes...>` - The prefixes the bot will respond to globally.
         """
+        if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(
+                _(
+                    "Warning: A prefix is above the recommended length (20 characters).\n"
+                    "Do you want to continue? (y/n)"
+                )
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Response timed out."))
+                return
+            else:
+                if pred.result is False:
+                    await ctx.send(_("Cancelled."))
+                    return
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         if len(prefixes) == 1:
             await ctx.send(_("Prefix set."))
@@ -2710,6 +2729,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
+            A prefix cannot have more than 20 characters.
 
         **Examples:**
             - `[p]set serverprefix !`
@@ -2723,6 +2743,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
+            return
+        if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(_("You cannot have a prefix longer than 20 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
