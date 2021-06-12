@@ -127,7 +127,16 @@ msgid "\n"
 "        If a reason is specified, it will be the reason that shows up\n"
 "        in the audit log.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Expulsar a un usuario.\n\n"
+"        Ejemplos:\n"
+"           - `[p]kick 428675506947227648 quería ser expulsado.\n"
+"            Esto expulsará a Twentysix del servidor.\n"
+"           - `[p]kick @Twentysix quería ser expulsado.\n"
+"            Esto expulsará a Twentysix del servidor.\n\n"
+"        Si se especifica una razón, será la razón por la que aparecerá\n"
+"        en el registro de auditoría.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:311 redbot/cogs/mod/kickban.py:684
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
@@ -150,7 +159,17 @@ msgid "Ban a user from this server and optionally delete days of messages.\n\n"
 "        If days is not a number, it's treated as the first word of the reason.\n"
 "        Minimum 0 days, maximum 7. If not specified, the defaultdays setting will be used instead.\n"
 "        "
-msgstr ""
+msgstr "Banear a un usuario de este servidor y opcionalmente eliminar los mensajes de unos días.\n\n"
+"        `días` es la cantidad de días a limpiar al banear.\n\n"
+"        Ejemplos:\n"
+"           - `[p]ban 428675506947227648 7 Ha continuado con el spam después de decirle que se detuviera.\n"
+"            Esto baneará Twentysix y eliminará los mensajes de hace 7 días.\n"
+"           - `[p]ban @Twentysix 7 Ha continuado con el spam después de decirle que se detuviera.\n"
+"            Esto baneará Twentysix y eliminará los mensajes de hace 7 días.\n\n"
+"        Se debe proporcionar un ID de usuario si el usuario no es miembro de este servidor.\n"
+"        Si los días no son un número, se trata como la primera palabra de la razón.\n"
+"        Mínimo 0 días, máximo 7. Si no se especifica, se utilizará la configuración por defecto en su lugar.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:417
 #, docstring
@@ -162,7 +181,14 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr ""
+msgstr "Banea en masa a usuarios(s) del servidor.\n\n"
+"        `días` es la cantidad de días a limpiar al baneo masivo.\n\n"
+"        Ejemplo:\n"
+"           - `[p]massban 345628097929936898 57287406247743488 7 rompieron todas las reglas.\n"
+"            Esto baneará a todos los usuarios añadidos y eliminará los mensajes de hace 7 días.\n\n"
+"        Las ID de usuario necesitan ser proporcionados para banear\n"
+"        usando este comando.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:433
 msgid "Banned {num} users from the server."
@@ -205,7 +231,17 @@ msgid "Temporarily ban a user from this server.\n\n"
 "           - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`\n"
 "            This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.\n"
 "        "
-msgstr ""
+msgstr "Banear temporalmente a un usuario de este servidor.\n\n"
+"        `duración` es el tiempo por el que el usuario debe ser baneado.\n"
+"        `días` es la cantidad de días a limpiar al baneo temporal.\n\n"
+"        Ejemplos:\n"
+"           - `[p]tempban @Twentysix Porque yo lo digo`\n"
+"            Esto baneará a Twentysix por la cantidad predeterminada de tiempo establecida por un administrador.\n"
+"           - `[p]tempban @Twentysix 15m Necesitas un tiempo de descanso`\n"
+"            Esto baneará a Twentysix durante 15 minutos.\n"
+"           - `[p]tempban 428675506947227648 1d2h15m 5 persona malvada`\n"
+"            Esto baneará al usuario por 1 día 2 horas 15 minutos y eliminará los últimos 5 días de sus mensajes.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:643
 msgid "You have been temporarily banned from {server_name} until {date}."
@@ -370,7 +406,9 @@ msgstr "Ajustes de retraso de borrado restaurados."
 msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
-msgstr ""
+msgstr "Cambiar el nick de un usuario.\n\n"
+"        Dejar el nick vacío lo eliminará.\n"
+"        "
 
 #: redbot/cogs/mod/names.py:45
 msgid "Nicknames must be between 2 and 32 characters long."
@@ -444,7 +482,12 @@ msgid "Show information about a member.\n\n"
 "        If the member has no roles, previous names or previous nicknames,\n"
 "        these fields will be omitted.\n"
 "        "
-msgstr ""
+msgstr "Mostrar información sobre un miembro.\n\n"
+"        Esto incluye campos para el estado, fecha de registro de discord, servidor\n"
+"        fecha de unión, estado de voz y nombres/apodos anteriores.\n\n"
+"        Si el miembro no tiene roles, nombres anteriores o apodos anteriores,\n"
+"        estos campos serán omitidos.\n"
+"        "
 
 #: redbot/cogs/mod/names.py:192
 msgid "Unknown"
@@ -507,7 +550,7 @@ msgstr "Miembro #{} | ID de usuario: {}"
 #: redbot/cogs/mod/names.py:298
 #, docstring
 msgid "Show previous names and nicknames of a member."
-msgstr ""
+msgstr "Muestra nombres y apodos anteriores de un usuario."
 
 #: redbot/cogs/mod/names.py:302
 msgid "**Past 20 names**:"
@@ -519,7 +562,7 @@ msgstr "**Últimos 20 nombres**:"
 
 #: redbot/cogs/mod/names.py:315
 msgid "That member doesn't have any recorded name or nickname change."
-msgstr ""
+msgstr "Ese miembro no tiene ningún cambio de nombre o apodo registrado."
 
 #: redbot/cogs/mod/settings.py:23
 #, docstring
@@ -533,7 +576,7 @@ msgstr "Mostrar la configuración actual de la administración del servidor."
 
 #: redbot/cogs/mod/settings.py:31
 msgid "Track name changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Rastrear cambios de nombres: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:32 redbot/cogs/mod/settings.py:55
 #: redbot/cogs/mod/settings.py:83 redbot/cogs/mod/settings.py:91
@@ -551,11 +594,11 @@ msgstr "No"
 
 #: redbot/cogs/mod/settings.py:53
 msgid "Overridden by another setting"
-msgstr ""
+msgstr "Anulado por otra configuración"
 
 #: redbot/cogs/mod/settings.py:56
 msgid "Track nickname changes: {yes_or_no}\n"
-msgstr ""
+msgstr "Rastrear cambios de apodos: {yes_or_no}\n"
 
 #: redbot/cogs/mod/settings.py:57
 msgid "Delete repeats: {num_repeats}\n"
@@ -934,23 +977,26 @@ msgid "\n"
 "        Toggle whether nickname changes should be tracked.\n\n"
 "        This setting will be overridden if trackallnames is disabled.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Alterna si los cambios de nick deben ser rastreados.\n\n"
+"        Esta configuración será anulada si los nombres de nick están desactivados.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:430
 msgid "Nickname changes are currently being tracked."
-msgstr ""
+msgstr "Los cambios de apodo están siendo rastreados."
 
 #: redbot/cogs/mod/settings.py:432
 msgid "Nickname changes are not currently being tracked."
-msgstr ""
+msgstr "Los cambios de apodo no están siendo rastreados."
 
 #: redbot/cogs/mod/settings.py:437
 msgid "Nickname changes will now be tracked."
-msgstr ""
+msgstr "Los cambios de apodo ahora serán rastreados."
 
 #: redbot/cogs/mod/settings.py:439
 msgid "Nickname changes will no longer be tracked."
-msgstr ""
+msgstr "Los cambios de apodo ya no serán rastreados."
 
 #: redbot/cogs/mod/settings.py:446
 #, docstring
@@ -958,24 +1004,28 @@ msgid "\n"
 "        Toggle whether all name changes should be tracked.\n\n"
 "        Toggling this off also overrides the tracknicknames setting.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Alternar si todos los cambios de nombre deben ser rastreados.\n\n"
+"        Desactivar esto también anula la configuración de los nombres de rastreo.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:454
 msgid "Name changes are currently being tracked."
-msgstr ""
+msgstr "Los cambios de apodo están siendo rastreados."
 
 #: redbot/cogs/mod/settings.py:456
 msgid "All name changes are currently not being tracked."
-msgstr ""
+msgstr "Todos los cambios de nombre están siendo rastreados."
 
 #: redbot/cogs/mod/settings.py:461
 msgid "Name changes will now be tracked."
-msgstr ""
+msgstr "Los cambios de nombre ahora serán rastreados."
 
 #: redbot/cogs/mod/settings.py:463
 msgid "All name changes will no longer be tracked.\n"
 "To delete existing name data, use {command}."
-msgstr ""
+msgstr "Ya no se rastrearán todos los cambios de nombre.\n"
+"Para eliminar los datos de nombres existentes, utilice {command}."
 
 #: redbot/cogs/mod/settings.py:474
 #, docstring
@@ -986,16 +1036,23 @@ msgid "Delete all stored usernames and nicknames.\n\n"
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "Eliminar todos los nombres de usuario y apodos almacenados.\n\n"
+"        Ejemplos:\n"
+"            - `[p]modset deletenames` - No confirmado. Muestra el mensaje de ayuda.\n"
+"            - `[p]modset deletenames yes` - Elimina todos los nombres de usuario y apodos almacenados.\n\n"
+"        **Argumentos**\n\n"
+"        - `<confirmation>` Esto será por defecto falso a menos que se especifique.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:486
 msgid "This will delete all stored usernames and nicknames the bot has stored.\n"
 "If you're sure, type {command}"
-msgstr ""
+msgstr "Esto eliminará todos los nombres de usuario y apodos almacenados por el bot.\n"
+"Si estás seguro, escribe {command}"
 
 #: redbot/cogs/mod/settings.py:527
 msgid "Usernames and nicknames have been deleted from Mod config."
-msgstr ""
+msgstr "Los nombres de usuario y apodos han sido eliminados de la configuración de Mod."
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring

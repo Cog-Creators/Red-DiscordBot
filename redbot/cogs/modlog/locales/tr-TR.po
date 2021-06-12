@@ -35,7 +35,9 @@ msgstr "Hatalı vaka türlerini düzeltmek için komut."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `[channel]` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Bir kanalı modlog olarak ayarla.\n\n"
+"        Modlog'u kapamak için `[channel]` yerini boş bırakın.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:55
 msgid "Mod events will be sent to {channel}."

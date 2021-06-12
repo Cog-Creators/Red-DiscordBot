@@ -29,11 +29,11 @@ msgstr "No puedo dejarte hacer eso. No eres más alto que el usuario en la jerar
 
 #: redbot/cogs/mutes/mutes.py:31
 msgid "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
-msgstr ""
+msgstr "No puedo dejarte hacer eso. No eres más alto que el usuario en la jerarquía de roles."
 
 #: redbot/cogs/mutes/mutes.py:34
 msgid "That user cannot be (un)muted, as they have the Administrator permission."
-msgstr ""
+msgstr "Ese usuario no puede estar (des)silenciado, ya que tiene el permiso de administrador."
 
 #: redbot/cogs/mutes/mutes.py:35
 msgid "Failed to mute or unmute user. I need the Manage Roles permission and the user I'm muting must be lower than myself in the role hierarchy."
@@ -64,7 +64,9 @@ msgstr "Debido a que no tengo el permiso de Mover miembros, esto entrará en vig
 msgid "\n"
 "    Mute users temporarily or indefinitely.\n"
 "    "
-msgstr ""
+msgstr "\n"
+"    Mutear a los usuarios temporal o indefinidamente.\n"
+"    "
 
 #: redbot/cogs/mutes/mutes.py:286 redbot/cogs/mutes/mutes.py:298
 #: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:392
@@ -76,7 +78,7 @@ msgstr "Desilenciar automáticamente"
 #: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:409
 #: redbot/cogs/mutes/mutes.py:617 redbot/cogs/mutes/mutes.py:1400
 msgid "Server unmute"
-msgstr ""
+msgstr "Mutear servidor"
 
 #: redbot/cogs/mutes/mutes.py:311
 msgid "I am unable to unmute {user} for the following reason:\n"
@@ -101,12 +103,12 @@ msgstr "{reason} en los siguientes canales: {channels}\n"
 #: redbot/cogs/mutes/mutes.py:472 redbot/cogs/mutes/mutes.py:692
 #: redbot/cogs/mutes/voicemutes.py:224
 msgid "Voice unmute"
-msgstr ""
+msgstr "Voz desmuteada"
 
 #: redbot/cogs/mutes/mutes.py:475 redbot/cogs/mutes/mutes.py:695
 #: redbot/cogs/mutes/mutes.py:1467
 msgid "Channel unmute"
-msgstr ""
+msgstr "Canal desmuteado"
 
 #: redbot/cogs/mutes/mutes.py:492
 msgid "I am unable to unmute {user} in {channel} for the following reason:\n"
@@ -120,7 +122,7 @@ msgstr "Desconocido"
 
 #: redbot/cogs/mutes/mutes.py:538
 msgid "No reason provided."
-msgstr ""
+msgstr "Ningún motivo proporcionado."
 
 #: redbot/cogs/mutes/mutes.py:549
 msgid "Until"
@@ -132,7 +134,7 @@ msgstr "Duración"
 
 #: redbot/cogs/mutes/mutes.py:551
 msgid "Guild"
-msgstr ""
+msgstr "Servidor"
 
 #: redbot/cogs/mutes/mutes.py:553
 msgid "Moderator"
@@ -141,18 +143,22 @@ msgstr "Moderador"
 #: redbot/cogs/mutes/mutes.py:562
 msgid "\n"
 "**Moderator**: {moderator}"
-msgstr ""
+msgstr "\n"
+"**Moderador**: {moderator}"
 
 #: redbot/cogs/mutes/mutes.py:567
 msgid "\n"
 "**Until**: {until}\n"
 "**Duration**: {duration}"
-msgstr ""
+msgstr "\n"
+"**Hasta**: {until}\n"
+"**Duración**: {duration}"
 
 #: redbot/cogs/mutes/mutes.py:573
 msgid "\n"
 "**Guild**: {guild_name}"
-msgstr ""
+msgstr "\n"
+"**Servidor**: {guild_name}"
 
 #: redbot/cogs/mutes/mutes.py:612 redbot/cogs/mutes/mutes.py:617
 msgid "Manually removed mute role"
@@ -164,7 +170,7 @@ msgstr "Se ha aplicado manualmente el rol de silencio"
 
 #: redbot/cogs/mutes/mutes.py:641 redbot/cogs/mutes/mutes.py:1184
 msgid "Server mute"
-msgstr ""
+msgstr "Servidor muteado"
 
 #: redbot/cogs/mutes/mutes.py:702 redbot/cogs/mutes/mutes.py:711
 msgid "Manually removed channel overwrites"
@@ -182,11 +188,11 @@ msgstr "Ajustes de Silenciado."
 #: redbot/cogs/mutes/mutes.py:758
 #, docstring
 msgid "Set whether mute notifications should be sent to users in DMs."
-msgstr ""
+msgstr "Establecer si las notificaciones de muteos deben ser enviadas a los usuarios en DMs."
 
 #: redbot/cogs/mutes/mutes.py:761
 msgid "I will now try to send mute notifications to users DMs."
-msgstr ""
+msgstr "Ahora intentaré enviar notificaciones de muteos a los DM de los usuarios."
 
 #: redbot/cogs/mutes/mutes.py:763
 msgid "Mute notifications will no longer be sent to users DMs."
