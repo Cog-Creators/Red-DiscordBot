@@ -1,5 +1,20 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.11 (2021-06-12)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Onii-Chan-Discord`
+
+This is a hotfix release fixing a crash involving guild uploaded stickers.
+
+Full changelog
+--------------
+
+- discord.py version has been bumped to 1.7.3 (:issue:`5129`)
+- Links to the CogBoard in Red's documentation have been updated to use the new domain (:issue:`5124`)
+
+
 Redbot 3.4.10 (2021-05-28)
 ==========================
 
