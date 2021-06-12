@@ -127,8 +127,6 @@ def init_events(bot, cli_flags):
             rich_console.print(
                 f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
-        if rich_outdated_message:
-            rich_console.print(rich_outdated_message)
 
         if not bot.owner_ids:
             # we could possibly exit here in future
@@ -136,8 +134,6 @@ def init_events(bot, cli_flags):
 
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
-        if outdated_red_message:
-            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):
