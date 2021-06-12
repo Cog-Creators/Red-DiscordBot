@@ -503,7 +503,7 @@ msgstr "La playlist {name} (`{id}`) [**{scope}**] sera utilisé pour la lecture 
 #: redbot/cogs/audio/core/commands/audioset.py:560
 #, docstring
 msgid "Resets auto-play to the default playlist."
-msgstr ""
+msgstr "Réinitialise la lecture automatique à la playlist par défaut."
 
 #: redbot/cogs/audio/core/commands/audioset.py:572
 msgid "Set auto-play playlist to play recently played tracks."
@@ -518,7 +518,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:590
 msgid "Global daily queues: {true_or_false}."
-msgstr ""
+msgstr "Liste globale de lecture journalière: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:599
 #, docstring
@@ -896,7 +896,7 @@ msgstr "Cache Lavalink local : [{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1088
 msgid "Global cache status:    [{global_cache}]\n"
-msgstr ""
+msgstr "Statut du cache global : [{global_cache}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1089
 msgid "Global timeout:         [{num_seconds}]\n"
@@ -962,11 +962,11 @@ msgstr "Aucun log trouvé dans votre dossier de données."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1166
 msgid "Logs are too large, you can find them in {path}"
-msgstr ""
+msgstr "Les logs sont trop volumineux, vous pouvez les trouver dans {path}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1176
 msgid "I need to be able to DM you to send you the logs."
-msgstr ""
+msgstr "Je dois pouvoir vous envoyer des messages privés pour envoyer les logs."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1185
 #, docstring
@@ -1524,7 +1524,7 @@ msgstr "Vous avez besoin du rôle DJ pour invoquer le bot."
 #: redbot/cogs/audio/core/commands/player.py:695
 #: redbot/cogs/audio/core/commands/queue.py:339
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "Je n'ai pas la permission de me connecter et de parler dans votre salon vocal."
 
 #: redbot/cogs/audio/core/commands/controller.py:680
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1879,12 +1879,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:93
 #, docstring
 msgid "Toggle using external Lavalink servers."
-msgstr ""
+msgstr "Activer/désactiver l'usage de serveurs Lavalink externes ."
 
 #: redbot/cogs/audio/core/commands/llset.py:100
 #: redbot/cogs/audio/core/commands/llset.py:126
 msgid "External Lavalink server: {true_or_false}."
-msgstr ""
+msgstr "Serveur Lavalink externe : {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:113
 msgid "External Lavalink server: {true_or_false}\n"
@@ -1927,7 +1927,7 @@ msgstr "Port websocket défini sur {port}."
 #: redbot/cogs/audio/core/commands/llset.py:217
 #, docstring
 msgid "Display Lavalink connection settings."
-msgstr ""
+msgstr "Affiche les paramètres de connexion de Lavalink."
 
 #: redbot/cogs/audio/core/commands/llset.py:223
 msgid "Connection Settings"
@@ -1939,11 +1939,11 @@ msgstr "Hôte :             [{host}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:225
 msgid "WS Port:          [{port}]\n"
-msgstr ""
+msgstr "Port WS : [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:227
 msgid "Rest Port:        [{port}]\n"
-msgstr ""
+msgstr "Port Rest : [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:228
 msgid "Password:         [{password}]\n"
@@ -2369,7 +2369,8 @@ msgstr "{num} pistes ajoutées à {playlist} (`{id}`) [**{scope}**]."
 #: redbot/cogs/audio/core/commands/playlists.py:204
 msgid "\n"
 "{existing} {plural} already in the playlist and were skipped."
-msgstr ""
+msgstr "\n"
+"{existing} {plural} étaient déjà dans la playlist et ont été ignorés."
 
 #: redbot/cogs/audio/core/commands/playlists.py:206
 msgid "tracks are"
@@ -2683,7 +2684,7 @@ msgstr "Auteur : {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "Portée : {scope}\n"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1078
 #, docstring

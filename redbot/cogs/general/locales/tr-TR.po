@@ -107,7 +107,11 @@ msgid "Choose between multiple options.\n\n"
 "        Options are separated by spaces.\n\n"
 "        To denote options which include whitespace, you should enclose the options in double quotes.\n"
 "        "
-msgstr ""
+msgstr "Çok sayıda seçenek arasından bir seçim yapar.\n\n"
+"        Arasından seçim yapılacak en az 2 seçenek olmalıdır.\n"
+"        Seçenekler birbirlerinden boşluklarla ayrılırlar.\n\n"
+"        İçinde boşluk barındıran seçenekler girmek için, seçenekleri tırnak işaretleri içine almanız gerekir.\n"
+"        "
 
 #: redbot/cogs/general/general.py:94
 msgid "Not enough options to pick from."

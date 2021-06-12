@@ -105,7 +105,9 @@ msgstr "Kullanıcıya özel mesaj gönderirken uyarıyı yazan moderatörün ad�
 msgid "Set the channel where warnings should be sent to.\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
-msgstr ""
+msgstr "Uyarıların gönderileceği kanalı ayarla.\n"
+"         `[p]warn` komutunun çalıştırıldığı kanalı kullanmak için boş bırakın.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:165
 msgid "The warn channel has been set to {channel}."
@@ -142,14 +144,23 @@ msgid "Manage automated actions for Warnings.\n"
 "        user is warned enough so that their points go over this\n"
 "        threshold, the action will be executed.\n"
 "        "
-msgstr ""
+msgstr "Uyarılar için otomatik eylemleri yönet.\n"
+"        Otomatik eylemler bir nevi komutlar için makrolardır, bir eylem\n"
+"        ilk tetiklendiğinde ve/veya sona erdiğinde herhangi bir komut\n"
+"        çalıştırılabilir.\n"
+"        Her eyleme birer ad ve puan sınırı verilmelidir. Bir kullnıcı\n"
+"        puanları bu sınırı geçecek kadar çok uyarıldığında eylem\n"
+"        tetiklenir.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:206
 #, docstring
 msgid "Create an automated action.\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr ""
+msgstr "Otomatik eylem oluştur.\n"
+"        Eylemlerin isimleri aynı olamaz.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:226
 msgid "Duplicate action name found!"
@@ -174,7 +185,10 @@ msgid "Manage warning reasons.\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr ""
+msgstr "Uyarı sebeplerini yönet.\n"
+"        Sebeplere birer ad, açıklama ve puan değeri verilmelidir. Bir\n"
+"        kullanıcı uyarıldığında sebebin de isminin verilmesi zorunludur.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:268
 #, docstring
@@ -263,7 +277,12 @@ msgid "Warn the user for the specified reason.\n"
 "        `<reason>` is reason for the warning. This can be a registered reason,\n"
 "        or a custom reason if ``[p]warningset allowcustomreasons`` is set.\n"
 "        "
-msgstr ""
+msgstr "Kullanıcıyı belirtilen sebeple uyar.\n"
+"        `<puan>` Uyarının kullanıcıya vereceği ceza puanı. Eğer herhangi\n"
+"        bir rakam girilmezse 1 puan verilir. Önceden ayarlanmış uyarılar bunu yok sayar.\n"
+"        `<sebep>` ise uyarının verilme sebebidir. Bu önceden kayıtlı bir sebep,\n"
+"        veya ``[p]warningset allowcustomreasons`` ayarlanmışsa herhangi bir sebep olabilir.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:379
 msgid "You cannot warn yourself."
