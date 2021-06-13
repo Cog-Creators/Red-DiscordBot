@@ -39,7 +39,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
-            await self.maybe_message_all_owners()
+            # global API is force-disabled right now
+            # await self.maybe_message_all_owners()
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
