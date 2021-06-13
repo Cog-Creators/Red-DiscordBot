@@ -3992,7 +3992,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
-    async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: str):
+    async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
         """Set the default state for a cog as disabled.
 
         This will disable the cog for all servers by default.
@@ -4007,9 +4007,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cogname>` - The name of the cog to make disabled by default. Must be title-case.
         """
-        cog = self.bot.get_cog(cogname)
-        if not cog:
-            return await ctx.send(_("Cog with the given name doesn't exist."))
+        cog = cogname
+        cogname = cog.qualified_name
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog by default."))
         await self.bot._disabled_cog_cache.default_disable(cogname)
@@ -4017,7 +4016,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultenablecog")
-    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: str):
+    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
         """Set the default state for a cog as enabled.
 
         This will re-enable the cog for all servers by default.
@@ -4032,15 +4031,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cogname>` - The name of the cog to make enabled by default. Must be title-case.
         """
-        cog = self.bot.get_cog(cogname)
-        if not cog:
-            return await ctx.send(_("Cog with the given name doesn't exist."))
+        cog = cogname
+        cogname = cog.qualified_name
         await self.bot._disabled_cog_cache.default_enable(cogname)
         await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
 
     @commands.guild_only()
     @command_manager.command(name="disablecog")
-    async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
+    async def command_disable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
         """Disable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4052,9 +4050,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cogname>` - The name of the cog to disable on this server. Must be title-case.
         """
-        cog = self.bot.get_cog(cogname)
-        if not cog:
-            return await ctx.send(_("Cog with the given name doesn't exist."))
+        cog = cogname
+        cogname = cog.qualified_name
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog as you would lock yourself out."))
         if await self.bot._disabled_cog_cache.disable_cog_in_guild(cogname, ctx.guild.id):
@@ -4066,7 +4063,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.guild_only()
     @command_manager.command(name="enablecog")
-    async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
+    async def command_enable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
         """Enable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4078,6 +4075,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cogname>` - The name of the cog to enable on this server. Must be title-case.
         """
+        cog = cogname
+        cogname = cog.qualified_name
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
