@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-03-15 04:02+0000\n"
+"POT-Creation-Date: 2021-05-08 00:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -44,8 +44,8 @@ msgstr "El canal de reportes ha sido establecido."
 
 #: redbot/cogs/reports/reports.py:117
 #, docstring
-msgid "Enable or Disable reporting for this server."
-msgstr "Activar o desactivar reportes para este servidor."
+msgid "Enable or disable reporting for this server."
+msgstr "Habilitar o deshabilitar los reportes en este servidor."
 
 #: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"
@@ -81,7 +81,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report [text]` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "Envía un  reporte.\n\n"
+"        Úsalo sin argumentos para un reporte interactivo, o usa\n"
+"        `[p]report [texto]` para usarlo de manera no interactiva.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."

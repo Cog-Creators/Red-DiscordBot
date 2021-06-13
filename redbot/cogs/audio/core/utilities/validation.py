@@ -40,8 +40,6 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
             "soundcloud.com",
             "bandcamp.com",
             "vimeo.com",
-            "beam.pro",
-            "mixer.com",
             "twitch.tv",
             "spotify.com",
             "localtracks",
@@ -54,6 +52,10 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def is_vc_full(self, channel: discord.VoiceChannel) -> bool:
         return not (channel.user_limit == 0 or channel.user_limit > len(channel.members))
+
+    def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
+        current_perms = channel.permissions_for(channel.guild.me)
+        return current_perms.speak and current_perms.connect
 
     async def is_query_allowed(
         self,

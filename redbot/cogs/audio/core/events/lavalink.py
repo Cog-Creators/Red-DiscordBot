@@ -17,7 +17,6 @@ from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = logging.getLogger("red.Audio.WS.Audio")
-ws_audio_log.setLevel(logging.WARNING)
 
 _ = Translator("Audio", Path(__file__))
 
@@ -55,7 +54,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set([])
             self._ll_guild_updates.discard(guild.id)
             return
 
@@ -64,8 +62,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
-                if _error_code == 1000:
-                    await player.resume(player.current, start=player.position, replace=False)
+                if _error_code == 1000 and player.current is not None and player.is_playing:
+                    await player.resume(player.current, start=player.position, replace=True)
+                    by_remote = extra.get("byRemote", "")
+                    reason = extra.get("reason", "No Specified Reason").strip()
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        extra.get("code"),
+                        by_remote,
+                        reason,
+                        player,
+                    )
                 return
             await self._ws_op_codes[guild_id].put((event_channel_id, _error_code))
             try:
@@ -76,9 +85,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
                 )
             except Exception:
-                log.exception(
-                    f"Error in WEBSOCKET_CLOSED handling for guild: {player.channel.guild.id}"
-                )
+                log.exception("Error in WEBSOCKET_CLOSED handling for guild: %s", player.guild.id)
             return
 
         await set_contextual_locales_from_guild(self.bot, guild)
@@ -95,7 +102,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             current_track, self.local_folder_current_path
         )
         status = await self.config.status()
-        log.debug(f"Received a new lavalink event for {guild_id}: {event_type}: {extra}")
+        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
 
@@ -112,7 +119,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
                 )
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel and autoplay:
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
                     [notify_channel, player.channel.id]
@@ -137,19 +144,19 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.playlist_api is not None
                 and self.api_interface is not None
             ):
-                notify_channel = player.fetch("channel")
+                notify_channel_id = player.fetch("notify_channel")
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
                         )
                     return
                 except TrackEnqueueError:
-                    notify_channel = self.bot.get_channel(notify_channel)
-                    if notify_channel:
+                    notify_channel = self.bot.get_channel(notify_channel_id)
+                    if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel,
                             title=_("Unable to Get Track"),
@@ -160,9 +167,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         )
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
-            notify_channel = player.fetch("channel")
-            if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
+            notify_channel_id = player.fetch("notify_channel")
+            notify_channel = self.bot.get_channel(notify_channel_id)
+            if notify_channel and self._has_notify_perms(notify_channel):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
                         await player.fetch("notify_message").delete()
@@ -199,9 +206,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
-                notify_channel = player.fetch("channel")
-                if notify_channel and notify:
-                    notify_channel = self.bot.get_channel(notify_channel)
+                notify_channel_id = player.fetch("notify_channel")
+                notify_channel = self.bot.get_channel(notify_channel_id)
+                if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
@@ -218,7 +225,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
-            message_channel = player.fetch("channel")
+            message_channel = player.fetch("notify_channel")
             while True:
                 if current_track in player.queue:
                     player.queue.remove(current_track)
@@ -271,7 +278,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
                             description=_(
-                                "Playback of the song has stopped due to an unexcepted error.\n{error}"
+                                "Playback of the song has stopped due to an unexpected error.\n{error}"
                             ).format(error=description),
                         )
                     else:
@@ -320,23 +327,24 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     code = 4014
             if event_channel_id != channel_id:
                 ws_audio_log.info(
-                    f"Received an op code for a channel that is no longer valid; {event_channel_id} "
-                    f"in guild: {guild_id}  - Active channel {channel_id} | "
-                    f"Reason: Error code {code} & {reason}."
+                    "Received an op code for a channel that is no longer valid; %d "
+                    "Reason: Error code %d & %s, %r",
+                    event_channel_id,
+                    code,
+                    reason,
+                    player,
                 )
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
             if player.channel:
-                current_perms = player.channel.permissions_for(player.channel.guild.me)
-                has_perm = current_perms.speak and current_perms.connect
+                has_perm = self.can_join_and_speak(player.channel)
             else:
                 has_perm = False
             if code in (1000,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info(
-                    f"Player resumed in channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & {reason}."
+                    "Player resumed | Reason: Error code %d & %s, %r", code, reason, player
                 )
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
@@ -349,12 +357,21 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     delay = player._con_delay.delay()
                 ws_audio_log.warning(
                     "YOU CAN IGNORE THIS UNLESS IT'S CONSISTENTLY REPEATING FOR THE SAME GUILD - "
-                    f"Voice websocket closed for guild {guild_id} -> "
-                    f"Socket Closed {voice_ws.socket._closing or voice_ws.socket.closed}.  "
-                    f"Code: {code} -- Remote: {by_remote} -- {reason}"
+                    "Voice websocket closed for guild %d -> "
+                    "Socket Closed %s.  "
+                    "Code: %d -- Remote: %s -- %s, %r",
+                    guild_id,
+                    voice_ws.socket._closing or voice_ws.socket.closed,
+                    code,
+                    by_remote,
+                    reason,
+                    player,
                 )
                 ws_audio_log.debug(
-                    f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
+                    "Reconnecting to channel %d in guild: %d | %.2fs",
+                    channel_id,
+                    guild_id,
+                    delay,
                 )
                 await asyncio.sleep(delay)
                 while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
@@ -367,8 +384,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Currently playing."
+                        "Reason: Error code %d & Currently playing, %r",
+                        code,
+                        player,
                     )
                 elif has_perm and player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
@@ -378,24 +396,27 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Currently Paused."
+                        "Reason: Error code %d & Currently Paused, %r",
+                        code,
+                        player,
                     )
                 elif has_perm and (not disconnect) and (not player.is_playing):
                     player.store("resumes", player.fetch("resumes", 0) + 1)
                     await player.connect(deafen=deafen)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Not playing, but auto disconnect disabled."
+                        "Reason: Error code %d & Not playing, but auto disconnect disabled, %r",
+                        code,
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
                         "Voice websocket disconnected "
-                        f"from channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Missing permissions."
+                        "Reason: Error code %d & Missing permissions, %r",
+                        code,
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                     player.store("autoplay_notified", False)
@@ -407,9 +428,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
-                        "Voice websocket disconnected "
-                        f"from channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Unknown."
+                        "Voice websocket disconnected Reason: Error code %d & Unknown, %r",
+                        code,
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                     player.store("autoplay_notified", False)
@@ -423,8 +444,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 await player.connect(deafen=deafen)
                 await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info(
-                    f"Player resumed in channel {channel_id} in guild: {guild_id} | "
-                    f"Reason: Error code {code} & {reason}."
+                    "Player resumed - Reason: Error code %d & %s, %r", code, reason, player
                 )
             elif code in (4015, 4009, 4006, 4000, 1006):
                 if player._con_delay:
@@ -433,7 +453,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player._con_delay = ExponentialBackoff(base=1)
                     delay = player._con_delay.delay()
                 ws_audio_log.debug(
-                    f"Reconnecting to channel {channel_id} in guild: {guild_id} | {delay:.2f}s"
+                    "Reconnecting to channel %d in guild: %d | %.2fs", channel_id, guild_id, delay
                 )
                 await asyncio.sleep(delay)
                 if has_perm and player.current and player.is_playing:
@@ -441,8 +461,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Player is active."
+                        "Reason: Error code %d & Player is active, %r",
+                        code,
+                        player,
                     )
                 elif has_perm and player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
@@ -452,24 +473,30 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Player is paused."
+                        "Reason: Error code %d & Player is paused, %r",
+                        code,
+                        player,
                     )
                 elif has_perm and (not disconnect) and (not player.is_playing):
                     player.store("resumes", player.fetch("resumes", 0) + 1)
                     await player.connect(deafen=deafen)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
-                        f"to channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Not playing."
+                        "to channel %d in guild: %d | "
+                        "Reason: Error code %d & Not playing, %r",
+                        channel_id,
+                        guild_id,
+                        code,
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
                         "Voice websocket disconnected "
-                        f"from channel {channel_id} in guild: {guild_id} | "
-                        f"Reason: Error code {code} & Missing permissions."
+                        "Reason: Error code %d & Missing permissions, %r",
+                        code,
+                        player,
                     )
                     self._ll_guild_updates.discard(guild_id)
                     player.store("autoplay_notified", False)
@@ -481,12 +508,26 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.resume(player.current, start=player.position, replace=False)
-                ws_audio_log.info(
-                    "WS EVENT - IGNORED (Healthy Socket) | "
-                    f"Voice websocket closed event for guild {guild_id} -> "
-                    f"Code: {code} -- Remote: {by_remote} -- {reason}"
-                )
+                    await player.resume(player.current, start=player.position, replace=True)
+                    ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
+                else:
+                    ws_audio_log.info(
+                        "WS EVENT - IGNORED (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s, %r",
+                        code,
+                        by_remote,
+                        reason,
+                        player,
+                    )
         except Exception:
             log.exception("Error in task")
         finally:

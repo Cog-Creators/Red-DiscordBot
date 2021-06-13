@@ -31,6 +31,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         # There has to be a task since this requires the bot to be ready
         # If it waits for ready in startup, we cause a deadlock during initial load
         # as initial load happens before the bot can ever be ready.
+        lavalink.set_logging_level(self.bot._cli_flags.logging_level)
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
         self.cog_init_task.add_done_callback(task_callback)
 
@@ -128,18 +129,17 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            await lavalink.connect(vc, deafen=auto_deafen)
-                            player = lavalink.get_player(guild.id)
-                            player.store("connect", datetime.datetime.utcnow())
-                            player.store("guild", guild_id)
-                            player.store("channel", notify_channel_id)
+                            player = await lavalink.connect(vc, deafen=auto_deafen)
+                            player.store("notify_channel", notify_channel_id)
                             break
                         except IndexError:
                             await asyncio.sleep(5)
                             tries += 1
                         except Exception as exc:
                             tries += 1
-                            debug_exc_log(log, exc, "Failed to restore music voice channel")
+                            debug_exc_log(
+                                log, exc, "Failed to restore music voice channel %s", vc_id
+                            )
                             if vc is None:
                                 break
                             else:
@@ -160,8 +160,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.maybe_shuffle()
                 if not player.is_playing:
                     await player.play()
+                log.info("Restored %r", player)
             except Exception as err:
-                debug_exc_log(log, err, f"Error restoring player in {guild_id}")
+                debug_exc_log(log, err, "Error restoring player in %d", guild_id)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
 
         for guild_id, (notify_channel_id, vc_id) in metadata.items():
@@ -197,18 +198,15 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not (perms.connect and perms.speak):
                             vc = None
                             break
-                        await lavalink.connect(vc, deafen=auto_deafen)
-                        player = lavalink.get_player(guild.id)
-                        player.store("connect", datetime.datetime.utcnow())
-                        player.store("guild", guild_id)
-                        player.store("channel", notify_channel_id)
+                        player = await lavalink.connect(vc, deafen=auto_deafen)
+                        player.store("notify_channel", notify_channel_id)
                         break
                     except IndexError:
                         await asyncio.sleep(5)
                         tries += 1
                     except Exception as exc:
                         tries += 1
-                        debug_exc_log(log, exc, "Failed to restore music voice channel")
+                        debug_exc_log(log, exc, "Failed to restore music voice channel %s", vc_id)
                         if vc is None:
                             break
                         else:
@@ -222,8 +220,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if player.volume != volume:
                     await player.set_volume(volume)
                 player.maybe_shuffle()
+                log.info("Restored %r", player)
                 if not player.is_playing:
-                    notify_channel = player.fetch("channel")
+                    notify_channel = player.fetch("notify_channel")
                     try:
                         await self.api_interface.autoplay(player, self.playlist_api)
                     except DatabaseError:

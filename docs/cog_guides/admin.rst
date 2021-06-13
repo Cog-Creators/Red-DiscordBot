@@ -25,8 +25,8 @@ It can add or remove a role to a member, edit one or make some available
 for members so they can self-assign them as they wish.
 
 It also provides tools for the bot owner such as server locking (once enabled,
-the bot will instantly leave new servers she joins) and announcements, which
-will send something in all the servers of the bot.
+the bot will instantly leave new servers it joins) and announcements, which
+can send something in all the servers of the bot.
 
 .. _admin-commands:
 
