@@ -1138,7 +1138,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(self, ctx: commands.Context, command: CommandConverter = None) -> None:
+    async def embedset_showsettings(
+        self, ctx: commands.Context, command: CommandConverter = None
+    ) -> None:
         """
         Show the current embed settings.
 
@@ -1329,7 +1331,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @embedset_command.command(name="server", aliases=["guild"])
     async def embedset_command_guild(
-        self, ctx: commands.GuildContext, command_name: CommandConverter, enabled: bool = None
+        self, ctx: commands.GuildContext, command: CommandConverter, enabled: bool = None
     ):
         """
         Sets a commmand's embed setting for the current server.
