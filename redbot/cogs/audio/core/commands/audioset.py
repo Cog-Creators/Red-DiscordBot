@@ -1092,6 +1092,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+                # global API is force-disabled right now
                 global_cache=_("Disabled"),
                 num_seconds=self.get_time_string(global_data["global_db_get_timeout"]),
             )
