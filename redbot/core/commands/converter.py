@@ -420,29 +420,29 @@ if not TYPE_CHECKING:
                 return cls((k,))
 
 
-class CommandConverter(dpy_commands.Converter):
-    """
-    Returns a `Command` object if the passed argument matches a command on the bot.
-    """
-    async def convert(self, ctx: "Context", argument: str):
-        arg = argument.strip()
-        command = ctx.bot.get_command(arg)
-        if not command:
-            raise BadArgument(_('Command "{arg}" not found.').format(arg=arg))
-        return command
-
-
-class CogConverter(dpy_commands.Converter):
-    """
-    Returns a `Cog` object if the passed argument matches a cog name on the bot.
-    """
-    async def convert(self, ctx: "Context", argument: str):
-        arg = argument.strip()
-        cog = ctx.bot.get_cog(arg)
-        if not cog:
-            raise BadArgument(_('Cog "{arg}" not found.').format(arg=arg))
-        return cog
-
 if TYPE_CHECKING:
     CommandConverter = dpy_commands.Command 
     CogConverter = dpy_commands.Cog
+else:
+    class CommandConverter(dpy_commands.Converter):
+        """
+        Returns a `Command` object if the passed argument matches a command on the bot.
+        """
+        async def convert(self, ctx: "Context", argument: str):
+            arg = argument.strip()
+            command = ctx.bot.get_command(arg)
+            if not command:
+                raise BadArgument(_('Command "{arg}" not found.').format(arg=arg))
+            return command
+
+
+    class CogConverter(dpy_commands.Converter):
+        """
+        Returns a `Cog` object if the passed argument matches a cog name on the bot.
+        """
+        async def convert(self, ctx: "Context", argument: str):
+            arg = argument.strip()
+            cog = ctx.bot.get_cog(arg)
+            if not cog:
+                raise BadArgument(_('Cog "{arg}" not found.').format(arg=arg))
+            return cog
