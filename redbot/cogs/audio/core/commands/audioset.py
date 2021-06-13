@@ -1092,7 +1092,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
-                global_cache=_("Enabled") if global_data["global_db_enabled"] else _("Disabled"),
+                global_cache=_("Disabled"),
                 num_seconds=self.get_time_string(global_data["global_db_get_timeout"]),
             )
         msg += (
@@ -1426,20 +1426,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset.group(name="globalapi")
     async def command_audioset_audiodb(self, ctx: commands.Context):
         """Change globalapi settings."""
-
-    @command_audioset_audiodb.command(name="toggle")
-    async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
-        """Toggle the server settings.
-
-        Default is OFF
-        """
-        state = await self.config.global_db_enabled()
-        await self.config.global_db_enabled.set(not state)
-        if not state:  # Ensure a call is made if the API is enabled to update user perms
-            self.global_api_user = await self.api_interface.global_cache_api.get_perms()
-        await ctx.send(
-            _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
-        )
 
     @command_audioset_audiodb.command(name="timeout")
     async def command_audioset_audiodb_timeout(
