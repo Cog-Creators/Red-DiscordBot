@@ -3174,6 +3174,8 @@ Sets Red's server prefix(es).
 
     This is not additive. It will replace all current server prefixes.
 
+    You cannot have a prefix with more than 20 characters.
+
 **Examples:**
     - ``[p]set serverprefix !``
     - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.

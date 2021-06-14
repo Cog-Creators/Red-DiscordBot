@@ -41,7 +41,7 @@ msgstr "Le salon des rapports a été défini."
 #: redbot/cogs/reports/reports.py:117
 #, docstring
 msgid "Enable or disable reporting for this server."
-msgstr ""
+msgstr "Activer ou désactiver les signalements pour ce serveur."
 
 #: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"
@@ -77,7 +77,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report [text]` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "Envoyer un signalement.\n\n"
+"        Utiliser sans arguments pour un signalement interactif, ou faire\n"
+"        `[p]report [text]` pour l'utiliser non-interactivement.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
@@ -111,7 +114,7 @@ msgstr "Vous avez pris trop de temps. Réessayez plus tard."
 
 #: redbot/cogs/reports/reports.py:309
 msgid "This server has no reports channel set up. Please contact a server admin."
-msgstr ""
+msgstr "Ce serveur n'a pas de salon pour les signalements configuré. Veuillez contacter un administrateur du serveur."
 
 #: redbot/cogs/reports/reports.py:315
 msgid "There was an error sending your report, please contact a server admin."
@@ -127,7 +130,7 @@ msgstr "{closer} a fermé la correspondance"
 
 #: redbot/cogs/reports/reports.py:371
 msgid "Re: ticket# {ticket_number} in {guild.name}"
-msgstr ""
+msgstr "Re : ticket# {ticket_number} dans {guild.name}"
 
 #: redbot/cogs/reports/reports.py:384
 msgid "Correspondence about ticket# {ticket_number} in {guild.name} has been ended due to reports being disabled in that server."

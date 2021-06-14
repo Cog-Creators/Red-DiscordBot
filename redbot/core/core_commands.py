@@ -103,6 +103,8 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
+MAX_PREFIX_LENGTH = 20
+
 
 class CoreLogic:
     def __init__(self, bot: "Red"):
@@ -383,9 +385,12 @@ class CoreLogic:
             Invite URL.
         """
         app_info = await self.bot.application_info()
-        perms_int = await self.bot._config.invite_perm()
+        data = await self.bot._config.all()
+        commands_scope = data["invite_commands_scope"]
+        scopes = ("bot", "applications.commands") if commands_scope else None
+        perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(app_info.id, permissions)
+        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -1571,6 +1576,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._config.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
 
+    @inviteset.command()
+    async def commandscope(self, ctx: commands.Context):
+        """
+        Add the `applications.commands` scope to your invite URL.
+
+        This allows the usage of slash commands on the servers that invited your bot with that scope.
+
+        Note that previous servers that invited the bot without the scope cannot have slash commands, they will have to invite the bot a second time.
+        """
+        enabled = not await self.bot._config.invite_commands_scope()
+        await self.bot._config.invite_commands_scope.set(enabled)
+        if enabled is True:
+            await ctx.send(
+                _("The `applications.commands` scope has been added to the invite URL.")
+            )
+        else:
+            await ctx.send(
+                _("The `applications.commands` scope has been removed from the invite URL.")
+            )
+
     @commands.command()
     @checks.is_owner()
     async def leave(self, ctx: commands.Context, *servers: GuildConverter):
@@ -2687,6 +2712,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<prefixes...>` - The prefixes the bot will respond to globally.
         """
+        if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(
+                _(
+                    "Warning: A prefix is above the recommended length (20 characters).\n"
+                    "Do you want to continue? (y/n)"
+                )
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Response timed out."))
+                return
+            else:
+                if pred.result is False:
+                    await ctx.send(_("Cancelled."))
+                    return
         await ctx.bot.set_prefixes(guild=None, prefixes=prefixes)
         if len(prefixes) == 1:
             await ctx.send(_("Prefix set."))
@@ -2702,6 +2744,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
+            A prefix cannot have more than 20 characters.
 
         **Examples:**
             - `[p]set serverprefix !`
@@ -2715,6 +2758,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
+            return
+        if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(_("You cannot have a prefix longer than 20 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)

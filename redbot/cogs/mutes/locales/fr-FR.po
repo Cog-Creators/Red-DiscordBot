@@ -21,7 +21,7 @@ msgstr "Cet utilisateur est déjà muet dans ce salon."
 
 #: redbot/cogs/mutes/mutes.py:27
 msgid "That user is not muted in this channel."
-msgstr ""
+msgstr "Cet utilisateur n'est pas muet dans ce salon."
 
 #: redbot/cogs/mutes/mutes.py:28
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
@@ -29,7 +29,7 @@ msgstr "Je ne peux pas vous laisser faire ça. Vous n'êtes pas supérieur à l'
 
 #: redbot/cogs/mutes/mutes.py:31
 msgid "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
-msgstr ""
+msgstr "Je ne peux pas vous laisser faire ça. Vous n'êtes pas supérieur au rôle muet dans la hiérarchie des rôles."
 
 #: redbot/cogs/mutes/mutes.py:34
 msgid "That user cannot be (un)muted, as they have the Administrator permission."
@@ -53,7 +53,7 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:45
 msgid "The mute role no longer exists."
-msgstr ""
+msgstr "Le rôle muet n'existe plus."
 
 #: redbot/cogs/mutes/mutes.py:46
 msgid "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
@@ -117,7 +117,7 @@ msgstr "Inconnu"
 
 #: redbot/cogs/mutes/mutes.py:538
 msgid "No reason provided."
-msgstr ""
+msgstr "Aucune raison n'a été fournie."
 
 #: redbot/cogs/mutes/mutes.py:549
 msgid "Until"
@@ -129,7 +129,7 @@ msgstr "Durée"
 
 #: redbot/cogs/mutes/mutes.py:551
 msgid "Guild"
-msgstr ""
+msgstr "Serveur"
 
 #: redbot/cogs/mutes/mutes.py:553
 msgid "Moderator"
@@ -138,26 +138,30 @@ msgstr "Modérateur"
 #: redbot/cogs/mutes/mutes.py:562
 msgid "\n"
 "**Moderator**: {moderator}"
-msgstr ""
+msgstr "\n"
+"**Modérateur** : {moderator}"
 
 #: redbot/cogs/mutes/mutes.py:567
 msgid "\n"
 "**Until**: {until}\n"
 "**Duration**: {duration}"
-msgstr ""
+msgstr "\n"
+"**Jusqu'à ** : {until}\n"
+"**Durée** : {duration}"
 
 #: redbot/cogs/mutes/mutes.py:573
 msgid "\n"
 "**Guild**: {guild_name}"
-msgstr ""
+msgstr "\n"
+"**Serveur** : {guild_name}"
 
 #: redbot/cogs/mutes/mutes.py:612 redbot/cogs/mutes/mutes.py:617
 msgid "Manually removed mute role"
-msgstr ""
+msgstr "Rôle muet enlevé manuellement"
 
 #: redbot/cogs/mutes/mutes.py:632 redbot/cogs/mutes/mutes.py:641
 msgid "Manually applied mute role"
-msgstr ""
+msgstr "Rôle muet appliqué manuellement"
 
 #: redbot/cogs/mutes/mutes.py:641 redbot/cogs/mutes/mutes.py:1184
 msgid "Server mute"

@@ -131,9 +131,11 @@
   - redbot/core/modlog.py
   # Docs
   - docs/framework_modlog.rst
-  - docs/cog_guides/modlog.rst
 "Category: Modlog Cog":
+  # Source
   - redbot/cogs/modlog/*
+  # Docs
+  - docs/cog_guides/modlog.rst
 "Category: Mutes Cog":
   # Source
   - redbot/cogs/mutes/*

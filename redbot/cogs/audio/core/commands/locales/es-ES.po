@@ -767,7 +767,11 @@ msgid "Toggle the domain restriction on Audio.\n\n"
 "        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and\n"
 "        Bandcamp links.\n"
 "        "
-msgstr ""
+msgstr "Cambie la restricción de dominio en Audio.\n\n"
+"        Cuando está desactivado, los usuarios podrán reproducir canciones desde sitios web y enlaces no comerciales.\n"
+"        Cuando está activado, los usuarios están restringidos a YouTube, SoundCloud, Mixer, Vimeo, Twitch, y\n"
+"        enlaces de Bandcamp.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:934
 msgid "Commercial links only: {true_or_false}."
@@ -950,7 +954,7 @@ msgstr "Versión de Cog:            [{version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1110
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
-msgstr ""
+msgstr "Red-Lavalink:           [{lavalink_version}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1111
 msgid "External server:        [{use_external_lavalink}]\n"
@@ -1564,7 +1568,7 @@ msgstr "Necesitas el rol del DJ para invocar al bot."
 #: redbot/cogs/audio/core/commands/player.py:695
 #: redbot/cogs/audio/core/commands/queue.py:339
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "No tengo permisos para conectarme o hablar en tu canal."
 
 #: redbot/cogs/audio/core/commands/controller.py:680
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1712,7 +1716,12 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Gestión del ecualizador.\n\n"
+"        Las posiciones de la banda son 1-15 y los valores tienen un rango de -0.25 a 1.0.\n"
+"        Los nombres de las bandas son 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6 k, 2.5k, 4k,\n"
+"        6.3k, 10k y 16k Hz.\n"
+"        Estableciendo un valor de banda a -0.25 lo nulifica mientras que +0.25 lo duplica.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring
@@ -2015,7 +2024,13 @@ msgid "Play all songs in a localtracks folder.\n\n"
 "        ​ ​ `[p]local folder folder_name`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.\n"
 "        "
-msgstr ""
+msgstr "Reproducir todas las canciones de una carpeta de pistas local.\n\n"
+"        **Uso**:\n"
+"        ​ ​ ​ ​ `[p]local folder`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Abre un menú para elegir una carpeta en cola.\n\n"
+"        ​ ​ `[p]local folder nombre_carpeta`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Pon en cola todas las pistas dentro de la carpeta.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:50
 msgid "Folder Not Found"
@@ -2037,7 +2052,16 @@ msgid "Play a local track.\n\n"
 "        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.\n"
 "        "
-msgstr ""
+msgstr "Reproducir una pista local.\n\n"
+"        Para reproducir una pista local, o bien utilice el menú para elegir una pista o introduzca la ruta de la pista directamente con el comando de reproducción.\n"
+"        Para reproducir una carpeta completa, usa `[p]help local folder` para las instrucciones.\n\n"
+"        **Uso**:\n"
+"        ​ ​ ​ ​ `[p]local play`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Abrir un menú para elegir una pista.\n\n"
+"        ​ ​ ​  `[p]play localtracks\\carpeta_album\\titulo_canción.mp3`\n"
+"        ​ ​ ​  `[p]play carpeta_album\\titulo_canción.mp3`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Utilice un enlace directo en relación a la carpeta localtracks.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:79
 #: redbot/cogs/audio/core/commands/localtracks.py:135
@@ -2095,7 +2119,10 @@ msgid "Play the specified track or search for a close match.\n\n"
 "        To play a local track, the query should be `<parentfolder>\\<filename>`.\n"
 "        If you are the bot owner, use `[p]audioset info` to display your localtracks path.\n"
 "        "
-msgstr ""
+msgstr "Reproducir la pista especificada o buscar un resultado similar.\n\n"
+"        Para reproducir una pista local, la consulta debe ser `<parentfolder>\\<filename>`.\n"
+"        Si eres el propietario del bot, usa `[p]audioset info` para mostrar tu ruta de pistas locales.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:162

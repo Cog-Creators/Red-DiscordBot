@@ -17,11 +17,11 @@ msgstr ""
 
 #: redbot/cogs/warnings/helpers.py:72
 msgid "I could not find a command from that input!"
-msgstr "¡No he podido encontrar ningún comando para tu respuesta!"
+msgstr "¡No he podido encontrar ningún comando para tu entrada!"
 
 #: redbot/cogs/warnings/helpers.py:77
 msgid "That command requires bot owner. I can't allow you to use that for an action"
-msgstr "Este comando requiere ser el dueño del bot. No puedo permitirte usarlo para una acción"
+msgstr "Ese comando requiere ser propietario del bot. No puedo permitir que lo utilices para una acción"
 
 #: redbot/cogs/warnings/helpers.py:86
 msgid "Enter the command to be run when the user **exceeds the points for this action to occur.**\n"
@@ -29,11 +29,15 @@ msgid "Enter the command to be run when the user **exceeds the points for this a
 "Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
-msgstr ""
+msgstr "Introduzca el comando a ejecutar cuando el usuario **excede los puntos para que esta acción ocurra. **\n"
+"**Si no deseas ejecutar un comando, introduzca** `none`.\n\n"
+"Escríbelo exactamente como lo harías si estuvieras intentando ejecutar el comando, excepto sin poner un prefijo y usar `{user}` en lugar de cualquier argumento de usuario/miembro\n\n"
+"ADVERTENCIA: El comando introducido se ejecutará sin tener en cuenta los chequeos o tiempos de espera. Los comandos que requieren ser el propietario del bot no están permitidos por razones de seguridad.\n\n"
+"Por favor espera 15 segundos antes de escribir tu respuesta."
 
 #: redbot/cogs/warnings/helpers.py:99 redbot/cogs/warnings/helpers.py:143
 msgid "You may enter your response now."
-msgstr "Ya puede escribir su respuesta."
+msgstr "Puede introducir su respuesta ahora."
 
 #: redbot/cogs/warnings/helpers.py:128
 msgid "Enter the command to be run when the user **returns to a value below the points for this action to occur.** Please note that this is intended to be used for reversal of the action taken when the user exceeded the action's point value.\n"
@@ -41,86 +45,94 @@ msgid "Enter the command to be run when the user **returns to a value below the 
 "Enter it exactly as you would if you were actually trying to run the command, except don't put a prefix and use `{user}` in place of any user/member arguments\n\n"
 "WARNING: The command entered will be run without regard to checks or cooldowns. Commands requiring bot owner are not allowed for security reasons.\n\n"
 "Please wait 15 seconds before entering your response."
-msgstr ""
+msgstr "Introduzca el comando a ejecutar cuando el usuario **regrese a un valor por debajo de los puntos para que esta acción ocurra.** Tenga en cuenta que esto está destinado a ser utilizado para revertir la acción realizada cuando el usuario excedió el valor de la acción.\n"
+"**Si no deseas tener un comando ejecutado en caída de puntos, introduzca** `none`.\n\n"
+"Escríbelo exactamente como lo harías si estuvieras intentando ejecutar el comando, excepto no poner un prefijo y usar `{user}` en lugar de cualquier argumento de usuario/miembro\n\n"
+"ADVERTENCIA: El comando introducido se ejecutará sin tener en cuenta los chequeos o tiempos de espera. Los comandos que requieren ser el propietario del bot no están permitidos por razones de seguridad.\n\n"
+"Por favor espera 15 segundos antes de escribir tu respuesta."
 
 #: redbot/cogs/warnings/warnings.py:30
 #, docstring
 msgid "Warn misbehaving users and take automated actions."
-msgstr ""
+msgstr "Avisar a los usuarios que se comportan mal y tomar acciones automatizadas."
 
 #: redbot/cogs/warnings/warnings.py:113
 #, docstring
 msgid "Manage settings for Warnings."
-msgstr ""
+msgstr "Administrar ajustes para Advertencias."
 
 #: redbot/cogs/warnings/warnings.py:119
 #, docstring
 msgid "Enable or disable custom reasons for a warning."
-msgstr ""
+msgstr "Activar o desactivar razones personalizadas para una advertencia."
 
 #: redbot/cogs/warnings/warnings.py:123
 msgid "Custom reasons have been enabled."
-msgstr ""
+msgstr "Las razones personalizadas han sido habilitadas."
 
 #: redbot/cogs/warnings/warnings.py:125
 msgid "Custom reasons have been disabled."
-msgstr ""
+msgstr "Las razones personalizadas han sido desactivadas."
 
 #: redbot/cogs/warnings/warnings.py:130
 #, docstring
 msgid "Set whether warnings should be sent to users in DMs."
-msgstr ""
+msgstr "Establecer si las advertencias deben ser enviadas a los usuarios en DMs."
 
 #: redbot/cogs/warnings/warnings.py:133
 msgid "I will now try to send warnings to users DMs."
-msgstr ""
+msgstr "Ahora intentaré enviar advertencias a los DMs de los usuarios."
 
 #: redbot/cogs/warnings/warnings.py:135
 msgid "Warnings will no longer be sent to users DMs."
-msgstr ""
+msgstr "Las advertencias ya no se enviarán a los DM de los usuarios."
 
 #: redbot/cogs/warnings/warnings.py:140
 #, docstring
 msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user."
-msgstr ""
+msgstr "Decide si el nombre del moderador que realiza una advertencia a un usuario debe ser incluido en el DM a ese usuario."
 
 #: redbot/cogs/warnings/warnings.py:144
 msgid "I will include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "Incluiré el nombre del moderador que emitió la advertencia al enviar un DM a un usuario."
 
 #: redbot/cogs/warnings/warnings.py:150
 msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+msgstr "No incluiré el nombre del moderador que emitió la advertencia al enviar un DM a un usuario."
 
 #: redbot/cogs/warnings/warnings.py:158
 #, docstring
 msgid "Set the channel where warnings should be sent to.\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
-msgstr ""
+msgstr "Establece el canal al que se deben enviar las advertencias.\n"
+"        Deje en blanco para usar el canal donde el comando `[p]warn` fue usado.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:165
 msgid "The warn channel has been set to {channel}."
-msgstr ""
+msgstr "El canal de advertencia se ha establecido en {channel}."
 
 #: redbot/cogs/warnings/warnings.py:169 redbot/cogs/warnings/warnings.py:185
 msgid "Warnings will now be sent in the channel command was used in."
-msgstr ""
+msgstr "Ahora se enviarán advertencias en el canal del comando."
 
 #: redbot/cogs/warnings/warnings.py:174
 #, docstring
 msgid "\n"
 "        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Establecer si las advertencias deben ser enviadas a un canal establecido con `[p]warningset warnchannel`.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:182
 msgid "Warnings will now be sent to {channel}."
-msgstr ""
+msgstr "Las advertencias se enviarán ahora a {channel}."
 
 #: redbot/cogs/warnings/warnings.py:187
 msgid "Toggle channel has been disabled."
-msgstr ""
+msgstr "El canal ha sido desactivado."
 
 #: redbot/cogs/warnings/warnings.py:193
 #, docstring
@@ -132,31 +144,40 @@ msgid "Manage automated actions for Warnings.\n"
 "        user is warned enough so that their points go over this\n"
 "        threshold, the action will be executed.\n"
 "        "
-msgstr ""
+msgstr "Administrar acciones automatizadas para Advertencias.\n"
+"        Las acciones son esencialmente macros de comandos. Cualquier comando se puede ejecutar\n"
+"        cuando la acción se activa inicialmente, y/o cuando la acción\n"
+"        sea levantada.\n"
+"        Las acciones deben tener un nombre y un umbral de puntos. Cuando un usuario\n"
+"        es advertido lo suficiente para que sus puntos superen este\n"
+"        umbral, la acción será ejecutada.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:206
 #, docstring
 msgid "Create an automated action.\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr ""
+msgstr "Crear una acción automatizada.\n"
+"        No se permiten nombres de acciones duplicadas.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:226
 msgid "Duplicate action name found!"
-msgstr ""
+msgstr "Nombre de acción duplicado encontrado!"
 
 #: redbot/cogs/warnings/warnings.py:233
 msgid "Action {name} has been added."
-msgstr ""
+msgstr "La acción {name} ha sido añadida."
 
 #: redbot/cogs/warnings/warnings.py:238
 #, docstring
 msgid "Delete the action with the specified name."
-msgstr ""
+msgstr "Eliminar la acción con el nombre especificado."
 
 #: redbot/cogs/warnings/warnings.py:251
 msgid "No action named {name} exists!"
-msgstr ""
+msgstr "¡No existe ninguna acción llamada {name}!"
 
 #: redbot/cogs/warnings/warnings.py:257
 #, docstring
@@ -164,38 +185,41 @@ msgid "Manage warning reasons.\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr ""
+msgstr "Administrar razones de advertencia.\n"
+"        Las razones deben tener un nombre, una descripción y un valor de puntos. El nombre\n"
+"        de la razón debe ser dado cuando un usuario es advertido.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:268
 #, docstring
 msgid "Create a warning reason."
-msgstr ""
+msgstr "Crear una razón de advertencia."
 
 #: redbot/cogs/warnings/warnings.py:272
 msgid "*Custom* cannot be used as a reason name!"
-msgstr ""
+msgstr "*Personalizado* no puede ser usado como un nombre de razón!"
 
 #: redbot/cogs/warnings/warnings.py:282
 msgid "The new reason has been registered."
-msgstr ""
+msgstr "La nueva razón ha sido registrada."
 
 #: redbot/cogs/warnings/warnings.py:287
 #, docstring
 msgid "Delete a warning reason."
-msgstr ""
+msgstr "Eliminar una razón de advertencia."
 
 #: redbot/cogs/warnings/warnings.py:294
 msgid "That is not a registered reason name."
-msgstr ""
+msgstr "Ese no es un nombre de razón registrado."
 
 #: redbot/cogs/warnings/warnings.py:300
 #, docstring
 msgid "List all configured reasons for Warnings."
-msgstr ""
+msgstr "Listar todas las razones configuradas para Advertencias."
 
 #: redbot/cogs/warnings/warnings.py:308
 msgid "Reason: {name}"
-msgstr ""
+msgstr "Razón: {name}"
 
 #: redbot/cogs/warnings/warnings.py:312 redbot/cogs/warnings/warnings.py:340
 #: redbot/cogs/warnings/warnings.py:438 redbot/cogs/warnings/warnings.py:471
@@ -206,7 +230,9 @@ msgstr "Puntos"
 msgid "Name: {reason_name}\n"
 "Points: {points}\n"
 "Description: {description}"
-msgstr ""
+msgstr "Nombre: {reason_name}\n"
+"Puntos: {points}\n"
+"Descripción: {description}"
 
 #: redbot/cogs/warnings/warnings.py:323
 msgid "There are no reasons configured!"
@@ -215,30 +241,33 @@ msgstr "¡No hay razones configuradas!"
 #: redbot/cogs/warnings/warnings.py:329
 #, docstring
 msgid "List all configured automated actions for Warnings."
-msgstr ""
+msgstr "Listar todas las acciones automatizadas configuradas para Advertencias."
 
 #: redbot/cogs/warnings/warnings.py:337
 msgid "Action: {name}"
-msgstr ""
+msgstr "Acción: {name}"
 
 #: redbot/cogs/warnings/warnings.py:342
 msgid "Exceed command"
-msgstr ""
+msgstr "Comando excedido"
 
 #: redbot/cogs/warnings/warnings.py:346
 msgid "Drop command"
-msgstr ""
+msgstr "Descartar comando"
 
 #: redbot/cogs/warnings/warnings.py:350
 msgid "Name: {action_name}\n"
 "Points: {points}\n"
 "Exceed command: {exceed_command}\n"
 "Drop command: {drop_command}"
-msgstr ""
+msgstr "Nombre: {action_name}\n"
+"Puntos: {points}\n"
+"Comando excedido: {exceed_command}\n"
+"Comando descartado: {drop_command}"
 
 #: redbot/cogs/warnings/warnings.py:358
 msgid "There are no actions configured!"
-msgstr ""
+msgstr "¡No hay acciones configuradas!"
 
 #: redbot/cogs/warnings/warnings.py:371
 #, docstring
@@ -248,7 +277,12 @@ msgid "Warn the user for the specified reason.\n"
 "        `<reason>` is reason for the warning. This can be a registered reason,\n"
 "        or a custom reason if ``[p]warningset allowcustomreasons`` is set.\n"
 "        "
-msgstr ""
+msgstr "Advierte al usuario por la razón especificada.\n"
+"        `<points>` número de puntos para los que debe ser la advertencia. Si no se proporciona ningún número\n"
+"        se dará 1 punto. Las advertencias preestablecidas hacen caso omiso de esto.\n"
+"        `<reason>` es la razón de la advertencia. Esta puede ser una razón registrada,\n"
+"        o una razón personalizada si ``[p]warningset allowcustomreasons`` está establecido.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:379
 msgid "You cannot warn yourself."
@@ -256,15 +290,15 @@ msgstr "No puedes advertirte a ti mismo."
 
 #: redbot/cogs/warnings/warnings.py:381
 msgid "You cannot warn other bots."
-msgstr ""
+msgstr "No puedes advertir a otros bots."
 
 #: redbot/cogs/warnings/warnings.py:383
 msgid "You cannot warn the server owner."
-msgstr ""
+msgstr "No puedes advertir al propietario del servidor."
 
 #: redbot/cogs/warnings/warnings.py:386
 msgid "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
-msgstr ""
+msgstr "La persona que intentas advertir es igual o superior a la que estás en la jerarquía de discord, no puedes advertirles."
 
 #: redbot/cogs/warnings/warnings.py:396
 msgid "That is not a registered reason!"
@@ -272,15 +306,15 @@ msgstr "¡Esa no es una razón registrada!"
 
 #: redbot/cogs/warnings/warnings.py:411
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
-msgstr ""
+msgstr "Utiliza `{prefix}warningset allowcustomreasons true` para habilitar razones personalizadas."
 
 #: redbot/cogs/warnings/warnings.py:432 redbot/cogs/warnings/warnings.py:465
 msgid "Warning from {user}"
-msgstr ""
+msgstr "Advertencia de {user}"
 
 #: redbot/cogs/warnings/warnings.py:434 redbot/cogs/warnings/warnings.py:467
 msgid "Warning"
-msgstr ""
+msgstr "Advertencia"
 
 #: redbot/cogs/warnings/warnings.py:441
 msgid "You have received a warning in {guild_name}."
@@ -288,26 +322,28 @@ msgstr "Has recibido un aviso en {guild_name}."
 
 #: redbot/cogs/warnings/warnings.py:451
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
-msgstr ""
+msgstr "Se ha emitido una advertencia para {user}, pero no pude enviarle un mensaje de advertencia."
 
 #: redbot/cogs/warnings/warnings.py:477 redbot/cogs/warnings/warnings.py:486
 msgid "{user} has been warned."
-msgstr ""
+msgstr "{user} ha sido advertido."
 
 #: redbot/cogs/warnings/warnings.py:491
 msgid "{reason}\n\n"
 "Use `{prefix}unwarn {user} {message}` to remove this warning."
-msgstr ""
+msgstr "{reason}\n\n"
+"Usa `{prefix}unwarn {user} {message}` para eliminar esta advertencia."
 
 #: redbot/cogs/warnings/warnings.py:494
 msgid "{description}\n"
 "Points: {points}"
-msgstr ""
+msgstr "{description}\n"
+"Puntos: {points}"
 
 #: redbot/cogs/warnings/warnings.py:517
 #, docstring
 msgid "List the warnings for the specified user."
-msgstr ""
+msgstr "Listar las advertencias para el usuario especificado."
 
 #: redbot/cogs/warnings/warnings.py:530
 msgid "That user has no warnings!"
@@ -315,33 +351,33 @@ msgstr "¡El usuario no tiene ningún aviso!"
 
 #: redbot/cogs/warnings/warnings.py:535 redbot/cogs/warnings/warnings.py:571
 msgid "Deleted Moderator"
-msgstr ""
+msgstr "Moderador eliminado"
 
 #: redbot/cogs/warnings/warnings.py:538 redbot/cogs/warnings/warnings.py:574
 msgid "Unknown Moderator ({})"
-msgstr ""
+msgstr "Moderador desconocido ({})"
 
 #: redbot/cogs/warnings/warnings.py:539 redbot/cogs/warnings/warnings.py:575
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
-msgstr ""
+msgstr "{num_points} puntos de advertencia {reason_name} emitida por {user} con motivo {description}\n"
 
 #: redbot/cogs/warnings/warnings.py:550 redbot/cogs/warnings/warnings.py:586
 msgid "Warnings for {user}"
-msgstr ""
+msgstr "Advertencias de {user}"
 
 #: redbot/cogs/warnings/warnings.py:558
 #, docstring
 msgid "List warnings for yourself."
-msgstr ""
+msgstr "Listar tus propias advertencias."
 
 #: redbot/cogs/warnings/warnings.py:566
 msgid "You have no warnings!"
-msgstr ""
+msgstr "¡No tienes advertencias!"
 
 #: redbot/cogs/warnings/warnings.py:600
 #, docstring
 msgid "Remove a warning from a user."
-msgstr ""
+msgstr "Eliminar una advertencia de un usuario."
 
 #: redbot/cogs/warnings/warnings.py:613
 msgid "You cannot remove warnings from yourself."
@@ -349,5 +385,5 @@ msgstr "No puedes quitarte avisos a ti mismo."
 
 #: redbot/cogs/warnings/warnings.py:620
 msgid "That warning doesn't exist!"
-msgstr ""
+msgstr "¡Esa advertencia no existe!"
 
