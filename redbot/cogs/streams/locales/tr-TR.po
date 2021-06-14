@@ -239,7 +239,12 @@ msgid "Set stream alert message when mentions are enabled.\n\n"
 "        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).\n\n"
 "        For example: `[p]streamset message mention {mention}, {stream.display_name} is live!`\n"
 "        "
-msgstr ""
+msgstr "Etiketler etkinleştirildiğinde kullanılacak yayın haber mesajını ayarlar.\n\n"
+"        Seçilen etiketleri yerleştirmek için mesajın içinde `{mention}` kullanın.\n"
+"        Kanal veya kullanıcı adı yerleştirmek için mesajın içinde `{stream}` kullanın.\n"
+"        Kanalın gösterilen adını (Twitch'deki, bu `{stream}` ile aynı olmayabilir) yerleştirmek için mesajın içinde `{stream.display_name}` kulanın.\n\n"
+"        Örneğin: `[p]streamset message mention {mention}, {stream.display_name} şimdi canlı yayında!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:538 redbot/cogs/streams/streams.py:552
 msgid "Stream alert message set!"
@@ -252,7 +257,11 @@ msgid "Set stream alert message when mentions are disabled.\n\n"
 "        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).\n\n"
 "        For example: `[p]streamset message nomention {stream.display_name} is live!`\n"
 "        "
-msgstr ""
+msgstr "Etiketler devre dışı bırakıldığında kullanılacak yayın haber mesajını ayarlar.\n\n"
+"        Kanal veya kullanıcı adı yerleştirmek için mesajın içinde `{stream}` kullanın.\n"
+"        Kanalın gösterilen adını (Twitch'deki, bu `{stream}` ile aynı olmayabilir) yerleştirmek için mesajın içinde `{stream.display_name}` kulanın.\n\n"
+"        Örneğin: `[p]streamset message nomention {stream.display_name} şimdi canlı yayında!`\n"
+"        "
 
 #: redbot/cogs/streams/streams.py:557
 #, docstring
@@ -360,11 +369,11 @@ msgstr "Artık bu kanalda {stream.name} hakkında bildirim göndermeyeceğim."
 
 #: redbot/cogs/streams/streams.py:819
 msgid "{mention}, {display_name} is live!"
-msgstr ""
+msgstr "{mention}, {display_name} canlı yayında!"
 
 #: redbot/cogs/streams/streams.py:841
 msgid "{display_name} is live!"
-msgstr ""
+msgstr "{display_name} canlı yayında!"
 
 #: redbot/cogs/streams/streamtypes.py:219
 msgid "This stream will start in {time}"

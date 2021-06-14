@@ -141,7 +141,14 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<repos...>` The repo or repos to remove.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Supprime des repos et leurs fichiers.\n\n"
+"        Exemples :\n"
+"            - `[p]repo delete 26-Cogs`\n"
+"            - `[p]repo delete 26-Cogs Laggrons-Dumb-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `<repos...>` Le ou les repos à supprimer.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:604
 msgid "Successfully deleted repos: "
@@ -248,7 +255,7 @@ msgstr "Ce repo est déjà à jour."
 #: redbot/cogs/downloader/downloader.py:695
 #, docstring
 msgid "Base command for cog installation management commands."
-msgstr ""
+msgstr "Des commandes pour l'installation et la gestion de cog."
 
 #: redbot/cogs/downloader/downloader.py:700
 #, docstring
@@ -258,7 +265,12 @@ msgid "\n"
 "        Red might ask the owner to use this when it clears contents of the lib folder\n"
 "        because of change in minor version of Python.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Cette commande ne devrait pas être exécuté sauf si Red le demande explicitement.\n\n"
+"        Cette commande va réinstaller les pré-requis et les bibliothèques partagées pour tous les cogs installés.\n\n"
+"        Red peut demander au propriétaire d'utiliser cette commande quand il efface le contenu du dossier des bibliothèque\n"
+"        à cause d'un changement de version mineure de Python.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:730
 #: redbot/cogs/downloader/downloader.py:1560
@@ -416,18 +428,23 @@ msgstr "\n"
 msgid "\n"
 "They were most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cogs are still usable. If so, ensure the cogs have been unloaded with {command_2}."
-msgstr ""
+msgstr "\n"
+"Ils ont très probablement été supprimés sans utiliser {command_1}.\n"
+"Vous devrez peut-être supprimer ces fichiers manuellement si les cogs sont toujours utilisables. Si c'est le cas, assurez-vous que les cogs ont été déchargés avec {command_2}."
 
 #: redbot/cogs/downloader/downloader.py:964
 msgid "\n"
 "Downloader has removed this cog from the installed cogs list but it wasn't able to find its files: "
-msgstr ""
+msgstr "\n"
+"Le cog Downloader a supprimé ce cog de la liste des cogs installés, mais il n'a pas pu trouver ses fichiers : "
 
 #: redbot/cogs/downloader/downloader.py:969
 msgid "\n"
 "It was most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cog is still usable. If so, ensure the cog has been unloaded with {command_2}."
-msgstr ""
+msgstr "\n"
+"Il a très probablement été supprimés sans utiliser {command_1}.\n"
+"Vous devrez peut-être supprimer ces fichiers manuellement si le cog est toujours utilisable. Si c'est le cas, assurez-vous que le cog a été déchargé avec {command_2}."
 
 #: redbot/cogs/downloader/downloader.py:982
 #, docstring
@@ -438,7 +455,13 @@ msgid "Pin cogs - this will lock cogs on their current version.\n\n"
 "        **Arguments**\n\n"
 "        - `<cogs...>` The cog or cogs to pin. Must already be installed.\n"
 "        "
-msgstr ""
+msgstr "Épingle des cogs - cela les bloquera sur leur version actuelle.\n\n"
+"        Exemples:\n"
+"            - `[p]cog pin defender`\n"
+"            - `[p]cog pin outdated_cog1 outdated_cog2`\n\n"
+"        **Arguments**\n\n"
+"        - `<cogs...>` Le ou les cogs à épingler. Ils doivent être déjà installé.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1005
 msgid "Pinned cogs: "
@@ -446,7 +469,7 @@ msgstr "Cogs épinglés : "
 
 #: redbot/cogs/downloader/downloader.py:1005
 msgid "Pinned cog: "
-msgstr ""
+msgstr "Cog épinglé : "
 
 #: redbot/cogs/downloader/downloader.py:1009
 msgid "\n"
@@ -838,7 +861,13 @@ msgid "Find which cog a command comes from.\n\n"
 "        **Arguments**\n\n"
 "        - `<command_name>` The command to search for.\n"
 "        "
-msgstr ""
+msgstr "Trouvez de quel cog provient une commande.\n\n"
+"        Cela fonctionnera uniquement avec les cogs chargés.\n\n"
+"        Exemple:\n"
+"            - `[p]findcog ping`\n\n"
+"        **Arguments**\n\n"
+"        - `<command_name>` la commande à rechercher.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1706
 msgid "That command doesn't seem to exist."

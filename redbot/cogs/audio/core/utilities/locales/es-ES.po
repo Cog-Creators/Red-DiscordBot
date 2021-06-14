@@ -402,7 +402,7 @@ msgstr "No se puede obtener listas de reproducción"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:542
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "No tengo permisos para conectarme o hablar en tu canal."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 msgid "You must be in the voice channel to use the playlist command."

@@ -123,7 +123,8 @@ msgstr "Rastreo atascado"
 #: redbot/cogs/audio/core/events/lavalink.py:280
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
-msgstr ""
+msgstr "La reproducción de la canción se ha detenido debido a un error inesperado.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:286
 msgid "Track Error"

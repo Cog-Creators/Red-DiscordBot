@@ -158,15 +158,22 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<repos...>` The repo or repos to remove.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Depoları dosyalarıyla birlikte kaldırır.\n\n"
+"        Örnekler:\n"
+"            - `[p]repo delete 26-Cogs`\n"
+"            - `[p]repo delete 26-Cogs Laggrons-Dumb-Cogs`\n\n"
+"        **Seçenekler**\n\n"
+"        - `<depolar...>` Kaldırılacak depo veya depolar.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:604
 msgid "Successfully deleted repos: "
-msgstr ""
+msgstr "Şu depolar başarıyla silindi: "
 
 #: redbot/cogs/downloader/downloader.py:606
 msgid "Successfully deleted the repo: "
-msgstr ""
+msgstr "Şu depo başarıyla silindi: "
 
 #: redbot/cogs/downloader/downloader.py:613
 #, docstring
@@ -385,7 +392,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:835
 msgid "\n"
 "Failed to install the requirement: "
-msgstr ""
+msgstr "\n"
+"Şu gereksinim yüklenirken hata oluştu: "
 
 #: redbot/cogs/downloader/downloader.py:856
 msgid "\n"
@@ -837,7 +845,7 @@ msgstr "\n"
 
 #: redbot/cogs/downloader/downloader.py:1444
 msgid "Cog with this name is already installed from a different repo."
-msgstr ""
+msgstr "Bu ada sahip bir cog başka bir depodan zaten kurulmuş."
 
 #: redbot/cogs/downloader/downloader.py:1461
 msgid " (Minimum: {min_version})"
