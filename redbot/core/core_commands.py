@@ -1494,7 +1494,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
-    async def invite(self, ctx):
+    async def redinvite(self, ctx):
         """Shows [botname]'s invite url.
 
         This will always send the invite to DMs to keep it private.
