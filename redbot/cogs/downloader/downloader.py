@@ -1112,8 +1112,8 @@ class Downloader(commands.Cog):
 
         await self.send_pagified(ctx, message)
 
-    @cog.command(name="update")
-    async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
+    @cog.command(name="update", usage="[reload=False] [cogs]")
+    async def _cog_update(self, ctx: commands.Context, _reload: Optional[bool], *cogs: InstalledCog) -> None:
         """Update all cogs, or ones of your choosing.
 
         Examples:
@@ -1122,8 +1122,11 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
+        - `[reload]` If the bot should not ask whether you want to reload cogs (defaults to False)
         - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.
         """
+        if _reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, cogs=cogs)
 
     @cog.command(name="updateallfromrepos", require_var_positional=True)
