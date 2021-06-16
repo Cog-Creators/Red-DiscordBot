@@ -433,7 +433,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             owner = app_info.owner
         custom_info = (
-            "Jojobot is a custom fork of Red made by Jojo#7791."
+            "Jojobot is a custom fork of Red made by Jojo#7791. "
             "Jojobot (aka Philip Mumford) is a bot created by "
             "Jojo for... reasons? idk why he does these things"
         )
