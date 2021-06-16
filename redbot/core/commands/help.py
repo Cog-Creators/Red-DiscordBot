@@ -315,6 +315,7 @@ class RedHelpFormatter(HelpFormatterABC):
         description = command.description or ""
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, tagline)
         signature = _("Syntax: {command_signature}").format(
             command_signature=self.get_command_signature(ctx, command)
         )
@@ -536,6 +537,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         description = obj.format_help_for_context(ctx)
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, tagline)
 
         if await ctx.embed_requested():
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
@@ -595,6 +597,10 @@ class RedHelpFormatter(HelpFormatterABC):
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False, help_settings=help_settings)
 
+    def format_tagline(self, ctx: Context, tagline: str) -> str:
+        tagline = tagline.replace("[p]", ctx.clean_prefix)
+        return tagline.replace("[bot]", ctx.bot.user.name)
+
     async def format_bot_help(self, ctx: Context, help_settings: HelpSettings):
 
         coms = await self.get_bot_help_mapping(ctx, help_settings=help_settings)
@@ -603,6 +609,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         description = ctx.bot.description or ""
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, tagline)
 
         if await ctx.embed_requested():
 
@@ -724,6 +731,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     icon_url=ctx.me.avatar_url,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                self.format_tagline(ctx, tagline)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -737,6 +745,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     icon_url=ctx.me.avatar_url,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(ctx, tagline)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -756,6 +765,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 icon_url=ctx.me.avatar_url,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
+            self.format_tagline(ctx, tagline)
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
