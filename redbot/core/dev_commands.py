@@ -261,6 +261,7 @@ class Dev(commands.Cog):
 
             if cleaned in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
+                await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
                 del self.sessions[ctx.channel.id]
                 return
 
@@ -294,11 +295,11 @@ class Dev(commands.Cog):
                         result = executor(code, env)
                     result = await self.maybe_await(result)
             except:
-                await ctx.tick(cross=True)
+                await response.add_reaction("\N{CROSS MARK}")
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
-                await ctx.tick()
+                await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
