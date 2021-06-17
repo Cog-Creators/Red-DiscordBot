@@ -211,11 +211,11 @@ msgstr "Les noms et les pseudos seront maintenant filtrés."
 
 #: redbot/cogs/filter/filter.py:411
 msgid "Filtered words used: {words}"
-msgstr ""
+msgstr "Mots filtrés utilisés : {words}"
 
 #: redbot/cogs/filter/filter.py:413
 msgid "Filtered word used: {word}"
-msgstr ""
+msgstr "Mot filtré utilisé : {word}"
 
 #: redbot/cogs/filter/filter.py:427
 msgid "Autoban (too many filtered messages.)"

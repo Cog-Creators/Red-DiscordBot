@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-19 20:30+0000\n"
+"POT-Creation-Date: 2021-06-17 17:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -231,20 +231,19 @@ msgstr "Juego automático cuando termine la cola: {true_or_false}."
 #: redbot/cogs/audio/core/commands/audioset.py:999
 #: redbot/cogs/audio/core/commands/audioset.py:1041
 #: redbot/cogs/audio/core/commands/audioset.py:1048
+#: redbot/cogs/audio/core/commands/audioset.py:1090
+#: redbot/cogs/audio/core/commands/audioset.py:1091
 #: redbot/cogs/audio/core/commands/audioset.py:1092
-#: redbot/cogs/audio/core/commands/audioset.py:1093
-#: redbot/cogs/audio/core/commands/audioset.py:1094
-#: redbot/cogs/audio/core/commands/audioset.py:1095
-#: redbot/cogs/audio/core/commands/audioset.py:1115
-#: redbot/cogs/audio/core/commands/audioset.py:1192
-#: redbot/cogs/audio/core/commands/audioset.py:1207
-#: redbot/cogs/audio/core/commands/audioset.py:1352
-#: redbot/cogs/audio/core/commands/audioset.py:1353
-#: redbot/cogs/audio/core/commands/audioset.py:1354
-#: redbot/cogs/audio/core/commands/audioset.py:1397
-#: redbot/cogs/audio/core/commands/audioset.py:1398
-#: redbot/cogs/audio/core/commands/audioset.py:1399
-#: redbot/cogs/audio/core/commands/audioset.py:1472
+#: redbot/cogs/audio/core/commands/audioset.py:1111
+#: redbot/cogs/audio/core/commands/audioset.py:1188
+#: redbot/cogs/audio/core/commands/audioset.py:1203
+#: redbot/cogs/audio/core/commands/audioset.py:1348
+#: redbot/cogs/audio/core/commands/audioset.py:1349
+#: redbot/cogs/audio/core/commands/audioset.py:1350
+#: redbot/cogs/audio/core/commands/audioset.py:1393
+#: redbot/cogs/audio/core/commands/audioset.py:1394
+#: redbot/cogs/audio/core/commands/audioset.py:1395
+#: redbot/cogs/audio/core/commands/audioset.py:1437
 #: redbot/cogs/audio/core/commands/controller.py:421
 #: redbot/cogs/audio/core/commands/controller.py:465
 #: redbot/cogs/audio/core/commands/controller.py:767
@@ -274,20 +273,19 @@ msgstr "Activado"
 #: redbot/cogs/audio/core/commands/audioset.py:999
 #: redbot/cogs/audio/core/commands/audioset.py:1041
 #: redbot/cogs/audio/core/commands/audioset.py:1048
+#: redbot/cogs/audio/core/commands/audioset.py:1090
+#: redbot/cogs/audio/core/commands/audioset.py:1091
 #: redbot/cogs/audio/core/commands/audioset.py:1092
-#: redbot/cogs/audio/core/commands/audioset.py:1093
-#: redbot/cogs/audio/core/commands/audioset.py:1094
-#: redbot/cogs/audio/core/commands/audioset.py:1095
-#: redbot/cogs/audio/core/commands/audioset.py:1117
-#: redbot/cogs/audio/core/commands/audioset.py:1192
-#: redbot/cogs/audio/core/commands/audioset.py:1207
-#: redbot/cogs/audio/core/commands/audioset.py:1352
-#: redbot/cogs/audio/core/commands/audioset.py:1353
-#: redbot/cogs/audio/core/commands/audioset.py:1354
-#: redbot/cogs/audio/core/commands/audioset.py:1397
-#: redbot/cogs/audio/core/commands/audioset.py:1398
-#: redbot/cogs/audio/core/commands/audioset.py:1399
-#: redbot/cogs/audio/core/commands/audioset.py:1472
+#: redbot/cogs/audio/core/commands/audioset.py:1113
+#: redbot/cogs/audio/core/commands/audioset.py:1188
+#: redbot/cogs/audio/core/commands/audioset.py:1203
+#: redbot/cogs/audio/core/commands/audioset.py:1348
+#: redbot/cogs/audio/core/commands/audioset.py:1349
+#: redbot/cogs/audio/core/commands/audioset.py:1350
+#: redbot/cogs/audio/core/commands/audioset.py:1393
+#: redbot/cogs/audio/core/commands/audioset.py:1394
+#: redbot/cogs/audio/core/commands/audioset.py:1395
+#: redbot/cogs/audio/core/commands/audioset.py:1437
 #: redbot/cogs/audio/core/commands/controller.py:421
 #: redbot/cogs/audio/core/commands/controller.py:465
 #: redbot/cogs/audio/core/commands/controller.py:767
@@ -330,14 +328,14 @@ msgstr "\n"
 #: redbot/cogs/audio/core/commands/audioset.py:898
 #: redbot/cogs/audio/core/commands/audioset.py:913
 #: redbot/cogs/audio/core/commands/audioset.py:933
-#: redbot/cogs/audio/core/commands/audioset.py:1190
-#: redbot/cogs/audio/core/commands/audioset.py:1205
-#: redbot/cogs/audio/core/commands/audioset.py:1226
-#: redbot/cogs/audio/core/commands/audioset.py:1233
-#: redbot/cogs/audio/core/commands/audioset.py:1293
-#: redbot/cogs/audio/core/commands/audioset.py:1315
-#: redbot/cogs/audio/core/commands/audioset.py:1423
-#: redbot/cogs/audio/core/commands/audioset.py:1470
+#: redbot/cogs/audio/core/commands/audioset.py:1186
+#: redbot/cogs/audio/core/commands/audioset.py:1201
+#: redbot/cogs/audio/core/commands/audioset.py:1222
+#: redbot/cogs/audio/core/commands/audioset.py:1229
+#: redbot/cogs/audio/core/commands/audioset.py:1289
+#: redbot/cogs/audio/core/commands/audioset.py:1311
+#: redbot/cogs/audio/core/commands/audioset.py:1419
+#: redbot/cogs/audio/core/commands/audioset.py:1435
 #: redbot/cogs/audio/core/commands/controller.py:419
 #: redbot/cogs/audio/core/commands/controller.py:463
 #: redbot/cogs/audio/core/commands/controller.py:774
@@ -591,13 +589,13 @@ msgstr "Desconexión automática del canal cuando el bot está solo en él duran
 
 #: redbot/cogs/audio/core/commands/audioset.py:691
 #: redbot/cogs/audio/core/commands/audioset.py:720
-#: redbot/cogs/audio/core/commands/audioset.py:1218
+#: redbot/cogs/audio/core/commands/audioset.py:1214
 msgid "Invalid Time"
 msgstr "Hora inválida"
 
 #: redbot/cogs/audio/core/commands/audioset.py:691
 #: redbot/cogs/audio/core/commands/audioset.py:720
-#: redbot/cogs/audio/core/commands/audioset.py:1218
+#: redbot/cogs/audio/core/commands/audioset.py:1214
 msgid "Seconds can't be less than zero."
 msgstr "Los segundos no pueden ser menos de cero."
 
@@ -767,7 +765,11 @@ msgid "Toggle the domain restriction on Audio.\n\n"
 "        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and\n"
 "        Bandcamp links.\n"
 "        "
-msgstr ""
+msgstr "Cambie la restricción de dominio en Audio.\n\n"
+"        Cuando está desactivado, los usuarios podrán reproducir canciones desde sitios web y enlaces no comerciales.\n"
+"        Cuando está activado, los usuarios están restringidos a YouTube, SoundCloud, Mixer, Vimeo, Twitch, y\n"
+"        enlaces de Bandcamp.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:934
 msgid "Commercial links only: {true_or_false}."
@@ -897,8 +899,8 @@ msgid "Playlist scope:   [{pscope}]\n"
 msgstr "Ámbito de la playlist: [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1082
-#: redbot/cogs/audio/core/commands/audioset.py:1357
-#: redbot/cogs/audio/core/commands/audioset.py:1402
+#: redbot/cogs/audio/core/commands/audioset.py:1353
+#: redbot/cogs/audio/core/commands/audioset.py:1398
 msgid "Cache Settings"
 msgstr "Ajustes de caché"
 
@@ -918,45 +920,37 @@ msgstr "Caché local de Youtube: [{youtube_status}]\n"
 msgid "Local Lavalink cache:   [{lavalink_status}]\n"
 msgstr "Caché local de Lavalink: [{lavalink_status}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1088
-msgid "Global cache status:    [{global_cache}]\n"
-msgstr "Estado global del caché: [{global_cache}]\n"
-
 #: redbot/cogs/audio/core/commands/audioset.py:1089
-msgid "Global timeout:         [{num_seconds}]\n"
-msgstr "Tiempo de espera global: [{num_seconds}]\n"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1091
-#: redbot/cogs/audio/core/commands/audioset.py:1351
-#: redbot/cogs/audio/core/commands/audioset.py:1396
+#: redbot/cogs/audio/core/commands/audioset.py:1347
+#: redbot/cogs/audio/core/commands/audioset.py:1392
 msgid "days"
 msgstr "días"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1100
+#: redbot/cogs/audio/core/commands/audioset.py:1096
 msgid "User Settings"
 msgstr "Ajustes de usuario"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1102
+#: redbot/cogs/audio/core/commands/audioset.py:1098
 msgid "Spotify search:   [{country_code}]\n"
 msgstr "Búsqueda de Spotify: [{country_code}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1107
+#: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Lavalink Settings"
 msgstr "Ajustes de Lavalink"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1109
+#: redbot/cogs/audio/core/commands/audioset.py:1105
 msgid "Cog version:            [{version}]\n"
 msgstr "Versión de Cog:            [{version}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1110
+#: redbot/cogs/audio/core/commands/audioset.py:1106
 msgid "Red-Lavalink:           [{lavalink_version}]\n"
-msgstr ""
+msgstr "Red-Lavalink:           [{lavalink_version}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1111
+#: redbot/cogs/audio/core/commands/audioset.py:1107
 msgid "External server:        [{use_external_lavalink}]\n"
 msgstr "Servidor externo: [{use_external_lavalink}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1120
+#: redbot/cogs/audio/core/commands/audioset.py:1116
 msgid "Lavalink build:         [{llbuild}]\n"
 "Lavalink branch:        [{llbranch}]\n"
 "Release date:           [{build_time}]\n"
@@ -970,70 +964,70 @@ msgstr "Construcción de Lavalink: [{llbuild}]\n"
 "Versión de Java: [{jvm}]\n"
 "Ejecutable de Java: [{jv_exec}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1136
+#: redbot/cogs/audio/core/commands/audioset.py:1132
 msgid "Localtracks path:       [{localpath}]\n"
 msgstr "Ruta local: [{localpath}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1145
+#: redbot/cogs/audio/core/commands/audioset.py:1141
 #, docstring
 msgid "Sends the Lavalink server logs to your DMs."
 msgstr "Envía los registros del servidor Lavalink a tus DMs."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1152
-#: redbot/cogs/audio/core/commands/audioset.py:1154
+#: redbot/cogs/audio/core/commands/audioset.py:1148
+#: redbot/cogs/audio/core/commands/audioset.py:1150
 msgid "No logs found in your data folder."
 msgstr "No se encontraron registros en su carpeta de datos."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1166
+#: redbot/cogs/audio/core/commands/audioset.py:1162
 msgid "Logs are too large, you can find them in {path}"
 msgstr "Los registros son demasiado grandes, puedes encontrarlos en {path}"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1176
+#: redbot/cogs/audio/core/commands/audioset.py:1172
 msgid "I need to be able to DM you to send you the logs."
 msgstr "Necesito ser capaz de DM para enviarte los registros."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1185
+#: redbot/cogs/audio/core/commands/audioset.py:1181
 #, docstring
 msgid "Enable/disable tracks' titles as status."
 msgstr "Activar/desactivar los títulos de las pistas como estado."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1191
+#: redbot/cogs/audio/core/commands/audioset.py:1187
 msgid "Song titles as status: {true_or_false}."
 msgstr "Títulos de canciones como estado: {true_or_false}."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1200
+#: redbot/cogs/audio/core/commands/audioset.py:1196
 #, docstring
 msgid "Toggle displaying a thumbnail on audio messages."
 msgstr "Cambiar a mostrar una miniatura en los mensajes de audio."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1206
+#: redbot/cogs/audio/core/commands/audioset.py:1202
 msgid "Thumbnail display: {true_or_false}."
 msgstr "Visualización de miniatura: {true_or_false}."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1215
+#: redbot/cogs/audio/core/commands/audioset.py:1211
 #, docstring
 msgid "Percentage needed for non-mods to skip tracks, 0 to disable."
 msgstr "Porcentaje necesario para que los no-mods se salten las pistas, 0 para desactivar."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1227
+#: redbot/cogs/audio/core/commands/audioset.py:1223
 msgid "Voting disabled. All users can use queue management commands."
 msgstr "Votación deshabilitada. Todos los usuarios pueden usar comandos de gestión de colas."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1234
+#: redbot/cogs/audio/core/commands/audioset.py:1230
 msgid "Vote percentage set to {percent}%."
 msgstr "Porcentaje de voto establecido a {percent}%."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1243
+#: redbot/cogs/audio/core/commands/audioset.py:1239
 #, docstring
 msgid "Instructions to set the YouTube API key."
 msgstr "Instrucciones para establecer la clave API de YouTube."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1262
+#: redbot/cogs/audio/core/commands/audioset.py:1258
 #, docstring
 msgid "Instructions to set the Spotify API tokens."
 msgstr "Instrucciones para establecer los tokens de la API de Spotify."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1263
+#: redbot/cogs/audio/core/commands/audioset.py:1259
 msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "(https://developer.spotify.com/dashboard/applications)\n"
 "2. Click \"Create An App\".\n"
@@ -1051,28 +1045,28 @@ msgstr "1. Ve a los desarrolladores de Spotify y inicia sesión con tu cuenta de
 "6. Copia tu ID de cliente y tu secreto de cliente en:\n"
 "`{prefix}establece api spotify client_id,<your_client_id_here> client_secret,<your_client_secret_here>`"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1280
-#: redbot/cogs/audio/core/commands/audioset.py:1302
+#: redbot/cogs/audio/core/commands/audioset.py:1276
+#: redbot/cogs/audio/core/commands/audioset.py:1298
 #, docstring
 msgid "Set the country code for Spotify searches."
 msgstr "Establece el código de país para las búsquedas de Spotify."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1284
-#: redbot/cogs/audio/core/commands/audioset.py:1306
+#: redbot/cogs/audio/core/commands/audioset.py:1280
+#: redbot/cogs/audio/core/commands/audioset.py:1302
 msgid "Invalid Country Code"
 msgstr "Código de país no válido"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1285
-#: redbot/cogs/audio/core/commands/audioset.py:1307
+#: redbot/cogs/audio/core/commands/audioset.py:1281
+#: redbot/cogs/audio/core/commands/audioset.py:1303
 msgid "Please use an official [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code."
 msgstr "Por favor, utiliza un código oficial [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1294
-#: redbot/cogs/audio/core/commands/audioset.py:1316
+#: redbot/cogs/audio/core/commands/audioset.py:1290
+#: redbot/cogs/audio/core/commands/audioset.py:1312
 msgid "Country Code set to {country}."
 msgstr "Código de país establecido a {country}."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1324
+#: redbot/cogs/audio/core/commands/audioset.py:1320
 #, docstring
 msgid "Sets the caching level.\n\n"
 "        Level can be one of the following:\n\n"
@@ -1093,27 +1087,27 @@ msgstr "Establece el nivel de caché.\n\n"
 "        Si desea desactivar un caché específico use un número negativo.\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/audioset.py:1346
-#: redbot/cogs/audio/core/commands/audioset.py:1391
+#: redbot/cogs/audio/core/commands/audioset.py:1342
+#: redbot/cogs/audio/core/commands/audioset.py:1387
 msgid "Max age:          [{max_age}]\n"
 msgstr "Edad máxima: [{max_age}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1347
-#: redbot/cogs/audio/core/commands/audioset.py:1392
+#: redbot/cogs/audio/core/commands/audioset.py:1343
+#: redbot/cogs/audio/core/commands/audioset.py:1388
 msgid "Spotify cache:    [{spotify_status}]\n"
 msgstr "Caché de Spotifify: [{spotify_status}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1348
-#: redbot/cogs/audio/core/commands/audioset.py:1393
+#: redbot/cogs/audio/core/commands/audioset.py:1344
+#: redbot/cogs/audio/core/commands/audioset.py:1389
 msgid "Youtube cache:    [{youtube_status}]\n"
 msgstr "Caché de YouTube: [{youtube_status}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1349
-#: redbot/cogs/audio/core/commands/audioset.py:1394
+#: redbot/cogs/audio/core/commands/audioset.py:1345
+#: redbot/cogs/audio/core/commands/audioset.py:1390
 msgid "Lavalink cache:   [{lavalink_status}]\n"
 msgstr "Caché Lavalink:  [{lavalink_status}]\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1409
+#: redbot/cogs/audio/core/commands/audioset.py:1405
 #, docstring
 msgid "Sets the cache max age.\n\n"
 "        This commands allows you to set the max number of days before an entry in the cache becomes\n"
@@ -1124,54 +1118,15 @@ msgstr "Establece la edad máxima del caché.\n\n"
 "        inválida.\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/audioset.py:1416
+#: redbot/cogs/audio/core/commands/audioset.py:1412
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
 msgstr "La edad de la caché no puede ser inferior a 7 días. Si deseas deshabilitarla ejecuta {prefix}audioset.\n"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1421
+#: redbot/cogs/audio/core/commands/audioset.py:1417
 msgid "I've set the cache age to {age} days"
 msgstr "He establecido la edad de caché a {age} días"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1428
-#, docstring
-msgid "Change globalapi settings."
-msgstr "Cambie la configuración globalapi."
-
-#: redbot/cogs/audio/core/commands/audioset.py:1432
-#, docstring
-msgid "Toggle the server settings.\n\n"
-"        Default is OFF\n"
-"        "
-msgstr "Cambiar la configuración del servidor.\n\n"
-"        Por defecto está APAGADO\n"
-"        "
-
-#: redbot/cogs/audio/core/commands/audioset.py:1441
-msgid "Global DB is {status}"
-msgstr "La base de datos global es {status}"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1441
-msgid "enabled"
-msgstr "activado"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1441
-msgid "disabled"
-msgstr "desactivado"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1448
-#, docstring
-msgid "Set GET request timeout.\n\n"
-"        Example: 0.1 = 100ms 1 = 1 second\n"
-"        "
-msgstr "Establecer tiempo de espera de solicitud GET.\n\n"
-"        Ejemplo: 0.1 = 100ms 1 = 1 segundo\n"
-"        "
-
-#: redbot/cogs/audio/core/commands/audioset.py:1454
-msgid "Request timeout set to {time} second(s)"
-msgstr "Tiempo de espera de solicitud establecido en {time} segundo(s)"
-
-#: redbot/cogs/audio/core/commands/audioset.py:1459
+#: redbot/cogs/audio/core/commands/audioset.py:1424
 #, docstring
 msgid "Toggle persistent queues.\n\n"
 "        Persistent queues allows the current queue to be restored when the queue closes.\n"
@@ -1180,20 +1135,20 @@ msgstr "Alternar colas persistentes.\n\n"
 "        Las colas persistentes permiten restaurar la cola actual cuando la cola se cierre.\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/audioset.py:1471
+#: redbot/cogs/audio/core/commands/audioset.py:1436
 msgid "Persisting queues: {true_or_false}."
 msgstr "Persistentes en colas: {true_or_false}."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1479
+#: redbot/cogs/audio/core/commands/audioset.py:1444
 #, docstring
 msgid "Restarts the lavalink connection."
 msgstr "Reinicia la conexión de lavalink."
 
-#: redbot/cogs/audio/core/commands/audioset.py:1489
+#: redbot/cogs/audio/core/commands/audioset.py:1454
 msgid "Restarting Lavalink"
 msgstr "Reiniciando Lavalink"
 
-#: redbot/cogs/audio/core/commands/audioset.py:1490
+#: redbot/cogs/audio/core/commands/audioset.py:1455
 msgid "It can take a couple of minutes for Lavalink to fully start up."
 msgstr "Lavalink puede tardar un par de minutos en ponerse en marcha completamente."
 
@@ -1564,7 +1519,7 @@ msgstr "Necesitas el rol del DJ para invocar al bot."
 #: redbot/cogs/audio/core/commands/player.py:695
 #: redbot/cogs/audio/core/commands/queue.py:339
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "No tengo permisos para conectarme o hablar en tu canal."
 
 #: redbot/cogs/audio/core/commands/controller.py:680
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1712,7 +1667,12 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Gestión del ecualizador.\n\n"
+"        Las posiciones de la banda son 1-15 y los valores tienen un rango de -0.25 a 1.0.\n"
+"        Los nombres de las bandas son 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6 k, 2.5k, 4k,\n"
+"        6.3k, 10k y 16k Hz.\n"
+"        Estableciendo un valor de banda a -0.25 lo nulifica mientras que +0.25 lo duplica.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:72
 #, docstring
@@ -2015,7 +1975,13 @@ msgid "Play all songs in a localtracks folder.\n\n"
 "        ​ ​ `[p]local folder folder_name`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.\n"
 "        "
-msgstr ""
+msgstr "Reproducir todas las canciones de una carpeta de pistas local.\n\n"
+"        **Uso**:\n"
+"        ​ ​ ​ ​ `[p]local folder`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Abre un menú para elegir una carpeta en cola.\n\n"
+"        ​ ​ `[p]local folder nombre_carpeta`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Pon en cola todas las pistas dentro de la carpeta.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:50
 msgid "Folder Not Found"
@@ -2037,7 +2003,16 @@ msgid "Play a local track.\n\n"
 "        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.\n"
 "        "
-msgstr ""
+msgstr "Reproducir una pista local.\n\n"
+"        Para reproducir una pista local, o bien utilice el menú para elegir una pista o introduzca la ruta de la pista directamente con el comando de reproducción.\n"
+"        Para reproducir una carpeta completa, usa `[p]help local folder` para las instrucciones.\n\n"
+"        **Uso**:\n"
+"        ​ ​ ​ ​ `[p]local play`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Abrir un menú para elegir una pista.\n\n"
+"        ​ ​ ​  `[p]play localtracks\\carpeta_album\\titulo_canción.mp3`\n"
+"        ​ ​ ​  `[p]play carpeta_album\\titulo_canción.mp3`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Utilice un enlace directo en relación a la carpeta localtracks.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:79
 #: redbot/cogs/audio/core/commands/localtracks.py:135
@@ -2095,7 +2070,10 @@ msgid "Play the specified track or search for a close match.\n\n"
 "        To play a local track, the query should be `<parentfolder>\\<filename>`.\n"
 "        If you are the bot owner, use `[p]audioset info` to display your localtracks path.\n"
 "        "
-msgstr ""
+msgstr "Reproducir la pista especificada o buscar un resultado similar.\n\n"
+"        Para reproducir una pista local, la consulta debe ser `<parentfolder>\\<filename>`.\n"
+"        Si eres el propietario del bot, usa `[p]audioset info` para mostrar tu ruta de pistas locales.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:162

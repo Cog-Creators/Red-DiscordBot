@@ -181,7 +181,14 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr ""
+msgstr "Banni massivement un ou des utilisateurs du serveur.\n\n"
+"        `days` est le nombre de jours de messages à supprimer en cas de ban.\n\n"
+"        Exemple :\n"
+"           - `[p]massban 345628097929936898 57287406247743488 7 ils ont enfreint toutes les règles.`\n"
+"            Cela bannira tous les userids donnés et supprimera 7 jours de leurs messages.\n\n"
+"        Les identifiants des utilisateurs doivent être fournis pour bannir\n"
+"        à l'aide de cette commande.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:433
 msgid "Banned {num} users from the server."
@@ -962,7 +969,7 @@ msgstr "Les changements de nom sont actuellement suivi."
 
 #: redbot/cogs/mod/settings.py:456
 msgid "All name changes are currently not being tracked."
-msgstr ""
+msgstr "Les changements de nom d'utilisateur ne sont pas actuellement suivi."
 
 #: redbot/cogs/mod/settings.py:461
 msgid "Name changes will now be tracked."
