@@ -71,7 +71,7 @@ msgstr "Gains de la machine à sous :\n"
 
 #: redbot/cogs/economy/economy.py:108
 msgid "Invalid value, the argument must be an integer, optionally preceded with a `+` or `-` sign."
-msgstr ""
+msgstr "Valeur invalide, l'argument doit être un entier, éventuellement précédé d'un signe `+` ou `-`."
 
 #: redbot/cogs/economy/economy.py:120
 msgid "Invalid value, the amount of currency to increase or decrease must be an integer different from zero."
@@ -332,7 +332,12 @@ msgid "Use the slot machine.\n\n"
 "        **Arguments**\n\n"
 "        - `<bid>` The amount to bet on the slot machine. Winning payouts are higher when you bet more.\n"
 "        "
-msgstr ""
+msgstr "Utilise la machine à sous.\n\n"
+"        Exemple:\n"
+"            - `[p]slot 50`\n\n"
+"        **Arguments**\n\n"
+"        - `<bid>` La somme à miser dans la machine à sous. Les gains gagnant sont plus haut quand votre mise est haute.\n"
+"        "
 
 #: redbot/cogs/economy/economy.py:714
 msgid "You're on cooldown, try again in a bit."

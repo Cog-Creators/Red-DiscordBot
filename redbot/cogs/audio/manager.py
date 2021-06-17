@@ -13,7 +13,7 @@ import time
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
-from tqdm import tqdm
+import rich.progress
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
@@ -297,22 +297,23 @@ class ServerManager:
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
                 nbytes = 0
-                with tqdm(
-                    desc="Lavalink.jar",
-                    total=response.content_length,
-                    file=sys.stdout,
-                    unit="B",
-                    unit_scale=True,
-                    miniters=1,
-                    dynamic_ncols=True,
-                    leave=False,
-                ) as progress_bar:
+                with rich.progress.Progress(
+                    rich.progress.SpinnerColumn(),
+                    rich.progress.TextColumn("[progress.description]{task.description}"),
+                    rich.progress.BarColumn(),
+                    rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                    rich.progress.TimeRemainingColumn(),
+                    rich.progress.TimeElapsedColumn(),
+                ) as progress:
+                    progress_task_id = progress.add_task(
+                        "[red]Downloading Lavalink.jar", total=response.content_length
+                    )
                     try:
                         chunk = await response.content.read(1024)
                         while chunk:
                             chunk_size = file.write(chunk)
                             nbytes += chunk_size
-                            progress_bar.update(chunk_size)
+                            progress.update(progress_task_id, advance=chunk_size)
                             chunk = await response.content.read(1024)
                         file.flush()
                     finally:

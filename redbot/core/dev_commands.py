@@ -158,6 +158,7 @@ class Dev(commands.Cog):
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")

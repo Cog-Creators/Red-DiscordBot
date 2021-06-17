@@ -45,15 +45,15 @@ msgstr ""
 
 #: redbot/core/commands/help.py:105
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: redbot/core/commands/help.py:107
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: redbot/core/commands/help.py:113
 msgid "Disabled"
-msgstr ""
+msgstr "Desactivat"
 
 #: redbot/core/commands/help.py:118
 msgid "\n"
@@ -82,7 +82,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:324
 msgid "Aliases"
-msgstr ""
+msgstr "Alies"
 
 #: redbot/core/commands/help.py:324
 msgid "Alias"
@@ -98,7 +98,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:391
 msgid "**__Subcommands:__**"
-msgstr ""
+msgstr "**__Subcomands:__**"
 
 #: redbot/core/commands/help.py:393
 msgid "**__Subcommands:__** (continued)"
@@ -140,7 +140,7 @@ msgstr ""
 
 #: redbot/core/commands/help.py:649 redbot/core/commands/help.py:663
 msgid "No Category:"
-msgstr ""
+msgstr "Sense categoria:"
 
 #: redbot/core/commands/help.py:732
 msgid "Help topic for *{command_name}* not found."

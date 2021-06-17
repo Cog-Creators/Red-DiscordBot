@@ -219,7 +219,7 @@ msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:337
 msgid "Action: {name}"
-msgstr ""
+msgstr "Acció: {name}"
 
 #: redbot/cogs/warnings/warnings.py:342
 msgid "Exceed command"
