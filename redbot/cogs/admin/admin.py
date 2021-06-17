@@ -56,7 +56,7 @@ ROLE_USER_HIERARCHY_ISSUE = _(
     " in the Discord hierarchy."
 )
 
-NEED_MANAGE_ROLES = _("I need manage roles permission to do that.")
+NEED_MANAGE_ROLES = _('I need the "Manage Roles" permission to do that.')
 
 RUNNING_ANNOUNCEMENT = _(
     "I am already announcing something. If you would like to make a"
@@ -70,7 +70,9 @@ _ = T_
 class Admin(commands.Cog):
     """A collection of server administration utilities."""
 
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
+
         self.config = Config.get_conf(self, 8237492837454039, force_registration=True)
 
         self.config.register_global(serverlocked=False, schema_version=0)
@@ -504,6 +506,13 @@ class Admin(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
         if await self.config.serverlocked():
+            if len(self.bot.guilds) == 1:  # will be 0 once left
+                log.warning(
+                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can "
+                    "temporarily disable serverlock by starting up the bot with the --no-cogs flag."
+                )
+            else:
+                log.info(f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")
             await guild.leave()
 
 

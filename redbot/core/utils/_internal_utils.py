@@ -2,32 +2,41 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
+import contextlib
 import json
 import logging
 import os
 import re
 import shutil
 import tarfile
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    AsyncIterable,
     AsyncIterator,
     Awaitable,
     Callable,
+    Generator,
+    Iterable,
     Iterator,
     List,
     Optional,
     Union,
+    TypeVar,
     TYPE_CHECKING,
     Tuple,
+    cast,
 )
 
 import aiohttp
 import discord
 import pkg_resources
 from fuzzywuzzy import fuzz, process
-from redbot import VersionInfo
+from rich.progress import ProgressColumn
+from rich.progress_bar import ProgressBar
 
+from redbot import VersionInfo
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -46,7 +55,11 @@ __all__ = (
     "send_to_owners_with_prefix_replaced",
     "expected_version",
     "fetch_latest_red_version_info",
+    "deprecated_removed",
+    "RichIndefiniteBarColumn",
 )
+
+_T = TypeVar("_T")
 
 
 def safe_delete(pth: Path):
@@ -317,3 +330,30 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+def deprecated_removed(
+    deprecation_target: str,
+    deprecation_version: str,
+    minimum_days: int,
+    message: str = "",
+    stacklevel: int = 1,
+) -> None:
+    warnings.warn(
+        f"{deprecation_target} is deprecated since version {deprecation_version}"
+        " and will be removed in the first minor version that gets released"
+        f" after {minimum_days} days since deprecation. {message}",
+        DeprecationWarning,
+        stacklevel=stacklevel + 1,
+    )
+
+
+class RichIndefiniteBarColumn(ProgressColumn):
+    def render(self, task):
+        return ProgressBar(
+            pulse=task.completed < task.total,
+            animation_time=task.get_time(),
+            width=40,
+            total=task.total,
+            completed=task.completed,
+        )

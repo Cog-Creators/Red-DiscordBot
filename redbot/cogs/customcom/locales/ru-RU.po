@@ -247,7 +247,10 @@ msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to show.\n"
 "        "
-msgstr ""
+msgstr "Показывает ответы пользовательской команды и ее настройки.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Пользовательская команда для показа.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:553
 msgid "I could not not find that custom command."
@@ -255,7 +258,7 @@ msgstr "Я не смог найти эту пользовательскую ко
 
 #: redbot/cogs/customcom/customcom.py:564
 msgid "Deleted User"
-msgstr ""
+msgstr "Удалённый пользователь"
 
 #: redbot/cogs/customcom/customcom.py:570
 msgid "Random"

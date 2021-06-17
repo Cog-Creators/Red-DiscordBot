@@ -118,7 +118,7 @@ class Context(DPYContext):
     async def react_quietly(
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
     ) -> bool:
-        """Adds a reaction to to the command message.
+        """Adds a reaction to the command message.
 
         Returns
         -------
@@ -188,7 +188,7 @@ class Context(DPYContext):
                 else:
                     try:
                         await self.channel.delete_messages((query, resp))
-                    except discord.HTTPException:
+                    except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
                         # or channel is a DM

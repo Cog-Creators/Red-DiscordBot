@@ -22,9 +22,9 @@ import discord
 # Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
 # return the correct loop object.
-from redbot import _update_event_loop_policy, __version__
+from redbot import _early_init, __version__
 
-_update_event_loop_policy()
+_early_init()
 
 import redbot.logging
 from redbot.core.bot import Red, ExitCodes
@@ -181,7 +181,7 @@ async def _edit_prefix(red, prefix, no_prompt):
 
 async def _edit_owner(red, owner, no_prompt):
     if owner:
-        if not (15 <= len(str(owner)) <= 21):
+        if not (15 <= len(str(owner)) <= 20):
             print(
                 "The provided owner id doesn't look like a valid Discord user id."
                 " Instance's owner will remain unchanged."
@@ -199,7 +199,7 @@ async def _edit_owner(red, owner, no_prompt):
             print("Please enter a Discord user id for new owner:")
             while True:
                 owner_id = input("> ").strip()
-                if not (15 <= len(owner_id) <= 21 and owner_id.isdecimal()):
+                if not (15 <= len(owner_id) <= 20 and owner_id.isdecimal()):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
@@ -434,7 +434,7 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.logout()
+        await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -446,13 +446,18 @@ def global_exception_handler(red, loop, context):
     """
     Logs unhandled exceptions in other tasks
     """
-    msg = context.get("exception", context["message"])
+    exc = context.get("exception")
     # These will get handled later when it *also* kills loop.run_forever
-    if not isinstance(msg, (KeyboardInterrupt, SystemExit)):
-        if isinstance(msg, Exception):
-            log.critical("Caught unhandled exception in task:\n", exc_info=msg)
-        else:
-            log.critical("Caught unhandled exception in task: %s", msg)
+    if exc is not None and isinstance(exc, (KeyboardInterrupt, SystemExit)):
+        return
+    # Maybe in the future we should handle some of the other things
+    # that the default exception handler handles, but this should work fine for now.
+    log.critical(
+        "Caught unhandled exception in %s:\n%s",
+        context.get("future", "event loop"),
+        context["message"],
+        exc_info=exc,
+    )
 
 
 def red_exception_handler(red, red_task: asyncio.Future):

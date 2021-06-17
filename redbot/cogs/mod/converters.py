@@ -4,8 +4,8 @@ from redbot.core.i18n import Translator
 
 _ = Translator("Mod", __file__)
 
-_id_regex = re.compile(r"([0-9]{15,21})$")
-_mention_regex = re.compile(r"<@!?([0-9]{15,21})>$")
+_id_regex = re.compile(r"([0-9]{15,20})$")
+_mention_regex = re.compile(r"<@!?([0-9]{15,20})>$")
 
 
 class RawUserIds(Converter):

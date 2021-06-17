@@ -24,7 +24,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         pause_times: Dict = {}
         while True:
             async for p in AsyncIter(lavalink.all_players()):
-                server = p.channel.guild
+                server = p.guild
                 if await self.bot.cog_disabled_in_guild(self, server):
                     continue
 
@@ -37,30 +37,47 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         try:
                             await p.pause(False)
                         except Exception as err:
-                            debug_exc_log(
-                                log,
-                                err,
-                                f"Exception raised in Audio's unpausing player for {server.id}.",
-                            )
+                            debug_exc_log(log, err, "Exception raised in Audio's unpausing %r.", p)
                     pause_times.pop(server.id, None)
             servers = stop_times.copy()
             servers.update(pause_times)
             async for sid in AsyncIter(servers, steps=5):
                 server_obj = self.bot.get_guild(sid)
-                if sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
+                if not server_obj:
+                    stop_times.pop(sid, None)
+                    pause_times.pop(sid, None)
+                    try:
+                        player = lavalink.get_player(sid)
+                        await self.api_interface.persistent_queue_api.drop(sid)
+                        player.store("autoplay_notified", False)
+                        await player.stop()
+                        await player.disconnect()
+                        await self.config.guild_from_id(
+                            guild_id=sid
+                        ).currently_auto_playing_in.set([])
+                    except Exception as err:
+                        debug_exc_log(
+                            log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
+                        )
+
+                elif sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
                             player = lavalink.get_player(sid)
                             await self.api_interface.persistent_queue_api.drop(sid)
+                            player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
+                            await self.config.guild_from_id(
+                                guild_id=sid
+                            ).currently_auto_playing_in.set([])
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)
                             debug_exc_log(
-                                log, err, f"Exception raised in Audio's emptydc_timer for {sid}."
+                                log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
                             )
                 elif (
                     sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
@@ -73,6 +90,6 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if "No such player for that guild" in str(err):
                                 pause_times.pop(sid, None)
                             debug_exc_log(
-                                log, err, f"Exception raised in Audio's pausing for {sid}."
+                                log, err, "Exception raised in Audio's pausing for %s.", sid
                             )
             await asyncio.sleep(5)

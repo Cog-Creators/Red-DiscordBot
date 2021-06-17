@@ -2,6 +2,9 @@ name: Auto Labeler - PRs
 on:
   pull_request_target:
 
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,3 +13,4 @@ jobs:
         uses: actions/labeler@v3
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: ""  # this is a temporary workaround, see #4844
