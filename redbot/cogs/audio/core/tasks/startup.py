@@ -39,7 +39,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
-            await self.maybe_message_all_owners()
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
@@ -246,17 +245,3 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         return
         del metadata
         del all_guilds
-
-    async def maybe_message_all_owners(self):
-        current_notification = await self.config.owner_notification()
-        if current_notification == _OWNER_NOTIFICATION:
-            return
-        if current_notification < 1 <= _OWNER_NOTIFICATION:
-            msg = _(
-                """Hello, this message brings you some important information regarding the core Audio cog:
-                
-It is highly recommended that you enable your local cache if you haven't yet.
-To do so, run `[p]audioset cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
-            )
-            await send_to_owners_with_prefix_replaced(self.bot, msg)
-            await self.config.owner_notification.set(1)

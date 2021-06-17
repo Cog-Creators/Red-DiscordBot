@@ -15,7 +15,7 @@ from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 
-from ..utils import PlaylistScope
+from ..utils import CacheLevel, PlaylistScope
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
@@ -95,7 +95,7 @@ class Audio(
             schema_version=1,
             bundled_playlist_version=0,
             owner_notification=0,
-            cache_level=0,
+            cache_level=CacheLevel.all().value,
             cache_age=365,
             daily_playlists=False,
             global_db_enabled=False,
