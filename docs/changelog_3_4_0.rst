@@ -6,14 +6,14 @@ Redbot 3.4.12 (2021-06-17)
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
 
-This is a hotfix release related to discontinuation of Audio Global API service.
+This is a hotfix release related to Red ceasing to use the Audio Global API service.
 
 Full changelog
 --------------
 
 - **Audio** - Updated URL of the curated playlist (:issue:`5135`)
 - **Audio** - All local caches are now enabled by default (:issue:`5140`)
-- **Audio** - Global API service has been discontinued for now and as such support for it has been removed from the cog (:issue:`5143`)
+- **Audio** - Global API service will no longer be used in Audio and as such support for it has been removed from the cog (:issue:`5143`)
 - **Core Bot** - ``[p]set serverprefix`` command will now prevent the user from setting a prefix with length higher than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Core Bot** - ``[p]set prefix`` command will now warn the user when trying to set a prefix with length higher than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Core Bot** - ``applications.commands`` scope can now be included in the invite URL returned from ``[p]invite`` by enabling it with``[p]inviteset commandscope``
