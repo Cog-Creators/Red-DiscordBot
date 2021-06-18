@@ -4,7 +4,7 @@ Redbot 3.4.12 (2021-06-17)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
 
 This is a hotfix release related to discontinuation of Audio Global API service.
 
