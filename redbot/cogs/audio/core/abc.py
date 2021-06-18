@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import datetime
+
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Set, Tuple, Union
+from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
-from lavalink import Track
-from lavalink.filters import Equalizer
+
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     from ..apis.playlist_interface import Playlist
     from ..apis.playlist_wrapper import PlaylistWrapper
     from ..audio_dataclasses import LocalPath, Query
+    from ..equalizer import Equalizer
     from ..manager import ServerManager
-    from .utilities import SettingCacheManager
 
 
 class MixinMeta(ABC):
@@ -40,10 +40,14 @@ class MixinMeta(ABC):
     local_folder_current_path: Optional[Path]
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
-    config_cache: SettingCacheManager
 
     skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
+    _daily_playlist_cache: MutableMapping[int, bool]
+    _daily_global_playlist_cache: MutableMapping[int, bool]
+    _persist_queue_cache: MutableMapping[int, bool]
+    _dj_status_cache: MutableMapping[int, Optional[bool]]
+    _dj_role_cache: MutableMapping[int, Optional[int]]
     _error_timer: MutableMapping[int, float]
     _disconnected_players: MutableMapping[int, bool]
     global_api_user: MutableMapping[str, Any]
@@ -68,7 +72,7 @@ class MixinMeta(ABC):
     _diconnected_shard: Set[int]
 
     @abstractmethod
-    async def command_audioset_lavalink(self, ctx: commands.Context):
+    async def command_llsetup(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -76,13 +80,11 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def update_bot_presence(
-        self, track: lavalink.Track, track_string: str, playing_servers: int
-    ) -> None:
+    async def update_bot_presence(self, track: lavalink.Track, playing_servers: int) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_active_player_count(self) -> Tuple[Optional[Track], Optional[str], int]:
+    async def get_active_player_count(self) -> Tuple[str, int]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -140,6 +142,15 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def remove_react(
+        self,
+        message: discord.Message,
+        react_emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        react_user: discord.abc.User,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def command_equalizer(self, ctx: commands.Context):
         raise NotImplementedError()
 
@@ -166,7 +177,7 @@ class MixinMeta(ABC):
     @abstractmethod
     async def is_query_allowed(
         self,
-        cache: SettingCacheManager,
+        config: Config,
         ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
         query: str,
         query_obj: Query,
@@ -216,11 +227,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def send_embed_msg(
-        self,
-        ctx: commands.Context,
-        author: Mapping[str, str] = None,
-        no_embed: bool = False,
-        **kwargs,
+        self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
     ) -> discord.Message:
         raise NotImplementedError()
 
@@ -350,10 +357,18 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         player: lavalink.Player,
+        eq: "Equalizer",
         message: discord.Message,
         selected: int,
-        equalizer: Equalizer,
     ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
+        NotImplementedError()
+
+    @abstractmethod
+    async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -380,7 +395,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def command_audioset_guild_autoplay_toggle(self, ctx: commands.Context):
+    async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @abstractmethod
@@ -438,6 +453,16 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def _build_queue_page(
+        self,
+        ctx: commands.Context,
+        queue: list,
+        player: lavalink.player_manager.Player,
+        page_num: int,
+    ) -> discord.Embed:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def command_pause(self, ctx: commands.Context):
         raise NotImplementedError()
 
@@ -445,6 +470,12 @@ class MixinMeta(ABC):
     async def _build_queue_search_list(
         self, queue_list: List[lavalink.Track], search_words: str
     ) -> List[Tuple[int, str]]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def _build_queue_search_page(
+        self, ctx: commands.Context, page_num: int, search_list: List[Tuple[int, str]]
+    ) -> discord.Embed:
         raise NotImplementedError()
 
     @abstractmethod
@@ -524,8 +555,4 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
-        raise NotImplementedError()
-
-    @staticmethod
-    def is_slash_compatible() -> bool:
         raise NotImplementedError()

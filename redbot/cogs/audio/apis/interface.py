@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 import asyncio
 import contextlib
 import datetime
+import json
 import logging
 import random
 import time
+
 from collections import namedtuple
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union, cast
@@ -13,13 +13,8 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
+
 from lavalink.rest_api import LoadResult, LoadType
-
-try:
-    from redbot import json
-except ImportError:
-    import json
-
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context
@@ -42,7 +37,6 @@ from .youtube import YouTubeWrapper
 
 if TYPE_CHECKING:
     from .. import Audio
-    from ..core.utilities import SettingCacheManager
 
 _ = Translator("Audio", Path(__file__))
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
@@ -63,28 +57,16 @@ class AudioAPIInterface:
         session: aiohttp.ClientSession,
         conn: APSWConnectionWrapper,
         cog: Union["Audio", Cog],
-        cache: SettingCacheManager,
     ):
         self.bot = bot
         self.config = config
         self.conn = conn
         self.cog = cog
-        self.config_cache = cache
-        self.spotify_api: SpotifyWrapper = SpotifyWrapper(
-            self.bot, self.config, session, self.cog, self.config_cache
-        )
-        self.youtube_api: YouTubeWrapper = YouTubeWrapper(
-            self.bot, self.config, session, self.cog, self.config_cache
-        )
-        self.local_cache_api = LocalCacheWrapper(
-            self.bot, self.config, self.conn, self.cog, self.config_cache
-        )
-        self.global_cache_api = GlobalCacheWrapper(
-            self.bot, self.config, session, self.cog, self.config_cache
-        )
-        self.persistent_queue_api = QueueInterface(
-            self.bot, self.config, self.conn, self.cog, self.config_cache
-        )
+        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session, self.cog)
+        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session, self.cog)
+        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn, self.cog)
+        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session, self.cog)
+        self.persistent_queue_api = QueueInterface(self.bot, self.config, self.conn, self.cog)
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -106,7 +88,7 @@ class AudioAPIInterface:
             date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
             date_timestamp = int(date.timestamp())
             query_data["day"] = date_timestamp
-            max_age = await self.config_cache.local_cache_age.get_global()
+            max_age = await self.config.cache_age()
             maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
                 days=max_age
             )
@@ -216,7 +198,7 @@ class AudioAPIInterface:
         uri: str,
         notifier: Optional[Notifier],
         skip_youtube: bool = False,
-        current_cache_level: CacheLevel = CacheLevel.none(),
+        current_cache_level: CacheLevel = CacheLevel.all(),
     ) -> List[str]:
         """Return youtube URLS for the spotify URL provided."""
         youtube_urls = []
@@ -397,7 +379,7 @@ class AudioAPIInterface:
         List[str]
             List of Youtube URLs.
         """
-        current_cache_level = await self.config_cache.local_cache_level.get_global()
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
             try:
@@ -477,7 +459,8 @@ class AudioAPIInterface:
         youtube_api_error = None
         skip_youtube_api = False
         try:
-            current_cache_level = await self.config_cache.local_cache_level.get_global()
+            current_cache_level = CacheLevel(await self.config.cache_level())
+            guild_data = await self.config.guild(ctx.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await self.cog.queue_duration(ctx)
@@ -635,7 +618,7 @@ class AudioAPIInterface:
                 single_track = track_object[0]
                 query = Query.process_input(single_track, self.cog.local_folder_current_path)
                 if not await self.cog.is_query_allowed(
-                    self.config_cache,
+                    self.config,
                     ctx,
                     f"{single_track.title} {single_track.author} {single_track.uri} {query}",
                     query_obj=query,
@@ -646,17 +629,10 @@ class AudioAPIInterface:
                     continue
                 track_list.append(single_track)
                 if enqueue:
-                    if len(
-                        player.queue
-                    ) >= await self.config_cache.max_queue_size.get_context_value(player.guild):
+                    if len(player.queue) >= 10000:
                         continue
-
-                    if (
-                        max_length := await self.config_cache.max_track_length.get_context_value(
-                            ctx.guild
-                        )
-                    ) > 0:
-                        if self.cog.is_track_length_allowed(single_track, max_length):
+                    if guild_data["maxlength"] > 0:
+                        if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             single_track.extras.update(
                                 {
@@ -706,10 +682,7 @@ class AudioAPIInterface:
                         num=enqueued_tracks, maxlength_msg=maxlength_msg
                     ),
                 )
-                if (
-                    not await self.config_cache.shuffle.get_context_value(ctx.guild)
-                    and queue_dur > 0
-                ):
+                if not guild_data["shuffle"] and queue_dur > 0:
                     embed.set_footer(
                         text=_(
                             "{time} until start of playlist"
@@ -745,7 +718,7 @@ class AudioAPIInterface:
         self,
         ctx: commands.Context,
         track_info: str,
-        current_cache_level: CacheLevel = CacheLevel.none(),
+        current_cache_level: CacheLevel = CacheLevel.all(),
     ) -> Optional[str]:
         """Call the Youtube API and returns the youtube URL that the query matched."""
         track_url = await self.youtube_api.get_call(track_info)
@@ -772,7 +745,7 @@ class AudioAPIInterface:
         self, ctx: commands.Context, track_info: str
     ) -> Optional[str]:
         """Gets an YouTube URL from for the query."""
-        current_cache_level = await self.config_cache.local_cache_level.get_global()
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
         if cache_enabled:
@@ -785,7 +758,7 @@ class AudioAPIInterface:
                 youtube_url = await self.fetch_youtube_query(
                     ctx, track_info, current_cache_level=current_cache_level
                 )
-            except YouTubeApiError:
+            except YouTubeApiError as err:
                 youtube_url = None
         else:
             if cache_enabled:
@@ -826,7 +799,7 @@ class AudioAPIInterface:
         Tuple[lavalink.LoadResult, bool]
             Tuple with the Load result and whether or not the API was called.
         """
-        current_cache_level = await self.config_cache.local_cache_level.get_global()
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None
         query = Query.process_input(query, self.cog.local_folder_current_path)
@@ -962,7 +935,7 @@ class AudioAPIInterface:
     async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
         autoplaylist = await self.config.guild(player.guild).autoplaylist()
-        current_cache_level = await self.config_cache.local_cache_level.get_global()
+        current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         notify_channel_id = player.fetch("notify_channel")
         playlist = None
@@ -1013,7 +986,7 @@ class AudioAPIInterface:
                     continue
                 notify_channel = self.bot.get_channel(notify_channel_id)
                 if not await self.cog.is_query_allowed(
-                    self.config_cache,
+                    self.config,
                     notify_channel,
                     f"{track.title} {track.author} {track.uri} {query}",
                     query_obj=query,
@@ -1041,11 +1014,13 @@ class AudioAPIInterface:
                 player,
             )
             if notify_channel_id:
-                await self.config_cache.autoplay.set_currently_in_guild(
-                    player.guild, [notify_channel_id, player.channel.id]
-                )
+                await self.config.guild_from_id(
+                    guild_id=player.guild.id
+                ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
             else:
-                await self.config_cache.autoplay.set_currently_in_guild(player.guild)
+                await self.config.guild_from_id(
+                    guild_id=player.guild.id
+                ).currently_auto_playing_in.set([])
             if not player.current:
                 await player.play()
 

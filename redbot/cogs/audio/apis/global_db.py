@@ -1,19 +1,14 @@
-from __future__ import annotations
-
 import asyncio
 import contextlib
+import json
 import logging
+
 from copy import copy
 from pathlib import Path
 from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
 from lavalink.rest_api import LoadResult
-
-try:
-    from redbot import json
-except ImportError:
-    import json
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -25,7 +20,6 @@ from ..audio_logging import IS_DEBUG, debug_exc_log
 
 if TYPE_CHECKING:
     from .. import Audio
-    from ..core.utilities import SettingCacheManager
 
 _API_URL = "https://api.redbot.app/"
 _ = Translator("Audio", Path(__file__))
@@ -34,17 +28,11 @@ log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
 
 class GlobalCacheWrapper:
     def __init__(
-        self,
-        bot: Red,
-        config: Config,
-        session: aiohttp.ClientSession,
-        cog: Union["Audio", Cog],
-        cache: SettingCacheManager,
+        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
     ):
         # Place Holder for the Global Cache PR
         self.bot = bot
         self.config = config
-        self.config_cache = cache
         self.session = session
         self.api_key = None
         self._handshake_token = ""
@@ -63,11 +51,7 @@ class GlobalCacheWrapper:
             self._token = await self.bot.get_shared_api_tokens("audiodb")
         self.api_key = self._token.get("api_key", None)
         self.has_api_key = self.cog.global_api_user.get("can_post")
-        id_list = list(
-            getattr(
-                self.bot, "all_owner_ids", getattr(self.bot, "_true_owner_ids", self.bot.owner_ids)
-            )
-        )
+        id_list = list(self.bot.owner_ids)
         self._handshake_token = "||".join(map(str, id_list))
         return self.api_key
 
@@ -87,9 +71,7 @@ class GlobalCacheWrapper:
             with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
                 async with self.session.get(
                     api_url,
-                    timeout=aiohttp.ClientTimeout(
-                        total=await self.config_cache.global_api_timeout.get_global()
-                    ),
+                    timeout=aiohttp.ClientTimeout(total=await self.config.global_db_get_timeout()),
                     headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
                     params={"query": query},
                 ) as r:
@@ -121,9 +103,7 @@ class GlobalCacheWrapper:
             with contextlib.suppress(aiohttp.ContentTypeError, asyncio.TimeoutError):
                 async with self.session.get(
                     api_url,
-                    timeout=aiohttp.ClientTimeout(
-                        total=await self.config_cache.global_api_timeout.get_global()
-                    ),
+                    timeout=aiohttp.ClientTimeout(total=await self.config.global_db_get_timeout()),
                     headers={"Authorization": self.api_key, "X-Token": self._handshake_token},
                     params=params,
                 ) as r:
@@ -194,7 +174,8 @@ class GlobalCacheWrapper:
     async def get_perms(self):
         global_api_user = copy(self.cog.global_api_user)
         await self._get_api_key()
-        is_enabled = await self.config_cache.global_api.get_global()
+        # global API is force-disabled right now
+        is_enabled = False
         if (not is_enabled) or self.api_key is None:
             return global_api_user
         with contextlib.suppress(Exception):

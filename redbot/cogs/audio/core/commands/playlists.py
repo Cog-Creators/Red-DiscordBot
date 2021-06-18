@@ -1,9 +1,11 @@
 import asyncio
+import json
 import logging
 import math
 import os
 import tarfile
 import time
+
 from io import BytesIO
 from pathlib import Path
 from typing import cast
@@ -11,18 +13,13 @@ from typing import cast
 import discord
 import lavalink
 
-try:
-    from redbot import json
-except ImportError:
-    import json
-
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils._dpy_menus_utils import dpymenu
 from redbot.core.utils.chat_formatting import bold, pagify
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
 
 from ...apis.api_utils import FakePlaylist
@@ -33,7 +30,7 @@ from ...converters import ComplexScopeParser, ScopeParser
 from ...errors import MissingGuild, TooManyMatches, TrackEnqueueError
 from ...utils import PlaylistScope
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, LazyMultilineConverter, PlaylistConverter
+from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.playlist")
 _ = Translator("Audio", Path(__file__))
@@ -61,12 +58,11 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_playlist.command(
         name="append", usage="<playlist_name_OR_id> <track_name_OR_url> [args]"
     )
-    @commands.cooldown(1, 5, commands.BucketType.member)
     async def command_playlist_append(
         self,
         ctx: commands.Context,
         playlist_matches: PlaylistConverter,
-        queries: LazyMultilineConverter,
+        query: LazyGreedyConverter,
         *,
         scope_data: ScopeParser = None,
     ):
@@ -114,132 +110,109 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         (scope, author, guild, specified_user) = scope_data
         if not await self._playlist_check(ctx):
             return
-        master_playlist = None
-        should_early_exit = False
-        for query in queries:
-            async with ctx.typing():
-                if master_playlist is None:
-                    try:
-                        (playlist, playlist_arg, scope) = await self.get_playlist_match(
-                            ctx, playlist_matches, scope, author, guild, specified_user
-                        )
-                        master_playlist = playlist
-                    except TooManyMatches as e:
-                        return await self.send_embed_msg(ctx, title=str(e))
-                if playlist is None:
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Playlist Not Found"),
-                        description=_("Could not match '{arg}' to a playlist").format(
-                            arg=playlist_arg
-                        ),
-                    )
-                else:
-                    playlist = master_playlist
-                if not await self.can_manage_playlist(
-                    scope, playlist, ctx, author, guild, bypass=False
-                ):
-                    return
-                player = lavalink.get_player(ctx.guild.id)
-                to_append = await self.fetch_playlist_tracks(ctx, player, query)
-
-                if isinstance(to_append, discord.Message):
-                    return None
-
-                if not to_append:
-                    return await self.send_embed_msg(
-                        ctx, title=_("Could not find a track matching your query.")
-                    )
-                track_list = playlist.tracks
-                current_count = len(track_list)
-                to_append_count = len(to_append)
-                tracks_obj_list = playlist.tracks_obj
-                not_added = 0
-                if (
-                    current_count + to_append_count
-                    > await self.config_cache.max_queue_size.get_context_value(player.guild)
-                ):
-                    to_append = to_append[: 10000 - current_count]
-                    not_added = to_append_count - len(to_append)
-                    to_append_count = len(to_append)
-                    should_early_exit = True
-                scope_name = self.humanize_scope(
-                    scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+        async with ctx.typing():
+            try:
+                (playlist, playlist_arg, scope) = await self.get_playlist_match(
+                    ctx, playlist_matches, scope, author, guild, specified_user
                 )
-                appended = 0
-                if to_append and to_append_count == 1:
-                    to = lavalink.Track(to_append[0])
-                    if to in tracks_obj_list:
-                        await self.send_embed_msg(
-                            ctx,
-                            title=_("Skipping track"),
-                            description=_(
-                                "{track} is already in {playlist} (`{id}`) [**{scope}**]."
-                            ).format(
-                                track=to.title,
-                                playlist=playlist.name,
-                                id=playlist.id,
-                                scope=scope_name,
-                            ),
-                            footer=_("Playlist limit reached: Could not add track.").format(
-                                not_added
-                            )
-                            if not_added > 0
-                            else None,
-                        )
-                        continue
-                    else:
-                        appended += 1
-                if to_append and to_append_count > 1:
-                    to_append_temp = []
-                    async for t in AsyncIter(to_append):
-                        to = lavalink.Track(t)
-                        if to not in tracks_obj_list:
-                            appended += 1
-                            to_append_temp.append(t)
-                    to_append = to_append_temp
-                if appended > 0:
-                    track_list.extend(to_append)
-                    update = {"tracks": track_list, "url": None}
-                    await playlist.edit(update)
+            except TooManyMatches as e:
+                return await self.send_embed_msg(ctx, title=str(e))
+            if playlist is None:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Playlist Not Found"),
+                    description=_("Could not match '{arg}' to a playlist").format(
+                        arg=playlist_arg
+                    ),
+                )
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
+                return
+            player = lavalink.get_player(ctx.guild.id)
+            to_append = await self.fetch_playlist_tracks(
+                ctx, player, Query.process_input(query, self.local_folder_current_path)
+            )
 
-                if to_append_count == 1 and appended == 1:
-                    track_title = to_append[0]["info"]["title"]
-                    await self.send_embed_msg(
+            if isinstance(to_append, discord.Message):
+                return None
+
+            if not to_append:
+                return await self.send_embed_msg(
+                    ctx, title=_("Could not find a track matching your query.")
+                )
+            track_list = playlist.tracks
+            current_count = len(track_list)
+            to_append_count = len(to_append)
+            tracks_obj_list = playlist.tracks_obj
+            not_added = 0
+            if current_count + to_append_count > 10000:
+                to_append = to_append[: 10000 - current_count]
+                not_added = to_append_count - len(to_append)
+                to_append_count = len(to_append)
+            scope_name = self.humanize_scope(
+                scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
+            )
+            appended = 0
+
+            if to_append and to_append_count == 1:
+                to = lavalink.Track(to_append[0])
+                if to in tracks_obj_list:
+                    return await self.send_embed_msg(
                         ctx,
-                        title=_("Track added"),
+                        title=_("Skipping track"),
                         description=_(
-                            "{track} appended to {playlist} (`{id}`) [**{scope}**]."
+                            "{track} is already in {playlist} (`{id}`) [**{scope}**]."
                         ).format(
-                            track=track_title,
+                            track=to.title,
                             playlist=playlist.name,
                             id=playlist.id,
                             scope=scope_name,
                         ),
+                        footer=_("Playlist limit reached: Could not add track.").format(not_added)
+                        if not_added > 0
+                        else None,
                     )
-                    if len(queries) > 1:
-                        continue
-                    return
+                else:
+                    appended += 1
+            if to_append and to_append_count > 1:
+                to_append_temp = []
+                async for t in AsyncIter(to_append):
+                    to = lavalink.Track(t)
+                    if to not in tracks_obj_list:
+                        appended += 1
+                        to_append_temp.append(t)
+                to_append = to_append_temp
+            if appended > 0:
+                track_list.extend(to_append)
+                update = {"tracks": track_list, "url": None}
+                await playlist.edit(update)
 
-                desc = _("{num} tracks appended to {playlist} (`{id}`) [**{scope}**].").format(
-                    num=appended, playlist=playlist.name, id=playlist.id, scope=scope_name
-                )
-                if to_append_count > appended:
-                    diff = to_append_count - appended
-                    desc += _(
-                        "\n{existing} {plural} already in the playlist and were skipped."
-                    ).format(existing=diff, plural=_("tracks are") if diff != 1 else _("track is"))
-
-                embed = discord.Embed(title=_("Playlist Modified"), description=desc)
-                await self.send_embed_msg(
+            if to_append_count == 1 and appended == 1:
+                track_title = to_append[0]["info"]["title"]
+                return await self.send_embed_msg(
                     ctx,
-                    embed=embed,
-                    footer=_("Playlist limit reached: Could not add track.").format(not_added)
-                    if not_added > 0
-                    else None,
+                    title=_("Track added"),
+                    description=_("{track} appended to {playlist} (`{id}`) [**{scope}**].").format(
+                        track=track_title, playlist=playlist.name, id=playlist.id, scope=scope_name
+                    ),
                 )
-                if should_early_exit:
-                    return
+
+            desc = _("{num} tracks appended to {playlist} (`{id}`) [**{scope}**].").format(
+                num=appended, playlist=playlist.name, id=playlist.id, scope=scope_name
+            )
+            if to_append_count > appended:
+                diff = to_append_count - appended
+                desc += _(
+                    "\n{existing} {plural} already in the playlist and were skipped."
+                ).format(existing=diff, plural=_("tracks are") if diff != 1 else _("track is"))
+
+            embed = discord.Embed(title=_("Playlist Modified"), description=desc)
+            await self.send_embed_msg(
+                ctx,
+                embed=embed,
+                footer=_("Playlist limit reached: Could not add track.").format(not_added)
+                if not_added > 0
+                else None,
+            )
 
     @commands.cooldown(1, 150, commands.BucketType.member)
     @command_playlist.command(
@@ -339,7 +312,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
 
             temp_playlist = cast(Playlist, FakePlaylist(to_author.id, to_scope))
             if not await self.can_manage_playlist(
-                to_scope, temp_playlist, ctx, to_author, to_guild, bypass=False
+                to_scope, temp_playlist, ctx, to_author, to_guild
             ):
                 ctx.command.reset_cooldown(ctx)
                 return
@@ -434,9 +407,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
         )
         async with ctx.typing():
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
             if playlist_name.isnumeric():
@@ -524,9 +495,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
             scope_name = self.humanize_scope(
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
@@ -622,9 +591,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
 
@@ -945,7 +912,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
                 page_list.append(embed)
-        await dpymenu(ctx, page_list)
+        await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @command_playlist.command(name="list", usage="[args]", cooldown_after_parsing=True)
@@ -1101,7 +1068,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             async for page_num in AsyncIter(range(1, len_playlist_list_pages + 1)):
                 embed = await self._build_playlist_list_page(ctx, page_num, abc_names, name)
                 playlist_embeds.append(embed)
-        await dpymenu(ctx, playlist_embeds)
+        await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
 
     @command_playlist.command(name="queue", usage="<name> [args]", cooldown_after_parsing=True)
     @commands.cooldown(1, 300, commands.BucketType.member)
@@ -1156,9 +1123,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 scope, ctx=guild if scope == PlaylistScope.GUILD.value else author
             )
             temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
@@ -1186,12 +1151,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             queue_length = len(player.queue)
             to_add = player.queue
             not_added = 0
-            max_queue_length = await self.config_cache.max_queue_size.get_context_value(
-                player.guild
-            )
-            if queue_length > max_queue_length:
-                to_add = player.queue[:max_queue_length]
-                not_added = queue_length - max_queue_length
+            if queue_length > 10000:
+                to_add = player.queue[:10000]
+                not_added = queue_length - 10000
 
             async for track in AsyncIter(to_add):
                 queue_idx = player.queue.index(track)
@@ -1283,9 +1245,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
 
             track_list = playlist.tracks
@@ -1391,9 +1351,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         async with ctx.typing():
             temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return ctx.command.reset_cooldown(ctx)
             playlist_name = playlist_name.split(" ")[0].strip('"')[:32]
             if playlist_name.isnumeric():
@@ -1418,12 +1376,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if tracklist is not None:
                 playlist_length = len(tracklist)
                 not_added = 0
-                max_queue_length = await self.config_cache.max_queue_size.get_context_value(
-                    player.guild
-                )
-                if playlist_length > max_queue_length:
-                    tracklist = tracklist[:max_queue_length]
-                    not_added = playlist_length - max_queue_length
+                if playlist_length > 10000:
+                    tracklist = tracklist[:10000]
+                    not_added = playlist_length - 10000
 
                 playlist = await create_playlist(
                     ctx,
@@ -1516,7 +1471,9 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
             await self.send_embed_msg(
@@ -1546,26 +1503,23 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not await self._playlist_check(ctx):
                 ctx.command.reset_cooldown(ctx)
                 return
-            jukebox_price = await self.config_cache.jukebox_price.get_context_value(ctx.guild)
+            jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
             if not await self.maybe_charge_requester(ctx, jukebox_price):
                 ctx.command.reset_cooldown(ctx)
                 return
-            maxlength = await self.config_cache.max_track_length.get_context_value(ctx.guild)
+            maxlength = await self.config.guild(ctx.guild).maxlength()
             author_obj = self.bot.get_user(ctx.author.id)
             track_len = 0
             try:
                 player = lavalink.get_player(ctx.guild.id)
                 tracks = playlist.tracks_obj
                 empty_queue = not player.queue
-                max_queue_length = await self.config_cache.max_queue_size.get_context_value(
-                    player.guild
-                )
                 async for track in AsyncIter(tracks):
-                    if len(player.queue) >= max_queue_length:
+                    if len(player.queue) >= 10000:
                         continue
                     query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
-                        self.config_cache,
+                        self.config,
                         ctx,
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,
@@ -1808,7 +1762,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 added_embeds.append(embed)
                                 added_text = ""
                     embeds = removed_embeds + added_embeds
-                    await dpymenu(ctx, embeds)
                 else:
                     return await self.send_embed_msg(
                         ctx,
@@ -1817,6 +1770,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             id=playlist.id, name=playlist.name, scope=scope_name
                         ),
                     )
+        if embeds:
+            await menu(ctx, embeds, DEFAULT_CONTROLS)
 
     @command_playlist.command(name="upload", usage="[args]")
     @commands.is_owner()
@@ -1871,9 +1826,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope = scope or PlaylistScope.GUILD.value
         temp_playlist = cast(Playlist, FakePlaylist(author.id, scope))
         async with ctx.typing():
-            if not await self.can_manage_playlist(
-                scope, temp_playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, temp_playlist, ctx, author, guild):
                 return
             if not await self._playlist_check(ctx):
                 return
@@ -2064,9 +2017,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         arg=playlist_arg
                     ),
                 )
-            if not await self.can_manage_playlist(
-                scope, playlist, ctx, author, guild, bypass=False
-            ):
+            if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 ctx.command.reset_cooldown(ctx)
                 return
             scope_name = self.humanize_scope(

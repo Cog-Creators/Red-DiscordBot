@@ -6,13 +6,14 @@ from pathlib import Path
 
 import discord
 import lavalink
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
-from redbot.core.utils._dpy_menus_utils import dpymenu
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
-from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
+from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -36,8 +37,11 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         player = lavalink.get_player(ctx.guild.id)
+        eq = player.fetch("eq", Equalizer())
         reactions = [
             "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
             "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}",
@@ -51,11 +55,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         ]
         await self._eq_msg_clear(player.fetch("eq_message"))
-        eq_message = await self.send_embed_msg(
-            ctx=ctx,
-            description=box(player.equalizer.visualise(), lang="yaml"),
-            no_embed=True,
-        )
+        eq_message = await ctx.send(box(eq.visualise(), lang="ini"))
 
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             with contextlib.suppress(discord.HTTPException):
@@ -63,8 +63,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             start_adding_reactions(eq_message, reactions)
 
-        player.store("eq_message", eq_message)
-        await self._eq_interact(ctx, player, eq_message, 0, player.equalizer)
+        eq_msg_with_reacts = await ctx.fetch_message(eq_message.id)
+        player.store("eq_message", eq_msg_with_reacts)
+        await self._eq_interact(ctx, player, eq, eq_msg_with_reacts, 0)
 
     @command_equalizer.command(name="delete", aliases=["del", "remove"])
     async def command_equalizer_delete(self, ctx: commands.Context, eq_preset: str):
@@ -122,9 +123,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             lang="ini",
         )
         preset_list = ""
-        for preset, data in eq_presets.items():
+        for preset, bands in eq_presets.items():
             try:
-                author = self.bot.get_user(data["author"])
+                author = self.bot.get_user(bands["author"])
             except TypeError:
                 author = "None"
             msg = f"{preset}{space * (22 - len(preset))}{author}\n"
@@ -139,7 +140,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
             )
             page_list.append(embed)
-        await dpymenu(ctx, page_list)
+        await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @command_equalizer.command(name="load")
     async def command_equalizer_load(self, ctx: commands.Context, eq_preset: str):
@@ -162,7 +163,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
@@ -171,13 +174,12 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to load equalizer presets."),
             )
         player.store("notify_channel", ctx.channel.id)
-        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
-            eq_data["eq_bands"] = eq_values
-            eq_data["name"] = eq_preset
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq_values)
         await self._eq_check(ctx, player)
+        eq = player.fetch("eq", Equalizer())
         await self._eq_msg_clear(player.fetch("eq_message"))
         message = await ctx.send(
-            content=box(player.equalizer.visualise(), lang="ini"),
+            content=box(eq.visualise(), lang="ini"),
             embed=discord.Embed(
                 colour=await ctx.embed_colour(),
                 title=_("The {eq_preset} preset was loaded.".format(eq_preset=eq_preset)),
@@ -190,7 +192,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
@@ -199,17 +203,20 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
-        player.equalizer.reset()
-        await player.set_equalizer(player.equalizer)
-        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
-            eq_data["eq_bands"] = player.equalizer.get()
-            eq_data["name"] = player.equalizer.name
+        eq = player.fetch("eq", Equalizer())
+
+        for band in range(eq.band_count):
+            eq.set_gain(band, 0.0)
+
+        await self._apply_gains(ctx.guild.id, eq.bands)
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        player.store("eq", eq)
         await self._eq_msg_clear(player.fetch("eq_message"))
-        message = await self.send_embed_msg(
-            ctx=ctx,
-            title=_("Equalizer values have been reset."),
-            description=box(player.equalizer.visualise(), lang="ini"),
-            no_embed=True,
+        message = await ctx.send(
+            content=box(eq.visualise(), lang="ini"),
+            embed=discord.Embed(
+                colour=await ctx.embed_colour(), title=_("Equalizer values have been reset.")
+            ),
         )
         player.store("eq_message", message)
 
@@ -219,7 +226,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
@@ -277,7 +286,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
-        to_append = {eq_preset: {"author": ctx.author.id, "bands": player.equalizer.get()}}
+        eq = player.fetch("eq", Equalizer())
+        to_append = {eq_preset: {"author": ctx.author.id, "bands": eq.bands}}
         new_eq_presets = {**eq_presets, **to_append}
         await self.config.custom("EQUALIZER", ctx.guild.id).eq_presets.set(new_eq_presets)
         embed3 = discord.Embed(
@@ -306,7 +316,9 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
@@ -334,6 +346,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "16k",
         ]
 
+        eq = player.fetch("eq", Equalizer())
+        bands_num = eq.band_count
         if band_value > 1:
             band_value = 1
         elif band_value <= -0.25:
@@ -346,10 +360,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         except ValueError:
             band_number = 1000
 
-        if (
-            band_number not in range(player.equalizer.band_count)
-            and band_name_or_position not in band_names
-        ):
+        if band_number not in range(0, bands_num) and band_name_or_position not in band_names:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Band"),
@@ -362,24 +373,25 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if band_name_or_position in band_names:
             band_pos = band_names.index(band_name_or_position)
             band_int = False
-            player.equalizer.set_gain(int(band_pos), band_value)
-            await player.set_equalizer(equalizer=player.equalizer)
+            eq.set_gain(int(band_pos), band_value)
+            await self._apply_gain(ctx.guild.id, int(band_pos), band_value)
         else:
             band_int = True
-            player.equalizer.set_gain(band_number, band_value)
-            await player.set_equalizer(equalizer=player.equalizer)
+            eq.set_gain(band_number, band_value)
+            await self._apply_gain(ctx.guild.id, band_number, band_value)
 
         await self._eq_msg_clear(player.fetch("eq_message"))
-        async with self.config.custom("EQUALIZER", ctx.guild.id).all() as eq_data:
-            eq_data["eq_bands"] = player.equalizer.get()
-            eq_data["name"] = player.equalizer.name
+        await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        player.store("eq", eq)
         band_name = band_names[band_number] if band_int else band_name_or_position
-        message = self.send_embed_msg(
-            ctx=ctx,
-            title=_("Preset Modified\nThe {band_name}Hz band has been set to {band_value}").format(
-                band_name=band_name, band_value=band_value
+        message = await ctx.send(
+            content=box(eq.visualise(), lang="ini"),
+            embed=discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_("Preset Modified"),
+                description=_("The {band_name}Hz band has been set to {band_value}.").format(
+                    band_name=band_name, band_value=band_value
+                ),
             ),
-            description=box(player.equalizer.visualise(), lang="ini"),
-            no_embed=True,
         )
         player.store("eq_message", message)

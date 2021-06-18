@@ -1,12 +1,13 @@
 import asyncio
+import datetime
 import itertools
 import logging
-from collections import namedtuple
 from pathlib import Path
+
 from typing import Optional
 
 import lavalink
-from lavalink.filters import Volume
+
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -31,15 +32,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         # If it waits for ready in startup, we cause a deadlock during initial load
         # as initial load happens before the bot can ever be ready.
         lavalink.set_logging_level(self.bot._cli_flags.logging_level)
-
-        if self.is_slash_compatible():
-            from dislash import slash_commands
-
-            if not hasattr(self.bot, "slash"):
-                slash_commands.SlashClient(self.bot)
-            elif not isinstance(self.bot.slash, slash_commands.SlashClient):
-                raise RuntimeError("Audio requires `bot.slash` to be a `SlashClient` object.")
-
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
         self.cog_init_task.add_done_callback(task_callback)
 
@@ -47,21 +39,13 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
-            await self.maybe_message_all_owners()
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
             self.api_interface = AudioAPIInterface(
-                self.bot,
-                self.config,
-                self.session,
-                self.db_conn,
-                self.bot.get_cog("Audio"),
-                self.config_cache,
+                self.bot, self.config, self.session, self.db_conn, self.bot.get_cog("Audio")
             )
-            self.playlist_api = PlaylistWrapper(
-                self.bot, self.config, self.db_conn, self.config_cache
-            )
+            self.playlist_api = PlaylistWrapper(self.bot, self.config, self.db_conn)
             await self.playlist_api.init()
             await self.api_interface.initialize()
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()
@@ -93,7 +77,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 return
         metadata = {}
         all_guilds = await self.config.all_guilds()
-        ctx = namedtuple("Context", "guild")
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if guild_data["auto_play"]:
                 if guild_data["currently_auto_playing_in"]:
@@ -109,7 +92,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 guild = self.bot.get_guild(guild_id)
                 if not guild:
                     continue
-                persist_cache = await self.config_cache.persistent_queue.get_context_value(guild)
+                persist_cache = self._persist_queue_cache.setdefault(
+                    guild_id, await self.config.guild(guild).persist_queue()
+                )
                 if not persist_cache:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
@@ -123,10 +108,12 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     except KeyError:
                         player = None
                 vc = 0
-                shuffle = await self.config_cache.shuffle.get_context_value(guild)
-                repeat = await self.config_cache.repeat.get_context_value(guild)
-                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
-                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
+                guild_data = await self.config.guild_from_id(guild.id).all()
+                shuffle = guild_data["shuffle"]
+                repeat = guild_data["repeat"]
+                volume = guild_data["volume"]
+                shuffle_bumped = guild_data["shuffle_bumped"]
+                auto_deafen = guild_data["auto_deafen"]
 
                 if player is None:
                     while tries < 5 and vc is not None:
@@ -161,18 +148,11 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
-                volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(
-                        guild, channel=player.channel
-                    )
-                    / 100
-                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
-                await self._eq_check(player=player, ctx=ctx(guild))
                 for track in track_data:
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
@@ -201,10 +181,12 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except KeyError:
                     player = None
             if player is None:
-                shuffle = await self.config_cache.shuffle.get_context_value(guild)
-                repeat = await self.config_cache.repeat.get_context_value(guild)
-                shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(guild)
-                auto_deafen = await self.config_cache.auto_deafen.get_context_value(guild)
+                guild_data = await self.config.guild_from_id(guild.id).all()
+                shuffle = guild_data["shuffle"]
+                repeat = guild_data["repeat"]
+                volume = guild_data["volume"]
+                shuffle_bumped = guild_data["shuffle_bumped"]
+                auto_deafen = guild_data["auto_deafen"]
 
                 while tries < 5 and vc is not None:
                     try:
@@ -231,18 +213,11 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
 
-                volume = Volume(
-                    value=await self.config_cache.volume.get_context_value(
-                        guild, channel=player.channel
-                    )
-                    / 100
-                )
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
-                await self._eq_check(player=player, ctx=ctx(guild))
                 player.maybe_shuffle()
                 log.info("Restored %r", player)
                 if not player.is_playing:
@@ -270,24 +245,3 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         return
         del metadata
         del all_guilds
-
-    async def maybe_message_all_owners(self):
-        current_notification = await self.config.owner_notification()
-        if current_notification == _OWNER_NOTIFICATION:
-            return
-        if current_notification < 1 <= _OWNER_NOTIFICATION:
-            msg = _(
-                """Hello, this message brings you an important update regarding the core Audio cog:
-
-Starting from Audio v2.3.0+ you can take advantage of the **Global Audio API**, a new service offered by the Cog-Creators organization that allows your bot to greatly reduce the amount of requests done to YouTube / Spotify. This reduces the likelihood of YouTube rate-limiting your bot for making requests too often.
-See `[p]help audioset global globalapi` for more information.
-Access to this service is disabled by default and **requires you to explicitly opt-in** to start using it.
-
-An access token is **required** to use this API. To obtain this token you may join <https://discord.gg/red> and run `?audioapi register` in the #testing channel.
-Note: by using this service you accept that your bot's IP address will be disclosed to the Cog-Creators organization and used only for the purpose of providing the Global API service.
-
-On a related note, it is highly recommended that you enable your local cache if you haven't yet.
-To do so, run `[p]audioset global cache 5`. This cache, which stores only metadata, will make repeated audio requests faster and further reduce the likelihood of YouTube rate-limiting your bot. Since it's only metadata the required disk space for this cache is expected to be negligible."""
-            )
-            await send_to_owners_with_prefix_replaced(self.bot, msg)
-            await self.config.owner_notification.set(1)

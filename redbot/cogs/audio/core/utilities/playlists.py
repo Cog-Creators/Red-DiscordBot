@@ -1,22 +1,19 @@
 import asyncio
 import contextlib
 import datetime
+import json
 import logging
 import math
 import random
 import time
 from pathlib import Path
+
 from typing import List, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
-
-try:
-    from redbot import json
-except ImportError:
-    import json
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -71,7 +68,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if not is_different_user:
                 has_perms = True
         elif playlist.scope == PlaylistScope.GUILD.value and not is_different_guild:
-            dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+            dj_enabled = self._dj_status_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+            )
             if (
                 guild.owner_id == ctx.author.id
                 or (dj_enabled and await self._has_dj_role(ctx, ctx.author))
@@ -532,8 +531,10 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(ctx, title=msg, description=desc)
                 return False
             try:
-                if not self.can_join_and_speak(ctx.author.voice.channel) or self.is_vc_full(
-                    ctx.author.voice.channel
+                if (
+                    not self.can_join_and_speak(ctx.author.voice.channel)
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     await self.send_embed_msg(
                         ctx,
@@ -545,7 +546,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return False
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except IndexError:
                 await self.send_embed_msg(

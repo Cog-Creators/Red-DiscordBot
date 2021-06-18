@@ -2,12 +2,14 @@ import asyncio
 import contextlib
 import logging
 import re
+
 from collections import OrderedDict
 from pathlib import Path
 from typing import Final, Pattern
 
 import discord
 import lavalink
+
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
 from redbot.core import commands
@@ -15,7 +17,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_list
 
 from ...audio_logging import debug_exc_log
-from ...errors import CommandRejected, TrackEnqueueError
+from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 
@@ -30,59 +32,19 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         # check for unsupported arch
         # Check on this needs refactoring at a later date
         # so that we have a better way to handle the tasks
-        is_owner = await ctx.bot.is_owner(ctx.author)
-        if self.command_audioset_lavalink in [ctx.command, ctx.command.root_parent]:
+        if self.command_llsetup in [ctx.command, ctx.command.root_parent]:
             pass
-        elif self.lavalink_connect_task and self.lavalink_connect_task.cancelled():
-            # This message does not need to be shown to non Owners,
-            if is_owner:
-                await ctx.send(
-                    _(
-                        "You have attempted to run our Lavalink node on an unsupported"
-                        " architecture. Only settings related commands will be available."
-                    )
-                )
-            raise RuntimeError(
-                "Not running Audio command due to invalid machine architecture for Lavalink."
-            )
-        not_deafened_commands = [  # TODO: Add the missing ones to the ABC
-            self.command_play,
-            self.command_prev,
-            self.command_playlist,
-            self.command_autoplay,
-            self.command_bump,
-            self.command_bumpplay,
-            self.command_disconnect,
-            self.command_effects,
-            self.command_equalizer,
-            self.command_genre,
-            self.command_local,
-            self.command_pause,
-            self.command_playmix,
-            self.command_search,
-            self.command_seek,
-            self.command_sing,
-            self.command_skip,
-            self.command_stop,
-            self.command_summon,
-            self.command_volume,
-        ]
-        if not is_owner and ctx.guild:
-            dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
 
-            if not (
-                ctx.author.id == ctx.guild.owner_id
-                or (dj_enabled and await self._has_dj_role(ctx, ctx.author))
-                or await self.bot.is_mod(ctx.author)
-            ) and any(
-                command in not_deafened_commands
-                for command in [ctx.command, ctx.command.root_parent]
-            ):
-                voice: discord.VoiceState = ctx.author.voice
-                if ctx.author.voice:
-                    if voice.self_deaf or voice.deaf:
-                        msg = _("You are unable to run this command while deafened.")
-                        raise CommandRejected(message=msg, reason="deafened")
+        elif self.lavalink_connect_task and self.lavalink_connect_task.cancelled():
+            await ctx.send(
+                _(
+                    "You have attempted to run Audio's Lavalink server on an unsupported"
+                    " architecture. Only settings related commands will be available."
+                )
+            )
+            raise RuntimeError(
+                "Not running audio command due to invalid machine architecture for Lavalink."
+            )
 
         current_perms = ctx.channel.permissions_for(ctx.me)
         surpass_ignore = (
@@ -117,7 +79,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 text = text.strip()
                 if current_perms.send_messages and current_perms.read_messages:
-                    await ctx.send(box(text=text, lang="yaml"))
+                    await ctx.send(box(text=text, lang="ini"))
                 else:
                     log.info(
                         "Missing write permission in %d, Owner ID: %d",
@@ -132,18 +94,33 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             if not notify_channel:
                 player.store("notify_channel", ctx.channel.id)
 
+        self._daily_global_playlist_cache.setdefault(
+            self.bot.user.id, await self.config.daily_playlists()
+        )
         if self.local_folder_current_path is None:
-            self.local_folder_current_path = await self.config_cache.localpath.get_context_value(
-                ctx.guild
-            )
+            self.local_folder_current_path = Path(await self.config.localpath())
         if not ctx.guild:
             return
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
+
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        self._daily_playlist_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
+        )
+        self._persist_queue_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
+        )
         if dj_enabled:
-            dj_roles = await self.config_cache.dj_roles.get_context_value(ctx.guild)
-            if not dj_roles:
-                await self.config_cache.dj_status.set_guild(ctx.guild, None)
-                await self.config_cache.dj_roles.set_guild(ctx.guild, None)
+            dj_role = self._dj_role_cache.setdefault(
+                ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+            )
+            dj_role_obj = ctx.guild.get_role(dj_role)
+            if not dj_role_obj:
+                await self.config.guild(ctx.guild).dj_enabled.set(None)
+                self._dj_status_cache[ctx.guild.id] = None
+                await self.config.guild(ctx.guild).dj_role.set(None)
+                self._dj_role_cache[ctx.guild.id] = None
                 await self.send_embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
     async def cog_after_invoke(self, ctx: commands.Context) -> None:
@@ -152,15 +129,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
         error = getattr(error, "original", error)
         handled = False
-        if isinstance(error, CommandRejected):
-            handled = True
-            await self.send_embed_msg(
-                ctx,
-                title=_("Unable To Run Command"),
-                description=error.message,
-                error=True,
-            )
-        elif isinstance(error, commands.ArgParserFailure):
+        if isinstance(error, commands.ArgParserFailure):
             handled = True
             msg = _("`{user_input}` is not a valid value for `{command}`").format(
                 user_input=error.user_input,
@@ -299,7 +268,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if (
             channel
             and bot_voice_state is False
-            and await self.config_cache.auto_deafen.get_context_value(channel.guild)
+            and await self.config.guild(member.guild).auto_deafen()
         ):
             try:
                 player = lavalink.get_player(channel.guild.id)

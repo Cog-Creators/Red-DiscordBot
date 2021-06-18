@@ -1,14 +1,14 @@
 import logging
 import time
 from pathlib import Path
+
 from typing import List, Optional, Tuple, Union
 
 import aiohttp
 import discord
 import lavalink
+
 from discord.embeds import EmptyEmbed
-from lavalink import Track
-from lavalink.filters import Volume
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -46,7 +46,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self._error_timer[guild] = now
         return self._error_counter[guild] >= 5
 
-    async def get_active_player_count(self) -> Tuple[Optional[Track], Optional[str], int]:
+    async def get_active_player_count(self) -> Tuple[Optional[str], int]:
         try:
             current = next(
                 (
@@ -61,21 +61,16 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             playing_servers = len(lavalink.active_players())
         except IndexError:
-            current = None
             get_single_title = None
             playing_servers = 0
-        return current, get_single_title, playing_servers
+        return get_single_title, playing_servers
 
-    async def update_bot_presence(
-        self, track: Optional[lavalink.Track], track_string: Optional[str], playing_servers: int
-    ) -> None:
-        if playing_servers == 0 or track is None:
+    async def update_bot_presence(self, track: Optional[str], playing_servers: int) -> None:
+        if playing_servers == 0:
             await self.bot.change_presence(activity=None)
-        elif playing_servers == 1 and track:
+        elif playing_servers == 1:
             await self.bot.change_presence(
-                activity=discord.Activity(
-                    name=f"{track_string}", url=track.uri, type=discord.ActivityType.streaming
-                )
+                activity=discord.Activity(name=track, type=discord.ActivityType.listening)
             )
         elif playing_servers > 1:
             await self.bot.change_presence(
@@ -86,13 +81,16 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+
         if member.bot:
             return True
 
         if member.id == ctx.guild.owner_id:
             return True
 
-        dj_enabled = await self.config_cache.dj_status.get_context_value(ctx.guild)
         if dj_enabled and await self._has_dj_role(ctx, member):
             return True
 
@@ -113,7 +111,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return not nonbots
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
-        return await self.config_cache.dj_roles.member_is_dj(ctx.guild, member)
+        dj_role = self._dj_role_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
+        )
+        dj_role_obj = ctx.guild.get_role(dj_role)
+        return dj_role_obj in ctx.guild.get_member(member.id).roles
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
@@ -126,7 +128,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        autoplay = await self.config_cache.autoplay.get_context_value(ctx.guild)
+        autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
                 pos, dur = player.position, player.current.length
@@ -214,7 +216,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(player, "channel.guild.id", None)
         if not guild_id:
             return
-        if not await self.config_cache.auto_deafen.get_context_value(player.guild):
+        if not await self.config.guild_from_id(guild_id).auto_deafen():
             return
         await player.guild.change_voice_state(channel=player.channel, self_deaf=True)
 
@@ -364,6 +366,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         except KeyError:
             self.update_player_lock(ctx, True)
+        guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
         single_track = None
         index = None
@@ -371,9 +374,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         playlist_url = None
         seek = 0
         if type(query) is not list:
-            if not await self.is_query_allowed(
-                self.config_cache, ctx, f"{query}", query_obj=query
-            ):
+            if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
                 raise QueryUnauthorized(
                     _("{query} is not an allowed query.").format(query=query.to_string_user())
                 )
@@ -410,12 +411,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         embed.set_footer(text=result.exception_message[:2000])
                     else:
                         embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
-                if (
-                    await self.config_cache.external_lavalink_server.get_context_value(
-                        player.guild
-                    )
-                    and query.is_local
-                ):
+                if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
                         "if the `Lavalink.jar` cannot see the track.\n"
@@ -441,19 +437,16 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or Soundcloud playlist
-            max_queue_length = await self.config_cache.max_queue_size.get_context_value(
-                player.guild
-            )
-            if len(player.queue) >= max_queue_length:
+            if len(player.queue) >= 10000:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
             empty_queue = not player.queue
             async for track in AsyncIter(tracks):
-                if len(player.queue) >= max_queue_length:
+                if len(player.queue) >= 10000:
                     continue
                 query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
-                    self.config_cache,
+                    self.config,
                     ctx,
                     f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                     query_obj=query,
@@ -461,13 +454,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if IS_DEBUG:
                         log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                     continue
-
-                elif (
-                    max_length := await self.config_cache.max_track_length.get_context_value(
-                        ctx.guild
-                    )
-                ) > 0:
-                    if self.is_track_length_allowed(track, max_length):
+                elif guild_data["maxlength"] > 0:
+                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
                         track.extras.update(
                             {
@@ -514,7 +502,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     num=track_len, maxlength_msg=maxlength_msg
                 )
             )
-            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
+            if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
@@ -531,9 +519,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # this is in the case of [p]play <query>, a single Spotify url/code
             # or this is a localtrack item
             try:
-                if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
-                    player.guild
-                ):
+                if len(player.queue) >= 10000:
                     return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
 
                 single_track = (
@@ -547,7 +533,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     single_track.start_timestamp = seek * 1000
                 query = Query.process_input(single_track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
-                    self.config_cache,
+                    self.config,
                     ctx,
                     (
                         f"{single_track.title} {single_track.author} {single_track.uri} "
@@ -561,12 +547,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif (
-                    max_length := await self.config_cache.max_track_length.get_context_value(
-                        ctx.guild
-                    )
-                ) > 0:
-                    if self.is_track_length_allowed(single_track, max_length):
+                elif guild_data["maxlength"] > 0:
+                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                         single_track.extras.update(
                             {
                                 "enqueue_time": int(time.time()),
@@ -615,7 +597,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 single_track, self.local_folder_current_path
             )
             embed = discord.Embed(title=_("Track Enqueued"), description=description)
-            if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
+            if not guild_data["shuffle"] and queue_dur > 0:
                 embed.set_footer(
                     text=_("{time} until track playback: #{position} in queue").format(
                         time=queue_total_duration, position=before_queue_length + 1
@@ -695,19 +677,14 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def set_player_settings(self, ctx: commands.Context) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config_cache.shuffle.get_context_value(ctx.guild)
-        repeat = await self.config_cache.repeat.get_context_value(ctx.guild)
-        volume = Volume(
-            value=await self.config_cache.volume.get_context_value(
-                ctx.guild, channel=player.channel
-            )
-            / 100
-        )
-        shuffle_bumped = await self.config_cache.shuffle_bumped.get_context_value(ctx.guild)
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+        repeat = await self.config.guild(ctx.guild).repeat()
+        volume = await self.config.guild(ctx.guild).volume()
+        shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
         player.repeat = repeat
         player.shuffle = shuffle
         player.shuffle_bumped = shuffle_bumped
-        if float(player.volume) > float(volume):
+        if player.volume != volume:
             await player.set_volume(volume)
 
     async def maybe_move_player(self, ctx: commands.Context) -> bool:
@@ -736,7 +713,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 await player.move_to(
                     user_channel,
-                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 return True
         else:

@@ -1,6 +1,7 @@
 import logging
 import sys
-from typing import Any, Final, Tuple
+
+from typing import Final, Any, Tuple
 
 IS_DEBUG: Final[bool] = "--debug" in sys.argv
 

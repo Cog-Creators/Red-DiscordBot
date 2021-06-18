@@ -1,18 +1,13 @@
-from __future__ import annotations
-
 import concurrent
+import json
 import logging
 import time
 from pathlib import Path
+
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, List, Union
 
 import lavalink
-
-try:
-    from redbot import json
-except ImportError:
-    import json
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -44,23 +39,16 @@ _ = Translator("Audio", Path(__file__))
 
 if TYPE_CHECKING:
     from .. import Audio
-    from ..core.utilities import SettingCacheManager
 
 
 class QueueInterface:
     def __init__(
-        self,
-        bot: Red,
-        config: Config,
-        conn: APSWConnectionWrapper,
-        cog: Union["Audio", Cog],
-        cache: SettingCacheManager,
+        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.database = conn
         self.config = config
         self.cog = cog
-        self.config_cache = cache
         self.statement = SimpleNamespace()
         self.statement.pragma_temp_store = PRAGMA_SET_temp_store
         self.statement.pragma_journal_mode = PRAGMA_SET_journal_mode

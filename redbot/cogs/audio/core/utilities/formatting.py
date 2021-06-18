@@ -1,12 +1,15 @@
+import datetime
 import logging
 import math
 import re
 import time
 from pathlib import Path
+
 from typing import List, Optional
 
 import discord
 import lavalink
+
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -98,7 +101,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             try:
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config_cache.auto_deafen.get_context_value(ctx.guild),
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
@@ -108,15 +111,12 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
-        if len(player.queue) >= await self.config_cache.max_queue_size.get_context_value(
-            player.guild
-        ):
+        guild_data = await self.config.guild(ctx.guild).all()
+        if len(player.queue) >= 10000:
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
             )
-        if not await self.maybe_charge_requester(
-            ctx, await self.config_cache.jukebox_price.get_context_value(ctx.guild)
-        ):
+        if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
@@ -158,7 +158,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         before_queue_length = len(player.queue)
         query = Query.process_input(search_choice, self.local_folder_current_path)
         if not await self.is_query_allowed(
-            self.config_cache,
+            self.config,
             ctx,
             f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
@@ -169,11 +169,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
             )
-        elif (
-            max_length := await self.config_cache.max_track_length.get_context_value(ctx.guild)
-        ) > 0:
+        elif guild_data["maxlength"] > 0:
 
-            if self.is_track_length_allowed(search_choice, max_length):
+            if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
                 search_choice.extras.update(
                     {
                         "enqueue_time": int(time.time()),
@@ -200,7 +198,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             player.maybe_shuffle()
             self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
-        if not await self.config_cache.shuffle.get_context_value(ctx.guild) and queue_dur > 0:
+        if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
                 text=_("{time} until track playback: #{position} in queue").format(
                     time=queue_total_duration, position=before_queue_length + 1

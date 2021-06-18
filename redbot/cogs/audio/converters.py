@@ -2,9 +2,11 @@ import argparse
 import functools
 import re
 from pathlib import Path
-from typing import Final, List, MutableMapping, Optional, Pattern, Tuple, Union
+
+from typing import Final, MutableMapping, Optional, Pattern, Tuple, Union
 
 import discord
+
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
@@ -12,7 +14,6 @@ from redbot.core.utils import AsyncIter
 
 from .apis.api_utils import standardize_scope
 from .apis.playlist_interface import get_all_playlist_converter
-from .audio_dataclasses import Query
 from .errors import NoMatchesFound, TooManyMatches
 from .utils import PlaylistScope
 
@@ -20,13 +21,11 @@ _ = Translator("Audio", Path(__file__))
 
 __all__ = [
     "ComplexScopeParser",
-    "MultiLineConverter",
     "PlaylistConverter",
     "ScopeParser",
     "LazyGreedyConverter",
     "standardize_scope",
     "get_lazy_converter",
-    "get_lazy_multiline_converter",
     "get_playlist_converter",
 ]
 
@@ -139,162 +138,6 @@ async def global_unique_user_finder(
                 "Please use the ID for the server you're trying to specify."
             ).format(arg=arg)
         )
-
-
-class MultiLineConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> List[Query]:
-        """Split the input into multiple arguments (Separated by `\n`)"""
-        response = []
-        for line in arg.splitlines():
-            response.append(Query.process_input(line, ctx.cog.local_folder_current_path))
-        if not response:
-            raise commands.BadArgument(_("Could not match process queries."))
-        return response
-
-
-class KaraokeConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Karaoke arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            level, mono, band, width = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _("Expect either `off` OR `<level> <mono> <band> <width>` as an argument")
-            )
-        else:
-            return True, entries
-
-
-class TimescaleConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Timescale arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            speed, pitch, rate = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _("Expect either `off` OR `<speed> <pitch> <rate>` as an argument")
-            )
-        else:
-            return True, entries
-
-
-class TremoloConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Tremolo arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            frequency, depth = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _("Expect either `off` OR `<frequency> <depth>` as an argument")
-            )
-        else:
-            return True, entries
-
-
-class VibratoConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Vibrato arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            frequency, depth = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _("Expect either `off` OR `<frequency> <depth>` as an argument")
-            )
-        else:
-            return True, entries
-
-
-class RotationConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Rotation arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            (frequency,) = entries
-        except ValueError:
-            raise commands.BadArgument(_("Expect either `off` OR `<frequency>` as an argument"))
-        else:
-            return True, entries
-
-
-class DistortionConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the Distortion arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            scale, offset, soffset, sscale, cscale, coffset, toffset, tscale = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _(
-                    "Expect either `off` OR `<scale> <offset> <soffset> <sscale> <cscale> <coffset> <toffset> <tscale>` as an argument"
-                )
-            )
-        else:
-            return True, entries
-
-
-class OffConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str = "True") -> bool:
-        """Parses the Rotation arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False
-        return True
-
-
-class ChannelMixConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the ChannelMix arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            left_to_left, left_to_right, right_to_left, right_to_right = entries
-        except ValueError:
-            raise commands.BadArgument(
-                _(
-                    "Expect either `off` OR `<left_to_left> <left_to_right> <right_to_left> <right_to_right>` as an argument"
-                )
-            )
-        else:
-            return True, entries
-
-
-class LowPassConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[bool, Optional[List[float]]]:
-        """Parses the LowPass arguments"""
-        arg = arg.strip()
-        if arg.lower() in ["off", "disable", "reset", "clear", "remove"]:
-            return False, None
-        try:
-            entries: List[float] = list(map(float, list(map(str.strip, arg.split()))))
-            (smoothing,) = entries
-        except ValueError:
-            raise commands.BadArgument(_("Expect either `off` OR `<smoothing>` as an argument"))
-        else:
-            return True, entries
 
 
 class PlaylistConverter(commands.Converter):
@@ -661,42 +504,19 @@ class LazyGreedyConverter(commands.Converter):
         self.splitter_Value = splitter
 
     async def convert(self, ctx: commands.Context, argument: str) -> str:
-        full_message = ctx.message.content.partition(f"{argument}")
+        full_message = ctx.message.content.partition(f" {argument} ")
         if len(full_message) == 1:
             full_message = (
                 (argument if argument not in full_message else "") + " " + full_message[0]
             )
         elif len(full_message) > 1:
             full_message = (
-                (argument if argument not in full_message else "")
-                + " "
-                + " ".join(full_message[1:])
+                (argument if argument not in full_message else "") + " " + full_message[-1]
             )
         greedy_output = (" " + full_message.replace("—", "--")).partition(
             f" {self.splitter_Value}"
         )[0]
         return f"{greedy_output}".strip()
-
-
-class LazyMultiLineConverter(commands.Converter):
-    def __init__(self, splitter: str):
-        self.splitter_Value = splitter
-
-    async def convert(self, ctx: commands.Context, argument: str) -> List[Query]:
-        full_message = await LazyGreedyConverter(self.splitter_Value).convert(ctx, argument)
-        return await MultiLineConverter().convert(ctx, full_message)
-
-
-def get_lazy_multiline_converter(splitter: str) -> type:
-    """Returns a typechecking safe `LazyMultiLineConverter` suitable for use with discord.py."""
-
-    class PartialMeta(type(LazyMultiLineConverter)):
-        __call__ = functools.partialmethod(type(LazyMultiLineConverter).__call__, splitter)
-
-    class ValidatedConverter(LazyMultiLineConverter, metaclass=PartialMeta):
-        pass
-
-    return ValidatedConverter
 
 
 def get_lazy_converter(splitter: str) -> type:

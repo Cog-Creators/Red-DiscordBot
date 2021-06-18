@@ -1,6 +1,7 @@
 import logging
 import re
 import struct
+
 from typing import Final, Optional
 
 import aiohttp

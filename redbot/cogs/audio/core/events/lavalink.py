@@ -9,8 +9,8 @@ import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
-from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 
+from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -43,19 +43,22 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             await player.stop()
             await player.disconnect()
             if guild:
-                await self.config_cache.autoplay.set_currently_in_guild(guild, None)
+                await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set(
+                    []
+                )
             return
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
-        disconnect = await self.config_cache.disconnect.get_context_value(guild)
+        guild_data = await self.config.guild(guild).all()
+        disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
             self._ll_guild_updates.discard(guild.id)
             return
 
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
-            deafen = await self.config_cache.auto_deafen.get_context_value(guild)
+            deafen = guild_data["auto_deafen"]
             event_channel_id = extra.get("channelID")
             _error_code = extra.get("code")
             if _error_code in [1000] or not guild:
@@ -92,13 +95,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
         current_id = self.rgetattr(current_track, "_info", {}).get("identifier")
 
-        repeat = await self.config_cache.repeat.get_context_value(guild)
-        notify = await self.config_cache.notify.get_context_value(guild)
-        autoplay = await self.config_cache.autoplay.get_context_value(guild)
+        repeat = guild_data["repeat"]
+        notify = guild_data["notify"]
+        autoplay = guild_data["auto_play"]
         description = await self.get_track_description(
             current_track, self.local_folder_current_path
         )
-        status = await self.config_cache.status.get_context_value(guild)
+        status = await self.config.status()
         log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
@@ -118,11 +121,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             notify_channel = player.fetch("notify_channel")
             if notify_channel and autoplay:
-                await self.config_cache.autoplay.set_currently_in_guild(
-                    guild, [notify_channel, player.channel.id]
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    [notify_channel, player.channel.id]
                 )
             else:
-                await self.config_cache.autoplay.set_currently_in_guild(guild)
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
             self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
@@ -176,10 +181,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     dur = self.format_time(current_length)
 
                 thumb = None
-                if (
-                    await self.config_cache.thumbnail.get_context_value(player.guild)
-                    and current_thumbnail
-                ):
+                if await self.config.guild(guild).thumbnail() and current_thumbnail:
                     thumb = current_thumbnail
 
                 notify_message = await self.send_embed_msg(
@@ -193,14 +195,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
-            current, get_single_title, playing_servers = await self.get_active_player_count()
-            await self.update_bot_presence(current, get_single_title, playing_servers)
+            player_check = await self.get_active_player_count()
+            await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
-                current, get_single_title, playing_servers = await self.get_active_player_count()
-                await self.update_bot_presence(current, get_single_title, playing_servers)
+                player_check = await self.get_active_player_count()
+                await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
@@ -210,18 +212,20 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
-                    await self.config_cache.autoplay.set_currently_in_guild(guild)
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
-                current, get_single_title, playing_servers = await self.get_active_player_count()
-                await self.update_bot_presence(current, get_single_title, playing_servers)
+                player_check = await self.get_active_player_count()
+                await self.update_bot_presence(*player_check)
 
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
         ]:
-            message_channel_id = player.fetch("notify_channel")
+            message_channel = player.fetch("notify_channel")
             while True:
                 if current_track in player.queue:
                     player.queue.remove(current_track)
@@ -239,19 +243,21 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             if early_exit:
                 self._disconnected_players[guild_id] = True
                 self.play_lock[guild_id] = False
+                eq = player.fetch("eq")
                 player.queue = []
                 player.store("playing_song", None)
                 player.store("autoplay_notified", False)
-                await self.config.custom("EQUALIZER", str(guild_id)).eq_bands.set(
-                    player.equalizer.get()
-                )
+                if eq:
+                    await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
-                await self.config_cache.autoplay.set_currently_in_guild(guild)
+                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
+                    []
+                )
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
-            message_channel = self.bot.get_channel(message_channel_id)
-            if message_channel and self._has_notify_perms(message_channel):
+            if message_channel:
+                message_channel = self.bot.get_channel(message_channel)
                 if early_exit:
                     embed = discord.Embed(
                         colour=await self.bot.get_embed_color(message_channel),
@@ -276,19 +282,10 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             ).format(error=description),
                         )
                     else:
-                        error = extra.get("message").replace("\n", "")
-                        cause = extra.get("cause", "").replace("\n", "")
-                        song = current_track or prev_song
-                        if cause and song:
-                            log.warning(
-                                "Track failed to play: error: %s | ID: %s",
-                                cause,
-                                song.track_identifier,
-                            )
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(error, description),
+                            description="{}\n{}".format(extra.replace("\n", ""), description),
                         )
                         if current_id:
                             asyncio.create_task(
@@ -425,7 +422,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config_cache.autoplay.set_currently_in_guild(guild)
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
                 else:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
@@ -437,7 +436,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config_cache.autoplay.set_currently_in_guild(guild)
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
             elif code in (42069,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
@@ -501,7 +502,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config_cache.autoplay.set_currently_in_guild(guild)
+                    await self.config.guild_from_id(
+                        guild_id=guild_id
+                    ).currently_auto_playing_in.set([])
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)

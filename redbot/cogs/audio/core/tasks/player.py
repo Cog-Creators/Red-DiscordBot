@@ -2,9 +2,11 @@ import asyncio
 import logging
 import time
 from pathlib import Path
+
 from typing import Dict
 
 import lavalink
+
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -50,18 +52,16 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         player.store("autoplay_notified", False)
                         await player.stop()
                         await player.disconnect()
-                        await self.config_cache.autoplay.set_currently_in_guild(server_obj)
+                        await self.config.guild_from_id(
+                            guild_id=sid
+                        ).currently_auto_playing_in.set([])
                     except Exception as err:
                         debug_exc_log(
                             log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
                         )
 
-                elif sid in stop_times and await self.config_cache.empty_dc.get_context_value(
-                    server_obj
-                ):
-                    emptydc_timer = await self.config_cache.empty_dc_timer.get_context_value(
-                        server_obj
-                    )
+                elif sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
+                    emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
@@ -70,19 +70,19 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                             player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
-                            await self.config_cache.autoplay.set_currently_in_guild(server_obj)
+                            await self.config.guild_from_id(
+                                guild_id=sid
+                            ).currently_auto_playing_in.set([])
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 stop_times.pop(sid, None)
                             debug_exc_log(
                                 log, err, "Exception raised in Audio's emptydc_timer for %s.", sid
                             )
-                elif sid in pause_times and await self.config_cache.empty_pause.get_context_value(
-                    server_obj
+                elif (
+                    sid in pause_times and await self.config.guild(server_obj).emptypause_enabled()
                 ):
-                    emptypause_timer = await self.config_cache.empty_pause_timer.get_context_value(
-                        server_obj
-                    )
+                    emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
                     if (time.time() - pause_times.get(sid, 0)) >= emptypause_timer:
                         try:
                             await lavalink.get_player(sid).pause()

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import aiohttp
-from redbot.core.commands import UserFeedbackCheckFailure
+
 from redbot.core.i18n import Translator
 
 _ = Translator("Audio", Path(__file__))
@@ -9,10 +9,6 @@ _ = Translator("Audio", Path(__file__))
 
 class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
-
-
-class ShouldAutoRecover(AudioError, RuntimeError):
-    """Spawning a Lavalink Nonde failed, this error is raised when the bot should attempt to connect to external."""
 
 
 class LavalinkDownloadFailed(AudioError, RuntimeError):
@@ -124,12 +120,3 @@ class InvalidLocalTrack(LocalTrackError):
 
 class InvalidLocalTrackFolder(LocalTrackError):
     """Base exception for local track errors."""
-
-
-class CommandRejected(AudioError, UserFeedbackCheckFailure):
-    """An Audio command is rejected."""
-
-    def __init__(self, message: str, reason: str):
-        super().__init__()
-        self.message = message
-        self.reason = reason

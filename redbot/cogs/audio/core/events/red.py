@@ -5,7 +5,6 @@ from typing import Literal, Mapping
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
-
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 

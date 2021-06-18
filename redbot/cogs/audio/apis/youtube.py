@@ -1,15 +1,10 @@
-from __future__ import annotations
-
+import json
 import logging
 from pathlib import Path
+
 from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
-
-try:
-    from redbot import json
-except ImportError:
-    import json
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -20,7 +15,6 @@ from ..errors import YouTubeApiError
 
 if TYPE_CHECKING:
     from .. import Audio
-    from ..core.utilities import SettingCacheManager
 
 log = logging.getLogger("red.cogs.Audio.api.YouTube")
 _ = Translator("Audio", Path(__file__))
@@ -31,17 +25,11 @@ class YouTubeWrapper:
     """Wrapper for the YouTube Data API."""
 
     def __init__(
-        self,
-        bot: Red,
-        config: Config,
-        session: aiohttp.ClientSession,
-        cog: Union["Audio", Cog],
-        cache: SettingCacheManager,
+        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.config = config
         self.session = session
-        self.config_cache = cache
         self.api_key: Optional[str] = None
         self._token: Mapping[str, str] = {}
         self.cog = cog
