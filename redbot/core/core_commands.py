@@ -439,7 +439,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
         pypi_version, py_version_req = await fetch_latest_red_version_info()
-        outdated = pypi_version and pypi_version > red_version_info
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
@@ -463,14 +462,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
             embed.add_field(name=_("Red version"), value=red_version)
-            if outdated in (True, None):
-                if outdated is True:
-                    outdated_value = _("Yes, {version} is available.").format(
-                        version=str(pypi_version)
-                    )
-                else:
-                    outdated_value = _("Checking for updates failed.")
-                embed.add_field(name=_("Outdated"), value=outdated_value)
             if custom_info:
                 embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
             embed.add_field(name=_("About Red"), value=about, inline=False)
@@ -518,15 +509,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     dpy_version=dpy_version,
                     red_version=red_version,
                 )
-
-            if outdated in (True, None):
-                if outdated is True:
-                    outdated_value = _("Yes, {version} is available.").format(
-                        version=str(pypi_version)
-                    )
-                else:
-                    outdated_value = _("Checking for updates failed.")
-                extras += _("Outdated:          [{state}]\n").format(state=outdated_value)
 
             red = (
                 _("**About Red**\n")
