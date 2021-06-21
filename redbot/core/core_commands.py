@@ -386,6 +386,12 @@ class CoreLogic:
         permissions = discord.Permissions(perms_int)
         return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
 
+    @staticmethod
+    async def _can_get_invite_url(ctx):
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_invite_public = await ctx.bot._config.invite_public()
+        return is_owner or is_invite_public
+
 
 @i18n.cog_i18n(_)
 class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
