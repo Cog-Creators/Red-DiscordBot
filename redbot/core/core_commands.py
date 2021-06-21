@@ -386,12 +386,6 @@ class CoreLogic:
         permissions = discord.Permissions(perms_int)
         return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
 
-    @staticmethod
-    async def _can_get_invite_url(ctx):
-        is_owner = await ctx.bot.is_owner(ctx.author)
-        is_invite_public = await ctx.bot._config.invite_public()
-        return is_owner or is_invite_public
-
 
 @i18n.cog_i18n(_)
 class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
@@ -1473,7 +1467,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("No exception has occurred yet."))
 
     @commands.command()
-    @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
         """Shows [botname]'s invite url.
 
@@ -1484,13 +1477,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]invite`
         """
-        try:
-            await ctx.author.send(await self._invite_url())
-        except discord.errors.Forbidden:
-            await ctx.send(
-                "I couldn't send the invite message to you in DM. "
-                "Either you blocked me or you disabled DMs in this server."
+        public = await self.bot._config.invite_public()
+        channel = ctx.author
+        if public:
+            channel = ctx.channel
+        invite = await self._invite_url()
+        kwargs = {"content": f"Here is Jojobot's invite: {invite}"}
+        if await ctx.embed_requested():
+            embed = discord.Embed(
+                title="Jojobot invte",
+                description=f"Here is [Jojobot's invite]({invite}) url",
+                colour=await ctx.embed_colour(),
+                timestamp=datetime.datetime.utcnow()
             )
+            embed.set_thumbnail(url=ctx.me.avatar_url)
+            embed.add_field(name="Here is a link if you're on mobile", value=invite)
+            kwargs = {"embed": embed}
+        try:
+            await channel.send(**kwargs)
+        except discord.Forbidden:
+            await ctx.send("I could not send that to you. Please make sure I can dm you.")
 
     @commands.group()
     @checks.is_owner()
@@ -4872,7 +4878,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         # We need a link which contains a thank you to other projects which we use at some point.
 
     @commands.Cog.listener()
-    async def on_message_without_command(self, msg: discord.Message):
+    async def on_message(self, msg: discord.Message):
         if msg.author.bot:
             return
         bot_id = re.compile(rf"<@!?{self.bot.user.id}>")
@@ -4895,6 +4901,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 f"\nWhy don't you use `{help_prefix}help` to see what I can do?"
             )
         if not msg.guild:
+            allowed = await self.bot.allowed_by_whitelist_blacklist(msg.author)
+            if not allowed:
+                await msg.reply(
+                    "You are blacklisted from Jojobot. "
+                    "You may appeal here but Jojo (the owner) can ignore you if he so wishes."
+                )
+            fake_context = await self.bot.get_context(msg)
+            if fake_context.command and allowed:
+                return
+            del fake_context
             maybe_channel = await self.bot._config.dm_log_channel()
             if not maybe_channel or not (channel := self.bot.get_channel(maybe_channel)):
                 return
