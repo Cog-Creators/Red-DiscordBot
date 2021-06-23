@@ -4887,7 +4887,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def on_message(self, msg: discord.Message):
         if msg.author.bot:
             return
-        bot_id = re.compile(rf"<@!?{self.bot.user.id}>")
+        bot_id = re.compile(rf"^<@!?{self.bot.user.id}>$")
         if re.match(bot_id, msg.content):
             prefixes = set(await self.bot.get_valid_prefixes(msg.guild))
             for maybe in (f"<@{self.bot.user.id}>", f"<@!{self.bot.user.id}>"):
