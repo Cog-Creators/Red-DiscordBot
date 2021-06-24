@@ -12,10 +12,12 @@ import os
 import re
 import sys
 import platform
+import psutil
 import getpass
 import pip
 import traceback
 from pathlib import Path
+from redbot.core import data_manager
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
@@ -25,7 +27,6 @@ import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
-from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -3587,51 +3588,56 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             or "None"
         )
-        if await ctx.embed_requested():
-            e = discord.Embed(color=await ctx.embed_colour())
-            e.title = "Debug Info for Red"
-            e.add_field(name="Red version", value=redver, inline=True)
-            e.add_field(name="Python version", value=pyver, inline=True)
-            e.add_field(name="Discord.py version", value=dpy_version, inline=True)
-            e.add_field(name="Pip version", value=pipver, inline=True)
-            e.add_field(name="System arch", value=platform.machine(), inline=True)
-            e.add_field(name="User", value=user_who_ran, inline=True)
-            e.add_field(name="Storage type", value=driver, inline=True)
-            e.add_field(name="Disabled intents", value=disabled_intents, inline=True)
-            e.add_field(name="OS version", value=osver, inline=False)
-            e.add_field(
-                name="Python executable",
-                value=escape(sys.executable, formatting=True),
-                inline=False,
-            )
-            e.add_field(
-                name="Data path",
-                value=escape(str(data_path), formatting=True),
-                inline=False,
-            )
-            e.add_field(
-                name="Metadata file",
-                value=escape(str(config_file), formatting=True),
-                inline=False,
-            )
-            await ctx.send(embed=e)
-        else:
-            info = (
-                "Debug Info for Red\n\n"
-                + "Red version: {}\n".format(redver)
-                + "Python version: {}\n".format(pyver)
-                + "Discord.py version: {}\n".format(dpy_version)
-                + "Pip version: {}\n".format(pipver)
-                + "System arch: {}\n".format(platform.machine())
-                + "User: {}\n".format(user_who_ran)
-                + "OS version: {}\n".format(osver)
-                + "Storage type: {}\n".format(driver)
-                + "Disabled intents: {}\n".format(disabled_intents)
-                + "Python executable: {}\n".format(sys.executable)
-                + "Data path: {}\n".format(data_path)
-                + "Metadata file: {}\n".format(config_file)
-            )
-            await ctx.send(box(info))
+
+        def _datasize(num: int):
+            for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
+                if abs(num) < 1024.0:
+                    return "{0:.1f}{1}".format(num, unit)
+                num /= 1024.0
+            return "{0:.1f}{1}".format(num, "YB")
+
+        memory_ram = psutil.virtual_memory()
+        ram_string = "{}/{} ({}%)".format(
+            _datasize(memory_ram.used),
+            _datasize(memory_ram.total),
+            memory_ram.percent
+        )
+
+        owners = []
+        for uid in self.bot.owner_ids:
+            try:
+                u = await self.bot.get_or_fetch_user(uid)
+                owners.append("{} ({})".format(u.id, str(u)))
+            except discord.HTTPException:
+                owners.append("{} (Unresolvable)".format(uid))
+        owners_string = ", ".join(owners) or "None"
+
+        info = (
+            "# Debug Info for Red:\n\n"
+            + "## System Metadata:\n"
+            + "CPU Cores: {} ({})\n".format(psutil.cpu_count(), platform.machine())
+            + "RAM: {}\n\n".format(ram_string)
+
+            + "## OS Variables:\n"
+            + "OS version: {}\n".format(osver)
+            + "User: {}\n\n".format(user_who_ran)
+
+            + "Python executable: {}\n".format(sys.executable)
+            + "Python version: {}\n".format(pyver)
+            + "Pip version: {}\n\n".format(pipver)
+
+            + "Red version: {}\n".format(redver)
+            + "Discord.py version: {}\n\n".format(dpy_version)
+
+            + "## Red variables:\n"
+            + "Instance name: {}\n".format(data_manager.instance_name)
+            + "Owner(s): {}\n".format(owners_string)
+            + "Storage type: {}\n".format(driver)
+            + "Disabled intents: {}\n".format(disabled_intents)
+            + "Data path: {}\n".format(data_path)
+            + "Metadata file: {}\n".format(config_file)
+        )
+        await ctx.send(box(info, lang="md"))
 
     @commands.group(aliases=["whitelist"])
     @checks.is_owner()
