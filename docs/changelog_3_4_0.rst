@@ -153,14 +153,14 @@ Developer changelog
 
     Here's the list of the methods that were added to the ``bot`` object:
 
-        - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
-        - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
-        - `Red.get_blacklist() <RedBase.get_blacklist()>`
-        - `Red.clear_blacklist() <RedBase.clear_blacklist()>`
-        - `Red.add_to_whitelist() <RedBase.add_to_whitelist()>`
-        - `Red.remove_from_whitelist() <RedBase.remove_from_whitelist()>`
-        - `Red.get_whitelist() <RedBase.get_whitelist()>`
-        - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
+        - `Red.add_to_blacklist()`
+        - `Red.remove_from_blacklist()`
+        - `Red.get_blacklist()`
+        - `Red.clear_blacklist()`
+        - `Red.add_to_whitelist()`
+        - `Red.remove_from_whitelist()`
+        - `Red.get_whitelist()`
+        - `Red.clear_whitelist()`
 
 - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
 
@@ -479,7 +479,7 @@ Developer changelog
 - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
 
     - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
-- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
 - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
@@ -675,8 +675,8 @@ Dev Cog
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
-        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
-        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
+        - `bot.add_dev_env_value() <Red.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
 
 
 Documentation changes
@@ -1067,9 +1067,9 @@ Core Bot
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
-- Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
-- Added `bot.get_or_fetch_user() <RedBase.get_or_fetch_user()>` and `bot.get_or_fetch_member() <RedBase.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
+- Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
 - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
 Bank
@@ -1232,7 +1232,7 @@ Core Bot
 
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
-    - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
+    - New methods added: `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Red.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
@@ -1242,9 +1242,9 @@ Core Bot
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
-- Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
-- `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
+- `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
 - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
