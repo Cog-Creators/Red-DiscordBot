@@ -3613,25 +3613,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         owners_string = ", ".join(owners) or "None"
 
         info = (
-            "# Debug Info for Red:\n\n"
-            + "## System Metadata:\n"
-            + "CPU Cores: {} ({})\n".format(psutil.cpu_count(), platform.machine())
-            + "RAM: {}\n\n".format(ram_string)
-            + "## OS Variables:\n"
-            + "OS version: {}\n".format(osver)
-            + "User: {}\n\n".format(user_who_ran)
-            + "Python executable: {}\n".format(sys.executable)
-            + "Python version: {}\n".format(pyver)
-            + "Pip version: {}\n\n".format(pipver)
-            + "Red version: {}\n".format(redver)
-            + "Discord.py version: {}\n\n".format(dpy_version)
-            + "## Red variables:\n"
-            + "Instance name: {}\n".format(data_manager.instance_name)
-            + "Owner(s): {}\n".format(owners_string)
-            + "Storage type: {}\n".format(driver)
-            + "Disabled intents: {}\n".format(disabled_intents)
-            + "Data path: {}\n".format(data_path)
-            + "Metadata file: {}\n".format(config_file)
+            f"# Debug Info for Red:\n\n"
+            f"## System Metadata:\n"
+            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\n"
+            f"RAM: {ram_string}\n\n"
+            f"## OS Variables:\n"
+            f"OS version: {osver}\n"
+            f"User: {user_who_ran}\n\n"
+            f"Python executable: {sys}\n"
+            f"Python version: {pyver}\n"
+            f"Pip version: {pipver}\n\n"
+            f"Red version: {redver}\n"
+            f"Discord.py version: {dpy_version}\n\n"
+            f"## Red variables:\n"
+            f"Instance name: {data_manager}\n"
+            f"Owner(s): {owners_string}\n"
+            f"Storage type: {driver}\n"
+            f"Disabled intents: {disabled_intents}\n"
+            f"Data path: {data_path}\n"
+            f"Metadata file: {config_file}\n"
         )
         await ctx.send(box(info, lang="md"))
 
