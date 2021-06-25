@@ -3559,7 +3559,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         IS_MAC = sys.platform == "darwin"
         IS_LINUX = sys.platform == "linux"
 
-        python_version = '.'.join(map(str, sys.version_info[:3]))
+        python_version = ".".join(map(str, sys.version_info[:3]))
         pyver = f"{python_version} ({platform.architecture()[0]})"
         pipver = pip.__version__
         redver = red_version_info
