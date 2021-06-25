@@ -105,7 +105,7 @@ class Stream:
 class YoutubeStream(Stream):
 
     token_name = "youtube"
-    platform_name = "Youtube"
+    platform_name = "YouTube"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)

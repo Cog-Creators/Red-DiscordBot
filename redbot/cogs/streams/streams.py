@@ -380,14 +380,14 @@ class Streams(commands.Cog):
     @streamalert.command(name="list")
     async def streamalert_list(self, ctx: commands.Context):
         """List all active stream alerts in this server."""
-        streams_list = defaultdict(dict)
+        streams_list = defaultdict(lambda: defaultdict(list))
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         msg = _("Active alerts:\n\n")
 
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].setdefault(stream.platform_name, []).append(
+                    streams_list[channel_id][stream.platform_name].append(
                         stream.name.lower()
                     )
 
@@ -683,7 +683,8 @@ class Streams(commands.Cog):
                 self.streams.append(stream)
             await ctx.send(
                 _(
-                    "I'll now send a notification in the channel {channel} when {stream.name} is live."
+                    "I'll now send a notification in the {channel.mention} channel"
+                    " when {stream.name} is live."
                 ).format(stream=stream, channel=discord_channel)
             )
         else:
@@ -692,8 +693,9 @@ class Streams(commands.Cog):
                 self.streams.remove(stream)
             await ctx.send(
                 _(
-                    "I won't send notifications about {stream.name} in the channel {discord_channel} anymore"
-                ).format(stream=stream, discord_channel=discord_channel)
+                    "I won't send notifications about {stream.name}"
+                    " in the {channel.mention} channel anymore"
+                ).format(stream=stream, channel=discord_channel)
             )
 
         await self.save_streams()
