@@ -60,8 +60,6 @@ async def menu(
         The user allowed to interact with the menu. Defaults to ctx.author.
         This is a keyword-only argument.
 
-        *Added in 3.4.10*
-
     Raises
     ------
     RuntimeError
