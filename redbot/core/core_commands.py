@@ -3559,19 +3559,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         IS_MAC = sys.platform == "darwin"
         IS_LINUX = sys.platform == "linux"
 
-        pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
+        python_version = '.'.join(map(str, sys.version_info[:3]))
+        pyver = f"{python_version} ({platform.architecture()[0]})"
         pipver = pip.__version__
         redver = red_version_info
         dpy_version = discord.__version__
         if IS_WINDOWS:
             os_info = platform.uname()
-            osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
+            osver = f"{os_info.system} {os_info.release} (version {os_info.version})"
         elif IS_MAC:
             os_info = platform.mac_ver()
-            osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
+            osver = f"Mac OSX {os_info[0]} {os_info[2]}"
         elif IS_LINUX:
             os_info = distro.linux_distribution()
-            osver = "{} {}".format(os_info[0], os_info[1]).strip()
+            osver = f"{os_info[0]} {os_info[1]}".strip()
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
@@ -3597,19 +3598,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return "{0:.1f}{1}".format(num, "YB")
 
         memory_ram = psutil.virtual_memory()
-        ram_string = "{}/{} ({}%)".format(
-            _datasize(memory_ram.used),
-            _datasize(memory_ram.total),
-            memory_ram.percent,
+        ram_string = "{used}/{total} ({percent}%)".format(
+            used=_datasize(memory_ram.used),
+            total=_datasize(memory_ram.total),
+            percent=memory_ram.percent,
         )
 
         owners = []
         for uid in self.bot.owner_ids:
             try:
                 u = await self.bot.get_or_fetch_user(uid)
-                owners.append("{} ({})".format(u.id, str(u)))
+                owners.append(f"{u.id} ({u})")
             except discord.HTTPException:
-                owners.append("{} (Unresolvable)".format(uid))
+                owners.append(f"{uid} (Unresolvable)")
         owners_string = ", ".join(owners) or "None"
 
         info = (
