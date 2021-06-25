@@ -1,13 +1,16 @@
+import asyncio
+from datetime import datetime, timezone
+
 from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, modlog, commands
+from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-
+from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
 
@@ -37,12 +40,12 @@ class ModLog(commands.Cog):
         await modlog.handle_auditype_key()
         await ctx.tick()
 
-    @modlogset.command()
+    @modlogset.command(aliases=["channel"])
     @commands.guild_only()
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set a channel as the modlog.
 
-        Omit `<channel>` to disable the modlog.
+        Omit `[channel]` to disable the modlog.
         """
         guild = ctx.guild
         if channel:
@@ -100,8 +103,21 @@ class ModLog(commands.Cog):
     async def resetcases(self, ctx: commands.Context):
         """Reset all modlog cases in this server."""
         guild = ctx.guild
-        await modlog.reset_cases(guild)
-        await ctx.send(_("Cases have been reset."))
+        await ctx.send(
+            _("Are you sure you would like to reset all modlog cases in this server?")
+            + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await modlog.reset_cases(guild)
+            await ctx.send(_("Cases have been reset."))
+        else:
+            await ctx.send(_("No changes have been made."))
 
     @commands.command()
     @commands.guild_only()
@@ -116,35 +132,88 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                await ctx.send(await case.message_content(embed=False))
+                message = _("{case}\n**Timestamp:** {timestamp}").format(
+                    case=await case.message_content(embed=False),
+                    timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
+                        "%Y-%m-%d %H:%M:%S UTC"
+                    ),
+                )
+                await ctx.send(message)
 
     @commands.command()
     @commands.guild_only()
     async def casesfor(self, ctx: commands.Context, *, member: Union[discord.Member, int]):
         """Display cases for the specified member."""
-        try:
-            if isinstance(member, int):
-                cases = await modlog.get_cases_for_member(
-                    bot=ctx.bot, guild=ctx.guild, member_id=member
+        async with ctx.typing():
+            try:
+                if isinstance(member, int):
+                    cases = await modlog.get_cases_for_member(
+                        bot=ctx.bot, guild=ctx.guild, member_id=member
+                    )
+                else:
+                    cases = await modlog.get_cases_for_member(
+                        bot=ctx.bot, guild=ctx.guild, member=member
+                    )
+            except discord.NotFound:
+                return await ctx.send(_("That user does not exist."))
+            except discord.HTTPException:
+                return await ctx.send(
+                    _("Something unexpected went wrong while fetching that user by ID.")
                 )
-            else:
-                cases = await modlog.get_cases_for_member(
-                    bot=ctx.bot, guild=ctx.guild, member=member
+
+            if not cases:
+                return await ctx.send(_("That user does not have any cases."))
+
+            embed_requested = await ctx.embed_requested()
+            if embed_requested:
+                rendered_cases = [await case.message_content(embed=True) for case in cases]
+            elif not embed_requested:
+                rendered_cases = []
+                for case in cases:
+                    message = _("{case}\n**Timestamp:** {timestamp}").format(
+                        case=await case.message_content(embed=False),
+                        timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
+                            "%Y-%m-%d %H:%M:%S UTC"
+                        ),
+                    )
+                    rendered_cases.append(message)
+
+        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+
+    @commands.command()
+    @commands.guild_only()
+    async def listcases(self, ctx: commands.Context, *, member: Union[discord.Member, int]):
+        """List cases for the specified member."""
+        async with ctx.typing():
+            try:
+                if isinstance(member, int):
+                    cases = await modlog.get_cases_for_member(
+                        bot=ctx.bot, guild=ctx.guild, member_id=member
+                    )
+                else:
+                    cases = await modlog.get_cases_for_member(
+                        bot=ctx.bot, guild=ctx.guild, member=member
+                    )
+            except discord.NotFound:
+                return await ctx.send(_("That user does not exist."))
+            except discord.HTTPException:
+                return await ctx.send(
+                    _("Something unexpected went wrong while fetching that user by ID.")
                 )
-        except discord.NotFound:
-            return await ctx.send(_("That user does not exist."))
-        except discord.HTTPException:
-            return await ctx.send(
-                _("Something unexpected went wrong while fetching that user by ID.")
-            )
+            if not cases:
+                return await ctx.send(_("That user does not have any cases."))
 
-        if not cases:
-            return await ctx.send(_("That user does not have any cases."))
-
-        embed_requested = await ctx.embed_requested()
-
-        rendered_cases = [await case.message_content(embed=embed_requested) for case in cases]
-
+            rendered_cases = []
+            message = ""
+            for case in cases:
+                message += _("{case}\n**Timestamp:** {timestamp}\n\n").format(
+                    case=await case.message_content(embed=False),
+                    timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
+                        "%Y-%m-%d %H:%M:%S UTC"
+                    ),
+                )
+            for page in pagify(message, ["\n\n", "\n"], priority=True):
+                rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
 
     @commands.command()
@@ -181,7 +250,7 @@ class ModLog(commands.Cog):
         to_modify = {"reason": reason}
         if case_obj.moderator != author:
             to_modify["amended_by"] = author
-        to_modify["modified_at"] = ctx.message.created_at.timestamp()
+        to_modify["modified_at"] = ctx.message.created_at.replace(tzinfo=timezone.utc).timestamp()
         await case_obj.edit(to_modify)
         await ctx.send(
             _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)

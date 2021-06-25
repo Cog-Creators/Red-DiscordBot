@@ -1,4 +1,5 @@
 .. Permissions Cog Reference
+.. _cog_permissions:
 
 =========================
 Permissions Cog Reference

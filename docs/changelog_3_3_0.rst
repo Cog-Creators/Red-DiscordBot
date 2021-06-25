@@ -1,10 +1,91 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.10 (2020-07-09)
-===================================
+Redbot 3.3.12 (2020-08-18)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`Injabie3`, :ghuser:`mikeshardmind`
+| :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
+
+Mod
+***
+
+- ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
+- Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
+
+Streams
+*******
+
+- Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
+
+Trivia Lists
+************
+
+- Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
+- Added ``whosthatpokemon3`` trivia containing Pokémons from 3rd generation (:issue:`4141`)
+
+
+Miscellaneous
+-------------
+
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
+- Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
+
+
+Redbot 3.3.11 (2020-08-10)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+
+End-user changelog
+------------------
+
+Audio
+*****
+
+- Audio should now work again on all voice regions (:issue:`4162`, :issue:`4168`)
+- Removed an edge case where an unfriendly error message was sent in Audio cog (:issue:`3879`)
+
+Cleanup
+*******
+
+- Fixed a bug causing ``[p]cleanup`` commands to clear all messages within last 2 weeks when ``0`` is passed as the amount of messages to delete (:issue:`4114`, :issue:`4115`)
+
+CustomCommands
+**************
+
+- ``[p]cc show`` now sends an error message when command with the provided name couldn't be found (:issue:`4108`)
+
+Downloader
+**********
+
+- ``[p]findcog`` no longer fails for 3rd-party cogs without any author (:issue:`4032`, :issue:`4042`)
+- Update commands no longer crash when a different repo is added under a repo name that was once used (:issue:`4086`)
+
+Permissions
+***********
+
+- ``[p]permissions removeserverrule`` and ``[p]permissions removeglobalrule`` no longer error when trying to remove a rule that doesn't exist (:issue:`4028`, :issue:`4036`)
+
+Warnings
+********
+
+- ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
+
+
+Redbot 3.3.10 (2020-07-09)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
@@ -85,11 +166,6 @@ Developer changelog
 - Vendor the ``discord.ext.menus`` module (:issue:`4039`)
 
 
-Documentation changes
----------------------
-
-
-
 Miscellaneous
 -------------
 
@@ -102,6 +178,7 @@ Miscellaneous
 - Fixed migration owner notifications being sent even when migration was not necessary (:issue:`3911`. :issue:`3909`)
 - Fixed commands being translated where they should not be (:issue:`3938`, :issue:`3919`)
 - Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
+
 
 Redbot 3.3.9 (2020-06-12)
 =========================
@@ -476,7 +553,7 @@ Core Bot
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
-- Permissions for commands in Bank, Economy and Trivia cogs can now be overriden by Permissions cog (:issue:`3672`, :issue:`3233`)
+- Permissions for commands in Bank, Economy and Trivia cogs can now be overridden by Permissions cog (:issue:`3672`, :issue:`3233`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
 - Fixed few deprecation warnings related to menus and uvloop (:issue:`3644`, :issue:`3700`)

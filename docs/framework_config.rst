@@ -21,8 +21,9 @@ Basic Usage
 .. code-block:: python
 
     from redbot.core import Config
+    from redbot.core import commands
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
 
@@ -52,7 +53,7 @@ Then, in the class's :code:`__init__` function, you need to get a config instanc
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
 
@@ -68,7 +69,7 @@ After we've gotten that, we need to register default values:
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
             default_global = {
@@ -188,19 +189,120 @@ features within Config to enable developers to work with data how they wish.
 
 This usage guide will cover the following features:
 
+- :py:meth:`Config.init_custom`
+- :py:meth:`Config.register_custom`
+- :py:meth:`Config.custom`
 - :py:meth:`Group.get_raw`
 - :py:meth:`Group.set_raw`
 - :py:meth:`Group.clear_raw`
+
+
+Custom Groups
+^^^^^^^^^^^^^
+While Config has built-in groups for the common discord objects,
+sometimes you need a combination of these or your own defined grouping.
+Config handles this by allowing you to define custom groups.
+
+Let's start by showing how :py:meth:`Config.custom` can be equivalent to :py:meth:`Config.guild` by modifying the above
+Tutorial example.
+
+.. code-block:: python
+
+    from redbot.core import Config, commands
+
+
+    class MyCog(commands.Cog):
+        def __init__(self):
+            self.config = Config.get_conf(self, identifier=1234567890)
+            default_guild = {
+                "blah": [],
+                "baz": 1234567890
+            }
+
+            # self.config.register_guild(**default_guild)
+
+            self.config.init_custom("CustomGuildGroup", 1)
+            self.config.register_custom("CustomGuildGroup", **default_guild)
+
+In the above, we registered the custom group named "CustomGuildGroup" to contain the same defaults
+that :code:`self.config.guild` normally would. First, we initialized the group "CustomGuildGroup" to
+accept one identifier by calling :py:meth:`Config.init_custom` with the argument :code:`1`. Then we used
+:py:meth:`Config.register_custom` to register the default values.
+
+.. important::
+
+    :py:meth:`Config.init_custom` **must** be called prior to using a custom group.
+
+
+Now let's use this custom group:
+
+.. code-block:: python
+
+    @commands.command()
+    async def setbaz(self, ctx, new_value):
+        # await self.config.guild(ctx.guild).baz.set(new_value)
+
+        await self.config.custom("CustomGuildGroup", ctx.guild.id).baz.set(new_value)
+        await ctx.send("Value of baz has been changed!")
+
+    @commands.command()
+    async def checkbaz(self, ctx):
+        # baz_val = await self.config.guild(ctx.guild).baz()
+
+        baz_val = await self.config.custom("CustomGuildGroup", ctx.guild.id).baz()
+        await ctx.send("The value of baz is {}".format("True" if baz_val else "False"))
+
+Here we used :py:meth:`Config.custom` to access our custom group much like we would have used :py:meth:`Config.guild`.
+Since it's a custom group, we need to use :code:`id` attribute of guild to get a unique identifier.
+
+Now let's see an example that uses multiple identifiers:
+
+.. code-block:: python
+
+    from redbot.core import Config, commands, checks
+
+
+    class ChannelAccesss(commands.Cog):
+        def __init__(self):
+            self.config = Config.get_conf(self, identifier=1234567890)
+            default_access = {
+                "allowed": False
+            }
+
+            self.config.init_custom("ChannelAccess", 2)
+            self.config.register_custom("ChannelAccess", **default_access)
+
+        @commands.command()
+        @checks.is_owner()
+        async def grantaccess(self, ctx, channel: discord.TextChannel, member: discord.Member):
+            await self.config.custom("ChannelAccess", channel.id, member.id).allowed.set(True)
+            await ctx.send("Member has been granted access to that channel")
+
+        @commands.command()
+        async def checkaccess(self, ctx, channel: discord.TextChannel):
+            allowed = await self.config.custom("ChannelAccess", channel.id, ctx.author.id).allowed()
+            await ctx.send("Your access to this channel is {}".format("Allowed" if allowed else "Denied"))
+
+In the above example, we defined the custom group "ChannelAccess" to accept two identifiers
+using :py:meth:`Config.init_custom`. Then, we were able to set the default value for any member's
+access to any channel to `False` until the bot owner grants them access.
+
+.. important::
+
+    The ordering of the identifiers matter. :code:`custom("ChannelAccess", channel.id, member.id)` is NOT the same
+    as :code:`custom("ChannelAccess", member.id, channel.id)`
+
+Raw Group Access
+^^^^^^^^^^^^^^^^
 
 For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
 the built-in Economy credits::
 
     from redbot.core import bank
-    from redbot.core import Config
-    from discord.ext import commands
+    from redbot.core import Config, commands
 
 
-    class Pets:
+    class Pets(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, 1234567890)
 
@@ -346,13 +448,13 @@ much the same way they would in V2. The following examples will demonstrate how 
 
 .. code-block:: python
 
-    from redbot.core import Config
+    from redbot.core import Config, commands
 
 
-    class ExampleCog:
+    class ExampleCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, 1234567890)
-
+            self.config.init_custom("V2", 1)
             self.data = {}
 
         async def load_data(self):

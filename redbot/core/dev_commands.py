@@ -13,8 +13,9 @@ from copy import copy
 import discord
 
 from . import checks, commands
-from .i18n import Translator
-from .utils.chat_formatting import box, pagify
+from .commands import NoParseOptional as Optional
+from .i18n import Translator, cog_i18n
+from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
 
 """
@@ -27,9 +28,10 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 _ = Translator("Dev", __file__)
 
-START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 
 
+@cog_i18n(_)
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
@@ -43,7 +45,8 @@ class Dev(commands.Cog):
     def __init__(self):
         super().__init__()
         self._last_result = None
-        self.sessions = set()
+        self.sessions = {}
+        self.env_extensions = {}
 
     @staticmethod
     def async_compile(source, filename, mode):
@@ -68,16 +71,16 @@ class Dev(commands.Cog):
         # remove `foo`
         return content.strip("` \n")
 
-    @staticmethod
-    def get_syntax_error(e):
+    @classmethod
+    def get_syntax_error(cls, e):
         """Format a syntax error to send to the user.
 
         Returns a string representation of the error formatted as a codeblock.
         """
         if e.text is None:
-            return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box(
-            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py"
+            return cls.get_pages("{0.__class__.__name__}: {0}".format(e))
+        return cls.get_pages(
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
         )
 
     @staticmethod
@@ -90,6 +93,29 @@ class Dev(commands.Cog):
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
         return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
+
+    def get_environment(self, ctx: commands.Context) -> dict:
+        env = {
+            "bot": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
+            "discord": discord,
+            "commands": commands,
+            "_": self._last_result,
+            "__name__": "__main__",
+        }
+        for name, value in self.env_extensions.items():
+            try:
+                env[name] = value(ctx)
+            except Exception as e:
+                traceback.clear_frames(e.__traceback__)
+                env[name] = e
+        return env
 
     @commands.command()
     @checks.is_owner()
@@ -105,7 +131,7 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -114,36 +140,25 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         code = self.cleanup_code(code)
 
         try:
             compiled = self.async_compile(code, "<string>", "eval")
             result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
-            await ctx.send(self.get_syntax_error(e))
+            await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
             return
         except Exception as e:
-            await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
+            await ctx.send_interactive(
+                self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
+            )
             return
 
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")
@@ -159,7 +174,7 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -168,21 +183,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
@@ -192,7 +193,7 @@ class Dev(commands.Cog):
             compiled = self.async_compile(to_compile, "<string>", "exec")
             exec(compiled, env)
         except SyntaxError as e:
-            return await ctx.send(self.get_syntax_error(e))
+            return await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
 
         func = env["func"]
         result = None
@@ -214,7 +215,7 @@ class Dev(commands.Cog):
 
         await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def repl(self, ctx):
         """Open an interactive REPL.
@@ -223,36 +224,40 @@ class Dev(commands.Cog):
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
         """
-        variables = {
-            "ctx": ctx,
-            "bot": ctx.bot,
-            "message": ctx.message,
-            "guild": ctx.guild,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "asyncio": asyncio,
-            "_": None,
-            "__builtins__": __builtins__,
-            "__name__": "__main__",
-        }
-
         if ctx.channel.id in self.sessions:
-            await ctx.send(
-                _("Already running a REPL session in this channel. Exit it with `quit`.")
-            )
+            if self.sessions[ctx.channel.id]:
+                await ctx.send(
+                    _("Already running a REPL session in this channel. Exit it with `quit`.")
+                )
+            else:
+                await ctx.send(
+                    _(
+                        "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
+                    ).format(ctx.prefix)
+                )
             return
 
-        self.sessions.add(ctx.channel.id)
-        await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
+        env = self.get_environment(ctx)
+        env["__builtins__"] = __builtins__
+        env["_"] = None
+        self.sessions[ctx.channel.id] = True
+        await ctx.send(
+            _(
+                "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
+            ).format(ctx.prefix)
+        )
 
         while True:
             response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
+
+            if not self.sessions[ctx.channel.id]:
+                continue
 
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
-                self.sessions.remove(ctx.channel.id)
+                del self.sessions[ctx.channel.id]
                 return
 
             executor = None
@@ -269,11 +274,10 @@ class Dev(commands.Cog):
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
-                    await ctx.send(self.get_syntax_error(e))
+                    await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
                     continue
 
-            variables["message"] = response
-
+            env["message"] = response
             stdout = io.StringIO()
 
             msg = ""
@@ -281,9 +285,9 @@ class Dev(commands.Cog):
             try:
                 with redirect_stdout(stdout):
                     if executor is None:
-                        result = types.FunctionType(code, variables)()
+                        result = types.FunctionType(code, env)()
                     else:
-                        result = executor(code, variables)
+                        result = executor(code, env)
                     result = await self.maybe_await(result)
             except:
                 value = stdout.getvalue()
@@ -292,7 +296,7 @@ class Dev(commands.Cog):
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
-                    variables["_"] = result
+                    env["_"] = result
                 elif value:
                     msg = "{}".format(value)
 
@@ -304,6 +308,22 @@ class Dev(commands.Cog):
                 pass
             except discord.HTTPException as e:
                 await ctx.send(_("Unexpected error: `{}`").format(e))
+
+    @repl.command(aliases=["resume"])
+    async def pause(self, ctx, toggle: Optional[bool] = None):
+        """Pauses/resumes the REPL running in the current channel"""
+        if ctx.channel.id not in self.sessions:
+            await ctx.send(_("There is no currently running REPL session in this channel."))
+            return
+
+        if toggle is None:
+            toggle = not self.sessions[ctx.channel.id]
+        self.sessions[ctx.channel.id] = toggle
+
+        if toggle:
+            await ctx.send(_("The REPL session in this channel has been resumed."))
+        else:
+            await ctx.send(_("The REPL session in this channel is now paused."))
 
     @commands.command()
     @checks.is_owner()
@@ -338,3 +358,18 @@ class Dev(commands.Cog):
         await asyncio.sleep(2)
         ctx.message.author = old_author
         ctx.message.content = old_content
+
+    @commands.command()
+    @checks.is_owner()
+    async def bypasscooldowns(self, ctx, toggle: Optional[bool] = None):
+        """Give bot owners the ability to bypass cooldowns.
+
+        Does not persist through restarts."""
+        if toggle is None:
+            toggle = not ctx.bot._bypass_cooldowns
+        ctx.bot._bypass_cooldowns = toggle
+
+        if toggle:
+            await ctx.send(_("Bot owners will now bypass all commands with cooldowns."))
+        else:
+            await ctx.send(_("Bot owners will no longer bypass all commands with cooldowns."))

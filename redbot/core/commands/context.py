@@ -69,12 +69,12 @@ class Context(DPYContext):
 
         Other Parameters
         ----------------
-        filter : Callable[`str`] -> `str`
-            A function which is used to sanitize the ``content`` before
-            it is sent. Defaults to
-            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+        filter : callable (`str`) -> `str`, optional
+            A function which is used to filter the ``content`` before
+            it is sent.
             This must take a single `str` as an argument, and return
-            the sanitized `str`.
+            the processed `str`. When `None` is passed, ``content`` won't be touched.
+            Defaults to `None`.
         **kwargs
             See `discord.ext.commands.Context.send`.
 
@@ -85,7 +85,7 @@ class Context(DPYContext):
 
         """
 
-        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+        _filter = kwargs.pop("filter", None)
 
         if _filter and content:
             content = _filter(str(content))
@@ -118,7 +118,7 @@ class Context(DPYContext):
     async def react_quietly(
         self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
     ) -> bool:
-        """Adds a reaction to to the command message.
+        """Adds a reaction to the command message.
 
         Returns
         -------
@@ -248,14 +248,20 @@ class Context(DPYContext):
             see `discord.abc.Messageable.send`
         discord.HTTPException
             see `discord.abc.Messageable.send`
+        ValueError
+            when the message's length is not between 1 and 2000 characters.
         """
-
+        if not message or len(message) > 2000:
+            raise ValueError("Message length must be between 1 and 2000")
         if await self.embed_requested():
             return await self.send(
                 embed=discord.Embed(description=message, color=(await self.embed_colour()))
             )
         else:
-            return await self.send(message)
+            return await self.send(
+                message,
+                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
+            )
 
     @property
     def clean_prefix(self) -> str:

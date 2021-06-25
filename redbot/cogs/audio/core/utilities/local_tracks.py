@@ -1,20 +1,24 @@
 import contextlib
 import logging
+
 from pathlib import Path
 from typing import List, Union
 
+import discord
 import lavalink
+
 from fuzzywuzzy import process
-
-from redbot.core.utils import AsyncIter
 from redbot.core import commands
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
-from ...errors import TrackEnqueueError
 from ...audio_dataclasses import LocalPath, Query
+from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
+_ = Translator("Audio", Path(__file__))
 
 
 class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -32,7 +36,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def get_localtrack_folder_list(self, ctx: commands.Context, query: Query) -> List[Query]:
-        """Return a list of folders per the provided query"""
+        """Return a list of folders per the provided query."""
         if not await self.localtracks_folder_exists(ctx):
             return []
         query = Query.process_input(query, self.local_folder_current_path)
@@ -49,7 +53,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def get_localtrack_folder_tracks(
         self, ctx, player: lavalink.player_manager.Player, query: Query
     ) -> List[lavalink.rest_api.Track]:
-        """Return a list of tracks per the provided query"""
+        """Return a list of tracks per the provided query."""
         if not await self.localtracks_folder_exists(ctx) or self.api_interface is None:
             return []
 
@@ -118,7 +122,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if percent_match > 85:
                 search_list.extend(
                     [
-                        i.to_string_user()
+                        discord.utils.escape_markdown(i.to_string_user())
                         for i in to_search
                         if i.local_track_path is not None
                         and i.local_track_path.name == track_match
