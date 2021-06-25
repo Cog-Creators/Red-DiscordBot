@@ -3600,7 +3600,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         ram_string = "{}/{} ({}%)".format(
             _datasize(memory_ram.used),
             _datasize(memory_ram.total),
-            memory_ram.percent
+            memory_ram.percent,
         )
 
         owners = []
@@ -3617,18 +3617,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             + "## System Metadata:\n"
             + "CPU Cores: {} ({})\n".format(psutil.cpu_count(), platform.machine())
             + "RAM: {}\n\n".format(ram_string)
-
             + "## OS Variables:\n"
             + "OS version: {}\n".format(osver)
             + "User: {}\n\n".format(user_who_ran)
-
             + "Python executable: {}\n".format(sys.executable)
             + "Python version: {}\n".format(pyver)
             + "Pip version: {}\n\n".format(pipver)
-
             + "Red version: {}\n".format(redver)
             + "Discord.py version: {}\n\n".format(dpy_version)
-
             + "## Red variables:\n"
             + "Instance name: {}\n".format(data_manager.instance_name)
             + "Owner(s): {}\n".format(owners_string)
