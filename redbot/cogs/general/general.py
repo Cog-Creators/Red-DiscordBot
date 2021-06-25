@@ -80,12 +80,14 @@ class General(commands.Cog):
         """ Nothing to delete """
         return
 
-    @commands.command(usage="<choice> <choices...>")
+    @commands.command(usage="<first> <second> [others...]")
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
-        To denote options which include whitespace, you should use
-        double quotes.
+        There must be at least 2 options to pick from.
+        Options are separated by spaces.
+
+        To denote options which include whitespace, you should enclose the options in double quotes.
         """
         choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
@@ -507,7 +509,7 @@ class General(commands.Cog):
                 # a list of embeds
                 embeds = []
                 for ud in data["list"]:
-                    embed = discord.Embed()
+                    embed = discord.Embed(color=await ctx.embed_color())
                     title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )

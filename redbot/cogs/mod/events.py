@@ -176,7 +176,7 @@ class Events(MixinMeta):
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if before.nick != after.nick and after.nick is not None:
+        if before.nick != after.nick and before.nick is not None:
             guild = after.guild
             if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
                 return

@@ -13,7 +13,7 @@ import time
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
-from tqdm import tqdm
+import rich.progress
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
@@ -22,9 +22,9 @@ from .errors import LavalinkDownloadFailed
 from .utils import task_callback
 
 _ = Translator("Audio", pathlib.Path(__file__))
-log = logging.getLogger("red.audio.manager")
+log = logging.getLogger("red.Audio.manager")
 JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1199
+JAR_BUILD: Final[int] = 1233
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -234,6 +234,7 @@ class ServerManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
@@ -286,7 +287,7 @@ class ServerManager:
                     # hasn't been published yet
                     raise LavalinkDownloadFailed(
                         f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
-                        f"yet",
+                        "yet",
                         response=response,
                         should_retry=False,
                     )
@@ -296,22 +297,23 @@ class ServerManager:
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
                 nbytes = 0
-                with tqdm(
-                    desc="Lavalink.jar",
-                    total=response.content_length,
-                    file=sys.stdout,
-                    unit="B",
-                    unit_scale=True,
-                    miniters=1,
-                    dynamic_ncols=True,
-                    leave=False,
-                ) as progress_bar:
+                with rich.progress.Progress(
+                    rich.progress.SpinnerColumn(),
+                    rich.progress.TextColumn("[progress.description]{task.description}"),
+                    rich.progress.BarColumn(),
+                    rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                    rich.progress.TimeRemainingColumn(),
+                    rich.progress.TimeElapsedColumn(),
+                ) as progress:
+                    progress_task_id = progress.add_task(
+                        "[red]Downloading Lavalink.jar", total=response.content_length
+                    )
                     try:
                         chunk = await response.content.read(1024)
                         while chunk:
                             chunk_size = file.write(chunk)
                             nbytes += chunk_size
-                            progress_bar.update(chunk_size)
+                            progress.update(progress_task_id, advance=chunk_size)
                             chunk = await response.content.read(1024)
                         file.flush()
                     finally:

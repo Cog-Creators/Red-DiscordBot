@@ -45,7 +45,7 @@ or unload them.
 How to install a local package without using downloader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's suppose you made a cog request on the `cog board <https://cogboard.red>`_
+Let's suppose you made a cog request on the `cog board <https://cogboard.discord.red>`_
 and now you want to add your own cog to Red. You should have a folder that
 looks like this:
 
@@ -193,7 +193,7 @@ reorderpath
 
 .. code-block:: none
 
-    [p]reorderpath <from\_> <to>
+    [p]reorderpath <from_> <to>
 
 **Description**
 

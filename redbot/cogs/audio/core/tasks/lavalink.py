@@ -99,7 +99,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                     host=host,
                     password=password,
-                    rest_port=ws_port,
                     ws_port=ws_port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
@@ -125,4 +124,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "See above tracebacks for details."
             )
             return
+        if external:
+            await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())
