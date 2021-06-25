@@ -387,9 +387,7 @@ class Streams(commands.Cog):
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id][stream.platform_name].append(
-                        stream.name.lower()
-                    )
+                    streams_list[channel_id][stream.platform_name].append(stream.name.lower())
 
         if not streams_list:
             await ctx.send(_("There are no active alerts in this server."))
