@@ -3613,32 +3613,39 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 owners.append(f"{uid} (Unresolvable)")
         owners_string = ", ".join(owners) or "None"
 
-        info = (
-            f"# Debug Info for Red:\n\n"
-            f"## System Metadata:\n"
-            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\n"
-            f"RAM: {ram_string}\n"
-            f"\n"
-            f"## OS Variables:\n"
-            f"OS version: {osver}\n"
-            f"User: {user_who_ran}\n"
-            f"\n"
-            f"Python executable: {sys.executable}\n"
-            f"Python version: {pyver}\n"
-            f"Pip version: {pipver}\n"
-            f"\n"
-            f"Red version: {redver}\n"
-            f"Discord.py version: {dpy_version}\n"
-            f"\n"
-            f"## Red variables:\n"
-            f"Instance name: {data_manager.instance_name}\n"
-            f"Owner(s): {owners_string}\n"
-            f"Storage type: {driver}\n"
-            f"Disabled intents: {disabled_intents}\n"
-            f"Data path: {data_path}\n"
-            f"Metadata file: {config_file}\n"
+        resp_intro = "# Debug Info for Red:"
+        resp_system_intro = "## System Metadata:"
+        resp_system = (
+            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
         )
-        await ctx.send(box(info, lang="md"))
+        resp_os_intro = "## OS Variables:"
+        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
+        resp_py_metadata = f"Python executable: {sys.executable}\nPython version: {pyver}\nPip version: {pipver}\n"
+        resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
+        resp_red_vars_intro = "## Red variables:"
+        resp_red_vars = (
+            f"Instance name: {data_manager.instance_name}\n",
+            f"Owners(s): {owners_string}\n",
+            f"Storage type: {driver}\n",
+            f"Disabled intents: {disabled_intents}\n",
+            f"Data path: {data_path}\n",
+            f"Metadata file: {config_file}",
+        )
+        resp_red_vars = "".join(resp_red_vars)
+
+        response = (
+            box(resp_intro, lang="md"),
+            box(resp_system_intro, lang="md"),
+            box(resp_system),
+            box(resp_os_intro, lang="md"),
+            box(resp_os),
+            box(resp_py_metadata),
+            box(resp_red_metadata),
+            box(resp_red_vars_intro, lang="md"),
+            box(resp_red_vars),
+        )
+
+        await ctx.send("".join(response))
 
     @commands.group(aliases=["whitelist"])
     @checks.is_owner()
