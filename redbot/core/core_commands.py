@@ -3635,12 +3635,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         response = (
             box(resp_intro, lang="md"),
+            "\n",
             box(resp_system_intro, lang="md"),
             box(resp_system),
+            "\n",
             box(resp_os_intro, lang="md"),
             box(resp_os),
             box(resp_py_metadata),
             box(resp_red_metadata),
+            "\n",
             box(resp_red_vars_intro, lang="md"),
             box(resp_red_vars),
         )
