@@ -3620,18 +3620,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         resp_os_intro = "## OS Variables:"
         resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
-        resp_py_metadata = f"Python executable: {sys.executable}\nPython version: {pyver}\nPip version: {pipver}\n"
+        resp_py_metadata = (
+            f"Python executable: {sys.executable}\n"
+            f"Python version: {pyver}\n"
+            f"Pip version: {pipver}\n"
+        )
         resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
         resp_red_vars_intro = "## Red variables:"
         resp_red_vars = (
-            f"Instance name: {data_manager.instance_name}\n",
-            f"Owners(s): {owners_string}\n",
-            f"Storage type: {driver}\n",
-            f"Disabled intents: {disabled_intents}\n",
-            f"Data path: {data_path}\n",
-            f"Metadata file: {config_file}",
+            f"Instance name: {data_manager.instance_name}\n"
+            f"Owners(s): {owners_string}\n"
+            f"Storage type: {driver}\n"
+            f"Disabled intents: {disabled_intents}\n"
+            f"Data path: {data_path}\n"
+            f"Metadata file: {config_file}"
         )
-        resp_red_vars = "".join(resp_red_vars)
 
         response = (
             box(resp_intro, lang="md"),
