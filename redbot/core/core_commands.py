@@ -3629,7 +3629,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         resp_red_vars_intro = "## Red variables:"
         resp_red_vars = (
             f"Instance name: {data_manager.instance_name}\n"
-            f"Owners(s): {owners_string}\n"
+            f"Owner(s): {owners_string}\n"
             f"Storage type: {driver}\n"
             f"Disabled intents: {disabled_intents}\n"
             f"Data path: {data_path}\n"
