@@ -1658,7 +1658,8 @@ class Downloader(commands.Cog):
 
             if not pred.result:
                 if can_react:
-                    await query.delete()
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
                 else:
                     await ctx.send(_("OK then."))
                 return
