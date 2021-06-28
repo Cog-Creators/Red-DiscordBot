@@ -1030,7 +1030,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
                 return False
 
             if not pred.result:
