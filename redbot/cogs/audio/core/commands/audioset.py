@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import logging
 import os
-from re import M
 import tarfile
 from pathlib import Path
 
