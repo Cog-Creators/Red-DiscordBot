@@ -185,7 +185,7 @@ class Alias(commands.Cog):
         # noinspection PyDunderSlots
         new_message.content = "{}{} {}".format(
             prefix, command, " ".join(args[trackform.max + 1 :])
-        )
+        ).strip()
         await self.bot.process_commands(new_message)
 
     async def paginate_alias_list(

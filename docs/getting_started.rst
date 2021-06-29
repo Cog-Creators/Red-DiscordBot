@@ -92,6 +92,13 @@ parameters.
     Sometimes (especially for the last argument) these double quotes are not
     required.
 
+    Arguments followed by an ellipsis ``...`` means that you may provide
+    multiple arguments for the command.
+
+    For example, the command ``[p]cog install`` in the downloader cog has
+    the syntax ``cog install <repo> <cogs...>``, meaning that you can provide
+    1 or more ``cogs`` to install from the ``repo``.
+
     Arguments followed by ``=value`` means that, if not specified,
     the argument will be equal to ``value``.
 
@@ -246,9 +253,9 @@ Hosting
 
 If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
-She needs an environment to work and respond.
+It needs an environment to work and respond.
 
-You can try to host Red somewhere she will always be online, like on a virtual
+You can try to host Red somewhere it will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
@@ -265,8 +272,8 @@ If you want to do it, follow these steps.
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this list <host-list>` for
-  quality VPS providers.
+  on an online service. Please check :ref:`this page <host-list>` for
+  more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
   be able to host Red. The model 3 or above is recommended.
