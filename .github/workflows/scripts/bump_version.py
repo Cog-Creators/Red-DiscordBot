@@ -6,6 +6,10 @@ from typing import Match
 import redbot
 
 
+if int(os.environ.get("JUST_RETURN_VERSION", 0)):
+    print(f"::set-output name=version::{redbot.__version__}")
+
+
 version_info = None
 
 
