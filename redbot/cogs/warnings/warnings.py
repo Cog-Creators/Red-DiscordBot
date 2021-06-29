@@ -457,7 +457,7 @@ class Warnings(commands.Cog):
             )
         async with member_settings.warnings() as user_warnings:
             user_warnings.update(warning_to_add)
-        current_point_count += reason_type["points"]
+        current_point_count += points
         await member_settings.total_points.set(current_point_count)
         await warning_points_add_check(self.config, ctx, member, current_point_count)
 
