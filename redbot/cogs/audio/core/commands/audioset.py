@@ -1469,14 +1469,18 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Error"),
-                description=_("Music without sound isn't music at all. Try setting the volume higher then 0%.")
+                description=_(
+                    "Music without sound isn't music at all. Try setting the volume higher then 0%."
+                ),
             )
         elif max_volume > 150:
             max_volume = 150
             await self.send_embed_msg(
                 ctx,
                 title=_("Setting changed"),
-                description=_("The maximum volume has been limited to 150%, be easy on your ears.")
+                description=_(
+                    "The maximum volume has been limited to 150%, be easy on your ears."
+                ),
             )
         else:
             await self.send_embed_msg(
