@@ -19,7 +19,7 @@ from pathlib import Path
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
+from typing import TYPE_CHECKING, Any, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
 import aiohttp
 import discord
@@ -405,10 +405,41 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """ Nothing to delete (Core Config is handled in a bot method ) """
         return
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=("ding",))
     async def ping(self, ctx: commands.Context):
         """Pong."""
-        await ctx.send("Pong.")
+        invoked = ctx.invoked_with == "ping"
+        msg = "Ping." if invoked else "Dong."
+        if not await ctx.embed_requested():
+            return await ctx.send(msg)
+        ping_ding = "Ping/Pong" if invoked else "Ding/Dong"
+        embed = discord.Embed(
+            title=ping_ding,
+            description=msg,
+            timestamp=datetime.datetime.utcnow(),
+            colour=await ctx.embed_colour(),
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.is_owner()
+    @commands.check(lambda c: c.bot.get_cog("Downloader") is not None)
+    async def unusedrepos(self, ctx):
+        repo_cog = self.bot.get_cog("Downloader")
+        repos = [r.name for r in repo_cog._repo_manager.repos]
+        active_repos = {c.repo_name for c in await repo_cog.installed_cogs()}
+        fails = []
+        for r in active_repos:
+            try:
+                repos.remove(r)
+            except ValueError:
+                fails.append(r)
+        if "MISSING_REPO" in fails:
+            fails.remove("MISSING_REPO")
+        msg = "**Unused repos:\n**" + ", ".join(repos)
+        if fails:
+            msg += "\n**Failed repos:**\n" + ", ".join(fails)
+        await ctx.maybe_send_embed(msg)
 
     @commands.command()
     async def info(self, ctx: commands.Context):

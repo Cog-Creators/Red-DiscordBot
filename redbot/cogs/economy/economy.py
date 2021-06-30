@@ -473,7 +473,7 @@ class Economy(commands.Cog):
                 await self.config.user(author).next_payday.set(cur_time)
 
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(
+                await ctx.maybe_send_embed(
                     _(
                         "{author.mention} Here, take some {currency}. "
                         "Enjoy! (+{amount} {currency}!)\n\n"
@@ -490,7 +490,7 @@ class Economy(commands.Cog):
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(
+                await ctx.maybe_send_embed(
                     _(
                         "{author.mention} Too soon. For your next payday you have to wait {time}."
                     ).format(author=author, time=dtime)
@@ -530,7 +530,7 @@ class Economy(commands.Cog):
 
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
-                await ctx.send(
+                await ctx.maybe_send_embed(
                     _(
                         "{author.mention} Here, take some {currency}. "
                         "Enjoy! (+{amount} {currency}!)\n\n"
@@ -546,7 +546,7 @@ class Economy(commands.Cog):
                 )
             else:
                 dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(
+                await ctx.maybe_send_embed(
                     _(
                         "{author.mention} Too soon. For your next payday you have to wait {time}."
                     ).format(author=author, time=dtime)
