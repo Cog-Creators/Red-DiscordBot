@@ -4,6 +4,7 @@ from typing import Callable, List, Optional, Set, Union
 
 import discord
 
+from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -204,7 +205,11 @@ class Cleanup(commands.Cog):
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def user(
-        self, ctx: commands.Context, user: str, number: positive_int, delete_pinned: bool = False
+        self,
+        ctx: commands.Context,
+        user: Union[discord.Member, RawUserIds],
+        number: positive_int,
+        delete_pinned: bool = False,
     ):
         """Delete the last X messages from a specified user in the current channel.
 
@@ -221,15 +226,11 @@ class Cleanup(commands.Cog):
         channel = ctx.channel
 
         member = None
-        try:
-            member = await commands.MemberConverter().convert(ctx, user)
-        except commands.BadArgument:
-            try:
-                _id = int(user)
-            except ValueError:
-                raise commands.BadArgument()
-        else:
+        if isinstance(user, discord.Member):
+            member = user
             _id = member.id
+        else:
+            _id = user
 
         author = ctx.author
 
