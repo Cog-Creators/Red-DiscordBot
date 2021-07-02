@@ -409,7 +409,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def ping(self, ctx: commands.Context):
         """Pong."""
         invoked = ctx.invoked_with == "ping"
-        msg = "Ping." if invoked else "Dong."
+        msg = "Pong." if invoked else "Dong."
         if not await ctx.embed_requested():
             return await ctx.send(msg)
         ping_ding = "Ping/Pong" if invoked else "Ding/Dong"
