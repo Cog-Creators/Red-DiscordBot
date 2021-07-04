@@ -270,7 +270,7 @@ class RedRichHandler(RichHandler):
                 show_path=self._log_render.show_path,
                 level_width=self._log_render.level_width,
             )
-        self.clean_copy_paste = copy_paste_friendly
+        self.copy_paste_friendly = copy_paste_friendly
 
     def get_level_text(self, record: LogRecord) -> Text:
         """Get the level name from the record.
@@ -336,7 +336,7 @@ class RedRichHandler(RichHandler):
                 link_path=record.pathname if self.enable_link_path else None,
                 logger_name=record.name,
             ),
-            soft_wrap=self.clean_copy_paste,
+            soft_wrap=self.copy_paste_friendly,
         )
         if traceback:
             self.console.print(traceback)
