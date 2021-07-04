@@ -238,7 +238,7 @@ A moderator is a step above the average users. You can set multiple moderator
 roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
 
 For example, in the mod cog (again), a mod will be able to mute;
-but he won't be able to modify the cog settings with the ``[p]modset`` command.
+but he won't be able to modify the cog settings with the ``[p]muteset`` command.
 
 .. tip::
     If you don't like the default permission settings for some commands or
