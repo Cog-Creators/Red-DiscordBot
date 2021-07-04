@@ -552,7 +552,7 @@ class Economy(commands.Cog):
                     ).format(author=author, time=dtime)
                 )
 
-    @commands.command()
+    @commands.command(aliases=["lb"])
     @guild_only_check()
     async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
         """Print the leaderboard.
