@@ -211,17 +211,66 @@ class RedLogRender(LogRender):
         return output
 
 
+class CopyFriendlyLogRender(LogRender):
+    def __call__(
+        self,
+        console,
+        renderables,
+        log_time=None,
+        time_format=None,
+        level="",
+        path=None,
+        line_no=None,
+        link_path=None,
+        logger_name=None,
+    ):
+        output = Text()
+        if self.show_time:
+            log_time = log_time or console.get_datetime()
+            log_time_display = log_time.strftime(time_format or self.time_format)
+            if log_time_display == self._last_time:
+                output.append(" " * len(log_time_display) + " ")
+            else:
+                output.append(log_time_display + " ", style="log.time")
+                self._last_time = log_time_display
+        if self.show_level:
+            output.append(level)
+            output.append(" ")
+        if logger_name:
+            output.append(f"[{logger_name}] ", style="bright_black")
+
+        output.append(*renderables)
+        if self.show_path and path:
+            path_text = Text()
+            path_text.append(path, style=f"link file://{link_path}" if link_path else "")
+            if line_no:
+                path_text.append(f":{line_no}")
+            output.append(path_text)
+
+        output.overflow
+        return output
+
+
 class RedRichHandler(RichHandler):
     """Adaptation of Rich's RichHandler to manually adjust the path to a logger name"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, copy_paste_friendly: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
-        self._log_render = RedLogRender(
-            show_time=self._log_render.show_time,
-            show_level=self._log_render.show_level,
-            show_path=self._log_render.show_path,
-            level_width=self._log_render.level_width,
-        )
+        if copy_paste_friendly:
+            self._log_render = CopyFriendlyLogRender(
+                show_time=self._log_render.show_time,
+                show_level=self._log_render.show_level,
+                show_path=self._log_render.show_path,
+                level_width=self._log_render.level_width,
+            )
+        else:
+            self._log_render = RedLogRender(
+                show_time=self._log_render.show_time,
+                show_level=self._log_render.show_level,
+                show_path=self._log_render.show_path,
+                level_width=self._log_render.level_width,
+            )
+        self.clean_copy_paste = copy_paste_friendly
 
     def get_level_text(self, record: LogRecord) -> Text:
         """Get the level name from the record.
@@ -286,7 +335,8 @@ class RedRichHandler(RichHandler):
                 line_no=record.lineno,
                 link_path=record.pathname if self.enable_link_path else None,
                 logger_name=record.name,
-            )
+            ),
+            soft_wrap=self.clean_copy_paste,
         )
         if traceback:
             self.console.print(traceback)
@@ -336,6 +386,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
         stdout_handler = RedRichHandler(
+            copy_paste_friendly=cli_flags.rich_copy_paste_friendly,
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),
