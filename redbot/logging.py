@@ -171,59 +171,6 @@ class RedLogRender(LogRender):
         link_path=None,
         logger_name=None,
     ):
-        output = Table.grid(padding=(0, 1))
-        output.expand = True
-        if self.show_time:
-            output.add_column(style="log.time")
-        if self.show_level:
-            output.add_column(style="log.level", width=self.level_width)
-        output.add_column(ratio=1, style="log.message", overflow="fold")
-        if self.show_path and path:
-            output.add_column(style="log.path")
-        if logger_name:
-            output.add_column()
-        row = []
-        if self.show_time:
-            log_time = log_time or console.get_datetime()
-            log_time_display = log_time.strftime(time_format or self.time_format)
-            if log_time_display == self._last_time:
-                row.append(Text(" " * len(log_time_display)))
-            else:
-                row.append(Text(log_time_display))
-                self._last_time = log_time_display
-        if self.show_level:
-            row.append(level)
-
-        row.append(Renderables(renderables))
-        if self.show_path and path:
-            path_text = Text()
-            path_text.append(path, style=f"link file://{link_path}" if link_path else "")
-            if line_no:
-                path_text.append(f":{line_no}")
-            row.append(path_text)
-
-        if logger_name:
-            logger_name_text = Text()
-            logger_name_text.append(f"[{logger_name}]", style="bright_black")
-            row.append(logger_name_text)
-
-        output.add_row(*row)
-        return output
-
-
-class CopyFriendlyLogRender(LogRender):
-    def __call__(
-        self,
-        console,
-        renderables,
-        log_time=None,
-        time_format=None,
-        level="",
-        path=None,
-        line_no=None,
-        link_path=None,
-        logger_name=None,
-    ):
         output = Text()
         if self.show_time:
             log_time = log_time or console.get_datetime()
@@ -246,31 +193,20 @@ class CopyFriendlyLogRender(LogRender):
             if line_no:
                 path_text.append(f":{line_no}")
             output.append(path_text)
-
-        output.overflow
         return output
 
 
 class RedRichHandler(RichHandler):
     """Adaptation of Rich's RichHandler to manually adjust the path to a logger name"""
 
-    def __init__(self, *args, copy_paste_friendly: bool = False, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if copy_paste_friendly:
-            self._log_render = CopyFriendlyLogRender(
-                show_time=self._log_render.show_time,
-                show_level=self._log_render.show_level,
-                show_path=self._log_render.show_path,
-                level_width=self._log_render.level_width,
-            )
-        else:
-            self._log_render = RedLogRender(
-                show_time=self._log_render.show_time,
-                show_level=self._log_render.show_level,
-                show_path=self._log_render.show_path,
-                level_width=self._log_render.level_width,
-            )
-        self.copy_paste_friendly = copy_paste_friendly
+        self._log_render = RedLogRender(
+            show_time=self._log_render.show_time,
+            show_level=self._log_render.show_level,
+            show_path=self._log_render.show_path,
+            level_width=self._log_render.level_width,
+        )
 
     def get_level_text(self, record: LogRecord) -> Text:
         """Get the level name from the record.
@@ -336,7 +272,7 @@ class RedRichHandler(RichHandler):
                 link_path=record.pathname if self.enable_link_path else None,
                 logger_name=record.name,
             ),
-            soft_wrap=self.copy_paste_friendly,
+            soft_wrap=True,
         )
         if traceback:
             self.console.print(traceback)
@@ -386,7 +322,6 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
         stdout_handler = RedRichHandler(
-            copy_paste_friendly=cli_flags.rich_copy_paste_friendly,
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),
