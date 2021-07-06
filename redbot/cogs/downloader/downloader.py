@@ -1496,7 +1496,7 @@ class Downloader(commands.Cog):
                 )
                 if len(outdated_bot_version) > 1
                 else _(
-                    "This cog requires different Red version than you currently "
+                    "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
