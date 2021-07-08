@@ -1441,7 +1441,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(name_already_used) > 1
-                else _("Cog with this name is already installed from a different repo.")
+                else _("\nCog with this name is already installed from a different repo.")
             ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
@@ -1486,7 +1486,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nThese cogs require higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("This cog requires higher python version than you have: ")
+                else _(\n"This cog requires higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += (
