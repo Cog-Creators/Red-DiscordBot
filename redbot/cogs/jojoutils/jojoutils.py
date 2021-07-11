@@ -12,8 +12,10 @@ from redbot.core.utils.chat_formatting import box
 import json
 from datetime import datetime
 from .converters import BotUser
+import logging
 
 
+log = logging.getLogger("red.JojoUtils")
 _config = {
     "denyed_bots": {}
 }
@@ -93,22 +95,36 @@ class JojoUtils(commands.Cog):
         if perms_denyed_role.id in bot._roles:
             return await ctx.send("That bot already has restricted permissions.")
         bot_role = ctx.guild.get_role(759697876342276117)
+        booster_role = ctx.guild.get_role(863369390539407381)
         staff_bot_role = ctx.guild.get_role(760519519109120040)
-        has_staffbot_role = staff_bot_role in bot._roles
+        elab_bot_role = ctx.guild.get_role(863371651012624435)
+
+        has_staffbot_role = staff_bot_role.id in bot._roles
+        has_elab_role = elab_bot_role.id in bot._roles
+        has_booster_role = booster_role.id in bot._roles
+        log.debug(has_elab_role)
 
         reason = f"Requested by {ctx.author.name} ({ctx.author.id})"
+        roles = [bot_role]
+        if has_staffbot_role:
+            roles.append(staff_bot_role)
+        if has_elab_role:
+            roles.append(elab_bot_role)
+        if has_booster_role:
+            roles.append(booster_role)
+
         try:
-            await bot.remove_roles(bot_role, reason=reason)
+            await bot.remove_roles(*roles, reason=reason)
         except discord.Forbidden:
             await ctx.tick(cross=True)
             return await ctx.send("I lack permissions to remove roles")
-        if has_staffbot_role:
-            await bot.remove_roles(bot_role, reason=reason)
         await bot.add_roles(perms_denyed_role, reason=reason)
+
         await ctx.tick()
         await ctx.send(f"Done. {bot.name} now has permissions denyed.")
+
         async with self.config.denyed_bots() as db:
-            db[bot.id] = has_staffbot_role # Store true or false
+            db[bot.id] = [r.id for r in roles]
 
     @commands.command()
     @commands.guild_only()
@@ -119,14 +135,14 @@ class JojoUtils(commands.Cog):
 
         denyed_bot_role = ctx.guild.get_role(810845790532403201)
         async with self.config.denyed_bots() as db:
-            found = db.pop(bot.id, None) # remove it from the database
-        if found is None and denyed_bot_role not in bot._roles:
+            found = db.pop(str(bot.id), None) # remove it from the database
+        if denyed_bot_role.id not in bot._roles:
             return await ctx.send("That bot does not have the denyed permissions role.")
+        elif found is not None:
+            return await ctx.send("I do not know which roles to assign to that bot")
 
         reason = f"Requested by {ctx.author.name} ({ctx.author.id})"
-        bot_role = ctx.guild.get_role(759697876342276117)
-        if found:
-            staff_bot_role = ctx.guild.get_role(760519519109120040)
+        roles = [ctx.guild.get_role(r) for r in found]
 
         try:
             await bot.remove_roles(denyed_bot_role, reason=reason)
@@ -134,7 +150,6 @@ class JojoUtils(commands.Cog):
             await ctx.tick(cross=True)
             return await ctx.send("I lack permissions to remove roles.")
 
-        roles = [bot_role] + ([staff_bot_role] if found else [])
         await bot.add_roles(*roles, reason=reason)
         await ctx.tick()
         await ctx.send(f"Done. {bot.name} now has its permissions back.")
