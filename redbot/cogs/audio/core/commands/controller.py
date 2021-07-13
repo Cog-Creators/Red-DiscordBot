@@ -670,7 +670,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Do This Action"),
-                        description=_("I am unable to connect two times."),
+                        description=_("I am already in your channel."),
                     )
                 await player.move_to(
                     ctx.author.voice.channel,
