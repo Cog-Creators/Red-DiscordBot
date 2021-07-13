@@ -686,6 +686,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Join Voice Channel"),
                 description=_("Connection to Lavalink has not yet been established."),
             )
+        await ctx.tick()
 
     @commands.command(name="volume")
     @commands.guild_only()
