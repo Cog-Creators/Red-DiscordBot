@@ -247,6 +247,11 @@ triviaset custom
 
 Manage custom trivia lists.
 
+.. tip:: 
+
+    Looking to learn how to create your own trivia lists?
+    See :ref:`here <guide_trivia_list_creation>` for more information.
+
 .. _trivia-command-triviaset-custom-upload:
 
 ^^^^^^^^^^^^^^^^^^^^^^^

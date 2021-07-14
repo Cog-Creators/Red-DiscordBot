@@ -544,7 +544,7 @@ class CustomCommands(commands.Cog):
 
         **Arguments:**
 
-        - `<command>` The custom command to show.
+        - `<command_name>` The custom command to show.
         """
 
         try:
