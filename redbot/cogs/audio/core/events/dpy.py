@@ -21,6 +21,8 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 
+from redbot.core.audio import ServerManager, Lavalink
+
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
 RE_CONVERSION: Final[Pattern] = re.compile('Converting to "(.*)" failed for parameter "(.*)".')
@@ -245,8 +247,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
             self.bot.loop.create_task(lavalink.close(self.bot))
-            if self.player_manager is not None:
-                self.bot.loop.create_task(self.player_manager.shutdown())
+            if ServerManager.is_running() and Lavalink.is_connected():
+                self.bot.loop.create_task(Lavalink.shutdown(shutdown_ll_server=True))
+            elif ServerManager.is_running():
+                self.bot.loop.create_task(ServerManager.shutdown())
 
             self.cog_cleaned_up = True
 

@@ -2,13 +2,14 @@ from pathlib import Path
 
 import aiohttp
 
-from redbot.core.i18n import Translator
-
-_ = Translator("Audio", Path(__file__))
+# from redbot.core.i18n import Translator
+#
+# _ = Translator("Audio", Path(__file__))
 
 
 class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
+
 
 class LavalinkDownloadFailed(AudioError, RuntimeError):
     """Downloading the Lavalink jar failed.

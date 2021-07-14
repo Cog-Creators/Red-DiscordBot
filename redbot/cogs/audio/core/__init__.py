@@ -9,7 +9,7 @@ from typing import Mapping
 import aiohttp
 import discord
 
-from redbot.core import Config
+from redbot.core import Config, audio
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
@@ -33,17 +33,10 @@ class Audio(
 ):
     """Play audio through voice channels."""
 
-    _default_lavalink_settings = {
-        "host": "localhost",
-        "rest_port": 2333,
-        "ws_port": 2333,
-        "password": "youshallnotpass",
-    }
-
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 2711759130, force_registration=True)
+        self.config = audio.Player._config
 
         self.api_interface = None
         self.player_manager = None
@@ -91,71 +84,3 @@ class Audio(
         self._diconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
-        default_global = dict(
-            schema_version=1,
-            bundled_playlist_version=0,
-            owner_notification=0,
-            cache_level=CacheLevel.all().value,
-            cache_age=365,
-            daily_playlists=False,
-            global_db_enabled=False,
-            global_db_get_timeout=5,
-            status=False,
-            use_external_lavalink=False,
-            restrict=True,
-            localpath=str(cog_data_path(raw_name="Audio")),
-            url_keyword_blacklist=[],
-            url_keyword_whitelist=[],
-            java_exc_path="java",
-            **self._default_lavalink_settings,
-        )
-
-        default_guild = dict(
-            auto_play=False,
-            currently_auto_playing_in=None,
-            auto_deafen=True,
-            autoplaylist=dict(
-                enabled=True,
-                id=42069,
-                name="Aikaterna's curated tracks",
-                scope=PlaylistScope.GLOBAL.value,
-            ),
-            persist_queue=True,
-            disconnect=False,
-            dj_enabled=False,
-            dj_role=None,
-            daily_playlists=False,
-            emptydc_enabled=False,
-            emptydc_timer=0,
-            emptypause_enabled=False,
-            emptypause_timer=0,
-            jukebox=False,
-            jukebox_price=0,
-            maxlength=0,
-            notify=False,
-            prefer_lyrics=False,
-            repeat=False,
-            shuffle=False,
-            shuffle_bumped=True,
-            thumbnail=False,
-            volume=100,
-            vote_enabled=False,
-            vote_percent=0,
-            room_lock=None,
-            url_keyword_blacklist=[],
-            url_keyword_whitelist=[],
-            country_code="US",
-        )
-        _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
-
-        self.config.init_custom("EQUALIZER", 1)
-        self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
-        self.config.init_custom(PlaylistScope.GLOBAL.value, 1)
-        self.config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
-        self.config.init_custom(PlaylistScope.GUILD.value, 2)
-        self.config.register_custom(PlaylistScope.GUILD.value, **_playlist)
-        self.config.init_custom(PlaylistScope.USER.value, 2)
-        self.config.register_custom(PlaylistScope.USER.value, **_playlist)
-        self.config.register_guild(**default_guild)
-        self.config.register_global(**default_global)
-        self.config.register_user(country_code=None)

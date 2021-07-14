@@ -16,6 +16,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from redbot.core.audio import ServerManager, Lavalink
 
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
@@ -1112,7 +1113,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+        if is_owner and not global_data["use_external_lavalink"] and ServerManager().ll_build:
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1121,12 +1122,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Java version:           [{jvm}]\n"
                 "Java Executable:        [{jv_exec}]\n"
             ).format(
-                build_time=self.player_manager.build_time,
-                llbuild=self.player_manager.ll_build,
-                llbranch=self.player_manager.ll_branch,
-                lavaplayer=self.player_manager.lavaplayer,
-                jvm=self.player_manager.jvm,
-                jv_exec=self.player_manager.path,
+                build_time=ServerManager().build_time,
+                llbuild=ServerManager().ll_build,
+                llbranch=ServerManager().ll_branch,
+                lavaplayer=ServerManager().lavaplayer,
+                jvm=ServerManager().jvm,
+                jv_exec=ServerManager().path,
             )
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
@@ -1443,11 +1444,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
-            await lavalink.close(self.bot)
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+            await Lavalink.shutdown(self.bot, shutdown_ll_server=True)
 
-            self.lavalink_restart_connect()
+            await Lavalink.start(bot=self.bot)
 
             await self.send_embed_msg(
                 ctx,

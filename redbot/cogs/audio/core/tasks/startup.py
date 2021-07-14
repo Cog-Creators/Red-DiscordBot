@@ -11,7 +11,6 @@ import lavalink
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ...apis.interface import AudioAPIInterface
@@ -20,7 +19,9 @@ from ...audio_logging import debug_exc_log
 from ...errors import DatabaseError, TrackEnqueueError
 from ...utils import task_callback
 from ..abc import MixinMeta
-from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
+from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
+
+from redbot.core.audio import Lavalink, ServerManager
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
@@ -55,7 +56,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await self.playlist_api.delete_scheduled()
             await self.api_interface.persistent_queue_api.delete_scheduled()
             await self._build_bundled_playlist()
-            self.lavalink_restart_connect()
+            if not Lavalink.is_connected() and not ServerManager.is_running():
+                await Lavalink.start(self.bot)
+
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()
             )
