@@ -215,6 +215,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.guild_from_id(
                         guild_id=guild_id
                     ).currently_auto_playing_in.set([])
+                    await asyncio.sleep(2)
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
