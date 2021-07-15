@@ -4,7 +4,7 @@ import lavalink
 from typing import ClassVar
 
 from redbot.core.utils import AsyncIter
-from redbot.core import data_manager, Config
+from redbot.core import data_manager, Config, audio
 from redbot.core.bot import Red
 
 from .api_interface import AudioAPIInterface
@@ -28,21 +28,14 @@ class Lavalink:
         return cls._bot
 
     @classmethod
-    async def start(cls, bot, force_restart_ll_server: bool = False, timeout: int = 50, max_retries: int = 5) -> None:
+    async def start(cls, bot, timeout: int = 50, max_retries: int = 5) -> None:
         cls._lavalink_connection_aborted = False
         cls._bot = bot
-        configs = await Config.get_conf(None, identifier=2711759130, cog_name="Audio").all()
-
-        if force_restart_ll_server:
-            await ServerManager.shutdown()
-            AudioAPIInterface.close()
-
-        if not AudioAPIInterface.is_connected():
-            await AudioAPIInterface.initialize()
+        configs = await audio.Player._config.all()
 
         async for _ in AsyncIter(range(0, max_retries)):
-            external = configs["use_external_lavalink"] if "use_external_lavalink" in configs.keys() else default_config["use_external_lavalink"]
-            java_exc = configs["java_exc_path"] if "java_exc_path" in configs.keys() else default_config["java_exc_path"]
+            external = configs["use_external_lavalink"]
+            java_exc = configs["java_exc_path"]
             if not external:
                 host = "localhost"
                 password = "youshallnotpass"
@@ -137,11 +130,8 @@ class Lavalink:
 
 
     @classmethod
-    async def shutdown(cls, bot, shutdown_ll_server: bool = False):
+    async def shutdown(cls, bot):
         await lavalink.close(bot)
-        AudioAPIInterface.close()
-        if shutdown_ll_server and ServerManager.is_running():
-            await ServerManager.shutdown()
         cls._lavalink_running = False
         log.debug("Lavalink connection closed")
 

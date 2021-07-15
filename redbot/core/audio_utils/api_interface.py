@@ -63,10 +63,12 @@ class AudioAPIInterface:
         await cls._local_cache_api.lavalink.init()
         await cls._persistent_queue_api.init()
         cls._is_connected = True
+        if IS_DEBUG:
+            log.debug("Database connection established")
 
     @classmethod
     def close(cls) -> None:
-        cls._local_cache_api.close()
+        cls._local_cache_api.lavalink.close()
         cls._is_connected = False
 
     @classmethod

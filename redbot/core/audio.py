@@ -22,6 +22,7 @@ from redbot.core.audio_utils.copied.utils import CacheLevel, PlaylistScope
 #from redbot.cogs.audio.apis.interface import AudioAPIInterface
 
 log = logging.getLogger("red.core.audio")
+_used_by = []
 
 class LavalinkNotReady(AudioError):
     """LavaLink server is not ready"""
@@ -32,6 +33,85 @@ class NotConnectedToVoice(AudioError):
 class InvalidQuery(AudioError):
     """Query is invalid - No tracks found"""
 
+async def initialize(
+        bot,
+        cog_name: str,
+        identifier: int,
+        force_restart_ll_server: bool = False,
+        force_reset_db_connection: bool = False,
+) -> None:
+    """Initializes the api and established the connection to lavalink
+
+    Parameters
+    ----------
+    bot: Red
+        The bot object to establish the connection to
+    cog_name: str
+        Used to detect whether the api is used by which cogs
+    identifier: int
+        Used to prevent shutdown if cog_name is the same between connections
+    force_restart_ll_server: bool
+        Whether the lavalink server should be restarted if it is currently running
+    force_reset_db_connection: bool
+        Whether the database connection should be reset if it is currently connected
+    Returns
+    -------
+    None
+    """
+
+    _used_by.append((cog_name, identifier))
+
+    if force_restart_ll_server:
+        if ServerManager.is_running():
+            await ServerManager.shutdown()
+
+    if force_reset_db_connection:
+        if AudioAPIInterface.is_connected():
+            AudioAPIInterface.close()
+
+    if not AudioAPIInterface.is_connected():
+        await AudioAPIInterface.initialize()
+
+    if not Lavalink.is_connected():
+        await Lavalink.start(bot)
+
+async def stop(
+        bot,
+        cog_name: str,
+        identifier: int,
+        force_shutdown: bool = False
+) -> None:
+    """Closes the lavalink connection and shuts the server down if unused
+
+    Parameters
+    ----------
+    bot: Red
+        The bot object to close the connection from
+    cog_name: str
+        Used to detect whether the api is used by which cogs
+    identifier: int
+        Used to prevent shutdown if cog_name is the same between connections
+    force_shutdown: bool
+        Shutdown all servers, even though other cogs still use it
+    Returns
+    -------
+    None
+    """
+
+    if not (cog_name, identifier) in _used_by:
+        raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
+
+    _used_by.pop((cog_name, identifier))
+
+    if not _used_by:
+        if ServerManager.is_running():
+            await ServerManager.shutdown()
+
+        if AudioAPIInterface.is_connected():
+            AudioAPIInterface.close()
+
+        if Lavalink.is_connected():
+            await Lavalink.shutdown(bot)
 
 class Player:
     _log: ClassVar[logging.Logger] = logging.getLogger("red.core.audio.player")
@@ -294,7 +374,7 @@ class Player:
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
 
         if deafen is None:
-            deafen = await cls._config.guild(channel.guild).deafen()
+            deafen = await cls._config.guild(channel.guild).auto_deafen()
 
         try:
             player = lavalink.get_player(channel.guild.id)
