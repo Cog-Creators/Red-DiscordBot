@@ -334,6 +334,20 @@ class Player:
 
     @classmethod
     async def play(cls, query: str, requester: discord.Member, local_folder: pathlib.Path = None) -> None:
+        """Plays a track
+
+        Parameters
+        ----------
+        query: str
+            The query to search for. Supports everything core audio supports
+        requester: discord.Member
+            The requester of the song
+        local_folder: pathlib.Path
+            Local folder if track is a local track
+        Returns
+        -------
+        None
+        """
         guild: discord.Guild = requester.guild
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
@@ -353,6 +367,16 @@ class Player:
 
     @classmethod
     async def stop(cls, guild: discord.Guild) -> None:
+        """Stop the playback
+
+        Parameters
+        ----------
+        guild: discord.Member
+            The guild in which playback should be stopped
+        Returns
+        -------
+        None
+        """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
 
@@ -370,6 +394,19 @@ class Player:
 
     @classmethod
     async def connect(cls, channel: discord.VoiceChannel, deafen: bool = None) -> None:
+        """Connect to a voice channel
+
+        Parameters
+        ----------
+        channel: discord.VoiceChannel
+            The channel to connect to
+        deafen: bool
+            Whether or not the bot should deafen on connect. Defaults to the
+            guild default value if not given
+        Returns
+        -------
+        None
+        """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
 
@@ -386,6 +423,16 @@ class Player:
 
     @classmethod
     def is_connected(cls, channel: discord.VoiceChannel) -> bool:
+        """Check whether the player is connected to a channel
+
+        Parameters
+        ----------
+        channel: discord.VoiceChannel
+            The query to search for. Supports everything core audio supports
+        Returns
+        -------
+        Bool
+        """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
 
@@ -399,6 +446,16 @@ class Player:
 
     @classmethod
     async def disconnect(cls, guild: discord.Guild) -> None:
+        """Disconnect the player
+
+        Parameters
+        ----------
+        guild: discord.Guild
+            The guild in which the player should disconnect
+        Returns
+        -------
+        None
+        """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
 
@@ -417,6 +474,16 @@ class Player:
 
     @classmethod
     async def get_volume(cls, guild: discord.Guild) -> Optional[int]:
+        """Get the current player volume
+
+        Parameters
+        ----------
+        guild: discord.Guild
+            The guild for which the volume should be returned
+        Returns
+        -------
+        int
+        """
         try:
             player = lavalink.get_player(guild.id)
             return player.volume
@@ -425,6 +492,16 @@ class Player:
 
     @classmethod
     async def set_volume(cls, guild: discord.Guild, vol: int) -> int:
+        """Set the player volume
+
+        Parameters
+        ----------
+        guild: discord.Guild
+            The guild for which the volume should be set
+        Returns
+        -------
+        int: the volume after change
+        """
         if vol < 0 or vol > 150:
             raise ValueError("Volume is not within the allowed range")
 
