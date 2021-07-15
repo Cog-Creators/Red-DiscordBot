@@ -544,7 +544,7 @@ class CustomCommands(commands.Cog):
 
         **Arguments:**
 
-        - `<command>` The custom command to show.
+        - `<command_name>` The custom command to show.
         """
 
         try:
@@ -694,20 +694,20 @@ class CustomCommands(commands.Cog):
         fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
         for arg in args:
             index = int(arg[0]) - low
-            anno = arg[1][1:]  # strip initial colon
-            if anno.lower().endswith("converter"):
-                anno = anno[:-9]
-            if not anno or anno.startswith("_"):  # public types only
+            anno_raw = arg[1][1:]  # strip initial colon
+            if anno_raw.lower().endswith("converter"):
+                anno_raw = anno_raw[:-9]
+            if not anno_raw or anno_raw.startswith("_"):  # public types only
                 name = "{}_{}".format("text", index if index < high else "final")
                 fin[index] = fin[index].replace(name=name)
                 continue
             # allow type hinting only for discord.py and builtin types
             try:
-                anno = getattr(discord, anno)
+                anno = getattr(discord, anno_raw)
                 # force an AttributeError if there's no discord.py converter
                 getattr(commands, anno.__name__ + "Converter")
             except AttributeError:
-                anno = allowed_builtins.get(anno.lower(), Parameter.empty)
+                anno = allowed_builtins.get(anno_raw.lower(), Parameter.empty)
             if (
                 anno is not Parameter.empty
                 and fin[index].annotation is not Parameter.empty

@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timezone
 
 from typing import Optional, Union
@@ -9,6 +10,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
 
@@ -43,7 +45,7 @@ class ModLog(commands.Cog):
     async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set a channel as the modlog.
 
-        Omit `<channel>` to disable the modlog.
+        Omit `[channel]` to disable the modlog.
         """
         guild = ctx.guild
         if channel:
@@ -101,8 +103,21 @@ class ModLog(commands.Cog):
     async def resetcases(self, ctx: commands.Context):
         """Reset all modlog cases in this server."""
         guild = ctx.guild
-        await modlog.reset_cases(guild)
-        await ctx.send(_("Cases have been reset."))
+        await ctx.send(
+            _("Are you sure you would like to reset all modlog cases in this server?")
+            + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await modlog.reset_cases(guild)
+            await ctx.send(_("Cases have been reset."))
+        else:
+            await ctx.send(_("No changes have been made."))
 
     @commands.command()
     @commands.guild_only()

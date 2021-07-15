@@ -343,7 +343,7 @@ class CogManagerUI(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def addpath(self, ctx: commands.Context, path: Path):
+    async def addpath(self, ctx: commands.Context, *, path: Path):
         """
         Add a path to the list of available cog paths.
         """
