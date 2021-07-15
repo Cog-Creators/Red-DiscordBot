@@ -21,7 +21,7 @@ from ...utils import task_callback
 from ..abc import MixinMeta
 from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
 
-from redbot.core.audio import Lavalink, ServerManager
+from redbot.core import audio
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
@@ -56,8 +56,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await self.playlist_api.delete_scheduled()
             await self.api_interface.persistent_queue_api.delete_scheduled()
             await self._build_bundled_playlist()
-            if not Lavalink.is_connected() and not ServerManager.is_running():
-                await Lavalink.start(self.bot)
+
+            await audio.initialize(self.bot, "Audio", 2711759130)
 
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()

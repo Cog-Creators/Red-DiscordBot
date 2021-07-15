@@ -101,7 +101,7 @@ async def stop(
     if not (cog_name, identifier) in _used_by:
         raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
 
-    _used_by.pop((cog_name, identifier))
+    _used_by.remove((cog_name, identifier))
 
     if not _used_by:
         if ServerManager.is_running():

@@ -21,7 +21,7 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 
-from redbot.core.audio import ServerManager, Lavalink
+from redbot.core import audio
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
@@ -246,11 +246,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
-            self.bot.loop.create_task(lavalink.close(self.bot))
-            if ServerManager.is_running() and Lavalink.is_connected():
-                self.bot.loop.create_task(Lavalink.shutdown(shutdown_ll_server=True))
-            elif ServerManager.is_running():
-                self.bot.loop.create_task(ServerManager.shutdown())
+
+            self.bot.loop.create_task(audio.stop(self.bot, "Audio", 2711759130))
 
             self.cog_cleaned_up = True
 
