@@ -701,6 +701,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         can_skip = await self._can_instaskip(ctx, ctx.author)
+        max_volume = await self.config.guild(ctx.guild).max_volume()
+
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
             embed = discord.Embed(title=_("Current Volume:"), description=f"{vol}%")
@@ -725,7 +727,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = max(0, min(vol, 150))
+        vol = max(0, min(vol, max_volume))
         await self.config.guild(ctx.guild).volume.set(vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
