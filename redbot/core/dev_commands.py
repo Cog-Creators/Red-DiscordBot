@@ -262,7 +262,10 @@ class Dev(commands.Cog):
 
             if cleaned in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
-                await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                try:
+                    await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                except discord.Forbidden:
+                    pass
                 del self.sessions[ctx.channel.id]
                 return
 
@@ -296,11 +299,17 @@ class Dev(commands.Cog):
                         result = executor(code, env)
                     result = await self.maybe_await(result)
             except:
-                await response.add_reaction("\N{CROSS MARK}")
+                try:
+                    await response.add_reaction("\N{CROSS MARK}")
+                except discord.Forbidden:
+                    pass
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
-                await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                try:
+                    await response.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                except discord.Forbidden:
+                    pass
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
