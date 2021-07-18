@@ -1,3 +1,4 @@
+import contextlib
 import logging
 from datetime import datetime, timedelta
 from typing import Callable, List, Optional, Set, Union
@@ -58,11 +59,9 @@ class Cleanup(commands.Cog):
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
-            await prompt.delete()
-            try:
+            with contextlib.suppress(discord.HTTPException):
+                await prompt.delete()
                 await response.delete()
-            except discord.HTTPException:
-                pass
             return True
         else:
             await ctx.send(_("Cancelled."))
