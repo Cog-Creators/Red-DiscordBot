@@ -472,6 +472,7 @@ Print the leaderboard.
 Defaults to top 10.
 
 Examples:
+    - ``[p]leaderboard yes`` - Shows the leaderboard from all servers.
     - ``[p]leaderboard``
     - ``[p]leaderboard 50`` - Shows the top 50 instead of top 10.
     - ``[p]leaderboard 100 yes`` - Shows the top 100 from all servers.
