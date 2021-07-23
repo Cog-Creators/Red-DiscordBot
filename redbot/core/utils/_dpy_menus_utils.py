@@ -27,12 +27,6 @@ async def dpymenu(
     delete_message_after: bool = True,
     clear_reactions_after: bool = True,
 ):
-    if controls is not None:
-        log.warning(
-            "dpymenu function does not accept controls, this is being ignored. "
-            f"Called by {ctx.cog}"
-        )
-
     await SimpleHybridMenu(
         source=SimpleSource(pages=pages),
         cog=ctx.cog,
