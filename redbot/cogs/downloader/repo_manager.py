@@ -963,7 +963,8 @@ class Repo(RepoJSONMixin):
         p = await self._run(
             ProcessFormatter().format(
                 self.PIP_INSTALL, python=executable, target_dir=target_dir, reqs=requirements
-            )
+            ),
+            cwd=target_dir,
         )
 
         if p.returncode != 0:
