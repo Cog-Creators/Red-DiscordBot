@@ -54,9 +54,6 @@ async def initialize(
         Whether the lavalink server should be restarted if it is currently running
     force_reset_db_connection: bool
         Whether the database connection should be reset if it is currently connected
-    Returns
-    -------
-    None
     """
 
     _used_by.append((cog_name, identifier))
@@ -93,9 +90,6 @@ async def stop(
         Used to prevent shutdown if cog_name is the same between connections
     force_shutdown: bool
         Shutdown all servers, even though other cogs still use it
-    Returns
-    -------
-    None
     """
 
     if not (cog_name, identifier) in _used_by:
@@ -344,9 +338,6 @@ class Player:
             The requester of the song
         local_folder: pathlib.Path
             Local folder if track is a local track
-        Returns
-        -------
-        None
         """
         guild: discord.Guild = requester.guild
         if not Lavalink.is_connected():
@@ -371,11 +362,8 @@ class Player:
 
         Parameters
         ----------
-        guild: discord.Member
+        guild: discord.Guild
             The guild in which playback should be stopped
-        Returns
-        -------
-        None
         """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
@@ -403,9 +391,6 @@ class Player:
         deafen: bool
             Whether or not the bot should deafen on connect. Defaults to the
             guild default value if not given
-        Returns
-        -------
-        None
         """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
@@ -431,7 +416,8 @@ class Player:
             The query to search for. Supports everything core audio supports
         Returns
         -------
-        Bool
+        bool
+            the current connection state
         """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
@@ -452,9 +438,6 @@ class Player:
         ----------
         guild: discord.Guild
             The guild in which the player should disconnect
-        Returns
-        -------
-        None
         """
         if not Lavalink.is_connected():
             raise LavalinkNotReady("Connection to Lavalink has not yet been established")
@@ -483,6 +466,7 @@ class Player:
         Returns
         -------
         int
+            The current volume
         """
         try:
             player = lavalink.get_player(guild.id)
@@ -500,7 +484,8 @@ class Player:
             The guild for which the volume should be set
         Returns
         -------
-        int: the volume after change
+        int
+            the volume after change
         """
         if vol < 0 or vol > 150:
             raise ValueError("Volume is not within the allowed range")

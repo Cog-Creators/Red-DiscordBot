@@ -17,7 +17,7 @@ from typing import ClassVar, Optional, Final, Pattern, List, Tuple
 from .api_utils import task_callback
 from .errors import LavalinkDownloadFailed
 
-from redbot.core import data_manager
+from redbot.core import data_manager, config
 
 log = logging.getLogger("red.core.audio.server_manager")
 
@@ -29,10 +29,10 @@ LAVALINK_DOWNLOAD_URL: Final[str] = (
     "Lavalink.jar"
 )
 
-LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
-LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
-LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
+# cls._lavalink_download_dir: Optional[pathlib.Path]
+# cls._lavalink_jar_file: Final[pathlib.Path] = cls._lavalink_download_dir / "Lavalink.jar"
+# BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
+# LAVALINK_APP_YML: Final[pathlib.Path] = cls._lavalink_download_dir / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
@@ -51,6 +51,12 @@ LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavapl
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
 
 class ServerManager:
+    data_manager.load_basic_configuration("bot")
+    _lavalink_download_dir : ClassVar[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
+    _lavalink_jar_file: Final[pathlib.Path] = _lavalink_download_dir / "Lavalink.jar"
+    _bundled_app_yml: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
+    _lavalink_app_yml: Final[pathlib.Path] = _lavalink_download_dir / "application.yml"
+    
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
@@ -113,7 +119,7 @@ class ServerManager:
         args = await cls._get_jar_args()
         cls._proc = await asyncio.subprocess.create_subprocess_exec(
             *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
+            cwd=str(cls._lavalink_download_dir),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT
         )
@@ -186,7 +192,7 @@ class ServerManager:
 
     @classmethod
     def _has_java_error(cls) -> bool:
-        poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(cls._proc.pid)
+        poss_error_file = cls._lavalink_download_dir / "hs_err_pid{}.log".format(cls._proc.pid)
         return poss_error_file.exists()
 
     @classmethod
@@ -244,7 +250,7 @@ class ServerManager:
             cls._java_exc,
             "-Djdk.tls.client.protocols=TLSv1.2",
             "-jar",
-            str(LAVALINK_JAR_FILE),
+            str(cls._lavalink_jar_file),
         ]
 
     @classmethod
@@ -254,7 +260,7 @@ class ServerManager:
 
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
+            cwd=str(cls._lavalink_download_dir),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
@@ -329,12 +335,12 @@ class ServerManager:
                     finally:
                         file.close()
 
-                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+                shutil.move(path, str(cls._lavalink_jar_file), copy_function=shutil.copyfile)
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await cls._is_up_to_date()
 
     @classmethod
     async def maybe_download_jar(cls) -> None:
-        if not (LAVALINK_JAR_FILE.exists() and await cls._is_up_to_date()):
+        if not (cls._lavalink_jar_file.exists() and await cls._is_up_to_date()):
             await cls._download_jar()

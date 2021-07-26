@@ -3,20 +3,26 @@
 .. role:: python(code)
     :language: python
 
+=====
+Audio
+=====
+
 *************
 API Reference
 *************
 
-.. automodule:: redbot.core import audio
+.. automodule:: redbot.core.audio
 
 Audio
 ^^^^^
 
-.. autoclass:: audio
-    :members:
+.. autofunction:: redbot.core.audio.initialize
+
+.. autofunction:: redbot.core.audio.stop
 
 Player
 ^^^^^^
 
-.. autoclass:: audio.Player
+.. autoclass:: redbot.core.audio.Player
     :members:
+
