@@ -266,7 +266,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             "Closing the audio player "
                             "due to multiple errors being detected. "
                             "If this persists, please inform the bot owner "
-                            "as the Audio cog may be temporally unavailable."
+                            "as the Audio cog may be temporarily unavailable."
                         ),
                     )
                     await message_channel.send(embed=embed)

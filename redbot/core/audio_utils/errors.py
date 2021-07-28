@@ -1,11 +1,4 @@
-from pathlib import Path
-
 import aiohttp
-
-# from redbot.core.i18n import Translator
-#
-# _ = Translator("Audio", Path(__file__))
-
 
 class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
@@ -120,3 +113,12 @@ class InvalidLocalTrack(LocalTrackError):
 
 class InvalidLocalTrackFolder(LocalTrackError):
     """Base exception for local track errors."""
+
+class LavalinkNotReady(AudioError):
+    """LavaLink server is not ready"""
+
+class NotConnectedToVoice(AudioError):
+    """Bot is not connected to a voice channel"""
+
+class InvalidQuery(AudioError):
+    """Query is invalid - No tracks found"""

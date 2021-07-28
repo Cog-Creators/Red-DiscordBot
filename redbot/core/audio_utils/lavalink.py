@@ -1,15 +1,18 @@
 import asyncio
 import logging
 import lavalink
-from typing import ClassVar
+import functools
+from typing import ClassVar, Any
 
 from redbot.core.utils import AsyncIter
-from redbot.core import data_manager, Config, audio
+from redbot.core import data_manager, audio
 from redbot.core.bot import Red
+from redbot.core.audio_utils.copied.audio_logging import IS_DEBUG
 
 from .api_interface import AudioAPIInterface
 from .server_manager import ServerManager
 from .errors import LavalinkDownloadFailed
+from .api_utils import rgetattr
 
 log = logging.getLogger("red.core.audio.lavalink")
 
@@ -31,7 +34,7 @@ class Lavalink:
     async def start(cls, bot, timeout: int = 50, max_retries: int = 5) -> None:
         cls._lavalink_connection_aborted = False
         cls._bot = bot
-        configs = await audio.Player._config.all()
+        configs = await audio._config.all()
 
         async for _ in AsyncIter(range(0, max_retries)):
             external = configs["use_external_lavalink"]
@@ -41,9 +44,9 @@ class Lavalink:
                 password = "youshallnotpass"
                 ws_port = 2333
 
-                if not ServerManager.is_running():
+                if not ServerManager.is_running:
                     try:
-                        await ServerManager.start(java_exc)
+                        await ServerManager.start(bot, java_exc)
                         cls._lavalink_running = True
                     except LavalinkDownloadFailed as exc:
                         await asyncio.sleep(1)
@@ -101,11 +104,12 @@ class Lavalink:
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{bot.user.id}-{data_manager.instance_name}"
                 )
-                log.debug("Lavalink connection established")
+                if IS_DEBUG:
+                    log.debug("Lavalink connection established")
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
-                if not external and ServerManager.is_running():
-                    await ServerManager.shutdown()
+                if not external and ServerManager.is_running:
+                    await ServerManager.shutdown(bot)
                 await asyncio.sleep()
             except Exception as exc:
                 log.exception(
@@ -125,16 +129,116 @@ class Lavalink:
         if external:
             await asyncio.sleep(5)
 
+        lavalink.register_event_listener(cls.lavalink_event_handler)
+
+        bot.dispatch(
+            "lavalink_connection_established", host, password, ws_port
+        )
+
         #ToDo restore players
         #cls._restore_task = asyncio.create_task()
 
-
     @classmethod
     async def shutdown(cls, bot):
+        lavalink.unregister_event_listener(cls.lavalink_event_handler)
         await lavalink.close(bot)
         cls._lavalink_running = False
-        log.debug("Lavalink connection closed")
+        if IS_DEBUG:
+            log.debug("Lavalink connection closed")
 
     @classmethod
     def is_connected(cls):
         return bool(lavalink.node._nodes)
+
+    @classmethod
+    async def cleanup_after_error(cls, player, current_track):
+        while current_track in player.queue:
+            player.queue.remove(current_track)
+
+        repeat = await audio._config.guild(player.channel.guild).repeat()
+
+        if repeat:
+            player.current = None
+
+        await player.skip()
+
+    @classmethod
+    async def lavalink_event_handler(
+        cls,
+        player: lavalink.Player,
+        event_type: lavalink.LavalinkEvents,
+        extra
+    ) -> None:
+        current_track = player.current
+        current_channel = player.channel
+        guild: discord.Guild = rgetattr(current_channel, "guild", None)
+        if not (current_channel and guild):
+            player.store("autoplay_notified", False)
+            await player.stop()
+            await player.disconnect()
+            return
+        if not guild:
+            return
+
+        if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
+            cls._bot.dispatch("red_audio_audio_disconnect", guild)
+            return
+
+        current_requester = rgetattr(current_track, "requester", None)
+        prev_song: lavalink.Track = player.fetch("prev_song")
+
+        if event_type == lavalink.LavalinkEvents.TRACK_START:
+            #extra being a lavalink.Track object
+            playing_song = player.fetch("playing_song")
+            requester = player.fetch("requester")
+            player.store("prev_song", playing_song)
+            player.store("prev_requester", requester)
+            player.store("playing_song", current_track)
+            player.store("requester", current_requester)
+
+            cls._bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
+
+            if current_track:
+                await audio.AudioAPIInterface._persistent_queue_api.played(
+                    guild_id=guild.id, track_id=current_track.track_identifier
+                )
+
+        if event_type == lavalink.LavalinkEvents.TRACK_END:
+            #extra being a lavalink.TrackEndReason object
+            prev_requester = player.fetch("prev_requester")
+            cls._bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester, extra)
+            player.store("resume_attempts", 0)
+
+            if audio.AudioAPIInterface:
+                await audio.AudioAPIInterface._local_cache_api.youtube.clean_up_old_entries()
+                await asyncio.sleep(5)
+                await audio.AudioAPIInterface._persistent_queue_api.drop(guild.id)
+                await asyncio.sleep(5)
+                await audio.AudioAPIInterface._persistent_queue_api.delete_scheduled()
+
+        if event_type == lavalink.LavalinkEvents.QUEUE_END:
+            #extra being None
+            prev_requester = player.fetch("prev_requester")
+            cls._bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
+
+            if audio.AudioAPIInterface:
+                await audio.AudioAPIInterface._local_cache_api.youtube.clean_up_old_entries()
+                await asyncio.sleep(5)
+                await audio.AudioAPIInterface._persistent_queue_api.drop(guild.id)
+                await asyncio.sleep(5)
+                await audio.AudioAPIInterface._persistent_queue_api.delete_scheduled()
+
+        if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+            #extra being an error string
+            prev_requester = player.fetch("prev_requester")
+            await cls.cleanup_after_error(player, current_track)
+            cls._bot.dispatch("red_audio_track_exception", guild, prev_song, prev_requester, extra)
+
+        if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
+            #extra being the threshold in ms that the track has been stuck for
+            prev_requester = player.fetch("prev_requester")
+            await cls.cleanup_after_error(player, current_track)
+            cls._bot.dispatch("red_audio_track_stuck", guild, prev_song, prev_requester, extra)
+
+        if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
+            cls._bot.dispatch("lavalink_websocket_closed", player, extra)

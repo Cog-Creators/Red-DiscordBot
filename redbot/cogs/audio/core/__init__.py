@@ -36,7 +36,7 @@ class Audio(
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = audio.Player._config
+        self.config = audio._config
 
         self.api_interface = None
         self.player_manager = None

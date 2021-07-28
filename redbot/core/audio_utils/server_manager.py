@@ -12,12 +12,13 @@ import time
 import aiohttp
 import rich
 
-from typing import ClassVar, Optional, Final, Pattern, List, Tuple
+from typing import ClassVar, Optional, Final, Pattern, List, Tuple, TYPE_CHECKING
 
-from .api_utils import task_callback
+from .api_utils import task_callback, classproperty
 from .errors import LavalinkDownloadFailed
 
-from redbot.core import data_manager, config
+from redbot.core import data_manager
+from redbot.core.bot import Red
 
 log = logging.getLogger("red.core.audio.server_manager")
 
@@ -51,12 +52,11 @@ LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavapl
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
 
 class ServerManager:
-    data_manager.load_basic_configuration("bot")
-    _lavalink_download_dir : ClassVar[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
-    _lavalink_jar_file: Final[pathlib.Path] = _lavalink_download_dir / "Lavalink.jar"
-    _bundled_app_yml: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
-    _lavalink_app_yml: Final[pathlib.Path] = _lavalink_download_dir / "application.yml"
-    
+    _lavalink_download_dir: ClassVar[Optional[pathlib.Path]] = None
+    _lavalink_jar_file: ClassVar[Optional[pathlib.Path]] = None
+    _bundled_app_yml: ClassVar[Optional[pathlib.Path]] = None
+    _lavalink_app_yml: ClassVar[Optional[pathlib.Path]] = None
+
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
     _up_to_date: ClassVar[Optional[bool]] = None
@@ -74,32 +74,66 @@ class ServerManager:
     _monitor_task: ClassVar[Optional[asyncio.Task]] = None
     _shutdown: ClassVar[bool] = False
 
-    @property
-    def path(self) -> Optional[str]:
-        return self._java_exc
+    @classproperty
+    def path(cls) -> Optional[str]:
+        """java path
+        :rtype: str"""
+        return cls._java_exc
 
-    @property
-    def jvm(self) -> Optional[str]:
-        return self._jvm
+    @classproperty
+    def jvm(cls) -> Optional[str]:
+        """java version
+        :rtype: str """
+        return cls._jvm
 
-    @property
-    def lavaplayer(self) -> Optional[str]:
-        return self._lavaplayer
+    @classproperty
+    def lavaplayer(cls) -> Optional[str]:
+        """lavaplayer version
+        :rtype: str """
+        return cls._lavaplayer
 
-    @property
-    def ll_build(self) -> Optional[int]:
-        return self._lavalink_build
+    @classproperty
+    def ll_build(cls) -> Optional[int]:
+        """lavalink build
+        :rtype: int """
+        return cls._lavalink_build
 
-    @property
-    def ll_branch(self) -> Optional[str]:
-        return self._lavalink_branch
+    @classproperty
+    def ll_branch(cls) -> Optional[str]:
+        """lavalink branch
+        :rtype: str """
+        return cls._lavalink_branch
 
-    @property
-    def build_time(self) -> Optional[str]:
-        return self._buildtime
+    @classproperty
+    def build_time(cls) -> Optional[str]:
+        """lavalink build time
+        :rtype: str """
+        return cls._buildtime
+
+    @classproperty
+    def is_running(cls) -> bool:
+        """Whether or not the internal lavalink server is running
+        :rtype: bool"""
+        if cls._shutdown or not cls._proc:
+            return False
+        return True
 
     @classmethod
-    async def start(cls, java_path: str):
+    async def start(cls, bot: Red, java_path: str):
+        """Starts the internal lavalink server and handles jar downloading
+
+        Parameters
+        ----------
+        bot: Red
+            The bot object to start the connection from
+        java_path: str
+            the java path to use
+        """
+        cls._lavalink_download_dir = data_manager.cog_data_path(raw_name="Audio")
+        cls._lavalink_jar_file = cls._lavalink_download_dir / "Lavalink.jar"
+        cls._bundled_app_yml = pathlib.Path(__file__).parent / "data" / "application.yml"
+        cls._lavalink_app_yml = cls._lavalink_download_dir / "application.yml"
+
         cls._shutdown = False
         arch_name = platform.machine()
         if arch_name in cls._blacklisted_archs:
@@ -128,6 +162,9 @@ class ServerManager:
 
         try:
             await asyncio.wait_for(cls._wait_for_launcher(), timeout=120)
+            bot.dispatch(
+                "lavalink_server_started", java_path
+            )
         except asyncio.TimeoutError:
             log.warning("Timeout occured whilst waiting for internal Lavalink server to become ready")
 
@@ -135,7 +172,14 @@ class ServerManager:
         cls._monitor_task.add_done_callback(task_callback)
 
     @classmethod
-    async def shutdown(cls) -> None:
+    async def shutdown(cls, bot: Red) -> None:
+        """Stops the internal lavalink server
+
+        Parameters
+        ----------
+        bot: Red
+            The bot object to close the connection from
+        """
         if cls._shutdown or not cls._proc:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
@@ -145,13 +189,8 @@ class ServerManager:
             cls._monitor_task.cancel()
         cls._proc.terminate()
         await cls._proc.wait()
+        bot.dispatch("lavalink_server_stopped")
         cls._shutdown = True
-
-    @classmethod
-    def is_running(cls) -> bool:
-        if cls._shutdown or not cls._proc:
-            return False
-        return True
 
     @classmethod
     async def _monitor(cls) -> None:
@@ -342,5 +381,6 @@ class ServerManager:
 
     @classmethod
     async def maybe_download_jar(cls) -> None:
+        """Checks jar version and redownloads if outdated"""
         if not (cls._lavalink_jar_file.exists() and await cls._is_up_to_date()):
             await cls._download_jar()

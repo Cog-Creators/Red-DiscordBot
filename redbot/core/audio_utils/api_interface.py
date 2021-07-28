@@ -18,7 +18,6 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from .audio_dataclasses import Query
-#from .lavalink import Lavalink
 from .errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from .copied.audio_logging import debug_exc_log, IS_DEBUG
 
@@ -33,8 +32,7 @@ log = logging.getLogger("red.core.audio.api_interface")
 
 class AudioAPIInterface:
     _bot: ClassVar[Optional[Red]] = None
-    _config: ClassVar[Config] = Config.get_conf(None, identifier=2711759130, cog_name="Audio")
-    _session: ClassVar[aiohttp.ClientSession] = aiohttp.ClientSession()
+    _session: ClassVar[Optional[aiohttp.ClientSession]] = None
     _conn: ClassVar[Optional[APSWConnectionWrapper]] = None
     _cog: ClassVar[str] = "Audio"
     _spotify_api: ClassVar[Optional[SpotifyWrapper]] = None
@@ -49,16 +47,17 @@ class AudioAPIInterface:
 
     @classmethod
     async def initialize(cls) -> None:
+        cls._session = aiohttp.ClientSession()
         cls._bot = audio.Lavalink.bot()
         cls._conn = APSWConnectionWrapper(
             str(data_manager.cog_data_path(raw_name="Audio") / "Audio.db")
         )
 
-        cls._spotify_api: ClassVar[SpotifyWrapper] = SpotifyWrapper(cls._bot, cls._config, cls._session, cls._cog)
-        cls._youtube_api: ClassVar[YouTubeWrapper] = YouTubeWrapper(cls._bot, cls._config, cls._session, cls._cog)
-        cls._local_cache_api: ClassVar[LocalCacheWrapper] = LocalCacheWrapper(cls._bot, cls._config, cls._conn, cls._cog)
+        cls._spotify_api: ClassVar[SpotifyWrapper] = SpotifyWrapper(cls._bot, audio._config, cls._session, cls._cog)
+        cls._youtube_api: ClassVar[YouTubeWrapper] = YouTubeWrapper(cls._bot, audio._config, cls._session, cls._cog)
+        cls._local_cache_api: ClassVar[LocalCacheWrapper] = LocalCacheWrapper(cls._bot, audio._config, cls._conn, cls._cog)
         # global api?
-        cls._persistent_queue_api: ClassVar[QueueInterface] = QueueInterface(cls._bot, cls._config, cls._conn, cls._cog)
+        cls._persistent_queue_api: ClassVar[QueueInterface] = QueueInterface(cls._bot, audio._config, cls._conn, cls._cog)
 
         await cls._local_cache_api.lavalink.init()
         await cls._persistent_queue_api.init()
@@ -82,7 +81,7 @@ class AudioAPIInterface:
             date = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=7)
             date_timestamp = int(date.timestamp())
             query_data["day"] = date_timestamp
-            maxage_conf = await cls._config.cache_age()
+            maxage_conf = await audio._config.cache_age()
             maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
                 days=maxage_conf if maxage_conf else 365
             )
@@ -96,7 +95,8 @@ class AudioAPIInterface:
                 result = LoadResult(track)
                 track = random.choice(list(result.tracks))
         except Exception as e:
-            log.debug(f"Failed to fetch a random track from db: {e}")
+            if IS_DEBUG:
+                log.debug(f"Failed to fetch a random track from db: {e}")
             track = {}
 
         if not track:
@@ -335,7 +335,7 @@ class AudioAPIInterface:
             uri: str,
             skip_youtube: bool = False
     ):
-        cache_level = await cls._config.cache_level()
+        cache_level = await audio._config.cache_level()
         current_cache_level = CacheLevel(cache_level if cache_level else CacheLevel.all().value)
         cache_enabled = CacheLevel.set_spotify().is_subset(current_cache_level)
         if query_type == "track" and cache_enabled:
@@ -387,9 +387,9 @@ class AudioAPIInterface:
         youtube_api_error = None
         skip_youtube_api = False
         try:
-            cache_level = await cls._config.cache_level()
+            cache_level = await audio._config.cache_level()
             current_cache_level = CacheLevel(cache_level if cache_level else CacheLevel.all().value)
-            guild_data = await cls._config.guild(requester.guild).all()
+            guild_data = await audio._config.guild(requester.guild).all()
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await get_queue_duration(player)
@@ -485,11 +485,13 @@ class AudioAPIInterface:
                                 )
                             except (RuntimeError, aiohttp.ServerDisconnectedError):
                                 lock(lock_id, False)
-                                log.debug("Connection reset while loading playlist")
+                                if IS_DEBUG:
+                                    log.debug("Connection reset while loading playlist")
                                 break
                             except asyncio.TimeoutError:
                                 lock(lock_id, False)
-                                log.debug("Player timeout. Skipping remaining...")
+                                if IS_DEBUG:
+                                    log.debug("Player timeout. Skipping remaining...")
                                 break
                         track_object = result.tracks
                     else:
@@ -500,7 +502,8 @@ class AudioAPIInterface:
                 if (youtube_api_error and not global_entry) or consecutive_fails >= (
                     20 if global_entry else 10
                 ):
-                    log.debug("Failing to get tracks. Skipping remaining...")
+                    if IS_DEBUG:
+                        log.debug("Failing to get tracks. Skipping remaining...")
                     if youtube_api_error:
                         lock(lock_id, False)
                         raise SpotifyFetchError(message=youtube_api_error)
@@ -569,7 +572,8 @@ class AudioAPIInterface:
                 else:
                     maxlength_msg = ""
 
-                log.debug(f"Added {enqueued_tracks} tracks to the queue. {maxlength_msg}")
+                if IS_DEBUG:
+                    log.debug(f"Added {enqueued_tracks} tracks to the queue. {maxlength_msg}")
 
                 # if not guild_data["shuffle"] and queue_dur > 0:
                 #     embed.set_footer(
@@ -636,7 +640,7 @@ class AudioAPIInterface:
         track_info: str
     ) -> Optional[str]:
         """Gets an YouTube URL from for the query."""
-        cache_level = await cls._config.cache_level()
+        cache_level = await audio._config.cache_level()
         current_cache_level = CacheLevel(cache_level if cache_level else CacheLevel.all().value)
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)
         val = None
@@ -671,7 +675,7 @@ class AudioAPIInterface:
         should_query_global: bool = False,
     ) -> Tuple[LoadResult, bool]:
 
-        cache_level = await cls._config.cache_level()
+        cache_level = await audio._config.cache_level()
         current_cache_level = CacheLevel(cache_level if cache_level else CacheLevel.all().value)
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
         val = None

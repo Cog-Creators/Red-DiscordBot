@@ -244,7 +244,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             if self._restore_task:
                 self._restore_task.cancel()
 
-            lavalink.unregister_event_listener(self.lavalink_event_handler)
+            #lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
 
             self.bot.loop.create_task(audio.stop(self.bot, "Audio", 2711759130))

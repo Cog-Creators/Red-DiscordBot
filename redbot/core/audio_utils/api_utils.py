@@ -1,8 +1,11 @@
-from abc import ABC
 import asyncio
 import contextlib
 import logging
 import lavalink
+import functools
+
+from abc import ABC
+from typing import Any
 
 from redbot.core import commands
 from redbot.core.utils import AsyncIter
@@ -46,3 +49,42 @@ async def get_queue_duration(player: lavalink.Player) -> int:
         remain = 0
     queue_total_duration = remain + queue_dur
     return queue_total_duration
+
+def rgetattr(obj, attr, *args) -> Any:
+    def _getattr(obj2, attr2):
+        return getattr(obj2, attr2, *args)
+
+    return functools.reduce(_getattr, [obj] + attr.split("."))
+
+class classproperty:
+    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        self.fget = fget
+        self.fset = fset
+        self.fdel = fdel
+        if doc is None and fget:
+            doc = fget.__doc__
+        self.__doc__ = doc
+
+    def __get__(self, obj, objtype):
+        if self.fget is None:
+            raise AttributeError("unreadable attribute")
+        return self.fget(objtype)
+
+    def __set__(self, obj, value):
+        if self.fset is None:
+            raise AttributeError("can't set attribute")
+        self.fset(obj, value)
+
+    def __delete__(self, obj):
+        if self.fdel is None:
+            raise AttributeError("can't delete attribute")
+        self.fdel(obj)
+
+    def getter(self, fget):
+        return type(self)(fget, self.fset, self.fdel, self.__doc__)
+
+    def setter(self, fset):
+        return type(self)(self.fget, fset, self.fdel, self.__doc__)
+
+    def deleter(self, fdel):
+        return type(self)(self.fget, self.fset, fdel, self.__doc__)

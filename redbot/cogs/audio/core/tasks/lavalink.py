@@ -4,7 +4,7 @@ from pathlib import Path
 
 import lavalink
 
-from redbot.core import data_manager
+from redbot.core import data_manager, audio
 from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
 from ..abc import MixinMeta
@@ -18,7 +18,7 @@ _ = Translator("Audio", Path(__file__))
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
     def lavalink_restart_connect(self) -> None:
-        lavalink.unregister_event_listener(self.lavalink_event_handler)
+        lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
         lavalink.unregister_update_listener(self.lavalink_update_handler)
         if self.lavalink_connect_task:
             self.lavalink_connect_task.cancel()
@@ -26,7 +26,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             self._restore_task.cancel()
 
         self._restore_task = None
-        lavalink.register_event_listener(self.lavalink_event_handler)
+        #lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
 
@@ -43,7 +43,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 host = settings["host"]
                 password = settings["password"]
                 ws_port = settings["ws_port"]
-                if ServerManager.is_running():
+                if ServerManager.is_running:
                     await ServerManager.shutdown()
                 try:
                     await ServerManager.start(java_exec)
@@ -105,7 +105,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
-                if external is False and ServerManager.is_running():
+                if external is False and ServerManager.is_running:
                     await ServerManager.shutdown()
                 retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
