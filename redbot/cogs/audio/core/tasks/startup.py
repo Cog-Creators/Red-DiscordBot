@@ -40,6 +40,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
+            await audio.initialize(self.bot, "Audio", 2711759130)
+            self.config = audio._config
+
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
@@ -57,7 +60,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
             await self._build_bundled_playlist()
 
-            await audio.initialize(self.bot, "Audio", 2711759130)
+            await self.restore_players()
 
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()

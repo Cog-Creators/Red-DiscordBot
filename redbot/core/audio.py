@@ -22,12 +22,17 @@ from redbot.core.audio_utils.copied.audio_logging import IS_DEBUG
 from redbot.core.audio_utils.copied.utils import CacheLevel, PlaylistScope
 
 log = logging.getLogger("red.core.audio")
+log_player = logging.getLogger("red.core.audio.Player")
 
 global _used_by
 
 _used_by = []
 _config = None
 _bot = None
+_local_folder_current_path = None
+_session = None
+_api_interface = None
+_persist_queue_cache = {}
 
 async def initialize(
         bot,
@@ -51,87 +56,98 @@ async def initialize(
     force_reset_db_connection: bool
         Whether the database connection should be reset if it is currently connected
     """
-    global _config
     global _used_by
-    global _bot
-    _bot = bot
-    _config = Config.get_conf(None, identifier=2711759130, cog_name="Audio", force_registration=True)
 
-    _default_lavalink_settings = {
-        "host": "localhost",
-        "rest_port": 2333,
-        "ws_port": 2333,
-        "password": "youshallnotpass",
-    }
+    if not _used_by:
+        global _config
+        global _bot
+        global _local_folder_current_path
+        global _session
+        global _api_interface
+        global _persist_queue_cache
 
-    default_global = {
-        "schema_version": 1,
-        "bundled_playlist_version": 0,
-        "owner_notification": 0,
-        "cache_level": CacheLevel.all().value,
-        "cache_age": 365,
-        "daily_playlists": False,
-        "global_db_enabled": False,
-        "global_db_get_timeout": 5,
-        "status": False,
-        "use_external_lavalink": False,
-        "restrict": True,
-        "localpath": str(cog_data_path(raw_name="Audio")),
-        "url_keyword_blacklist": [],
-        "url_keyword_whitelist": [],
-        "java_exc_path": "java",
-        **_default_lavalink_settings,
-    }
+        _bot = bot
+        _local_folder_current_path = None
+        _session = aiohttp.ClientSession(json_serialize=json.dumps)
+        _api_interface = AudioAPIInterface
 
-    default_guild = {
-        "auto_play": False,
-        "currently_auto_playing_in": None,
-        "auto_deafen": True,
-        "autoplaylist": {
-            "enabled": True,
-            "id": 42069,
-            "name": "Aikaterna's curated tracks",
-            "scope": PlaylistScope.GLOBAL.value,
-        },
-        "persist_queue": True,
-        "disconnect": False,
-        "dj_enabled": False,
-        "dj_role": None,
-        "daily_playlists": False,
-        "emptydc_enabled": False,
-        "emptydc_timer": 0,
-        "emptypause_enabled": False,
-        "emptypause_timer": 0,
-        "jukebox": False,
-        "jukebox_price": 0,
-        "maxlength": 0,
-        "notify": False,
-        "prefer_lyrics": False,
-        "repeat": False,
-        "shuffle": False,
-        "shuffle_bumped": True,
-        "thumbnail": False,
-        "volume": 100,
-        "vote_enabled": False,
-        "vote_percent": 0,
-        "room_lock": None,
-        "url_keyword_blacklist": [],
-        "url_keyword_whitelist": [],
-        "country_code": "US",
-    }
-    _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
+        _config = Config.get_conf(None, identifier=2711759130, cog_name="Audio", force_registration=True)
 
-    _config.init_custom("EQUALIZER", 1)
-    _config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
-    _config.init_custom(PlaylistScope.GLOBAL.value, 1)
-    _config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
-    _config.init_custom(PlaylistScope.GUILD.value, 2)
-    _config.register_custom(PlaylistScope.GUILD.value, **_playlist)
-    _config.init_custom(PlaylistScope.USER.value, 2)
-    _config.register_custom(PlaylistScope.USER.value, **_playlist)
-    _config.register_guild(**default_guild)
-    _config.register_global(**default_global)
-    _config.register_user(country_code=None)
+        _default_lavalink_settings = {
+            "host": "localhost",
+            "rest_port": 2333,
+            "ws_port": 2333,
+            "password": "youshallnotpass",
+        }
+
+        default_global = {
+            "schema_version": 1,
+            "bundled_playlist_version": 0,
+            "owner_notification": 0,
+            "cache_level": CacheLevel.all().value,
+            "cache_age": 365,
+            "daily_playlists": False,
+            "global_db_enabled": False,
+            "global_db_get_timeout": 5,
+            "status": False,
+            "use_external_lavalink": False,
+            "restrict": True,
+            "localpath": str(cog_data_path(raw_name="Audio")),
+            "url_keyword_blacklist": [],
+            "url_keyword_whitelist": [],
+            "java_exc_path": "java",
+            **_default_lavalink_settings,
+        }
+
+        default_guild = {
+            "auto_play": False,
+            "currently_auto_playing_in": None,
+            "auto_deafen": True,
+            "autoplaylist": {
+                "enabled": True,
+                "id": 42069,
+                "name": "Aikaterna's curated tracks",
+                "scope": PlaylistScope.GLOBAL.value,
+            },
+            "persist_queue": True,
+            "disconnect": False,
+            "dj_enabled": False,
+            "dj_role": None,
+            "daily_playlists": False,
+            "emptydc_enabled": False,
+            "emptydc_timer": 0,
+            "emptypause_enabled": False,
+            "emptypause_timer": 0,
+            "jukebox": False,
+            "jukebox_price": 0,
+            "maxlength": 0,
+            "notify": False,
+            "prefer_lyrics": False,
+            "repeat": False,
+            "shuffle": False,
+            "shuffle_bumped": True,
+            "thumbnail": False,
+            "volume": 100,
+            "vote_enabled": False,
+            "vote_percent": 0,
+            "room_lock": None,
+            "url_keyword_blacklist": [],
+            "url_keyword_whitelist": [],
+            "country_code": "US",
+        }
+        _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
+
+        _config.init_custom("EQUALIZER", 1)
+        _config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
+        _config.init_custom(PlaylistScope.GLOBAL.value, 1)
+        _config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
+        _config.init_custom(PlaylistScope.GUILD.value, 2)
+        _config.register_custom(PlaylistScope.GUILD.value, **_playlist)
+        _config.init_custom(PlaylistScope.USER.value, 2)
+        _config.register_custom(PlaylistScope.USER.value, **_playlist)
+        _config.register_guild(**default_guild)
+        _config.register_global(**default_global)
+        _config.register_user(country_code=None)
 
     if force_restart_ll_server:
         if ServerManager.is_running:
@@ -146,9 +162,6 @@ async def initialize(
 
     if not Lavalink.is_connected():
         await Lavalink.start(bot)
-
-    if not _used_by:
-        await Player._initialize(bot)
 
     _used_by.append((cog_name, identifier))
 
@@ -207,16 +220,8 @@ def get_player(guild: discord.Guild) -> Optional[lavalink.Player]:
         return None
 
 class Player:
-    @classmethod
-    async def _initialize(cls, bot):
-        cls._log: ClassVar[logging.Logger] = logging.getLogger("red.core.audio.player")
-        cls._bot: ClassVar[Red] = bot
-        cls._local_folder_current_path: ClassVar[Optional[pathlib.Path]] = None
-        cls._session: ClassVar[aiohttp.ClientSession] = aiohttp.ClientSession(json_serialize=json.dumps)
-        cls._api_interface: ClassVar[AudioAPIInterface] = AudioAPIInterface
-
-    @classmethod
-    async def _set_player_settings(cls, guild: discord.Guild, player: lavalink.Player) -> None:
+    @staticmethod
+    async def _set_player_settings(guild: discord.Guild, player: lavalink.Player) -> None:
         guild_data = await _config.guild(guild).all()
         player.repeat = guild_data["repeat"]
         player.shuffle = guild_data["shuffle"]
@@ -225,8 +230,8 @@ class Player:
         if player.volume != volume:
             await player.set_volume(volume)
 
-    @classmethod
-    async def _enqueue_tracks(cls, query, player: lavalink.Player, requester: discord.Member, enqueue: bool = True):
+    @staticmethod
+    async def _enqueue_tracks(query, player: lavalink.Player, requester: discord.Member, enqueue: bool = True):
         settings = await _config.guild(player.guild).all()
         settings["maxlength"] = 0 if not "maxlength" in settings.keys() else settings["maxlength"]
 
@@ -257,13 +262,13 @@ class Player:
             if not tracks:
                 if result.exception_message:
                     if "Status Code" in result.exception_message:
-                        cls._log.debug(result.exception_message[:2000])
+                        log_player.debug(result.exception_message[:2000])
                     else:
-                        cls._log.debug(result.exception_message[:2000].replace("\n", ""))
+                        log_player.debug(result.exception_message[:2000].replace("\n", ""))
                 if await _config.use_external_lavalink() and query.is_local:
-                    cls._log.debug("Local track")
+                    log_player.debug("Local track")
                 elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
-                    cls._log.debug("Semi supported file extension: Track might not be fully playable")
+                    log_player.debug("Semi supported file extension: Track might not be fully playable")
                 return
 
         else:
@@ -271,14 +276,14 @@ class Player:
 
         if not first_track_only and len(tracks) > 1:
             if len(player.queue) >= 10000:
-                cls._log.debug("Queue limit reached")
+                log_player.debug("Queue limit reached")
             track_len = 0
             empty_queue = not player.queue
             async for track in AsyncIter(tracks):
                 if len(player.queue) >= 10000:
-                    cls._log.debug("Queue limit reached")
+                    log_player.debug("Queue limit reached")
                     break
-                query = Query.process_input(track, cls._local_folder_current_path)
+                query = Query.process_input(track, _local_folder_current_path)
 
                 if settings["maxlength"] > 0:
                     track_len += 1
@@ -290,7 +295,7 @@ class Player:
                         }
                     )
                     player.add(requester, track)
-                    cls._bot.dispatch(
+                    _bot.dispatch(
                         "red_audio_track_enqueue", player.guild, track, requester
                     )
                 else:
@@ -303,13 +308,13 @@ class Player:
                         }
                     )
                     player.add(requester, track)
-                    cls._bot.dispatch(
+                    _bot.dispatch(
                         "red_audio_track_enqueue", player.guild, track, requester
                     )
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
-                cls._log.debug(f"{len(tracks) - track_len} tracks cannot be enqueued")
+                log_player.debug(f"{len(tracks) - track_len} tracks cannot be enqueued")
 
             if not player.current:
                 await player.play()
@@ -318,7 +323,7 @@ class Player:
         else:
             try:
                 if len(player.queue) >= 10000:
-                    cls._log.debug("Queue limit reached")
+                    log_player.debug("Queue limit reached")
 
                 single_track = (
                     tracks if isinstance(tracks, lavalink.rest_api.Track)
@@ -330,7 +335,7 @@ class Player:
 
                 if settings["maxlength"] > 0:
                     player.add(requester, single_track)
-                    cls._bot.dispatch(
+                    _bot.dispatch(
                         "red_audio_track_enqueue", player.guild, single_track, requester
                     )
                     player.maybe_shuffle()
@@ -344,7 +349,7 @@ class Player:
                         }
                     )
                     player.add(requester, single_track)
-                    cls._bot.dispatch(
+                    _bot.dispatch(
                         "red_audio_track_enqueue", player.guild, single_track, requester
                     )
                     player.maybe_shuffle()
@@ -354,12 +359,12 @@ class Player:
                 raise e
 
         if not player.current:
-            cls._log.debug("Starting player")
+            log_player.debug("Starting player")
             await player.play()
         return single_track, None
 
-    @classmethod
-    async def _skip(cls, player: lavalink.Player, requester: Union[discord.User, discord.Member], skip_to_track: int = None) -> None:
+    @staticmethod
+    async def _skip(player: lavalink.Player, requester: Union[discord.User, discord.Member], skip_to_track: int = None) -> None:
         autoplay = await _config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             raise AudioError("Nothing in the queue")
@@ -378,12 +383,12 @@ class Player:
         player.queue = player.queue[
             min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
         ]
-        cls._bot.dispatch("red_audio_track_skip", player.guild, player.current, requester)
+        _bot.dispatch("red_audio_track_skip", player.guild, player.current, requester)
         await player.play()
         player.queue += queue_to_append
 
-    @classmethod
-    async def play(cls, query: str, requester: discord.Member, local_folder: pathlib.Path = None):
+    @staticmethod
+    async def play(query: str, requester: discord.Member, local_folder: pathlib.Path = None):
         """Plays a track
 
         Parameters
@@ -408,17 +413,17 @@ class Player:
         except (KeyError, IndexError):
             raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
 
-        await cls._set_player_settings(requester.guild, player)
+        await Player._set_player_settings(requester.guild, player)
 
         if not query.valid:
             raise InvalidQuery(f"No results found for {query}")
 
-        tracks, playlist_data = await cls._enqueue_tracks(query, player, requester)
+        tracks, playlist_data = await Player._enqueue_tracks(query, player, requester)
 
         return tracks, playlist_data
 
-    @classmethod
-    async def pause(cls, guild: discord.Guild) -> None:
+    @staticmethod
+    async def pause(guild: discord.Guild) -> None:
         """Pauses the player in a guild
 
         Parameters
@@ -436,12 +441,12 @@ class Player:
 
         if not player.paused:
             await player.pause()
-            cls._bot.dispatch(
+            _bot.dispatch(
                 "red_audio_audio_paused", guild, True
             )
 
-    @classmethod
-    async def resume(cls, guild: discord.Guild) -> None:
+    @staticmethod
+    async def resume(guild: discord.Guild) -> None:
         """Resumes the player in a guild
 
         Parameters
@@ -459,12 +464,12 @@ class Player:
 
         if player.paused:
             await player.pause(False)
-            cls._bot.dispatch(
+            _bot.dispatch(
                 "red_audio_audio_paused", guild, False
             )
 
-    @classmethod
-    async def current(cls, guild: discord.Guild) -> Optional[lavalink.Track]:
+    @staticmethod
+    async def current(guild: discord.Guild) -> Optional[lavalink.Track]:
         """Returns the current track in the given guild
 
         Parameters
@@ -485,8 +490,8 @@ class Player:
         except (KeyError, IndexError):
             return None
 
-    @classmethod
-    async def queue(cls, guild: discord.Guild) -> List[lavalink.Track]:
+    @staticmethod
+    async def queue(guild: discord.Guild) -> List[lavalink.Track]:
         """Returns the player's queue in the given guild
 
         Parameters
@@ -507,9 +512,8 @@ class Player:
         except (KeyError, IndexError):
             return []
 
-    @classmethod
-    async def skip(cls,
-                   requester: discord.Member,
+    @staticmethod
+    async def skip(requester: discord.Member,
                    skip_to_track: int = None) -> lavalink.Track:
         """Skips a track
 
@@ -532,10 +536,10 @@ class Player:
         except (KeyError, IndexError):
             raise NotConnectedToVoice("Bot is not connected to a voice channel")
 
-        await cls._skip(player, requester, skip_to_track)
+        await Player._skip(player, requester, skip_to_track)
 
-    @classmethod
-    async def stop(cls, guild: discord.Guild) -> None:
+    @staticmethod
+    async def stop(guild: discord.Guild) -> None:
         """Stop the playback
 
         Parameters
@@ -556,12 +560,12 @@ class Player:
             player.store("autoplay_notified", False)
             await player.stop()
 
-            cls._bot.dispatch("red_audio_audio_stop", guild)
+            _bot.dispatch("red_audio_audio_stop", guild)
         except (KeyError, IndexError):
             raise NotConnectedToVoice("Nothing playing")
 
-    @classmethod
-    async def connect(cls, channel: discord.VoiceChannel, deafen: bool = None) -> None:
+    @staticmethod
+    async def connect(channel: discord.VoiceChannel, deafen: bool = None) -> None:
         """Connect to a voice channel
 
         Parameters
@@ -585,10 +589,10 @@ class Player:
             await lavalink.connect(channel=channel, deafen=deafen)
 
         if IS_DEBUG:
-            cls._log.debug(f"Connected to {channel} in {channel.guild}")
+            log_player.debug(f"Connected to {channel} in {channel.guild}")
 
-    @classmethod
-    async def move_to(cls, channel: discord.VoiceChannel) -> None:
+    @staticmethod
+    async def move_to(channel: discord.VoiceChannel) -> None:
         """Move the player to another voice channel
 
         Parameters
@@ -606,8 +610,8 @@ class Player:
 
         await player.move_to(channel)
 
-    @classmethod
-    def is_playing(cls, guild: discord.Guild):
+    @staticmethod
+    def is_playing(guild: discord.Guild):
         """Check whether the player is playing in a guild
 
         Parameters
@@ -628,8 +632,8 @@ class Player:
         except (KeyError, IndexError):
             return False
 
-    @classmethod
-    def is_connected(cls, channel: discord.VoiceChannel) -> bool:
+    @staticmethod
+    def is_connected(channel: discord.VoiceChannel) -> bool:
         """Check whether the player is connected to a channel
 
         Parameters
@@ -652,8 +656,8 @@ class Player:
             return False
         return False
 
-    @classmethod
-    async def disconnect(cls, guild: discord.Guild) -> None:
+    @staticmethod
+    async def disconnect(guild: discord.Guild) -> None:
         """Disconnect the player
 
         Parameters
@@ -675,12 +679,12 @@ class Player:
             await player.disconnect()
 
             if IS_DEBUG:
-                cls._log.debug(f"Disconnected from {channel} in {guild}")
+                log_player.debug(f"Disconnected from {channel} in {guild}")
         except (KeyError, IndexError):
             raise NotConnectedToVoice(f"Bot is not connected to a voice channel in guild {guild}")
 
-    @classmethod
-    async def get_volume(cls, guild: discord.Guild) -> Optional[int]:
+    @staticmethod
+    async def get_volume(guild: discord.Guild) -> Optional[int]:
         """Get the current player volume
 
         Parameters
@@ -701,8 +705,8 @@ class Player:
         except (KeyError, IndexError):
             return await _config.guild(guild).volume()
 
-    @classmethod
-    async def set_volume(cls, guild: discord.Guild, vol: int) -> int:
+    @staticmethod
+    async def set_volume(guild: discord.Guild, vol: int) -> int:
         """Set the player's volume
 
         Parameters
