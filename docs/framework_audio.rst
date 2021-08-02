@@ -21,21 +21,25 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import commands, audio
+    from redbot.core import commands, Audio
 
     class MyAudioCog(commands.Cog):
         def __init__(self, bot):
-            bot.loop.create_task(audio.initialize(bot, "MyAudioCog", 365911945565569036))
+            self.bot = bot
+            self.audio: Audio = None
             #This function starts the lavalink server and established a lavalink and database connection
+
+        async def initialize(self):
+            self.audio = Audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
 
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
-            await audio.connect(channel)
+            await self.audio.Player.connect(channel)
             await ctx.send(f"Successfully connected to {channel.mention"})
 
         @commands.command()
         async def play(self, ctx, query: str):
-            await audio.play(query, ctx.author)
+            await self.audio.Player.play(query, ctx.author)
 
             now_playing = await audio.current(ctx.guild)
             await ctx.send(f"Now playing: {now_playing.title}")
@@ -140,15 +144,20 @@ Event Reference
 API Reference
 *************
 
+.. py:currentmodule:: redbot.core.audio
+
 Audio
 ^^^^^
-.. automodule:: redbot.core.audio
+.. note:: This class shouldn't be instantiated manually. Use :py:meth:`Audio.initialize` to do so.
+
+.. autoclass:: Audio
     :members:
 
 Player
 ^^^^^^
 .. note:: This class wraps various lavalink.Player methods and meanwhile interacts with RED's
-          inbuilt config and databases
+          inbuilt config and databases. It is instantiated for you on startup and thus shouldn't be instantiated
+          manually. :py:meth:`Audio.player` returns that class instance for you.
 
 .. autoclass:: redbot.core.audio.Player
     :members:
@@ -158,7 +167,7 @@ ServerManager
 
 .. note:: This class handles the lavalink server subprocess. While the properties provided by this class may be useful,
           one shouldn't interact with any other function since starting of the server and dealing with the jar is
-          handled by :py:meth:`redbot.core.audio.initialize`. Shutting down is handled by :py:meth:`redbot.core.audio.stop`
+          handled by :py:meth:`Audio.initialize`. Shutting down is handled by :py:meth:`Audio.stop`
 
 .. autoclass:: redbot.core.audio.ServerManager
     :members:

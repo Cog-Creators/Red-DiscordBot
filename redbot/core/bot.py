@@ -1707,6 +1707,8 @@ class RedBase(
         try:
             if self.rpc_enabled:
                 await self.rpc.close()
+            if self.bot.audio_class:
+                await self.bot.audio_class.stop(self.bot, "", 0, force_shutdown=True)
         except AttributeError:
             pass
 

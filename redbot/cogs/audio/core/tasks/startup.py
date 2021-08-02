@@ -21,7 +21,7 @@ from ...utils import task_callback
 from ..abc import MixinMeta
 from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
 
-from redbot.core import audio
+from redbot.core import Audio
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
@@ -40,8 +40,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
-            await audio.initialize(self.bot, "Audio", 2711759130)
-            self.config = audio._config
+            self.audio_api = await Audio.initialize(self.bot, "Audio", 2711759130)
+            self.config = self.audio_api.config
 
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")

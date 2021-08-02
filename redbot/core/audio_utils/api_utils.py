@@ -5,7 +5,7 @@ import lavalink
 import functools
 
 from abc import ABC
-from typing import Any
+from typing import Any, AsyncContextManager, Awaitable, TypeVar, List
 
 from redbot.core import commands
 from redbot.core.utils import AsyncIter
@@ -56,35 +56,21 @@ def rgetattr(obj, attr, *args) -> Any:
 
     return functools.reduce(_getattr, [obj] + attr.split("."))
 
-class classproperty:
-    def __init__(self, fget=None, fset=None, fdel=None, doc=None):
-        self.fget = fget
-        self.fset = fset
-        self.fdel = fdel
-        if doc is None and fget:
-            doc = fget.__doc__
-        self.__doc__ = doc
+class _ValueCtxManager(Awaitable[TypeVar("_T")], AsyncContextManager[TypeVar("_T")]):  # pylint: disable=duplicate-bases
+    """Context manager implementation for audio immutables
 
-    def __get__(self, obj, objtype):
-        if self.fget is None:
-            raise AttributeError("unreadable attribute")
-        return self.fget(objtype)
+    totally not stolen from redbot.core.config"""
+    def __init__(self, player: lavalink.Player, *, acquire_lock: bool = False):
+        self.player = player
+        self._queue = player.queue
+        #self.__acquire_lock = acquire_lock
+        #self.__lock = self.value_obj.get_lock()
 
-    def __set__(self, obj, value):
-        if self.fset is None:
-            raise AttributeError("can't set attribute")
-        self.fset(obj, value)
+    def __await__(self):
+        return self.__aenter__().__await__()
 
-    def __delete__(self, obj):
-        if self.fdel is None:
-            raise AttributeError("can't delete attribute")
-        self.fdel(obj)
+    async def __aenter__(self):
+        return self._queue
 
-    def getter(self, fget):
-        return type(self)(fget, self.fset, self.fdel, self.__doc__)
-
-    def setter(self, fset):
-        return type(self)(self.fget, fset, self.fdel, self.__doc__)
-
-    def deleter(self, fdel):
-        return type(self)(self.fget, self.fset, fdel, self.__doc__)
+    async def __aexit__(self, exc_type, exc, tb):
+        self.player.queue = self._queue

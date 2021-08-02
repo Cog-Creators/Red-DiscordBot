@@ -78,6 +78,8 @@ class ApiError(AudioError):
 class SpotifyApiError(ApiError):
     """Base exception for Spotify API errors."""
 
+class TrackFetchError(ApiError):
+    """Fetching track data failed"""
 
 class SpotifyFetchError(SpotifyApiError):
     """Fetching Spotify data failed."""
@@ -114,11 +116,18 @@ class InvalidLocalTrack(LocalTrackError):
 class InvalidLocalTrackFolder(LocalTrackError):
     """Base exception for local track errors."""
 
+
+class PortAlreadyInUse(AudioError):
+    """Lavalink port is already in use"""
+
+
 class LavalinkNotReady(AudioError):
     """LavaLink server is not ready"""
 
+
 class NotConnectedToVoice(AudioError):
     """Bot is not connected to a voice channel"""
+
 
 class InvalidQuery(AudioError):
     """Query is invalid - No tracks found"""

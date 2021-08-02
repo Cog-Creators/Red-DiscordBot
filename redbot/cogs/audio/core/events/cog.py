@@ -10,7 +10,7 @@ from typing import Optional
 import discord
 import lavalink
 
-from redbot.core import commands, audio
+from redbot.core import commands, Audio
 from redbot.core.audio_utils.errors import DatabaseError, TrackEnqueueError
 from redbot.core.i18n import Translator
 
@@ -31,7 +31,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
 
-        player = audio.get_player(guild)
+        player = Audio.get_player(guild)
         if not player:
             return
 
@@ -217,7 +217,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
 
-        player = audio.get_player(guild)
+        player = Audio.get_player(guild)
         if player:
             guild_data = await self.config.guild(guild).all()
             autoplay = guild_data["auto_play"]
@@ -292,7 +292,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         status = await self.config.status()
 
-        player = audio.get_player(guild)
+        player = Audio.get_player(guild)
         if (not player.is_playing) and status:
             player_check = await self.get_active_player_count()
             await self.update_bot_presence(*player_check)
