@@ -27,21 +27,22 @@ Basic Usage
         def __init__(self, bot):
             self.bot = bot
             self.audio: Audio = None
+            self.bot.loop.create_task(initialize())
             #This function starts the lavalink server and established a lavalink and database connection
 
         async def initialize(self):
-            self.audio = Audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
+            self.audio = await Audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
 
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
-            await self.audio.Player.connect(channel)
+            await self.audio.player.connect(channel)
             await ctx.send(f"Successfully connected to {channel.mention"})
 
         @commands.command()
         async def play(self, ctx, query: str):
-            await self.audio.Player.play(query, ctx.author)
+            await self.audio.player.play(query, ctx.author)
 
-            now_playing = await audio.current(ctx.guild)
+            now_playing = await self.audio.player.current(ctx.guild)
             await ctx.send(f"Now playing: {now_playing.title}")
 
 ***************

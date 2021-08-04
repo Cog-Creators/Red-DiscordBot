@@ -266,7 +266,7 @@ class Player:
         seek = 0
 
         query = Query.process_input(query, local_folder)
-        tracks, playlist_data = await self.get_tracks(query._raw, requester.guild, local_folder)
+        #tracks, playlist_data = await self.get_tracks(query._raw, requester.guild, local_folder)
 
         if not isinstance(query, list):
             if query.single_track:
@@ -277,7 +277,7 @@ class Player:
 
             try:
                 result, called_api = await self._api_interface.fetch_track(
-                    requester, requester.id, player, query
+                    requester.id, player, query
                 )
             except KeyError:
                 raise NoMatchesFound("No matches could be found for the given query")
