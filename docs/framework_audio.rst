@@ -33,6 +33,12 @@ Basic Usage
         async def initialize(self):
             self.audio = await Audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
 
+        async def shutdown(self):
+            await Audio.shutdown(self.bot, "MyAudioCog", 365911945565569036)
+
+        def cog_unload(self):
+            self.bot.loop.create_task(shutdown())
+
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
             await self.audio.player.connect(channel)

@@ -582,7 +582,7 @@ class Player:
 
         await self._skip(player, requester, skip_to_track)
 
-    async def stop(self, guild: discord.Guild) -> None:
+    async def shutdown(self, guild: discord.Guild) -> None:
         """Stop the playback
 
         Parameters
