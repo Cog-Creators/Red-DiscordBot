@@ -21,7 +21,7 @@ log = logging.getLogger("red.core.audio")
 log_player = logging.getLogger("red.core.audio.Player")
 
 _used_by = []
-_players = []
+_players = {}
 _api_interface = None
 _lavalink = None
 _server_manager = None
@@ -173,7 +173,7 @@ async def connect(
         raise LavalinkNotReady("Connection to lavalink has not yet been established")
 
     if not force_deafen:
-        deafen = await _config.guild(channel.guild).deafen()
+        deafen = await _config.guild(channel.guild).auto_deafen()
     await lavalink.connect(channel=channel, deafen=deafen)
 
     player = Player(bot, channel)
@@ -189,9 +189,10 @@ def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
     except (KeyError, IndexError):
         raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
 
-class Player:
+class Player():
     def __init__(self, bot, channel):
-        self.bot = bot
+        self._bot = bot
+        self._player = lavalink.get_player(channel.guild.id)
         self._guild = channel.guild
         self._channel = channel
         self._config = _config
@@ -209,12 +210,20 @@ class Player:
         return self._channel
 
     @property
+    def player(self):
+        return self._player
+
+    @property
+    def bot(self):
+        return self._bot
+
+    @property
     def is_playing(self):
-        return _get_ll_player(self._guild).is_playing
+        return self.player.is_playing
 
     @property
     def paused(self):
-        return _get_ll_player(self._guild).paused
+        return self.player.paused
 
     async def _set_player_settings(self, player: lavalink.Player) -> None:
         guild_data = await self._config.guild(self._guild).all()
@@ -404,7 +413,7 @@ class Player:
         if not query.valid:
             raise InvalidQuery(f"No results found for {query}")
 
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         try:
             result, called_api = await self._api_interface.fetch_track(
@@ -445,7 +454,7 @@ class Player:
         -------
         List[lavalink.Track], playlist_data
         """
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         await self._set_player_settings(player)
 
@@ -455,7 +464,7 @@ class Player:
 
     async def pause(self) -> None:
         """Pauses the player in a guild"""
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         if not player.paused:
             await player.pause()
@@ -465,7 +474,7 @@ class Player:
 
     async def resume(self) -> None:
         """Resumes the player in a guild"""
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         if player.paused:
             await player.pause(False)
@@ -481,7 +490,7 @@ class Player:
         Optional[lavalink.Track]
             The current track
         """
-        player = _get_ll_player(self._guild)
+        player = self.player
         return player.current
 
     async def skip(self, requester: discord.Member,
@@ -499,13 +508,13 @@ class Player:
         lavalink.Track
             The current track
         """
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         await self._skip(player, requester, skip_to_track)
 
     async def stop(self) -> None:
         """Stop the playback"""
-        player = _get_ll_player(self._guild)
+        player = self.player
         player.queue = []
         player.store("playing_song", None)
         player.store("prev_requester", None)
@@ -524,7 +533,7 @@ class Player:
         channel: discord.VoiceChannel
             The channel to move the player to
         """
-        player = _get_ll_player(self._guild)
+        player = self.player
 
         await player.move_to(channel)
 
@@ -532,7 +541,7 @@ class Player:
         """Disconnects the player"""
         global _players
 
-        player = _get_ll_player(self._guild)
+        player = self.player
         channel = player.channel
 
         player.queue = []
