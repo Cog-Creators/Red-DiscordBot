@@ -3344,7 +3344,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_reacttimeout(self, ctx: commands.Context, seconds: int):
         """Set the timeout for reactions, if menus are enabled.
 
-        The default is 30 seconds, and it has to be between 15 and 300 seconds.
+        The default is 30 seconds.
+        The timeout has to be between 15 and 300 seconds.
 
         **Examples:**
             - `[p]helpset reacttimeout 30` - The default timeout.
