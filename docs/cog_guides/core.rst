@@ -1201,7 +1201,7 @@ helpset reacttimeout
 
 .. code-block:: none
 
-    [p]helpset reacttimeout <limit>
+    [p]helpset reacttimeout <seconds>
 
 **Description**
 
