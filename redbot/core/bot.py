@@ -7,7 +7,6 @@ import shutil
 import sys
 import contextlib
 import weakref
-import functools
 from collections import namedtuple
 from datetime import datetime
 from enum import IntEnum
@@ -34,7 +33,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
+from . import Config, i18n, commands, errors, drivers, modlog, bank, audio
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -1707,8 +1706,7 @@ class RedBase(
         try:
             if self.rpc_enabled:
                 await self.rpc.close()
-            if self.bot.audio_class:
-                await self.bot.audio_class.stop(self.bot, "", 0, force_shutdown=True)
+            await audio.shutdown("", 0, force_shutdown=True)
         except AttributeError:
             pass
 

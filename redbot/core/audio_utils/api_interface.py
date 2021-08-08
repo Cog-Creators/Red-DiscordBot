@@ -13,7 +13,6 @@ from lavalink.rest_api import LoadResult, LoadType
 from typing import ClassVar, Optional, MutableMapping, Union, List, Tuple, Callable
 
 from redbot.core import Config, data_manager
-from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -32,7 +31,7 @@ log = logging.getLogger("red.core.audio.api_interface")
 
 class AudioAPIInterface:
     def __init__(self, bot, config):
-        self._bot: Red = bot
+        self._bot = bot
         self._config: Config = config
         self._session: Optional[aiohttp.ClientSession] = None
         self._conn: Optional[APSWConnectionWrapper] = None

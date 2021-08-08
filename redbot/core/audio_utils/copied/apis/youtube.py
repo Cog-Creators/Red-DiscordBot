@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Mapping, Optional, Union
 import aiohttp
 
 from redbot.core import Config
-from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 
@@ -25,7 +24,7 @@ class YouTubeWrapper:
     """Wrapper for the YouTube Data API."""
 
     def __init__(
-        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+        self, bot, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.config = config

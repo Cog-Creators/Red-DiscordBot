@@ -3,20 +3,16 @@ import discord
 import lavalink
 import pathlib
 import time
-import contextlib
 
-from typing import Optional, Mapping, ClassVar, List, Union
-
-from .audio_utils import Lavalink, AudioAPIInterface, ServerManager
+from typing import Optional, Mapping, List, Union
 
 from .audio_utils.errors import AudioError, LavalinkNotReady, NotConnectedToVoice, InvalidQuery, NoMatchesFound, TrackFetchError
 from .audio_utils.audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
-from .audio_utils.api_utils import _ValueCtxManager
 
 from redbot.core import Config
-from redbot.core.bot import Red
 from redbot.core.utils import AsyncIter
 from redbot.core.data_manager import cog_data_path
+from redbot.core.audio_utils import Lavalink, AudioAPIInterface, ServerManager
 from redbot.core.audio_utils.copied.audio_logging import IS_DEBUG
 
 from redbot.core.audio_utils.copied.utils import CacheLevel, PlaylistScope
@@ -24,17 +20,26 @@ from redbot.core.audio_utils.copied.utils import CacheLevel, PlaylistScope
 log = logging.getLogger("red.core.audio")
 log_player = logging.getLogger("red.core.audio.Player")
 
+_used_by = []
+_players = []
+_api_interface = None
+_lavalink = None
+_server_manager = None
+_config = None
 
-class Audio:
-    _used_by: ClassVar[List] = []
+async def initialize(
+        bot,
+        cog_name: str,
+        identifier: int,
+        force_restart_ll_server: bool = False,
+        force_reset_db_conn: bool = False
+):
+    global _used_by
 
-    def __init__(self, bot):
-        self._used_by = []
-        self._bot = bot
-        self._local_folder_current_path = None
-        self._session = None
+    if not _used_by:
+        global _config, _lavalink, _server_manager, _api_interface
 
-        self._config = Config.get_conf(None, identifier=2711759130, cog_name="Audio", force_registration=True)
+        _config = Config.get_conf(None, identifier=2711759130, cog_name="Audio", force_registration=True)
 
         _default_lavalink_settings = {
             "host": "localhost",
@@ -84,6 +89,7 @@ class Audio:
             "jukebox": False,
             "jukebox_price": 0,
             "maxlength": 0,
+            "max_volume": 150,
             "notify": False,
             "prefer_lyrics": False,
             "repeat": False,
@@ -100,154 +106,118 @@ class Audio:
         }
         _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
-        self._config.init_custom("EQUALIZER", 1)
-        self._config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
-        self._config.init_custom(PlaylistScope.GLOBAL.value, 1)
-        self._config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
-        self._config.init_custom(PlaylistScope.GUILD.value, 2)
-        self._config.register_custom(PlaylistScope.GUILD.value, **_playlist)
-        self._config.init_custom(PlaylistScope.USER.value, 2)
-        self._config.register_custom(PlaylistScope.USER.value, **_playlist)
-        self._config.register_guild(**default_guild)
-        self._config.register_global(**default_global)
-        self._config.register_user(country_code=None)
+        _config.init_custom("EQUALIZER", 1)
+        _config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})
+        _config.init_custom(PlaylistScope.GLOBAL.value, 1)
+        _config.register_custom(PlaylistScope.GLOBAL.value, **_playlist)
+        _config.init_custom(PlaylistScope.GUILD.value, 2)
+        _config.register_custom(PlaylistScope.GUILD.value, **_playlist)
+        _config.init_custom(PlaylistScope.USER.value, 2)
+        _config.register_custom(PlaylistScope.USER.value, **_playlist)
+        _config.register_guild(**default_guild)
+        _config.register_global(**default_global)
+        _config.register_user(country_code=None)
 
-        self.api_interface = AudioAPIInterface(self._bot, self._config)
-        self.server_manager = ServerManager(self._bot, self._config)
-        self.lavalink = Lavalink(self._bot, self._config, self.server_manager, self.api_interface)
-        self._player = Player(self._bot, self._config, self.lavalink, self.api_interface)
-
-    @property
-    def player(self):
-        return self._player
-
-    @property
-    def config(self):
-        return self._config
-
-    @classmethod
-    async def initialize(
-            cls,
-            bot,
-            cog_name: str,
-            identifier: int,
-            force_restart_ll_server: bool = False,
-            force_reset_db_connection: bool = False,
-    ):
-        """Initializes the api and establishes the connection to lavalink
-
-        Parameters
-        ----------
-        bot: Red
-            The bot object to establish the connection to
-        cog_name: str
-            Used to detect whether the api is used by which cogs
-        identifier: int
-            Used to prevent shutdown if cog_name is the same between connections
-        force_restart_ll_server: bool
-            Whether the lavalink server should be restarted if it is currently running
-        force_reset_db_connection: bool
-            Whether the database connection should be reset if it is currently connected
-
-        Returns
-        -------
-        cls: Audio
-            An instance of the api
-        """
-        if not cls._used_by:
-            audio_class = cls(bot)
-            bot.audio_class = audio_class
-        else:
-            audio_class = bot.audio_class
+        _api_interface = AudioAPIInterface(bot, _config)
+        _server_manager = ServerManager(bot, _config)
+        _lavalink = Lavalink(bot, _config, _server_manager, _api_interface)
 
         if force_restart_ll_server:
-            if audio_class.server_manager.is_running:
-                await audio_class.server_manager.shutdown_ll_server()
+            if _server_manager.is_running:
+                await _server_manager.shutdown_ll_server()
 
-        if force_reset_db_connection:
-            if audio_class.api_interface.is_connected:
-                audio_class.api_interface.close()
+        if force_reset_db_conn:
+            if _api_interface.is_connected:
+                await _api_interface.initialize()
 
-        if not audio_class.api_interface.is_connected:
-            await audio_class.api_interface.initialize()
+        if not _lavalink.is_connected:
+            await _lavalink.start()
 
-        if not audio_class.lavalink.is_connected:
-            await audio_class.lavalink.start()
+    _used_by.append((cog_name, identifier))
 
-        cls._used_by.append((cog_name, identifier))
+async def shutdown(
+        cog_name: str,
+        identifier: int,
+        force_shutdown: bool = False
+):
+    global _used_by
 
-        return audio_class
+    if force_shutdown:
+        if _server_manager.is_running:
+            await _server_manager.shutdown_ll_server()
+        if _api_interface.is_connected:
+            _api_interface.close()
+        if _lavalink.is_connected:
+            await _lavalink.shutdown()
+        _used_by = []
+    else:
+        if not (cog_name, identifier) in _used_by:
+            raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
 
-    @classmethod
-    async def stop(
-            cls,
-            bot,
-            cog_name: str,
-            identifier: int,
-            force_shutdown: bool = False
-    ) -> None:
-        """Closes the lavalink connection and shuts the server down if unused
+        if not _used_by:
+            if _server_manager.is_running:
+                await _server_manager.shutdown_ll_server()
 
-        Parameters
-        ----------
-        bot: Red
-            The bot object to close the connection from
-        cog_name: str
-            Used to detect whether the api is used by which cogs
-        identifier: int
-            Used to prevent shutdown if cog_name is the same between connections
-        force_shutdown: bool
-            Shutdown all servers, even though other cogs still use it
-        """
+            if _api_interface.is_connected:
+                _api_interface.close()
 
-        if not force_shutdown:
-            if not (cog_name, identifier) in cls._used_by:
-                raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
+            if _lavalink.is_connected:
+                await _lavalink.shutdown()
 
-        audio_class = bot.audio_class
-        if not audio_class:
-            return
+async def connect(
+        bot,
+        channel: discord.VoiceChannel,
+        force_deafen: bool = False
+):
+    if not _lavalink and not _lavalink.is_connected:
+        raise LavalinkNotReady("Connection to lavalink has not yet been established")
 
-        cls._used_by.remove((cog_name, identifier))
+    if not force_deafen:
+        deafen = await _config.guild(channel.guild).deafen()
+    await lavalink.connect(channel=channel, deafen=deafen)
 
-        if not cls._used_by:
-            if audio_class.server_manager.is_running:
-                await audio_class.server_manager.shutdown_ll_server()
+    player = Player(bot, channel)
+    _players[channel.guild.id] = player
+    return player
 
-            if audio_class.api_interface.is_connected:
-                audio_class.api_interface.close()
+def get_player(guild: discord.Guild):
+    return _players[guild.id]
 
-            if audio_class.lavalink.is_connected:
-                await audio_class.lavalink.shutdown()
-
-    @classmethod
-    def get_player(cls, guild: discord.Guild) -> Optional[lavalink.Player]:
-        """Returns the lavalink player object for a guild
-
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild for which the player should be returned
-        Returns
-        -------
-        Optional[lavalink.Player]
-            The Player object of the given guild"""
-
-        try:
-            return lavalink.get_player(guild.id)
-        except (KeyError, IndexError):
-            return None
+def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
+    try:
+        return lavalink.get_player(guild.id)
+    except (KeyError, IndexError):
+        raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
 
 class Player:
-    def __init__(self, bot, config, lavalink, api_interface):
-        self._bot = bot
-        self._config = config
+    def __init__(self, bot, channel):
+        self.bot = bot
+        self._guild = channel.guild
+        self._channel = channel
+        self._config = _config
         self._local_folder_current_path = None
-        self._lavalink = lavalink
-        self._api_interface = api_interface
+        self._lavalink = _lavalink
+        self._api_interface = _api_interface
+        self._server_manager = _server_manager
 
-    async def _set_player_settings(self, guild: discord.Guild, player: lavalink.Player) -> None:
-        guild_data = await self._config.guild(guild).all()
+    @property
+    def guild(self):
+        return self._guild
+
+    @property
+    def channel(self):
+        return self._channel
+
+    @property
+    def is_playing(self):
+        return _get_ll_player(self._guild).is_playing
+
+    @property
+    def paused(self):
+        return _get_ll_player(self._guild).paused
+
+    async def _set_player_settings(self, player: lavalink.Player) -> None:
+        guild_data = await self._config.guild(self._guild).all()
         player.repeat = guild_data["repeat"]
         player.shuffle = guild_data["shuffle"]
         player.shuffle_bumped = guild_data["shuffle_bumped"]
@@ -256,7 +226,7 @@ class Player:
             await player.set_volume(volume)
 
     async def _enqueue_tracks(self, query: str, player: lavalink.Player, requester: discord.Member, enqueue: bool = True):
-        settings = await self._config.guild(player.guild).all()
+        settings = await self._config.guild(self._guild).all()
         settings["maxlength"] = 0 if not "maxlength" in settings.keys() else settings["maxlength"]
 
         local_folder = None
@@ -326,7 +296,7 @@ class Player:
                     )
                     player.add(requester, track)
                     self._bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, track, requester
+                        "red_audio_track_enqueue", self._guild, track, requester
                     )
                 else:
                     track_len += 1
@@ -339,7 +309,7 @@ class Player:
                     )
                     player.add(requester, track)
                     self._bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, track, requester
+                        "red_audio_track_enqueue", self._guild, track, requester
                     )
             player.maybe_shuffle(0 if empty_queue else 1)
 
@@ -366,7 +336,7 @@ class Player:
                 if settings["maxlength"] > 0:
                     player.add(requester, single_track)
                     self._bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, single_track, requester
+                        "red_audio_track_enqueue", self._guild, single_track, requester
                     )
                     player.maybe_shuffle()
 
@@ -380,7 +350,7 @@ class Player:
                     )
                     player.add(requester, single_track)
                     self._bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, single_track, requester
+                        "red_audio_track_enqueue", self._guild, single_track, requester
                     )
                     player.maybe_shuffle()
             except IndexError:
@@ -394,7 +364,7 @@ class Player:
         return single_track, None
 
     async def _skip(self, player: lavalink.Player, requester: Union[discord.User, discord.Member], skip_to_track: int = None) -> None:
-        autoplay = await self._config.guild(player.guild).auto_play()
+        autoplay = await self._config.guild(self._guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             raise AudioError("Nothing in the queue")
 
@@ -412,11 +382,11 @@ class Player:
             player.queue = player.queue[
                 min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
             ]
-        self._bot.dispatch("red_audio_track_skip", player.guild, player.current, requester)
+        self._bot.dispatch("red_audio_track_skip", self._guild, player.current, requester)
         await player.play()
         player.queue += queue_to_append
 
-    async def get_tracks(self, query: str, guild: discord.Guild, local_folder: pathlib.Path = None):
+    async def get_tracks(self, query: str, local_folder: pathlib.Path = None):
         """Queries the local apis for a track and falls back to lavalink if none was found
         Note: falling back to lavalink is only possible if the bot is connected to a voice channel
 
@@ -424,8 +394,6 @@ class Player:
         ----------
         query: str
             The query to search for. Supports everything core audio supports
-        guild: discord.Guild
-            The guild for which tracks should be returned
         local_folder: pathlib.Path
             Local folder if track is a local track
         Returns
@@ -436,11 +404,11 @@ class Player:
         if not query.valid:
             raise InvalidQuery(f"No results found for {query}")
 
-        player = Audio.get_player(guild)
+        player = _get_ll_player(self._guild)
 
         try:
             result, called_api = await self._api_interface.fetch_track(
-                guild.id, player, query
+                self._guild.id, player, query
             )
         except KeyError:
             raise NoMatchesFound("No matches could be found for the given query")
@@ -477,85 +445,44 @@ class Player:
         -------
         List[lavalink.Track], playlist_data
         """
-        guild: discord.Guild = requester.guild
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
+        player = _get_ll_player(self._guild)
 
-        try:
-            player = lavalink.get_player(guild.id)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
-
-        await self._set_player_settings(requester.guild, player)
+        await self._set_player_settings(player)
 
         tracks, playlist_data = await self._enqueue_tracks(query, player, requester)
 
         return tracks, playlist_data
 
-    async def pause(self, guild: discord.Guild) -> None:
-        """Pauses the player in a guild
-
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild in which the player should be paused
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
+    async def pause(self) -> None:
+        """Pauses the player in a guild"""
+        player = _get_ll_player(self._guild)
 
         if not player.paused:
             await player.pause()
             self._bot.dispatch(
-                "red_audio_audio_paused", guild, True
+                "red_audio_audio_paused", self._guild, True
             )
 
-    async def resume(self, guild: discord.Guild) -> None:
-        """Resumes the player in a guild
-
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild in which the player should be paused
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
+    async def resume(self) -> None:
+        """Resumes the player in a guild"""
+        player = _get_ll_player(self._guild)
 
         if player.paused:
             await player.pause(False)
             self._bot.dispatch(
-                "red_audio_audio_paused", guild, False
+                "red_audio_audio_paused", self._guild, False
             )
 
-    async def current(self, guild: discord.Guild) -> Optional[lavalink.Track]:
+    async def current(self) -> Optional[lavalink.Track]:
         """Returns the current track in the given guild
 
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild for which the current song should be returned
         Returns
         -------
         Optional[lavalink.Track]
             The current track
         """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-            return player.current
-        except (KeyError, IndexError):
-            return None
+        player = _get_ll_player(self._guild)
+        return player.current
 
     async def skip(self, requester: discord.Member,
                    skip_to_track: int = None) -> lavalink.Track:
@@ -572,66 +499,22 @@ class Player:
         lavalink.Track
             The current track
         """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(requester.guild.id)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Bot is not connected to a voice channel")
+        player = _get_ll_player(self._guild)
 
         await self._skip(player, requester, skip_to_track)
 
-    async def shutdown(self, guild: discord.Guild) -> None:
-        """Stop the playback
+    async def stop(self) -> None:
+        """Stop the playback"""
+        player = _get_ll_player(self._guild)
+        player.queue = []
+        player.store("playing_song", None)
+        player.store("prev_requester", None)
+        player.store("prev_song", None)
+        player.store("requester", None)
+        player.store("autoplay_notified", False)
+        await player.stop()
 
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild in which playback should be stopped
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-            player.queue = []
-            player.store("playing_song", None)
-            player.store("prev_requester", None)
-            player.store("prev_song", None)
-            player.store("requester", None)
-            player.store("autoplay_notified", False)
-            await player.stop()
-
-            self._bot.dispatch("red_audio_audio_stop", guild)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Nothing playing")
-
-    async def connect(self, channel: discord.VoiceChannel, deafen: bool = None) -> None:
-        """Connect to a voice channel
-
-        Parameters
-        ----------
-        channel: discord.VoiceChannel
-            The channel to connect to
-        deafen: bool
-            Whether or not the bot should deafen on connect. Defaults to the
-            guild default value if not given
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        if deafen is None:
-            deafen = await self._config.guild(channel.guild).auto_deafen()
-
-        try:
-            player = lavalink.get_player(channel.guild.id)
-            await player.connect(deafen=deafen, channel=channel)
-        except (KeyError, IndexError):
-            await lavalink.connect(channel=channel, deafen=deafen)
-
-        if IS_DEBUG:
-            log_player.debug(f"Connected to {channel} in {channel.guild}")
+        self._bot.dispatch("red_audio_audio_stop", self._guild)
 
     async def move_to(self, channel: discord.VoiceChannel) -> None:
         """Move the player to another voice channel
@@ -641,86 +524,29 @@ class Player:
         channel: discord.VoiceChannel
             The channel to move the player to
         """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(channel.guild.id)
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice("Not currently connected to a voice channel in the given guild")
+        player = _get_ll_player(self._guild)
 
         await player.move_to(channel)
 
-    def is_playing(self, guild: discord.Guild):
-        """Check whether the player is playing in a guild
+    async def disconnect(self) -> None:
+        """Disconnects the player"""
+        global _players
 
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild to check in
-        Returns
-        -------
-        bool
-            the current playing state"""
+        player = _get_ll_player(self._guild)
+        channel = player.channel
 
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
+        player.queue = []
+        player.store("playing_song", None)
+        player.store("autoplay_notified", False)
+        await player.stop()
+        await player.disconnect()
 
-        try:
-            player = lavalink.get_player(guild.id)
-            return player.is_playing
-        except (KeyError, IndexError):
-            return False
+        if IS_DEBUG:
+            log_player.debug(f"Disconnected from {channel} in {guild}")
 
-    def is_connected(self, guild: discord.Guild = None) -> Optional[discord.VoiceChannel]:
-        """Check whether the player is connected to a channel
+        del _players[self._guild.id]
 
-        Parameters
-        ----------
-        guild: discord.Guild
-            guild to check the connection state for
-        Returns
-        -------
-        Optional[discord.VoiceChannel]
-            discord.VoiceChannel if connected in the given guild else None
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-            return player.channel
-        except (KeyError, IndexError):
-            pass
-        return None
-
-    async def disconnect(self, guild: discord.Guild) -> None:
-        """Disconnect the player
-
-        Parameters
-        ----------
-        guild: discord.Guild
-            The guild in which the player should disconnect
-        """
-        if not self._lavalink.is_connected:
-            raise LavalinkNotReady("Connection to Lavalink has not yet been established")
-
-        try:
-            player = lavalink.get_player(guild.id)
-            channel = player.channel
-
-            player.queue = []
-            player.store("playing_song", None)
-            player.store("autoplay_notified", False)
-            await player.stop()
-            await player.disconnect()
-
-            if IS_DEBUG:
-                log_player.debug(f"Disconnected from {channel} in {guild}")
-        except (KeyError, IndexError):
-            raise NotConnectedToVoice(f"Bot is not connected to a voice channel in guild {guild}")
-
-    async def get_volume(self, guild: discord.Guild) -> Optional[int]:
+    async def get_volume(self) -> Optional[int]:
         """Get the current player volume
 
         Parameters
@@ -741,7 +567,7 @@ class Player:
         except (KeyError, IndexError):
             return await self._config.guild(guild).volume()
 
-    async def set_volume(self, guild: discord.Guild, vol: int) -> int:
+    async def set_volume(self, vol: int) -> int:
         """Set the player's volume
 
         Parameters
@@ -767,7 +593,7 @@ class Player:
         except (KeyError, IndexError):
             pass
 
-    async def get_queue(self, guild: discord.Guild) -> List[lavalink.Track]:
+    async def get_queue(self) -> List[lavalink.Track]:
         """Get the current player queue
 
         Parameters
@@ -788,7 +614,7 @@ class Player:
         except (KeyError, IndexError):
             return []
 
-    async def set_queue(self, guild: discord.Guild, queue: List) -> None:
+    async def set_queue(self, queue: List) -> None:
         """Set the player's queue
 
         Parameters

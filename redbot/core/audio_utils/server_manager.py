@@ -12,13 +12,12 @@ import time
 import aiohttp
 import rich
 
-from typing import ClassVar, Optional, Final, Pattern, List, Tuple, TYPE_CHECKING
+from typing import Optional, Final, Pattern, List, Tuple
 
 from .api_utils import task_callback
 from .errors import LavalinkDownloadFailed, PortAlreadyInUse
 
 from redbot.core import data_manager
-from redbot.core.bot import Red
 
 log = logging.getLogger("red.core.audio.server_manager")
 
@@ -169,13 +168,7 @@ class ServerManager:
         self._monitor_task.add_done_callback(task_callback)
     
     async def shutdown_ll_server(self) -> None:
-        """Stops the internal lavalink server
-
-        Parameters
-        ----------
-        bot: Red
-            The bot object to close the connection from
-        """
+        """Stops the internal lavalink server"""
         if self._shutdown or not self._proc:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
@@ -196,7 +189,7 @@ class ServerManager:
         log.info("Internal Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
             log.info("Restarting internal Lavalink server")
-            await self.start(self._java_exc)
+            await self.start_ll_server(self._java_exc)
         else:
             log.critical(
                 "Your Java is borked. Please find the hs_err_pid%d.log file"

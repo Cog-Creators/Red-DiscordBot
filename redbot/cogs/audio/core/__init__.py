@@ -9,7 +9,6 @@ from typing import Mapping
 import aiohttp
 import discord
 
-from redbot.core import Audio
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
@@ -37,7 +36,6 @@ class Audio(
         super().__init__()
         self.bot = bot
         self.config = None
-        self.audio_api: Audio = None
 
         self.api_interface = None
         self.player_manager = None

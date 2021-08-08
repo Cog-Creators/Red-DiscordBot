@@ -22,7 +22,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
-from ..audio_dataclasses import Query
+from ...audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
 from ...errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from ..utils import CacheLevel, Notifier

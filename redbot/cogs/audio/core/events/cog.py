@@ -10,8 +10,8 @@ from typing import Optional
 import discord
 import lavalink
 
-from redbot.core import commands, Audio
-from redbot.core.audio_utils.errors import DatabaseError, TrackEnqueueError
+from redbot.core import commands, audio
+from redbot.core.audio_utils.errors import DatabaseError, TrackEnqueueError, NotConnectedToVoice
 from redbot.core.i18n import Translator
 
 from ...apis.playlist_interface import Playlist, delete_playlist, get_playlist
@@ -31,8 +31,9 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
 
-        player = Audio.get_player(guild)
-        if not player:
+        try:
+            player = audio._get_ll_player(guild)
+        except NotConnectedToVoice:
             return
 
         guild_data = await self.config.guild(guild).all()
@@ -217,7 +218,11 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
 
-        player = Audio.get_player(guild)
+        try:
+            player = audio._get_ll_player(guild)
+        except NotConnectedToVoice:
+            pass
+
         if player:
             guild_data = await self.config.guild(guild).all()
             autoplay = guild_data["auto_play"]
@@ -292,7 +297,11 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         status = await self.config.status()
 
-        player = Audio.get_player(guild)
+        try:
+            player = audio._get_ll_player(guild)
+        except NotConnectedToVoice:
+            return
+
         if (not player.is_playing) and status:
             player_check = await self.get_active_player_count()
             await self.update_bot_presence(*player_check)
