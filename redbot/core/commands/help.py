@@ -277,6 +277,8 @@ class RedHelpFormatter(HelpFormatterABC):
 
     @staticmethod
     def format_tagline(ctx: Context, tagline: str):
+        if not tagline:
+            return
         return tagline.replace("[p]", ctx.clean_prefix)
 
     @staticmethod
