@@ -3354,7 +3354,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]helpset reacttimeout 300` - Max allowed timeout (5 mins).
 
         **Arguments:**
-            - `<seconds>` - The timeout in seconds of the reactions.
+            - `<seconds>` - The timeout, in seconds, of the reactions.
         """
         if seconds < 15:
             await ctx.send(_("You must give a value of at least 15 seconds!"))
