@@ -153,11 +153,10 @@ API Reference
 
 .. py:currentmodule:: redbot.core.audio
 
-Audio
+audio
 ^^^^^
-.. note:: This class shouldn't be instantiated manually. Use :py:meth:`Audio.initialize` to do so.
 
-.. autoclass:: Audio
+.. automodule:: redbot.core.audio
     :members:
 
 Player
@@ -165,8 +164,9 @@ Player
 .. attributetable:: redbot.core.audio.Player
 
 .. note:: This class wraps various lavalink.Player methods and meanwhile interacts with RED's
-          inbuilt config and databases. It is instantiated for you on startup and thus shouldn't be instantiated
-          manually. :py:meth:`Audio.player` returns that class instance for you.
+          inbuilt config and databases. This class shouldn't be instantiated manually. Use
+          :py:meth:`audio.connect` to do so. The presence of this object guarantees that the
+          bot is connected to a voice channel in the current guild
 
 .. autoclass:: redbot.core.audio.Player
     :members:
@@ -176,7 +176,7 @@ ServerManager
 
 .. note:: This class handles the lavalink server subprocess. While the properties provided by this class may be useful,
           one shouldn't interact with any other function since starting of the server and dealing with the jar is
-          handled by :py:meth:`Audio.initialize`. Shutting down is handled by :py:meth:`Audio.stop`
+          handled by :py:meth:`audio.initialize`. Shutting down is handled by :py:meth:`audio.shutdown`
 
 .. autoclass:: redbot.core.audio.ServerManager
     :members:

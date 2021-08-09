@@ -11,7 +11,7 @@ import discord
 import lavalink
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -84,7 +84,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -192,7 +193,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -456,7 +458,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -572,7 +575,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -696,7 +700,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )

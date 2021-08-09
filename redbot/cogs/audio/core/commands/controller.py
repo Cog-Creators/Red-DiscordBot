@@ -10,7 +10,7 @@ from typing import Optional, Union
 import discord
 import lavalink
 
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
@@ -37,7 +37,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
             )
             vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild)
             can_skip = await self._can_instaskip(ctx, ctx.author)
             if (
                 (vote_enabled or (vote_enabled and dj_enabled))
@@ -65,10 +65,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, title=_("Disconnecting..."))
             self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
             self.update_player_lock(ctx, False)
-            eq = player.fetch("eq")
+            eq = player.player.fetch("eq")
             player.queue = []
-            player.store("playing_song", None)
-            player.store("autoplay_notified", False)
+            player.player.store("playing_song", None)
+            player.player.store("autoplay_notified", False)
             if eq:
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
@@ -94,8 +94,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "close": "\N{CROSS MARK}",
         }
         expected = tuple(emoji.values())
-        player = lavalink.get_player(ctx.guild.id)
-        player.store("notify_channel", ctx.channel.id)
+        player = audio.get_player(ctx.guild)
+        player.player.store("notify_channel", ctx.channel.id)
         if player.current:
             arrow = await self.draw_time(ctx)
             pos = self.format_time(player.position)
@@ -112,9 +112,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             song = _("Nothing.")
 
-        if player.fetch("np_message") is not None:
+        if player.player.fetch("np_message") is not None:
             with contextlib.suppress(discord.HTTPException):
-                await player.fetch("np_message").delete()
+                await player.player.fetch("np_message").delete()
         embed = discord.Embed(title=_("Now Playing"), description=song)
         guild_data = await self.config.guild(ctx.guild).all()
 
@@ -144,7 +144,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         message = await self.send_embed_msg(ctx, embed=embed, footer=text)
 
-        player.store("np_message", message)
+        player.player.store("np_message", message)
 
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -203,7 +203,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
@@ -217,7 +217,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Manage Tracks"),
                 description=_("You need the DJ role to pause or resume tracks."),
             )
-        player.store("notify_channel", ctx.channel.id)
+        player.player.store("notify_channel", ctx.channel.id)
         if not player.current:
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         description = await self.get_track_description(
@@ -228,7 +228,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await player.pause()
             return await self.send_embed_msg(ctx, title=_("Track Paused"), description=description)
         if player.current and player.paused:
-            await player.pause(False)
+            await player.resume()
             return await self.send_embed_msg(
                 ctx, title=_("Track Resumed"), description=description
             )
@@ -654,14 +654,15 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("I don't have permission to connect and speak in your channel."),
                 )
             if not self._player_check(ctx):
-                player = await lavalink.connect(
+                player = await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-                player.store("notify_channel", ctx.channel.id)
+                player.player.store("notify_channel", ctx.channel.id)
             else:
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("notify_channel", ctx.channel.id)
+                player = audio.get_player(ctx.guild)
+                player.player.store("notify_channel", ctx.channel.id)
                 if (
                     ctx.author.voice.channel == player.channel
                     and ctx.guild.me in ctx.author.voice.channel.members

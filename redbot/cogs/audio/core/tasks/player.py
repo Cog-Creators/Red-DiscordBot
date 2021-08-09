@@ -5,8 +5,7 @@ from pathlib import Path
 
 from typing import Dict
 
-import lavalink
-
+from redbot.core import audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -23,7 +22,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
         stop_times: Dict = {}
         pause_times: Dict = {}
         while True:
-            async for p in AsyncIter(lavalink.all_players()):
+            async for p in AsyncIter(audio.all_players()):
                 server = p.guild
                 if await self.bot.cog_disabled_in_guild(self, server):
                     continue
@@ -35,7 +34,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     stop_times.pop(server.id, None)
                     if p.paused and server.id in pause_times:
                         try:
-                            await p.pause(False)
+                            await p.resume()
                         except Exception as err:
                             debug_exc_log(log, err, "Exception raised in Audio's unpausing %r.", p)
                     pause_times.pop(server.id, None)
@@ -47,9 +46,9 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     stop_times.pop(sid, None)
                     pause_times.pop(sid, None)
                     try:
-                        player = lavalink.get_player(sid)
+                        player = audio.get_player(server_obj)
                         await self.api_interface.persistent_queue_api.drop(sid)
-                        player.store("autoplay_notified", False)
+                        player.player.store("autoplay_notified", False)
                         await player.stop()
                         await player.disconnect()
                         await self.config.guild_from_id(
@@ -65,9 +64,9 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
-                            player = lavalink.get_player(sid)
+                            player = audio.get_player(server_obj)
                             await self.api_interface.persistent_queue_api.drop(sid)
-                            player.store("autoplay_notified", False)
+                            player.player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
                             await self.config.guild_from_id(
@@ -85,7 +84,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
                     if (time.time() - pause_times.get(sid, 0)) >= emptypause_timer:
                         try:
-                            await lavalink.get_player(sid).pause()
+                            await audio.get_player(server_obj).pause()
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 pause_times.pop(sid, None)

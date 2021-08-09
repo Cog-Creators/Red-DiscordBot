@@ -15,7 +15,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
@@ -544,7 +544,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ),
                     )
                     return False
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -562,8 +563,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-        player = lavalink.get_player(ctx.guild.id)
-        player.store("notify_channel", ctx.channel.id)
+        player = audio.get_player(ctx.guild)
+        player.player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
@@ -573,7 +574,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You must be in the voice channel to use the playlist command."),
             )
             return False
-        await self._eq_check(ctx, player)
+        await self._eq_check(ctx, player.player)
         await self.set_player_settings(ctx)
         return True
 
