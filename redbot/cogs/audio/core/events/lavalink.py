@@ -8,7 +8,6 @@ from typing import Dict
 import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
-from discord.gateway import DiscordWebSocket
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
