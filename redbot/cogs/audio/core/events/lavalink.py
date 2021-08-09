@@ -340,6 +340,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect: bool,
     ) -> None:
         guild_id = guild.id
+        shard = self.bot.shards[guild.shard_id]
         event_channel_id = extra.get("channelID")
         try:
             if not self._ws_resume[guild_id].is_set():
@@ -385,7 +386,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
 
-            if self.bot.is_closed():
+            if shard.is_closed():
                 if player._con_delay:
                     delay = player._con_delay.delay()
                 else:
@@ -397,7 +398,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Socket Closed %s.  "
                     "Code: %s -- Remote: %s -- %s, %r",
                     guild_id,
-                    self.bot.is_closed(),
+                    shard.is_closed(),
                     code,
                     by_remote,
                     reason,
@@ -410,7 +411,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     delay,
                 )
                 await asyncio.sleep(delay)
-                while self.bot.is_closed():
+                while shard.is_closed():
                     await asyncio.sleep(0.1)
 
                 if has_perm and player.current and player.is_playing:
