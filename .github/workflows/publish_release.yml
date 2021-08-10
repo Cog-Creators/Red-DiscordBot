@@ -5,8 +5,58 @@ on:
       - "*"
 
 jobs:
-  release_to_pypi:
+  release_information:
     if: github.repository == 'Cog-Creators/Red-DiscordBot'
+    name: GO HERE BEFORE APPROVING
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository and install Python
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Get version to release
+      - name: Get version to release
+        id: version_to_release
+        run: |
+          python .github/workflows/scripts/bump_version.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
+          JUST_RETURN_VERSION: '1'
+
+      # Print release information
+      - name: REVIEW OUTPUT OF THIS STEP BEFORE APPROVING
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+          TAG_REF_NAME: ${{ github.ref }}
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          echo 'Release information:'
+          echo "- Branch the tag was based off: ${TAG_BASE_BRANCH#'refs/heads/'}"
+          echo "- Tag name: ${TAG_REF_NAME#'refs/tags/'}"
+          echo "- Release version: $RELEASE_VERSION"
+
+          echo "TAG_NAME=${TAG_REF_NAME#'refs/tags/'}" >> $GITHUB_ENV
+
+      - name: Ensure the tag name corresponds to the released version
+        env:
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          if [[ "$TAG_NAME" != "$RELEASE_VERSION" ]]; then
+              echo -n "The tag name ($TAG_NAME) is not the same as"
+              echo " the release version ($RELEASE_VERSION)!"
+              exit 1
+          else
+              echo "The tag name and the release version are the same ($TAG_NAME)."
+              echo 'Continuing...'
+          fi
+
+  release_to_pypi:
+    needs: release_information
+    environment: Release
+    name: Release to PyPI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +83,7 @@ jobs:
       contents: write
       pull-requests: write
     needs: release_to_pypi
+    name: Update Red version number to dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
