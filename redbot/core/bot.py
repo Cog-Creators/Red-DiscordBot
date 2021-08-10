@@ -1528,6 +1528,16 @@ class RedBase(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
+    def remove_and_add_command(self, func: commands.Command):
+        """Removes a command and adds the command back.
+        
+        Raises
+        ------
+        See :meth:`add_command` and :meth:`remove_command`
+        """
+        self.remove_command(func.name)
+        self.add_command(func)
+
     def remove_command(self, name: str) -> Optional[commands.Command]:
         command = super().remove_command(name)
         if command is None:
