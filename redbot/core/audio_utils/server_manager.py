@@ -11,6 +11,7 @@ import tempfile
 import time
 import aiohttp
 import rich
+import sys
 
 from typing import Optional, Final, Pattern, List, Tuple
 
@@ -127,7 +128,7 @@ class ServerManager:
         """
         self._lavalink_download_dir = data_manager.cog_data_path(raw_name="Audio")
         self._lavalink_jar_file = self._lavalink_download_dir / "Lavalink.jar"
-        self._bundled_app_yml = pathlib.Path(__file__).parent / "data" / "application.yml"
+        self._bundled_app_yml = pathlib.Path(sys.modules["__main__"].__file__).parent / "cogs" / "audio" / "data" / "application.yml"
         self._lavalink_app_yml = self._lavalink_download_dir / "application.yml"
 
         self._shutdown = False
@@ -144,7 +145,7 @@ class ServerManager:
 
         await self.maybe_download_jar()
 
-        #handle application.yml copying
+        shutil.copy(self._bundled_app_yml, self._lavalink_app_yml)
 
         args = await self._get_jar_args()
         self._proc = await asyncio.subprocess.create_subprocess_exec(

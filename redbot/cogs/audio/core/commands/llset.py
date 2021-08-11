@@ -3,7 +3,7 @@ from pathlib import Path
 
 import discord
 
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 
@@ -63,30 +63,28 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     exc=exc_absolute
                 ),
             )
-        try:
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
-        except ProcessLookupError:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Failed To Shutdown Lavalink"),
-                description=_(
-                    "For it to take effect please reload Audio (`{prefix}reload audio`)."
-                ).format(
-                    prefix=ctx.prefix,
-                ),
-            )
-        else:
-            try:
-                self.lavalink_restart_connect()
-            except ProcessLookupError:
-                await self.send_embed_msg(
-                    ctx,
-                    title=_("Failed To Shutdown Lavalink"),
-                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                        prefix=ctx.prefix
-                    ),
-                )
+        # if audio._server_manager.is_running:
+        #     await audio.shutdown("", 0, force_shutdown=True)
+        # else:
+        #     await self.send_embed_msg(
+        #         ctx,
+        #         title=_("Failed To Shutdown Lavalink"),
+        #         description=_(
+        #             "For it to take effect please reload Audio (`{prefix}reload audio`)."
+        #         ).format(
+        #             prefix=ctx.prefix,
+        #         ),
+        #     )
+        # try:
+        await audio.initialize(self.bot, "Audio", 2711759130, force_restart_ll_server=True)
+        # except ProcessLookupError:
+        #     await self.send_embed_msg(
+        #         ctx,
+        #         title=_("Failed To Shutdown Lavalink"),
+        #         description=_("Please reload Audio (`{prefix}reload audio`).").format(
+        #             prefix=ctx.prefix
+        #         ),
+        #     )
 
     @command_llsetup.command(name="external")
     async def command_llsetup_external(self, ctx: commands.Context):

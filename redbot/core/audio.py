@@ -136,17 +136,19 @@ async def initialize(
         _server_manager = ServerManager(bot, _config)
         _lavalink = Lavalink(bot, _config, _server_manager, _api_interface)
 
-        if force_restart_ll_server:
-            if _server_manager.is_running:
-                await _server_manager.shutdown_ll_server()
+    if force_restart_ll_server:
+        if _server_manager.is_running:
+            await _lavalink.shutdown()
+            await _server_manager.shutdown_ll_server()
 
-        if force_reset_db_conn:
-            if _api_interface.is_connected:
-                await _api_interface.close()
+    if force_reset_db_conn:
+        if _api_interface.is_connected:
+            await _api_interface.close()
 
-        if not _lavalink.is_connected:
-            await _lavalink.start()
+    if not _lavalink.is_connected:
+        await _lavalink.start()
 
+    if not _api_interface.is_connected:
         await _api_interface.initialize()
 
     _used_by.append((cog_name, identifier))
@@ -296,7 +298,7 @@ class Player():
         return self.player.queue
 
     @queue.setter
-    def set_queue(self, q: List):
+    def queue(self, q: List):
         self.player.queue = q
 
     @property
@@ -305,7 +307,7 @@ class Player():
         return self.player.repeat
 
     @repeat.setter
-    def set_repeat(self, r: bool):
+    def repeat(self, r: bool):
         self.player.repeat = r
 
     @property
@@ -314,7 +316,7 @@ class Player():
         return self.player.shuffle
 
     @shuffle.setter
-    def set_shuffle(self, s: bool):
+    def shuffle(self, s: bool):
         self.player.shuffle = s
 
     @property
@@ -322,7 +324,7 @@ class Player():
         return self.player.shuffle_bumped
 
     @shuffle_bumped.setter
-    def set_shuffle_bumped(self, sb: bool):
+    def shuffle_bumped(self, sb: bool):
         self.player.shuffle_bumped = sb
 
     @property

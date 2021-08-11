@@ -128,104 +128,104 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def cog_after_invoke(self, ctx: commands.Context) -> None:
         await self.maybe_run_pending_db_tasks(ctx)
 
-    async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
-        error = getattr(error, "original", error)
-        handled = False
-        if isinstance(error, commands.ArgParserFailure):
-            handled = True
-            msg = _("`{user_input}` is not a valid value for `{command}`").format(
-                user_input=error.user_input,
-                command=error.cmd,
-            )
-            if error.custom_help_msg:
-                msg += f"\n{error.custom_help_msg}"
-            await self.send_embed_msg(
-                ctx,
-                title=_("Unable To Parse Argument"),
-                description=msg,
-                error=True,
-            )
-            if error.send_cmd_help:
-                await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
-            handled = True
-            if error.args:
-                if match := RE_CONVERSION.search(error.args[0]):
-                    await self.send_embed_msg(
-                        ctx,
-                        title=_("Invalid Argument"),
-                        description=_(
-                            "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-                        ).format(match.group(2), match.group(1)),
-                        error=True,
-                    )
-                else:
-                    await self.send_embed_msg(
-                        ctx,
-                        title=_("Invalid Argument"),
-                        description=error.args[0],
-                        error=True,
-                    )
-            else:
-                await ctx.send_help()
-        elif isinstance(error, (IndexError, ClientConnectorError)) and any(
-            e in str(error).lower() for e in ["no nodes found.", "cannot connect to host"]
-        ):
-            handled = True
-            await self.send_embed_msg(
-                ctx,
-                title=_("Invalid Environment"),
-                description=_("Connection to Lavalink has been lost."),
-                error=True,
-            )
-            debug_exc_log(log, error, "This is a handled error")
-        elif isinstance(error, KeyError) and "such player for that guild" in str(error):
-            handled = True
-            await self.send_embed_msg(
-                ctx,
-                title=_("No Player Available"),
-                description=_("The bot is not connected to a voice channel."),
-                error=True,
-            )
-            debug_exc_log(log, error, "This is a handled error")
-        elif isinstance(error, (TrackEnqueueError, asyncio.exceptions.TimeoutError)):
-            handled = True
-            await self.send_embed_msg(
-                ctx,
-                title=_("Unable to Get Track"),
-                description=_(
-                    "I'm unable to get a track from Lavalink at the moment, "
-                    "try again in a few minutes."
-                ),
-                error=True,
-            )
-            debug_exc_log(log, error, "This is a handled error")
-        elif isinstance(error, discord.errors.HTTPException):
-            handled = True
-            await self.send_embed_msg(
-                ctx,
-                title=_("There was an issue communicating with Discord."),
-                description=_("This error has been reported to the bot owner."),
-                error=True,
-            )
-            log.exception(
-                "This is not handled in the core Audio cog, please report it.", exc_info=error
-            )
-        if not isinstance(
-            error,
-            (
-                commands.CheckFailure,
-                commands.UserInputError,
-                commands.DisabledCommand,
-                commands.CommandOnCooldown,
-                commands.MaxConcurrencyReached,
-            ),
-        ):
-            self.update_player_lock(ctx, False)
-            if self.api_interface is not None:
-                await self.api_interface.run_tasks(ctx)
-        if not handled:
-            await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+    # async def cog_command_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     error = getattr(error, "original", error)
+    #     handled = False
+    #     if isinstance(error, commands.ArgParserFailure):
+    #         handled = True
+    #         msg = _("`{user_input}` is not a valid value for `{command}`").format(
+    #             user_input=error.user_input,
+    #             command=error.cmd,
+    #         )
+    #         if error.custom_help_msg:
+    #             msg += f"\n{error.custom_help_msg}"
+    #         await self.send_embed_msg(
+    #             ctx,
+    #             title=_("Unable To Parse Argument"),
+    #             description=msg,
+    #             error=True,
+    #         )
+    #         if error.send_cmd_help:
+    #             await ctx.send_help()
+    #     elif isinstance(error, commands.ConversionFailure):
+    #         handled = True
+    #         if error.args:
+    #             if match := RE_CONVERSION.search(error.args[0]):
+    #                 await self.send_embed_msg(
+    #                     ctx,
+    #                     title=_("Invalid Argument"),
+    #                     description=_(
+    #                         "The argument you gave for `{}` is not valid: I was expecting a `{}`."
+    #                     ).format(match.group(2), match.group(1)),
+    #                     error=True,
+    #                 )
+    #             else:
+    #                 await self.send_embed_msg(
+    #                     ctx,
+    #                     title=_("Invalid Argument"),
+    #                     description=error.args[0],
+    #                     error=True,
+    #                 )
+    #         else:
+    #             await ctx.send_help()
+    #     elif isinstance(error, (IndexError, ClientConnectorError)) and any(
+    #         e in str(error).lower() for e in ["no nodes found.", "cannot connect to host"]
+    #     ):
+    #         handled = True
+    #         await self.send_embed_msg(
+    #             ctx,
+    #             title=_("Invalid Environment"),
+    #             description=_("Connection to Lavalink has been lost."),
+    #             error=True,
+    #         )
+    #         debug_exc_log(log, error, "This is a handled error")
+    #     elif isinstance(error, KeyError) and "such player for that guild" in str(error):
+    #         handled = True
+    #         await self.send_embed_msg(
+    #             ctx,
+    #             title=_("No Player Available"),
+    #             description=_("The bot is not connected to a voice channel."),
+    #             error=True,
+    #         )
+    #         debug_exc_log(log, error, "This is a handled error")
+    #     elif isinstance(error, (TrackEnqueueError, asyncio.exceptions.TimeoutError)):
+    #         handled = True
+    #         await self.send_embed_msg(
+    #             ctx,
+    #             title=_("Unable to Get Track"),
+    #             description=_(
+    #                 "I'm unable to get a track from Lavalink at the moment, "
+    #                 "try again in a few minutes."
+    #             ),
+    #             error=True,
+    #         )
+    #         debug_exc_log(log, error, "This is a handled error")
+    #     elif isinstance(error, discord.errors.HTTPException):
+    #         handled = True
+    #         await self.send_embed_msg(
+    #             ctx,
+    #             title=_("There was an issue communicating with Discord."),
+    #             description=_("This error has been reported to the bot owner."),
+    #             error=True,
+    #         )
+    #         log.exception(
+    #             "This is not handled in the core Audio cog, please report it.", exc_info=error
+    #         )
+    #     if not isinstance(
+    #         error,
+    #         (
+    #             commands.CheckFailure,
+    #             commands.UserInputError,
+    #             commands.DisabledCommand,
+    #             commands.CommandOnCooldown,
+    #             commands.MaxConcurrencyReached,
+    #         ),
+    #     ):
+    #         self.update_player_lock(ctx, False)
+    #         if self.api_interface is not None:
+    #             await self.api_interface.run_tasks(ctx)
+    #     if not handled:
+    #         await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
     async def test_unload(self):
         if not self.cog_cleaned_up:
