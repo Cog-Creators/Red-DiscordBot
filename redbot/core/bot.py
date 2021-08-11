@@ -536,7 +536,7 @@ class RedBase(
         Parameters
         ----------
         users_or_roles : Union[int, discord.Role, discord.User, discord.Member]
-            The users or roles to blacklist. If the `guild` argument is passed it will be blocked on that guild.
+            The users or roles to blacklist. If the 'guild' argument is passed it will be blocked on that guild.
         guild : Optional[discord.Guild]
             The guild for blacklisting the items. If no guild is passed, it will blacklist the items globally.
 
