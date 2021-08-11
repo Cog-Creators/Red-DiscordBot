@@ -27,7 +27,6 @@ from typing import (
     Literal,
     MutableMapping,
     Set,
-    Iterable,
     overload,
 )
 from types import MappingProxyType
