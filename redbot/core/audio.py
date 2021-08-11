@@ -170,26 +170,24 @@ async def shutdown(
     global _used_by
 
     if force_shutdown:
+        if _lavalink.is_connected:
+            await _lavalink.shutdown()
         if _server_manager.is_running:
             await _server_manager.shutdown_ll_server()
         if _api_interface.is_connected:
             _api_interface.close()
-        if _lavalink.is_connected:
-            await _lavalink.shutdown()
         _used_by = []
     else:
         if not (cog_name, identifier) in _used_by:
             raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
 
         if not _used_by:
-            if _server_manager.is_running:
-                await _server_manager.shutdown_ll_server()
-
-            if _api_interface.is_connected:
-                _api_interface.close()
-
             if _lavalink.is_connected:
                 await _lavalink.shutdown()
+            if _server_manager.is_running:
+                await _server_manager.shutdown_ll_server()
+            if _api_interface.is_connected:
+                _api_interface.close()
 
 async def connect(
         bot,

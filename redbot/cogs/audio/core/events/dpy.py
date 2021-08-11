@@ -227,6 +227,32 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not handled:
             await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
+    async def test_unload(self):
+        if not self.cog_cleaned_up:
+            self.bot.dispatch("red_audio_unload", self)
+            self.session.detach()
+            self.bot.loop.create_task(self._close_database())
+            if self.player_automated_timer_task:
+                self.player_automated_timer_task.cancel()
+
+            if self.lavalink_connect_task:
+                self.lavalink_connect_task.cancel()
+
+            # while not self.lavalink_connect_task.done():
+            #     await asyncio.sleep(0.1)
+
+            if self.cog_init_task:
+                self.cog_init_task.cancel()
+
+            if self._restore_task:
+                self._restore_task.cancel()
+
+            await audio.shutdown("Audio", 2711759130)
+            #lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
+            lavalink.unregister_update_listener(self.lavalink_update_handler)
+
+            self.cog_cleaned_up = True
+
     def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
             self.bot.dispatch("red_audio_unload", self)
@@ -244,12 +270,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             if self._restore_task:
                 self._restore_task.cancel()
 
-            #lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
-            lavalink.unregister_update_listener(self.lavalink_update_handler)
-
             self.bot.loop.create_task(audio.shutdown("Audio", 2711759130))
-
-            self.cog_cleaned_up = True
+            lavalink.unregister_update_listener(self.lavalink_update_handler)
 
     @commands.Cog.listener()
     async def on_voice_state_update(

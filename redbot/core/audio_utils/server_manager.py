@@ -176,6 +176,12 @@ class ServerManager:
         log.info("Shutting down internal Lavalink server")
         if self._monitor_task is not None:
             self._monitor_task.cancel()
+            # while not self._monitor_task.exception():
+            #     await asyncio.sleep(0.1)
+            # print(self._monitor_task.exception())
+            # while not self._monitor_task.done():
+            #     await asyncio.sleep(0.1)
+
         self._proc.terminate()
         await self._proc.wait()
         self._bot.dispatch("lavalink_server_stopped")

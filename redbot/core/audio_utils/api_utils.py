@@ -21,7 +21,7 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     pass
 
 def task_callback(task: asyncio.Task) -> None:
-    with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
+    with contextlib.suppress(asyncio.InvalidStateError, asyncio.CancelledError):
         if exc := task.exception():
             log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
 
@@ -56,21 +56,3 @@ def rgetattr(obj, attr, *args) -> Any:
 
     return functools.reduce(_getattr, [obj] + attr.split("."))
 
-class _ValueCtxManager(Awaitable[TypeVar("_T")], AsyncContextManager[TypeVar("_T")]):  # pylint: disable=duplicate-bases
-    """Context manager implementation for audio immutables
-
-    totally not stolen from redbot.core.config"""
-    def __init__(self, player: lavalink.Player, *, acquire_lock: bool = False):
-        self.player = player
-        self._queue = player.queue
-        #self.__acquire_lock = acquire_lock
-        #self.__lock = self.value_obj.get_lock()
-
-    def __await__(self):
-        return self.__aenter__().__await__()
-
-    async def __aenter__(self):
-        return self._queue
-
-    async def __aexit__(self, exc_type, exc, tb):
-        self.player.queue = self._queue
