@@ -527,8 +527,7 @@ class RedBase(
         return self._max_messages
 
     async def add_to_blacklist(
-        self, *users_or_roles: UserOrRoles,
-        guild: Optional[discord.Guild] = None
+        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
     ):
         """Add users or roles to the blacklist.
 
@@ -596,7 +595,9 @@ class RedBase(
         """
         await self._whiteblacklist_cache.clear_blacklist(guild)
 
-    async def add_to_whitelist(self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None):
+    async def add_to_whitelist(
+        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+    ):
         """Add users or roles to the whitelist.
 
         If a guild is passed in the items will be whitelisted locally.
@@ -616,8 +617,10 @@ class RedBase(
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
         await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
 
-    async def remove_from_whitelist(self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None):
-        """Remove users or roles from the whitelist
+    async def remove_from_whitelist(
+        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+    ):
+        """Remove users or roles from the whitelist.
 
         If a guild is passed in the items will be removed from the local whitelist.
 
