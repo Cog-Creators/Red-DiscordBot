@@ -530,21 +530,21 @@ class RedBase(
         self, *users_or_roles: UserOrRoles,
         guild: Optional[discord.Guild] = None
     ):
-        """Add users or roles to the blacklist
+        """Add users or roles to the blacklist.
 
-        If a guild is provided the items will be added to the guild's blacklist
+        If a guild is provided the items will be added to the guild's blacklist.
 
         Parameters
         ----------
         users_or_roles : Union[int, discord.Role, discord.User, discord.Member]
-            The users or roles to blacklist. If the `guild` argument is passed it will be blocked on that guild
+            The users or roles to blacklist. If the `guild` argument is passed it will be blocked on that guild.
         guild : Optional[discord.Guild]
-            The guild for blacklisting the items. If no guild is passed, it will blacklist the items globally
+            The guild for blacklisting the items. If no guild is passed, it will blacklist the items globally.
 
         Raises
         ------
         TypeError
-            The values passed were not the proper type
+            The values passed were not the proper type.
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
         await self._whiteblacklist_cache.add_to_blacklist(guild, to_add)
@@ -552,66 +552,66 @@ class RedBase(
     async def remove_from_blacklist(
         self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
     ):
-        """Remove users or roles from the blacklist
+        """Remove users or roles from the blacklist.
 
-        If a guild is provided the items will be removed from that guild's blacklist
+        If a guild is provided the items will be removed from that guild's blacklist.
 
         Parameters
         ----------
         users_or_roles : Union[int, discord.Role, discord.User, discord.Member]
-            The users or roles to remove from the blacklist
+            The users or roles to remove from the blacklist.
         guild : Optional[discord.Guild]
-            The guild for removing the blacklisted items. If no guild is passed, it will remove the items from the global blacklist
+            The guild for removing the blacklisted items. If no guild is passed, it will remove the items from the global blacklist.
 
         Raises
         ------
         TypeError
-            The values passed were not the proper type
+            The values passed were not the proper type.
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
         await self._whiteblacklist_cache.remove_from_blacklist(guild, to_add)
 
     async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
-        """Get the blacklist of either the bot or a guild
+        """Get the blacklist of either the bot or a guild.
 
         Parameters
         ----------
         guild : Optional[discord.Guild]
-            The guild to get the blacklist of. If this is not passed in it will return the global blacklist
+            The guild to get the blacklist of. If this is not passed in it will return the global blacklist.
 
         Returns
         -------
         Set[int]
-            The ids of the blacklisted items
+            The ids of the blacklisted items.
         """
         return await self._whiteblacklist_cache.get_blacklist(guild)
 
     async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
-        """Clear the blacklist of either the bot or a guild
+        """Clear the blacklist of either the bot or a guild.
 
         Parameters
         ----------
         guild : Optional[discord.Guild]
-            The guild to clear the blacklist of. If this is not passed in it will clear the global blacklist
+            The guild to clear the blacklist of. If this is not passed in it will clear the global blacklist.
         """
         await self._whiteblacklist_cache.clear_blacklist(guild)
 
     async def add_to_whitelist(self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None):
-        """Add users or roles to the whitelist
+        """Add users or roles to the whitelist.
 
-        If a guild is passed in the items will be whitelisted locally
+        If a guild is passed in the items will be whitelisted locally.
 
         Parameters
         ----------
         users_or_roles : Union[int, discord.Role, discord.Member, discord.User]
-            The items to whitelist
+            The items to whitelist.
         guild : Optional[discord.Guild]
-            The guild for whitelisting the items. If this is not passed in it will whitelist the items globally
+            The guild for whitelisting the items. If this is not passed in it will whitelist the items globally.
 
         Raises
         ------
         TypeError
-            The passed values were not of the proper type
+            The passed values were not of the proper type.
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
         await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
@@ -619,47 +619,47 @@ class RedBase(
     async def remove_from_whitelist(self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None):
         """Remove users or roles from the whitelist
 
-        If a guild is passed in the items will be removed from the local whitelist
+        If a guild is passed in the items will be removed from the local whitelist.
 
         Parameters
         ----------
         users_or_roles : Union[int, discord.Role, discord.Member, discord.User]
             The items to remove from the whitelist
         guild : Optional[discord.Guild]
-            The guild to remove the items from the whitelist
+            The guild to remove the items from the whitelist.
 
         Raises
         ------
         TypeError
-            The passed values were not of the proper type
+            The passed values were not of the proper type.
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
         await self._whiteblacklist_cache.remove_from_whitelist(guild, to_add)
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None):
-        """Get the whitelist of either the bot or a guild
+        """Get the whitelist of either the bot or a guild.
 
         Parameters
         ----------
         guild : Optional[discord.Guild]
-            The guild to get the whitelist of. If this is not passed in the bot's whitelist will be returned
+            The guild to get the whitelist of. If this is not passed in the bot's whitelist will be returned.
 
         Returns
         -------
         Set[int]
-            The ids of the whitelisted items
+            The ids of the whitelisted items.
         """
         return await self._whiteblacklist_cache.get_whitelist(guild)
 
     async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
         """Clears the whitelist of either the bot or a guild
 
-        If a guild is passed in the bot's whitelist will remain the same and vice versa
+        If a guild is passed in the bot's whitelist will remain the same and vice versa.
 
         Parameters
         ----------
         guild : Optional[discord.Guild]
-            The guild to clear the whitelist of. If not passed in, the global whitelist will be cleared
+            The guild to clear the whitelist of. If not passed in, the global whitelist will be cleared.
         """
         await self._whiteblacklist_cache.clear_whitelist(guild)
 
