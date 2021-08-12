@@ -422,7 +422,43 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(name="about", aliases=["aboot"])
+    async def about_aboot(self, ctx: commands.Context):
+        """About Jojobot"""
+        about_aboot = (
+            cm.capitalize() if (cm := ctx.invoked_with) in ["about", "aboot"] else "About"
+        )
+        msg = (
+            "Jojobot is an instance of Red - DiscordBot by TwentySix. He is maintained by Jojo#7791.\n\n"
+            "Jojobot has various cogs written by both Jojo and other Cog Creators, most notably Kreusada and OofChari (lol)\n\n"
+            "You can join the support server for either Jojobot or for Wall-E (Kreusada's bot) and talk to Jojo"
+        )
+        kwargs = {
+            "content": (
+                f"**{about_aboot} Jojobot**\n\n{msg}\n"
+                f"**Jojobot's support server:** https://discord.gg/jG2GXy9wKt\n"
+                f"**Wall-E's support server:** https://discord.gg/JmCFyq"
+            )
+        }
+        if await ctx.embed_requested():
+            embed = discord.Embed(
+                title=f"{about_aboot} Jojobot",
+                description=msg,
+                colour=await ctx.embed_colour(),
+                timestamp=datetime.datetime.utcnow(),
+            ).set_thumbnail(url=str(ctx.me.avatar_url))
+            log.info(embed.thumbnail)
+            [
+                embed.add_field(name=key, value=value)
+                for key, value in {
+                    "Jojobot's support server": "https://discord.gg/jG2GXy9wKt",
+                    "Wall-E's support server": "https://discord.gg/JmCFyq7",
+                }.items()
+            ]
+            kwargs = {"embed": embed}
+        await ctx.send(**kwargs)
+
+    @commands.command(hidden=True)
     @commands.is_owner()
     @commands.check(lambda c: c.bot.get_cog("Downloader") is not None)
     async def unusedrepos(self, ctx):
@@ -1526,7 +1562,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 title="Jojobot invte",
                 description=f"Here is [Jojobot's invite]({invite}) url",
                 colour=await ctx.embed_colour(),
-                timestamp=datetime.datetime.utcnow()
+                timestamp=datetime.datetime.utcnow(),
             )
             embed.set_thumbnail(url=ctx.me.avatar_url)
             embed.add_field(name="Here is a link if you're on mobile", value=invite)
@@ -2091,7 +2127,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.is_owner()
     async def dmchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set the dm log channel.
-        
+
         This will log dms sent by users"""
         if not channel:
             await ctx.send("Okay. I have reset the dm log channel.")
@@ -4975,8 +5011,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             kwargs = {"content": f"**{title}**\n{msg.content}"}
             if await self.bot.embed_requested(channel, msg.author):
                 embed = discord.Embed(
-                    title=title, description=msg.content,
-                    colour=await self.bot.get_embed_colour(channel)
+                    title=title,
+                    description=msg.content,
+                    colour=await self.bot.get_embed_colour(channel),
                 )
                 embed.set_author(name=msg.author.name, icon_url=msg.author.avatar_url)
                 embed.timestamp = datetime.datetime.utcnow()

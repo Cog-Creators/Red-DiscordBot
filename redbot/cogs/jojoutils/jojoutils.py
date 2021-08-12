@@ -16,9 +16,7 @@ import logging
 
 
 log = logging.getLogger("red.JojoUtils")
-_config = {
-    "denyed_bots": {}
-}
+_config = {"denyed_bots": {}}
 
 
 class JojoUtils(commands.Cog):
@@ -76,7 +74,7 @@ class JojoUtils(commands.Cog):
         embed = discord.Embed(
             title=f"Deleted message by {message.author.name} ({message.author.id})",
             description=message.content,
-            colour=0x00ffff,
+            colour=0x00FFFF,
             timestamp=datetime.utcnow(),
         )
         embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
@@ -135,7 +133,7 @@ class JojoUtils(commands.Cog):
 
         denyed_bot_role = ctx.guild.get_role(810845790532403201)
         async with self.config.denyed_bots() as db:
-            found = db.pop(str(bot.id), None) # remove it from the database
+            found = db.pop(str(bot.id), None)  # remove it from the database
         if denyed_bot_role.id not in bot._roles:
             return await ctx.send("That bot does not have the denyed permissions role.")
         elif found is not None:

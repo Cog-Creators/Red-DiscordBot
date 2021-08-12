@@ -1113,7 +1113,9 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @cog.command(name="update", usage="[reload=False] [cogs]")
-    async def _cog_update(self, ctx: commands.Context, _reload: Optional[bool], *cogs: InstalledCog) -> None:
+    async def _cog_update(
+        self, ctx: commands.Context, _reload: Optional[bool], *cogs: InstalledCog
+    ) -> None:
         """Update all cogs, or ones of your choosing.
 
         Examples:
