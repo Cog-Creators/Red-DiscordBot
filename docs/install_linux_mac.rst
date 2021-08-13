@@ -105,7 +105,7 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Debian and Raspbian Buster
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We recommend installing pyenv as a method of installing non-native versions of python on
+We recommend installing pyenv as a method of installing non-native versions of Python on
 Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
 
 .. prompt:: bash
@@ -289,7 +289,7 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
     sudo apt -y install software-properties-common
     sudo add-apt-repository -yu ppa:git-core/ppa
 
-Now, to install non-native version of python on non-LTS versions of Ubuntu, we recommend
+Now, to install non-native version of Python on non-LTS versions of Ubuntu, we recommend
 installing pyenv. To do this, first run the following commands:
 
 .. prompt:: bash
@@ -371,7 +371,7 @@ You have 2 options:
 Using ``venv``
 **************
 This is the quickest way to get your virtual environment up and running, as `venv` is shipped with
-python.
+Python.
 
 First, choose a directory where you would like to create your virtual environment. It's a good idea
 to keep it in a location which is easy to type out the path to. From now, we'll call it
@@ -407,7 +407,7 @@ Using ``pyenv virtualenv``
 Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
 environments. This option is only available if you installed Python with pyenv.
 
-First, ensure your pyenv interpreter is set to python 3.8.1 or greater with the following command:
+First, ensure your pyenv interpreter is set to Python 3.8.1 or greater with the following command:
 
 .. prompt:: bash
 
