@@ -209,8 +209,8 @@ class ServerManager:
                 log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
-                # if _RE_PORT_IN_USE.search(line):
-                #     raise PortAlreadyInUse
+                if _RE_PORT_IN_USE.search(line):
+                    raise PortAlreadyInUse
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
