@@ -28,6 +28,7 @@ from redbot import _early_init, __version__
 _early_init()
 
 import redbot.logging
+from redbot.core import audio
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
@@ -424,6 +425,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
 
 async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
+        await audio.shutdown("", 0, force_shutdown=True)
         log.info("%s received. Quitting...", signal_type)
         # Do not collapse the below line into other logic
         # We need to renter this function

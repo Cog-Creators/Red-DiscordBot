@@ -1701,17 +1701,16 @@ class RedBase(
 
     async def close(self):
         """Logs out of Discord and closes all connections."""
-        if self._shutdown_mode == ExitCodes.SHUTDOWN:
-            await audio.shutdown("", 1, force_shutdown=True)
-
         await super().close()
         await drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
                 await self.rpc.close()
-
         except AttributeError:
             pass
+
+        if self._shutdown_mode == ExitCodes.SHUTDOWN:
+            await audio.shutdown("", 1, force_shutdown=True)
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.

@@ -172,6 +172,7 @@ async def shutdown(
     global _used_by
 
     if force_shutdown:
+        print("Called")
         if _lavalink.is_connected:
             await _lavalink.shutdown()
         if _server_manager.is_running:
