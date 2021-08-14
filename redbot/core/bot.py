@@ -1709,8 +1709,7 @@ class RedBase(
         except AttributeError:
             pass
 
-        if self._shutdown_mode == ExitCodes.SHUTDOWN:
-            await audio.shutdown("", 1, force_shutdown=True)
+        await audio.shutdown("", 1, force_shutdown=True)
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
