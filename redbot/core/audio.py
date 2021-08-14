@@ -245,7 +245,7 @@ def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
         raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
 
 def all_players():
-    return list(_players.items())
+    return list(_players.values())
 
 class Player():
     def __init__(self, bot, channel):
@@ -294,7 +294,7 @@ class Player():
         return self.player.position
 
     @property
-    async def queue(self):
+    def queue(self):
         """list: The player's queue"""
         return self.player.queue
 
@@ -329,7 +329,7 @@ class Player():
         self.player.shuffle_bumped = sb
 
     @property
-    async def volume(self):
+    def volume(self):
         """The player's volume
         :type: int"""
         return self.player.volume
@@ -677,5 +677,5 @@ class Player():
             raise ValueError("Volume is not within the allowed range")
 
         await self._config.guild(self._guild).volume.set(vol)
-        self.player.volume = vol
+        await self.player.set_volume(vol)
 

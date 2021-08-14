@@ -23,7 +23,7 @@ from redbot.core import data_manager
 log = logging.getLogger("red.core.audio.server_manager")
 
 JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1236
+JAR_BUILD: Final[int] = 1237
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"
@@ -262,7 +262,7 @@ class ServerManager:
             self._java_version = None
         else:
             self._java_version = version = await self._get_java_version()
-            self._java_available = (11, 0) <= version < (12, 0)
+            self._java_available = ((11, 0) <= version < (12, 0)) or ((13, 0) <= version < (14, 0))
             self._java_exc = java_exc
         return self._java_available, self._java_version
     
