@@ -96,9 +96,9 @@ Complete the rest of the installation by `installing Python 3.9 with pyenv <inst
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian Buster
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Debian 10 Buster and Raspberry Pi OS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
 Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
