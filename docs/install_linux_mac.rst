@@ -116,6 +116,23 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
 
 Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
 
+---
+
+.. _instal-debian11:
+
+~~~~~~~~~~~~~~~~~~~~
+Debian 11 Bullseye
+~~~~~~~~~~~~~~~~~~~~
+
+Debian 11 "Bullseye" has all required packages available in official repositories. Install them
+with apt:
+
+.. prompt:: bash
+
+    sudo apt -y install python3 python3-dev python3-venv python3-pip git openjdk-11-jre-headless build-essential nano
+
+Continue by `creating-venv-linux`.
+
 ----
 
 .. _install-fedora:
