@@ -545,7 +545,10 @@ class Downloader(commands.Cog):
             return
         if re.match(r"^[a-zA-Z0-9_\-\.]+$", name) is None:
             await ctx.send(
-                _("Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots.")
+                _(
+                    "Repo names can only contain characters A-z, numbers, underscores, hyphens,"
+                    " and dots."
+                )
             )
             return
         try:
