@@ -103,11 +103,11 @@ msgstr "Bonne réponse {user} ! **+1** pour vous !"
 
 #: redbot/cogs/trivia/session.py:329
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
-msgstr ""
+msgstr "Félicitations {users} ! Vous avez tous reçu {num} {currency} pour avoir gagné !"
 
 #: redbot/cogs/trivia/session.py:337
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
-msgstr ""
+msgstr "Félicitations {user} ! Vous avez reçu {num} {currency} pour avoir gagné !"
 
 #: redbot/cogs/trivia/trivia.py:41
 #, docstring
@@ -134,7 +134,15 @@ msgid "Current settings\n"
 "Payout multiplier: {payout_multiplier}\n"
 "Allow lists to override settings: {allow_override}\n"
 "Use Spoilers in answers: {use_spoilers}"
-msgstr ""
+msgstr "Paramètres actuels\n"
+"Le bot gagne des points : {bot_plays}\n"
+"Délai de réponse : {delay} secondes\n"
+"Délai de non-réponse : {timeout} secondes\n"
+"Points pour gagner : {max_score}\n"
+"Révéler la réponse à la fin du délai : {reveal_answer}\n"
+"Multiplicateur des gains : {payout_multiplier}\n"
+"Autoriser les listes à remplacer les paramètres : {allow_override}\n"
+"Utiliser des \"spoilers\" dans les réponses : {use_spoilers}"
 
 #: redbot/cogs/trivia/trivia.py:105
 #, docstring
@@ -201,7 +209,7 @@ msgstr "Fait. Je mettrai les réponses dans des spoilers la prochaine fois."
 
 #: redbot/cogs/trivia/trivia.py:165
 msgid "Alright, I won't use spoilers to hide answers anymore."
-msgstr ""
+msgstr "D'accord, je n'utiliserai plus de \"spoilers\" pour cacher les réponses."
 
 #: redbot/cogs/trivia/trivia.py:169
 #, docstring
@@ -218,7 +226,7 @@ msgstr "Fait. Je vais maintenant gagné un point si les utilisateurs ne réponde
 
 #: redbot/cogs/trivia/trivia.py:178
 msgid "Alright, I won't embarrass you at trivia anymore."
-msgstr ""
+msgstr "D'accord, je ne vous dérangerais plus pour les Trivia."
 
 #: redbot/cogs/trivia/trivia.py:182
 #, docstring

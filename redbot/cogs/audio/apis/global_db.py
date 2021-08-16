@@ -174,7 +174,8 @@ class GlobalCacheWrapper:
     async def get_perms(self):
         global_api_user = copy(self.cog.global_api_user)
         await self._get_api_key()
-        is_enabled = await self.config.global_db_enabled()
+        # global API is force-disabled right now
+        is_enabled = False
         if (not is_enabled) or self.api_key is None:
             return global_api_user
         with contextlib.suppress(Exception):

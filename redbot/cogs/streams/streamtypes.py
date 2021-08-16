@@ -65,6 +65,10 @@ class Stream:
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
 
+    @property
+    def display_name(self) -> Optional[str]:
+        return self.name
+
     async def is_online(self):
         raise NotImplementedError()
 
@@ -274,7 +278,7 @@ class YoutubeStream(Stream):
             and data["pageInfo"]["totalResults"] < 1
         ):
             raise StreamNotFound()
-        raise APIError(data)
+        raise APIError(r.status, data)
 
     def _check_api_errors(self, data: dict):
         if "error" in data:
@@ -287,7 +291,7 @@ class YoutubeStream(Stream):
                 "rateLimitExceeded",
             ):
                 raise YoutubeQuotaExceeded()
-            raise APIError(data)
+            raise APIError(error_code, data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
@@ -299,12 +303,21 @@ class TwitchStream(Stream):
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
+        self._display_name = None
         self._client_id = kwargs.pop("token", None)
         self._bearer = kwargs.pop("bearer", None)
         self.games = kwargs.pop("games", {})
         self._rate_limit_resets: set = set()
         self._rate_limit_remaining: int = 0
         super().__init__(**kwargs)
+
+    @property
+    def display_name(self) -> Optional[str]:
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, value: str) -> None:
+        self._display_name = value
 
     async def wait_for_rate_limit_reset(self) -> None:
         """Check rate limits in response header and ensure we're following them.
@@ -379,7 +392,7 @@ class TwitchStream(Stream):
                 final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
-            final_data["user_name"] = self.name = stream_data["user_name"]
+            final_data["user_name"] = self.display_name = stream_data["user_name"]
             final_data["game_name"] = stream_data["game_name"]
             final_data["thumbnail_url"] = stream_data["thumbnail_url"]
             final_data["title"] = stream_data["title"]
@@ -395,7 +408,7 @@ class TwitchStream(Stream):
         elif stream_code == 404:
             raise StreamNotFound()
         else:
-            raise APIError(stream_data)
+            raise APIError(stream_code, stream_data)
 
     async def _fetch_user_profile(self):
         code, data = await self.get_data(TWITCH_ID_ENDPOINT, {"login": self.name})
@@ -410,7 +423,7 @@ class TwitchStream(Stream):
         elif code == 401:
             raise InvalidTwitchCredentials()
         else:
-            raise APIError(data)
+            raise APIError(code, data)
 
     def make_embed(self, data):
         is_rerun = data["type"] == "rerun"
@@ -459,7 +472,7 @@ class PicartoStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError(data)
+            raise APIError(r.status, data)
 
     def make_embed(self, data):
         avatar = rnd(

@@ -118,6 +118,7 @@ class RedBase(
             description="Red V3",
             invite_public=False,
             invite_perm=0,
+            invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
             extra_owner_destinations=[],
@@ -347,7 +348,7 @@ class RedBase(
             "__name__",
             "__builtins__",
         ]:
-            raise RuntimeError(f"The name {name} is reserved for default environement.")
+            raise RuntimeError(f"The name {name} is reserved for default environment.")
         if name in dev.env_extensions:
             raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value

@@ -54,7 +54,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
-            await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set([])
             self._ll_guild_updates.discard(guild.id)
             return
 
@@ -216,6 +215,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.guild_from_id(
                         guild_id=guild_id
                     ).currently_auto_playing_in.set([])
+                    # let audio buffer run out on slower machines (GH-5158)
+                    await asyncio.sleep(2)
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
@@ -338,8 +339,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
             if player.channel:
-                current_perms = player.channel.permissions_for(player.guild.me)
-                has_perm = current_perms.speak and current_perms.connect
+                has_perm = self.can_join_and_speak(player.channel)
             else:
                 has_perm = False
             if code in (1000,) and has_perm and player.current and player.is_playing:

@@ -2326,7 +2326,7 @@ set addadminrole
 
 Adds an admin role for this guild.
 
-Admins have all the same access and Mods, plus additional admin level commands like:
+Admins have the same access as Mods, plus additional admin level commands like:
  - ``[p]set serverprefix``
  - ``[p]addrole``
  - ``[p]ban``
@@ -3173,6 +3173,8 @@ Sets Red's server prefix(es).
 .. Warning:: This will override global prefixes, the bot will not respond to any global prefixes in this server.
 
     This is not additive. It will replace all current server prefixes.
+
+    You cannot have a prefix with more than 20 characters.
 
 **Examples:**
     - ``[p]set serverprefix !``

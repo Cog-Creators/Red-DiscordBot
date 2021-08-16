@@ -33,7 +33,7 @@ from ..cog_utils import CompositeMetaClass
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
 CURRATED_DATA = (
-    "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/json"
+    "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"
 )
 
 
@@ -532,14 +532,16 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return False
             try:
                 if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    not self.can_join_and_speak(ctx.author.voice.channel)
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Playlists"),
-                        description=_("I don't have permission to connect to your channel."),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
                     )
                     return False
                 await lavalink.connect(

@@ -923,7 +923,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and
+        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and
         Bandcamp links.
         """
         restrict = await self.config.restrict()
@@ -960,6 +960,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         is_owner = await self.bot.is_owner(ctx.author)
         global_data = await self.config.all()
         data = await self.config.guild(ctx.guild).all()
+
+        auto_deafen = _("Enabled") if data["auto_deafen"] else _("Disabled")
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
@@ -972,6 +974,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         dc = data["disconnect"]
         autoplay = data["auto_play"]
         maxlength = data["maxlength"]
+        maxvolume = data["max_volume"]
         vote_percent = data["vote_percent"]
         current_level = CacheLevel(global_data["cache_level"])
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
@@ -980,7 +983,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
         persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
-        auto_deafen = _("Enabled") if data["auto_deafen"] else _("Disabled")
 
         countrycode = data["country_code"]
 
@@ -994,6 +996,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         autoplaylist = data["autoplaylist"]
         vote_enabled = data["vote_enabled"]
         msg = "----" + _("Server Settings") + "----        \n"
+        msg += _("Auto-deafen:      [{auto_deafen}]\n").format(
+            auto_deafen=auto_deafen,
+        )
         msg += _("Auto-disconnect:  [{dc}]\n").format(dc=_("Enabled") if dc else _("Disabled"))
         msg += _("Auto-play:        [{autoplay}]\n").format(
             autoplay=_("Enabled") if autoplay else _("Disabled")
@@ -1018,23 +1023,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracklength=self.get_time_string(maxlength)
             )
         msg += _(
+            "Max volume:       [{max_volume}%]\n"
+            "Persist queue:    [{persist_queue}]\n"
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
             "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
-            "Persist queue:    [{persist_queue}]\n"
             "Spotify search:   [{countrycode}]\n"
-            "Auto-Deafen:      [{auto_deafen}]\n"
         ).format(
+            max_volume=maxvolume,
             countrycode=countrycode,
+            persist_queue=persist_queue,
             repeat=song_repeat,
             shuffle=song_shuffle,
             notify=song_notify,
             status=song_status,
             bumpped_shuffle=bumpped_shuffle,
-            persist_queue=persist_queue,
-            auto_deafen=auto_deafen,
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
@@ -1085,15 +1090,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Local Spotify cache:    [{spotify_status}]\n")
                 + _("Local Youtube cache:    [{youtube_status}]\n")
                 + _("Local Lavalink cache:   [{lavalink_status}]\n")
-                + _("Global cache status:    [{global_cache}]\n")
-                + _("Global timeout:         [{num_seconds}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
-                global_cache=_("Enabled") if global_data["global_db_enabled"] else _("Disabled"),
-                num_seconds=self.get_time_string(global_data["global_db_get_timeout"]),
             )
         msg += (
             "\n---"
@@ -1422,37 +1423,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.cache_age.set(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
-    @commands.is_owner()
-    @command_audioset.group(name="globalapi")
-    async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change globalapi settings."""
-
-    @command_audioset_audiodb.command(name="toggle")
-    async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
-        """Toggle the server settings.
-
-        Default is OFF
-        """
-        state = await self.config.global_db_enabled()
-        await self.config.global_db_enabled.set(not state)
-        if not state:  # Ensure a call is made if the API is enabled to update user perms
-            self.global_api_user = await self.api_interface.global_cache_api.get_perms()
-        await ctx.send(
-            _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
-        )
-
-    @command_audioset_audiodb.command(name="timeout")
-    async def command_audioset_audiodb_timeout(
-        self, ctx: commands.Context, timeout: Union[float, int]
-    ):
-        """Set GET request timeout.
-
-        Example: 0.1 = 100ms 1 = 1 second
-        """
-
-        await self.config.global_db_get_timeout.set(timeout)
-        await ctx.send(_("Request timeout set to {time} second(s)").format(time=timeout))
-
     @command_audioset.command(name="persistqueue")
     @commands.admin()
     async def command_audioset_persist_queue(self, ctx: commands.Context):
@@ -1489,3 +1459,43 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Restarting Lavalink"),
                 description=_("It can take a couple of minutes for Lavalink to fully start up."),
             )
+
+    @command_audioset.command(usage="<maximum volume>", name="maxvolume")
+    @commands.guild_only()
+    @commands.admin_or_permissions(manage_roles=True)
+    async def command_audioset_maxvolume(self, ctx: commands.Context, max_volume: int):
+        """Set the maximum volume allowed in this server."""
+        if max_volume < 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Error"),
+                description=_(
+                    "Music without sound isn't music at all. Try setting the volume higher then 0%."
+                ),
+            )
+        elif max_volume > 150:
+            max_volume = 150
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting changed"),
+                description=_(
+                    "The maximum volume has been limited to 150%, be easy on your ears."
+                ),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting changed"),
+                description=_("The maximum volume has been limited to {max_volume}%.").format(
+                    max_volume=max_volume
+                ),
+            )
+        current_volume = await self.config.guild(ctx.guild).volume()
+        if current_volume > max_volume:
+            await self.config.guild(ctx.guild).volume.set(max_volume)
+            if self._player_check(ctx):
+                player = lavalink.get_player(ctx.guild.id)
+                await player.set_volume(max_volume)
+                player.store("notify_channel", ctx.channel.id)
+
+        await self.config.guild(ctx.guild).max_volume.set(max_volume)
