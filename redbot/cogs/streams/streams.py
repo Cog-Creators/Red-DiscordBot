@@ -324,7 +324,12 @@ class Streams(commands.Cog):
             return await ctx.send(
                 _("That channel has not been set up for stream alerts in this channel!")
             )
-        game_data = await stream.get_game_info_by_name(game_name)
+        try:
+            status, game_data = await stream.get_data(
+                _streamtypes.TWITCH_GAMES_ENDPOINT, game_name
+            )
+        except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
+            return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
         if not game_data:
             return await ctx.send(
                 _(
@@ -332,7 +337,7 @@ class Streams(commands.Cog):
                 )
             )
         else:
-            game = game_data[0]
+            game = game_data["data"][0]
             if game["id"] in stream.games:
                 chan_list = stream.games[game["id"]]
             else:
@@ -359,7 +364,12 @@ class Streams(commands.Cog):
             return await ctx.send(
                 _("That channel has not been set up for stream alerts in this channel!")
             )
-        game_data = await stream.get_game_info_by_name(game_name)
+        try:
+            status, game_data = await stream.get_data(
+                _streamtypes.TWITCH_GAMES_ENDPOINT, game_name
+            )
+        except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
+            return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
         if not game_data:
             return await ctx.send(
                 _(
@@ -367,7 +377,7 @@ class Streams(commands.Cog):
                 )
             )
         else:
-            game = game_data[0]
+            game = game_data["data"][0]
             if game["id"] in stream.games:
                 chan_list = stream.games[game["id"]]
             else:
