@@ -123,16 +123,18 @@ class Cleanup(commands.Cog):
                     break
 
         return collected
-    
+
     async def send_optional_notification(self, num: int, channel: discord.TextChannel) -> None:
         """
         Sends a notification to the channel that a certain number of messages have been deleted.
         """
-        if not hasattr(channel, 'guild') or await self.config.guild(channel.guild).notify():
+        if not hasattr(channel, "guild") or await self.config.guild(channel.guild).notify():
             if num == 1:
                 await channel.send(_("1 message was deleted."), delete_after=5)
             else:
-                await channel.send(_("{num} messages were deleted.").format(num=num), delete_after=5)
+                await channel.send(
+                    _("{num} messages were deleted.").format(num=num), delete_after=5
+                )
 
     @staticmethod
     async def get_message_from_reference(
