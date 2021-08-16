@@ -4,7 +4,7 @@ from typing import Callable, List, Optional, Set, Union
 
 import discord
 
-from redbot.core import checks, commands
+from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
@@ -32,6 +32,8 @@ class Cleanup(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
+        self.config = Config.get_conf(self, 8927348724)
+        self.config.register_guild(notify=True)
 
     async def red_delete_data_for_user(self, **kwargs):
         """ Nothing to delete """
@@ -121,6 +123,16 @@ class Cleanup(commands.Cog):
                     break
 
         return collected
+    
+    async def send_optional_notification(self, num: int, channel: discord.TextChannel) -> None:
+        """
+        Sends a notification to the channel that a certain number of messages have been deleted.
+        """
+        if not hasattr(channel, 'guild') or await self.config.guild(channel.guild).notify():
+            if num == 1:
+                await channel.send(_("1 message was deleted."), delete_after=5)
+            else:
+                await channel.send(_("{num} messages were deleted.").format(num=num), delete_after=5)
 
     @staticmethod
     async def get_message_from_reference(
@@ -198,6 +210,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -268,6 +281,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -320,6 +334,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -375,6 +390,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -427,6 +443,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -465,6 +482,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -551,6 +569,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command(name="self")
     @check_self_permissions()
@@ -639,6 +658,7 @@ class Cleanup(commands.Cog):
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
+        await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command(name="duplicates", aliases=["spam"])
     @commands.guild_only()
@@ -689,3 +709,21 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
+        await self.send_optional_notification(len(to_delete), ctx.channel)
+
+    @commands.group()
+    @commands.admin_or_permissions(manage_messages=True)
+    async def cleanupset(self, ctx: commands.Context):
+        """Manage the settings for the cleanup command."""
+        pass
+
+    @cleanupset.command(name="notify")
+    async def cleanupset_notify(self, ctx: commands.Context):
+        """Toggle clean up notification settings."""
+        toggle = await self.config.guild(ctx.guild).notify()
+        if toggle:
+            await self.config.guild(ctx.guild).notify.set(False)
+            await ctx.send(_("I will no longer notify of message deletions."))
+        else:
+            await self.config.guild(ctx.guild).notify.set(True)
+            await ctx.send(_("I will now notify of message deletions."))
