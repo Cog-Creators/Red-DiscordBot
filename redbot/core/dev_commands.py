@@ -164,9 +164,9 @@ class Dev(commands.Cog):
         await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
-    @commands.command(name="eval")
+    @commands.command(name="eval", usage="<body or file>")
     @checks.is_owner()
-    async def _eval(self, ctx, *, body: str):
+    async def _eval(self, ctx, *, body: str = None):
         """Execute asynchronous code.
 
         This command wraps code into the body of an async function and then
@@ -186,6 +186,17 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
+        if body is None and not ctx.message.attachments:
+            raise commands.UserInputError
+        elif ctx.message.attachments:
+            atta = ctx.message.attachments[0]
+            try:
+                maybe_body = (await atta.read()).decode()
+            except Exception:
+                if not body:
+                    raise commands.UserInputError
+            else:
+                body = maybe_body
         env = self.get_environment(ctx)
         body = self.cleanup_code(body)
         stdout = io.StringIO()

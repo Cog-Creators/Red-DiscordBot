@@ -180,6 +180,7 @@ class JojoUtils(commands.Cog):
                 line = last_line + "\\n"
                 ret.pop()
             else:
+                line = line.replace("\\", "\\\\")
                 line = line.replace('"', r"\"")
             ret.append(f'"{line}",')
             last_line = line
