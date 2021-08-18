@@ -113,7 +113,7 @@ Complete the rest of the installation by `installing Python 3.9 with pyenv <inst
 
 ---
 
-.. _instal-debian11:
+.. _install-debian11:
 
 ~~~~~~~~~~~~~~~~~~~~
 Debian 11 Bullseye
