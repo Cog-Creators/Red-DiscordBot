@@ -7,7 +7,7 @@ import discord
 
 from redbot.core import commands, Config
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify, text_to_file
 
 import json
 from datetime import datetime
@@ -17,6 +17,11 @@ import logging
 
 log = logging.getLogger("red.JojoUtils")
 _config = {"denyed_bots": {}}
+
+async def check(ctx: commands.Context) -> bool:
+    if not ctx.guild:
+        return True # Not in a guild. Don't check perms
+    return ctx.channel.permissions_for(ctx.me).attach_files
 
 
 class JojoUtils(commands.Cog):
@@ -151,3 +156,31 @@ class JojoUtils(commands.Cog):
         await bot.add_roles(*roles, reason=reason)
         await ctx.tick()
         await ctx.send(f"Done. {bot.name} now has its permissions back.")
+
+    @commands.command(usage="<text or file>")
+    @commands.check(check)
+    async def jsonify(self, ctx: commands.Context, *, data: str = None):
+        """Jsonify a string"""
+        if data is None and not ctx.message.attachments:
+            raise commands.UserInputError
+        if ctx.message.attachments:
+            data = await ctx.message.attachments[0].read()
+            data = data.decode()
+        async with ctx.typing():
+            data = await self._actual_jsonify(data)
+        await ctx.send("Here is your jsonified string", file=text_to_file(data, "jsonifed_text.txt"))
+
+    async def _actual_jsonify(self, data: str) -> str:
+        ret = []
+        last_line = None
+        for line in data.splitlines():
+            if not line:
+                if last_line is None:
+                    continue
+                line = last_line + "\\n"
+                ret.pop()
+            else:
+                line = line.replace('"', r"\"")
+            ret.append(f'"{line}",')
+            last_line = line
+        return "\n".join(ret)[:-1] # Remove the last comma
