@@ -3,8 +3,10 @@ import discord
 import lavalink
 import pathlib
 import time
+import re
+import asyncio
 
-from typing import Optional, Mapping, List, Union
+from typing import Optional, Mapping, List
 
 from .audio_utils.errors import AudioError, LavalinkNotReady, NotConnectedToVoice, InvalidQuery, NoMatchesFound, TrackFetchError
 from .audio_utils.audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
@@ -13,9 +15,9 @@ from redbot.core import Config
 from redbot.core.utils import AsyncIter
 from redbot.core.data_manager import cog_data_path
 from redbot.core.audio_utils import Lavalink, AudioAPIInterface, ServerManager
-from redbot.core.audio_utils.copied.audio_logging import IS_DEBUG
+from redbot.core.audio_utils.audio_logging import IS_DEBUG
 
-from redbot.core.audio_utils.copied.utils import CacheLevel, PlaylistScope
+from redbot.core.audio_utils.utils import CacheLevel, PlaylistScope
 
 log = logging.getLogger("red.core.audio")
 log_player = logging.getLogger("red.core.audio.Player")
@@ -192,6 +194,12 @@ async def shutdown(
             if _api_interface.is_connected:
                 _api_interface.close()
 
+async def wait_until_api_ready():
+    while True:
+        if _used_by:
+            break
+        await asyncio.sleep(0.1)
+
 async def connect(
         bot,
         channel: discord.VoiceChannel,
@@ -237,6 +245,46 @@ def get_player(guild: discord.Guild):
         return _players[guild.id]
     except KeyError:
         return None
+
+async def dj_enabled(guild: discord.Guild):
+    """Whether or not DJ controls are enabled
+    
+    Parameters
+    ----------
+    guild: discord.Guild
+        The guild for which to check
+    Returns
+    -------
+    bool
+        Whether or not DJ controls are enabled"""
+
+    if await _config.guild(guild).dj_enabled():
+        return True
+
+    return False
+
+async def is_dj(user: discord.Member):
+    """Whether ot not a user has the DJ role
+
+    Parameters
+    ----------
+    user: discord.Member
+        The user to check for
+    Returns
+    -------
+    bool
+        Whether or not the user has the DJ role"""
+
+    dj_role = await _config.guild(user.guild).dj_role()
+
+    if not dj_role:
+        return False
+
+    dj_role = user.guild.get_role(dj_role)
+    if dj_role in user.roles:
+        return True
+
+    return False
 
 def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
     try:
@@ -349,15 +397,63 @@ class Player():
         if player.volume != volume:
             await player.set_volume(volume)
 
-    async def _enqueue_tracks(self, query: str, player: lavalink.Player, requester: discord.Member, enqueue: bool = True):
+    async def _add_to_queue(self,
+                      requester: discord.Member,
+                      track: lavalink.Track,
+                      bump: bool = False,
+                      bump_and_skip: bool = False):
+
+        track.requester = requester
+        if not bump and not bump_and_skip:
+            self.player.queue.append(track)
+        elif bump or bump_and_skip:
+            self.player.queue.insert(0, track)
+            if bump_and_skip:
+                await self.player.skip()
+
+    async def _enqueue_tracks(self,
+                              requester: discord.Member,
+                              query: Optional[str],
+                              track: Optional[lavalink.Track],
+                              local_folder: Optional[pathlib.Path],
+                              bump: bool = False,
+                              bump_and_skip: bool = False,
+                              enqueue: bool = True):
         settings = await self._config.guild(self._guild).all()
         settings["maxlength"] = 0 if not "maxlength" in settings.keys() else settings["maxlength"]
-
-        local_folder = None
 
         first_track_only = False
         index = None
         seek = 0
+
+        if track:
+            if len(self.player.queue) >= 10000:
+                log_player.debug("Queue limit reached")
+
+            if seek and seek > 0:
+                track.start_timestamp = seek * 1000
+
+            if settings["maxlength"] > 0:
+                await self._add_to_queue(requester, track, bump, bump_and_skip)
+                self._bot.dispatch(
+                    "red_audio_track_enqueue", self._guild, track, requester
+                )
+                self.player.maybe_shuffle()
+
+            else:
+                track.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": self.player.channel.id,
+                        "requester": requester.id
+                    }
+                )
+                await self._add_to_queue(requester, track, bump, bump_and_skip)
+                self._bot.dispatch(
+                    "red_audio_track_enqueue", self._guild, track, requester
+                )
+                self.player.maybe_shuffle()
+                return track, None
 
         query = Query.process_input(query, local_folder)
         #tracks, playlist_data = await self.get_tracks(query._raw, requester.guild, local_folder)
@@ -371,7 +467,7 @@ class Player():
 
             try:
                 result, called_api = await self._api_interface.fetch_track(
-                    requester.id, player, query
+                    requester.id, self.player, query
                 )
             except KeyError:
                 raise NoMatchesFound("No matches could be found for the given query")
@@ -400,12 +496,12 @@ class Player():
             return
 
         if not first_track_only and len(tracks) > 1:
-            if len(player.queue) >= 10000:
+            if len(self.player.queue) >= 10000:
                 log_player.debug("Queue limit reached")
             track_len = 0
-            empty_queue = not player.queue
+            empty_queue = not self.player.queue
             async for track in AsyncIter(tracks):
-                if len(player.queue) >= 10000:
+                if len(self.player.queue) >= 10000:
                     log_player.debug("Queue limit reached")
                     break
 
@@ -414,11 +510,11 @@ class Player():
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
+                            "vc": self.player.channel.id,
                             "requester": requester.id
                         }
                     )
-                    player.add(requester, track)
+                    await self._add_to_queue(requester, track, bump, bump_and_skip)
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, track, requester
                     )
@@ -427,26 +523,26 @@ class Player():
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
+                            "vc": self.player.channel.id,
                             "requester": requester.id
                         }
                     )
-                    player.add(requester, track)
+                    await self._add_to_queue(requester, track, bump, bump_and_skip)
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, track, requester
                     )
-            player.maybe_shuffle(0 if empty_queue else 1)
+            self.player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
                 log_player.debug(f"{len(tracks) - track_len} tracks cannot be enqueued")
 
-            if not player.current:
-                await player.play()
+            if not self.player.current:
+                await self.player.play()
             return tracks, playlist_data
 
         else:
             try:
-                if len(player.queue) >= 10000:
+                if len(self.player.queue) >= 10000:
                     log_player.debug("Queue limit reached")
 
                 single_track = (
@@ -458,36 +554,39 @@ class Player():
                     single_track.start_timestamp = seek * 1000
 
                 if settings["maxlength"] > 0:
-                    player.add(requester, single_track)
+                    await self._add_to_queue(requester, single_track, bump, bump_and_skip)
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, single_track, requester
                     )
-                    player.maybe_shuffle()
+                    self.player.maybe_shuffle()
 
                 else:
                     single_track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
+                            "vc": self.player.channel.id,
                             "requester": requester.id
                         }
                     )
-                    player.add(requester, single_track)
+                    await self._add_to_queue(requester, single_track, bump, bump_and_skip)
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, single_track, requester
                     )
-                    player.maybe_shuffle()
+                    self.player.maybe_shuffle()
             except IndexError:
                 raise InvalidQuery(f"No results found for {query}")
             except Exception as e:
                 raise e
 
-        if not player.current:
+        if not self.player.current:
             log_player.debug("Starting player")
-            await player.play()
+            await self.player.play()
         return single_track, None
 
-    async def _skip(self, player: lavalink.Player, requester: Union[discord.User, discord.Member], skip_to_track: int = None) -> None:
+    async def _skip(self,
+                    player: lavalink.Player,
+                    requester: discord.Member,
+                    skip_to_track: int = None) -> None:
         autoplay = await self._config.guild(self._guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             raise AudioError("Nothing in the queue")
@@ -554,26 +653,42 @@ class Player():
                 log_player.debug("Semi supported file extension: Track might not be fully playable")
         return tracks, playlist_data
 
-    async def play(self, query: str, requester: discord.Member, local_folder: pathlib.Path = None):
+    async def play(self,
+                   requester: discord.Member,
+                   query: Optional[str] = None,
+                   track: Optional[lavalink.Track] = None,
+                   local_folder: pathlib.Path = None,
+                   bump: bool = False,
+                   bump_and_skip: bool = False):
         """Plays a track
 
         Parameters
         ----------
-        query: str
-            The query to search for. Supports everything core audio supports
         requester: discord.Member
             The requester of the song
+        query: str
+            The query to search for. Supports everything core audio supports
+        track: lavalink.Track
+            A track object to be enqueued
         local_folder: pathlib.Path
             Local folder if track is a local track
+        bump: bool
+            Puts the song at queue position 0 if True
+        bump_and_skip: bool
+            acts like bump but also skips the current song
         Returns
         -------
         List[lavalink.Track], playlist_data
         """
+        if not query and not track:
+            raise AttributeError("Either a query string or a track object is required")
+
         player = self.player
 
         await self._set_player_settings(player)
 
-        tracks, playlist_data = await self._enqueue_tracks(query, player, requester)
+        tracks, playlist_data = await self._enqueue_tracks(
+            requester, query=query, track=track, local_folder=local_folder, bump=bump, bump_and_skip=bump_and_skip)
 
         return tracks, playlist_data
 
@@ -596,6 +711,49 @@ class Player():
             self._bot.dispatch(
                 "red_audio_audio_paused", self._guild, False
             )
+
+    async def seek(self, seconds: int = None, timestamp: str = None):
+        """Skip to a given position or skips a given amount of seconds
+
+        Parameters
+        ----------
+        seconds: int
+            Seconds to skip. Can be a negative number to go backwards
+        timestamp: str
+            timestamp to skip to
+            Expected format: hh:mm:ss -> 00:10:15 for example"""
+        if self.player.current:
+            if self.player.current.is_stream:
+                raise AudioError("Cannot seek streams")
+
+            if not self.player.current.seekable:
+                raise AudioError("Track is not seekable")
+
+            if seconds:
+                if seconds * 1000 > self.player.current.length - self.player.position:
+                    raise ValueError("Cannot seek for more time than the current track has remaining")
+
+                seek = self.player.position + seconds * 1000
+                await self.player.seek(seek)
+                return
+
+            elif timestamp:
+                match = (re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")).match(seconds)
+                if match is not None:
+                    hr = int(match.group(1)) if match.group(1) else 0
+                    mn = int(match.group(2)) if match.group(2) else 0
+                    sec = int(match.group(3)) if match.group(3) else 0
+                    seek = sec + (mn * 60) + (hr * 3600)
+                else:
+                    try:
+                        seek = int(seconds)
+                    except ValueError:
+                        seek = 0
+
+                await self.player.seek(seek)
+
+            else:
+                raise AttributeError("Either seconds or timestamp has to be given")
 
     async def skip(self, requester: discord.Member,
                    skip_to_track: int = None) -> lavalink.Track:

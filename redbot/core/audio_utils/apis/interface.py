@@ -22,9 +22,9 @@ from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
-from ...audio_dataclasses import Query
+from redbot.core.audio_utils.audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
-from ...errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
+from redbot.core.audio_utils.errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
 from ..utils import CacheLevel, Notifier
 from .api_utils import LavalinkCacheFetchForGlobalResult
 from .global_db import GlobalCacheWrapper
@@ -36,7 +36,7 @@ from .spotify import SpotifyWrapper
 from .youtube import YouTubeWrapper
 
 if TYPE_CHECKING:
-    from .. import Audio
+    from redbot.core.audio_utils.copied import Audio
 
 _ = Translator("Audio", Path(__file__))
 log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")

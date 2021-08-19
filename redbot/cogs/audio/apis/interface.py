@@ -15,7 +15,7 @@ import discord
 import lavalink
 
 from lavalink.rest_api import LoadResult, LoadType
-from redbot.core import Config, commands
+from redbot.core import Config, commands, audio
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator

@@ -19,7 +19,7 @@ from ..audio_dataclasses import Query
 from ..audio_logging import IS_DEBUG, debug_exc_log
 
 if TYPE_CHECKING:
-    from .. import Audio
+    from redbot.core.audio_utils.copied import Audio
 
 _API_URL = "https://api.redbot.app/"
 _ = Translator("Audio", Path(__file__))

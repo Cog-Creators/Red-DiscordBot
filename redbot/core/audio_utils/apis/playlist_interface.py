@@ -11,7 +11,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
-from ...errors import NotAllowed
+from redbot.core.audio_utils.errors import NotAllowed
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
 from .playlist_wrapper import PlaylistWrapper

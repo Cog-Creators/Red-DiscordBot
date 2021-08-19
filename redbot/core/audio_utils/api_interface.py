@@ -17,15 +17,15 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from .audio_dataclasses import Query
-from .errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError
-from .copied.audio_logging import debug_exc_log, IS_DEBUG
+from .errors import SpotifyFetchError, TrackEnqueueError, YouTubeApiError
+from redbot.core.audio_utils.audio_logging import debug_exc_log, IS_DEBUG
 
 from redbot.core.audio_utils.api_utils import get_queue_duration
-from redbot.core.audio_utils.copied.utils import CacheLevel
-from redbot.core.audio_utils.copied.apis.spotify import SpotifyWrapper
-from redbot.core.audio_utils.copied.apis.youtube import YouTubeWrapper
-from redbot.core.audio_utils.copied.apis.local_db import LocalCacheWrapper
-from redbot.core.audio_utils.copied.apis.persist_queue_wrapper import QueueInterface
+from redbot.core.audio_utils.utils import CacheLevel
+from redbot.core.audio_utils.apis.spotify import SpotifyWrapper
+from redbot.core.audio_utils.apis.youtube import YouTubeWrapper
+from redbot.core.audio_utils.apis.local_db import LocalCacheWrapper
+from redbot.core.audio_utils.apis.persist_queue_wrapper import QueueInterface
 
 log = logging.getLogger("red.core.audio.api_interface")
 
@@ -130,7 +130,7 @@ class AudioAPIInterface:
         #     await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
 
     async def _run_tasks(self, lock_id: int) -> None:
-        async with self._lock as lock:
+        async with self._lock:
             if lock_id in self._tasks:
                 if IS_DEBUG:
                     log.debug(f"Running database writes for {lock_id}")

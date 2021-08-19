@@ -14,10 +14,10 @@ from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
-from ...errors import SpotifyFetchError
+from redbot.core.audio_utils.errors import SpotifyFetchError
 
 if TYPE_CHECKING:
-    from .. import Audio
+    from redbot.core.audio_utils.copied import Audio
 
 _ = Translator("Audio", Path(__file__))
 

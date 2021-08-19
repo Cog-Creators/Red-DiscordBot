@@ -13,7 +13,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 
-from ...errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
+from redbot.core.audio_utils.errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
 from ..utils import PlaylistScope
 
 log = logging.getLogger("red.cogs.Audio.api.utils")

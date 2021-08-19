@@ -57,7 +57,7 @@ from .api_utils import (
 )
 
 if TYPE_CHECKING:
-    from .. import Audio
+    from redbot.core.audio_utils.copied import Audio
 
 
 log = logging.getLogger("red.cogs.Audio.api.LocalDB")

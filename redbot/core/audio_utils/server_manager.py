@@ -160,7 +160,7 @@ class ServerManager:
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
             self._bot.dispatch(
-                "lavalink_server_started", java_path
+                "red_lavalink_server_started", java_path
             )
         except asyncio.TimeoutError:
             log.warning("Timeout occured whilst waiting for internal Lavalink server to become ready")
@@ -180,24 +180,27 @@ class ServerManager:
 
         self._proc.terminate()
         await self._proc.wait()
-        self._bot.dispatch("lavalink_server_stopped")
+        #self._bot.dispatch("lavalink_server_stopped")
         self._shutdown = True
     
     async def _monitor(self) -> None:
-        while self._proc.returncode is None:
-            await asyncio.sleep(0.5)
+        try:
+            while self._proc.returncode is None:
+                await asyncio.sleep(0.5)
 
-        # This task hasn't been cancelled - Lavalink was shut down by something else
-        log.info("Internal Lavalink jar shutdown unexpectedly")
-        if not self._has_java_error():
-            log.info("Restarting internal Lavalink server")
-            await self.start_ll_server(self._java_exc)
-        else:
-            log.critical(
-                "Your Java is borked. Please find the hs_err_pid%d.log file"
-                " in the Audio data folder and report this issue.",
-                self._proc.pid,
-            )
+            # This task hasn't been cancelled - Lavalink was shut down by something else
+            log.info("Internal Lavalink jar shutdown unexpectedly")
+            if not self._has_java_error():
+                log.info("Restarting internal Lavalink server")
+                await self.start_ll_server(self._java_exc)
+            else:
+                log.critical(
+                    "Your Java is borked. Please find the hs_err_pid%d.log file"
+                    " in the Audio data folder and report this issue.",
+                    self._proc.pid,
+                )
+        except asyncio.CancelledError:
+            self._bot.dispatch("red_lavalink_server_stopped")
     
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")

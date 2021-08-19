@@ -4,7 +4,7 @@ import lavalink
 
 from redbot.core.utils import AsyncIter
 from redbot.core import data_manager
-from redbot.core.audio_utils.copied.audio_logging import IS_DEBUG
+from redbot.core.audio_utils.audio_logging import IS_DEBUG
 
 from .errors import LavalinkDownloadFailed, PortAlreadyInUse
 from .api_utils import rgetattr
@@ -132,7 +132,7 @@ class Lavalink():
         lavalink.register_event_listener(self.lavalink_event_handler)
 
         self._bot.dispatch(
-            "lavalink_connection_established", host, password, ws_port
+            "red_lavalink_connection_established", host, password, ws_port
         )
 
     async def shutdown(self):
@@ -231,4 +231,4 @@ class Lavalink():
             self._bot.dispatch("red_audio_track_stuck", guild, prev_song, prev_requester, extra)
 
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
-            self._bot.dispatch("lavalink_websocket_closed", player, extra)
+            self._bot.dispatch("red_lavalink_websocket_closed", player, extra)

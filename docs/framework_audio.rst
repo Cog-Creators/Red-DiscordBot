@@ -21,51 +21,55 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import commands, Audio
+    from redbot.core import commands, audio
 
     class MyAudioCog(commands.Cog):
         def __init__(self, bot):
             self.bot = bot
-            self.audio: Audio = None
             self.bot.loop.create_task(initialize())
             #This function starts the lavalink server and established a lavalink and database connection
 
         async def initialize(self):
-            self.audio = await Audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
+            await audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
 
         async def shutdown(self):
-            await Audio.shutdown(self.bot, "MyAudioCog", 365911945565569036)
+            await audio.shutdown("MyAudioCog", 365911945565569036)
 
         def cog_unload(self):
             self.bot.loop.create_task(shutdown())
 
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
-            await self.audio.player.connect(channel)
+            player = audio.get_player(ctx.guild)
+            if not player: #not currently connected to a voice channel
+                player = await audio.connect(bot, ctx.author.voice.channel)
             await ctx.send(f"Successfully connected to {channel.mention"})
 
         @commands.command()
         async def play(self, ctx, query: str):
-            await self.audio.player.play(query, ctx.author)
+            player = audio.get_player(ctx.guild)
+            if not player:
+                return #use connect first
 
-            now_playing = await self.audio.player.current(ctx.guild)
+            await player.play(ctx.author, query)
+            now_playing = await player.current
             await ctx.send(f"Now playing: {now_playing.title}")
 
 ***************
 Event Reference
 ***************
 
-.. py:function:: on_lavalink_server_started(java_path)
+.. py:function:: on_red_lavalink_server_started(java_path)
 
     Dispatched when the lavalink server has been started
 
     :param str java_path: The java executable used to start the server
 
-.. py:function:: on_lavalink_server_stopped()
+.. py:function:: on_red_lavalink_server_stopped()
 
     Dispatched when the lavalink server has been stopped
 
-.. py:function:: on_lavalink_connection_established(host, password, ws_port)
+.. py:function:: on_red_lavalink_connection_established(host, password, ws_port)
 
     Dispatched when the lavalink connection has been established
 

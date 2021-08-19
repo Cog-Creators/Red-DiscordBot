@@ -10,10 +10,10 @@ from redbot.core import Config
 from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 
-from ...errors import YouTubeApiError
+from redbot.core.audio_utils.errors import YouTubeApiError
 
 if TYPE_CHECKING:
-    from .. import Audio
+    from redbot.core.audio_utils.copied import Audio
 
 log = logging.getLogger("red.cogs.Audio.api.YouTube")
 _ = Translator("Audio", Path(__file__))
