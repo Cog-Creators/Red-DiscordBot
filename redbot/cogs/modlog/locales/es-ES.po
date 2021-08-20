@@ -35,7 +35,9 @@ msgstr "Comando para corregir los casos de mal comportamiento."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `[channel]` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Establece un canal para el modlog.\n\n"
+"        Omitir `[channel]` para desactivar el modlog.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:55
 msgid "Mod events will be sent to {channel}."
@@ -85,11 +87,11 @@ msgstr "Restablecer todos los casos de moderación en este servidor."
 
 #: redbot/cogs/modlog/modlog.py:107
 msgid "Are you sure you would like to reset all modlog cases in this server?"
-msgstr ""
+msgstr "¿Está seguro de que desea restablecer todos los casos de modlog en este servidor?"
 
 #: redbot/cogs/modlog/modlog.py:114
 msgid "You took too long to respond."
-msgstr ""
+msgstr "Has tardado demasiado en responder."
 
 #: redbot/cogs/modlog/modlog.py:118
 msgid "Cases have been reset."
@@ -97,7 +99,7 @@ msgstr "Casos han sido reseteados."
 
 #: redbot/cogs/modlog/modlog.py:120
 msgid "No changes have been made."
-msgstr ""
+msgstr "No se han realizado cambios."
 
 #: redbot/cogs/modlog/modlog.py:125
 #, docstring
@@ -134,12 +136,13 @@ msgstr "Ese usuario no tiene ningún caso."
 #: redbot/cogs/modlog/modlog.py:186
 #, docstring
 msgid "List cases for the specified member."
-msgstr ""
+msgstr "Lista los casos para el miembro especificado."
 
 #: redbot/cogs/modlog/modlog.py:209
 msgid "{case}\n"
 "**Timestamp:** {timestamp}\n\n"
-msgstr ""
+msgstr "{case}\n"
+"**Marca de tiempo:** {timestamp}\n\n"
 
 #: redbot/cogs/modlog/modlog.py:222
 #, docstring

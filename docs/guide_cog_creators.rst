@@ -17,7 +17,7 @@ Creating a Cog Creator Application
   You will need to have created and published your cogs before you create a Cog Creator Application!
   See `guide_cog_creation` and `guide_publish_cogs` for more information.
 
-Cog Creator Applications are hosted on the `cogboard <https://cogboard.red/c/apps/12>`__.
+Cog Creator Applications are hosted on the `cogboard <https://cogboard.discord.red/c/apps/12>`__.
 To create an application, start a new topic in the "Applications" category and fill out all of the required information.
 QA reviews Cog Creator Applications for security and functionality on a first come, first serve basis.
 Once your application is reviewed, you will have 14 days to make any requested changes, or to check in with the member of QA who is reviewing your application.

@@ -198,7 +198,7 @@ class AudioAPIInterface:
         uri: str,
         notifier: Optional[Notifier],
         skip_youtube: bool = False,
-        current_cache_level: CacheLevel = CacheLevel.none(),
+        current_cache_level: CacheLevel = CacheLevel.all(),
     ) -> List[str]:
         """Return youtube URLS for the spotify URL provided."""
         youtube_urls = []
@@ -718,7 +718,7 @@ class AudioAPIInterface:
         self,
         ctx: commands.Context,
         track_info: str,
-        current_cache_level: CacheLevel = CacheLevel.none(),
+        current_cache_level: CacheLevel = CacheLevel.all(),
     ) -> Optional[str]:
         """Call the Youtube API and returns the youtube URL that the query matched."""
         track_url = await self.youtube_api.get_call(track_info)

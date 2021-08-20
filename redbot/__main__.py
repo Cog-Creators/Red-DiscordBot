@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import NoReturn
 
 import discord
+import rich
 
 # Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
@@ -395,10 +396,12 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 sys.exit(0)
         sys.exit(1)
     except discord.PrivilegedIntentsRequired:
-        print(
+        console = rich.get_console()
+        console.print(
             "Red requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
-            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents"
+            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
+            style="red",
         )
         sys.exit(1)
 

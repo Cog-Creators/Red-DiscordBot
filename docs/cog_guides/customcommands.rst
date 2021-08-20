@@ -291,4 +291,4 @@ Shows a custom command's responses and its settings.
 
 **Arguments:**
 
-- ``<command>`` The custom command to show.
+- ``<command_name>`` The custom command to show.

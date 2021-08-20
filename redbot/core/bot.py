@@ -348,7 +348,7 @@ class RedBase(
             "__name__",
             "__builtins__",
         ]:
-            raise RuntimeError(f"The name {name} is reserved for default environement.")
+            raise RuntimeError(f"The name {name} is reserved for default environment.")
         if name in dev.env_extensions:
             raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value
