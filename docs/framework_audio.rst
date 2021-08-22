@@ -174,7 +174,7 @@ Player
 
 .. autoclass:: redbot.core.audio.Player
     :members:
-    :member_order: bysource
+    :member-order: bysource
 
 ServerManager
 ^^^^^^^^^^^^^
