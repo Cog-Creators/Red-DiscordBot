@@ -184,7 +184,7 @@ class AudioAPIInterface:
         """Return youtube URLS for the spotify URL provided."""
         youtube_urls = []
         tracks = await self.fetch_from_spotify_api(
-            query_type, uri, params=None, lock_id=lock_id
+            query_type, uri, params=None
         )
         database_entries = []
         track_count = 0
@@ -623,7 +623,7 @@ class AudioAPIInterface:
         lock_id: int,
         track_info: str
     ) -> Optional[str]:
-        """Gets an YouTube URL from for the query."""
+        """Gets a YouTube URL from for the query."""
         cache_level = await self._config.cache_level()
         current_cache_level = CacheLevel(cache_level if cache_level else CacheLevel.all().value)
         cache_enabled = CacheLevel.set_youtube().is_subset(current_cache_level)

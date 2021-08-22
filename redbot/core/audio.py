@@ -8,7 +8,7 @@ import asyncio
 
 from typing import Optional, Mapping, List
 
-from .audio_utils.errors import AudioError, LavalinkNotReady, NotConnectedToVoice, InvalidQuery, NoMatchesFound, TrackFetchError
+from .audio_utils.errors import AudioError, LavalinkNotReady, NotConnectedToVoice, InvalidQuery, NoMatchesFound, TrackFetchError, SpotifyFetchError
 from .audio_utils.audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
 
 from redbot.core import Config
@@ -248,7 +248,7 @@ def get_player(guild: discord.Guild):
 
 async def dj_enabled(guild: discord.Guild):
     """Whether or not DJ controls are enabled
-    
+
     Parameters
     ----------
     guild: discord.Guild
@@ -327,6 +327,12 @@ class Player():
         return self._guild
 
     @property
+    def is_playing(self):
+        """Whether or not the player is playing
+        :type: bool"""
+        return self.player.is_playing
+
+    @property
     def paused(self):
         """bool: Whether or not the player is paused"""
         return self.player.paused
@@ -381,12 +387,6 @@ class Player():
         """The player's volume
         :type: int"""
         return self.player.volume
-
-    @property
-    def is_playing(self):
-        """Whether or not the player is playing
-        :type: bool"""
-        return self.player.is_playing
 
     async def _set_player_settings(self, player: lavalink.Player) -> None:
         guild_data = await self._config.guild(self._guild).all()
@@ -456,7 +456,8 @@ class Player():
                 return track, None
 
         query = Query.process_input(query, local_folder)
-        #tracks, playlist_data = await self.get_tracks(query._raw, requester.guild, local_folder)
+        if query.is_spotify:
+            await self._enqueue_spotify_tracks(requester, query, local_folder)
 
         if not isinstance(query, list):
             if query.single_track:
@@ -583,6 +584,28 @@ class Player():
             await self.player.play()
         return single_track, None
 
+    async def _enqueue_spotify_tracks(self,
+                                      requester: discord.Member,
+                                      query: Query,
+                                      local_folder: Optional[pathlib.Path]):
+        if query.single_track:
+            try:
+                res = await self._api_interface.spotify_query(
+                    requester.id, "track", query.id, skip_youtube=True
+                )
+                if not res:
+                    raise NoMatchesFound("No tracks which match your query found on spotify")
+            except Exception as e:
+                raise e
+
+            new_query = Query.process_input(res[0], local_folder)
+            new_query.start_time = query.start_time
+            return await self._enqueue_tracks(requester, new_query)
+
+        elif query.is_album or query.is_playlist:
+            #ToDo fetch spotify playlists: utilities/player.py L#336
+            pass
+
     async def _skip(self,
                     player: lavalink.Player,
                     requester: discord.Member,
@@ -608,6 +631,27 @@ class Player():
         self._bot.dispatch("red_audio_track_skip", self._guild, player.current, requester)
         await player.play()
         player.queue += queue_to_append
+
+    async def disconnect(self) -> None:
+        """Disconnects the player"""
+        global _players
+
+        player = self.player
+        channel = player.channel
+
+        player.queue = []
+        player.store("playing_song", None)
+        player.store("autoplay_notified", False)
+        await player.stop()
+        self._bot.dispatch("red_audio_audio_stop", self._guild)
+        await player.disconnect()
+        self._bot.dispatch("red_audio_audio_disconnect", self._guild)
+
+        if IS_DEBUG:
+            log_player.debug(f"Disconnected from {channel} in {self._guild}")
+
+        del _players[self._guild.id]
+        del self
 
     async def get_tracks(self, query: str, local_folder: pathlib.Path = None):
         """Queries the local apis for a track and falls back to lavalink if none was found
@@ -653,6 +697,45 @@ class Player():
                 log_player.debug("Semi supported file extension: Track might not be fully playable")
         return tracks, playlist_data
 
+    async def is_requester(self, member: discord.Member):
+        """Whether a user is the requester of the current song
+
+        Parameters
+        ----------
+        member: discord.Member
+            Member to check
+        Returns
+        -------
+        bool
+        """
+        if self.current:
+            if self.current.requester.id == member.id:
+                return True
+        return False
+
+    async def move_to(self, channel: discord.VoiceChannel) -> None:
+        """Move the player to another voice channel
+
+        Parameters
+        ----------
+        channel: discord.VoiceChannel
+            The channel to move the player to
+        """
+        player = self.player
+        self.channel = channel
+
+        await player.move_to(channel)
+
+    async def pause(self) -> None:
+        """Pauses the player in a guild"""
+        player = self.player
+
+        if not player.paused:
+            await player.pause()
+            self._bot.dispatch(
+                "red_audio_audio_paused", self._guild, True
+            )
+
     async def play(self,
                    requester: discord.Member,
                    query: Optional[str] = None,
@@ -691,16 +774,6 @@ class Player():
             requester, query=query, track=track, local_folder=local_folder, bump=bump, bump_and_skip=bump_and_skip)
 
         return tracks, playlist_data
-
-    async def pause(self) -> None:
-        """Pauses the player in a guild"""
-        player = self.player
-
-        if not player.paused:
-            await player.pause()
-            self._bot.dispatch(
-                "red_audio_audio_paused", self._guild, True
-            )
 
     async def resume(self) -> None:
         """Resumes the player in a guild"""
@@ -755,6 +828,22 @@ class Player():
             else:
                 raise AttributeError("Either seconds or timestamp has to be given")
 
+    async def set_volume(self, vol: int) -> int:
+        """Set the player's volume
+
+        Returns
+        -------
+        int
+            the volume after change
+        """
+
+        max_vol = await self._config.guild(self.guild).max_volume()
+        if vol < 0 or vol > max_vol:
+            raise ValueError("Volume is not within the allowed range")
+
+        await self._config.guild(self._guild).volume.set(vol)
+        await self.player.set_volume(vol)
+
     async def skip(self, requester: discord.Member,
                    skip_to_track: int = None) -> lavalink.Track:
         """Skips a track
@@ -787,53 +876,4 @@ class Player():
 
         self._bot.dispatch("red_audio_audio_stop", self._guild)
 
-    async def move_to(self, channel: discord.VoiceChannel) -> None:
-        """Move the player to another voice channel
-
-        Parameters
-        ----------
-        channel: discord.VoiceChannel
-            The channel to move the player to
-        """
-        player = self.player
-        self.channel = channel
-
-        await player.move_to(channel)
-
-    async def disconnect(self) -> None:
-        """Disconnects the player"""
-        global _players
-
-        player = self.player
-        channel = player.channel
-
-        player.queue = []
-        player.store("playing_song", None)
-        player.store("autoplay_notified", False)
-        await player.stop()
-        self._bot.dispatch("red_audio_audio_stop", self._guild)
-        await player.disconnect()
-        self._bot.dispatch("red_audio_audio_disconnect", self._guild)
-
-        if IS_DEBUG:
-            log_player.debug(f"Disconnected from {channel} in {self._guild}")
-
-        del _players[self._guild.id]
-        del self
-
-    async def set_volume(self, vol: int) -> int:
-        """Set the player's volume
-
-        Returns
-        -------
-        int
-            the volume after change
-        """
-
-        max_vol = await self._config.guild(self.guild).max_volume()
-        if vol < 0 or vol > max_vol:
-            raise ValueError("Volume is not within the allowed range")
-
-        await self._config.guild(self._guild).volume.set(vol)
-        await self.player.set_volume(vol)
 

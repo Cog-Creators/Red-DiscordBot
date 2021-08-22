@@ -49,7 +49,7 @@ Basic Usage
         async def play(self, ctx, query: str):
             player = audio.get_player(ctx.guild)
             if not player:
-                return #use connect first
+                return #use audio.connect first
 
             await player.play(ctx.author, query)
             now_playing = await player.current
@@ -174,6 +174,7 @@ Player
 
 .. autoclass:: redbot.core.audio.Player
     :members:
+    :member_order: bysource
 
 ServerManager
 ^^^^^^^^^^^^^
