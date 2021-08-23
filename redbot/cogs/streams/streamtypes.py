@@ -64,6 +64,9 @@ class Stream:
         # self.already_online = kwargs.pop("already_online", False)
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
+        # Keep track of how many failed consecutive attempts we had at checking
+        # if the stream's channel actually exists.
+        self.retry_count = 0
 
     @property
     def display_name(self) -> Optional[str]:
@@ -188,6 +191,11 @@ class YoutubeStream(Stream):
                             self.livestreams.remove(video_id)
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
+
+        # Reset the retry count since we successfully got information about this
+        # channel's streams
+        self.retry_count = 0
+
         # This is technically redundant since we have the
         # info from the RSS ... but incase you don't wanna deal with fully rewritting the
         # code for this part, as this is only a 2 quota query.
@@ -401,6 +409,10 @@ class TwitchStream(Stream):
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
+
             return self.make_embed(final_data), final_data["type"] == "rerun"
         elif stream_code == 400:
             raise InvalidTwitchCredentials()
@@ -462,6 +474,9 @@ class PicartoStream(Stream):
                 data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data)
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
             if data["online"] is True:
                 # self.already_online = True
                 return self.make_embed(data)
