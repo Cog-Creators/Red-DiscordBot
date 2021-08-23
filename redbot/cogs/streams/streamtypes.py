@@ -132,6 +132,10 @@ class YoutubeStream(Stream):
                     raise StreamNotFound()
                 rssdata = await r.text()
 
+        # Reset the retry count since we successfully got information about this
+        # channel's streams
+        self.retry_count = 0
+
         if self.not_livestreams:
             self.not_livestreams = list(dict.fromkeys(self.not_livestreams))
 
@@ -191,11 +195,6 @@ class YoutubeStream(Stream):
                             self.livestreams.remove(video_id)
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
-
-        # Reset the retry count since we successfully got information about this
-        # channel's streams
-        self.retry_count = 0
-
         # This is technically redundant since we have the
         # info from the RSS ... but incase you don't wanna deal with fully rewritting the
         # code for this part, as this is only a 2 quota query.
