@@ -68,8 +68,9 @@ class AudioAPIInterface:
         if IS_DEBUG:
             log.debug("Database connection established")
 
-    def close(self) -> None:
+    async def close(self) -> None:
         self._local_cache_api.lavalink.close()
+        await self._session.close()
         self._is_connected = False
 
     async def get_random_track_from_db(self) -> Optional[MutableMapping]:

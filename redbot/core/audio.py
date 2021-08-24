@@ -180,11 +180,14 @@ async def shutdown(
         if _server_manager.is_running:
             await _server_manager.shutdown_ll_server()
         if _api_interface.is_connected:
-            _api_interface.close()
+            await _api_interface.run_all_pending_tasks()
+            await _api_interface.close()
         _used_by = []
     else:
         if not (cog_name, identifier) in _used_by:
             raise KeyError(f"{cog_name}: {identifier} doesn't match any established connection")
+
+        _used_by.remove((cog_name, identifier))
 
         if not _used_by:
             if _lavalink.is_connected:
@@ -192,7 +195,8 @@ async def shutdown(
             if _server_manager.is_running:
                 await _server_manager.shutdown_ll_server()
             if _api_interface.is_connected:
-                _api_interface.close()
+                await _api_interface.run_all_pending_tasks()
+                await _api_interface.close()
 
 async def wait_until_api_ready():
     while True:
