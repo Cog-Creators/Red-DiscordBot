@@ -96,7 +96,7 @@ log = logging.getLogger("red")
 
 _ = i18n.Translator("Core", __file__)
 
-TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
+TokenConverter = commands.get_dict_converter(delims=[" ", ","])
 
 MAX_PREFIX_LENGTH = 20
 
@@ -2970,7 +2970,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Arguments:**
             - `<service>` - The service you're adding tokens to.
-            - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
+            - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, or `,`.
         """
         if ctx.channel.permissions_for(ctx.me).manage_messages:
             await ctx.message.delete()
