@@ -236,6 +236,11 @@ class Dev(commands.Cog):
             "__builtins__": __builtins__,
             "__name__": "__main__",
         }
+        
+        #SOME CODES ARE ADDED HERE FOR BUG FIXING PURPOSE
+        #EXAMPLE
+        # 
+        #
 
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
