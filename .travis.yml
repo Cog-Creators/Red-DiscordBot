@@ -2,11 +2,12 @@ dist: xenial
 git: 
  depth: false
 
-#addons: 
-#  sonarcloud:
-#    organization: wiyiiong   
-#    token:
-#      secure: ••••••••••••••••
+addons:
+  sonarcloud:
+    organization: kimfml
+    token:
+      secure: ••••••••••••••••
+
 
 language: python
 
@@ -36,5 +37,5 @@ script:
 # - tox
 - pytest --cov-report term --cov-report xml:cov.xml --cov=test tests/
 - pytest --junitxml=pytest-report.xml
-#- sonar-scanner
+- sonar-scanner
  
