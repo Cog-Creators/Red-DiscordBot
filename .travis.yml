@@ -4,9 +4,9 @@ git:
 
 addons:
   sonarcloud:
-    organization: kimfml
+    organization: "kimfml"
     token:
-      secure: ••••••••••••••••
+      secure: "••••••••••••••••"
 
 
 language: python
