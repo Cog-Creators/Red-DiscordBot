@@ -14,7 +14,9 @@ install:
 - pip install --upgrade pip tox
 
 script:
-- tox
+#- tox
+- pytest --cov-report term --cov-report xml:cov.xml --cov=test test/
+- pytest --junitxml=pytest-report.xml
 
 jobs:
   include:
