@@ -346,7 +346,7 @@ The cog guides are formatted the same. They're divided into 3 sections:
   * **Aliases**
   
     Each command may have one or more aliases, which are alternative command names
-    we can use to invoke the same command. For example, ``[p]set colour`` can also
+    you can use to invoke the same command. For example, ``[p]set colour`` can also
     be invoked with ``[p]set color``. If there are aliases for a command, they will
     appear just under the syntax.
 
