@@ -344,9 +344,12 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
     A line that will show how the command must be invoked, with the arguments.
 
-    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
-        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
-        called an alias.
+  * **Aliases**
+  
+    Each command may have one or more aliases, which are alternative command names
+    you can use to invoke the same command. For example, ``[p]set colour`` can also
+    be invoked with ``[p]set color``. If there are aliases for a command, they will
+    appear just under the syntax.
 
   * **Description**
 
