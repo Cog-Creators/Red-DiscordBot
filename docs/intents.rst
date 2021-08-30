@@ -131,7 +131,7 @@ are rather lacking in features and cannot cover all the functionalities that sta
 Discord staff
 `stated <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-if-we-are-granted-this-intent-will-bots-be-sanctioned-if-they-use-it-for-their-own-use-case-but-also-to-continue-to-run-normal-non-slash-commands-or-do-we-assume-that-if-you-are-granted-the-intent-you-are-trusted-with-it-and-are-allowed-to-use-it-for-additional-uses>`_
 that they will want your bot to have slash commands when you ask for message intent. |br|
-Slash commands might very well turn out to be a big undertaking for the Red team to implement: our underlying library,
-discord.py, at the time of writing doesn't even have a stable version that supports them yet. |br|
-The time window that Discord is giving us to adapt is very small: **Red will most likely not be able to support slash
+Slash commands might very well turn out to be a big undertaking for the Red team to implement, even more now that our
+underlying library, `discord.py <https://github.com/Rapptz/discord.py>`_, has been discontinued. |br|
+The time window that Discord is giving us to adapt is very narrow: **Red will likely not be able to support slash
 commands for April 2022** and you should plan accordingly.
