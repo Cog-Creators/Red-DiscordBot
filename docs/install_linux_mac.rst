@@ -154,7 +154,7 @@ one-by-one:
 .. prompt:: bash
 
     brew install python@3.8
-    echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
+    echo 'export PATH="$(brew --prefix)/opt/python@3.8/bin:$PATH"' >> ~/.profile
     source ~/.profile
     brew install git
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
