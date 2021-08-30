@@ -322,7 +322,7 @@ Then run the following command:
 
 .. prompt:: bash
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.9.5 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.9.7 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -334,7 +334,7 @@ After that is finished, run:
 
 .. prompt:: bash
 
-    pyenv global 3.9.5
+    pyenv global 3.9.7
 
 Pyenv is now installed and your system should be configured to run Python 3.9.
 
