@@ -56,7 +56,7 @@ Continue to the next section to enable privileged intents.
 Enabling Privileged Intents
 -------------------------------
 .. warning::
-    Due to Discord API changes, Red Bot requires all intents.
+    :ref:`As explained in this page <intents>`, Red Bot requires all intents.
     \This section is required.
 
 1. Make sure you're logged on to the `Discord website <https://discord.com>`_.
@@ -75,5 +75,6 @@ Enabling Privileged Intents
 .. warning::
 
     Red bots with over 100 servers require `bot verification <https://support.discord.com/hc/en-us/articles/360040720412>`_ which is not covered in this guide.
+    Remember that as explained :ref:`here <intents>` we do not support public bots. We encourage you to read that page before scaling up your bot.
 
 *Parts of this guide have been adapted from* `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ *and* `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
