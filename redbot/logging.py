@@ -176,11 +176,13 @@ class RedLogRender(LogRender):
             log_time = log_time or console.get_datetime()
             log_time_display = log_time.strftime(time_format or self.time_format)
             if log_time_display == self._last_time:
-                output.append(" " * len(log_time_display) + " ")
+                output.append(" " * (len(log_time_display) + 1))
             else:
-                output.append(log_time_display + " ", style="log.time")
+                output.append(f"{log_time_display} ", style="log.time")
                 self._last_time = log_time_display
         if self.show_level:
+            # The space needs to be added separately so that log level is colored by
+            # Rich.
             output.append(level)
             output.append(" ")
         if logger_name:
