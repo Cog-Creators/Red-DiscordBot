@@ -1,3 +1,5 @@
+import textwrap
+
 import yaml
 from schema import SchemaError
 
@@ -20,6 +22,6 @@ def test_trivia_lists():
 
     if problem_lists:
         msg = ""
-        for l in problem_lists:
-            msg += "{}: {}\n".format(l[0], l[1])
+        for name, error in problem_lists:
+            msg += f"- {name}:\n{textwrap.indent(error, '    ')}"
         raise TypeError("The following lists contain errors:\n" + msg)
