@@ -1501,6 +1501,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         try:
             await ctx.author.send(await self._invite_url())
+            await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
                 "I couldn't send the invite message to you in DM. "
