@@ -185,10 +185,6 @@ class ModInfo(MixinMeta):
         joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
         if is_special:
             joined_at = special_date
-        if joined_at is not None:
-            user_joined = int(joined_at.timestamp())
-        else:
-            user_joined = _("Unknown")
         user_created = int(member.created_at.replace(tzinfo=datetime.timezone.utc).timestamp())
         voice_state = member.voice
         member_number = (
@@ -199,7 +195,10 @@ class ModInfo(MixinMeta):
         )
 
         created_on = "<t:{0}:D>\n(<t:{0}:R>)".format(user_created)
-        joined_on = "<t:{0}:D>\n(<t:{0}:R>)".format(user_joined)
+        if joined_at is not None:
+            joined_on = "<t:{0}:D>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+        else:
+            joined_on = _("Unknown")
 
         if any(a.type is discord.ActivityType.streaming for a in member.activities):
             statusemoji = "\N{LARGE PURPLE CIRCLE}"
