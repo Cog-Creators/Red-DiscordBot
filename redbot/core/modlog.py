@@ -454,9 +454,7 @@ class Case:
 
         last_modified = None
         if self.modified_at:
-            last_modified = "<t:{}>".format(
-                int(datetime.fromtimestamp(self.modified_at).timestamp())
-            )
+            last_modified = f"<t:{self.modified_at}>"
 
         if isinstance(self.user, int):
             if self.user == 0xDE1:
