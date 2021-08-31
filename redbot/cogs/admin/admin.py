@@ -504,9 +504,7 @@ class Admin(commands.Cog):
                 count += 1
             else:
                 await ctx.send(
-                    _('The role "{role.name}" was not already a selfrole.').format(
-                        role=role
-                    )
+                    _('The role "{role.name}" was not already a selfrole.').format(role=role)
                 )
                 return
 
