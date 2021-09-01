@@ -294,7 +294,11 @@ class ModInfo(MixinMeta):
     @commands.command()
     async def names(self, ctx: commands.Context, *, member: discord.Member):
         """Show previous names and nicknames of a member."""
-        names, nicks = await self.get_names_and_nicks(member)
+        if user is None:
+            user = ctx.author
+        else:
+            user = member
+        names, nicks = await self.get_names_and_nicks(user)
         msg = ""
         if names:
             msg += _("**Past 20 names**:")
