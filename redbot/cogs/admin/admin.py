@@ -491,6 +491,13 @@ class Admin(commands.Cog):
         """
         current_selfroles = await self.config.guild(ctx.guild).selfroles()
         for role in roles:
+            if not self.pass_user_hierarchy_check(ctx, role):
+                await ctx.send(
+                    _(
+                        "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                    ).format(role=role)
+                )
+                return
             current_selfroles.remove(role.id)
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
