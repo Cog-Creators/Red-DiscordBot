@@ -540,9 +540,15 @@ class Downloader(commands.Cog):
         agreed = await do_install_agreement(ctx)
         if not agreed:
             return
-        if re.match(r"^[a-zA-Z0-9_\-]*$", name) is None:
+        if name.startswith(".") or name.endswith("."):
+            await ctx.send(_("Repo names cannot start or end with a dot."))
+            return
+        if re.match(r"^[a-zA-Z0-9_\-\.]+$", name) is None:
             await ctx.send(
-                _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
+                _(
+                    "Repo names can only contain characters A-z, numbers, underscores, hyphens,"
+                    " and dots."
+                )
             )
             return
         try:
