@@ -3340,6 +3340,32 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
 
+    @helpset.command(name="reacttimeout")
+    async def helpset_reacttimeout(self, ctx: commands.Context, seconds: int):
+        """Set the timeout for reactions, if menus are enabled.
+
+        The default is 30 seconds.
+        The timeout has to be between 15 and 300 seconds.
+
+        **Examples:**
+            - `[p]helpset reacttimeout 30` - The default timeout.
+            - `[p]helpset reacttimeout 60` - Timeout of 1 minute.
+            - `[p]helpset reacttimeout 15` - Minimum allowed timeout.
+            - `[p]helpset reacttimeout 300` - Max allowed timeout (5 mins).
+
+        **Arguments:**
+            - `<seconds>` - The timeout, in seconds, of the reactions.
+        """
+        if seconds < 15:
+            await ctx.send(_("You must give a value of at least 15 seconds!"))
+            return
+        if seconds > 300:
+            await ctx.send(_("The timeout cannot be greater than 5 minutes!"))
+            return
+
+        await ctx.bot._config.help.react_timeout.set(seconds)
+        await ctx.send(_("Done. The reaction timeout has been set to {} seconds.").format(seconds))
+
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
