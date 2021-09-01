@@ -189,7 +189,7 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
+        reason = "{}({}) deleted {} messages containing '{}' in channel #{}.".format(
             author.name,
             author.id,
             humanize_number(len(to_delete), override_locale="en_us"),
@@ -255,8 +255,8 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = (
-            "{}({}) deleted {} messages "
-            " made by {}({}) in channel {}."
+            "{}({}) deleted {} messages"
+            " made by {}({}) in channel #{}."
             "".format(
                 author.name,
                 author.id,
@@ -312,7 +312,7 @@ class Cleanup(commands.Cog):
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
 
-        reason = "{}({}) deleted {} messages in channel {}.".format(
+        reason = "{}({}) deleted {} messages in channel #{}.".format(
             author.name,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
@@ -367,7 +367,7 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel {}.".format(
+        reason = "{}({}) deleted {} messages in channel #{}.".format(
             author.name,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
@@ -419,7 +419,7 @@ class Cleanup(commands.Cog):
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
-        reason = "{}({}) deleted {} messages in channel {}.".format(
+        reason = "{}({}) deleted {} messages in channel #{}.".format(
             author.name,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
@@ -460,7 +460,7 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel {}.".format(
+        reason = "{}({}) deleted {} messages in #{}}.".format(
             author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
@@ -540,8 +540,8 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = (
-            "{}({}) deleted {} "
-            " command messages in channel {}."
+            "{}({}) deleted {}"
+            " command messages in channel #{}."
             "".format(
                 author.name,
                 author.id,
