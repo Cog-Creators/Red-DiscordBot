@@ -785,10 +785,10 @@ class Streams(commands.Cog):
                         if await self.bot.cog_disabled_in_guild(self, channel.guild):
                             continue
 
-                        config = await self.config.guild(channel.guild).all()
-                        if config["ignore_reruns"] and is_rerun:
+                        guild_data = await self.config.guild(channel.guild).all()
+                        if guild_data["ignore_reruns"] and is_rerun:
                             continue
-                        if config["ignore_schedule"] and is_schedule:
+                        if guild_data["ignore_schedule"] and is_schedule:
                             continue
                         if is_schedule:
                             # skip messages and mentions
@@ -798,14 +798,13 @@ class Streams(commands.Cog):
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
 
                         mention_str, edited_roles = await self._get_mention_str(
-                            channel.guild, channel, config
+                            channel.guild, channel, guild_data
                         )
 
                         if mention_str:
-                            if config["live_message_mention"]:
-                                content = config[
-                                    "live_message_mention"
-                                ]  # Stop bad things from happening here...
+                            if guild_data["live_message_mention"]:
+                                # Stop bad things from happening here...
+                                content = guild_data["live_message_mention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
@@ -819,10 +818,9 @@ class Streams(commands.Cog):
                                     ),
                                 )
                         else:
-                            if config["live_message_nomention"]:
-                                content = config[
-                                    "live_message_nomention"
-                                ]  # Stop bad things from happening here...
+                            if guild_data["live_message_nomention"]:
+                                # Stop bad things from happening here...
+                                content = guild_data["live_message_nomention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
