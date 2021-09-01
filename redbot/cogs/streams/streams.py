@@ -784,11 +784,11 @@ class Streams(commands.Cog):
                             continue
                         if await self.bot.cog_disabled_in_guild(self, channel.guild):
                             continue
-                        ignore_reruns = await self.config.guild(channel.guild).ignore_reruns()
-                        if ignore_reruns and is_rerun:
+
+                        guild_data = await self.config.guild(channel.guild).all()
+                        if guild_data["ignore_reruns"] and is_rerun:
                             continue
-                        ignore_schedules = await self.config.guild(channel.guild).ignore_schedule()
-                        if ignore_schedules and is_schedule:
+                        if guild_data["ignore_schedule"] and is_schedule:
                             continue
                         if is_schedule:
                             # skip messages and mentions
@@ -798,15 +798,13 @@ class Streams(commands.Cog):
                         await set_contextual_locales_from_guild(self.bot, channel.guild)
 
                         mention_str, edited_roles = await self._get_mention_str(
-                            channel.guild, channel
+                            channel.guild, channel, guild_data
                         )
 
                         if mention_str:
-                            alert_msg = await self.config.guild(
-                                channel.guild
-                            ).live_message_mention()
-                            if alert_msg:
-                                content = alert_msg  # Stop bad things from happening here...
+                            if guild_data["live_message_mention"]:
+                                # Stop bad things from happening here...
+                                content = guild_data["live_message_mention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
@@ -825,11 +823,9 @@ class Streams(commands.Cog):
                                     ),
                                 )
                         else:
-                            alert_msg = await self.config.guild(
-                                channel.guild
-                            ).live_message_nomention()
-                            if alert_msg:
-                                content = alert_msg  # Stop bad things from happening here...
+                            if guild_data["live_message_nomention"]:
+                                # Stop bad things from happening here...
+                                content = guild_data["live_message_nomention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
@@ -859,17 +855,16 @@ class Streams(commands.Cog):
             await self.save_streams()
 
     async def _get_mention_str(
-        self, guild: discord.Guild, channel: discord.TextChannel
+        self, guild: discord.Guild, channel: discord.TextChannel, guild_data: dict
     ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
         """
-        settings = self.config.guild(guild)
         mentions = []
         edited_roles = []
-        if await settings.mention_everyone():
+        if guild_data["mention_everyone"]:
             mentions.append("@everyone")
-        if await settings.mention_here():
+        if guild_data["mention_here"]:
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
         can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
