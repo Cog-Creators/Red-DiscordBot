@@ -3340,7 +3340,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
 
     @helpset.command(name="reacttimeout")
-    @commands.bot_has_permissions(manage_messages=True)
     async def helpset_reacttimeout(self, ctx: commands.Context, seconds: int):
         """Set the timeout for reactions, if menus are enabled.
 

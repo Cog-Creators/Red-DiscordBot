@@ -1190,7 +1190,6 @@ mean some pages will exceed this limit.
 **Arguments:**
     - ``<limit>`` - The max amount of characters to show per page in the help message.
 
-
 .. _core-command-helpset-reacttimeout:
 
 """"""""""""""""""""
@@ -1218,7 +1217,6 @@ The timeout has to be between 15 and 300 seconds.
 
 **Arguments:**
     - ``<seconds>`` - The timeout, in seconds, of the reactions.
-
 
 .. _core-command-helpset-resetformatter:
 
