@@ -468,7 +468,6 @@ class Admin(commands.Cog):
                 return
             if role.id not in current_selfroles:
                 current_selfroles.append(role.id)
-                count += 1
             else:
                 await ctx.send(
                     _('The role "{role.name}" is already a selfrole.').format(role=role)
