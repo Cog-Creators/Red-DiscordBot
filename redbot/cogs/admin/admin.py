@@ -456,7 +456,6 @@ class Admin(commands.Cog):
 
         NOTE: The role is case sensitive!
         """
-        count = 0
         current_selfroles = await self.config.guild(ctx.guild).selfroles()
         for role in roles:
             if not self.pass_user_hierarchy_check(ctx, role):
@@ -477,10 +476,10 @@ class Admin(commands.Cog):
                 return
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
-        if count > 1:
-            message = _("Removed {count} selfroles.").format(count=count)
+        if (count := len(roles)) > 1:
+            message = _("Added {count} selfroles.").format(count=count)
         else:
-            message = _("Removed 1 selfrole.")
+            message = _("Added 1 selfrole.")
 
         await ctx.send(message)
 
@@ -491,29 +490,13 @@ class Admin(commands.Cog):
 
         NOTE: The role is case sensitive!
         """
-        count = 0
         current_selfroles = await self.config.guild(ctx.guild).selfroles()
         for role in roles:
-            if not self.pass_user_hierarchy_check(ctx, role):
-                await ctx.send(
-                    _(
-                        "I cannot let you remove {role.name} from being a selfrole"
-                        " because that role is higher than or equal to your highest role"
-                        " in the Discord hierarchy."
-                    ).format(role=role)
-                )
-                return
-            if role.id in current_selfroles:
-                current_selfroles.remove(role.id)
-                count += 1
-            else:
-                await ctx.send(
-                    _('The role "{role.name}" was not already a selfrole.').format(role=role)
-                )
-                return
+            current_selfroles.remove(role.id)
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
-        if count > 1:
+
+        if (count := len(roles)) > 1:
             message = _("Removed {count} selfroles.").format(count=count)
         else:
             message = _("Removed 1 selfrole.")
