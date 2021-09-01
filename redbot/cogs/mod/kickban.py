@@ -243,7 +243,7 @@ class KickBanMixin(MixinMeta):
         async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
             if not (guild := self.bot.get_guild(guild_id)):
                 continue
-            if not guild.me.guild_permissions.ban_members:
+            if guild.unavailable or not guild.me.guild_permissions.ban_members:
                 continue
             if await self.bot.cog_disabled_in_guild(self, guild):
                 continue

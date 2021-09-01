@@ -26,8 +26,8 @@ window like this:
 Invite Red to your server
 -------------------------
 
-When started, the console will show you ``Invite URL`` (here at
-the bottom of the screenshot).
+When started, the console will show you the ``Invite URL``
+(visible at the bottom of the screenshot above).
 Paste the link into your browser and select the server you want
 to invite the bot in, like any other bot.
 
@@ -63,7 +63,7 @@ example, if your prefix is ``!``, you will execute your command like this:
 The commands
 ~~~~~~~~~~~~
 
-The command you're going to use the most is help. That command will
+The command you're going to use the most is **help**. This command will
 show you **all of the available commands** of the bot with a small description.
 
 .. code-block:: none
@@ -106,8 +106,8 @@ parameters.
     the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
     ``delete_pinned`` default will be false, unless you specify it as true.
 
-You can use help to show the **categories** too, generally called cogs.
-Just do something like this (notice the capitalization):
+You can use help to show the **categories** too, generally called cogs,
+by doing the following (notice the capitalization):
 
 .. code-block:: none
 
@@ -122,7 +122,7 @@ To get the description of a subcommand, type this:
 
 When using subcommands, you also need to specify the command group.
 As an example, ``cleanup`` has 6 subcommands. If you want
-to use one, do it like this: ``[p]cleanup messages 10``
+to use one of them, do: ``[p]cleanup messages 10``
 
 .. _getting-started-cogs:
 
@@ -217,7 +217,7 @@ Server owner
 ~~~~~~~~~~~~
 
 The server owner can access all commands on his guild, except the global
-ones or those who can interact with system files (available for the
+ones or those that can interact with system files (available for the
 bot owner).
 
 ~~~~~~~~~~~~~
@@ -237,12 +237,13 @@ Moderator
 A moderator is a step above the average users. You can set multiple moderator
 roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
 
-For example, in the mod cog (again), a mod will be able to mute, kick and ban;
-but he won't be able to modify the cog settings with the ``[p]modset`` command.
+For example, in the filter cog, a mod will be able to use the various commands 
+under ``[p]filter`` (such as adding and removing filtered words), but they will
+not be able to modify the cog settings with the ``[p]filterset`` command.
 
 .. tip::
     If you don't like the default permission settings for some commands or
-    if want to restrict a cog or a command to a channel/member, you can use
+    want to restrict a cog or a command to a channel/member, you can use
     the permissions cog.
 
 .. _getting-started-hosting:
@@ -343,9 +344,12 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
     A line that will show how the command must be invoked, with the arguments.
 
-    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
-        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
-        called an alias.
+  * **Aliases**
+  
+    Each command may have one or more aliases, which are alternative command names
+    you can use to invoke the same command. For example, ``[p]set colour`` can also
+    be invoked with ``[p]set color``. If there are aliases for a command, they will
+    appear just under the syntax.
 
   * **Description**
 

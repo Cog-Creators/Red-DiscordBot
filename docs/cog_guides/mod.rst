@@ -282,7 +282,7 @@ modset hierarchy
 
 Toggle role hierarchy check for mods and admins.
 
-..warning:: Disabling this setting will allow mods to take actions on users above them in the role hierarchy!
+.. warning:: Disabling this setting will allow mods to take actions on users above them in the role hierarchy!
 
 This is enabled by default.
 

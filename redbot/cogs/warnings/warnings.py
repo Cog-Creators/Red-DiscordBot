@@ -395,8 +395,8 @@ class Warnings(commands.Cog):
             if (allowed_reason := registered_reasons.get(reason.lower())) is None:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
-                    if points <= 0:
-                        return await ctx.send(_("You cannot apply 0 or less points."))
+                    if points < 0:
+                        return await ctx.send(_("You cannot apply negative points."))
                     allowed_reason = reason
                 else:
                     # logic taken from `[p]permissions canrun`
