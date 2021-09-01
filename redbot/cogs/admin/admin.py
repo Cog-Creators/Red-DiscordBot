@@ -485,7 +485,7 @@ class Admin(commands.Cog):
     @selfroleset.command(name="remove")
     async def selfroleset_remove(self, ctx: commands.Context, *roles: SelfRole):
         """
-        testRemove a role, or a selection of roles, from the list of available selfroles.
+        Remove a role, or a selection of roles, from the list of available selfroles.
 
         NOTE: The role is case sensitive!
         """
