@@ -292,7 +292,7 @@ class ModInfo(MixinMeta):
         await ctx.send(embed=data)
 
     @commands.command()
-    async def names(self, ctx: commands.Context, *, member: discord.Member):
+    async def names(self, ctx: commands.Context, *, member: discord.Member = None):
         """Show previous names and nicknames of a member."""
         if member is None:
             member = ctx.author
