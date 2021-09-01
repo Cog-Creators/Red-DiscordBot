@@ -462,7 +462,8 @@ class Admin(commands.Cog):
             if not self.pass_user_hierarchy_check(ctx, role):
                 await ctx.send(
                     _(
-                        "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                        "I cannot let you add {role.name} as a selfrole because that role is"
+                        " higher than or equal to your highest role in the Discord hierarchy."
                     ).format(role=role)
                 )
                 return
@@ -476,11 +477,12 @@ class Admin(commands.Cog):
                 return
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
-        await ctx.send(
-            _("Added {count} {plural_roles}.").format(
-                count=str(count), plural_roles="selfroles" if count > 1 else "selfrole"
-            )
-        )
+        if count > 1:
+            message = _("Removed {count} selfroles.")
+        else:
+            message = _("Removed 1 selfrole.")
+
+        await ctx.send(message)
 
     @selfroleset.command(name="remove")
     async def selfroleset_remove(self, ctx: commands.Context, *roles: SelfRole):
@@ -495,7 +497,9 @@ class Admin(commands.Cog):
             if not self.pass_user_hierarchy_check(ctx, role):
                 await ctx.send(
                     _(
-                        "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                        "I cannot let you remove {role.name} from being a selfrole"
+                        " because that role is higher than or equal to your highest role"
+                        " in the Discord hierarchy."
                     ).format(role=role)
                 )
                 return
@@ -509,11 +513,12 @@ class Admin(commands.Cog):
                 return
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
-        await ctx.send(
-            _("Removed {count} {plural_roles}.").format(
-                count=str(count), plural_roles="selfroles" if count > 1 else "selfrole"
-            )
-        )
+        if count > 1:
+            message = _("Removed {count} selfroles.")
+        else:
+            message = _("Removed 1 selfrole.")
+
+        await ctx.send(message)
 
     @commands.command()
     @checks.is_owner()
