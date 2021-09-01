@@ -1190,6 +1190,34 @@ mean some pages will exceed this limit.
 **Arguments:**
     - ``<limit>`` - The max amount of characters to show per page in the help message.
 
+.. _core-command-helpset-reacttimeout:
+
+""""""""""""""""""""
+helpset reacttimeout
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]helpset reacttimeout <seconds>
+
+**Description**
+
+Set the timeout for reactions, if menus are enabled.
+
+The default is 30 seconds.
+The timeout has to be between 15 and 300 seconds.
+
+**Examples:**
+    - ``[p]helpset reacttimeout 30`` - The default timeout.
+    - ``[p]helpset reacttimeout 60`` - Timeout of 1 minute.
+    - ``[p]helpset reacttimeout 15`` - Minimum allowed timeout.
+    - ``[p]helpset reacttimeout 300`` - Max allowed timeout (5 mins).
+
+**Arguments:**
+    - ``<seconds>`` - The timeout, in seconds, of the reactions.
+
 .. _core-command-helpset-resetformatter:
 
 """"""""""""""""""""""
