@@ -478,7 +478,7 @@ class Admin(commands.Cog):
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
         if count > 1:
-            message = _("Removed {count} selfroles.")
+            message = _("Removed {count} selfroles.").format(count=count)
         else:
             message = _("Removed 1 selfrole.")
 
@@ -514,7 +514,7 @@ class Admin(commands.Cog):
 
         await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
         if count > 1:
-            message = _("Removed {count} selfroles.")
+            message = _("Removed {count} selfroles.").format(count=count)
         else:
             message = _("Removed 1 selfrole.")
 
