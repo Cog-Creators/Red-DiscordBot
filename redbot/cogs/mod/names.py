@@ -56,7 +56,10 @@ class ModInfo(MixinMeta):
                     "equal to me in the role hierarchy."
                 )
             )
-        elif not await is_allowed_by_hierarchy(self.bot, self.config, ctx.guild, ctx.author, member):
+        elif me != member
+        and not await is_allowed_by_hierarchy(
+            self.bot, self.config, ctx.guild, ctx.author, member
+        ):
             await ctx.send(
                 _(
                     "I cannot let you do that. You are "
