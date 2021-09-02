@@ -74,7 +74,7 @@ class Cleanup(commands.Cog):
     @staticmethod
     async def get_messages_for_deletion(
         *,
-        channel: discord.TextChannel,
+        channel: Union[discord.TextChannel, discord.DMChannel],
         number: Optional[PositiveInt] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
         limit: Optional[PositiveInt] = None,
@@ -126,7 +126,11 @@ class Cleanup(commands.Cog):
         return collected
 
     async def send_optional_notification(
-        self, num: int, channel: discord.TextChannel, *, subtract_invoking: bool = False
+        self,
+        num: int,
+        channel: Union[discord.TextChannel, discord.DMChannel],
+        *,
+        subtract_invoking: bool = False,
     ) -> None:
         """
         Sends a notification to the channel that a certain number of messages have been deleted.
