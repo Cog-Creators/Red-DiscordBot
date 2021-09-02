@@ -33,9 +33,7 @@ class ModInfo(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(
-        self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""
-    ):
+    async def rename(self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""):
         """Change a member's nickname.
         Leaving the nickname empty will remove it.
         """
@@ -47,10 +45,7 @@ class ModInfo(MixinMeta):
             await ctx.send(_("Nicknames must be between 2 and 32 characters long."))
             return
         if not (
-            (
-                me.guild_permissions.manage_nicknames
-                or me.guild_permissions.administrator
-            )
+            (me.guild_permissions.manage_nicknames or me.guild_permissions.administrator)
             and me.top_role > member.top_role
             and member != ctx.guild.owner
         ):
@@ -72,9 +67,7 @@ class ModInfo(MixinMeta):
             )
         else:
             try:
-                await member.edit(
-                    reason=get_audit_reason(ctx.author, None), nick=nickname
-                )
+                await member.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
             except discord.Forbidden:
                 # Just in case we missed something in the permissions check above
                 await ctx.send(_("I do not have permission to rename that member."))
@@ -111,9 +104,7 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.playing
 
     def handle_streaming(self, user):
-        s_acts = [
-            c for c in user.activities if c.type == discord.ActivityType.streaming
-        ]
+        s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
         if not s_acts:
             return None, discord.ActivityType.streaming
         s_act = s_acts[0]
@@ -129,9 +120,7 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.streaming
 
     def handle_listening(self, user):
-        l_acts = [
-            c for c in user.activities if c.type == discord.ActivityType.listening
-        ]
+        l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
         if not l_acts:
             return None, discord.ActivityType.listening
         l_act = l_acts[0]
@@ -139,9 +128,7 @@ class ModInfo(MixinMeta):
             act = _("Listening: [{title}{sep}{artist}]({url})").format(
                 title=discord.utils.escape_markdown(l_act.title),
                 sep=" | " if l_act.artist else "",
-                artist=discord.utils.escape_markdown(l_act.artist)
-                if l_act.artist
-                else "",
+                artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
                 url=f"https://open.spotify.com/track/{l_act.track_id}",
             )
         else:
@@ -157,9 +144,7 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.watching
 
     def handle_competing(self, user):
-        w_acts = [
-            c for c in user.activities if c.type == discord.ActivityType.competing
-        ]
+        w_acts = [c for c in user.activities if c.type == discord.ActivityType.competing]
         if not w_acts:
             return None, discord.ActivityType.competing
         w_act = w_acts[0]
@@ -216,9 +201,9 @@ class ModInfo(MixinMeta):
         user_created = member.created_at.strftime("%d %b %Y %H:%M")
         voice_state = member.voice
         member_number = (
-            sorted(
-                guild.members, key=lambda m: m.joined_at or ctx.message.created_at
-            ).index(member)
+            sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
+                member
+            )
             + 1
         )
 
@@ -252,9 +237,7 @@ class ModInfo(MixinMeta):
                 continuation_string = _(
                     "and {numeric_number} more roles not displayed due to embed limits."
                 )
-                available_length = 1024 - len(
-                    continuation_string
-                )  # do not attempt to tweak, i18n
+                available_length = 1024 - len(continuation_string)  # do not attempt to tweak, i18n
 
                 role_chunks = []
                 remaining_roles = 0
@@ -269,18 +252,14 @@ class ModInfo(MixinMeta):
                     else:
                         remaining_roles += 1
 
-                role_chunks.append(
-                    continuation_string.format(numeric_number=remaining_roles)
-                )
+                role_chunks.append(continuation_string.format(numeric_number=remaining_roles))
 
                 role_str = "".join(role_chunks)
 
         else:
             role_str = None
 
-        data = discord.Embed(
-            description=status_string or activity, colour=member.colour
-        )
+        data = discord.Embed(description=status_string or activity, colour=member.colour)
 
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
@@ -301,10 +280,7 @@ class ModInfo(MixinMeta):
         if nicks:
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(nicks))
-            data.add_field(
-                name=_("Previous Nicknames")
-                if len(nicks) > 1
-                else _("Previous Nickname"),
+            data.add_field(name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),
                 value=val,
                 inline=False,
             )
@@ -314,9 +290,7 @@ class ModInfo(MixinMeta):
                 value="{0.mention} ID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(
-            text=_("Member #{} | User ID: {}").format(member_number, member.id)
-        )
+        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, member.id))
 
         name = str(member)
         name = " ~ ".join((name, member.nick)) if member.nick else name
@@ -347,6 +321,4 @@ class ModInfo(MixinMeta):
             msg = filter_various_mentions(msg)
             await ctx.send(msg)
         else:
-            await ctx.send(
-                _("That member doesn't have any recorded name or nickname change.")
-            )
+            await ctx.send(_("That member doesn't have any recorded name or nickname change."))
