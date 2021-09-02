@@ -136,7 +136,7 @@ filter channel clear
 
 **Description**
 
-Clears this channels filter list.
+Clears this channel's filter list.
 
 .. _filter-command-filter-channel-list:
 
@@ -194,7 +194,7 @@ filter clear
 
 **Description**
 
-Clears this servers filter list.
+Clears this server's filter list.
 
 .. _filter-command-filter-delete:
 

@@ -154,13 +154,13 @@ class Filter(commands.Cog):
 
     @_filter.command(name="clear")
     async def _filter_clear(self, ctx: commands.Context):
-        """Clears this servers filter list."""
-        server = ctx.guild
+        """Clears this server's filter list."""
+        guild = ctx.guild
         author = ctx.author
-        filter_list = await self.config.guild(server).filter()
+        filter_list = await self.config.guild(guild).filter()
         if not filter_list:
             return await ctx.send(_("The filter list for this server is empty."))
-        await ctx.send(_("Are you sure you want to clear this server's filter list? (yes/no)"))
+        await ctx.send(_("Are you sure you want to clear this server's filter list?") + "(yes/no)")
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=author)
             await ctx.bot.wait_for("message", check=pred, timeout=60)
@@ -168,7 +168,7 @@ class Filter(commands.Cog):
             await ctx.send(_("You took too long to respond."))
             return
         if pred.result:
-            await self.config.guild(server).filter.clear()
+            await self.config.guild(guild).filter.clear()
             await ctx.send(_("Server filter cleared."))
         else:
             await ctx.send(_("No changes have been made."))
@@ -200,13 +200,13 @@ class Filter(commands.Cog):
 
     @_filter_channel.command(name="clear")
     async def _channel_clear(self, ctx: commands.Context):
-        """Clears this channels filter list."""
+        """Clears this channel's filter list."""
         channel = ctx.channel
         author = ctx.author
         filter_list = await self.config.channel(channel).filter()
         if not filter_list:
             return await ctx.send(_("The filter list for this channel is empty."))
-        await ctx.send(_("Are you sure you want to clear this channels's filter list? (yes/no)"))
+        await ctx.send(_("Are you sure you want to clear this channel's filter list?") + "(yes/no)")
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=author)
             await ctx.bot.wait_for("message", check=pred, timeout=60)
@@ -214,7 +214,7 @@ class Filter(commands.Cog):
             await ctx.send(_("You took too long to respond."))
             return
         if pred.result:
-            await self.config.guild(channel).filter.clear()
+            await self.config.channel(channel).filter.clear()
             await ctx.send(_("Channel filter cleared."))
         else:
             await ctx.send(_("No changes have been made."))
