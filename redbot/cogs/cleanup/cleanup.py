@@ -124,16 +124,21 @@ class Cleanup(commands.Cog):
 
         return collected
 
-    async def send_optional_notification(self, num: int, channel: discord.TextChannel) -> None:
+    async def send_optional_notification(
+        self, num: int, channel: discord.TextChannel, *, subtract_invoking: bool = False
+    ) -> None:
         """
         Sends a notification to the channel that a certain number of messages have been deleted.
         """
         if not hasattr(channel, "guild") or await self.config.guild(channel.guild).notify():
+            if subtract_invoking:
+                num -= 1
             if num == 1:
                 await channel.send(_("1 message was deleted."), delete_after=5)
             else:
                 await channel.send(
-                    _("{num} messages were deleted.").format(num=num), delete_after=5
+                    _("{num} messages were deleted.").format(num=humanize_number(num)),
+                    delete_after=5,
                 )
 
     @staticmethod
@@ -212,7 +217,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel)
+        await self.send_optional_notification(len(to_delete), channel, True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -283,7 +288,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel)
+        await self.send_optional_notification(len(to_delete), channel, True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -392,7 +397,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel)
+        await self.send_optional_notification(len(to_delete), channel, True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -445,7 +450,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel)
+        await self.send_optional_notification(len(to_delete), channel, True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -484,7 +489,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel)
+        await self.send_optional_notification(len(to_delete), channel, True)
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -711,7 +716,7 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
-        await self.send_optional_notification(len(to_delete), ctx.channel)
+        await self.send_optional_notification(len(to_delete), ctx.channel, True)
 
     @commands.group()
     @commands.admin_or_permissions(manage_messages=True)
