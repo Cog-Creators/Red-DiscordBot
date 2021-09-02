@@ -259,7 +259,7 @@ class General(commands.Cog):
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
-        ) 
+        )
         total_users = humanize_number(guild.member_count)
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
