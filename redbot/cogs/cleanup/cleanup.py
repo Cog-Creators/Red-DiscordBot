@@ -217,7 +217,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel, True)
+        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -288,7 +288,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel, True)
+        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -397,7 +397,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel, True)
+        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -450,7 +450,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel, True)
+        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
     @commands.guild_only()
@@ -489,7 +489,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         await mass_purge(to_delete, channel)
-        await self.send_optional_notification(len(to_delete), channel, True)
+        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -716,7 +716,7 @@ class Cleanup(commands.Cog):
 
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
-        await self.send_optional_notification(len(to_delete), ctx.channel, True)
+        await self.send_optional_notification(len(to_delete), ctx.channel, subtract_invoking=True)
 
     @commands.group()
     @commands.admin_or_permissions(manage_messages=True)
