@@ -160,7 +160,9 @@ class Filter(commands.Cog):
         filter_list = await self.config.guild(guild).filter()
         if not filter_list:
             return await ctx.send(_("The filter list for this server is empty."))
-        await ctx.send(_("Are you sure you want to clear this server's filter list?") + "(yes/no)")
+        await ctx.send(
+            _("Are you sure you want to clear this server's filter list?") + " (yes/no)"
+        )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=author)
             await ctx.bot.wait_for("message", check=pred, timeout=60)
@@ -207,7 +209,7 @@ class Filter(commands.Cog):
         if not filter_list:
             return await ctx.send(_("The filter list for this channel is empty."))
         await ctx.send(
-            _("Are you sure you want to clear this channel's filter list?") + "(yes/no)"
+            _("Are you sure you want to clear this channel's filter list?") + " (yes/no)"
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=author)
