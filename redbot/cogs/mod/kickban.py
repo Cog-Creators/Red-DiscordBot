@@ -642,17 +642,17 @@ class KickBanMixin(MixinMeta):
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
-            msg = _(
-                "You have been temporarily banned from {server_name} until {date}."
-            ).format(server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S"))
+            msg = _("You have been temporarily banned from {server_name} until {date}.").format(
+                server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
+            )
             if guild_data["dm_on_kickban"] and reason:
                 msg += _("\n\n**Reason:** {reason}").format(
                     reason=reason if reason else _("None was provided.")
                 )
             if invite:
-                msg += _(
-                    "\n\nHere is an invite for when your ban expires: {invite_link}"
-                ).format(invite_link=invite)
+                msg += _("\n\nHere is an invite for when your ban expires: {invite_link}").format(
+                    invite_link=invite
+                )
             await member.send(msg)
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
