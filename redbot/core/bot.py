@@ -547,7 +547,7 @@ class RedBase(
             The values passed were not the proper type
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
-        await self._whiteblacklist_cache.add_to_blacklist(guild, users_or_roles)
+        await self._whiteblacklist_cache.add_to_blacklist(guild, to_add)
 
     async def remove_from_blacklist(
         self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
@@ -614,7 +614,7 @@ class RedBase(
             The passed values were not of the proper type
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
-        await self._whiteblacklist_cache.add_to_whitelist(guild, *to_add)
+        await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
 
     async def remove_from_whitelist(self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None):
         """Remove users or roles from the whitelist
@@ -634,7 +634,7 @@ class RedBase(
             The passed values were not of the proper type
         """
         to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
-        await self._whiteblacklist_cache.remove_from_whitelist(guild, *to_add)
+        await self._whiteblacklist_cache.remove_from_whitelist(guild, to_add)
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None):
         """Get the whitelist of either the bot or a guild
