@@ -32,7 +32,7 @@ class Cleanup(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 8927348724)
+        self.config = Config.get_conf(self, 8927348724, force_registration=True)
         self.config.register_guild(notify=True)
 
     async def red_delete_data_for_user(self, **kwargs):
