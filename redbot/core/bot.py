@@ -115,6 +115,7 @@ class RedBase(
             help__verify_exists=False,
             help__tagline="",
             help__use_tick=False,
+            help__react_timeout=30,
             description="Red V3",
             invite_public=False,
             invite_perm=0,
@@ -348,7 +349,7 @@ class RedBase(
             "__name__",
             "__builtins__",
         ]:
-            raise RuntimeError(f"The name {name} is reserved for default environement.")
+            raise RuntimeError(f"The name {name} is reserved for default environment.")
         if name in dev.env_extensions:
             raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value

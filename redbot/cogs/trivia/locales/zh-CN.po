@@ -33,19 +33,19 @@ msgstr "我知道这个！ {answer}！"
 
 #: redbot/cogs/trivia/session.py:21
 msgid "Easy: {answer}."
-msgstr ""
+msgstr "简单：{answer}"
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr ""
+msgstr "真的？当然是 {answer}"
 
 #: redbot/cogs/trivia/session.py:26
 msgid "I know this one! ||{answer}!||"
-msgstr ""
+msgstr "我知道这个! ||{answer}!||"
 
 #: redbot/cogs/trivia/session.py:27
 msgid "Easy: ||{answer}.||"
-msgstr ""
+msgstr "简单：||{answer}.||"
 
 #: redbot/cogs/trivia/session.py:28
 msgid "Oh really? It's ||{answer}|| of course."
@@ -57,7 +57,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/session.py:33
 msgid "Moving on..."
-msgstr ""
+msgstr "继续。。。"
 
 #: redbot/cogs/trivia/session.py:34
 msgid "I'm sure you'll know the answer of the next one."
@@ -65,7 +65,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/session.py:35
 msgid "😔 Next one."
-msgstr ""
+msgstr "😔 下一个"
 
 #: redbot/cogs/trivia/session.py:121
 msgid "An unexpected error occurred in the trivia session.\n"
