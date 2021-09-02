@@ -665,7 +665,9 @@ class Cleanup(commands.Cog):
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
-        await self.send_optional_notification(len(to_delete), channel, subtract_invoking=can_mass_purge)
+        await self.send_optional_notification(
+            len(to_delete), channel, subtract_invoking=can_mass_purge
+        )
 
     @cleanup.command(name="duplicates", aliases=["spam"])
     @commands.guild_only()
