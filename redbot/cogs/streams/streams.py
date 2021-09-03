@@ -31,7 +31,7 @@ from datetime import datetime
 from collections import defaultdict
 from typing import Optional, List, Tuple, Union, Dict
 
-MAX_RETRY_COUNT = 20
+MAX_RETRY_COUNT = 10
 
 _ = Translator("Streams", __file__)
 log = logging.getLogger("red.core.cogs.Streams")
