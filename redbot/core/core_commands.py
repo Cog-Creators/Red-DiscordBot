@@ -4058,7 +4058,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command defaultdisablecog ModLog`
 
         **Arguments:**
-            - `<cogname>` - The name of the cog to make disabled by default. Must be title-case.
+            - `<cog>` - The name of the cog to make disabled by default. Must be title-case.
         """
         cog = cogname
         cogname = cog.qualified_name
@@ -4082,7 +4082,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command defaultenablecog ModLog`
 
         **Arguments:**
-            - `<cogname>` - The name of the cog to make enabled by default. Must be title-case.
+            - `<cog>` - The name of the cog to make enabled by default. Must be title-case.
         """
         cog = cogname
         cogname = cog.qualified_name
@@ -4091,7 +4091,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.guild_only()
     @command_manager.command(name="disablecog")
-    async def command_disable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
+    async def command_disable_cog(self, ctx: commands.Context, *, cog: CogConverter):
         """Disable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4101,9 +4101,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command disablecog ModLog`
 
         **Arguments:**
-            - `<cogname>` - The name of the cog to disable on this server. Must be title-case.
+            - `<cog>` - The name of the cog to disable on this server. Must be title-case.
         """
-        cog = cogname
         cogname = cog.qualified_name
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog as you would lock yourself out."))
@@ -4116,7 +4115,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.guild_only()
     @command_manager.command(name="enablecog")
-    async def command_enable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
+    async def command_enable_cog(self, ctx: commands.Context, *, cog: CogConverter):
         """Enable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4126,9 +4125,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command enablecog ModLog`
 
         **Arguments:**
-            - `<cogname>` - The name of the cog to enable on this server. Must be title-case.
+            - `<cog>` - The name of the cog to enable on this server. Must be title-case.
         """
-        cog = cogname
         cogname = cog.qualified_name
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
