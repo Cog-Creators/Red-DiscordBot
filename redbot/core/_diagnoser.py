@@ -694,13 +694,16 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                 _(
                     "The user is missing the privilege level ({privilege_level})"
                     " required by the {cog} cog."
-                ).format(permissions=permissions, cog=inline(cog_or_command.qualified_name))
+                ).format(
+                    privilege_level=privilege_level, cog=inline(cog_or_command.qualified_name)
+                )
                 if cog_or_command is self.ctx.cog
                 else _(
                     "The user is missing the privilege level ({privilege_level})"
                     " required by the {command} command."
                 ).format(
-                    permissions=permissions, command=self._format_command_name(cog_or_command)
+                    privilege_level=privilege_level,
+                    command=self._format_command_name(cog_or_command),
                 )
             )
 
