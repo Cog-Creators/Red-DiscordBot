@@ -572,6 +572,9 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             _("To fix this issue, a manual review of the installed cogs is required."),
         )
 
+    # Pinpointing a specific rule that denied the access is possible but it was considered
+    # to require more effort than it is worth it for the little benefit it gives.
+    # If this becomes a significant pain point for the users, this might get reconsidered.
     async def _check_requires_permission_rules(
         self, cog_or_command: commands.CogCommandMixin
     ) -> CheckResult:
