@@ -436,9 +436,7 @@ else:
             return command
 
     class CogConverter(dpy_commands.Converter):
-        """
-        Returns a `Cog` object if the passed argument matches a cog name on the bot.
-        """
+        """Converts a cog name to the matching `Cog` object."""
 
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()
