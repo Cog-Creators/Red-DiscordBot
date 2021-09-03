@@ -750,9 +750,10 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
                     "All checks passed and no issues were detected."
                     " Make sure that the given parameters correspond to"
                     " the channel, user, and command name that have been problematic.\n\n"
-                    "If you still can't find the issue, it is likely that one of the 3rd-party cogs"
-                    " you're using adds a global or cog local before invoke hook that prevents"
-                    " the command from getting invoked as this can't be diagnosed with this tool."
+                    "If you still can't find the issue, it is likely that one of the 3rd-party"
+                    " cogs you're using adds a global or cog local before invoke hook that"
+                    " prevents the command from getting invoked as this can't be diagnosed"
+                    " with this tool."
                 )
             )
         else:
